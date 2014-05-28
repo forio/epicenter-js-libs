@@ -1,8 +1,14 @@
 module.exports = function () {
 
     var defaults = {
+        /**
+         * For operations which require authentication, pass in token
+         * @see  Auth-service for getting tokens
+         * @type {String}
+         */
         token: '',
         apiKey: '',
+
         model: 'model.jl',
         account: '',
         project: ''
@@ -59,7 +65,7 @@ module.exports = function () {
          * @example
          *     rs.get('<runid>', {include: '.score', set: 'xyz'});
          */
-        get: function (runID, filters) {
+        load: function (runID, filters) {
 
         },
 
