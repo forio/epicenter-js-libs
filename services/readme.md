@@ -45,22 +45,26 @@ rs.next();// If you got paged results initially, gets the next one, else null
  */
 
 rs.get('<runid>', {include: '.score', set: 'xyz'});
-rs.getVariables(); //returns object, implements _, gets from default set
+rs.populate(); //returns object, implements _, gets from default set
 
-rs.getVariables(["Price", "Sales"]);//shorthand, doesn't directly map to api
-rs.getVariables("variableset", {include: ['price', 'sales']})
-rs.getVariables({set: 'variableset', include:['price', 'sales']})
-rs.getVariables({set: ['set1', 'set2'], include:['price', 'sales']});
+rs.populate(["Price", "Sales"]);//shorthand, doesn't directly map to api
+rs.populate({set: 'variableset', include:['price', 'sales']})
+rs.populate({set: ['set1', 'set2'], include:['price', 'sales']});
 
-rs.getVariables(..).get('X'); 10
+rs.populate(..).get('X'); 10
 
-rs.variables
-    .query({});
+rs.query()
+    .variables({})
+        .query({});
+        .save({price: 2})
+        .end()
+
+
 
 rs.save({saved:true, variables: {a:23,b:23}})
 rs.save({saved:true}).saveVariables({a:23, b:23})
-rs.save({saved:true}).variables.save({a:23, b:23});
-rs.save({saved:true}).variables.merge({a:23, b:[23,24]});
+rs.save({saved:true}).variables().save({a:23, b:23});
+rs.save({saved:true}).variables().merge({a:23, b:[23,24]});
 
 ##Operations
 rs.do('solve');

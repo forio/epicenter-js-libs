@@ -41,6 +41,7 @@ Implements all of underscore's methods natively
     ? Implement data api as an adapter for https://github.com/brianleroux/lawnchair
 
 
+
 var ds = require('data-service')({
     env: 'dev'
 });
@@ -59,7 +60,7 @@ var run = run({saved=true,account=mit}) -> Run object
 
 or
 
-run.query({saved:tue, account:mit}).getVariables().query({price = '<4'});
+run.query({saved:tue, account:mit}).variables.query({price = '<4'});
 run.query({saved: true, account:mit, variables: { price = '<4'}})
 
 var op = require('operations-service');
