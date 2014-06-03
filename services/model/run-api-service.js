@@ -3,7 +3,11 @@
  *
  */
 
-module.exports = function () {
+var configService = require('configService');
+
+module.exports = function (config) {
+
+    config || config = configService.get();
 
     var defaults = {
         /**
@@ -18,6 +22,8 @@ module.exports = function () {
         account: '',
         project: ''
     };
+
+    var options = $.extend({}, defaults, config);
 
     return {
 
