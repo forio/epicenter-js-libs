@@ -10,6 +10,9 @@
  */
 
 var configService = require('configService');
+var qutils = require('query-utils');
+var urlService = require('url-service');
+var http = require('http-transport');
 
 module.exports = function (config) {
 
@@ -43,6 +46,8 @@ module.exports = function (config) {
 
     var options = $.extend({}, defaults, config);
 
+    http.basePath = urlService.get('run');
+
     return {
 
         /**
@@ -63,7 +68,12 @@ module.exports = function (config) {
          *
          */
         query: function (qs, outputModifier, options) {
+            var matrixParams = qservice.toMatrix(qs);
+            var urlParams = qutils.toURL(outputModifier);
 
+            var url =   matrixParams + '/?' + urlParams;
+
+            return http.get(url);
         },
 
         /**

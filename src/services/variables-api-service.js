@@ -59,5 +59,5 @@ module.exports = function (options) {
         merge: function (variables) {
 
         }
-    }
-}
+    };
+};
