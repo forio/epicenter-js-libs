@@ -1,4 +1,15 @@
 
+## CommonJS & Globals
+Every Epicenter service/utility is also a CommonJS module (http://dailyjs.com/2010/10/18/modules/). This means this can be used directly within Node, or within the browser using tools like Browserify.
+
+If you prefer not to use CommonJS, or if the Browserify library is not available for your project, the libraries can also be accessed using the F namespace.
+
+var rs = require('run-service')
+
+is equivalent to
+
+rs = F.RunService()
+
 
 
 ## Call-backs and promises
