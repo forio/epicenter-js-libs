@@ -1,5 +1,11 @@
 /**
 
+ * All API calls take in an "options" object as the last parameter. The options can be used to extend/override whatever was provided as the API Defaults
+ * @example
+ *     var rs = require('run-service')({
+ *
+ *     });
+ *
  *
  */
 
@@ -20,7 +26,19 @@ module.exports = function (config) {
 
         model: 'model.jl',
         account: '',
-        project: ''
+        project: '',
+
+        /** Called when the call completes successfully **/
+        onSuccess: $.noop,
+
+        /** Called when the call fails **/
+        onError: $.noop,
+
+        /** Called when the call completes, regardless of success or failure **/
+        onComplete: $.noop,
+
+        /** Called at any significant point in the progress of the call, usually before and after server requests **/
+        onProgress: $.noop,
     };
 
     var options = $.extend({}, defaults, config);
@@ -44,7 +62,7 @@ module.exports = function (config) {
 
          *
          */
-        query: function (qs, outputModifier) {
+        query: function (qs, outputModifier, options) {
 
         },
 
@@ -64,7 +82,7 @@ module.exports = function (config) {
          *         'user': 'john'
          *     }) //Get all saved runs with price > 1 belonging to user John
          */
-        filter: function (filter, outputModifier) {
+        filter: function (filter, outputModifier, options) {
 
         },
 
@@ -76,7 +94,7 @@ module.exports = function (config) {
          * @example
          *     rs.get('<runid>', {include: '.score', set: 'xyz'});
          */
-        load: function (runID, filters) {
+        load: function (runID, filters, options) {
 
         },
 
@@ -91,7 +109,7 @@ module.exports = function (config) {
          *     rs.variables(["Price", "Sales"])
          *     rs.variables()
          */
-        variables: function (variableSet, filters) {
+        variables: function (variableSet, filters, options) {
 
         },
 
@@ -105,7 +123,7 @@ module.exports = function (config) {
          *     rs.save({saved:true, variables: {a:23,b:23}});
          *     rs.save({saved:true, '.a':23, '.b':23}}); //equivalent to above
          */
-        save: function (attributes) {
+        save: function (attributes, options) {
 
         },
 
@@ -120,7 +138,7 @@ module.exports = function (config) {
          *     rs.do('add', [1,2]);
          *     rs.do({name:'add', arguments:[2,4]})
          */
-        do: function (operation, params) {
+        do: function (operation, params, options) {
 
         },
 
@@ -133,7 +151,7 @@ module.exports = function (config) {
          *     rs.serial(['initialize', 'solve', 'reset']);
          *     rs.serial([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
          */
-        serial: function (operations, params) {
+        serial: function (operations, params, options) {
 
         },
 
@@ -146,7 +164,7 @@ module.exports = function (config) {
          *     rs.parallel([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
          *     rs.parallel(['solve', 'reset']);
          */
-        parallel: function (operations) {
+        parallel: function (operations, options) {
 
         }
 

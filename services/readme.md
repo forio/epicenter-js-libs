@@ -1,84 +1,52 @@
-All services will implement the following methods
-
-- configure
 
 
-var auth = require('authenticationService')({
-    store: cookieStore,
+
+## Call-backs and promises
+
+There are two different patterns for using the service adapters  - using callbacks or using promises
+
+### Callbacks
+All services take in an "options" object as the final parameter. Among other things, the options object contains the following properties:
+
+onSuccess /** Called when the call completes successfully **/
+
+onError /** Called when the call fails **/
+
+onComplete /** Called when the call completes, regardless of success or failure **/
+
+onProgress /** Called at any significant point in the progress of the call, usually before and after server requests **/
+
+An example of a sequence of operations involving callbacks would be:
+
+var rs = require('run-service');
+rs.create({model: 'model.jl'}, {
+    onSuccess: function (data, $run) {
+        console.log('Run Created');
+        $run.do("initialize",  {
+            onSuccess: function (data, $run){
+                console.log('Initialized');
+                $run.do("add", [1,2], {
+                    onSuccess: function (data, $run){
+                        console.log('1 + 2 is', data);
+                    }
+                });
+            }
+        });
+    }
 });
-auth.login(username, password);
-auth.logout([username]);
 
-auth.getToken([username], [password]); //if already logged in, gets token from store. If not, logs in and then gets token
+Callbacks work great for one-off operations, but as can be seen in the previous example, can get messy for a complicated sequence of steps.
 
-auth.store; //cookie store
+### Promises
+Every service call returns a promise, and promises can be chained. See http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/ for more details on how promises work
 
+The above call can then be re-written as
 
-//Create run behind the scenes on instantiation.. because what else will you do with a run service
-var rs = require('runService')({
-    token: '',
-    apiKey: '',
-    model: 'model.jl',
-    account: 'mit',
-    project: 'afv'
-});
-
-//explicitly create new run
-rs.create(options);
-rs.reset(options);// passes in old runid so mandelbrot can deassign
-
-rs.toJSON(); // a.k.a rs.attributes. Implements underscore methods
-rs.query({
-    'saved': 'true',
-    '.price': '>1'
-}, // All Matrix parameters
-{limit:5, page:2} //All Querystring params
-);
-
-//Query over-writes your params with the queryparams, filter merges
-rs.filter({
-
-})
-
-
-rs.get('<runid>', {include: '.score', set: 'xyz'});
-rs.populate(); //returns object, implements _, gets from default set
-
-rs.populate(["Price", "Sales"]);//shorthand, doesn't directly map to api
-rs.populate({set: 'variableset', include:['price', 'sales']})
-rs.populate({set: ['set1', 'set2'], include:['price', 'sales']});
-
-rs.populate(..).get('X'); 10
-
-rs.query()
-    .variables({})
-        .query({});
-        .save({price: 2})
-        .end()
-
-var var
-
-
-
-rs.save({saved:true, variables: {a:23,b:23}})
-
-rs.save({saved:true}).saveVariables({a:23, b:23})
-
-rs.save({saved:true}).variables().save({a:23, b:23});
-
-
-rs.save({saved:true}).variables().merge({a:23, b:[23,24]});
-
-##Operations
-rs.do('solve');
-rs.do('add', [1,2]);
-rs.serial(['initialize', 'solve', 'reset']).then(function(resetResult, solveResult, initializeResult){
-
-});
-rs.parallel(..);
-
-rs.getOperations();//returns list of possible operations and arguments. Rarely likely to be used directly
-
-
-
-
+rs
+    .create({model: 'model.jl'})
+    .do('initialize')
+    .then(function (){ console.log('initialized'); })
+    .do('add', [1,2])
+    .done(function (data, $run){
+        console.log('1 + 2 is', data);
+    });
