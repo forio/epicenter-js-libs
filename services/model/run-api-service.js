@@ -1,3 +1,8 @@
+/**
+
+ *
+ */
+
 module.exports = function () {
 
     var defaults = {

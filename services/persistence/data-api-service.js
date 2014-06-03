@@ -1,3 +1,17 @@
+/**
+ * @class Data API Service
+ *
+ * @example
+ *      var people = require('data-service')({root: 'people'});
+        people
+            .query({firstName: 'john'})
+            .save({lastName: 'smith'})
+            .done(function(data) {
+                console.log('Queried and saved!')
+            });
+
+ */
+
 module.exports = function (options) {
 
     var config = {

@@ -1,4 +1,4 @@
-#Persistence
+€#Persistence
 
 
 
@@ -10,20 +10,6 @@ Implements all of underscore's methods natively
 -
 
 ##Usage:
-    var dataService = require('persistence/cookie-service')(options);
-
-    dataService.save('person', {firstName: 'john', lastName: 'smith'});
-    dataService.get('person').then(function (person) {
-        console.log(person.firstName === 'john'); //true
-    });
-    dataService.exists('person').then(function(isExisting){
-        console.log(isExisting); //true
-    });
-    dataService.remove('person');
-
-    dataService.remove('key')
-
-
     var errorHandler = function() {
         console.log('Something blew up!');
         };
@@ -45,29 +31,3 @@ Implements all of underscore's methods natively
 var ds = require('data-service')({
     env: 'dev'
 });
-var people = ds.config({root: 'people'});
-people
-    .query({name: 'naren'})
-    .save({lastName: 'ranjit'})
-    .done(function() {
-        console.log('Queried and saved!')
-    });
-
-
-
-var run = run({saved=true,account=mit}) -> Run object
-    run.variables({price='<5'})
-
-or
-
-run.query({saved:tue, account:mit}).variables.query({price = '<4'});
-run.query({saved: true, account:mit, variables: { price = '<4'}})
-
-var op = require('operations-service');
-    op.do('solve').then(function () {
-        console.log('solved');
-    });
-
-var run = require('runs-service');
-    run.operations.do('solve');
-    run.operation('solve')

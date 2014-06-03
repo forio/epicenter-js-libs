@@ -39,10 +39,7 @@ rs.query({
 rs.filter({
 
 })
-rs.next();// If you got paged results initially, gets the next one, else null
-/**
- * while (rs.next()) { console.log()}
- */
+
 
 rs.get('<runid>', {include: '.score', set: 'xyz'});
 rs.populate(); //returns object, implements _, gets from default set
@@ -59,11 +56,17 @@ rs.query()
         .save({price: 2})
         .end()
 
+var var
+
 
 
 rs.save({saved:true, variables: {a:23,b:23}})
+
 rs.save({saved:true}).saveVariables({a:23, b:23})
+
 rs.save({saved:true}).variables().save({a:23, b:23});
+
+
 rs.save({saved:true}).variables().merge({a:23, b:[23,24]});
 
 ##Operations
