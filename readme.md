@@ -8,7 +8,7 @@ var rs = require('run-service')
 
 is equivalent to
 
-rs = F.RunService()
+var rs = F.RunService()
 
 
 
