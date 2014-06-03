@@ -1,0 +1,7 @@
+{
+  "name": "Epicenter-JS-Libs",
+  "version": "0.0.1",
+  "devDependencies": {
+    "grunt-dox": "^0.5.0"
+  }
+}
