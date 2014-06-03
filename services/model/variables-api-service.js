@@ -10,7 +10,7 @@ module.exports = function (options) {
          * The runs object to apply the variable filters to
          * @type {RunService}
          */
-        runFilter: ''
+        runFilter: null
     };
 
     return {

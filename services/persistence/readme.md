@@ -1,13 +1,3 @@
-€#Persistence
-
-
-
-#Persistence Services
-
-Implements all of underscore's methods natively
-
-- query
--
 
 ##Usage:
     var errorHandler = function() {
@@ -25,9 +15,3 @@ Implements all of underscore's methods natively
 ##TODOs
     ? Implement https://github.com/crcn/sift.js for querying? Skip this for Data API but use for everything else instead?
     ? Implement data api as an adapter for https://github.com/brianleroux/lawnchair
-
-
-
-var ds = require('data-service')({
-    env: 'dev'
-});
