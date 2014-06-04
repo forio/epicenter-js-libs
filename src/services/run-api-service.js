@@ -48,6 +48,12 @@ module.exports = function (config) {
 
     http.basePath = urlService.get('run');
 
+    var $basePromise;
+
+    var pfy = function (fn) {
+        fn.done();
+    };
+
     return {
 
         /**
@@ -178,6 +184,6 @@ module.exports = function (config) {
 
         }
 
-    }
-}
+    };
+};
 
