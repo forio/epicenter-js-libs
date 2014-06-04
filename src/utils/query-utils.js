@@ -1,10 +1,14 @@
-module.exports = function () {
+// module.exports = function () {
 
-    return {
+//     return {
 
-        toMatrixFormat: function(qs) {
+//         toMatrixFormat: function(qs) {
 
-            return qs;
-        }
-    };
+//             return qs;
+//         }
+//     };
+// };
+
+function test(){
+    return 1;
 };

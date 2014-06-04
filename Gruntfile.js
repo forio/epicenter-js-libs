@@ -4,6 +4,10 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         watch: {
+            source: {
+                files: ['src/**/*.js'],
+                tasks: ['mocha:test']
+            },
             tests: {
                 files: ['tests/spec/**/*.js'],
                 tasks: ['mocha:test']
