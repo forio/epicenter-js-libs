@@ -22,4 +22,5 @@ var Query= function () {
 }();
 
 if (!window.F) window.F = {};
-F.Query = Query;
+if (!window.F.Utils) window.F.Utils = {};
+F.Utils.Query = Query;
