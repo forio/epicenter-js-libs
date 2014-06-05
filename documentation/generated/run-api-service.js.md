@@ -49,6 +49,8 @@ Parameters to filter the list of runs by
 
 - limit: {Object} | page | sort @see <TBD>
 
+- options: {object} Overrides for configuration options
+
 ````
 
 rs.query({
@@ -75,6 +77,8 @@ Similar to query, except merges parameters instead of over-writing them
 - filter: {Object} 
 
 - limit: {Object} | page | sort @see <TBD>
+
+- options: {object} Overrides for configuration options
 
 ````
 
@@ -105,6 +109,8 @@ Get data for a specific run
 
 - filters: {Object} 
 
+- options: {object} Overrides for configuration options
+
 ````
 
 rs.get('<runid>', {include: '.score', set: 'xyz'});
@@ -118,6 +124,8 @@ Returns a variables object
 
 - filters: {Object} (Optional)
 
+- options: {object} Overrides for configuration options
+
 ````
 
 rs.variables(["Price", "Sales"])
@@ -130,6 +138,8 @@ rs.variables()
 Save attributes on the run
 
 - attributes: {Object} Run attributes to save
+
+- options: {object} Overrides for configuration options
 
 ````
 
@@ -148,6 +158,8 @@ Call an operation on the model
 
 - params: {*} (Optional) Any parameters the operation takes
 
+- options: {object} Overrides for configuration options
+
 ````
 
 rs.do('solve');
@@ -165,6 +177,8 @@ Call a bunch of operations in serial
 
 - params: {params} Parameters for each operation
 
+- options: {object} Overrides for configuration options
+
 ````
 
 rs.serial(['initialize', 'solve', 'reset']);
@@ -177,6 +191,8 @@ rs.serial([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
 Executes operations in parallel
 
 - operations: {Array|Object} List of operations and arguments (if object)
+
+- options: {object} Overrides for configuration options
 
 ````
 

@@ -8,14 +8,30 @@
  *
  */
 
-var configService = require('configService');
-var qutils = require('query-utils');
-var urlService = require('url-service');
-var http = require('http-transport');
+(function(){
+var root = this;
+var F = root.F;
 
-module.exports = function (config) {
+var $, configService, qutils, urlService;
+if  (typeof require !== 'undefined') {
+    $ = require('jquery');
+    configService = require('utils/configuration-service');
+    qutils = require('utils/query-utils');
+}
+else {
+    configService = F.Service.Config;
+    qutils = F.Utils.Query;
+}
 
-    config || config = configService.get();
+
+// var configService = require('configService');
+// var qutils = require('query-utils');
+// var urlService = require('url-service');
+// var http = require('http-transport');
+
+var RunService = function (config) {
+
+    // config || (config = configService.get());
 
     var defaults = {
         /**
@@ -58,7 +74,7 @@ module.exports = function (config) {
 
     var options = $.extend({}, defaults, config);
 
-    http.basePath = urlService.get('run');
+    // http.basePath = urlService.get('run');
 
     var $basePromise;
 
@@ -87,8 +103,8 @@ module.exports = function (config) {
          *
          */
         query: function (qs, outputModifier, options) {
-            var matrixParams = qutils.toMatrix(qs);
-            var urlParams = qutils.toURL(outputModifier);
+            var matrixParams = qutils.toMatrixFormat(qs);
+            var urlParams = qutils.toQueryFormat(outputModifier);
 
             var url =   matrixParams + '/?' + urlParams;
 
@@ -203,8 +219,16 @@ module.exports = function (config) {
         parallel: function (operations, options) {
 
         }
-
     };
 };
 
-utils.namespace('RunService', RunService);
+if (typeof exports !== 'undefined') {
+    module.exports = RunService;
+}
+else {
+    if (!root.F) { root.F = {};}
+    if (!root.F.Service) { root.F.Service = {};}
+    root.F.Service.Run = RunService;
+}
+
+}).call(this);
