@@ -17,6 +17,16 @@ var Query= function () {
 
             var mtrx = ';' + returnArray.join(';');
             return mtrx;
+        },
+
+        toQueryFormat: function(qs) {
+            var returnArray = [];
+            _.each(qs, function(value, key) {
+                returnArray.push(key + '=' + value);
+            });
+
+            var mtrx = returnArray.join('&');
+            return mtrx;
         }
     };
 }();
