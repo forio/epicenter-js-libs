@@ -28,6 +28,8 @@ var query= function () {
             var mtrx = returnArray.join('&');
             return mtrx;
         }
+        //TODO: test string, null, invalids
+
     };
 }();
 

@@ -27,10 +27,29 @@
  *
  */
 
+(function(){
+ var root = this;
+ var F = root.F;
 
-module.exports = function (config) {
+
+ var urlService;
+ if  (typeof require !== 'undefined') {
+     urlService = require('service/urlService');
+ }
+ else {
+     urlService = F.service.url;
+ }
+
+var ConfigurationService = function (config) {
+
+    //TODO: Environments
+    var defaultConfig = {
+        url: urlService
+    };
 
     return {
+
+        data: defaultConfig,
 
         /**
          * Set the environment key to get configuration options from
@@ -46,7 +65,7 @@ module.exports = function (config) {
          * @return {*}          Value of property if specified, the entire config object otherwise
          */
         get: function (property) {
-
+            return defaultConfig[property];
         },
 
 
@@ -60,4 +79,15 @@ module.exports = function (config) {
         }
     };
 };
+
+if (typeof exports !== 'undefined') {
+    module.exports = ConfigurationService;
+}
+else {
+    if (!root.F) { root.F = {};}
+    if (!root.F.service) { root.F.service = {};}
+    root.F.service.Config = ConfigurationService;
+}
+
+}).call(this);
 

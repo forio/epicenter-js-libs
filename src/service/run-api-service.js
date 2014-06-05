@@ -12,22 +12,20 @@
 var root = this;
 var F = root.F;
 
-var $, configService, qutils, urlService;
+var $, ConfigService, qutils, urlService, httpTransport;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('utils/configuration-service');
     qutils = require('utils/query-utils');
 }
 else {
-    configService = F.service.Config;
+    $ = jQuery;
+    ConfigService = F.service.Config;
     qutils = F.util.query;
+    httpTransport = F.transport.HTTP;
 }
 
 
-// var configService = require('configService');
-// var qutils = require('query-utils');
-// var urlService = require('url-service');
-// var http = require('http-transport');
 
 var RunService = function (config) {
 
@@ -73,16 +71,14 @@ var RunService = function (config) {
     };
 
     var options = $.extend({}, defaults, config);
+    var baseurl = ConfigService().get('url').getAPIPath('run');
 
-    // http.basePath = urlService.get('run');
+    var http = httpTransport({
+        url: baseurl
+    });
 
-    var $basePromise;
-
-    var pfy = function (fn) {
-        fn.done();
-    };
-
-    return {
+    var publicAPI = {
+        url: baseurl,
 
         /**
          * Parameters to filter the list of runs by
@@ -104,11 +100,11 @@ var RunService = function (config) {
          */
         query: function (qs, outputModifier, options) {
             var matrixParams = qutils.toMatrixFormat(qs);
-            var urlParams = qutils.toQueryFormat(outputModifier);
+            var url =   matrixParams + '/';
 
-            var url =   matrixParams + '/?' + urlParams;
-
-            return http.get(url);
+            return http.get(outputModifier, {
+                url: baseurl + url
+            });
         },
 
         /**
@@ -220,6 +216,8 @@ var RunService = function (config) {
 
         }
     };
+
+    return publicAPI;
 };
 
 if (typeof exports !== 'undefined') {
@@ -227,8 +225,8 @@ if (typeof exports !== 'undefined') {
 }
 else {
     if (!root.F) { root.F = {};}
-    if (!root.F.Service) { root.F.Service = {};}
-    root.F.Service.Run = RunService;
+    if (!root.F.service) { root.F.service = {};}
+    root.F.service.Run = RunService;
 }
 
 }).call(this);

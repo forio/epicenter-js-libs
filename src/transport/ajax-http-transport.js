@@ -1,23 +1,28 @@
 (function(){
 var root = this;
 var F = root.F;
+var qutils = F.util.query;
 
 var AjaxHTTP= function (config) {
 
     var defaults = {
+        url: '',
+
         contentType: 'application/json',
         headers: {},
         statusCode: {
             404: $.noop
         },
     };
+
+    //TODO: Add config service to switch between locations by url
     var options = $.extend({}, defaults, config);
 
     var connect = function (method, params, ajaxOptions) {
-        var options = $.extend(true, {
+        var connOptions = $.extend(true, options, ajaxOptions, {
             type: method,
             data: JSON.stringify(params)
-        }, ajaxOptions);
+        });
 
         return  $.ajax(options);
     };
@@ -30,8 +35,9 @@ var AjaxHTTP= function (config) {
 
         },
 
-        get:function () {
-            return connect.apply(this, ['get'].concat(arguments));
+        get:function (params, ajaxOptions) {
+            params = qutils.toQueryFormat(params);
+            return connect.call(this, 'GET', params, ajaxOptions);
         },
         post: function () {
             return connect.apply(this, ['post'].concat(arguments));
