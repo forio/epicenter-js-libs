@@ -3,9 +3,9 @@
 (function () {
     'use strict';
 
-    var qutils = F.Utils.Query;
+    var qutils = F.util.query;
 
-    describe('Query Utils', function () {
+    describe('Query Util', function () {
         describe('#toMatrixFormat()', function () {
             it('should convert single-key objects to string', function () {
                 qutils.toMatrixFormat({a: 2}).should.equal(';a=2');

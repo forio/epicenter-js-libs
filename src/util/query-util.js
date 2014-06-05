@@ -1,7 +1,7 @@
 /**
  * Utilities for working with query strings
 */
-var Query= function () {
+var query= function () {
 
     return {
         /**
@@ -32,5 +32,5 @@ var Query= function () {
 }();
 
 if (!window.F) window.F = {};
-if (!window.F.Utils) window.F.Utils = {};
-F.Utils.Query = Query;
+if (!window.F.util) window.F.util = {};
+F.util.query = query;

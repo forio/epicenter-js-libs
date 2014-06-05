@@ -19,8 +19,8 @@ if  (typeof require !== 'undefined') {
     qutils = require('utils/query-utils');
 }
 else {
-    configService = F.Service.Config;
-    qutils = F.Utils.Query;
+    configService = F.service.Config;
+    qutils = F.util.query;
 }
 
 
