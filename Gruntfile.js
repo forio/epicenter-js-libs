@@ -30,10 +30,10 @@ module.exports = function (grunt) {
                 //                }()
                 files:  [
                     {
-                        src: 'src/utils/configuration-service.js', dest: 'documentation/configuration-service.js.md'
+                        src: 'src/utils/configuration-service.js', dest: 'documentation/generated/configuration-service.js.md'
                     },
                     {
-                        src: 'src/services/run-api-service.js', dest: 'documentation/run-api-service.js.md'
+                        src: 'src/services/run-api-service.js', dest: 'documentation/generated/run-api-service.js.md'
                     }
                 ]
             }
