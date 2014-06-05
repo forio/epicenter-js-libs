@@ -1,5 +1,4 @@
 /**
-
  * All API calls take in an "options" object as the last parameter. The options can be used to extend/override whatever was provided as the API Defaults
  * @example
  *     var rs = require('run-service')({
@@ -25,10 +24,23 @@ module.exports = function (config) {
          * @type {String}
          */
         token: '',
-        apiKey: '',
 
+        /**
+         * Model file to create the run with
+         * @type {String}
+         */
         model: 'model.jl',
+
+        /**
+         * Account to create the run in
+         * @type {String}
+         */
         account: '',
+
+        /**
+         * Project to create the run in
+         * @type {String}
+         */
         project: '',
 
         /** Called when the call completes successfully **/

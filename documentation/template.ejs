@@ -15,16 +15,31 @@
     ```
     <? } ?>
 
+    ##Configuration Options
+    <? doc.javadoc.forEach(function(block) { ?>
+        <? if (!block.paramStr) { ?>
+            <? var methodName =  block.raw.code.split(':')[0] ?>
+
+            ###<?= methodName ?>
+            <?= block.description ?>
+
+            <? block.paramTags.forEach(function(tag) { ?>
+                - <?= tag.name ?>: {<?= tag.joinedTypes ?>} <?= tag.description ?>
+            <? }) ?>
+        <? } ?>
+    <? }) ?>
+
     ##Methods
     <? doc.javadoc.forEach(function(block) { ?>
-        <? var methodName =  block.raw.code.split(':')[0] ?>
+        <? if (block.paramStr) { ?>
+            <? var methodName =  block.raw.code.split(':')[0] ?>
 
-        ###<?= methodName ?>
-        <?= block.description ?>
+            ###<?= methodName ?>
+            <?= block.description ?>
 
-        #### Parameters
-        <? block.paramTags.forEach(function(tag) { ?>
-            - <?= tag.name ?>: {<?= tag.joinedTypes ?>} <?= tag.description ?>
-        <? }) ?>
+            <? block.paramTags.forEach(function(tag) { ?>
+                - <?= tag.name ?>: {<?= tag.joinedTypes ?>} <?= tag.description ?>
+            <? }) ?>
+        <? } ?>
     <? }) ?>
 <? }) ?>

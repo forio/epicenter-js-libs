@@ -20,8 +20,21 @@ module.exports = function (grunt) {
                template: 'documentation/template.ejs'
             },
             target: {
-                files: [
-                    {src: 'src/utils/configuration-service.js', dest: 'documentation/file1.md'}
+                // files: function() {
+                //                    var mapping = [];
+                //                    grunt.file.expand('src/**/*.js').forEach(function(file) {
+                //                        var target = file.split('/').pop() + '.md';
+                //                        mapping.push({src: file, dest: 'documentation/' + target});
+                //                    });
+                //                    return mapping;
+                //                }()
+                files:  [
+                    {
+                        src: 'src/utils/configuration-service.js', dest: 'documentation/configuration-service.js.md'
+                    },
+                    {
+                        src: 'src/services/run-api-service.js', dest: 'documentation/run-api-service.js.md'
+                    }
                 ]
             }
         },

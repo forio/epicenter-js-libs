@@ -33,26 +33,22 @@ All services take in a configuration settings object to configure themselves. A 
 
 ```
 
+##Configuration Options
+
 ##Methods
 
 ###setEnv
 Set the environment key to get configuration options from
-
-#### Parameters
 
 - env: {String} 
 
 ###get
 Get configuration.
 
-#### Parameters
-
 - property: {String} optional
 
 ###set
 Set configuration.
-
-#### Parameters
 
 - key: {String|Object} if a key is provided, set a key to that value. Otherwise merge object with current config
 

@@ -1,14 +1,16 @@
-// module.exports = function () {
+/**
+ * Utilities for working with query strings
+*/
+ module.exports = function () {
 
-//     return {
+    return {
+        /**
+            Converts to matrix format
+        */
+        toMatrixFormat: function(qs) {
 
-//         toMatrixFormat: function(qs) {
-
-//             return qs;
-//         }
-//     };
-// };
-
-function test(){
-    return 1;
+            return qs;
+        }
+    };
 };
+
