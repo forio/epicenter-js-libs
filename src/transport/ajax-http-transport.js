@@ -1,4 +1,8 @@
-module.exports = function (config) {
+(function(){
+var root = this;
+var F = root.F;
+
+var AjaxHTTP= function (config) {
 
     var defaults = {
         contentType: 'application/json',
@@ -10,10 +14,12 @@ module.exports = function (config) {
     var options = $.extend({}, defaults, config);
 
     var connect = function (method, params, ajaxOptions) {
-      return  $.ajax($.extend(true, {
-        type: method,
-        data: JSON.stringify(params)
-      }, ajaxOptions);
+        var options = $.extend(true, {
+            type: method,
+            data: JSON.stringify(params)
+        }, ajaxOptions);
+
+        return  $.ajax(options);
     };
 
     return {
@@ -23,7 +29,6 @@ module.exports = function (config) {
         statusHandlers: {
 
         },
-
 
         get:function () {
             return connect.apply(this, ['get'].concat(arguments));
@@ -43,5 +48,16 @@ module.exports = function (config) {
         options: function () {
             return connect.apply(this, ['options'].concat(arguments));
         }
-    }
+    };
 };
+
+if (typeof exports !== 'undefined') {
+    module.exports = AjaxHTTP;
+}
+else {
+    if (!root.F) { root.F = {};}
+    if (!root.F.transport) { root.F.transport = {};}
+    root.F.transport.Ajax = AjaxHTTP;
+}
+
+}).call(this);
