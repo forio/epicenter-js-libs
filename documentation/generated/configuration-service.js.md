@@ -42,10 +42,18 @@ Set the environment key to get configuration options from
 
 - env: {String} 
 
+````
+
+````
+
 ###get
 Get configuration.
 
 - property: {String} optional
+
+````
+
+````
 
 ###set
 Set configuration.
@@ -53,4 +61,8 @@ Set configuration.
 - key: {String|Object} if a key is provided, set a key to that value. Otherwise merge object with current config
 
 - value: {*} value for provided key
+
+````
+
+````
 

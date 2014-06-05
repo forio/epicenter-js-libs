@@ -40,6 +40,18 @@
             <? block.paramTags.forEach(function(tag) { ?>
                 - <?= tag.name ?>: {<?= tag.joinedTypes ?>} <?= tag.description ?>
             <? }) ?>
+
+            <? var isExample = false ?>
+            ````
+                <? block.raw.tags.forEach(function(tag) { ?>
+                  <? if (tag.type === 'example') { ?>
+                        <?  isExample = true ?>
+                  <? } ?>
+                  <? if (isExample) { ?>
+                        <?= tag.string ?>
+                  <? } ?>
+                <? }) ?>
+            ````
         <? } ?>
     <? }) ?>
 <? }) ?>

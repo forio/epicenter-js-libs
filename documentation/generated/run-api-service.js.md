@@ -49,12 +49,54 @@ Parameters to filter the list of runs by
 
 - limit: {Object} | page | sort @see <TBD>
 
+````
+
+rs.query({
+
+'saved': 'true',
+
+'.price': '>1'
+
+}, // All Matrix parameters
+
+{
+
+limit:5,
+
+page:2
+
+}); //All Querystring params
+
+````
+
 ###filter
 Similar to query, except merges parameters instead of over-writing them
 
 - filter: {Object} 
 
 - limit: {Object} | page | sort @see <TBD>
+
+````
+
+rs.query({
+
+saved: true
+
+}) //Get all saved runs
+
+.filter({
+
+'.price': '>1'
+
+}) //Get all saved runs with price > 1
+
+.filter({
+
+'user': 'john'
+
+}) //Get all saved runs with price > 1 belonging to user John
+
+````
 
 ###load
 Get data for a specific run
@@ -63,6 +105,12 @@ Get data for a specific run
 
 - filters: {Object} 
 
+````
+
+rs.get('<runid>', {include: '.score', set: 'xyz'});
+
+````
+
 ###variables
 Returns a variables object
 
@@ -70,10 +118,28 @@ Returns a variables object
 
 - filters: {Object} (Optional)
 
+````
+
+rs.variables(["Price", "Sales"])
+
+rs.variables()
+
+````
+
 ###save
 Save attributes on the run
 
 - attributes: {Object} Run attributes to save
+
+````
+
+rs.save({completed: true});
+
+rs.save({saved:true, variables: {a:23,b:23}});
+
+rs.save({saved:true, '.a':23, '.b':23}}); //equivalent to above
+
+````
 
 ###do
 Call an operation on the model
@@ -82,6 +148,16 @@ Call an operation on the model
 
 - params: {*} (Optional) Any parameters the operation takes
 
+````
+
+rs.do('solve');
+
+rs.do('add', [1,2]);
+
+rs.do({name:'add', arguments:[2,4]})
+
+````
+
 ###serial
 Call a bunch of operations in serial
 
@@ -89,8 +165,26 @@ Call a bunch of operations in serial
 
 - params: {params} Parameters for each operation
 
+````
+
+rs.serial(['initialize', 'solve', 'reset']);
+
+rs.serial([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
+
+````
+
 ###parallel
 Executes operations in parallel
 
 - operations: {Array|Object} List of operations and arguments (if object)
+
+````
+
+rs.parallel({add: [1,2], subtract: [2,4]});
+
+rs.parallel([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
+
+rs.parallel(['solve', 'reset']);
+
+````
 
