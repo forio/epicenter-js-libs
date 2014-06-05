@@ -3,10 +3,13 @@
 (function () {
     'use strict';
 
-    describe('Give it some context', function () {
-        describe('maybe a bit more context here', function () {
-            it('should run here few assertions', function () {
-                test().should.equal(-1);
+    describe('Query Utils', function () {
+        describe('#toMatrixFormat()', function () {
+            it('should convert single-key objects to string', function () {
+                F.Query.toMatrixFormat({a: 2}).should.equal(';a=2');
+            });
+            it('should convert multi-key objects to semicolon-seperated values', function () {
+                F.Query.toMatrixFormat({a: 2, b: 3}).should.equal(';a=2;b=3');
             });
         });
     });

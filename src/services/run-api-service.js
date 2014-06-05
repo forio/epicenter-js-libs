@@ -87,7 +87,7 @@ module.exports = function (config) {
          *
          */
         query: function (qs, outputModifier, options) {
-            var matrixParams = qservice.toMatrix(qs);
+            var matrixParams = qutils.toMatrix(qs);
             var urlParams = qutils.toURL(outputModifier);
 
             var url =   matrixParams + '/?' + urlParams;

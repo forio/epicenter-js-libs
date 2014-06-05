@@ -1,16 +1,25 @@
 /**
  * Utilities for working with query strings
 */
- module.exports = function () {
+var Query= function () {
 
     return {
         /**
-            Converts to matrix format
-        */
+         * Converts to matrix format
+         * @param  {Object} qs Object to convert to query string
+         * @return {String}    Matrix-format query parameters
+         */
         toMatrixFormat: function(qs) {
+            var returnArray = [];
+            _.each(qs, function(value, key) {
+                returnArray.push(key + '=' + value);
+            });
 
-            return qs;
+            var mtrx = ';' + returnArray.join(';');
+            return mtrx;
         }
     };
-};
+}();
 
+if (!window.F) window.F = {};
+F.Query = Query;
