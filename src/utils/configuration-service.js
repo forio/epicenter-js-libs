@@ -52,7 +52,8 @@ module.exports = function (config) {
 
         /**
          * Set configuration.
-         * @param  {String|Object} if a key is provided, set a key to that value. Otherwise merge object with current config
+         * @param  {String|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
+         * @param  {*} value  value for provided key
          */
         set: function (key, value) {
 

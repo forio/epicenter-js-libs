@@ -187,3 +187,4 @@ module.exports = function (config) {
     };
 };
 
+utils.namespace('RunService', RunService);

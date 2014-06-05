@@ -1,0 +1,30 @@
+<? docfiles.forEach(function(doc) { ?>
+
+    <? var moduleName = doc.filename.split('/').pop().split('.')[0] ?>
+    #<?= moduleName ?>
+
+    <!-- module desc -->
+    <? var moduleDoc = doc.javadoc.shift() ?>
+    <?= moduleDoc.description ?>
+
+    <? var firstTag = moduleDoc.raw.tags[0] ?>
+    <? if (firstTag.type === 'example') { ?>
+    ```
+        <? moduleDoc.raw.tags.forEach(function(code) { ?> <?= code.string ?>
+        <? }) ?>
+    ```
+    <? } ?>
+
+    ##Methods
+    <? doc.javadoc.forEach(function(block) { ?>
+        <? var methodName =  block.raw.code.split(':')[0] ?>
+
+        ###<?= methodName ?>
+        <?= block.description ?>
+
+        #### Parameters
+        <? block.paramTags.forEach(function(tag) { ?>
+            - <?= tag.name ?>: {<?= tag.joinedTypes ?>} <?= tag.description ?>
+        <? }) ?>
+    <? }) ?>
+<? }) ?>
