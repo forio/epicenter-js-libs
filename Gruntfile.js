@@ -34,6 +34,15 @@ module.exports = function (grunt) {
                     },
                     {
                         src: 'src/services/run-api-service.js', dest: 'documentation/generated/run-api-service.js.md'
+                    },
+                    {
+                        src: 'src/services/data-api-persistence-service.js', dest: 'documentation/generated/data-api-persistence-service.js.md'
+                    },
+                    {
+                        src: 'src/services/auth-api-service.js', dest: 'documentation/generated/auth-api-service.js.md'
+                    },
+                    {
+                        src: 'src/services/variable-api-service.js', dest: 'documentation/generated/variable-api-service.js.md'
                     }
                 ]
             }
