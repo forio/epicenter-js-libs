@@ -92,8 +92,8 @@ var RunService = function (config) {
                     '.price': '>1'
                 }, // All Matrix parameters
                 {
-                    limit:5,
-                    page:2
+                    limit: 5,
+                    page: 2
                 }); //All Querystring params
 
          *
@@ -165,8 +165,8 @@ var RunService = function (config) {
           *
          * @example
          *     rs.save({completed: true});
-         *     rs.save({saved:true, variables: {a:23,b:23}});
-         *     rs.save({saved:true, '.a':23, '.b':23}}); //equivalent to above
+         *     rs.save({saved: true, variables: {a: 23, b: 23}});
+         *     rs.save({saved: true, '.a': 23, '.b': 23}}); //equivalent to above
          */
         save: function (attributes, options) {
 
@@ -196,7 +196,7 @@ var RunService = function (config) {
           *
          * @example
          *     rs.serial(['initialize', 'solve', 'reset']);
-         *     rs.serial([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
+         *     rs.serial([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
          */
         serial: function (operations, params, options) {
 
@@ -209,7 +209,7 @@ var RunService = function (config) {
           *
          * @example
          *     rs.parallel({add: [1,2], subtract: [2,4]});
-         *     rs.parallel([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
+         *     rs.parallel([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
          *     rs.parallel(['solve', 'reset']);
          */
         parallel: function (operations, options) {
