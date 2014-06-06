@@ -1,5 +1,5 @@
 /**
- * @class Data API Service
+ * Data API Service
  *
  * @example
  *      var people = require('data-service')({root: 'people'});

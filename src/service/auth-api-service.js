@@ -1,3 +1,11 @@
+/**
+ * Authentication API Service
+ *
+ * @example
+ *      var auth = require('autentication-service')();
+        auth.login();
+
+ */
 module.exports = function (options) {
 
     var defaults = {

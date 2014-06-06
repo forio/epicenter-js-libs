@@ -1,6 +1,13 @@
 /**
- * @class variables-api
- * To be used in conjunction with the Run API Service.
+ * variables-api
+ *
+ * To be usually used in conjunction with the Run API Service, though can also be used stand-alone if paired with the right run
+ *
+ * @example
+ *     var rs = require('service/run-api-service')
+ *     var vs = require('service/variable-api-service')({runFilter: rs.create();})
+ *
+ *
  */
 
 module.exports = function (options) {

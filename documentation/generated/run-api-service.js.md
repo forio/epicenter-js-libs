@@ -63,9 +63,9 @@ rs.query({
 
 {
 
-limit:5,
+limit: 5,
 
-page:2
+page: 2
 
 }); //All Querystring params
 
@@ -145,9 +145,9 @@ Save attributes on the run
 
 rs.save({completed: true});
 
-rs.save({saved:true, variables: {a:23,b:23}});
+rs.save({saved: true, variables: {a: 23, b: 23}});
 
-rs.save({saved:true, '.a':23, '.b':23}}); //equivalent to above
+rs.save({saved: true, '.a': 23, '.b': 23}}); //equivalent to above
 
 ````
 
@@ -183,7 +183,7 @@ Call a bunch of operations in serial
 
 rs.serial(['initialize', 'solve', 'reset']);
 
-rs.serial([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
+rs.serial([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
 
 ````
 
@@ -198,7 +198,7 @@ Executes operations in parallel
 
 rs.parallel({add: [1,2], subtract: [2,4]});
 
-rs.parallel([{name: add, params: [1,2]]}, {name:'subtract', params:[2,3]});
+rs.parallel([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
 
 rs.parallel(['solve', 'reset']);
 
