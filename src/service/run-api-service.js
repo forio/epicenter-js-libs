@@ -100,10 +100,10 @@ var RunService = function (config) {
          */
         query: function (qs, outputModifier, options) {
             var matrixParams = qutils.toMatrixFormat(qs);
-            var url =   matrixParams + '/';
+            var url =   baseurl + matrixParams + '/';
 
             return http.get(outputModifier, {
-                url: baseurl + url
+                url: url
             });
         },
 
@@ -138,7 +138,10 @@ var RunService = function (config) {
          *     rs.get('<runid>', {include: '.score', set: 'xyz'});
          */
         load: function (runID, filters, options) {
-
+            var url =   baseurl + '/' + runid + '/';
+            return http.get(runID, {
+                url:  url
+            });
         },
 
 
