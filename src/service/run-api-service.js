@@ -82,6 +82,21 @@ var RunService = function (config) {
         url: baseurl,
 
         /**
+         * Create a new run
+         * @param {Object} qs Query
+         * @param {object} options Overrides for configuration options
+          *
+         * @example
+         *     rs.create({
+                    model: 'model.jl'
+                 })
+         *
+         */
+        create: function(qs, options) {
+            return http.post(qs);
+        },
+
+        /**
          * Parameters to filter the list of runs by
          * @param {Object} qs Query
          * @param {Object} limit | page | sort @see <TBD>
