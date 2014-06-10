@@ -24,9 +24,6 @@ var AjaxHTTP= function (config) {
             type: method,
             data: params
         });
-
-        console.log(connOptions);
-
         return  $.ajax(connOptions);
     };
 
@@ -43,19 +40,19 @@ var AjaxHTTP= function (config) {
             return connect.call(this, 'GET', params, ajaxOptions);
         },
         post: function () {
-            return connect.apply(this, ['post'].concat(arguments));
+            return connect.apply(this, ['post'].concat([].slice.call(arguments)));
         },
         put: function () {
-            return connect.apply(this, ['put'].concat(arguments));
+            return connect.apply(this, ['put'].concat([].slice.call(arguments)));
         },
         delete: function () {
-            return connect.apply(this, ['delete'].concat(arguments));
+            return connect.apply(this, ['delete'].concat([].slice.call(arguments)));
         },
         head: function () {
-            return connect.apply(this, ['head'].concat(arguments));
+            return connect.apply(this, ['head'].concat([].slice.call(arguments)));
         },
         options: function () {
-            return connect.apply(this, ['options'].concat(arguments));
+            return connect.apply(this, ['options'].concat([].slice.call(arguments)));
         }
     };
 };

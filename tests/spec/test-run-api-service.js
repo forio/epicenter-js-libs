@@ -8,7 +8,6 @@
         before(function () {
             server = sinon.fakeServer.create();
             server.respondWith(/(.*)\/run\/(.*)\/(.*)/, function (xhr, id){
-                console.log(arguments);
                 xhr.respond(200, { 'Content-Type': 'application/json'}, JSON.stringify({url: xhr.url}));
             });
             server.autoRespond = true;
