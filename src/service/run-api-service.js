@@ -138,8 +138,8 @@ var RunService = function (config) {
          *     rs.get('<runid>', {include: '.score', set: 'xyz'});
          */
         load: function (runID, filters, options) {
-            var url =   baseurl + '/' + runid + '/';
-            return http.get(runID, {
+            var url =   baseurl + runID + '/';
+            return http.get(filters, {
                 url:  url
             });
         },

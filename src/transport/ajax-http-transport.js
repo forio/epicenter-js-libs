@@ -21,7 +21,7 @@ var AjaxHTTP= function (config) {
     var connect = function (method, params, ajaxOptions) {
         var connOptions = $.extend(true, options, ajaxOptions, {
             type: method,
-            data: JSON.stringify(params)
+            data: (params) ? JSON.stringify(params) : null
         });
 
         return  $.ajax(options);
