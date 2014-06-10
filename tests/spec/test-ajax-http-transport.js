@@ -33,8 +33,7 @@
                 var ajax = new Transport({url: 'http://google.com?a=2&b=3'});
                 ajax.get({a:2,b:3});
 
-                //FIXME: Query strings don't count as part of thr url for the request obj
-                //requests[0].url.should.equal('http://google.com?a=2&b=3');
+                // requests[0].url.should.equal('http://google.com?a=2&b=3');
             });
 
             it('should call success callback on success', function () {
