@@ -133,12 +133,13 @@ var RunService = function (config) {
          * Get data for a specific run
          * @param  {String} runID
          * @param  {Object} filters
+         * @param {Object} outputModifier Options to include as part of the query string @see <TBD>
          * @param {object} options Overrides for configuration options
           *
          * @example
          *     rs.get('<runid>', {include: '.score', set: 'xyz'});
          */
-        load: function (runID, filters, options) {
+        load: function (runID, filters, outputModifier, options) {
             var url =   baseurl + runID + '/';
             return http.get(filters, {
                 url:  url
@@ -151,13 +152,14 @@ var RunService = function (config) {
          * @see  variables service to see what you can do with it
          * @param  {String} variableSet (Optional)
          * @param  {Object} filters (Optional)
+         * @param {Object} outputModifier Options to include as part of the query string @see <TBD>
          * @param {object} options Overrides for configuration options
           *
          * @example
          *     rs.variables(["Price", "Sales"])
          *     rs.variables()
          */
-        variables: function (variableSet, filters, options) {
+        variables: function (variableSet, filters, outputModifier, options) {
 
         },
 
