@@ -95,5 +95,32 @@
                 req.requestBody.should.equal(JSON.stringify(params));
             });
         });
+
+        describe('#patch', function () {
+            it('should make an ajax PATCH', function () {
+                var ajax = new Transport({url: 'http://api.success.com'});
+                ajax.patch();
+
+                server.requests.pop().method.toUpperCase().should.equal('PATCH');
+            });
+            it('should convert query parameters', function () {
+                var params = {a:2,b:3};
+                var ajax = new Transport({url: 'http://api.success.com'});
+                ajax.patch(params);
+
+                var req = server.requests.pop();
+                req.url.should.equal('http://api.success.com');
+                req.requestBody.should.equal(JSON.stringify(params));
+            });
+            it('should combine query parameters', function () {
+                var params = {b:3};
+                var ajax = new Transport({url: 'http://api.success.com?a=2'});
+                ajax.patch(params);
+
+                var req = server.requests.pop();
+                req.url.should.equal('http://api.success.com?a=2');
+                req.requestBody.should.equal(JSON.stringify(params));
+            });
+        });
     });
 })();

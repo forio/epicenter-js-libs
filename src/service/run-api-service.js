@@ -160,7 +160,6 @@ var RunService = function (config) {
             });
         },
 
-
         /**
          * Returns a variables object
          * @see  variables service to see what you can do with it
@@ -189,7 +188,7 @@ var RunService = function (config) {
          *     rs.save({saved: true, '.a': 23, '.b': 23}}); //equivalent to above
          */
         save: function (attributes, options) {
-
+            return http.patch(attributes, options);
         },
 
         //##Operations

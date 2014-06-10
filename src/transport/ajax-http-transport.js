@@ -42,6 +42,9 @@ var AjaxHTTP= function (config) {
         post: function () {
             return connect.apply(this, ['post'].concat([].slice.call(arguments)));
         },
+        patch: function () {
+            return connect.apply(this, ['patch'].concat([].slice.call(arguments)));
+        },
         put: function () {
             return connect.apply(this, ['put'].concat([].slice.call(arguments)));
         },
