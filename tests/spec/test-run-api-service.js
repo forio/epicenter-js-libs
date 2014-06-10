@@ -37,12 +37,21 @@
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
 
+                //TODO: See what the api does in this case
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/?page=1&limit=2');
             });
         });
 
         describe('#load()', function () {
+            it('should take in a run id and queries the server', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.load('myfancyrunid', {include: 'score'});
 
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/?include=score');
+            });
         });
     });
 })();
