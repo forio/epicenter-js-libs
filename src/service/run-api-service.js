@@ -25,10 +25,7 @@ else {
     httpTransport = F.transport.HTTP;
 }
 
-
-
 var RunService = function (config) {
-
     // config || (config = configService.get());
 
     var defaults = {
@@ -71,7 +68,11 @@ var RunService = function (config) {
     };
 
     var options = $.extend({}, defaults, config);
-    var baseurl = ConfigService().get('url').getAPIPath('run');
+    var urlConfig = ConfigService().get('url');
+    if (options.account) urlConfig.accountPath = options.account;
+    if (options.project) urlConfig.projectPath = options.project;
+
+    var baseurl = urlConfig.getAPIPath('run');
 
     var http = httpTransport({
         url: baseurl
