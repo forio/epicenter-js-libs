@@ -20,12 +20,14 @@ var AjaxHTTP= function (config) {
 
     var connect = function (method, params, ajaxOptions) {
         params = ($.isPlainObject(params)) ? JSON.stringify(params) : params;
-        var connOptions = $.extend(true, options, ajaxOptions, {
+        var connOptions = $.extend(true, {}, options, ajaxOptions, {
             type: method,
             data: params
         });
 
-        return  $.ajax(options);
+        console.log(connOptions);
+
+        return  $.ajax(connOptions);
     };
 
     return {

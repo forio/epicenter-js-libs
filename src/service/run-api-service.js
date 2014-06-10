@@ -58,16 +58,16 @@ var RunService = function (config) {
         project: '',
 
         /** Called when the call completes successfully **/
-        onSuccess: $.noop,
+        success: $.noop,
 
         /** Called when the call fails **/
-        onError: $.noop,
+        error: $.noop,
 
         /** Called when the call completes, regardless of success or failure **/
-        onComplete: $.noop,
+        complete: $.noop,
 
         /** Called at any significant point in the progress of the call, usually before and after server requests **/
-        onProgress: $.noop,
+        progress: $.noop,
     };
 
     var options = $.extend({}, defaults, config);
