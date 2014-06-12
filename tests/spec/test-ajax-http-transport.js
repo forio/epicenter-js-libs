@@ -105,6 +105,23 @@
                 req.url.should.equal('http://api.success.com?a=2');
                 req.requestBody.should.equal(JSON.stringify(params));
             });
+
+            it('should allow posting arrays', function() {
+                var params = [1,2];
+                var ajax = new Transport({url: 'http://api.success.com'});
+                ajax.post(params);
+
+                var req = server.requests.pop();
+                req.requestBody.should.equal(JSON.stringify(params));
+            });
+            it('should allow posting strings', function() {
+                var params = 'hello';
+                var ajax = new Transport({url: 'http://api.success.com'});
+                ajax.post(params);
+
+                var req = server.requests.pop();
+                req.requestBody.should.equal('hello');
+            });
         });
 
         describe('#patch', function () {
