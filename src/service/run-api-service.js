@@ -227,6 +227,7 @@ var RunService = function (config) {
             }, opParams));
         },
 
+        //FIXME: Figure out which one is params and which one is options
         /**
          * Call a bunch of operations in serial
          * @param  {Array<string>} operations List of operations
@@ -270,10 +271,11 @@ var RunService = function (config) {
          *     rs.parallel([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
          *     rs.parallel(['solve', 'reset']);
          */
-        parallel: function (operations, options) {
-            var opParams = rutil.normalizeOperations(operation, params);
+        parallel: function (operations, params, options) {
+            var opParams = rutil.normalizeOperations(operations, params);
             var ops = opParams[0];
             var args = opParams[1];
+            var postOptions = $.extend({success: $.noop}, options);
 
             var queue  = [];
             for (var i=0; i< ops.length; i++) {
@@ -281,7 +283,7 @@ var RunService = function (config) {
                     this.do(ops[i], args[i])
                 );
             }
-            $.when.apply(queue, options.success);
+            $.when.apply(queue, postOptions.success);
         }
     };
 

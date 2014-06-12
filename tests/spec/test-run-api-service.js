@@ -121,6 +121,19 @@
                 });
             });
 
+            describe('#parallel', function () {
+                it('should send multiple operations calls once by one', function () {
+                    server.requests = [];
+
+                    var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    rs.parallel([{first: [1,2]}, {second: [2,3]}]);
+                    server.respond();
+
+                    // sinon.assert.callOrder(spy1, spy2, ...)
+                    server.requests.length.should.equal(2);
+                });
+            });
+
         });
     });
 })();
