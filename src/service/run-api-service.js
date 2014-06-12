@@ -206,10 +206,25 @@ var RunService = function (config) {
          *     rs.do({name:'add', arguments:[2,4]})
          */
         do: function (operation, params, options) {
-            var opParams = rutil.normalizeOperations(operation, params);
-            http.post(opParams[1], {
+            var opsArgs;
+            var postOptions;
+            if (options) {
+                opsArgs = params;
+                postOptions = options;
+            }
+            else {
+                if ($.isPlainObject(params)) {
+                    opsArgs = null;
+                    postOptions = params;
+                }
+                else {
+                    opsArgs = params;
+                }
+            }
+            var opParams = rutil.normalizeOperations(operation, opsArgs);
+            http.post(opParams[1], $.extend(true, {}, postOptions, {
                 url: baseurl + ';/operations/' + opParams[0] + '/'
-            });
+            }, opParams));
         },
 
         /**
@@ -223,15 +238,22 @@ var RunService = function (config) {
          *     rs.serial([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
          */
         serial: function (operations, params, options) {
-            var opParams = rutil.normalizeOperations(operation, params);
+            var opParams = rutil.normalizeOperations(operations, params);
             var ops = opParams[0];
             var args = opParams[1];
+            var me = this;
+
+            var postOptions = $.extend({success: $.noop}, options);
 
             var doSingleOp = function() {
-                var op = ops.pop();
-                var arg = args.pop();
-                this.do(op, arg, {success: function() {
-                    ((ops.length) ? doSingleOp : options.success)();
+                var op = ops.shift();
+                var arg = args.shift();
+                me.do(op, arg, {success: function() {
+                    if (ops.length) {
+                        doSingleOp();
+                    } else {
+                        postOptions.success.apply(this, arguments);
+                    }
                 }});
             };
 

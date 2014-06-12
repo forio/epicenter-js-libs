@@ -56,7 +56,8 @@
                 ajax.get({a:2,b:3}, {
                     success: callback
                 });
-                // callback.called.should.equal(true);
+                server.respond();
+                callback.called.should.equal(true);
             });
             it('should call fail callback on success', function () {
                 var callback = sinon.spy(function(){console.log("Fail!");});
@@ -65,7 +66,9 @@
                 ajax.get({a:2,b:3}, {
                     error: callback
                 });
-                // callback.called.should.equal(true);
+                server.respond();
+
+                callback.called.should.equal(true);
             });
         });
 
