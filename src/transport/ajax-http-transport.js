@@ -19,7 +19,7 @@ var AjaxHTTP= function (config) {
     var options = $.extend({}, defaults, config);
 
     var connect = function (method, params, ajaxOptions) {
-        params = ($.isPlainObject(params)) ? JSON.stringify(params) : params;
+        params = ($.isPlainObject(params) || $.isArray(params)) ? JSON.stringify(params) : params;
         var connOptions = $.extend(true, {}, options, ajaxOptions, {
             type: method,
             data: params
