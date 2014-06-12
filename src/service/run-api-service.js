@@ -162,21 +162,6 @@ var RunService = function (config) {
             });
         },
 
-        /**
-         * Returns a variables object
-         * @see  variables service to see what you can do with it
-         * @param  {String} variableSet (Optional)
-         * @param  {Object} filters (Optional)
-         * @param {Object} outputModifier Options to include as part of the query string @see <TBD>
-         * @param {object} options Overrides for configuration options
-          *
-         * @example
-         *     rs.variables(["Price", "Sales"])
-         *     rs.variables()
-         */
-        variables: function (variableSet, filters, outputModifier, options) {
-
-        },
 
         //Saving data
         /**
@@ -191,6 +176,22 @@ var RunService = function (config) {
          */
         save: function (attributes, options) {
             return http.patch(attributes, options);
+        },
+
+        /**
+         * Returns a variables object
+         * @see  variables service to see what you can do with it
+         * @param  {String} variableSet (Optional)
+         * @param  {Object} filters (Optional)
+         * @param {Object} outputModifier Options to include as part of the query string @see <TBD>
+         * @param {object} options Overrides for configuration options
+          *
+         * @example
+         *     rs.variables(["Price", "Sales"])
+         *     rs.variables()
+         */
+        variables: function (variableSet, filters, outputModifier, options) {
+
         },
 
         //##Operations

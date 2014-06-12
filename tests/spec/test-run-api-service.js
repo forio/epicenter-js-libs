@@ -64,6 +64,14 @@
         });
 
         describe('#load()', function () {
+            it('should do an GET', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.load('myfancyrunid', {include: 'score'});
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+            });
+
             it('should take in a run id and query the server', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.load('myfancyrunid', {include: 'score'});
@@ -73,6 +81,26 @@
             });
         });
 
+        describe('#save()', function () {
+            it('should do an PATCH', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.save({completed: true});
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('PATCH');
+            });
+
+            it('should take in options and send to server', function () {
+                var params = {completed: true};
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.save(params);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
+                req.requestBody.should.equal(JSON.stringify(params));
+
+            });
+        });
         //Operations
         describe('Run#Operations', function() {
             describe('#do', function() {
