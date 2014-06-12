@@ -12,16 +12,18 @@
 var root = this;
 var F = root.F;
 
-var $, ConfigService, qutils, urlService, httpTransport;
+var $, ConfigService, qutil, rutil, urlService, httpTransport;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('utils/configuration-service');
-    qutils = require('utils/query-utils');
+    qutil = require('util/query-util');
+    rutil = require('util/run-util');
 }
 else {
     $ = jQuery;
     ConfigService = F.service.Config;
-    qutils = F.util.query;
+    qutil = F.util.query;
+    rutil = F.util.run;
     httpTransport = F.transport.HTTP;
 }
 
@@ -115,7 +117,7 @@ var RunService = function (config) {
          *
          */
         query: function (qs, outputModifier, options) {
-            var matrixParams = qutils.toMatrixFormat(qs);
+            var matrixParams = qutil.toMatrixFormat(qs);
             var url =   baseurl + matrixParams + '/';
 
             return http.get(outputModifier, {
@@ -204,7 +206,10 @@ var RunService = function (config) {
          *     rs.do({name:'add', arguments:[2,4]})
          */
         do: function (operation, params, options) {
-
+            var opParams = rutil.normalizeOperations(operation, params);
+            http.post(opParams[1], {
+                url: baseurl + ';/operations/' + opParams[0] + '/'
+            });
         },
 
         /**
@@ -218,7 +223,19 @@ var RunService = function (config) {
          *     rs.serial([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
          */
         serial: function (operations, params, options) {
+            var opParams = rutil.normalizeOperations(operation, params);
+            var ops = opParams[0];
+            var args = opParams[1];
 
+            var doSingleOp = function() {
+                var op = ops.pop();
+                var arg = args.pop();
+                this.do(op, arg, {success: function() {
+                    ((ops.length) ? doSingleOp : options.success)();
+                }});
+            };
+
+            doSingleOp();
         },
 
         /**
@@ -232,7 +249,17 @@ var RunService = function (config) {
          *     rs.parallel(['solve', 'reset']);
          */
         parallel: function (operations, options) {
+            var opParams = rutil.normalizeOperations(operation, params);
+            var ops = opParams[0];
+            var args = opParams[1];
 
+            var queue  = [];
+            for (var i=0; i< ops.length; i++) {
+                queue.push(
+                    this.do(ops[i], args[i])
+                );
+            }
+            $.when.apply(queue, options.success);
         }
     };
 

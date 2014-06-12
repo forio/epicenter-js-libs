@@ -64,12 +64,33 @@
         });
 
         describe('#load()', function () {
-            it('should take in a run id and queries the server', function () {
+            it('should take in a run id and query the server', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.load('myfancyrunid', {include: 'score'});
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/?include=score');
+            });
+        });
+
+        //Operations
+        describe('Run#Operations', function() {
+            describe('#do', function() {
+                it('should do a POST', function() {
+                    var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    rs.do('add', [1,2]);
+
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('POST');
+                });
+                it('should take in operation names and send to server', function() {
+                    var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    rs.do('add', [1,2]);
+
+                    var req = server.requests.pop();
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/add/');
+                    req.requestBody.should.equal(JSON.stringify([1,2]));
+                });
             });
         });
     });
