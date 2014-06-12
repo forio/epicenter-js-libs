@@ -51,6 +51,11 @@ var run= function () {
                     }
                 });
             }
+            else {
+                //String opname;
+                opsList.push(operations);
+                argsList.push(args);
+            }
             return [opsList, argsList];
         }
     };

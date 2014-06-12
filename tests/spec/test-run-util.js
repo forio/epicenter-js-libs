@@ -16,6 +16,11 @@
                 var result = rutil.normalizeOperations(params);
                 result.should.deep.equal([['add', 'subtract'], [[1,2], [2,3]]]);
             });
+            it('takes in literal values', function () {
+                var result = rutil.normalizeOperations('add', [1,2]);
+                result.should.deep.equal([['add'], [[1,2]]]);
+            });
+
 
             it('takes in array pairs', function () {
                 var params =  ['add', 'subtract'];
