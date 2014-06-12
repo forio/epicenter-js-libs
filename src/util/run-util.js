@@ -54,7 +54,7 @@ var run= function () {
             else {
                 //String opname;
                 opsList.push(operations);
-                argsList.push(args);
+                argsList = argsList.concat(args);
             }
             return [opsList, argsList];
         }

@@ -18,7 +18,7 @@
             });
             it('takes in literal values', function () {
                 var result = rutil.normalizeOperations('add', [1,2]);
-                result.should.deep.equal([['add'], [[1,2]]]);
+                result.should.deep.equal([['add'], [1,2]]);
             });
 
 
