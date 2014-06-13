@@ -22,9 +22,53 @@
             vs = null;
         });
 
+        describe('#get()', function () {
+            it('Should do a GET', function () {
+                it('should do a GET', function () {
+                    vs.get('price');
+
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('GET');
+                });
+                it('should use the right url', function () {
+                    vs.get('price');
+
+                    var req = server.requests.pop();
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/price/');
+                });
+            });
+        });
+
+        describe('#query()', function () {
+            it('should do a GET', function () {
+                vs.query(['price', 'sales']);
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+            });
+            it('should convert includes', function () {
+                vs.query({include: ['price', 'sales']});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/?include=price,sales');
+            });
+            it('should convert sets', function () {
+                vs.query({set: 'a'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/?set=a');
+            });
+            it('should convert sets & includes', function () {
+                vs.query({set: ['a', 'b'], include: 'price'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/?set=a,b&include=price');
+            });
+        });
+
 
         describe('#save()', function () {
-            it('should do an POST', function () {
+            it('should do a POST', function () {
                 vs.save({a: 1, b: 2});
 
                 var req = server.requests.pop();
@@ -49,7 +93,7 @@
         });
 
         describe('#merge()', function () {
-            it('should do an PATCH', function () {
+            it('should do a PATCH', function () {
                 vs.merge({a: 1, b: 2});
 
                 var req = server.requests.pop();

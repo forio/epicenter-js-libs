@@ -42,10 +42,11 @@ var VariableService = function (config) {
     var options = $.extend({}, defaults, config);
     var urlConfig = ConfigService().get('url');
 
+    var getURL = function() {
+        return options.runService.urlConfig.getFilterURL() + 'variable/';
+    };
     var http = httpTransport({
-        url: function() {
-            return options.runService.urlConfig.getFilterURL() + 'variable/';
-        }
+        url: getURL
     });
 
     return {
@@ -59,12 +60,14 @@ var VariableService = function (config) {
          *     vs.get('price');
          */
         get: function (variable, filters, options) {
-
+            return http.get(filters, $.extend({}, options, {
+                url: getURL() + variable + '/'
+            }));
         },
 
         /**
          * Parameters to filter the list of runs by
-         * @param {String} Query
+         * @param {Object | Array} Query
          * @param {Object} filters filters & op modifiers
          * @param {object} options Overrides for configuration options
          *
@@ -74,7 +77,12 @@ var VariableService = function (config) {
          *     vs.query({set: ['set1', 'set2'], include:['price', 'sales']});
          */
         query: function (query, filters, options) {
-
+            //Query and filters are both querystrings in the url; only calling them out separately here to be consistent with the other calls
+            if ($.isArray(query)) {
+                query = {include: query};
+            }
+            $.extend(query, filters);
+            return http.get(query, options);
         },
 
         /**
