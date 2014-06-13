@@ -73,15 +73,20 @@ var RunService = function (config) {
     var urlConfig = ConfigService().get('url');
     if (options.account) urlConfig.accountPath = options.account;
     if (options.project) urlConfig.projectPath = options.project;
-
-    var baseurl = urlConfig.getAPIPath('run');
+    urlConfig.filter = ';';
+    urlConfig.getFilterURL = function() {
+        var baseurl = urlConfig.getAPIPath('run');
+        var url = baseurl + urlConfig.filter + '/';
+        return url;
+    };
 
     var http = httpTransport({
-        url: baseurl
+        url: urlConfig.getFilterURL
     });
 
+
     var publicAPI = {
-        url: baseurl,
+        urlConfig: urlConfig,
 
         /**
          * Create a new run
@@ -95,7 +100,8 @@ var RunService = function (config) {
          *
          */
         create: function(qs, options) {
-            return http.post(qs);
+            urlConfig.filter = ';';
+            return http.post(qs, $.extend(options, {url: urlConfig.getAPIPath('run')}));
         },
 
         /**
@@ -118,11 +124,9 @@ var RunService = function (config) {
          */
         query: function (qs, outputModifier, options) {
             var matrixParams = qutil.toMatrixFormat(qs);
-            var url =   baseurl + matrixParams + '/';
+            urlConfig.filter = matrixParams;
 
-            return http.get(outputModifier, {
-                url: url
-            });
+            return http.get(outputModifier, options);
         },
 
         /**
@@ -156,10 +160,9 @@ var RunService = function (config) {
          *     rs.get('<runid>', {include: '.score', set: 'xyz'});
          */
         load: function (runID, filters, options) {
-            var url =   baseurl + runID + '/';
-            return http.get(filters, {
-                url:  url
-            });
+            urlConfig.filter = runID;
+
+            return http.get(filters, options);
         },
 
 
@@ -224,8 +227,8 @@ var RunService = function (config) {
             }
             var opParams = rutil.normalizeOperations(operation, opsArgs);
             http.post(opParams[1], $.extend(true, {}, postOptions, {
-                url: baseurl + ';/operations/' + opParams[0] + '/'
-            }, opParams));
+                url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
+            }));
         },
 
         //FIXME: Figure out which one is params and which one is options

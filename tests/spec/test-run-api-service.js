@@ -96,7 +96,7 @@
                 rs.save(params);
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/');
                 req.requestBody.should.equal(JSON.stringify(params));
 
             });
