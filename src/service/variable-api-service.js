@@ -53,13 +53,13 @@ var VariableService = function (config) {
 
         /**
          * Get values for a variable
-         * @param {String} Variable to get
+         * @param {String} Variable to load
          * @param {Object} filters filters & op modifiers
          * @param {object} options Overrides for configuration options
          * @example
-         *     vs.get('price');
+         *     vs.load('price');
          */
-        get: function (variable, filters, options) {
+        load: function (variable, filters, options) {
             return http.get(filters, $.extend({}, options, {
                 url: getURL() + variable + '/'
             }));

@@ -22,16 +22,16 @@
             vs = null;
         });
 
-        describe('#get()', function () {
+        describe('#load()', function () {
             it('Should do a GET', function () {
                 it('should do a GET', function () {
-                    vs.get('price');
+                    vs.load('price');
 
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('GET');
                 });
                 it('should use the right url', function () {
-                    vs.get('price');
+                    vs.load('price');
 
                     var req = server.requests.pop();
                     req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/price/');
@@ -151,10 +151,10 @@
                     cb1.called.should.equal(true);
                 });
             });
-            describe('#get', function () {
+            describe('#load', function () {
                 it('Passes success callbacks', function () {
                     var cb1 = sinon.spy();
-                    vs.get('sales', null, {success: cb1});
+                    vs.load('sales', null, {success: cb1});
 
                     server.respond();
                     cb1.called.should.equal(true);
