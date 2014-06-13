@@ -5,6 +5,10 @@ var qutils = F.util.query;
 
 var AjaxHTTP= function (config) {
 
+    var result = function(d) {
+        return ($.isFunction(d)) ? d() : d;
+    };
+
     var defaults = {
         url: '',
 
@@ -19,11 +23,19 @@ var AjaxHTTP= function (config) {
     var options = $.extend({}, defaults, config);
 
     var connect = function (method, params, ajaxOptions) {
+        params = result(params);
         params = ($.isPlainObject(params) || $.isArray(params)) ? JSON.stringify(params) : params;
         var connOptions = $.extend(true, {}, options, ajaxOptions, {
             type: method,
             data: params
         });
+        var ALLOWED_TO_BE_FUNCTIONS = ['data', 'url'];
+        $.each(connOptions, function(key, value) {
+            if ($.isFunction(value) && $.inArray(key, ALLOWED_TO_BE_FUNCTIONS) !== -1) {
+                connOptions[key] = value();
+            }
+        });
+
         return  $.ajax(connOptions);
     };
 
@@ -36,7 +48,7 @@ var AjaxHTTP= function (config) {
         },
 
         get:function (params, ajaxOptions) {
-            params = qutils.toQueryFormat(params);
+            params = qutils.toQueryFormat(result(params));
             return connect.call(this, 'GET', params, ajaxOptions);
         },
         post: function () {

@@ -28,6 +28,38 @@
             server.requests.pop().url.should.equal('http://api.success.com');
         });
 
+        it('should allow urls to be functions', function () {
+            var urlResolver = sinon.stub();
+            urlResolver.onFirstCall().returns('http://api.success0.com');
+            urlResolver.onSecondCall().returns('http://api.success1.com');
+
+            var ajax = new Transport({url: urlResolver});
+            ajax.get();
+
+            urlResolver.calledOnce.should.equal(true);
+            server.requests.pop().url.should.equal('http://api.success0.com');
+
+            ajax.get();
+            urlResolver.calledTwice.should.equal(true);
+            server.requests.pop().url.should.equal('http://api.success1.com');
+        });
+
+        it('should allow data to be functions', function () {
+            var dataSource = sinon.stub();
+            dataSource.onFirstCall().returns({value: 1});
+            dataSource.onSecondCall().returns({value: 2});
+
+            var ajax = new Transport({url: 'http://api.success.com'});
+            ajax.post(dataSource);
+
+            dataSource.calledOnce.should.equal(true);
+            server.requests.pop().requestBody.should.equal(JSON.stringify({value: 1}));
+
+            ajax.post(dataSource);
+            dataSource.calledTwice.should.equal(true);
+            server.requests.pop().requestBody.should.equal(JSON.stringify({value: 2}));
+        });
+
         describe('#get()', function () {
             it('should make an ajax GET', function () {
                 var ajax = new Transport({url: 'http://api.success.com'});
