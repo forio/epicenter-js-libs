@@ -20,6 +20,8 @@ var query= function () {
         },
 
         toQueryFormat: function(qs) {
+            if (qs === null || qs === undefined) return '';
+
             var returnArray = [];
             $.each(qs, function(key, value) {
                 if ($.isArray(value)) {
@@ -28,8 +30,8 @@ var query= function () {
                 returnArray.push(key + '=' + value);
             });
 
-            var mtrx = returnArray.join('&');
-            return mtrx;
+            var result = returnArray.join('&');
+            return result;
         }
         //TODO: test string, null, invalids
 
