@@ -26,6 +26,13 @@
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
             });
+            it('POSTs to the base URL', function() {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.create({model: 'model.jl'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
+            });
             it('should pass through run options', function() {
                 var params = {model: 'model.jl'};
 
@@ -51,7 +58,17 @@
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price=>1/');
+            });
+            it('should be idempotent across multiple queries', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.query({saved: true, '.price': '>1'});
 
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price=>1/');
+
+                rs.query({saved: false, '.sales': '<4'});
+                req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.sales=<4/');
             });
             it('should convert op modifiers to query strings', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
@@ -160,6 +177,28 @@
                     // sinon.assert.callOrder(spy1, spy2, ...)
                     server.requests.length.should.equal(2);
                 });
+            });
+        });
+        describe('#urlConfig', function () {
+            it('should be set after #query', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.query({saved: true, '.price': '>1'});
+
+                rs.urlConfig.filter = ';saved=true;.price=>1';
+
+                rs.query({saved: false, '.sales': '<4'});
+                rs.urlConfig.filter = ';saved=false;.sales=<4';
+            });
+
+
+            it('should be set after #load', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.load('myfancyrunid', {include: 'score'});
+
+                rs.urlConfig.filter = 'myfancyrunid';
+
+                rs.load('myfancyrunid2', {include: 'score'});
+                rs.urlConfig.filter = 'myfancyrunid2';
             });
 
         });
