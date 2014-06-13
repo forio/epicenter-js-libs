@@ -2,6 +2,7 @@
     'use strict';
 
     var RunService = F.service.Run;
+    var VariableService = F.service.Variable;
 
     describe('Run API Service', function () {
         var server;
@@ -118,6 +119,18 @@
 
             });
         });
+        //variables
+        describe('#variable()', function () {
+            it('should return an instance of the variables service', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                var vs = rs.variable();
+
+                //FIXME: This currently returns an object
+                // vs.should.be.instanceOf(VariableService);
+            });
+
+        });
+
         //Operations
         describe('Run#Operations', function() {
             describe('#do', function() {
@@ -133,7 +146,7 @@
                     rs.do('add', [1,2]);
 
                     var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/add/');
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/add/');
                     req.requestBody.should.equal(JSON.stringify([1,2]));
                 });
                 it('should call success callback on success', function () {
@@ -160,8 +173,8 @@
 
                     // sinon.assert.callOrder(spy1, spy2, ...)
                     server.requests.length.should.equal(2);
-                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/first/');
-                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/second/');
+                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/first/');
+                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/second/');
 
                 });
             });

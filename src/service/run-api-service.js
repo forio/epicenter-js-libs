@@ -12,16 +12,18 @@
 var root = this;
 var F = root.F;
 
-var $, ConfigService, qutil, rutil, urlService, httpTransport;
+var $, ConfigService, qutil, rutil, urlService, httpTransport, VariableService;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
-    configService = require('utils/configuration-service');
+    configService = require('util/configuration-service');
+    VariableService = require('service/variable-api-service');
     qutil = require('util/query-util');
     rutil = require('util/run-util');
 }
 else {
     $ = jQuery;
     ConfigService = F.service.Config;
+    VariableService = F.service.Variable;
     qutil = F.util.query;
     rutil = F.util.run;
     httpTransport = F.transport.HTTP;
@@ -123,9 +125,7 @@ var RunService = function (config) {
          *
          */
         query: function (qs, outputModifier, options) {
-            var matrixParams = qutil.toMatrixFormat(qs);
-            urlConfig.filter = matrixParams;
-
+            urlConfig.filter = qutil.toMatrixFormat(qs);
             return http.get(outputModifier, options);
         },
 
@@ -161,7 +161,6 @@ var RunService = function (config) {
          */
         load: function (runID, filters, options) {
             urlConfig.filter = runID;
-
             return http.get(filters, options);
         },
 
@@ -182,19 +181,22 @@ var RunService = function (config) {
         },
 
         /**
-         * Returns a variables object
-         * @see  variables service to see what you can do with it
+         * Returns a variable object
+         * @see  variable service to see what you can do with it
          * @param  {String} variableSet (Optional)
          * @param  {Object} filters (Optional)
          * @param {Object} outputModifier Options to include as part of the query string @see <TBD>
          * @param {object} options Overrides for configuration options
           *
          * @example
-         *     rs.variables(["Price", "Sales"])
-         *     rs.variables()
+         *     rs.variable(["Price", "Sales"])
+         *     rs.variable()
          */
-        variables: function (variableSet, filters, outputModifier, options) {
-
+        variable: function (config) {
+            var vs = new VariableService($.extend({}, config, {
+                runService: this
+            }));
+            return vs;
         },
 
         //##Operations
@@ -227,7 +229,7 @@ var RunService = function (config) {
             }
             var opParams = rutil.normalizeOperations(operation, opsArgs);
             http.post(opParams[1], $.extend(true, {}, postOptions, {
-                url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
+                url: urlConfig.getFilterURL() + 'operation/' + opParams[0] + '/'
             }));
         },
 

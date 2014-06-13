@@ -1,11 +1,11 @@
 /**
- * variables-api
+ * variable-api
  *
  * To be usually used in conjunction with the Run API Service, though can also be used stand-alone if paired with the right run
  *
  * @example
  *     var rs = require('service/run-api-service')
- *     var vs = require('service/variable-api-service')({runFilter: rs.create();})
+ *     var vs = require('service/variable-api-service')({runService: rs.create();})
  *
  *
  */
@@ -30,14 +30,14 @@
  }
 
 
-var VariablesService = function (config) {
+var VariableService = function (config) {
 
     var defaults = {
         /**
          * The runs object to apply the variable filters to
-         * @type {VariablesService}
+         * @type {RunService}
          */
-        runFilter: null
+        runService: null
     };
 
     var options = $.extend({}, defaults, config);
@@ -104,12 +104,12 @@ var VariablesService = function (config) {
 };
 
 if (typeof exports !== 'undefined') {
-    module.exports = VariablesService;
+    module.exports = VariableService;
 }
 else {
     if (!root.F) { root.F = {};}
     if (!root.F.service) { root.F.service = {};}
-    root.F.service.Variables = VariablesService;
+    root.F.service.Variable = VariableService;
 }
 
 }).call(this);
