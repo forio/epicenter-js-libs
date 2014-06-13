@@ -79,26 +79,44 @@ var VariableService = function (config) {
 
         /**
          * Save values to the api. Over-writes whatever is on there currently
-         * @param  {Object} variables
+         * @param {Object|String} variable Object with attributes, or string key
+         * @param {Object} val Optional if prev parameter was a string, set value here
          * @param {object} options Overrides for configuration options
          *
          * @example
          *     vs.save({price: 4, quantity: 5, products: [2,3,4]})
+         *     vs.save('price', 4);
          */
-        save: function (variables, options) {
-            return http.post.apply(this, arguments);
+        save: function (variable, val, options) {
+            var attrs;
+            if (typeof variable === 'object') {
+              attrs = variable;
+              options = val;
+            } else {
+              (attrs = {})[variable] = val;
+            }
+            return http.post.call(this, attrs, options);
         },
 
         /**
          * Save values to the api. Merges arrays, but otherwise same as save
-         * @param  {Object} variables
+         * @param {Object|String} variable Object with attributes, or string key
+         * @param {Object} val Optional if prev parameter was a string, set value here
          * @param {object} options Overrides for configuration options
          *
          * @example
          *     vs.merge({price: 4, quantity: 5, products: [2,3,4]})
+         *     vs.merge('price', 4);
          */
-        merge: function (variables, options) {
-            return http.patch.apply(this, arguments);
+        merge: function (variable, val, options) {
+            var attrs;
+            if (typeof variable === 'object') {
+              attrs = variable;
+              options = val;
+            } else {
+              (attrs = {})[variable] = val;
+            }
+            return http.patch.call(this, attrs, options);
         }
     };
 };

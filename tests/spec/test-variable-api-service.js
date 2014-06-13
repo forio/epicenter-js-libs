@@ -33,11 +33,18 @@
 
             it('should send requests in the body', function () {
                 var params = {a: 1, b: 2};
-                vs.merge(params);
+                vs.save(params);
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/');
                 req.requestBody.should.equal(JSON.stringify(params));
+            });
+            it('should support setting key, value syntax', function () {
+                vs.save('a', 1);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/');
+                req.requestBody.should.equal(JSON.stringify({a: 1}));
             });
         });
 
@@ -56,6 +63,13 @@
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/');
                 req.requestBody.should.equal(JSON.stringify(params));
+            });
+
+            it('should support setting key, value syntax', function () {
+                vs.merge('a', 1);
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variable/');
+                req.requestBody.should.equal(JSON.stringify({a: 1}));
             });
         });
     });
