@@ -116,5 +116,50 @@
                 req.requestBody.should.equal(JSON.stringify({a: 1}));
             });
         });
+
+        describe('Callbacks', function () {
+            describe('#merge', function () {
+                it('Passes success callbacks', function () {
+                    var cb1 = sinon.spy();
+                    var cb2 = sinon.spy();
+                    vs.merge({a: 1, b: 2}, {success: cb1});
+                    vs.merge('a', 1, {success: cb2});
+
+                    server.respond();
+                    cb1.called.should.equal(true);
+                    cb2.called.should.equal(true);
+                });
+            });
+            describe('#save', function () {
+                it('Passes success callbacks', function () {
+                    var cb1 = sinon.spy();
+                    var cb2 = sinon.spy();
+                    vs.save({a: 1, b: 2}, {success: cb1});
+                    vs.save('a', 1, {success: cb2});
+
+                    server.respond();
+                    cb1.called.should.equal(true);
+                    cb2.called.should.equal(true);
+                });
+            });
+            describe('#query', function () {
+                it('Passes success callbacks', function () {
+                    var cb1 = sinon.spy();
+                    vs.query({include: ['price', 'sales']}, null, {success: cb1});
+
+                    server.respond();
+                    cb1.called.should.equal(true);
+                });
+            });
+            describe('#get', function () {
+                it('Passes success callbacks', function () {
+                    var cb1 = sinon.spy();
+                    vs.get('sales', null, {success: cb1});
+
+                    server.respond();
+                    cb1.called.should.equal(true);
+                });
+            });
+        });
     });
 }());
