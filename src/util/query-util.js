@@ -11,7 +11,7 @@ var query= function () {
          */
         toMatrixFormat: function(qs) {
             var returnArray = [];
-            _.each(qs, function(value, key) {
+            $.each(qs, function(key, value) {
                 returnArray.push(key + '=' + value);
             });
 
@@ -21,7 +21,10 @@ var query= function () {
 
         toQueryFormat: function(qs) {
             var returnArray = [];
-            _.each(qs, function(value, key) {
+            $.each(qs, function(key, value) {
+                if ($.isArray(value)) {
+                    value = value.join(',');
+                }
                 returnArray.push(key + '=' + value);
             });
 

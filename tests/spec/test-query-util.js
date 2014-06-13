@@ -20,6 +20,9 @@
             it('should convert multi-key objects to semicolon-seperated values', function () {
                 qutils.toQueryFormat({a: 2, b: 3}).should.equal('a=2&b=3');
             });
+            it('should convert array values to comma seperated', function () {
+                qutils.toQueryFormat({a:1, b:[2,3,4]}).should.equal('a=1&b=2,3,4');
+            });
         });
     });
 })();
