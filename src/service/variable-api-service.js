@@ -39,13 +39,13 @@ var VariableService = function (config) {
          */
         runService: null
     };
-
     var options = $.extend({}, defaults, config);
     var urlConfig = ConfigService().get('url');
-    var baseurl = urlConfig.getAPIPath('run');
 
     var http = httpTransport({
-        url: baseurl
+        url: function() {
+            return options.runService.urlConfig.getFilterURL() + 'variable/';
+        }
     });
 
     return {
