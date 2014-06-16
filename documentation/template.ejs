@@ -1,7 +1,11 @@
 <? docfiles.forEach(function(doc) { ?>
 
     <? var moduleName = doc.filename.split('/').pop().split('.')[0] ?>
-    #<?= moduleName ?>
+    ---
+    title: <?= moduleName.split('-').join(' ') ?>
+    layout: "default"
+    isPage: true
+    ---
 
     <!-- module desc -->
     <? var moduleDoc = doc.javadoc.shift() ?>
