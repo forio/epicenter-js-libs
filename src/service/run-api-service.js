@@ -242,7 +242,7 @@ var RunService = function (config) {
           *
          * @example
          *     rs.serial(['initialize', 'solve', 'reset']);
-         *     rs.serial([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
+         *     rs.serial([{name: 'init', params: [1,2]}, {name: 'reset', params:[2,3]}]);
          */
         serial: function (operations, params, options) {
             var opParams = rutil.normalizeOperations(operations, params);
@@ -274,7 +274,7 @@ var RunService = function (config) {
           *
          * @example
          *     rs.parallel({add: [1,2], subtract: [2,4]});
-         *     rs.parallel([{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]});
+         *     rs.parallel([{name: 'add', params: [1,2]}, {name: 'subtract', params:[2,3]}]);
          *     rs.parallel(['solve', 'reset']);
          */
         parallel: function (operations, params, options) {
