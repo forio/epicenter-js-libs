@@ -28,19 +28,36 @@ Account to create the run in
 ###project
 Project to create the run in
 
-###onSuccess
+###success
 Called when the call completes successfully *
 
-###onError
+###error
 Called when the call fails *
 
-###onComplete
+###complete
 Called when the call completes, regardless of success or failure *
 
-###onProgress
+###progress
 Called at any significant point in the progress of the call, usually before and after server requests *
 
 ##Methods
+
+###create
+Create a new run
+
+- qs: {Object} Query
+
+- options: {object} Overrides for configuration options
+
+````
+
+rs.create({
+
+model: 'model.jl'
+
+})
+
+````
 
 ###query
 Parameters to filter the list of runs by
@@ -107,30 +124,13 @@ Get data for a specific run
 
 - runID: {String} 
 
-- filters: {Object} 
+- filters: {Object} & op modifiers
 
 - options: {object} Overrides for configuration options
 
 ````
 
 rs.get('<runid>', {include: '.score', set: 'xyz'});
-
-````
-
-###variables
-Returns a variables object
-
-- variableSet: {String} (Optional)
-
-- filters: {Object} (Optional)
-
-- options: {object} Overrides for configuration options
-
-````
-
-rs.variables(["Price", "Sales"])
-
-rs.variables()
 
 ````
 
@@ -148,6 +148,25 @@ rs.save({completed: true});
 rs.save({saved: true, variables: {a: 23, b: 23}});
 
 rs.save({saved: true, '.a': 23, '.b': 23}}); //equivalent to above
+
+````
+
+###variable
+Returns a variable object
+
+- variableSet: {String} (Optional)
+
+- filters: {Object} (Optional)
+
+- outputModifier: {Object} Options to include as part of the query string @see <TBD>
+
+- options: {object} Overrides for configuration options
+
+````
+
+rs.variable(["Price", "Sales"])
+
+rs.variable()
 
 ````
 

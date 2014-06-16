@@ -30,13 +30,13 @@ module.exports = function (grunt) {
                 //                }()
                 files:  [
                     {
-                        src: 'src/util/configuration-service.js', dest: 'documentation/generated/configuration-service.js.md'
+                        src: 'src/service/configuration-service.js', dest: 'documentation/generated/configuration-service.js.md'
                     },
                     {
                         src: 'src/service/run-api-service.js', dest: 'documentation/generated/run-api-service.js.md'
                     },
                     {
-                        src: 'src/service/data-api-persistence-service.js', dest: 'documentation/generated/data-api-persistence-service.js.md'
+                        src: 'src/persistence/data-api-persistence-service.js', dest: 'documentation/generated/data-api-persistence-service.js.md'
                     },
                     {
                         src: 'src/service/auth-api-service.js', dest: 'documentation/generated/auth-api-service.js.md'
