@@ -56,5 +56,42 @@
                });
             });
         });
+
+        describe('success callbacks', function() {
+            it('#save', function () {
+                var callback = sinon.spy();
+                cs.save('test', 'key', {success: callback});
+                callback.should.have.been.called;
+                callback.should.have.been.calledOn(cs);
+            });
+
+            it('#load', function () {
+                cs.save('loadtest', 'key', {success: function(){
+                    var callback = sinon.spy();
+                    cs.load('loadtest', {success: callback});
+                    callback.should.have.been.called;
+                    callback.should.have.been.calledWith('key');
+                    callback.should.have.been.calledOn(cs);
+                }});
+            });
+            it('#remove', function () {
+                cs.save('test', 'key', {success: function(){
+                    var callback = sinon.spy();
+                    cs.remove('test', {success: callback});
+                    callback.should.have.been.called;
+                    callback.should.have.been.calledWith('test');
+                    callback.should.have.been.calledOn(cs);
+                }});
+            });
+            it('#destroy', function () {
+                cs.save('loadtest', 'key', {success: function(){
+                    var callback = sinon.spy();
+                    cs.destroy({success: callback});
+                    callback.should.have.been.called;
+                    callback.should.have.been.calledWith('loadtest');
+                    callback.should.have.been.calledOn(cs);
+                }});
+            });
+        });
     });
 }());

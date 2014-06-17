@@ -48,7 +48,17 @@ var CookieService = function (config) {
     var serviceOptions = $.extend({}, defaults, config);
 
 
-    return {
+    var success = function($promise, callOptions /* others */) {
+        var argsArray = [].slice.call(arguments);
+        var successArgs = argsArray.slice(2);
+
+        $promise.resolve.apply(this, successArgs);
+        if (callOptions && callOptions.success) {
+            callOptions.success.apply(this, successArgs);
+        }
+    };
+
+    var publicAPI = {
 
         /**
          * Query collection; uses MongoDB syntax
@@ -86,7 +96,8 @@ var CookieService = function (config) {
                                 encodeURIComponent(value) +
                                 (domain ? '; domain=' + domain : '') +
                                 (path ? '; path=' + path : '');
-            $d.resolve(value);
+
+            success.call(this, $d, options, value);
             return $d.promise();
         },
 
@@ -105,8 +116,8 @@ var CookieService = function (config) {
             var cookieReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
             var val = document.cookie.replace(cookieReg, '$1');
             val = decodeURIComponent(val) || null;
-            $d.resolve(val);
 
+            success.call(this, $d, options, val);
             return $d.promise();
         },
 
@@ -117,7 +128,7 @@ var CookieService = function (config) {
          * @example
          *     cs.remove('person');
          */
-        remove: function (key) {
+        remove: function (key, options) {
             var $d = $.Deferred();
 
             var domain = serviceOptions.domain;
@@ -128,7 +139,7 @@ var CookieService = function (config) {
                             ( domain ? '; domain=' + domain : '') +
                             ( path ? '; path=' + path : '');
 
-            $d.resolve(key);
+            success.call(this, $d, options, key);
             return $d.promise();
         },
 
@@ -148,14 +159,16 @@ var CookieService = function (config) {
                 promises.push($deletePromise);
             }
 
+            var me = this;
             $.when.apply(null, promises).done(function() {
-                $d.resolve.apply(null, arguments);
+                success.apply(me, [$d, options].concat([].slice.call(arguments)));
             });
 
             return $d.promise();
         }
-
     };
+
+    return publicAPI;
 };
 
 
