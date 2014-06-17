@@ -290,7 +290,7 @@ var RunService = function (config) {
                     this.do(ops[i], args[i])
                 );
             }
-            $.when.apply(queue, postOptions.success);
+            $.when.apply(null, queue).done(postOptions.success);
         }
     };
 
