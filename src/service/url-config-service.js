@@ -28,7 +28,13 @@ var URLService= function (config) {
         }()),
 
         getAPIPath: function (api) {
-            return this.protocol + '://' + this.apiBase + '/' + api + '/' + this.accountPath + '/' + this.projectPath  + '/';
+            var PROJECT_APIS = ['run', 'data'];
+            var apiPath = this.protocol + '://' + this.apiBase + '/' + api + '/';
+
+            if ($.inArray(PROJECT_APIS, api)) {
+                apiPath += this.accountPath + '/' + this.projectPath  + '/';
+            }
+            return apiPath;
         }
     };
 }();

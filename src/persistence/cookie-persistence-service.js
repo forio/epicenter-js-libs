@@ -12,7 +12,22 @@
 
  */
 
-module.exports = function (options) {
+(function() {
+var root = this;
+var F = root.F;
+var $, ConfigService, qutil, urlService, httpTransport;
+if (typeof require !== 'undefined') {
+    $ = require('jquery');
+    configService = require('util/configuration-service');
+    qutil = require('util/query-util');
+} else {
+    $ = jQuery;
+    ConfigService = F.service.Config;
+    qutil = F.util.query;
+    httpTransport = F.transport.HTTP;
+}
+
+var CookieService = function (options) {
 
     var config = {
         /**
@@ -61,7 +76,7 @@ module.exports = function (options) {
          */
         save: function (key, value) {
 
-        }
+        },
 
         /**
          * Removes key from collection
@@ -82,5 +97,18 @@ module.exports = function (options) {
 
         }
 
-    }
+    };
+};
+
+
+if (typeof exports !== 'undefined') {
+    module.exports = CookieService;
 }
+else {
+    if (!root.F) { root.F = {};}
+    if (!root.F.service) { root.F.service = {};}
+    root.F.service.Cookie = CookieService;
+}
+
+}).call(this);
+

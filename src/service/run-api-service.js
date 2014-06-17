@@ -193,6 +193,7 @@ var RunService = function (config) {
          *     rs.variable()
          */
         variable: function (config) {
+            console.log(this);
             var vs = new VariableService($.extend({}, config, {
                 runService: this
             }));
@@ -228,7 +229,7 @@ var RunService = function (config) {
                 }
             }
             var opParams = rutil.normalizeOperations(operation, opsArgs);
-            http.post(opParams[1], $.extend(true, {}, postOptions, {
+            return http.post(opParams[1], $.extend(true, {}, postOptions, {
                 url: urlConfig.getFilterURL() + 'operation/' + opParams[0] + '/'
             }));
         },
@@ -293,8 +294,28 @@ var RunService = function (config) {
         }
     };
 
+    var  defer = $.Deferred();
+    defer.promise(publicAPI);
+
     return publicAPI;
 };
+
+// var me = this;
+// _.each(publicAPI, function(fn, name) {
+//     publicAPI[name] = _.wrap(fn, function(func) {
+//         // console.log('Before', name);
+//         var passedInParams = _.toArray(arguments).slice(1);
+//         func.apply(me, passedInParams);
+//     });
+// });
+
+// var PRunService = _.wrap(RunService, function(fn) {
+//     var passedInParams = _.toArray(arguments).slice(1);
+//     var  defer = $.Deferred();
+
+//     var oldRS = fn.apply(null, passedInParams);
+//     defer.promise(oldRS);
+// });
 
 if (typeof exports !== 'undefined') {
     module.exports = RunService;

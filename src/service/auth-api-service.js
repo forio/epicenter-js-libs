@@ -6,8 +6,26 @@
         auth.login();
 
  */
-module.exports = function (options) {
 
+(function() {
+var root = this;
+var F = root.F;
+var $, ConfigService, qutil, urlService, httpTransport, PersistenceService;
+if (typeof require !== 'undefined') {
+    $ = require('jquery');
+    configService = require('util/configuration-service');
+    qutil = require('util/query-util');
+    PersistenceService = require('persistence/persistence-service-factory');
+} else {
+    $ = jQuery;
+    ConfigService = F.service.Config;
+    qutil = F.util.query;
+    httpTransport = F.transport.HTTP;
+    PersistenceService= F.service.Persistence;
+}
+
+
+var AuthService = function (config) {
     var defaults = {
         /**
          * Where to store tokens for temporary access.
@@ -16,45 +34,91 @@ module.exports = function (options) {
         store: 'cookie'
     };
 
+    var options = $.extend({}, defaults, config);
+    var urlConfig = ConfigService().get('url');
+    var http = httpTransport({
+        url: urlConfig.getAPIPath('authentication')
+    });
+
+    var token;
+    var currentPassword;
+    var currentUsername;
+
+    var store = new PersistenceService();
     return {
 
         /**
          * @param {String} username LoginID of user
          * @param {String} password Password
+         * @param {object} options Overrides for configuration options
          */
-        login: function (username, password) {
+        login: function (username, password, options) {
+            if (!options) options = { success: $.noop };
+            options.success = _.wrap(options.success, function(fn, data) {
+                currentPassword = password;
+                currentUsername = username;
 
+                token = data.access_token;
+                store.save('epicenter.token', token);
+                fn.call(this, data);
+            });
+
+            return http.post({userName: username, password: password}, options);
         },
 
         /**
          * Logs user out from specified accounts
          * @param  {String} username (Optional) If provided only logs specific username out, otherwise logs out all usernames associated with session
+         * @param {object} options Overrides for configuration options
          */
-        logout: function (username) {
-
+        logout: function (username, options) {
+            store.remove('epicenter.token');
         },
 
         /**
          * Returns existing token if already logged in, or creates a new one otherwise
-         * @param  {String} username (Optional) Userid to get the token for; if currently logged in as a single user username is optional
+         * @param {object} options Overrides for configuration options
          */
-        getToken: function (username) {
-
+        getToken: function (options) {
+            var $d = $.Deferred();
+            if (token) {
+                $d.resolve(token);
+            }
+            else {
+                this.login().then(function() {
+                    $.resolve(token);
+                });
+            }
+            return $d.promise();
         },
 
         /**
          * Returns user information of
          * @see <TBD> for return object syntax
-         * @param  {String} token Token obtained as part of logging in
+         * @param {String} token (Optional) Token obtained as part of logging in
+         * @param {object} options Overrides for configuration options
          */
-        getUserInfo: function (token) {
-
+        getUserInfo: function (inputToken, options) {
+            var toDecode = (inputToken) ? inputToken : token;
+            var $d = $.Deferred();
+            $d.resolve(root.atob(toDecode));
+            return $d.promise();
         },
 
         //TBD, check which server
-        resetPassword: function () {
+        resetPassword: function (options) {
 
         }
+    };
+};
 
-    }
+if (typeof exports !== 'undefined') {
+    module.exports = AuthService;
 }
+else {
+    if (!root.F) { root.F = {};}
+    if (!root.F.service) { root.F.service = {};}
+    root.F.service.Auth = AuthService;
+}
+
+}).call(this);
