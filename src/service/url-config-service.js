@@ -31,7 +31,7 @@ var URLService= function (config) {
             var PROJECT_APIS = ['run', 'data'];
             var apiPath = this.protocol + '://' + this.apiBase + '/' + api + '/';
 
-            if ($.inArray(PROJECT_APIS, api)) {
+            if ($.inArray(api, PROJECT_APIS) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath  + '/';
             }
             return apiPath;
