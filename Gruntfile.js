@@ -29,9 +29,9 @@ module.exports = function (grunt) {
                 //                    return mapping;
                 //                }()
                 files:  [
-                    {
-                        src: 'src/service/configuration-service.js', dest: 'documentation/generated/configuration-service.html.md'
-                    },
+                    // {
+                    //     src: 'src/service/configuration-service.js', dest: 'documentation/generated/configuration-service.html.md'
+                    // },
                     {
                         src: 'src/service/run-api-service.js', dest: 'documentation/generated/run-api-service.html.md'
                     },
