@@ -9,10 +9,10 @@ var F = root.F;
 var dataStore;
 var isNode = false;
 if (typeof require !== 'undefined') {
-    dataStore =  (isNode) ? require('./cookie-persistence-service.js') : require('./session-persistence-service.js');
+    dataStore =  (isNode) ? require('./session-persistence-service.js') : require('./cookie-persistence-service.js');
 }
 else {
-    dataStore =  F.Service.Ajax;
+    dataStore =  F.service.Cookie;
 }
 
 if (typeof exports !== 'undefined') {
