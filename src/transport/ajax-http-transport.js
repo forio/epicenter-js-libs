@@ -3,7 +3,7 @@ var root = this;
 var F = root.F;
 var qutils = F.util.query;
 
-var AjaxHTTP= function (config) {
+var AjaxHTTP= function (ajaxOptions, config) {
 
     var result = function(d) {
         return ($.isFunction(d)) ? d() : d;
@@ -20,7 +20,7 @@ var AjaxHTTP= function (config) {
     };
 
     //TODO: Add config service to switch between locations by url
-    var options = $.extend({}, defaults, config);
+    var options = $.extend({}, defaults, ajaxOptions);
 
     var connect = function (method, params, ajaxOptions) {
         params = result(params);

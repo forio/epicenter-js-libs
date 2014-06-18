@@ -11,8 +11,19 @@ var URLService= function (config) {
         'foriodev.com': 'api.epicenter.foriodev.com'
     };
 
-    return $.extend(true, {}, {
+    var getAPIPath = function(api) {
+        var PROJECT_APIS = ['run', 'data'];
+        var apiPath = this.protocol + '://' + this.host + '/' + api + '/';
+
+        if ($.inArray(api, PROJECT_APIS) !== -1) {
+            apiPath += this.accountPath + '/' + this.projectPath  + '/';
+        }
+        return apiPath;
+    };
+    var publicExports = {
         protocol: API_PROTOCOL,
+
+        api: '',
 
         host: (function() {
             host = window.location.host;
@@ -27,16 +38,12 @@ var URLService= function (config) {
             return 'test';
         }()),
 
-        getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data'];
-            var apiPath = this.protocol + '://' + this.host + '/' + api + '/';
+        getAPIPath: getAPIPath
+    };
+    publicExports.apiPath = getAPIPath(publicExports.api);
 
-            if ($.inArray(api, PROJECT_APIS) !== -1) {
-                apiPath += this.accountPath + '/' + this.projectPath  + '/';
-            }
-            return apiPath;
-        }
-    }, config);
+    $.extend(publicExports, config);
+    return publicExports;
 };
 
 if (typeof exports !== 'undefined') {

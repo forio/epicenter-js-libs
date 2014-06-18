@@ -84,9 +84,9 @@ var RunService = function (config) {
         return url;
     };
 
-    var http = httpTransport({
+    var http = httpTransport($.extend(true, config, {
         url: urlConfig.getFilterURL
-    });
+    }));
 
 
     var publicAPI = {

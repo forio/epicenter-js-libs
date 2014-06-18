@@ -35,7 +35,7 @@ var AuthService = function (config) {
     };
 
     var options = $.extend({}, defaults, config);
-    var urlConfig = ConfigService().get('url');
+    var urlConfig = ConfigService(options).get('server');
     var http = httpTransport({
         url: urlConfig.getAPIPath('authentication')
     });
