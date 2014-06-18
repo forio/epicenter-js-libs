@@ -219,7 +219,7 @@ var RunService = function (config) {
          *     rs.variable()
          */
         variables: function (config) {
-            var vs = new VariablesService($.extend({}, config, {
+            var vs = new VariablesService($.extend({}, serviceOptions, config, {
                 runService: this
             }));
             return vs;
