@@ -71,10 +71,12 @@ var RunService = function (config) {
         progress: $.noop,
     };
 
-    var options = $.extend({}, defaults, config);
-    var urlConfig = ConfigService().get('url');
-    if (options.account) urlConfig.accountPath = options.account;
-    if (options.project) urlConfig.projectPath = options.project;
+    var serviceOptions = $.extend({}, defaults, config);
+
+    var urlConfig = ConfigService(serviceOptions).get('server');
+    if (serviceOptions.account) urlConfig.accountPath = serviceOptions.account;
+    if (serviceOptions.project) urlConfig.projectPath = serviceOptions.project;
+
     urlConfig.filter = ';';
     urlConfig.getFilterURL = function() {
         var baseurl = urlConfig.getAPIPath('run');
@@ -102,8 +104,26 @@ var RunService = function (config) {
          *
          */
         create: function(qs, options) {
+            if (qs) {
+                //Create is allowed to set base account and project
+                $.extend(serviceOptions, qs);
+                if (serviceOptions.account) urlConfig.accountPath = serviceOptions.account;
+                if (serviceOptions.project) urlConfig.projectPath = serviceOptions.project;
+            }
+            else {
+                qs = {
+                    model: serviceOptions.model
+                };
+            }
+
+            var createOptions = $.extend(true, {}, serviceOptions, options, {url: urlConfig.getAPIPath('run')});
+            createOptions.success = _.wrap(createOptions.success, function(fn, response) {
+                urlConfig.filter = response.id; //all future chained calls to operate on this id
+                fn.call(this, response);
+            });
+
             urlConfig.filter = ';';
-            return http.post(qs, $.extend(options, {url: urlConfig.getAPIPath('run')}));
+            return http.post(qs, createOptions);
         },
 
         /**
@@ -193,7 +213,6 @@ var RunService = function (config) {
          *     rs.variable()
          */
         variable: function (config) {
-            console.log(this);
             var vs = new VariableService($.extend({}, config, {
                 runService: this
             }));

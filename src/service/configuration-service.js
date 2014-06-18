@@ -37,19 +37,21 @@
      urlService = require('service/urlService');
  }
  else {
-     urlService = F.service.url;
+     urlService = F.service.URL;
  }
 
 var ConfigurationService = function (config) {
 
     //TODO: Environments
-    var defaultConfig = {
-        url: urlService
+    var defaults = {
+        logLevel: 'NONE'
     };
+    var serviceOptions = $.extend({}, defaults, config);
+    serviceOptions.server = urlService(serviceOptions.server);
 
     return {
 
-        data: defaultConfig,
+        data: serviceOptions,
 
         /**
          * Set the environment key to get configuration options from
@@ -65,9 +67,8 @@ var ConfigurationService = function (config) {
          * @return {*}          Value of property if specified, the entire config object otherwise
          */
         get: function (property) {
-            return defaultConfig[property];
+            return serviceOptions[property];
         },
-
 
         /**
          * Set configuration.
@@ -75,7 +76,7 @@ var ConfigurationService = function (config) {
          * @param  {*} value  value for provided key
          */
         set: function (key, value) {
-
+            serviceOptions[key] = value;
         }
     };
 };

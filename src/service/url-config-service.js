@@ -11,10 +11,10 @@ var URLService= function (config) {
         'foriodev.com': 'api.epicenter.foriodev.com'
     };
 
-    return {
+    return $.extend(true, {}, {
         protocol: API_PROTOCOL,
 
-        apiBase: (function() {
+        host: (function() {
             host = window.location.host;
             return HOST_API_MAPPING[host] || 'api.forio.com';
         }()),
@@ -29,15 +29,15 @@ var URLService= function (config) {
 
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data'];
-            var apiPath = this.protocol + '://' + this.apiBase + '/' + api + '/';
+            var apiPath = this.protocol + '://' + this.host + '/' + api + '/';
 
             if ($.inArray(api, PROJECT_APIS) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath  + '/';
             }
             return apiPath;
         }
-    };
-}();
+    }, config);
+};
 
 if (typeof exports !== 'undefined') {
     module.exports = URLService;
@@ -45,7 +45,7 @@ if (typeof exports !== 'undefined') {
 else {
     if (!root.F) { root.F = {};}
     if (!root.F.service) { root.F.service = {};}
-    root.F.service.url = URLService;
+    root.F.service.URL = URLService;
 }
 
 }).call(this);
