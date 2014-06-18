@@ -80,7 +80,6 @@
                 server.requests.pop().url.should.equal('http://api.success.com?a=2&b=3');
             });
 
-            //FIXME: Figure out why sinon doesn't like this
             it('should call success callback on success', function () {
                 var callback = sinon.spy(function(){console.log("Success!");});
 
@@ -183,6 +182,31 @@
                 var req = server.requests.pop();
                 req.url.should.equal('http://api.success.com?a=2');
                 req.requestBody.should.equal(JSON.stringify(params));
+            });
+        });
+
+        describe('#delete', function () {
+            it('should make an ajax DELETE', function () {
+                var ajax = new Transport({url: 'http://api.success.com'});
+                ajax.delete();
+
+                server.requests.pop().method.toUpperCase().should.equal('DELETE');
+            });
+            it('should convert query parameters', function () {
+                var params = {a:1,b:2};
+                var ajax = new Transport({url: 'http://api.success.com'});
+                ajax.delete(params);
+
+                var req = server.requests.pop();
+                req.url.should.equal('http://api.success.com?a=1&b=2');
+            });
+            it('should combine query parameters', function () {
+                var params = {b:3};
+                var ajax = new Transport({url: 'http://api.success.com?a=2'});
+                ajax.delete(params);
+
+                var req = server.requests.pop();
+                req.url.should.equal('http://api.success.com?a=2&b=3');
             });
         });
     });

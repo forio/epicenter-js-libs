@@ -3,7 +3,7 @@ var root = this;
 var F = root.F;
 var qutils = F.util.query;
 
-var AjaxHTTP= function (ajaxOptions, config) {
+var AjaxHTTP= function (ajaxOptions) {
 
     var result = function(d) {
         return ($.isFunction(d)) ? d() : d;
@@ -20,32 +20,32 @@ var AjaxHTTP= function (ajaxOptions, config) {
     };
 
     //TODO: Add config service to switch between locations by url
-    var options = $.extend({}, defaults, ajaxOptions);
+    var transportOptions = $.extend({}, defaults, ajaxOptions);
 
-    var connect = function (method, params, ajaxOptions) {
+    var connect = function (method, params, connectOptions) {
         params = result(params);
         params = ($.isPlainObject(params) || $.isArray(params)) ? JSON.stringify(params) : params;
-        var connOptions = $.extend(true, {}, options, ajaxOptions, {
+        var options = $.extend(true, {}, transportOptions, connectOptions, {
             type: method,
             data: params
         });
         var ALLOWED_TO_BE_FUNCTIONS = ['data', 'url'];
-        $.each(connOptions, function(key, value) {
+        $.each(options, function(key, value) {
             if ($.isFunction(value) && $.inArray(key, ALLOWED_TO_BE_FUNCTIONS) !== -1) {
-                connOptions[key] = value();
+                options[key] = value();
             }
         });
 
-        if (connOptions.logLevel && connOptions.logLevel === 'DEBUG' ) {
-            if (connOptions.success) {
-                connOptions.success = _.wrap(connOptions.success, function(fn) {
+        if (options.logLevel && options.logLevel === 'DEBUG' ) {
+            if (options.success) {
+                options.success = _.wrap(options.success, function(fn) {
                     var fnArgs = _.toArray(arguments).slice(1); //ignore first fn argument
                     fn.apply(null, fnArgs);
                     console.log(fnArgs[0]);
                 });
             }
         }
-        return $.ajax(connOptions);
+        return $.ajax(options);
     };
 
     return {
@@ -69,8 +69,14 @@ var AjaxHTTP= function (ajaxOptions, config) {
         put: function () {
             return connect.apply(this, ['put'].concat([].slice.call(arguments)));
         },
-        delete: function () {
-            return connect.apply(this, ['delete'].concat([].slice.call(arguments)));
+        delete: function (params, ajaxOptions) {
+            params = qutils.toQueryFormat(result(params));
+            var options = $.extend({}, transportOptions, ajaxOptions);
+            var delimiter = (options.url.indexOf('?') === -1) ? '?' : '&';
+
+            options.url += delimiter + params;
+
+            return connect.call(this, 'DELETE', null, options);
         },
         head: function () {
             return connect.apply(this, ['head'].concat([].slice.call(arguments)));
