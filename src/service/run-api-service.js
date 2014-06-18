@@ -21,14 +21,14 @@ var $, ConfigService, qutil, rutil, urlService, httpTransport, VariableService;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
-    VariableService = require('service/variable-api-service');
+    VariablesService = require('service/variables-api-service');
     qutil = require('util/query-util');
     rutil = require('util/run-util');
 }
 else {
     $ = jQuery;
     ConfigService = F.service.Config;
-    VariableService = F.service.Variable;
+    VariablesService = F.service.Variables;
     qutil = F.util.query;
     rutil = F.util.run;
     httpTransport = F.transport.HTTP;
@@ -44,12 +44,6 @@ var RunService = function (config) {
          * @type {String}
          */
         token: '',
-
-        /**
-         * The name of the primary [model file](../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your project. Defaults to 'model.jl'.
-         * @type {String}
-         */
-        model: 'model.jl',
 
         /**
          * The account id. In the Epicenter UI, this is the "Team ID" (for team projects) or "User ID" (for personal projects). Defaults to empty string.
@@ -84,10 +78,12 @@ var RunService = function (config) {
         progress: $.noop,
     };
 
-    var options = $.extend({}, defaults, config);
-    var urlConfig = ConfigService().get('url');
-    if (options.account) urlConfig.accountPath = options.account;
-    if (options.project) urlConfig.projectPath = options.project;
+    var serviceOptions = $.extend({}, defaults, config);
+
+    var urlConfig = ConfigService(serviceOptions).get('server');
+    if (serviceOptions.account) urlConfig.accountPath = serviceOptions.account;
+    if (serviceOptions.project) urlConfig.projectPath = serviceOptions.project;
+
     urlConfig.filter = ';';
     urlConfig.getFilterURL = function() {
         var baseurl = urlConfig.getAPIPath('run');
@@ -95,9 +91,9 @@ var RunService = function (config) {
         return url;
     };
 
-    var http = httpTransport({
+    var http = httpTransport($.extend(true, config, {
         url: urlConfig.getFilterURL
-    });
+    }));
 
 
     var publicAPI = {
@@ -113,13 +109,19 @@ var RunService = function (config) {
          *      })
          * 
          *  **Parameters**
-         * @param {Object} `qs` The account, project, and model if you are creating a run using any project information other than your run service defaults.
-         * @param {object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} `model` The name of the primary [model file](../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your project.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
-        create: function(qs, options) {
+        create: function(model, options) {
+            var createOptions = $.extend(true, {}, serviceOptions, options, {url: urlConfig.getAPIPath('run')});
+            createOptions.success = _.wrap(createOptions.success, function(fn, response) {
+                urlConfig.filter = response.id; //all future chained calls to operate on this id
+                fn.call(this, response);
+            });
+
             urlConfig.filter = ';';
-            return http.post(qs, $.extend(options, {url: urlConfig.getAPIPath('run')}));
+            return http.post({model: model}, createOptions);
         },
 
         /**
@@ -155,8 +157,10 @@ var RunService = function (config) {
          * @param {object} `options` (Optional) Overrides for configuration options
          */
         query: function (qs, outputModifier, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+
             urlConfig.filter = qutil.toMatrixFormat(qs);
-            return http.get(outputModifier, options);
+            return http.get(outputModifier, httpOptions);
         },
 
         /**
@@ -199,8 +203,10 @@ var RunService = function (config) {
          * @param {object} `options` (Optional) Overrides for configuration options
          */
         load: function (runID, filters, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+
             urlConfig.filter = runID;
-            return http.get(filters, options);
+            return http.get(filters, httpOptions);
         },
 
 
@@ -219,7 +225,9 @@ var RunService = function (config) {
          * @param {object} `options` (Optional) Overrides for configuration options
          */
         save: function (attributes, options) {
-            return http.patch(attributes, options);
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+
+            return http.patch(attributes, httpOptions);
         },
 
         /**
@@ -237,9 +245,8 @@ var RunService = function (config) {
          * @param {object} `options` (Optional) Overrides for configuration options
          * @see [Variable API Service](./variable-api-service.html) for more information.
          */
-        variable: function (config) {
-            console.log(this);
-            var vs = new VariableService($.extend({}, config, {
+        variables: function (config) {
+            var vs = new VariablesService($.extend({}, serviceOptions, config, {
                 runService: this
             }));
             return vs;
@@ -281,8 +288,10 @@ var RunService = function (config) {
                 }
             }
             var opParams = rutil.normalizeOperations(operation, opsArgs);
-            return http.post(opParams[1], $.extend(true, {}, postOptions, {
-                url: urlConfig.getFilterURL() + 'operation/' + opParams[0] + '/'
+            var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
+
+            return http.post(opParams[1], $.extend(true, {}, httpOptions, {
+                url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
             }));
         },
 
@@ -353,7 +362,7 @@ var RunService = function (config) {
                     this.do(ops[i], args[i])
                 );
             }
-            $.when.apply(queue, postOptions.success);
+            $.when.apply(null, queue).done(postOptions.success);
         }
     };
 

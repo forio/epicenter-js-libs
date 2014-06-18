@@ -34,21 +34,31 @@ var AuthService = function (config) {
          * Where to store user access tokens for temporary access. Defaults to `cookie`.
          * @type {String}
          */
-        store: 'cookie'
+        store: 'session'
     };
 
     var options = $.extend({}, defaults, config);
-    var urlConfig = ConfigService().get('url');
+    var urlConfig = ConfigService(options).get('server');
     var http = httpTransport({
         url: urlConfig.getAPIPath('authentication')
     });
 
-    var token;
-    var currentPassword;
-    var currentUsername;
+    var store = new PersistenceService(options.store);
+    var EPI_COOKIE_KEY = 'epicenter.token';
 
-    var store = new PersistenceService();
+    var token;
+    var currentUsername;
+    var currentPassword;
+
+    //See if we already have a token stashed
+    store.load(EPI_COOKIE_KEY).then(function(savedToken) {
+        if (savedToken) {
+            token = savedToken;
+        }
+    });
+
     return {
+        store: store,
 
         /**
          * Logs user in to specified account.
@@ -69,7 +79,7 @@ var AuthService = function (config) {
                 currentUsername = username;
 
                 token = data.access_token;
-                store.save('epicenter.token', token);
+                store.save(EPI_COOKIE_KEY, token);
                 fn.call(this, data);
             });
 
@@ -88,7 +98,7 @@ var AuthService = function (config) {
          * @param {Object} `options` (Optional) Overrides for configuration options     
          */
         logout: function (username, options) {
-            store.remove('epicenter.token');
+            return store.remove(EPI_COOKIE_KEY, options);
         },
 
         /**
@@ -108,7 +118,7 @@ var AuthService = function (config) {
                 $d.resolve(token);
             }
             else {
-                this.login().then(function() {
+                this.login(currentUsername, currentPassword, options).then(function() {
                     $.resolve(token);
                 });
             }

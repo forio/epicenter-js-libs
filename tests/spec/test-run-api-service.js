@@ -22,28 +22,21 @@
         describe('#create()', function () {
             it('should do a POST', function() {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.create({model: 'model.jl'});
+                rs.create('model.jl');
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
+
             });
             it('POSTs to the base URL', function() {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.create({model: 'model.jl'});
+                rs.create('model.jl');
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
+                req.requestBody.should.equal(JSON.stringify({model: 'model.jl'}));
+
             });
-            it('should pass through run options', function() {
-                var params = {model: 'model.jl'};
-
-                var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.create(params);
-
-                var req = server.requests.pop();
-                req.requestBody.should.equal(JSON.stringify(params));
-            });
-
         });
         describe('#query()', function () {
             it('should do a GET', function() {
@@ -120,10 +113,10 @@
             });
         });
         //variables
-        describe('#variable()', function () {
+        describe('#variables()', function () {
             it('should return an instance of the variables service', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                var vs = rs.variable();
+                var vs = rs.variables();
 
                 //FIXME: This currently returns an object
                 // vs.should.be.instanceOf(VariableService);
@@ -146,7 +139,7 @@
                     rs.do('add', [1,2]);
 
                     var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/add/');
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/add/');
                     req.requestBody.should.equal(JSON.stringify([1,2]));
                 });
                 it('should call success callback on success', function () {
@@ -173,8 +166,8 @@
 
                     // sinon.assert.callOrder(spy1, spy2, ...)
                     server.requests.length.should.equal(2);
-                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/first/');
-                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/second/');
+                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/first/');
+                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/second/');
 
                 });
             });

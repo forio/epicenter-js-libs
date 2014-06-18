@@ -2,7 +2,7 @@
     Decides type of persistence store to provide
 */
 
-(function(){
+(function(storeType){
 var root = this;
 var F = root.F;
 

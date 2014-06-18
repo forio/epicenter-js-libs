@@ -11,10 +11,21 @@ var URLService= function (config) {
         'foriodev.com': 'api.epicenter.foriodev.com'
     };
 
-    return {
+    var getAPIPath = function(api) {
+        var PROJECT_APIS = ['run', 'data'];
+        var apiPath = this.protocol + '://' + this.host + '/' + api + '/';
+
+        if ($.inArray(api, PROJECT_APIS) !== -1) {
+            apiPath += this.accountPath + '/' + this.projectPath  + '/';
+        }
+        return apiPath;
+    };
+    var publicExports = {
         protocol: API_PROTOCOL,
 
-        apiBase: (function() {
+        api: '',
+
+        host: (function() {
             host = window.location.host;
             return HOST_API_MAPPING[host] || 'api.forio.com';
         }()),
@@ -27,17 +38,13 @@ var URLService= function (config) {
             return 'test';
         }()),
 
-        getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data'];
-            var apiPath = this.protocol + '://' + this.apiBase + '/' + api + '/';
-
-            if ($.inArray(PROJECT_APIS, api)) {
-                apiPath += this.accountPath + '/' + this.projectPath  + '/';
-            }
-            return apiPath;
-        }
+        getAPIPath: getAPIPath
     };
-}();
+    publicExports.apiPath = getAPIPath(publicExports.api);
+
+    $.extend(publicExports, config);
+    return publicExports;
+};
 
 if (typeof exports !== 'undefined') {
     module.exports = URLService;
@@ -45,7 +52,7 @@ if (typeof exports !== 'undefined') {
 else {
     if (!root.F) { root.F = {};}
     if (!root.F.service) { root.F.service = {};}
-    root.F.service.url = URLService;
+    root.F.service.URL = URLService;
 }
 
 }).call(this);
