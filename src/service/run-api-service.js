@@ -145,8 +145,10 @@ var RunService = function (config) {
          *
          */
         query: function (qs, outputModifier, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+
             urlConfig.filter = qutil.toMatrixFormat(qs);
-            return http.get(outputModifier, options);
+            return http.get(outputModifier, httpOptions);
         },
 
         /**
@@ -180,8 +182,10 @@ var RunService = function (config) {
          *     rs.get('<runid>', {include: '.score', set: 'xyz'});
          */
         load: function (runID, filters, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+
             urlConfig.filter = runID;
-            return http.get(filters, options);
+            return http.get(filters, httpOptions);
         },
 
 
@@ -197,7 +201,9 @@ var RunService = function (config) {
          *     rs.save({saved: true, '.a': 23, '.b': 23}}); //equivalent to above
          */
         save: function (attributes, options) {
-            return http.patch(attributes, options);
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+
+            return http.patch(attributes, httpOptions);
         },
 
         /**
@@ -248,8 +254,10 @@ var RunService = function (config) {
                 }
             }
             var opParams = rutil.normalizeOperations(operation, opsArgs);
-            return http.post(opParams[1], $.extend(true, {}, postOptions, {
-                url: urlConfig.getFilterURL() + 'operation/' + opParams[0] + '/'
+            var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
+
+            return http.post(opParams[1], $.extend(true, {}, httpOptions, {
+                url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
             }));
         },
 

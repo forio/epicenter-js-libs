@@ -146,7 +146,7 @@
                     rs.do('add', [1,2]);
 
                     var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/add/');
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/add/');
                     req.requestBody.should.equal(JSON.stringify([1,2]));
                 });
                 it('should call success callback on success', function () {
@@ -173,8 +173,8 @@
 
                     // sinon.assert.callOrder(spy1, spy2, ...)
                     server.requests.length.should.equal(2);
-                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/first/');
-                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operation/second/');
+                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/first/');
+                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/second/');
 
                 });
             });

@@ -36,12 +36,14 @@ var AjaxHTTP= function (ajaxOptions, config) {
             }
         });
 
-        if (connOptions.logLevel && connOptions.logLevel === 'DEBUG') {
-            connOptions.success = _.wrap(connOptions.success, function(fn) {
-                var fnArgs = _.toArray(arguments).slice(1); //ignore first fn argument
-                fn.apply(null, fnArgs);
-                console.log(fnArgs);
-            });
+        if (connOptions.logLevel && connOptions.logLevel === 'DEBUG' ) {
+            if (connOptions.success) {
+                connOptions.success = _.wrap(connOptions.success, function(fn) {
+                    var fnArgs = _.toArray(arguments).slice(1); //ignore first fn argument
+                    fn.apply(null, fnArgs);
+                    console.log(fnArgs);
+                });
+            }
         }
         return $.ajax(connOptions);
     };
