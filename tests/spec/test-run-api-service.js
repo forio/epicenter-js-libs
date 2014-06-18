@@ -22,28 +22,21 @@
         describe('#create()', function () {
             it('should do a POST', function() {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.create({model: 'model.jl'});
+                rs.create('model.jl');
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
+
             });
             it('POSTs to the base URL', function() {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.create({model: 'model.jl'});
+                rs.create('model.jl');
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
+                req.requestBody.should.equal(JSON.stringify({model: 'model.jl'}));
+
             });
-            it('should pass through run options', function() {
-                var params = {model: 'model.jl'};
-
-                var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.create(params);
-
-                var req = server.requests.pop();
-                req.requestBody.should.equal(JSON.stringify(params));
-            });
-
         });
         describe('#query()', function () {
             it('should do a GET', function() {

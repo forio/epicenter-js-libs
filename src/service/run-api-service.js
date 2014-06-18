@@ -41,12 +41,6 @@ var RunService = function (config) {
         token: '',
 
         /**
-         * Model file to create the run with
-         * @type {String}
-         */
-        model: 'model.jl',
-
-        /**
          * Account to create the run in
          * @type {String}
          */
@@ -94,7 +88,7 @@ var RunService = function (config) {
 
         /**
          * Create a new run
-         * @param {Object} qs Query
+         * @param {Object} model Model file to create the run with
          * @param {object} options Overrides for configuration options
           *
          * @example
@@ -103,19 +97,7 @@ var RunService = function (config) {
                  })
          *
          */
-        create: function(qs, options) {
-            if (qs) {
-                //Create is allowed to set base account and project
-                $.extend(serviceOptions, qs);
-                if (serviceOptions.account) urlConfig.accountPath = serviceOptions.account;
-                if (serviceOptions.project) urlConfig.projectPath = serviceOptions.project;
-            }
-            else {
-                qs = {
-                    model: serviceOptions.model
-                };
-            }
-
+        create: function(model, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, {url: urlConfig.getAPIPath('run')});
             createOptions.success = _.wrap(createOptions.success, function(fn, response) {
                 urlConfig.filter = response.id; //all future chained calls to operate on this id
@@ -123,7 +105,7 @@ var RunService = function (config) {
             });
 
             urlConfig.filter = ';';
-            return http.post(qs, createOptions);
+            return http.post({model: model}, createOptions);
         },
 
         /**

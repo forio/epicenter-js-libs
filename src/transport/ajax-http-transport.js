@@ -41,7 +41,7 @@ var AjaxHTTP= function (ajaxOptions, config) {
                 connOptions.success = _.wrap(connOptions.success, function(fn) {
                     var fnArgs = _.toArray(arguments).slice(1); //ignore first fn argument
                     fn.apply(null, fnArgs);
-                    console.log(fnArgs);
+                    console.log(fnArgs[0]);
                 });
             }
         }
