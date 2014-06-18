@@ -92,9 +92,9 @@ var DataService = function (config) {
             var attrs;
             if (typeof key === 'object') {
               attrs = key;
-              options = val;
+              options = value;
             } else {
-              (attrs = {})[key] = val;
+              (attrs = {})[key] = value;
             }
 
             var httpOptions = $.extend(true, {}, serviceOptions, options);

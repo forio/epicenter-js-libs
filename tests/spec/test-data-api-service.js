@@ -48,5 +48,31 @@
                 req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/?page=1');
             });
         });
+
+        describe('#save', function () {
+            it('Should do a POST', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.save('name', 'John');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+            });
+            it('Should send key,value requests in body', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.save('name', 'John');
+
+                var req = server.requests.pop();
+                req.requestBody.should.equal(JSON.stringify({name: 'John'}));
+            });
+
+            it('Should send object requests in body', function () {
+                var params = {fname: 'john', lname: 'smith'};
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.save(params);
+
+                var req = server.requests.pop();
+                req.requestBody.should.equal(JSON.stringify(params));
+            });
+        });
     });
 }());
