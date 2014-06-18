@@ -120,10 +120,10 @@
             });
         });
         //variables
-        describe('#variable()', function () {
+        describe('#variables()', function () {
             it('should return an instance of the variables service', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                var vs = rs.variable();
+                var vs = rs.variables();
 
                 //FIXME: This currently returns an object
                 // vs.should.be.instanceOf(VariableService);

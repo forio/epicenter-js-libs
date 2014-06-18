@@ -16,14 +16,14 @@ var $, ConfigService, qutil, rutil, urlService, httpTransport, VariableService;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
-    VariableService = require('service/variable-api-service');
+    VariablesService = require('service/variables-api-service');
     qutil = require('util/query-util');
     rutil = require('util/run-util');
 }
 else {
     $ = jQuery;
     ConfigService = F.service.Config;
-    VariableService = F.service.Variable;
+    VariablesService = F.service.Variables;
     qutil = F.util.query;
     rutil = F.util.run;
     httpTransport = F.transport.HTTP;
@@ -218,8 +218,8 @@ var RunService = function (config) {
          *     rs.variable(["Price", "Sales"])
          *     rs.variable()
          */
-        variable: function (config) {
-            var vs = new VariableService($.extend({}, config, {
+        variables: function (config) {
+            var vs = new VariablesService($.extend({}, config, {
                 runService: this
             }));
             return vs;
