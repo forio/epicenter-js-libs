@@ -42,8 +42,8 @@ var AjaxHTTP= function (config) {
                 fn.apply(null, fnArgs);
                 console.log(fnArgs);
             });
-            return  $.ajax(connOptions);
         }
+        return $.ajax(connOptions);
     };
 
     return {
