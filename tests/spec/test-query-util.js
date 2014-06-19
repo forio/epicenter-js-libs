@@ -30,6 +30,22 @@
             it('should handle nulls', function () {
                 qutils.toQueryFormat().should.equal('');
             });
+            it('should leave strings as is', function () {
+                qutils.toQueryFormat('a=b').should.equal('a=b');
+            });
+        });
+
+        describe('#qsToObject()', function () {
+            it('should convert single strings', function () {
+                qutils.qsToObject('a=b').should.deep.equal({a:'b'});
+            });
+            it('should convert multi strings', function () {
+                qutils.qsToObject('a=b&c=d').should.deep.equal({a:'b', c:'d'});
+            });
+            it('should convert multi strings with arrays', function () {
+                //Deep equal doesn't work on arrays with objects
+                JSON.stringify(qutils.qsToObject('a=b&c=d&arr=1,2,3')).should.equal(JSON.stringify({a:'b', c:'d', arr: ['1','2','3']}));
+            });
         });
     });
 })();

@@ -21,6 +21,7 @@ var query= function () {
 
         toQueryFormat: function(qs) {
             if (qs === null || qs === undefined) return '';
+            if (typeof qs === 'string' || qs instanceof String) return qs;
 
             var returnArray = [];
             $.each(qs, function(key, value) {
@@ -36,9 +37,24 @@ var query= function () {
 
             var result = returnArray.join('&');
             return result;
-        }
-        //TODO: test string, null, invalids
+        },
 
+        qsToObject: function(qs) {
+            var qsArray = qs.split('&');
+            var returnObj = {};
+            $.each(qsArray, function(index, value) {
+                var qKey = value.split('=')[0];
+                var qVal = value.split('=')[1];
+
+                if (qVal.indexOf(',') !== -1) {
+                    qVal = qVal.split(',');
+                }
+
+                returnObj[qKey] = qVal;
+            });
+
+            return returnObj;
+        }
     };
 }();
 
