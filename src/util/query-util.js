@@ -54,6 +54,12 @@ var query= function () {
             });
 
             return returnObj;
+        },
+
+        mergeQS: function(qs1, qs2) {
+            var obj1 = this.qsToObject(this.toQueryFormat(qs1));
+            var obj2 = this.qsToObject(this.toQueryFormat(qs2));
+            return $.extend(true, {}, obj1, obj2);
         }
     };
 }();

@@ -47,5 +47,21 @@
                 JSON.stringify(qutils.qsToObject('a=b&c=d&arr=1,2,3')).should.equal(JSON.stringify({a:'b', c:'d', arr: ['1','2','3']}));
             });
         });
+
+        describe('#mergeQS()', function () {
+            it('should convert merge strings', function () {
+                qutils.mergeQS('a=b', 'c=d').should.deep.equal({a:'b', c:'d'});
+            });
+            it('should merge objects', function () {
+                qutils.mergeQS({a:'b'}, {c:'d'}).should.deep.equal({a:'b', c:'d'});
+            });
+            it('should merge strings and objects', function () {
+                qutils.mergeQS('a=b', {c: 'd'}).should.deep.equal({a:'b', c:'d'});
+            });
+            it('should merge multi strings with objects with arrays', function () {
+                //Deep equal doesn't work on arrays with objects
+                JSON.stringify(qutils.mergeQS('a=b&c=d', {arr: [1,2,3]})).should.equal(JSON.stringify({a:'b', c:'d', arr: ['1','2','3']}));
+            });
+        });
     });
 })();
