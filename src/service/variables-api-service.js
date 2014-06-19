@@ -49,7 +49,7 @@ var VariablesService = function (config) {
         url: getURL
     }));
 
-    return {
+    var publicAPI = {
 
         /**
          * Get values for a variable
@@ -134,6 +134,8 @@ var VariablesService = function (config) {
             return http.patch.call(this, attrs, httpOptions);
         }
     };
+
+    $.extend(this, publicAPI);
 };
 
 if (typeof exports !== 'undefined') {

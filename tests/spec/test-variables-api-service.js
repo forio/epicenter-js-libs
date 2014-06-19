@@ -25,6 +25,7 @@
         describe('#load()', function () {
             it('should do a GET', function () {
                 vs.load('price');
+
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
             });
