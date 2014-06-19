@@ -62,6 +62,11 @@
                 //Deep equal doesn't work on arrays with objects
                 JSON.stringify(qutils.mergeQS('a=b&c=d', {arr: [1,2,3]})).should.equal(JSON.stringify({a:'b', c:'d', arr: ['1','2','3']}));
             });
+            it('should merge nulls', function () {
+                qutils.mergeQS('a=b', null).should.deep.equal({a:'b'});
+                qutils.mergeQS({a:'b'}, null).should.deep.equal({a:'b'});
+                qutils.mergeQS(null, null).should.deep.equal({});
+            });
         });
     });
 })();

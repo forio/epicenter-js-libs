@@ -40,6 +40,8 @@ var query= function () {
         },
 
         qsToObject: function(qs) {
+            if (qs === null || qs === undefined || qs === '') return {};
+
             var qsArray = qs.split('&');
             var returnObj = {};
             $.each(qsArray, function(index, value) {
