@@ -81,7 +81,7 @@
             });
 
             it('should call success callback on success', function () {
-                var callback = sinon.spy(function(){console.log("Success!");});
+                var callback = sinon.spy();
 
                 var ajax = new Transport({url: 'http://api.success.com'});
                 ajax.get({a:2,b:3}, {
@@ -91,7 +91,7 @@
                 callback.called.should.equal(true);
             });
             it('should call fail callback on success', function () {
-                var callback = sinon.spy(function(){console.log("Fail!");});
+                var callback = sinon.spy();
 
                 var ajax = new Transport({url: 'http://api.fail.com'});
                 ajax.get({a:2,b:3}, {
@@ -100,6 +100,16 @@
                 server.respond();
 
                 callback.called.should.equal(true);
+            });
+
+            it('should allow over-riding the parameter parese', function () {
+                var params = {a:2,b:3};
+                var ajax = new Transport({url: 'http://api.success.com'});
+                ajax.get(params, {
+                    parameterParser: JSON.stringify
+                });
+
+                server.requests.pop().url.should.equal('http://api.success.com?' + JSON.stringify(params));
             });
         });
 

@@ -17,6 +17,8 @@ var AjaxHTTP= function (ajaxOptions) {
         statusCode: {
             404: $.noop
         },
+
+        parameterParser: qutils.toQueryFormat
     };
 
     //TODO: Add config service to switch between locations by url
@@ -57,8 +59,9 @@ var AjaxHTTP= function (ajaxOptions) {
         },
 
         get:function (params, ajaxOptions) {
-            params = qutils.toQueryFormat(result(params));
-            return connect.call(this, 'GET', params, ajaxOptions);
+            var options = $.extend({}, transportOptions, ajaxOptions);
+            params = options.parameterParser(result(params));
+            return connect.call(this, 'GET', params, options);
         },
         post: function () {
             return connect.apply(this, ['post'].concat([].slice.call(arguments)));
@@ -71,7 +74,7 @@ var AjaxHTTP= function (ajaxOptions) {
         },
         delete: function (params, ajaxOptions) {
             var options = $.extend({}, transportOptions, ajaxOptions);
-            params = qutils.toQueryFormat(result(params));
+            params = options.parameterParser(result(params));
             if ($.trim(params)) {
                 var delimiter = (result(options.url).indexOf('?') === -1) ? '?' : '&';
                 options.url = result(options.url) + delimiter + params;
