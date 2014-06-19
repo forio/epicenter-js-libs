@@ -17,7 +17,6 @@ var AjaxHTTP= function (ajaxOptions) {
         statusCode: {
             404: $.noop
         },
-
         parameterParser: qutils.toQueryFormat
     };
 
@@ -27,6 +26,7 @@ var AjaxHTTP= function (ajaxOptions) {
     var connect = function (method, params, connectOptions) {
         params = result(params);
         params = ($.isPlainObject(params) || $.isArray(params)) ? JSON.stringify(params) : params;
+
         var options = $.extend(true, {}, transportOptions, connectOptions, {
             type: method,
             data: params

@@ -60,6 +60,15 @@
             server.requests.pop().requestBody.should.equal(JSON.stringify({value: 2}));
         });
 
+
+        // TODO: Determine if this is really useful
+        // it('should pass in default parameters in every call', function () {
+        //     var ajax = new Transport({url: 'http://api.success.com', data: {a: '1'}});
+        //     ajax.get({b:2});
+
+        //     server.requests.pop().url.should.equal('http://api.success.com?a=1&b=2');
+        // });
+
         describe('#get()', function () {
             it('should make an ajax GET', function () {
                 var ajax = new Transport({url: 'http://api.success.com'});
