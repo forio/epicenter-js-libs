@@ -83,40 +83,69 @@
             });
         });
 
-    describe('#remove', function () {
-        it('Should do a DELETE', function () {
-            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
-            ds.remove('name');
+        describe('#remove', function () {
+            it('Should do a DELETE', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.remove('name');
 
-            var req = server.requests.pop();
-            req.method.toUpperCase().should.equal('DELETE');
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+            });
+
+            it('Should remove single keys from collection', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.remove('name');
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/name/');
+            });
+
+            it('Should remove multiple keys from collection', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.remove(['name', 'age']);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/?id=name,age');
+            });
+
+            it('Should remove nested keys from collection', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.remove('first/name');
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/');
+            });
         });
 
-        it('Should remove single keys from collection', function () {
-            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
-            ds.remove('name');
+        describe('#query', function () {
+            it('Should do a GET', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.query('', {name: 'john'});
 
-            var req = server.requests.pop();
-            req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/name/');
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+            });
+            it('should hit the right url', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.query('', {name: 'john'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/?q={"name":"john"}');
+            });
+            it('should support output modifiers', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.query('', {name: 'john', age:'10'}, {page: 1});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/?q={"name":"john","age":"10"}&page=1');
+            });
+            it('should support keys', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.query('a/b', {name: 'john', age:'10'}, {page: 1});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/a/b/?q={"name":"john","age":"10"}&page=1');
+            });
         });
-
-        it('Should remove multiple keys from collection', function () {
-            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
-            ds.remove(['name', 'age']);
-
-            var req = server.requests.pop();
-            req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/?id=name,age');
-        });
-
-        it('Should remove nested keys from collection', function () {
-            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
-            ds.remove('first/name');
-
-            var req = server.requests.pop();
-            req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/');
-        });
-
-    });
-
     });
 }());

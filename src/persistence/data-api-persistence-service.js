@@ -76,8 +76,10 @@ var DataService = function (config) {
          *      {limit: 10}
          *     )
          */
-        query: function (qs, limiters, options) {
-
+        query: function (key, query, limiters, options) {
+            var params = $.extend(true, {q: query}, limiters);
+            var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
+            return http.get(params, httpOptions);
         },
 
         /**
@@ -115,15 +117,6 @@ var DataService = function (config) {
          */
         load: function (key, filters, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
-            if (!filters) filters = {};
-
-            $.each(filters, function(key, value) {
-                if($.isPlainObject(value)) {
-                    // support formats like ?sort={"fieldName1": 1, "fieldName2": -1}
-                    filters[key] = JSON.stringify(value);
-                }
-            });
-
             return http.get(filters, httpOptions);
         },
 
