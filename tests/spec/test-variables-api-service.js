@@ -23,19 +23,16 @@
         });
 
         describe('#load()', function () {
-            it('Should do a GET', function () {
-                it('should do a GET', function () {
-                    vs.load('price');
+            it('should do a GET', function () {
+                vs.load('price');
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+            });
+            it('should use the right url', function () {
+                vs.load('price');
 
-                    var req = server.requests.pop();
-                    req.method.toUpperCase().should.equal('GET');
-                });
-                it('should use the right url', function () {
-                    vs.load('price');
-
-                    var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/price/');
-                });
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/price/');
             });
         });
 
