@@ -15,6 +15,14 @@
             server.restore();
         });
 
+        it('should pass through string tokens', function () {
+            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs', token: 'abc'});
+            ds.load('name');
+
+            var req = server.requests.pop();
+            req.requestHeaders.Authorization.should.equal('Bearer abc');
+        });
+
         describe('#load', function () {
             it('Should do a GET', function () {
                 var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
