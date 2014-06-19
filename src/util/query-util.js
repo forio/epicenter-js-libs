@@ -27,6 +27,10 @@ var query= function () {
                 if ($.isArray(value)) {
                     value = value.join(',');
                 }
+                if ($.isPlainObject(value)) {
+                    //Mostly for data api
+                    value = JSON.stringify(value);
+                }
                 returnArray.push(key + '=' + value);
             });
 
