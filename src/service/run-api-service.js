@@ -78,10 +78,15 @@ var RunService = function (config) {
         return url;
     };
 
-    var http = httpTransport($.extend(true, config, {
+    var httpOptions = {
         url: urlConfig.getFilterURL
-    }));
-
+    };
+    if (serviceOptions.token) {
+        httpOptions.headers = {
+            'Authorization': 'Bearer ' + serviceOptions.token
+        };
+    }
+    var http = httpTransport(httpOptions);
 
     var publicAPI = {
         urlConfig: urlConfig,

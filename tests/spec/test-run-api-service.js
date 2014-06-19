@@ -19,6 +19,20 @@
             server.restore();
         });
 
+        it('should pass through string tokens', function () {
+            var rs = new RunService({account: 'forio', project: 'js-libs', token: 'abc'});
+            rs.create('model.jl');
+
+            var req = server.requests.pop();
+            req.requestHeaders.Authorization.should.equal('Bearer abc');
+
+            var rs2 = new RunService({account: 'forio', project: 'js-libs'});
+            rs2.create('model.jl');
+
+            req = server.requests.pop();
+            should.not.exist(req.requestHeaders.Authorization);
+        });
+
         describe('#create()', function () {
             it('should do a POST', function() {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
