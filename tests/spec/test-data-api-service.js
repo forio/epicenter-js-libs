@@ -74,5 +74,41 @@
                 req.requestBody.should.equal(JSON.stringify(params));
             });
         });
+
+    describe('#remove', function () {
+        it('Should do a DELETE', function () {
+            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+            ds.remove('name');
+
+            var req = server.requests.pop();
+            req.method.toUpperCase().should.equal('DELETE');
+        });
+
+        it('Should remove single keys from collection', function () {
+            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+            ds.remove('name');
+
+            var req = server.requests.pop();
+            req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/name/');
+        });
+
+        it('Should remove multiple keys from collection', function () {
+            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+            ds.remove(['name', 'age']);
+
+            var req = server.requests.pop();
+            req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/?id=name,age');
+        });
+
+        it('Should remove nested keys from collection', function () {
+            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+            ds.remove('first/name');
+
+            var req = server.requests.pop();
+            req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/');
+        });
+
+    });
+
     });
 }());

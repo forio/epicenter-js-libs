@@ -70,12 +70,12 @@ var AjaxHTTP= function (ajaxOptions) {
             return connect.apply(this, ['put'].concat([].slice.call(arguments)));
         },
         delete: function (params, ajaxOptions) {
-            params = qutils.toQueryFormat(result(params));
             var options = $.extend({}, transportOptions, ajaxOptions);
-            var delimiter = (options.url.indexOf('?') === -1) ? '?' : '&';
-
-            options.url += delimiter + params;
-
+            params = qutils.toQueryFormat(result(params));
+            if ($.trim(params)) {
+                var delimiter = (result(options.url).indexOf('?') === -1) ? '?' : '&';
+                options.url = result(options.url) + delimiter + params;
+            }
             return connect.call(this, 'DELETE', null, options);
         },
         head: function () {

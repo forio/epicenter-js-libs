@@ -117,23 +117,32 @@ var DataService = function (config) {
 
         /**
          * Removes key from collection
-         * @param {String} key key to remove
+         * @param {String| Array} key key to remove
          *
          * @example
          *     ds.remove('person');
          */
         remove: function (keys, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
-            return http.delete({id: keys}, httpOptions);
-        },
-
-        /**
-         * Removes collection being referenced
-         * @return null
-         */
-        destroy: function (options) {
-            return this.remove('', options);
+            var params;
+            if ($.isArray(keys)) {
+                params = {id: keys};
+            }
+            else {
+                params = '';
+                httpOptions.url = getURL(keys);
+            }
+            return http.delete(params, httpOptions);
         }
+
+    // Epicenter doesn't allow nuking collections
+    //     /**
+    //      * Removes collection being referenced
+    //      * @return null
+    //      */
+    //     destroy: function (options) {
+    //         return this.remove('', options);
+    //     }
     };
 
     return publicAPI;
