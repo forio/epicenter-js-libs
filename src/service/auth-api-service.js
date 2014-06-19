@@ -113,12 +113,12 @@ var AuthService = function (config) {
             var $d = $.Deferred();
             $d.resolve(root.atob(toDecode));
             return $d.promise();
-        },
-
-        //TBD, check which server
-        resetPassword: function (options) {
-
         }
+
+        // //TBD, need to be talked through
+        // resetPassword: function (options) {
+
+        // }
     };
 };
 
