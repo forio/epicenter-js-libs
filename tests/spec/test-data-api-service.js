@@ -47,6 +47,14 @@
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/?page=1');
             });
+
+            it('should support url parameters with objects', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.load('first/name', {page: 1, sort: {'fieldName1': 1, 'fieldName2': -1}});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/?page=1&sort={"fieldName1":1,"fieldName2":-1}');
+            });
         });
 
         describe('#save', function () {

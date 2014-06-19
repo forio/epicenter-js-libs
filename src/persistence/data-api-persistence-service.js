@@ -66,8 +66,9 @@ var DataService = function (config) {
          * Query collection; uses MongoDB syntax
          * @see  <TBD: Data API URL>
          *
-         * @param {String} qs Query Filter
+         * @param {String} Object Query Filter
          * @param {String} limiters @see <TBD: url for limits, paging etc>
+         * @param {Object} options Overrides for configuration options
          *
          * @example
          *     ds.query(
@@ -75,7 +76,7 @@ var DataService = function (config) {
          *      {limit: 10}
          *     )
          */
-        query: function (qs, limiters) {
+        query: function (qs, limiters, options) {
 
         },
 
@@ -83,6 +84,7 @@ var DataService = function (config) {
          * Save value to key
          * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
          * @param  {Object} value (Optional)
+         * @param  {Object} options Overrides for configuration options
          *
          * @example
          *     ds.save('person', {firstName: 'john', lastName: 'smith'});
@@ -104,20 +106,31 @@ var DataService = function (config) {
         /**
          * Load value
          * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-         * @param  {Object} value (Optional)
+         * @param {Object} filters filters & op modifiers
+         * @param {Object} options Overrides for configuration options
          *
          * @example
          *     ds.save('person', {firstName: 'john', lastName: 'smith'});
          *     ds.save({name:'smith', age:'32'});
          */
-        load: function (key, outputModifiers, options) {
-           var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
-           return http.get(outputModifiers, httpOptions);
+        load: function (key, filters, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
+            if (!filters) filters = {};
+
+            $.each(filters, function(key, value) {
+                if($.isPlainObject(value)) {
+                    // support formats like ?sort={"fieldName1": 1, "fieldName2": -1}
+                    filters[key] = JSON.stringify(value);
+                }
+            });
+
+            return http.get(filters, httpOptions);
         },
 
         /**
          * Removes key from collection
-         * @param {String| Array} key key to remove
+         * @param {String| Array} key elements or field names to remove
+         * @param {Object} options Overrides for configuration options
          *
          * @example
          *     ds.remove('person');
