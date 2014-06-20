@@ -37,11 +37,7 @@
                         return $d.promise();
                     },
                     doNow: function() {
-                        var $d= $.Deferred();
-                        setTimeout(function() {
-                            $d.resolve('slow');
-                        }, SLOW);
-                        return $d.promise();
+                       return 42;
                     }
                 };
                 $.extend(this, publicAPI);
@@ -139,5 +135,14 @@
 
             fastSpy.should.have.been.calledBefore(mediumSpy);
         });
+
+        // describe('Synchronous functions', function () {
+        //     it('should not be thenable', function () {
+        //         var mf = new MockFunction();
+        //         var ret = mf.doNow();
+
+        //         ret.should.equal(42);
+        //     });
+        // });
     });
 }());
