@@ -3,11 +3,14 @@
 
     describe('Promisify utilities', function () {
         var MockFunction;
-
+        var clock;
+        var SLOW, MEDIUM, FAST;
         before(function() {
-            var SLOW = 300;
-            var MEDIUM = 200;
-            var FAST = 100;
+            SLOW = 300;
+            MEDIUM = 200;
+            FAST = 100;
+
+            clock = sinon.useFakeTimers();
 
             MockFunction = function() {
                 var publicAPI = {
@@ -49,7 +52,7 @@
         });
         after(function() {
             MockFunction = null;
-
+            clock.restore();
         });
 
         it.skip('#should chain functions', function () {
@@ -57,13 +60,15 @@
             // mf.doSlow().doFast().doMedium();
         });
         it('#should be thenable', function() {
-            var cb = sinon.spy(function(){console.log('spy called!', arguments);});
+            var cb = sinon.spy();
             var mf = new MockFunction();
-            mf.doFast('fast').then(spy);
+            mf.doFast('fast').then(cb);
 
-            // cb.should.have.been.called;
-            // cb.should.have.been.calledWith('fast');
-            // cb.should.have.been.calledOn(mf);
+            clock.tick(FAST);
+
+            cb.should.have.been.called;
+            cb.should.have.been.calledWith('fast');
+            cb.should.have.been.calledOn(mf);
         });
     });
 }());

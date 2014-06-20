@@ -14,11 +14,10 @@ var promisify= function (api) {
         var item = pending.shift();
 
         console.log("Doing", item.name, item.args);
-        // item.$promise.resolve.apply(me);
 
         item.fn.apply(me, item.args).done(function() {
             console.log("Done", item, pending);
-            item.$promise.resolve.apply(this, arguments);
+            item.$promise.resolve.apply(me, arguments);
             if (pending.length) {
                 doSingleOp.call(me);
             } else {
