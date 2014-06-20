@@ -3,59 +3,54 @@ var root = this;
 var F = root.F;
 
 var promisify= function (context) {
-    var me = context;
     var pending = [];
 
     var $d = $.Deferred();
     var $prom = $d.promise(context);
 
-    var loopStarted = false;
-    var doSingleOp = function() {
-        var me = this;
-        loopStarted = true;
+    var isCurrentlyExecuting = false;
 
+    var executeSingle = function() {
+        isCurrentlyExecuting = true;
         var item = pending.shift();
+        // console.log("Doing", item.name, item.args);
 
-        console.log("Doing", item.name, item.args);
+        return item.fn.apply(context, item.args).then(function() {
+            // console.log("Done", item, pending);
+            item.$promise.resolve.apply(context, arguments);
 
-        return item.fn.apply(me, item.args).then(function() {
-            console.log("Done", item, pending);
-            item.$promise.resolve.apply(me, arguments);
             if (pending.length) {
-                doSingleOp.call(me);
+                executeSingle.call(context);
             } else {
-                loopStarted = false;
-                console.log('All ops complete');
+                isCurrentlyExecuting = false;
+                // console.log('All ops complete');
             }
-            return me;
+            return context;
         });
     };
-
 
     _.each(context, function(value, name) {
         if ($.isFunction(value)) {
             context[name] = _.wrap(value, function(func) {
-
                 var myid = _.uniqueId(name);
                 var passedInParams = _.toArray(arguments).slice(1);
-                // $d.resolve.apply(me, passedInParams);
 
                 var item = {
+                    id: myid,
                     fn: func,
                     name: name,
                     args: passedInParams,
                     $promise: $d
                 };
                 pending.push(item);
-                console.log("pushing", item, pending);
-                if (!loopStarted) {
-                    doSingleOp.call(me);
+                // console.log("Queued", item, pending);
+                if (!isCurrentlyExecuting) {
+                    executeSingle.call(context);
                 }
-                return me;
+                return context;
             });
         }
     });
-
 };
 
 

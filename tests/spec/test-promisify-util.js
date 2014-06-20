@@ -86,6 +86,7 @@
             var mf = new MockFunction();
             // var ret = mf.doFast('fast').then(cb1);
             var ret = mf.doFast('fast').then(cb1).doSlow('slow').then(cb2);
+
             clock.tick(FAST);
             cb1.should.have.been.called;
             cb2.should.not.have.been.called;
