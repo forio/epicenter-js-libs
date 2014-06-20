@@ -15,17 +15,17 @@
             MockFunction = function() {
                 var publicAPI = {
 
-                    doSlow: function() {
+                    doSlow: function(echo) {
                         var $d= $.Deferred();
                         setTimeout(function() {
-                            $d.resolve('slow');
+                            $d.resolve(echo);
                         }, SLOW);
                         return $d.promise();
                     },
-                    doMedium: function() {
+                    doMedium: function(echo) {
                         var $d= $.Deferred();
                         setTimeout(function() {
-                            $d.resolve('medium');
+                            $d.resolve(echo);
                         }, MEDIUM);
                         return $d.promise();
                     },
@@ -55,10 +55,6 @@
             clock.restore();
         });
 
-        it.skip('#should chain functions', function () {
-            var mf = new MockFunction();
-            // mf.doSlow().doFast().doMedium();
-        });
         it('#should be thenable', function() {
             var cb = sinon.spy();
             var mf = new MockFunction();
@@ -70,5 +66,28 @@
             cb.should.have.been.calledWith('fast');
             cb.should.have.been.calledOn(mf);
         });
+
+        it.skip('#should return itself on then', function () {
+            var cb = sinon.spy();
+            var mf = new MockFunction();
+            var ret = mf.doFast('fast').then(cb);
+
+            console.log(ret);
+            // ret.should.be.instanceOf(mf);
+        });
+
+        // it('#should chain functions', function () {
+        //     var mf = new MockFunction();
+        //     var cb1 = sinon.spy();
+
+        //     console.log(mf.doSlow('hi').then(cb1));
+
+        //     clock.tick(SLOW);
+
+        //     cb1.should.have.been.called;
+        //     cb1.should.have.been.calledWith('hi');
+        //     cb1.should.have.been.calledOn(mf);
+
+        // });
     });
 }());
