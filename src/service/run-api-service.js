@@ -297,6 +297,18 @@ var RunService = function (config) {
     };
 
     var publicSyncAPI = {
+        /**
+         * Returns a variable object
+         * @see  variable service to see what you can do with it
+         * @param  {String} variableSet (Optional)
+         * @param  {Object} filters (Optional)
+         * @param {Object} outputModifier Options to include as part of the query string @see <TBD>
+         * @param {object} options Overrides for configuration options
+          *
+         * @example
+         *     rs.variable(["Price", "Sales"])
+         *     rs.variable()
+         */
         variables: function (config) {
             var vs = new VariablesService($.extend({}, serviceOptions, config, {
                 runService: this
