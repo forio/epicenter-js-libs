@@ -11,21 +11,23 @@ var promisify= function (context) {
     var isCurrentlyExecuting = false;
 
     var executeSingle = function() {
+        var me = this;
+
         isCurrentlyExecuting = true;
         var item = pending.shift();
         // console.log("Doing", item.name, item.args);
 
-        return item.fn.apply(context, item.args).then(function() {
+        return item.fn.apply(me, item.args).then(function() {
             // console.log("Done", item, pending);
-            item.$promise.resolve.apply(context, arguments);
+            item.$promise.resolve.apply(me, arguments);
 
             if (pending.length) {
-                executeSingle.call(context);
+                executeSingle.call(me);
             } else {
                 isCurrentlyExecuting = false;
                 // console.log('All ops complete');
             }
-            return context;
+            return me;
         });
     };
 
