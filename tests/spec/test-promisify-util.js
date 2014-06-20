@@ -76,18 +76,47 @@
             // ret.should.be.instanceOf(mf);
         });
 
-        // it('#should chain functions', function () {
-        //     var mf = new MockFunction();
-        //     var cb1 = sinon.spy();
+        it('#should chain functions', function () {
+            var mf = new MockFunction();
+            var slowSpy = sinon.spy(mf, 'doSlow');
 
-        //     console.log(mf.doSlow('hi').then(cb1));
+            var slow = slowSpy('slow');
 
-        //     clock.tick(SLOW);
+            var fastSpy = sinon.spy(slow, 'doFast');
+            var fast = fastSpy('fast');
 
-        //     cb1.should.have.been.called;
-        //     cb1.should.have.been.calledWith('hi');
-        //     cb1.should.have.been.calledOn(mf);
+            var mediumSpy = sinon.spy(fast, 'doMedium');
+            var medium = mediumSpy('medium');
 
-        // });
+            // clock.tick(SLOW);
+
+            slowSpy.should.have.been.called;
+            slowSpy.should.have.been.calledWith('slow');
+
+            fastSpy.should.have.been.called;
+            fastSpy.should.have.been.calledWith('fast');
+
+            mediumSpy.should.have.been.called;
+            mediumSpy.should.have.been.calledWith('medium');
+
+        });
+
+        it('#should have executed chained functions in the right order', function () {
+            var mf = new MockFunction();
+            var slowSpy = sinon.spy(mf, 'doSlow');
+
+            var slow = slowSpy('slow');
+
+            var fastSpy = sinon.spy(slow, 'doFast');
+            var fast = fastSpy('fast');
+
+            var mediumSpy = sinon.spy(fast, 'doMedium');
+            var medium = mediumSpy('medium');
+
+            slowSpy.should.have.been.calledBefore(fastSpy);
+            slowSpy.should.have.been.calledBefore(mediumSpy);
+
+            fastSpy.should.have.been.calledBefore(mediumSpy);
+        });
     });
 }());
