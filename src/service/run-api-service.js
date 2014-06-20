@@ -281,6 +281,8 @@ var RunService = function (config) {
          *     rs.parallel(['solve', 'reset']);
          */
         parallel: function (operations, params, options) {
+            var $d = $.Deferred();
+
             var opParams = rutil.normalizeOperations(operations, params);
             var ops = opParams[0];
             var args = opParams[1];
@@ -292,7 +294,12 @@ var RunService = function (config) {
                     this.do(ops[i], args[i])
                 );
             }
-            $.when.apply(this, queue).done(postOptions.success);
+            $.when.apply(this, queue).done(function() {
+                $d.resolve.apply(this, arguments);
+                postOptions.success.apply(this.arguments);
+            });
+
+            return $d.promise();
         }
     };
 
