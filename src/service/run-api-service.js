@@ -54,6 +54,13 @@ var RunService = function (config) {
          */
         project: '',
 
+        //TODO: Move filter here from urlconfig
+        // *
+        //  * Default filter for the service to filter by
+        //  * T
+
+        // filter: '',
+
         /** Called when the call completes successfully **/
         success: $.noop,
 
@@ -95,7 +102,7 @@ var RunService = function (config) {
 
         /**
          * Create a new run
-         * @param {Object} model Model file to create the run with
+         * @param {String|Object} model Model file to create the run with, or object with model and other properties
          * @param {object} options Overrides for configuration options
           *
          * @example
@@ -104,15 +111,17 @@ var RunService = function (config) {
                  })
          *
          */
-        create: function(model, options) {
+        create: function(params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, {url: urlConfig.getAPIPath('run')});
+            if (typeof params === 'string') params = {model: params};
+
             createOptions.success = _.wrap(createOptions.success, function(fn, response) {
                 urlConfig.filter = response.id; //all future chained calls to operate on this id
-                fn.call(this, response);
+                return fn.call(this, response);
             });
 
             urlConfig.filter = ';';
-            return http.post({model: model}, createOptions);
+            return http.post(params, createOptions);
         },
 
         /**
@@ -325,7 +334,7 @@ var RunService = function (config) {
     };
 
     $.extend(this, publicAsyncAPI);
-    futil.promisify(this);
+    // futil.promisify(this);
 
     $.extend(this, publicSyncAPI);
 };

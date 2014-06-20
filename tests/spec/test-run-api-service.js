@@ -49,7 +49,7 @@
             should.not.exist(req.requestHeaders.Authorization);
         });
 
-        it('should chain', function () {
+        it.skip('should chain', function () {
             var rs = new RunService({account: 'forio', project: 'js-libs', token: 'abc'});
             rs
                 .create('model.jl')
@@ -105,6 +105,18 @@
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
                 req.requestBody.should.equal(JSON.stringify({model: 'model.jl'}));
+
+            });
+
+            it('Takes in object params', function() {
+                var params = {model: 'model.jl', user: 'x'};
+
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.create(params);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
+                req.requestBody.should.equal(JSON.stringify(params));
 
             });
         });
