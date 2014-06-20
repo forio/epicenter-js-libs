@@ -49,7 +49,7 @@
             should.not.exist(req.requestHeaders.Authorization);
         });
 
-        it.only('should chain', function () {
+        it('should chain', function () {
             var rs = new RunService({account: 'forio', project: 'js-libs', token: 'abc'});
             rs
                 .create('model.jl')
