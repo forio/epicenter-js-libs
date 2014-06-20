@@ -105,8 +105,6 @@
             var mediumSpy = sinon.spy(fast, 'doMedium');
             var medium = mediumSpy('medium');
 
-            // clock.tick(SLOW);
-
             slowSpy.should.have.been.called;
             slowSpy.should.have.been.calledWith('slow');
 
@@ -118,7 +116,7 @@
 
         });
 
-        it('#should have executed chained functions in the right order', function () {
+        it('should have executed chained functions in the right order', function () {
             var mf = new MockFunction();
             var slowSpy = sinon.spy(mf, 'doSlow');
 
@@ -136,6 +134,19 @@
             fastSpy.should.have.been.calledBefore(mediumSpy);
         });
 
+        it('should run multiple queries in parallel', function () {
+            var mf = new MockFunction();
+            var cb1 = sinon.spy();
+            var cb2 = sinon.spy();
+
+            mf.doFast(1).then(cb1);
+            mf.doFast(2).then(cb2);
+
+            clock.tick(FAST);
+
+            cb1.should.have.been.called;
+            cb2.should.have.been.called;
+        });
         // describe('Synchronous functions', function () {
         //     it('should not be thenable', function () {
         //         var mf = new MockFunction();
