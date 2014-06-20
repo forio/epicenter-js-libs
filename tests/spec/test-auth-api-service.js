@@ -6,7 +6,7 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            server.respondWith(/(.*)\/run\/(.*)\/(.*)/, function (xhr, id){
+            server.respondWith(/(.*)\/auth\/(.*)\/(.*)/, function (xhr, id){
                 xhr.respond(200, { 'Content-Type': 'application/json'}, JSON.stringify({url: xhr.url}));
             });
             server.autoRespond = true;

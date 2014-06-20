@@ -225,6 +225,7 @@ var RunService = function (config) {
          *     rs.do({name:'add', arguments:[2,4]})
          */
         do: function (operation, params, options) {
+            console.log('do', operation, params);
             var opsArgs;
             var postOptions;
             if (options) {
@@ -265,6 +266,7 @@ var RunService = function (config) {
             var args = opParams[1];
             var me = this;
 
+            var $d = $.Deferred();
             var postOptions = $.extend({success: $.noop}, options);
 
             var doSingleOp = function() {
@@ -274,12 +276,15 @@ var RunService = function (config) {
                     if (ops.length) {
                         doSingleOp();
                     } else {
+                        $d.resolve.apply(this, arguments);
                         postOptions.success.apply(this, arguments);
                     }
                 }});
             };
 
             doSingleOp();
+
+            return $d.promise();
         },
 
         /**
@@ -304,14 +309,61 @@ var RunService = function (config) {
                     this.do(ops[i], args[i])
                 );
             }
-            $.when.apply(null, queue).done(postOptions.success);
+            $.when.apply(this, queue).done(postOptions.success);
         }
     };
 
-    var  defer = $.Deferred();
-    defer.promise(publicAPI);
+    var me = this;
+    var pendingFunctions = [];
+    var pendingFunctionNames = [];
+    var pendingFunctionParams = [];
+
+    var loopStarted = false;
+    var doSingleOp = function() {
+        loopStarted = true;
+
+        var fn = pendingFunctions.shift();
+        var arg = pendingFunctionParams.shift();
+        var name = pendingFunctionNames.shift();
+
+        console.log("Doing", name, arg);
+        fn.apply(me, arg).then(function() {
+            console.log("Done", name, arg, pendingFunctions);
+            if (pendingFunctions.length) {
+                doSingleOp();
+            } else {
+                loopStarted = false;
+                console.log('All ops complete');
+                // $d.resolve.apply(this, arguments);
+            }
+        });
+    };
+
+    _.each(publicAPI, function(value, name) {
+        if ($.isFunction(value)) {
+
+
+            publicAPI[name] = _.wrap(value, function(func) {
+                var myid = _.uniqueId(name);
+                var passedInParams = _.toArray(arguments).slice(1);
+
+                // console.log(name, myid, 'here, am the first');
+                pendingFunctions.push(func);
+                pendingFunctionNames.push(name);
+                pendingFunctionParams.push(passedInParams);
+
+                // console.log("pushing", name, passedInParams, pendingFunctions);
+                if (!loopStarted) {
+                    doSingleOp();
+                }
+                return me;
+            });
+        }
+    });
 
     $.extend(this, publicAPI);
+    // var  defer = $.Deferred();
+    // defer.promise(this);
 };
 
 if (typeof exports !== 'undefined') {

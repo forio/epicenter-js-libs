@@ -8,11 +8,27 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            server.respondWith(/(.*)\/run\/(.*)\/(.*)/, function (xhr, id){
+            server.respondWith('PATCH',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id){
                 xhr.respond(200, { 'Content-Type': 'application/json'}, JSON.stringify({url: xhr.url}));
             });
-            server.autoRespond = true;
+            server.respondWith('GET',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id){
+                xhr.respond(200, { 'Content-Type': 'application/json'}, JSON.stringify({url: xhr.url}));
+            });
+            server.respondWith('POST',  /(.*)\/run\/(.*)\/(.*)/,  function (xhr, id){
+                var resp = {
+                    "id": "065dfe50-d29d-4b55-a0fd-30868d7dd26c",
+                    "model": "model.vmf",
+                    "account": "mit",
+                    "project": "afv",
+                    "saved": false,
+                    "lastModified": "2014-06-20T04:09:45.738Z",
+                    "created": "2014-06-20T04:09:45.738Z"
+                };
+                xhr.respond(201, { 'Content-Type': 'application/json'}, JSON.stringify(resp));
+            });
 
+
+            server.autoRespond = true;
         });
 
         after(function () {
@@ -33,6 +49,32 @@
             should.not.exist(req.requestHeaders.Authorization);
         });
 
+        it('should chain', function () {
+            var rs = new RunService({account: 'forio', project: 'js-libs', token: 'abc'});
+            rs
+                .create('model.jl')
+                .save({saved: true})
+                .query({saved: true});
+
+
+            server.respond();
+            server.respond();
+            server.respond();
+
+            server.requests.length.should.equal(3);
+
+            var req = server.requests.shift();
+            req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
+            req.requestBody.should.equal(JSON.stringify({model: 'model.jl'}));
+
+            req = server.requests.shift();
+            req.url.should.equal('https://api.forio.com/run/forio/js-libs/065dfe50-d29d-4b55-a0fd-30868d7dd26c/');
+            req.requestBody.should.equal(JSON.stringify({saved: true}));
+
+            req = server.requests.shift();
+            req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/');
+
+        });
         describe('#create()', function () {
             it('should do a POST', function() {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
