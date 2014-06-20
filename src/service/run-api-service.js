@@ -314,49 +314,48 @@ var RunService = function (config) {
     };
 
     var me = this;
-    var pendingFunctions = [];
-    var pendingFunctionNames = [];
-    var pendingFunctionParams = [];
+    var pending = [];
 
     var loopStarted = false;
     var doSingleOp = function() {
         loopStarted = true;
 
-        var fn = pendingFunctions.shift();
-        var arg = pendingFunctionParams.shift();
-        var name = pendingFunctionNames.shift();
+        var item = pending.shift();
 
-        console.log("Doing", name, arg);
-        fn.apply(me, arg).then(function() {
-            console.log("Done", name, arg, pendingFunctions);
-            if (pendingFunctions.length) {
+        console.log("Doing", item.name, item.args);
+        item.fn.apply(me, item.args).then(function() {
+            console.log("Done", item.name, item.args, pending);
+            item.$promise.resolve.apply(me, arguments);
+            if (pending.length) {
                 doSingleOp();
             } else {
                 loopStarted = false;
                 console.log('All ops complete');
-                // $d.resolve.apply(this, arguments);
             }
         });
     };
 
     _.each(publicAPI, function(value, name) {
         if ($.isFunction(value)) {
-
-
             publicAPI[name] = _.wrap(value, function(func) {
+                var $d = $.Deferred();
+                var $prom = $d.promise(me);
+
                 var myid = _.uniqueId(name);
                 var passedInParams = _.toArray(arguments).slice(1);
 
-                // console.log(name, myid, 'here, am the first');
-                pendingFunctions.push(func);
-                pendingFunctionNames.push(name);
-                pendingFunctionParams.push(passedInParams);
-
-                // console.log("pushing", name, passedInParams, pendingFunctions);
+                var item = {
+                    fn: func,
+                    name: name,
+                    args: passedInParams,
+                    $promise: $d
+                };
+                pending.push(item);
+                console.log("pushing", item, pending);
                 if (!loopStarted) {
                     doSingleOp();
                 }
-                return me;
+                return $prom;
             });
         }
     });
