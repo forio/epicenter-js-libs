@@ -12,13 +12,14 @@
 var root = this;
 var F = root.F;
 
-var $, ConfigService, qutil, rutil, urlService, httpTransport, VariableService;
+var $, ConfigService, qutil, rutil, futil, urlService, httpTransport, VariableService;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
     VariablesService = require('service/variables-api-service');
     qutil = require('util/query-util');
-    rutil = require('util/run-util');
+    rutil = require('util/promisify-util');
+    futil = require('util/run-util');
 }
 else {
     $ = jQuery;
@@ -26,6 +27,7 @@ else {
     VariablesService = F.service.Variables;
     qutil = F.util.query;
     rutil = F.util.run;
+    futil = F.util;
     httpTransport = F.transport.HTTP;
 }
 
@@ -88,7 +90,7 @@ var RunService = function (config) {
     }
     var http = httpTransport(httpOptions);
 
-    var publicAPI = {
+    var publicAsyncAPI = {
         urlConfig: urlConfig,
 
         /**
@@ -193,25 +195,6 @@ var RunService = function (config) {
             return http.patch(attributes, httpOptions);
         },
 
-        /**
-         * Returns a variable object
-         * @see  variable service to see what you can do with it
-         * @param  {String} variableSet (Optional)
-         * @param  {Object} filters (Optional)
-         * @param {Object} outputModifier Options to include as part of the query string @see <TBD>
-         * @param {object} options Overrides for configuration options
-          *
-         * @example
-         *     rs.variable(["Price", "Sales"])
-         *     rs.variable()
-         */
-        variables: function (config) {
-            var vs = new VariablesService($.extend({}, serviceOptions, config, {
-                runService: this
-            }));
-            return vs;
-        },
-
         //##Operations
         /**
          * Call an operation on the model
@@ -313,56 +296,19 @@ var RunService = function (config) {
         }
     };
 
-    var me = this;
-    var pending = [];
-
-    var loopStarted = false;
-    var doSingleOp = function() {
-        loopStarted = true;
-
-        var item = pending.shift();
-
-        console.log("Doing", item.name, item.args);
-        item.fn.apply(me, item.args).then(function() {
-            console.log("Done", item.name, item.args, pending);
-            item.$promise.resolve.apply(me, arguments);
-            if (pending.length) {
-                doSingleOp();
-            } else {
-                loopStarted = false;
-                console.log('All ops complete');
-            }
-        });
+    var publicSyncAPI = {
+        variables: function (config) {
+            var vs = new VariablesService($.extend({}, serviceOptions, config, {
+                runService: this
+            }));
+            return vs;
+        }
     };
 
-    _.each(publicAPI, function(value, name) {
-        if ($.isFunction(value)) {
-            publicAPI[name] = _.wrap(value, function(func) {
-                var $d = $.Deferred();
-                var $prom = $d.promise(me);
+    $.extend(this, publicAsyncAPI);
+    futil.promisify(this);
 
-                var myid = _.uniqueId(name);
-                var passedInParams = _.toArray(arguments).slice(1);
-
-                var item = {
-                    fn: func,
-                    name: name,
-                    args: passedInParams,
-                    $promise: $d
-                };
-                pending.push(item);
-                console.log("pushing", item, pending);
-                if (!loopStarted) {
-                    doSingleOp();
-                }
-                return $prom;
-            });
-        }
-    });
-
-    $.extend(this, publicAPI);
-    // var  defer = $.Deferred();
-    // defer.promise(this);
+    $.extend(this, publicSyncAPI);
 };
 
 if (typeof exports !== 'undefined') {
