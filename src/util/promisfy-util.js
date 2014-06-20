@@ -2,9 +2,12 @@
 var root = this;
 var F = root.F;
 
-var promisify= function (api) {
-    var me = this;
+var promisify= function (context) {
+    var me = context;
     var pending = [];
+
+    var $d = $.Deferred();
+    var $prom = $d.promise(context);
 
     var loopStarted = false;
     var doSingleOp = function() {
@@ -15,7 +18,7 @@ var promisify= function (api) {
 
         console.log("Doing", item.name, item.args);
 
-        item.fn.apply(me, item.args).done(function() {
+        return item.fn.apply(me, item.args).then(function() {
             console.log("Done", item, pending);
             item.$promise.resolve.apply(me, arguments);
             if (pending.length) {
@@ -24,14 +27,14 @@ var promisify= function (api) {
                 loopStarted = false;
                 console.log('All ops complete');
             }
+            return me;
         });
     };
 
-    _.each(api, function(value, name) {
+
+    _.each(context, function(value, name) {
         if ($.isFunction(value)) {
-            api[name] = _.wrap(value, function(func) {
-                var $d = $.Deferred();
-                var $prom = $d.promise(me);
+            context[name] = _.wrap(value, function(func) {
 
                 var myid = _.uniqueId(name);
                 var passedInParams = _.toArray(arguments).slice(1);
@@ -53,7 +56,6 @@ var promisify= function (api) {
         }
     });
 
-    return api;
 };
 
 

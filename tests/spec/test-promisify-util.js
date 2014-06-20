@@ -44,8 +44,8 @@
                         return $d.promise();
                     }
                 };
-                publicAPI = futil.promisify.call(this, publicAPI);
                 $.extend(this, publicAPI);
+                futil.promisify(this);
             };
 
 
@@ -67,13 +67,33 @@
             cb.should.have.been.calledOn(mf);
         });
 
-        it.skip('#should return itself on then', function () {
-            var cb = sinon.spy();
+        it('#should return a promise on then', function () {
+            var cb1 = sinon.spy();
+            var cb2 = sinon.spy();
             var mf = new MockFunction();
-            var ret = mf.doFast('fast').then(cb);
+            var ret = mf.doFast('fast').then(cb1).then(cb2);
 
-            console.log(ret);
-            // ret.should.be.instanceOf(mf);
+            clock.tick(FAST);
+
+            cb1.should.have.been.called;
+            cb2.should.have.been.called;
+
+        });
+
+        it('#should return itself on then', function () {
+            var cb1 = sinon.spy();
+            var cb2 = sinon.spy();
+            var mf = new MockFunction();
+            // var ret = mf.doFast('fast').then(cb1);
+            var ret = mf.doFast('fast').then(cb1).doSlow('slow').then(cb2);
+            clock.tick(FAST);
+            cb1.should.have.been.called;
+            cb2.should.not.have.been.called;
+
+            clock.tick(SLOW);
+            cb2.should.have.been.called;
+
+            cb1.should.have.been.calledBefore(cb2);
         });
 
         it('#should chain functions', function () {
