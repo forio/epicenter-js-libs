@@ -11,8 +11,11 @@ var query= function () {
          */
         toMatrixFormat: function(qs) {
             var returnArray = [];
+            var OPERATORS = ['<', '>', '!'];
             $.each(qs, function(key, value) {
-                returnArray.push(key + '=' + value);
+                if (typeof value !== 'string' || $.inArray(value.charAt(0), OPERATORS) === -1)
+                    value = '=' + value;
+                returnArray.push(key + value);
             });
 
             var mtrx = ';' + returnArray.join(';');

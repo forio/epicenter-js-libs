@@ -11,6 +11,13 @@
             it('should convert multi-key objects to semicolon-seperated values', function () {
                 qutils.toMatrixFormat({a: 2, b: 3}).should.equal(';a=2;b=3');
             });
+            it('should convert arithmetic operators', function () {
+                qutils.toMatrixFormat({a: 2, b: '<3'}).should.equal(';a=2;b<3');
+                qutils.toMatrixFormat({a: 2, b: '>3'}).should.equal(';a=2;b>3');
+                qutils.toMatrixFormat({a: 2, b: '!=3'}).should.equal(';a=2;b!=3');
+                qutils.toMatrixFormat({a: 2, b: '>=3'}).should.equal(';a=2;b>=3');
+                qutils.toMatrixFormat({a: 2, b: '<=3'}).should.equal(';a=2;b<=3');
+            });
         });
 
         describe('#toQueryFormat()', function () {
