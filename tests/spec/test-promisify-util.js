@@ -18,6 +18,7 @@
                     doSlow: function(echo) {
                         var $d= $.Deferred();
                         setTimeout(function() {
+                            console.log('slow');
                             $d.resolve(echo);
                         }, SLOW);
                         return $d.promise();
@@ -32,6 +33,7 @@
                     doFast: function(echo) {
                         var $d= $.Deferred();
                         setTimeout(function() {
+                            console.log('fast');
                             $d.resolve(echo);
                         }, FAST);
                         return $d.promise();
@@ -44,6 +46,7 @@
                 futil.promisify(this);
             };
 
+            window.mf = MockFunction;
             window.m  = new MockFunction();
 
         });
