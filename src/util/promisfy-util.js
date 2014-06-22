@@ -17,8 +17,8 @@ var promisify= function (context) {
         var item = pending.shift();
         if (item.args && $.isFunction(item.args[0])) {
             item.args[0] = _.wrap(item.args[0], function(fn) {
-                fn.call(me, lastResult);
-                return me;
+                var fnResult = fn.call(me, lastResult);
+                return (fnResult !== null && fnResult !== undefined) ? fnResult : me;
             });
         }
         // console.log("Doing", item.name, item.args);
@@ -26,7 +26,6 @@ var promisify= function (context) {
         if (result && result.pipe) {
             result.then(function() {
                 lastResult = arguments[0];
-
                 if (pending.length) {
                     executeSingle.call(me);
                 } else {
@@ -36,14 +35,24 @@ var promisify= function (context) {
                 return me;
             });
         }
+        else if(result){
+            lastResult = result;
+            if (pending.length) {
+                executeSingle.call(me);
+            } else {
+                isCurrentlyExecuting = false;
+                // console.log('All ops complete');
+            }
+            return lastResult;
+        }
         else {
             if (pending.length) {
-              executeSingle.call(me);
-          } else {
-              isCurrentlyExecuting = false;
-              // console.log('All ops complete');
-          }
-          return me;
+                executeSingle.call(me);
+            } else {
+                isCurrentlyExecuting = false;
+                // console.log('All ops complete');
+            }
+            return me;
         }
     };
 

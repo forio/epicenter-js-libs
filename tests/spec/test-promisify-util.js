@@ -59,7 +59,7 @@
         });
 
         describe('thenable', function () {
-            it('#should be thenable', function() {
+            it('should be thenable', function() {
                 var cb = sinon.spy();
                 var mf = new MockFunction();
                 mf.doFast('fast').then(cb);
@@ -71,7 +71,7 @@
                 cb.should.have.been.calledOn(mf);
             });
 
-            it('#should chain thens', function () {
+            it('should chain thens', function () {
                 var cb1 = sinon.spy();
                 var cb2 = sinon.spy();
                 var mf = new MockFunction();
@@ -83,7 +83,22 @@
                 cb2.should.have.been.called;
             });
 
-            it('#should return itself on then', function () {
+            it('should pass the parameters of previous function to then', function () {
+                var cb1 = sinon.spy(function() {
+                    return 42;
+                });
+                var cb2 = sinon.spy();
+                var mf = new MockFunction();
+                var ret = mf.doFast('fast').then(cb1).then(cb2);
+
+                clock.tick(FAST);
+
+                cb1.should.have.been.calledWith('fast');
+                cb2.should.have.been.calledWith(42);
+            });
+
+
+            it('should return itself on then', function () {
                 var cb1 = sinon.spy();
                 var cb2 = sinon.spy();
                 var mf = new MockFunction();
@@ -96,7 +111,7 @@
         });
 
 
-        it('#should chain its own functions', function () {
+        it('should chain its own functions', function () {
             var mf = new MockFunction();
             var slowSpy = sinon.spy(mf, 'doSlow');
 
@@ -119,7 +134,7 @@
 
         });
 
-        it('#should not execute functions till previous completes', function () {
+        it('should not execute functions till previous completes', function () {
             var cb1 = sinon.spy();
             var cb2 = sinon.spy();
             var mf = new MockFunction();
