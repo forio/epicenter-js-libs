@@ -40,6 +40,9 @@
                     },
                     doNow: function() {
                        return 42;
+                    },
+                    then: function(fn) {
+                        return fn.call(this);
                     }
                 };
                 $.extend(this, publicAPI);

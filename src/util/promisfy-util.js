@@ -6,6 +6,7 @@ var promisify= function (context) {
     var pending = [];
 
     var isCurrentlyExecuting = false;
+    var lastResult = null;
 
     var executeSingle = function() {
         var me = this;
@@ -14,10 +15,18 @@ var promisify= function (context) {
 
         isCurrentlyExecuting = true;
         var item = pending.shift();
+        if (item.args && $.isFunction(item.args[0])) {
+            item.args[0] = _.wrap(item.args[0], function(fn) {
+                fn.call(me, lastResult);
+                return me;
+            });
+        }
         // console.log("Doing", item.name, item.args);
         var result = item.fn.apply(me, item.args);
-        if (result.pipe) {
+        if (result && result.pipe) {
             result.then(function() {
+                lastResult = arguments[0];
+
                 if (pending.length) {
                     executeSingle.call(me);
                 } else {
@@ -26,6 +35,15 @@ var promisify= function (context) {
                 }
                 return me;
             });
+        }
+        else {
+            if (pending.length) {
+              executeSingle.call(me);
+          } else {
+              isCurrentlyExecuting = false;
+              // console.log('All ops complete');
+          }
+          return me;
         }
     };
 
