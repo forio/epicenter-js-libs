@@ -44,6 +44,7 @@
                 futil.promisify(this);
             };
 
+            window.m  = new MockFunction();
 
         });
         after(function() {
@@ -81,13 +82,13 @@
             var cb2 = sinon.spy();
             var mf = new MockFunction();
             // var ret = mf.doFast('fast').then(cb1);
-            var ret = mf.doFast('fast').then(cb1).doSlow('slow').then(cb2);
+            var ret = mf.doSlow('slow').then(cb1).doFast('fast').then(cb2);
 
-            clock.tick(FAST);
+            clock.tick(SLOW);
             cb1.should.have.been.called;
             cb2.should.not.have.been.called;
 
-            clock.tick(SLOW);
+            clock.tick(FAST);
             cb2.should.have.been.called;
 
             cb1.should.have.been.calledBefore(cb2);
