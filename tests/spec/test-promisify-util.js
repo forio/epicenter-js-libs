@@ -58,7 +58,7 @@
             clock.restore();
         });
 
-        describe('thenable', function () {
+        describe('then', function () {
             it('should be thenable', function() {
                 var cb = sinon.spy();
                 var mf = new MockFunction();
@@ -83,18 +83,20 @@
                 cb2.should.have.been.called;
             });
 
-            it('should pass the parameters of previous function to then', function () {
+            it('should pass the result of previous function to then', function () {
                 var cb1 = sinon.spy(function() {
                     return 42;
                 });
                 var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
                 var mf = new MockFunction();
-                var ret = mf.doFast('fast').then(cb1).then(cb2);
+                var ret = mf.doFast('fast').then(cb1).then(cb2).then(cb3);
 
                 clock.tick(FAST);
 
                 cb1.should.have.been.calledWith('fast');
                 cb2.should.have.been.calledWith(42);
+                cb2.should.have.been.calledWith(42); //Should this be undefined?
             });
 
 

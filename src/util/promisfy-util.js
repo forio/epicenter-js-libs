@@ -6,18 +6,27 @@ var promisify= function (context) {
     var pending = [];
 
     var isCurrentlyExecuting = false;
-    var lastResult = null;
+    var lastResult;
 
     var executeSingle = function() {
         var me = this;
         console.log(me.test);
         me.test = true;
 
+        var doNext = function() {
+            if (pending.length) {
+                executeSingle.call(me);
+            } else {
+                isCurrentlyExecuting = false;
+                // console.log('All ops complete');
+            }
+        };
+
         isCurrentlyExecuting = true;
         var item = pending.shift();
         if (item.args && $.isFunction(item.args[0])) {
             item.args[0] = _.wrap(item.args[0], function(fn) {
-                var fnResult = fn.call(me, lastResult);
+                var fnResult = fn.apply(me, [].concat(lastResult));
                 return (fnResult !== null && fnResult !== undefined) ? fnResult : me;
             });
         }
@@ -25,33 +34,14 @@ var promisify= function (context) {
         var result = item.fn.apply(me, item.args);
         if (result && result.pipe) {
             result.then(function() {
-                lastResult = arguments[0];
-                if (pending.length) {
-                    executeSingle.call(me);
-                } else {
-                    isCurrentlyExecuting = false;
-                    // console.log('All ops complete');
-                }
+                lastResult = _.toArray(arguments);
+                doNext();
                 return me;
             });
         }
-        else if(result){
-            lastResult = result;
-            if (pending.length) {
-                executeSingle.call(me);
-            } else {
-                isCurrentlyExecuting = false;
-                // console.log('All ops complete');
-            }
-            return lastResult;
-        }
         else {
-            if (pending.length) {
-                executeSingle.call(me);
-            } else {
-                isCurrentlyExecuting = false;
-                // console.log('All ops complete');
-            }
+            lastResult = result;
+            doNext();
             return me;
         }
     };
