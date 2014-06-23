@@ -49,7 +49,7 @@
             should.not.exist(req.requestHeaders.Authorization);
         });
 
-        it.skip('should chain', function () {
+        it('should chain', function () {
             var rs = new RunService({account: 'forio', project: 'js-libs', token: 'abc'});
             rs
                 .create('model.jl')
@@ -75,7 +75,7 @@
             req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/');
         });
 
-        it.skip('should return promiseables', function () {
+        it('should return promiseables', function () {
             var callback = sinon.spy();
             var rs = new RunService({account: 'forio', project: 'js-libs'});
             rs

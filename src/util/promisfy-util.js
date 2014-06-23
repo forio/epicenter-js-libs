@@ -8,6 +8,13 @@ var promisify= function (context) {
     var isCurrentlyExecuting = false;
     var lastResult;
 
+
+    $.extend(context, {
+        then: function(fn) {
+            return fn.call(this);
+        }
+    });
+
     var executeSingle = function() {
         var me = this;
 
