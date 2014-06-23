@@ -34,13 +34,14 @@ var AuthService = function (config) {
         store: 'session'
     };
 
-    var options = $.extend({}, defaults, config);
-    var urlConfig = ConfigService(options).get('server');
+    var serviceOptions = $.extend({}, defaults, config);
+
+    var urlConfig = ConfigService(serviceOptions).get('server');
     var http = httpTransport({
         url: urlConfig.getAPIPath('authentication')
     });
 
-    var store = new PersistenceService(options.store);
+    var store = new PersistenceService(serviceOptions.store);
     var EPI_COOKIE_KEY = 'epicenter.token';
 
     var token;
@@ -63,8 +64,9 @@ var AuthService = function (config) {
          * @param {object} options Overrides for configuration options
          */
         login: function (username, password, options) {
-            if (!options) options = { success: $.noop };
-            options.success = _.wrap(options.success, function(fn, data) {
+            var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
+
+            httpOptions.success = _.wrap(httpOptions.success, function(fn, data) {
                 currentPassword = password;
                 currentUsername = username;
 
@@ -73,7 +75,7 @@ var AuthService = function (config) {
                 fn.call(this, data);
             });
 
-            return http.post({userName: username, password: password}, options);
+            return http.post({userName: username, password: password}, httpOptions);
         },
 
         /**
@@ -90,12 +92,14 @@ var AuthService = function (config) {
          * @param {object} options Overrides for configuration options
          */
         getToken: function (options) {
+            var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
+
             var $d = $.Deferred();
             if (token) {
                 $d.resolve(token);
             }
             else {
-                this.login(currentUsername, currentPassword, options).then(function() {
+                this.login(currentUsername, currentPassword, httpOptions).then(function() {
                     $.resolve(token);
                 });
             }
