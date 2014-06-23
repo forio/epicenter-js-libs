@@ -153,6 +153,7 @@
             });
 
             it('should be idempotent across multiple queries', function () {
+                server.requests = [];
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.query({saved: true, '.price': '>1'}).query({saved: false, '.sales': '<4'});
                 server.respond();
@@ -164,6 +165,8 @@
                 server.respond();
 
                 server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.sales<4/');
+                server.requests = [];
+
             });
             it('should convert op modifiers to query strings', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
@@ -307,7 +310,6 @@
                 rs.load('myfancyrunid2', {include: 'score'});
                 rs.urlConfig.filter = 'myfancyrunid2';
             });
-
         });
     });
 })();

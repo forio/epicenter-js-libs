@@ -168,7 +168,16 @@
             fastSpy.should.have.been.calledBefore(mediumSpy);
         });
 
+        // it('should call the same fn twice', function () {
+        //     var mf = new MockFunction();
+        //     var fastSpy = sinon.spy(mf, 'doFast');
+        //     var fastSpy2 = sinon.spy(fastSpy, 'doFast');
 
+        //     mf.doFast().doFast();
+
+        //     fastSpy.should.have.been.called;
+        //     fastSpy2.should.have.been.called;
+        // });
 
 
 

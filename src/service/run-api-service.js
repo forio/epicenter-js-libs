@@ -97,6 +97,32 @@ var RunService = function (config) {
     }
     var http = httpTransport(httpOptions);
 
+    //FIXME: Moving this to a private function temporarily, because promisify breaks with functions which call others
+    var doOp = function(operation, params, options) {
+        // console.log('do', operation, params);
+        var opsArgs;
+        var postOptions;
+        if (options) {
+            opsArgs = params;
+            postOptions = options;
+        }
+        else {
+            if ($.isPlainObject(params)) {
+                opsArgs = null;
+                postOptions = params;
+            }
+            else {
+                opsArgs = params;
+            }
+        }
+        var opParams = rutil.normalizeOperations(operation, opsArgs);
+        var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
+
+        return http.post(opParams[1], $.extend(true, {}, httpOptions, {
+            url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
+        }));
+    };
+
     var publicAsyncAPI = {
         urlConfig: urlConfig,
 
@@ -216,30 +242,7 @@ var RunService = function (config) {
          *     rs.do('add', [1,2]);
          *     rs.do({name:'add', arguments:[2,4]})
          */
-        do: function (operation, params, options) {
-            // console.log('do', operation, params);
-            var opsArgs;
-            var postOptions;
-            if (options) {
-                opsArgs = params;
-                postOptions = options;
-            }
-            else {
-                if ($.isPlainObject(params)) {
-                    opsArgs = null;
-                    postOptions = params;
-                }
-                else {
-                    opsArgs = params;
-                }
-            }
-            var opParams = rutil.normalizeOperations(operation, opsArgs);
-            var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
-
-            return http.post(opParams[1], $.extend(true, {}, httpOptions, {
-                url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
-            }));
-        },
+        do: doOp,
 
         //FIXME: Figure out which one is params and which one is options
         /**
@@ -264,7 +267,7 @@ var RunService = function (config) {
             var doSingleOp = function() {
                 var op = ops.shift();
                 var arg = args.shift();
-                me.do(op, arg, {success: function() {
+                doOp(op, arg, {success: function() {
                     if (ops.length) {
                         doSingleOp();
                     } else {
@@ -300,7 +303,7 @@ var RunService = function (config) {
             var queue  = [];
             for (var i=0; i< ops.length; i++) {
                 queue.push(
-                    this.do(ops[i], args[i])
+                    doOp(ops[i], args[i])
                 );
             }
             $.when.apply(this, queue).done(function() {
