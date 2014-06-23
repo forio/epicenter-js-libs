@@ -39,6 +39,7 @@ var AjaxHTTP= function (ajaxOptions) {
         });
 
         if (options.logLevel && options.logLevel === 'DEBUG' ) {
+            console.log(options.url);
             if (options.success) {
                 options.success = _.wrap(options.success, function(fn) {
                     var fnArgs = _.toArray(arguments).slice(1); //ignore first fn argument

@@ -154,14 +154,16 @@
 
             it('should be idempotent across multiple queries', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.query({saved: true, '.price': '>1'});
+                rs.query({saved: true, '.price': '>1'}).query({saved: false, '.sales': '<4'});
+                server.respond();
 
-                var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price>1/');
+                server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price>1/');
+
 
                 rs.query({saved: false, '.sales': '<4'});
-                req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.sales<4/');
+                server.respond();
+
+                server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.sales<4/');
             });
             it('should convert op modifiers to query strings', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
