@@ -243,7 +243,7 @@
                 });
                 it('should call success callback on success', function () {
                     var callback = function() {
-                        console.log('Ops do success');
+                        // console.log('Ops do success');
                     };
                     var spy = sinon.spy(callback);
 

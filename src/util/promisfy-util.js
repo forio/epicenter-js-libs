@@ -10,8 +10,6 @@ var promisify= function (context) {
 
     var executeSingle = function() {
         var me = this;
-        console.log(me.test);
-        me.test = true;
 
         var doNext = function() {
             if (pending.length) {
@@ -49,7 +47,6 @@ var promisify= function (context) {
     _.each(context, function(value, name) {
         if ($.isFunction(value)) {
             context[name] = _.wrap(value, function(func) {
-                console.log("pending", pending.length, pending);
                 var myid = _.uniqueId(name);
                 var passedInParams = _.toArray(arguments).slice(1);
 

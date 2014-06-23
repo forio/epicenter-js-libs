@@ -18,7 +18,7 @@
                     doSlow: function(echo) {
                         var $d= $.Deferred();
                         setTimeout(function() {
-                            console.log('slow');
+                            // console.log('slow');
                             $d.resolve(echo);
                         }, SLOW);
                         return $d.promise();
@@ -33,7 +33,7 @@
                     doFast: function(echo) {
                         var $d= $.Deferred();
                         setTimeout(function() {
-                            console.log('fast');
+                            // console.log('fast');
                             $d.resolve(echo);
                         }, FAST);
                         return $d.promise();
@@ -175,7 +175,7 @@
 
 
 
-        it('should run multiple queries in parallel', function () {
+        it.skip('should run multiple queries in parallel', function () {
             var mf = new MockFunction();
             var cb1 = sinon.spy();
             var cb2 = sinon.spy();

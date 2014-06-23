@@ -217,7 +217,7 @@ var RunService = function (config) {
          *     rs.do({name:'add', arguments:[2,4]})
          */
         do: function (operation, params, options) {
-            console.log('do', operation, params);
+            // console.log('do', operation, params);
             var opsArgs;
             var postOptions;
             if (options) {
