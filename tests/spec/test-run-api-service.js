@@ -75,7 +75,7 @@
             req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/');
         });
 
-        it.skip('should return promises', function () {
+        it.skip('should return promiseables', function () {
             var callback = sinon.spy();
             var rs = new RunService({account: 'forio', project: 'js-libs'});
             rs
@@ -85,7 +85,15 @@
             server.respond();
 
             callback.should.have.been.called;
-            // callback.should.have.been.calledWith('loadtest');
+            callback.should.have.been.calledWith({
+                    "id": "065dfe50-d29d-4b55-a0fd-30868d7dd26c",
+                    "model": "model.vmf",
+                    "account": "mit",
+                    "project": "afv",
+                    "saved": false,
+                    "lastModified": "2014-06-20T04:09:45.738Z",
+                    "created": "2014-06-20T04:09:45.738Z"
+                });
             callback.should.have.been.calledOn(rs);
 
         });
@@ -149,11 +157,11 @@
                 rs.query({saved: true, '.price': '>1'});
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price=>1/');
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price>1/');
 
                 rs.query({saved: false, '.sales': '<4'});
                 req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.sales=<4/');
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.sales<4/');
             });
             it('should convert op modifiers to query strings', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
