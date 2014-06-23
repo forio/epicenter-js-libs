@@ -55,7 +55,7 @@ var AuthService = function (config) {
         }
     });
 
-    return {
+    var publicAPI = {
         store: store,
 
         /**
@@ -124,6 +124,8 @@ var AuthService = function (config) {
 
         // }
     };
+
+    $.extend(this, publicAPI);
 };
 
 if (typeof exports !== 'undefined') {

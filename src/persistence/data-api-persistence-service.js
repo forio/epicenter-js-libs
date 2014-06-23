@@ -158,7 +158,7 @@ var DataService = function (config) {
     //     }
     };
 
-    return publicAPI;
+    $.extend(this, publicAPI);
 };
 
 
