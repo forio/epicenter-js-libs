@@ -148,7 +148,7 @@ var VariablesService = function (config) {
     };
 
     $.extend(this, publicAPI);
-    futil.promisify(this);
+    // futil.promisify(this);
 
 };
 

@@ -337,7 +337,7 @@ var RunService = function (config) {
     };
 
     $.extend(this, publicAsyncAPI);
-    futil.promisify(this);
+    // futil.promisify(this);
 
     $.extend(this, publicSyncAPI);
 };
