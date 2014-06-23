@@ -37,6 +37,8 @@ var promisify= function (context) {
         }
         // console.log("Doing", item.name, item.args);
         var result = item.fn.apply(me, item.args);
+        var lastParam = item.args[item.args.length - 1];
+
         if (result && result.pipe) {
             result.then(function() {
                 lastResult = _.toArray(arguments);

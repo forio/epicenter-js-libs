@@ -14,18 +14,22 @@
  var root = this;
  var F = root.F;
 
- var $, ConfigService, qutil, rutil, urlService, httpTransport;
+ var $, ConfigService, qutil, rutil, futil, urlService, httpTransport;
  if  (typeof require !== 'undefined') {
      $ = require('jquery');
      configService = require('utils/configuration-service');
      qutil = require('util/query-util');
      rutil = require('util/run-util');
+     futil = require('util/promisify-util');
+
  }
  else {
      $ = jQuery;
      ConfigService = F.service.Config;
      qutil = F.util.query;
      rutil = F.util.run;
+     futil = F.util;
+
      httpTransport = F.transport.HTTP;
  }
 
@@ -132,10 +136,20 @@ var VariablesService = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
 
             return http.patch.call(this, attrs, httpOptions);
+        },
+
+        /**
+         * Stops chaining on the variables api and switches context back to run service
+         * @return {{RunService}}
+         */
+        end: function() {
+            return serviceOptions.runService;
         }
     };
 
     $.extend(this, publicAPI);
+    futil.promisify(this);
+
 };
 
 if (typeof exports !== 'undefined') {

@@ -18,8 +18,8 @@ if  (typeof require !== 'undefined') {
     configService = require('util/configuration-service');
     VariablesService = require('service/variables-api-service');
     qutil = require('util/query-util');
-    rutil = require('util/promisify-util');
-    futil = require('util/run-util');
+    rutil = require('util/run-util');
+    futil = require('util/promisify-util');
 }
 else {
     $ = jQuery;

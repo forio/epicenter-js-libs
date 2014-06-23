@@ -31,6 +31,7 @@
             });
             it('should use the right url', function () {
                 vs.load('price');
+                server.respond();
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/price/');
@@ -40,24 +41,28 @@
         describe('#query()', function () {
             it('should do a GET', function () {
                 vs.query(['price', 'sales']);
+                server.respond();
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
             });
             it('should convert includes', function () {
                 vs.query({include: ['price', 'sales']});
+                server.respond();
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/?include=price,sales');
             });
             it('should convert sets', function () {
                 vs.query({set: 'a'});
+                server.respond();
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/?set=a');
             });
             it('should convert sets & includes', function () {
                 vs.query({set: ['a', 'b'], include: 'price'});
+                server.respond();
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/?set=a,b&include=price');
@@ -68,6 +73,8 @@
         describe('#save()', function () {
             it('should do a POST', function () {
                 vs.save({a: 1, b: 2});
+                server.respond();
+
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -76,6 +83,8 @@
             it('should send requests in the body', function () {
                 var params = {a: 1, b: 2};
                 vs.save(params);
+                server.respond();
+
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
@@ -83,6 +92,7 @@
             });
             it('should support setting key, value syntax', function () {
                 vs.save('a', 1);
+                server.respond();
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
@@ -93,6 +103,7 @@
         describe('#merge()', function () {
             it('should do a PATCH', function () {
                 vs.merge({a: 1, b: 2});
+                server.respond();
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('PATCH');
@@ -101,6 +112,7 @@
             it('should send requests in the body', function () {
                 var params = {a: 1, b: 2};
                 vs.merge(params);
+                server.respond();
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
@@ -109,12 +121,20 @@
 
             it('should support setting key, value syntax', function () {
                 vs.merge('a', 1);
+                server.respond();
+
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
                 req.requestBody.should.equal(JSON.stringify({a: 1}));
             });
         });
 
+        describe('#end', function () {
+            it('should return run service', function () {
+                var rs = vs.end();
+                rs.should.be.instanceof(RunService);
+            });
+        });
         describe('Callbacks', function () {
             describe('#merge', function () {
                 it('Passes success callbacks', function () {
