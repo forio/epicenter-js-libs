@@ -20,14 +20,6 @@ module.exports = function (grunt) {
                template: 'documentation/template.ejs'
             },
             target: {
-                // files: function() {
-                //                    var mapping = [];
-                //                    grunt.file.expand('src/**/*.js').forEach(function(file) {
-                //                        var target = file.split('/').pop() + '.md';
-                //                        mapping.push({src: file, dest: 'documentation/' + target});
-                //                    });
-                //                    return mapping;
-                //                }()
                 files:  [
                     // {
                     //     src: 'src/service/configuration-service.js', dest: 'documentation/generated/configuration-service.html.md'
@@ -56,4 +48,8 @@ module.exports = function (grunt) {
           },
         }
     });
+
+    grunt.registerTask('default', ['watch']);
+    grunt.registerTask('documentation', ['markdox']);
+
 };
