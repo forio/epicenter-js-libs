@@ -136,14 +136,6 @@ var VariablesService = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
 
             return http.patch.call(this, attrs, httpOptions);
-        },
-
-        /**
-         * Stops chaining on the variables api and switches context back to run service
-         * @return {{RunService}}
-         */
-        end: function() {
-            return serviceOptions.runService;
         }
     };
     $.extend(this, publicAPI);
