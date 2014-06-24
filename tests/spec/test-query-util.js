@@ -18,6 +18,12 @@
                 qutils.toMatrixFormat({a: 2, b: '>=3'}).should.equal(';a=2;b>=3');
                 qutils.toMatrixFormat({a: 2, b: '<=3'}).should.equal(';a=2;b<=3');
             });
+            it('should handle nulls', function () {
+                qutils.toMatrixFormat().should.equal(';');
+            });
+            it('should leave strings as is', function () {
+                qutils.toMatrixFormat('a=b').should.equal('a=b');
+            });
         });
 
         describe('#toQueryFormat()', function () {

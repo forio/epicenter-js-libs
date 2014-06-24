@@ -43,7 +43,7 @@
                 var cb1 = sinon.spy();
                 var cb2 = sinon.spy();
 
-                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                 rs.do('add', [1,2], {success: cb1}).then(cb2);
                 server.respond();
 
@@ -56,7 +56,7 @@
                 var cb3 = sinon.spy();
 
 
-                var rs = new RunService({account: 'failure', project: 'js-libs'});
+                var rs = new RunService({account: 'failure', project: 'js-libs', filter: {saved: true}});
                 rs.do('add', [1,2], {error: cb1}).fail(cb3);
                 server.respond();
 
@@ -70,7 +70,7 @@
                 var cb1 = sinon.spy();
                 var cb2 = sinon.spy();
 
-                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                 rs.serial([{first: [1,2]}, {second: [2,3]}], null, {success: cb1}).then(cb2);
                 server.respond();
                 server.respond();
@@ -83,7 +83,7 @@
                 var cb2 = sinon.spy();
                 var cb3 = sinon.spy();
 
-                var rs = new RunService({account: 'failure', project: 'js-libs'});
+                var rs = new RunService({account: 'failure', project: 'js-libs', filter: {saved: true}});
                 rs.serial([{first: [1,2]}, {second: [2,3]}], null, {error: cb1}).fail(cb3);
                 server.respond();
 
@@ -98,7 +98,7 @@
                 var cb2 = sinon.spy();
 
 
-                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                 rs.parallel([{first: [1,2]}, {second: [2,3]}], null, {success: cb1}).then(cb2);
                 server.respond();
 
@@ -111,7 +111,7 @@
                 var cb3 = sinon.spy();
 
 
-                var rs = new RunService({account: 'failure', project: 'js-libs'});
+                var rs = new RunService({account: 'failure', project: 'js-libs', filter: {saved: true}});
                 rs.parallel([{first: [1,2]}, {second: [2,3]}], null, {error: cb1}).fail(cb3);
                 server.respond();
 
@@ -211,7 +211,7 @@
                 var cb1 = sinon.spy();
                 var cb2 = sinon.spy();
 
-                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true} });
                 rs.save({completed: true}, {success: cb1}).then(cb2);
                 server.respond();
 
@@ -224,7 +224,7 @@
                 var cb3 = sinon.spy();
 
 
-                var rs = new RunService({account: 'failure', project: 'js-libs'});
+                var rs = new RunService({account: 'failure', project: 'js-libs', filter: {saved: true} });
                 rs.save({completed: true}, {error: cb1}).fail(cb3);
                 server.respond();
 

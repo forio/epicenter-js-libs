@@ -59,12 +59,11 @@ var RunService = function (config) {
          */
         project: '',
 
-        //TODO: Move filter here from urlconfig
-        // *
-        //  * Default filter for the service to filter by
-        //  * T
-
-        // filter: '',
+        /**
+         * Criteria to filter runs by
+         * @type {String}
+         */
+        filter: '',
 
         /** Called when the call completes successfully **/
         success: $.noop,
@@ -93,8 +92,10 @@ var RunService = function (config) {
 
     urlConfig.filter = ';';
     urlConfig.getFilterURL = function() {
-        var baseurl = urlConfig.getAPIPath('run');
-        var url = baseurl + urlConfig.filter + '/';
+        var url = urlConfig.getAPIPath('run');
+        var filter = qutil.toMatrixFormat(serviceOptions.filter);
+
+        if (filter) url += filter + '/';
         return url;
     };
 
@@ -129,6 +130,11 @@ var RunService = function (config) {
         var opParams = rutil.normalizeOperations(operation, opsArgs);
         var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
 
+        if (httpOptions.filter) serviceOptions.filter = httpOptions.filter;
+        if (!serviceOptions.filter) {
+            throw new Error('No filter specified to apply operations against');
+        }
+
         return http.post(opParams[1], $.extend(true, {}, httpOptions, {
             url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
         }));
@@ -156,11 +162,10 @@ var RunService = function (config) {
             if (typeof params === 'string') params = {model: params};
 
             createOptions.success = _.wrap(createOptions.success, function(fn, response) {
-                urlConfig.filter = response.id; //all future chained calls to operate on this id
+                serviceOptions.filter = response.id; //all future chained calls to operate on this id
                 return fn.call(this, response);
             });
 
-            urlConfig.filter = ';';
             return http.post(params, createOptions);
         },
 
@@ -197,9 +202,8 @@ var RunService = function (config) {
          * @param {object} `options` (Optional) Overrides for configuration options
          */
         query: function (qs, outputModifier, options) {
+            serviceOptions.filter = qs; //shouldn't be able to over-ride
             var httpOptions = $.extend(true, {}, serviceOptions, options);
-
-            urlConfig.filter = qutil.toMatrixFormat(qs);
             return http.get(outputModifier, httpOptions);
         },
 
@@ -243,9 +247,8 @@ var RunService = function (config) {
          * @param {object} `options` (Optional) Overrides for configuration options
          */
         load: function (runID, filters, options) {
+            serviceOptions.filter = runID; //shouldn't be able to over-ride
             var httpOptions = $.extend(true, {}, serviceOptions, options);
-
-            urlConfig.filter = runID;
             return http.get(filters, httpOptions);
         },
 
@@ -266,7 +269,10 @@ var RunService = function (config) {
          */
         save: function (attributes, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
-
+            if (httpOptions.filter) serviceOptions.filter = httpOptions.filter;
+            if (!serviceOptions.filter) {
+                throw new Error('No filter specified to save runs against');
+            }
             return http.patch(attributes, httpOptions);
         },
 

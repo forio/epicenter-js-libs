@@ -152,6 +152,9 @@
 
         it('should have executed chained functions in the right order', function () {
             var mf = new MockFunction();
+
+            // mf.doSlow().doFast().doMedium();
+
             var slowSpy = sinon.spy(mf, 'doSlow');
 
             var slow = slowSpy('slow');

@@ -197,8 +197,20 @@
         });
 
         describe('#save()', function () {
-            it('should do an PATCH', function () {
+            it('should require a filter', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
+                (function() {rs.save({completed: true});}).should.throw(Error);
+            });
+            it('should allow passing in filter through options', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                var r = rs.save({completed: true}, {filter: {saved:true}});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/');
+            });
+
+            it('should do an PATCH', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved:true}});
                 rs.save({completed: true});
 
                 var req = server.requests.pop();
@@ -207,11 +219,11 @@
 
             it('should take in options and send to server', function () {
                 var params = {completed: true};
-                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved:true}});
                 rs.save(params);
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/');
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/');
                 req.requestBody.should.equal(JSON.stringify(params));
 
             });
@@ -230,55 +242,58 @@
         //Operations
         describe('Run#Operations', function() {
             describe('#do', function() {
-                it('should do a POST', function() {
+                it('should require a filter', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    (function() {rs.do('solve');}).should.throw(Error);
+                });
+
+                it('should do a POST', function() {
+                    var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.do('add', [1,2]);
 
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('POST');
                 });
                 it('should take in operation names and send to server', function() {
-                    var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.do('add', [1,2]);
 
                     var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/add/');
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/add/');
                     req.requestBody.should.equal(JSON.stringify([1,2]));
-                });
-                it('should call success callback on success', function () {
-                    var callback = function() {
-                        // console.log('Ops do success');
-                    };
-                    var spy = sinon.spy(callback);
-
-                    var rs = new RunService({account: 'forio', project: 'js-libs'});
-                    rs.do('add', [1,2], {success: spy });
-
-                    server.respond();
-                    spy.called.should.equal(true);
                 });
             });
 
             describe('#serial', function () {
+                it('should require a filter', function () {
+                    var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    (function() {rs.serial(['init', 'solve']);}).should.throw(Error);
+                });
+
                 it('should send multiple operations calls once by one', function () {
                     server.requests = [];
 
-                    var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.serial([{first: [1,2]}, {second: [2,3]}]);
                     server.respond();
 
                     server.requests.length.should.equal(2);
-                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/first/');
-                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;/operations/second/');
+                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/first/');
+                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/second/');
 
                 });
             });
 
             describe('#parallel', function () {
+                it('should require a filter', function () {
+                    var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    (function() {rs.parallel(['init', 'solve']);}).should.throw(Error);
+                });
+
                 it('should send multiple operations calls once by one', function () {
                     server.requests = [];
 
-                    var rs = new RunService({account: 'forio', project: 'js-libs'});
+                    var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.parallel([{first: [1,2]}, {second: [2,3]}]);
                     server.respond();
 
