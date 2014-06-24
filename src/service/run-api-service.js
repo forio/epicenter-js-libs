@@ -376,16 +376,8 @@ var RunService = function (config) {
         /**
          * Returns a variable object.
          *
-         * **Example**
-         *
-         *     rs.variable(["Price", "Sales"])
-         *     rs.variable()
-         *
          * **Parameters**
-         * @param {String} `variableSet` (Optional) The name of the variable set to include.
-         * @param {Object} `filters` (Optional) Filters & op modifiers
-         * @param {Object} `outputModifier` (Optional) Paging object. Can include `limit`, `page`, and `sort`.
-         * @param {object} `options` (Optional) Overrides for configuration options
+         * @param {object} `config` (Optional) Overrides for configuration options
          * @see [Variable API Service](./variable-api-service.html) for more information.
          */
 
