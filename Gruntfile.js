@@ -1,5 +1,6 @@
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-mocha');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-markdox');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -12,6 +13,41 @@ module.exports = function (grunt) {
             tests: {
                 files: ['tests/spec/**/*.js'],
                 tasks: ['mocha:test']
+            }
+        },
+        uglify: {
+            options: {
+                compress: false,
+                sourceMap: false,
+                sourceMapIncludeSources: false
+            },
+            dev: {
+                files: []
+            },
+            production: {
+                options: {
+                    compress: true,
+                    sourceMap: false
+                },
+                files: {
+                    'dist/epicenter.min.js' : [
+                        'src/util/query-util.js',
+                        'src/util/run-util.js',
+
+                        'src/transport/ajax-http-transport.js',
+                        'src/transport/http-transport-factory.js',
+
+                        'src/persistence/cookie-persistence-service.js',
+                        'src/persistence/data-api-persistence-service.js',
+                        'src/persistence/persistence-service-factory.js',
+
+                        'src/service/url-config-service.js',
+                        'src/service/configuration-service.js',
+                        'src/service/auth-api-service.js',
+                        'src/service/run-api-service.js',
+                        'src/service/variables-api-service.js',
+                    ]
+                }
             }
         },
         markdox: {
