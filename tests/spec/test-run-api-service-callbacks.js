@@ -39,7 +39,7 @@
         });
 
         describe('#do', function () {
-            it('passess success callbacks', function () {
+            it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.do('add', [1,2], {success: cb1});
@@ -48,7 +48,7 @@
                 cb1.should.have.been.called;
 
             });
-            it('passess error callbacks', function () {
+            it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
                 rs.do('add', [1,2], {error: cb1});
@@ -59,7 +59,7 @@
             });
         });
         describe('#serial', function () {
-            it('passess success callbacks', function () {
+            it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.serial([{first: [1,2]}, {second: [2,3]}], null, {success: cb1});
@@ -69,7 +69,7 @@
                 cb1.should.have.been.called;
 
             });
-            it('passess error callbacks', function () {
+            it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
                 rs.serial([{first: [1,2]}, {second: [2,3]}], null, {error: cb1});
@@ -80,7 +80,7 @@
             });
         });
         describe('#parallel', function () {
-            it('passess success callbacks', function () {
+            it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
 
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
@@ -89,7 +89,7 @@
 
                 cb1.should.have.been.called;
             });
-            it('passess error callbacks', function () {
+            it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
                 rs.parallel([{first: [1,2]}, {second: [2,3]}], null, {error: cb1});
@@ -101,7 +101,7 @@
         });
 
         describe('#create', function () {
-            it('passess success callbacks', function () {
+            it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.create('model.jl', {success: cb1});
@@ -109,7 +109,7 @@
 
                 cb1.should.have.been.called;
             });
-            it('passess error callbacks', function () {
+            it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
                 rs.create('model.jl', {error: cb1});
@@ -120,7 +120,7 @@
             });
         });
         describe('#query', function () {
-            it('passess success callbacks', function () {
+            it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.query({saved: true, '.price': '>1'}, {page: 1}, {success: cb1});
@@ -128,7 +128,7 @@
 
                 cb1.should.have.been.called;
             });
-            it('passess error callbacks', function () {
+            it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
                 rs.query({saved: true, '.price': '>1'}, {page: 1}, {error: cb1});
@@ -139,13 +139,13 @@
             });
         });
         // describe('#filter', function () {
-        //     it('passess success callbacks', function () {
+        //     it('passes success callbacks', function () {
         //         var cb1 = sinon.spy();
 
         //     });
         // });
         describe('#load', function () {
-            it('passess success callbacks', function () {
+            it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.load('myfancyrunid', {include: 'score'}, {success: cb1});
@@ -154,7 +154,7 @@
                 cb1.should.have.been.called;
 
             });
-            it('passess error callbacks', function () {
+            it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
                 rs.load('myfancyrunid', {include: 'score'}, {error: cb1});
@@ -165,7 +165,7 @@
             });
         });
         describe('#save', function () {
-            it('passess success callbacks', function () {
+            it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.save({completed: true}, {success: cb1});
@@ -173,7 +173,7 @@
 
                 cb1.should.have.been.called;
             });
-            it('passess error callbacks', function () {
+            it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
                 rs.save({completed: true}, {error: cb1});
