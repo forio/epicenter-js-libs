@@ -3,7 +3,6 @@
 */
 (function(){
 var root = this;
-var F = root.F;
 
 var run= function () {
 

@@ -19,7 +19,7 @@
 (function() {
 var root = this;
 var F = root.F;
-var $, ConfigService, qutil, urlService, httpTransport;
+var $, ConfigService, qutil, httpTransport;
 if (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');

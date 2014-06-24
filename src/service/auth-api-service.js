@@ -1,10 +1,10 @@
 /**
- * 
- * ##Authentication API Service 
  *
- * The Authentication API Service provides methods for logging in and creating user access tokens. 
+ * ##Authentication API Service
+ *
+ * The Authentication API Service provides methods for logging in and creating user access tokens.
  * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../project_access/) for more information.)
- * 
+ *
  * @example
  *      var auth = require('authentication-service')();
  *      auth.login()
@@ -13,7 +13,7 @@
 (function() {
 var root = this;
 var F = root.F;
-var $, ConfigService, qutil, urlService, httpTransport, PersistenceService;
+var $, ConfigService, qutil, httpTransport, PersistenceService;
 if (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
@@ -71,7 +71,7 @@ var AuthService = function (config) {
          * **Parameters**
          * @param {String} `username` Email (for Epicenter authors and team members) or Username (for end users) of user
          * @param {String} `password` Password
-         * @param {Object} `options` (Optional) Overrides for configuration options      
+         * @param {Object} `options` (Optional) Overrides for configuration options
          */
         login: function (username, password, options) {
             var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
@@ -97,7 +97,7 @@ var AuthService = function (config) {
          *
          * **Parameters**
          * @param {String} `username` (Optional) If provided only logs specific username out, otherwise logs out all usernames associated with session
-         * @param {Object} `options` (Optional) Overrides for configuration options     
+         * @param {Object} `options` (Optional) Overrides for configuration options
          */
         logout: function (username, options) {
             return store.remove(EPI_COOKIE_KEY, options);
@@ -108,11 +108,11 @@ var AuthService = function (config) {
          *
          * **Example**
          *
-         *      var currToken = auth.getToken('jsmith@acmesimulations.com'); 
+         *      var currToken = auth.getToken('jsmith@acmesimulations.com');
          *
          * **Parameters**
          * @param {String} `username` (Optional) Username of user to get the token for; if currently logged in as a single user, username is optional
-         * @param {Object} `options` (Optional) Overrides for configuration options             
+         * @param {Object} `options` (Optional) Overrides for configuration options
          */
         getToken: function (options) {
             var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
@@ -130,6 +130,7 @@ var AuthService = function (config) {
         },
 
         /**
+         * TODO
          * Returns user information.
          * @see <TBD> for return object syntax
          *

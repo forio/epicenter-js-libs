@@ -15,7 +15,7 @@
 (function() {
 var root = this;
 var F = root.F;
-var $, ConfigService, qutil, urlService, httpTransport;
+var $, ConfigService, qutil, httpTransport;
 if (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
@@ -59,23 +59,22 @@ var CookieService = function (config) {
     };
 
     var publicAPI = {
+        // * TBD
+        //  * Query collection; uses MongoDB syntax
+        //  * @see  <TBD: Data API URL>
+        //  *
+        //  * @param {String} qs Query Filter
+        //  * @param {String} limiters @see <TBD: url for limits, paging etc>
+        //  *
+        //  * @example
+        //  *     cs.query(
+        //  *      {name: 'John', className: 'CSC101'},
+        //  *      {limit: 10}
+        //  *     )
 
-        /**
-         * Query collection; uses MongoDB syntax
-         * @see  <TBD: Data API URL>
-         *
-         * @param {String} qs Query Filter
-         * @param {String} limiters @see <TBD: url for limits, paging etc>
-         *
-         * @example
-         *     cs.query(
-         *      {name: 'John', className: 'CSC101'},
-         *      {limit: 10}
-         *     )
-         */
-        query: function (qs, limiters) {
+        // query: function (qs, limiters) {
 
-        },
+        // },
 
         /**
          * Save cookie value

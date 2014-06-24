@@ -14,7 +14,7 @@
  var root = this;
  var F = root.F;
 
- var $, ConfigService, qutil, rutil, futil, urlService, httpTransport;
+ var $, ConfigService, qutil, rutil, futil, httpTransport;
  if  (typeof require !== 'undefined') {
      $ = require('jquery');
      configService = require('utils/configuration-service');
@@ -44,7 +44,7 @@ var VariablesService = function (config) {
         runService: null
     };
     var serviceOptions = $.extend({}, defaults, config);
-    var urlConfig = ConfigService().get('url');
+    var urlConfig = ConfigService(serviceOptions).get('url');
 
     var getURL = function() {
         return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';

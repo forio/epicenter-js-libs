@@ -1,6 +1,5 @@
 (function(){
 var root = this;
-var F = root.F;
 
 var URLService= function (config) {
     //TODO: urlutils to get host, since no window on node

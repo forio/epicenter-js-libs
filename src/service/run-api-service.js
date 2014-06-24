@@ -17,7 +17,7 @@
 var root = this;
 var F = root.F;
 
-var $, ConfigService, qutil, rutil, futil, urlService, httpTransport, VariableService;
+var $, ConfigService, qutil, rutil, futil, httpTransport, VariablesService;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
