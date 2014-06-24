@@ -31,11 +31,21 @@ var URLService= function (config) {
         }()),
 
         accountPath: (function () {
-            return 'test';
+            var accnt = 'test';
+            var path = window.location.pathname.split('\/');
+            if (path && path[1] === 'app') {
+                accnt = path[2];
+            }
+            return accnt;
         }()),
 
         projectPath: (function () {
-            return 'test';
+            var prj = 'test';
+            var path = window.location.pathname.split('\/');
+            if (path && path[1] === 'app') {
+                prj = path[2];
+            }
+            return prj;
         }()),
 
         getAPIPath: getAPIPath

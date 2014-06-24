@@ -10,7 +10,7 @@ var query= function () {
          * @return {String}    Matrix-format query parameters
          */
         toMatrixFormat: function(qs) {
-            if (qs === null || qs === undefined) return ';';
+            if (qs === null || qs === undefined || qs === '') return ';';
             if (typeof qs === 'string' || qs instanceof String) return qs;
 
             var returnArray = [];
