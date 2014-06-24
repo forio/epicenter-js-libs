@@ -156,39 +156,47 @@
             });
         });
         describe('Callbacks', function () {
-            it('#load', function () {
-                var cb1 = sinon.spy();
-                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
-                ds.load('name', null, {success: cb1});
+            describe('#load', function () {
+                it('passes success callbacks', function(){
+                    var cb1 = sinon.spy();
+                    var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                    ds.load('name', null, {success: cb1});
 
-                server.respond();
-                cb1.called.should.equal(true);
+                    server.respond();
+                    cb1.called.should.equal(true);
+                });
             });
 
-            it('#save', function () {
-                var cb1 = sinon.spy();
-                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
-                ds.save('name', 'John', {success: cb1});
+            describe('#save', function () {
+                it('passes success callbacks', function(){
+                    var cb1 = sinon.spy();
+                    var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                    ds.save('name', 'John', {success: cb1});
 
-                server.respond();
-                cb1.called.should.equal(true);
+                    server.respond();
+                    cb1.called.should.equal(true);
+                });
             });
 
-            it('#query', function () {
-                var cb1 = sinon.spy();
-                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
-                ds.query('', {name: 'john'}, {page: 1}, {success: cb1});
+            describe('#query', function () {
+                it('passes success callbacks', function(){
+                    var cb1 = sinon.spy();
+                    var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                    ds.query('', {name: 'john'}, {page: 1}, {success: cb1});
 
-                server.respond();
-                cb1.called.should.equal(true);
+                    server.respond();
+                    cb1.called.should.equal(true);
+                });
             });
-            it('#remove', function () {
-                var cb1 = sinon.spy();
-                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
-                ds.remove('name', {success: cb1});
+            describe('#remove', function () {
+                it('passes success callbacks', function(){
+                    var cb1 = sinon.spy();
+                    var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                    ds.remove('name', {success: cb1});
 
-                server.respond();
-                cb1.called.should.equal(true);
+                    server.respond();
+                    cb1.called.should.equal(true);
+                });
             });
         });
     });
