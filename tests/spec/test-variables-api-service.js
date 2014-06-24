@@ -136,16 +136,22 @@
             });
         });
         describe('Callbacks', function () {
-            describe('#merge', function () {
+            describe('#load', function () {
                 it('Passes success callbacks', function () {
                     var cb1 = sinon.spy();
-                    var cb2 = sinon.spy();
-                    vs.merge({a: 1, b: 2}, {success: cb1});
-                    vs.merge('a', 1, {success: cb2});
+                    vs.load('sales', null, {success: cb1});
 
                     server.respond();
                     cb1.called.should.equal(true);
-                    cb2.called.should.equal(true);
+                });
+            });
+            describe('#query', function () {
+                it('Passes success callbacks', function () {
+                    var cb1 = sinon.spy();
+                    vs.query({include: ['price', 'sales']}, null, {success: cb1});
+
+                    server.respond();
+                    cb1.called.should.equal(true);
                 });
             });
             describe('#save', function () {
@@ -160,22 +166,16 @@
                     cb2.called.should.equal(true);
                 });
             });
-            describe('#query', function () {
+            describe('#merge', function () {
                 it('Passes success callbacks', function () {
                     var cb1 = sinon.spy();
-                    vs.query({include: ['price', 'sales']}, null, {success: cb1});
+                    var cb2 = sinon.spy();
+                    vs.merge({a: 1, b: 2}, {success: cb1});
+                    vs.merge('a', 1, {success: cb2});
 
                     server.respond();
                     cb1.called.should.equal(true);
-                });
-            });
-            describe('#load', function () {
-                it('Passes success callbacks', function () {
-                    var cb1 = sinon.spy();
-                    vs.load('sales', null, {success: cb1});
-
-                    server.respond();
-                    cb1.called.should.equal(true);
+                    cb2.called.should.equal(true);
                 });
             });
         });
