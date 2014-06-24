@@ -244,7 +244,6 @@ var RunService = function (config) {
          */
         do: doOp,
 
-        //FIXME: Figure out which one is params and which one is options
         /**
          * Call a bunch of operations in serial
          * @param  {Array<string>} operations List of operations
@@ -285,6 +284,7 @@ var RunService = function (config) {
         /**
          * Executes operations in parallel
          * @param  {Array|Object} operations List of operations and arguments (if object)
+         * @param  {Array|Object} params arguments for operations
          * @param {object} options Overrides for configuration options
           *
          * @example
