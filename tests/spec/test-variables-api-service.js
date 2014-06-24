@@ -129,12 +129,6 @@
             });
         });
 
-        describe('#end', function () {
-            it('should return run service', function () {
-                var rs = vs.end();
-                rs.should.be.instanceof(RunService);
-            });
-        });
         describe('Callbacks', function () {
             describe('#load', function () {
                 it('Passes success callbacks', function () {
