@@ -273,7 +273,7 @@
 
                     var req = server.requests.pop();
                     req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/add/');
-                    req.requestBody.should.equal(JSON.stringify([1,2]));
+                    req.requestBody.should.equal(JSON.stringify({arguments: [1,2]}));
                 });
             });
 
