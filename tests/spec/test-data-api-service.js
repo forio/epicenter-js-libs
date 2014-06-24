@@ -6,7 +6,7 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            server.respondWith(/(.*)\/run\/(.*)\/(.*)/, function (xhr, id){
+            server.respondWith(/(.*)\/data\/(.*)\/(.*)/, function (xhr, id){
                 xhr.respond(200, { 'Content-Type': 'application/json'}, JSON.stringify({url: xhr.url}));
             });
         });
@@ -153,6 +153,42 @@
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/a/b/?q={"name":"john","age":"10"}&page=1');
+            });
+        });
+        describe('Callbacks', function () {
+            it('#load', function () {
+                var cb1 = sinon.spy();
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.load('name', null, {success: cb1});
+
+                server.respond();
+                cb1.called.should.equal(true);
+            });
+
+            it('#save', function () {
+                var cb1 = sinon.spy();
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.save('name', 'John', {success: cb1});
+
+                server.respond();
+                cb1.called.should.equal(true);
+            });
+
+            it('#query', function () {
+                var cb1 = sinon.spy();
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.query('', {name: 'john'}, {page: 1}, {success: cb1});
+
+                server.respond();
+                cb1.called.should.equal(true);
+            });
+            it('#remove', function () {
+                var cb1 = sinon.spy();
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.remove('name', {success: cb1});
+
+                server.respond();
+                cb1.called.should.equal(true);
             });
         });
     });
