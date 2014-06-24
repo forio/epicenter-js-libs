@@ -313,19 +313,25 @@ var RunService = function (config) {
             var me = this;
 
             var $d = $.Deferred();
-            var postOptions = $.extend({success: $.noop}, options);
+            var postOptions = $.extend(true, {}, serviceOptions, options);
 
             var doSingleOp = function() {
                 var op = ops.shift();
                 var arg = args.shift();
-                doOp(op, arg, {success: function() {
-                    if (ops.length) {
-                        doSingleOp();
-                    } else {
-                        $d.resolve.apply(this, arguments);
-                        postOptions.success.apply(this, arguments);
+                doOp(op, arg, {
+                    success: function() {
+                        if (ops.length) {
+                            doSingleOp();
+                        } else {
+                            $d.resolve.apply(this, arguments);
+                            postOptions.success.apply(this, arguments);
+                        }
+                    },
+                    error: function() {
+                        $d.reject.apply(this, arguments);
+                        postOptions.error.apply(this, arguments);
                     }
-                }});
+                });
             };
 
             doSingleOp();
@@ -355,7 +361,7 @@ var RunService = function (config) {
             var opParams = rutil.normalizeOperations(operations, params);
             var ops = opParams[0];
             var args = opParams[1];
-            var postOptions = $.extend({success: $.noop}, options);
+            var postOptions = $.extend(true, {}, serviceOptions, options);
 
             var queue  = [];
             for (var i=0; i< ops.length; i++) {
@@ -363,10 +369,15 @@ var RunService = function (config) {
                     doOp(ops[i], args[i])
                 );
             }
-            $.when.apply(this, queue).done(function() {
-                $d.resolve.apply(this, arguments);
-                postOptions.success.apply(this.arguments);
-            });
+            $.when.apply(this, queue)
+                .done(function() {
+                    $d.resolve.apply(this, arguments);
+                    postOptions.success.apply(this.arguments);
+                })
+                .fail(function() {
+                    $d.reject.apply(this, arguments);
+                    postOptions.error.apply(this.arguments);
+                });
 
             return $d.promise();
         }
