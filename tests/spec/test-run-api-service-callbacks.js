@@ -41,101 +41,137 @@
         describe('#do', function () {
             it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.do('add', [1,2], {success: cb1});
+                rs.do('add', [1,2], {success: cb1}).then(cb2);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.have.been.called;
             });
             it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
+
+
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
-                rs.do('add', [1,2], {error: cb1});
+                rs.do('add', [1,2], {error: cb1}).fail(cb3);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.not.have.been.called;
+                cb3.should.have.been.called;
             });
         });
         describe('#serial', function () {
             it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.serial([{first: [1,2]}, {second: [2,3]}], null, {success: cb1});
+                rs.serial([{first: [1,2]}, {second: [2,3]}], null, {success: cb1}).then(cb2);
                 server.respond();
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.have.been.called;
             });
             it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
+
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
-                rs.serial([{first: [1,2]}, {second: [2,3]}], null, {error: cb1});
+                rs.serial([{first: [1,2]}, {second: [2,3]}], null, {error: cb1}).fail(cb3);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.not.have.been.called;
+                cb3.should.have.been.called;
             });
         });
         describe('#parallel', function () {
             it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+
 
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.parallel([{first: [1,2]}, {second: [2,3]}], null, {success: cb1});
+                rs.parallel([{first: [1,2]}, {second: [2,3]}], null, {success: cb1}).then(cb2);
                 server.respond();
 
                 cb1.should.have.been.called;
+                cb2.should.have.been.called;
             });
             it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
+
+
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
-                rs.parallel([{first: [1,2]}, {second: [2,3]}], null, {error: cb1});
+                rs.parallel([{first: [1,2]}, {second: [2,3]}], null, {error: cb1}).fail(cb3);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.not.have.been.called;
+                cb3.should.have.been.called;
             });
         });
 
         describe('#create', function () {
             it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.create('model.jl', {success: cb1});
+                rs.create('model.jl', {success: cb1}).then(cb2);
                 server.respond();
 
                 cb1.should.have.been.called;
+                cb2.should.have.been.called;
             });
             it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
+
+
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
-                rs.create('model.jl', {error: cb1});
+                rs.create('model.jl', {error: cb1}).fail(cb3);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.not.have.been.called;
+                cb3.should.have.been.called;
             });
         });
         describe('#query', function () {
             it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.query({saved: true, '.price': '>1'}, {page: 1}, {success: cb1});
+                rs.query({saved: true, '.price': '>1'}, {page: 1}, {success: cb1}).then(cb2);
                 server.respond();
 
                 cb1.should.have.been.called;
             });
             it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
+
+
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
-                rs.query({saved: true, '.price': '>1'}, {page: 1}, {error: cb1});
+                rs.query({saved: true, '.price': '>1'}, {page: 1}, {error: cb1}).fail(cb3);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.not.have.been.called;
+                cb3.should.have.been.called;
             });
         });
         // describe('#filter', function () {
@@ -147,40 +183,54 @@
         describe('#load', function () {
             it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.load('myfancyrunid', {include: 'score'}, {success: cb1});
+                rs.load('myfancyrunid', {include: 'score'}, {success: cb1}).then(cb2);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.have.been.called;
             });
             it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
+
+
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
-                rs.load('myfancyrunid', {include: 'score'}, {error: cb1});
+                rs.load('myfancyrunid', {include: 'score'}, {error: cb1}).fail(cb3);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.not.have.been.called;
+                cb3.should.have.been.called;
             });
         });
         describe('#save', function () {
             it('passes success callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                rs.save({completed: true}, {success: cb1});
+                rs.save({completed: true}, {success: cb1}).then(cb2);
                 server.respond();
 
                 cb1.should.have.been.called;
+                cb2.should.have.been.called;
             });
             it('passes error callbacks', function () {
                 var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
+
+
                 var rs = new RunService({account: 'failure', project: 'js-libs'});
-                rs.save({completed: true}, {error: cb1});
+                rs.save({completed: true}, {error: cb1}).fail(cb3);
                 server.respond();
 
                 cb1.should.have.been.called;
-
+                cb2.should.not.have.been.called;
+                cb3.should.have.been.called;
             });
         });
 
