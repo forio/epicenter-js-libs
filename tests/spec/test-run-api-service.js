@@ -2,7 +2,7 @@
     'use strict';
 
     var RunService = F.service.Run;
-    var VariableService = F.service.Variable;
+    var VariablesService = F.service.Variables;
 
     describe('Run API Service', function () {
         var server;
@@ -85,16 +85,16 @@
             server.respond();
 
             callback.should.have.been.called;
-            // callback.should.have.been.calledWith({
-            //         "id": "065dfe50-d29d-4b55-a0fd-30868d7dd26c",
-            //         "model": "model.vmf",
-            //         "account": "mit",
-            //         "project": "afv",
-            //         "saved": false,
-            //         "lastModified": "2014-06-20T04:09:45.738Z",
-            //         "created": "2014-06-20T04:09:45.738Z"
-            //     });
-            callback.should.have.been.calledOn(rs);
+            callback.should.have.been.calledWith({
+                    "id": "065dfe50-d29d-4b55-a0fd-30868d7dd26c",
+                    "model": "model.vmf",
+                    "account": "mit",
+                    "project": "afv",
+                    "saved": false,
+                    "lastModified": "2014-06-20T04:09:45.738Z",
+                    "created": "2014-06-20T04:09:45.738Z"
+                });
+            // callback.should.have.been.calledOn(rs);
 
         });
         describe('#create()', function () {
@@ -222,8 +222,7 @@
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 var vs = rs.variables();
 
-                //FIXME: This currently returns an object
-                // vs.should.be.instanceOf(VariableService);
+                vs.should.be.instanceof(VariablesService);
             });
 
         });
