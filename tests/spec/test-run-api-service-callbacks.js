@@ -174,12 +174,32 @@
                 cb3.should.have.been.called;
             });
         });
-        // describe('#filter', function () {
-        //     it('passes success callbacks', function () {
-        //         var cb1 = sinon.spy();
+        describe('#filter', function () {
+            it('passes success callbacks', function () {
+                var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
 
-        //     });
-        // });
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.filter({saved: true, '.price': '>1'}, {page: 1}, {success: cb1}).then(cb2);
+                server.respond();
+
+                cb1.should.have.been.called;
+            });
+            it('passes error callbacks', function () {
+                var cb1 = sinon.spy();
+                var cb2 = sinon.spy();
+                var cb3 = sinon.spy();
+
+
+                var rs = new RunService({account: 'failure', project: 'js-libs'});
+                rs.filter({saved: true, '.price': '>1'}, {page: 1}, {error: cb1}).fail(cb3);
+                server.respond();
+
+                cb1.should.have.been.called;
+                cb2.should.not.have.been.called;
+                cb3.should.have.been.called;
+            });
+        });
         describe('#load', function () {
             it('passes success callbacks', function () {
                 var cb1 = sinon.spy();

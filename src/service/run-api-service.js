@@ -109,6 +109,13 @@ var RunService = function (config) {
     }
     var http = httpTransport(httpOptions);
 
+    var setFilterOrThrowError = function(options) {
+        if (options.filter) serviceOptions.filter = options.filter;
+        if (!serviceOptions.filter) {
+            throw new Error('No filter specified to apply operations against');
+        }
+    };
+
     //FIXME: Moving this to a private function temporarily, because promisify breaks with functions which call others
     var doOp = function(operation, params, options) {
         // console.log('do', operation, params);
@@ -130,10 +137,7 @@ var RunService = function (config) {
         var opParams = rutil.normalizeOperations(operation, opsArgs);
         var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
 
-        if (httpOptions.filter) serviceOptions.filter = httpOptions.filter;
-        if (!serviceOptions.filter) {
-            throw new Error('No filter specified to apply operations against');
-        }
+        setFilterOrThrowError(httpOptions);
 
         return http.post(opParams[1], $.extend(true, {}, httpOptions, {
             url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
@@ -231,7 +235,14 @@ var RunService = function (config) {
          * @param {object} `options` (Optional) Overrides for configuration options
          */
         filter: function (filter, outputModifier, options) {
-
+            if ($.isPlainObject(serviceOptions.filter)) {
+                $.extend(serviceOptions.filter, filter);
+            }
+            else {
+                serviceOptions.filter = filter;
+            }
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            return http.get(outputModifier, httpOptions);
         },
 
         /**
@@ -269,10 +280,7 @@ var RunService = function (config) {
          */
         save: function (attributes, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
-            if (httpOptions.filter) serviceOptions.filter = httpOptions.filter;
-            if (!serviceOptions.filter) {
-                throw new Error('No filter specified to save runs against');
-            }
+            setFilterOrThrowError(httpOptions);
             return http.patch(attributes, httpOptions);
         },
 

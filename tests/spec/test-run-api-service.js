@@ -173,11 +173,50 @@
                 rs.query({}, {page: 1, limit:2});
 
                 var req = server.requests.pop();
-                //TODO: See what the api does in this case
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/?page=1&limit=2');
             });
         });
 
+        describe('#filter', function () {
+            it('should do a GET', function() {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.filter({saved: true, '.price': '>1'});
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+            });
+            it('should convert filters to matrix parameters', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.filter({saved: true, '.price': '1'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price=1/');
+            });
+            it('should convert op modifiers to query strings', function () {
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.filter({}, {page: 1, limit:2});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/?page=1&limit=2');
+            });
+            it('should pass through options across multiple queries', function () {
+                server.requests = [];
+
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.filter({saved: true, '.price': '>1'});
+                server.respond();
+
+                server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price>1/');
+
+
+                rs.filter({saved: false, '.sales': '<4'});
+                server.respond();
+
+                server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.price>1;.sales<4/');
+                server.requests = [];
+
+            });
+        });
         describe('#load()', function () {
             it('should do an GET', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
