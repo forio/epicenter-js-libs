@@ -146,10 +146,7 @@ var VariablesService = function (config) {
             return serviceOptions.runService;
         }
     };
-
     $.extend(this, publicAPI);
-    // futil.promisify(this);
-
 };
 
 if (typeof exports !== 'undefined') {

@@ -116,34 +116,6 @@ var RunService = function (config) {
         }
     };
 
-    //FIXME: Moving this to a private function temporarily, because promisify breaks with functions which call others
-    var doOp = function(operation, params, options) {
-        // console.log('do', operation, params);
-        var opsArgs;
-        var postOptions;
-        if (options) {
-            opsArgs = params;
-            postOptions = options;
-        }
-        else {
-            if ($.isPlainObject(params)) {
-                opsArgs = null;
-                postOptions = params;
-            }
-            else {
-                opsArgs = params;
-            }
-        }
-        var opParams = rutil.normalizeOperations(operation, opsArgs);
-        var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
-
-        setFilterOrThrowError(httpOptions);
-
-        return http.post(opParams[1], $.extend(true, {}, httpOptions, {
-            url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
-        }));
-    };
-
     var publicAsyncAPI = {
         urlConfig: urlConfig,
 
@@ -303,7 +275,32 @@ var RunService = function (config) {
          * @param {Array} `params` (Optional) Any parameters the operation takes, passed as an array.
          * @param {object} `options` (Optional) Overrides for configuration options
          */
-        do: doOp,
+        do: function(operation, params, options) {
+            // console.log('do', operation, params);
+            var opsArgs;
+            var postOptions;
+            if (options) {
+                opsArgs = params;
+                postOptions = options;
+            }
+            else {
+                if ($.isPlainObject(params)) {
+                    opsArgs = null;
+                    postOptions = params;
+                }
+                else {
+                    opsArgs = params;
+                }
+            }
+            var opParams = rutil.normalizeOperations(operation, opsArgs);
+            var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
+
+            setFilterOrThrowError(httpOptions);
+
+            return http.post(opParams[1], $.extend(true, {}, httpOptions, {
+                url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
+            }));
+        },
 
         /**
          * Call several methods from the model, sequentially.
@@ -332,7 +329,7 @@ var RunService = function (config) {
             var doSingleOp = function() {
                 var op = ops.shift();
                 var arg = args.shift();
-                doOp(op, arg, {
+                me.do(op, arg, {
                     success: function() {
                         if (ops.length) {
                             doSingleOp();
@@ -380,7 +377,7 @@ var RunService = function (config) {
             var queue  = [];
             for (var i=0; i< ops.length; i++) {
                 queue.push(
-                    doOp(ops[i], args[i])
+                    this.do(ops[i], args[i])
                 );
             }
             $.when.apply(this, queue)
@@ -415,8 +412,6 @@ var RunService = function (config) {
     };
 
     $.extend(this, publicAsyncAPI);
-    // futil.promisify(this);
-
     $.extend(this, publicSyncAPI);
 };
 
