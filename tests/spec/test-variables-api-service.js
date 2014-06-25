@@ -71,13 +71,23 @@
 
 
         describe('#save()', function () {
-            it('should do a POST', function () {
+            // Temporarily using PATCH to mean PUT
+            // it('should do a PUT', function () {
+            //     vs.save({a: 1, b: 2});
+            //     server.respond();
+
+
+            //     var req = server.requests.pop();
+            //     req.method.toUpperCase().should.equal('PUT');
+            // });
+
+            it('should do a PATCH', function () {
                 vs.save({a: 1, b: 2});
                 server.respond();
 
 
                 var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
+                req.method.toUpperCase().should.equal('PATCH');
             });
 
             it('should send requests in the body', function () {
@@ -100,34 +110,34 @@
             });
         });
 
-        describe('#merge()', function () {
-            it('should do a PATCH', function () {
-                vs.merge({a: 1, b: 2});
-                server.respond();
+        // describe('#merge()', function () {
+        //     it('should do a PATCH', function () {
+        //         vs.merge({a: 1, b: 2});
+        //         server.respond();
 
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('PATCH');
-            });
+        //         var req = server.requests.pop();
+        //         req.method.toUpperCase().should.equal('PATCH');
+        //     });
 
-            it('should send requests in the body', function () {
-                var params = {a: 1, b: 2};
-                vs.merge(params);
-                server.respond();
+        //     it('should send requests in the body', function () {
+        //         var params = {a: 1, b: 2};
+        //         vs.merge(params);
+        //         server.respond();
 
-                var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
-                req.requestBody.should.equal(JSON.stringify(params));
-            });
+        //         var req = server.requests.pop();
+        //         req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
+        //         req.requestBody.should.equal(JSON.stringify(params));
+        //     });
 
-            it('should support setting key, value syntax', function () {
-                vs.merge('a', 1);
-                server.respond();
+        //     it('should support setting key, value syntax', function () {
+        //         vs.merge('a', 1);
+        //         server.respond();
 
-                var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
-                req.requestBody.should.equal(JSON.stringify({a: 1}));
-            });
-        });
+        //         var req = server.requests.pop();
+        //         req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
+        //         req.requestBody.should.equal(JSON.stringify({a: 1}));
+        //     });
+        // });
 
         describe('Callbacks', function () {
             describe('#load', function () {
@@ -160,18 +170,18 @@
                     cb2.called.should.equal(true);
                 });
             });
-            describe('#merge', function () {
-                it('Passes success callbacks', function () {
-                    var cb1 = sinon.spy();
-                    var cb2 = sinon.spy();
-                    vs.merge({a: 1, b: 2}, {success: cb1});
-                    vs.merge('a', 1, {success: cb2});
+            // describe('#merge', function () {
+            //     it('Passes success callbacks', function () {
+            //         var cb1 = sinon.spy();
+            //         var cb2 = sinon.spy();
+            //         vs.merge({a: 1, b: 2}, {success: cb1});
+            //         vs.merge('a', 1, {success: cb2});
 
-                    server.respond();
-                    cb1.called.should.equal(true);
-                    cb2.called.should.equal(true);
-                });
-            });
+            //         server.respond();
+            //         cb1.called.should.equal(true);
+            //         cb2.called.should.equal(true);
+            //     });
+            // });
         });
     });
 }());
