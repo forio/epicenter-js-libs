@@ -15,16 +15,24 @@ var run= function () {
          */
         normalizeOperations: function(operations, args) {
             if (!args) args = [];
+            var returnList = {
+                ops: [],
+                args: []
+            };
 
-            var opsList = [];
-            var argsList = [];
+            //{add: [1,2], subtract: [2,4]}
+            var _normalizePlainObjects = function(operations, returnList) {
+                if (!returnList) returnList = {ops: [], args: []};
+                $.each(operations, function(opn, arg) {
+                    returnList.ops.push(opn);
+                    returnList.args.push([].concat(arg));
+                });
+                return returnList;
+            };
+
 
             if ($.isPlainObject(operations)) {
-                //{add: [1,2], subtract: [2,4]}
-                $.each(operations, function(opn, arg) {
-                    opsList.push(opn);
-                    argsList.push(arg);
-                });
+                _normalizePlainObjects(operations, returnList);
             }
             else if($.isArray(operations)) {
                 // ['solve', 'reset']
@@ -32,30 +40,29 @@ var run= function () {
                     if ($.isPlainObject(opn)) {
                         //{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]}
                         if (opn.name) {
-                            opsList.push(opn.name);
-                            argsList.push(opn.params);
+                            returnList.ops.push(opn.name);
+                            returnList.args.push([].concat(opn.params));
                         }
                         else {
                             //{add: [1,2], subtract: [2,4]}
-                            $.each(opn, function(op, arg) {
-                                opsList.push(op);
-                                argsList.push(arg);
-                            });
+                            _normalizePlainObjects(opn, returnList);
                         }
                     }
                     else {
                         //'solve'
-                        opsList.push(opn);
-                        argsList.push(args[index]);
+                        returnList.ops.push(opn);
+                        returnList.args.push([].concat(args[index]));
                     }
                 });
             }
             else {
                 //String opname;
-                opsList.push(operations);
-                argsList = argsList.concat(args);
+                returnList.ops.push(operations);
+                returnList.args.push([].concat(args));
             }
-            return [opsList, argsList];
+
+            // if (returnList.ops.length === 1) returnList.ops = returnList.ops[0];
+            return returnList;
         }
     };
 }();

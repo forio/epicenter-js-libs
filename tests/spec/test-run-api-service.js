@@ -275,6 +275,15 @@
                     req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/add/');
                     req.requestBody.should.equal(JSON.stringify({arguments: [1,2]}));
                 });
+
+                it('should take in operation names  with single values and send to server', function() {
+                    var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
+                    rs.do('echo', 'hello');
+
+                    var req = server.requests.pop();
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/echo/');
+                    req.requestBody.should.equal(JSON.stringify({arguments: ['hello']}));
+                });
             });
 
             describe('#serial', function () {
