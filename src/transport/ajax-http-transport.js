@@ -41,7 +41,7 @@ var AjaxHTTP= function (ajaxOptions) {
         if (options.logLevel && options.logLevel === 'DEBUG' ) {
             console.log(options.url);
             var oldSuccessFn = options.success || $.noop;
-            var newSuccess = function(response, ajaxStatus, ajaxReq) {
+            options.success = function(response, ajaxStatus, ajaxReq) {
                 console.log(response);
                 oldSuccessFn.apply(this, arguments);
             };
