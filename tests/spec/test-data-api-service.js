@@ -91,6 +91,24 @@
             });
         });
 
+        describe('#saveAs', function () {
+            it('Should do a PUT', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.saveAs('user', {name: 'john'});
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('PUT');
+            });
+            it('Should send key,value requests in body', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.saveAs('user', {name: 'john'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/user/');
+                req.requestBody.should.equal(JSON.stringify({name: 'john'}));
+            });
+        });
+
         describe('#remove', function () {
             it('Should do a DELETE', function () {
                 var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});

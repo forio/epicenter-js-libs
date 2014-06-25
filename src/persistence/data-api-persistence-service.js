@@ -94,11 +94,10 @@ var DataService = function (config) {
         },
 
         /**
-         * Save data to the collection.
+         * Save data to an anonymous set
          *
          * **Example**
          *
-         *     ds.save('person', {firstName: 'john', lastName: 'smith'});
          *     ds.save({name:'smith', age:'32'});
          *
          * **Parameters**
@@ -115,9 +114,26 @@ var DataService = function (config) {
             } else {
               (attrs = {})[key] = value;
             }
-
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             return http.post(attrs, httpOptions);
+        },
+
+        /**
+         * Save data to a named set
+         *
+         * **Example**
+         *
+         *     ds.saveAs('person', {firstName: 'john', lastName: 'smith'});
+         *
+         * **Parameters**
+         *
+         * @param {String} name of the set
+         * @param {Object} `value` (Optional) contents of the set
+         * @param {object} `options` (Optional) Overrides for configuration options.
+         */
+        saveAs: function (key, value, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
+            return http.put(value, httpOptions);
         },
 
         /**
@@ -127,8 +143,7 @@ var DataService = function (config) {
          * @param {Object} options Overrides for configuration options
          *
          * @example
-         *     ds.save('person', {firstName: 'john', lastName: 'smith'});
-         *     ds.save({name:'smith', age:'32'});
+         *     ds.load('person');
          */
         load: function (key, filters, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
