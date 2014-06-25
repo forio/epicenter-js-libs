@@ -26,7 +26,8 @@ var URLService= function (config) {
 
         host: (function() {
             host = window.location.host;
-            return HOST_API_MAPPING[host] || 'api.forio.com';
+            if (!host) host = 'forio.com';
+            return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : 'api.' + host;
         }()),
 
         accountPath: (function () {
@@ -42,7 +43,7 @@ var URLService= function (config) {
             var prj = 'test';
             var path = window.location.pathname.split('\/');
             if (path && path[1] === 'app') {
-                prj = path[2];
+                prj = path[3];
             }
             return prj;
         }()),
