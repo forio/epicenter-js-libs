@@ -34,6 +34,9 @@ module.exports = function (grunt) {
                         'src/util/query-util.js',
                         'src/util/run-util.js',
 
+                        'src/service/url-config-service.js',
+                        'src/service/configuration-service.js',
+
                         'src/transport/ajax-http-transport.js',
                         'src/transport/http-transport-factory.js',
 
@@ -41,8 +44,7 @@ module.exports = function (grunt) {
                         'src/persistence/data-api-persistence-service.js',
                         'src/persistence/persistence-service-factory.js',
 
-                        'src/service/url-config-service.js',
-                        'src/service/configuration-service.js',
+
                         'src/service/auth-api-service.js',
                         'src/service/run-api-service.js',
                         'src/service/variables-api-service.js',

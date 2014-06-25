@@ -40,13 +40,11 @@ var AjaxHTTP= function (ajaxOptions) {
 
         if (options.logLevel && options.logLevel === 'DEBUG' ) {
             console.log(options.url);
-            if (options.success) {
-                options.success = _.wrap(options.success, function(fn) {
-                    var fnArgs = _.toArray(arguments).slice(1); //ignore first fn argument
-                    fn.apply(null, fnArgs);
-                    console.log(fnArgs[0]);
-                });
-            }
+            var oldSuccessFn = options.success || $.noop;
+            var newSuccess = function(response, ajaxStatus, ajaxReq) {
+                console.log(response);
+                oldSuccessFn.apply(this, arguments);
+            };
         }
         return $.ajax(options);
     };

@@ -137,10 +137,11 @@ var RunService = function (config) {
             var createOptions = $.extend(true, {}, serviceOptions, options, {url: urlConfig.getAPIPath('run')});
             if (typeof params === 'string') params = {model: params};
 
-            createOptions.success = _.wrap(createOptions.success, function(fn, response) {
+            var oldSuccess = createOptions.success;
+            createOptions.success = function(response) {
                 serviceOptions.filter = response.id; //all future chained calls to operate on this id
-                return fn.call(this, response);
-            });
+                return oldSuccess.apply(this, arguments);
+            };
 
             return http.post(params, createOptions);
         },
