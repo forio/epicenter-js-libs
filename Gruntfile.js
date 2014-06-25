@@ -8,7 +8,7 @@ module.exports = function (grunt) {
         watch: {
             source: {
                 files: ['src/**/*.js'],
-                tasks: ['mocha:test']
+                tasks: ['mocha:test', 'uglify:production']
             },
             tests: {
                 files: ['tests/spec/**/*.js'],
@@ -27,7 +27,8 @@ module.exports = function (grunt) {
             production: {
                 options: {
                     compress: true,
-                    sourceMap: false
+                    sourceMap: true,
+                    sourceMapIncludeSources: true
                 },
                 files: {
                     'dist/epicenter.min.js' : [
@@ -46,8 +47,8 @@ module.exports = function (grunt) {
 
 
                         'src/service/auth-api-service.js',
-                        'src/service/run-api-service.js',
                         'src/service/variables-api-service.js',
+                        'src/service/run-api-service.js',
                     ]
                 }
             }
