@@ -298,7 +298,8 @@ var RunService = function (config) {
 
             setFilterOrThrowError(httpOptions);
 
-            return http.post({arguments: result.args[0]}, $.extend(true, {}, httpOptions, {
+            var prms = (result.args[0].length) ? {arguments: result.args[0]} : undefined;
+            return http.post(prms, $.extend(true, {}, httpOptions, {
                 url: urlConfig.getFilterURL() + 'operations/' + result.ops[0] + '/'
             }));
         },
