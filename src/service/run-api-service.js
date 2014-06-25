@@ -292,13 +292,13 @@ var RunService = function (config) {
                     opsArgs = params;
                 }
             }
-            var opParams = rutil.normalizeOperations(operation, opsArgs);
+            var result = rutil.normalizeOperations(operation, opsArgs);
             var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
 
             setFilterOrThrowError(httpOptions);
 
-            return http.post({arguments: opParams[1]}, $.extend(true, {}, httpOptions, {
-                url: urlConfig.getFilterURL() + 'operations/' + opParams[0] + '/'
+            return http.post({arguments: result.args[0]}, $.extend(true, {}, httpOptions, {
+                url: urlConfig.getFilterURL() + 'operations/' + result.ops[0] + '/'
             }));
         },
 
@@ -319,8 +319,8 @@ var RunService = function (config) {
          */
         serial: function (operations, params, options) {
             var opParams = rutil.normalizeOperations(operations, params);
-            var ops = opParams[0];
-            var args = opParams[1];
+            var ops = opParams.ops;
+            var args = opParams.args;
             var me = this;
 
             var $d = $.Deferred();
@@ -370,8 +370,8 @@ var RunService = function (config) {
             var $d = $.Deferred();
 
             var opParams = rutil.normalizeOperations(operations, params);
-            var ops = opParams[0];
-            var args = opParams[1];
+            var ops = opParams.ops;
+            var args = opParams.args;
             var postOptions = $.extend(true, {}, serviceOptions, options);
 
             var queue  = [];

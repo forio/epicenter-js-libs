@@ -66,7 +66,6 @@
             describe('literals', function () {
                 it('takes in string + arrays', function () {
                     var result = rutil.normalizeOperations('echo', ['hello','world']); //Call echo with 2 parameters, hello and world
-                    console.log(result);
                     result.should.deep.equal({ops: ['echo'], args: [['hello', 'world']] });
                 });
 
