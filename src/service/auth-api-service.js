@@ -76,14 +76,15 @@ var AuthService = function (config) {
         login: function (username, password, options) {
             var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
 
-            httpOptions.success = _.wrap(httpOptions.success, function(fn, data) {
+            var oldSuccessFn = httpOptions.success || $.noop;
+            httpOptions.success = function(response) {
                 currentPassword = password;
                 currentUsername = username;
 
-                token = data.access_token;
+                token = response.access_token;
                 store.save(EPI_COOKIE_KEY, token);
-                fn.call(this, data);
-            });
+                oldSuccessFn.apply(this, arguments);
+            };
 
             return http.post({userName: username, password: password}, httpOptions);
         },
