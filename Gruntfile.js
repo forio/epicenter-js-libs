@@ -41,9 +41,9 @@ module.exports = function (grunt) {
                         'src/transport/ajax-http-transport.js',
                         'src/transport/http-transport-factory.js',
 
-                        'src/persistence/cookie-persistence-service.js',
-                        'src/persistence/data-api-persistence-service.js',
-                        'src/persistence/persistence-service-factory.js',
+                        'src/store/cookie-store.js',
+                        'src/store/store-factory.js',
+                        'src/service/data-api-service.js',
 
 
                         'src/service/auth-api-service.js',
@@ -67,7 +67,7 @@ module.exports = function (grunt) {
                         src: 'src/service/run-api-service.js', dest: 'documentation/generated/run-api-service.html.md'
                     },
                     {
-                        src: 'src/persistence/data-api-persistence-service.js', dest: 'documentation/generated/data-api-persistence-service.html.md'
+                        src: 'src/service/data-api-service.js', dest: 'documentation/generated/data-api-service.html.md'
                     },
                     {
                         src: 'src/service/auth-api-service.js', dest: 'documentation/generated/auth-api-service.html.md'
