@@ -10,7 +10,8 @@ The Epicenter API Adapters are a JavaScript library that abstracts the underlyin
 
 If you are most comfortable with JavaScript, this library is the easiest way to connect your project's [model](../writing_your_model/) and [user interface](../creating_your_interface).
 
-This overview highlights some information common to working with all of the API Adapaters. For details on particular services, select the service reference page from the left.
+This overview highlights some information common to working with all of the API Adapters, including some [example code](#example). For details on particular services, select the service reference page from the left.
+
 
 ###Using API Adapters
 
@@ -34,7 +35,7 @@ For example:
 
 	var rs = F.service.Run();
 
-
+<a name="example"></a>
 ####Examples of usage: Callbacks and Promises
 
 Often the best way to get started is by looking at some example code. Within Epicenter, you can [create a new project](../project_admin/) and select to use one of the example projects. Each example project is written using the Epicenter API Adapters.
