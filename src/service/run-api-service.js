@@ -40,7 +40,7 @@ else {
 
 var RunService = function (config) {
     // config || (config = configService.get());
-    var store = PersistenceFactory({synchronous: true});
+    var store = new PersistenceFactory({synchronous: true});
 
     var defaults = {
         /**

@@ -35,7 +35,7 @@ if (typeof require !== 'undefined') {
 
 var DataService = function (config) {
 
-    var store = PersistenceFactory({synchronous: true});
+    var store = new PersistenceFactory({synchronous: true});
 
     var defaults = {
         /**
