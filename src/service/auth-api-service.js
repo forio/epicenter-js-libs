@@ -13,18 +13,18 @@
 (function() {
 var root = this;
 var F = root.F;
-var $, ConfigService, qutil, TransportFactory, PersistenceService;
+var $, ConfigService, qutil, TransportFactory, StorageService;
 if (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
     qutil = require('util/query-util');
-    PersistenceService = require('persistence/persistence-service-factory');
+    StorageService = require('store/store-factory');
 } else {
     $ = jQuery;
     ConfigService = F.service.Config;
     qutil = F.util.query;
     TransportFactory = F.factory.Transport;
-    PersistenceService= F.service.Persistence;
+    StorageService= F.factory.Store;
 }
 
 
@@ -44,7 +44,7 @@ var AuthService = function (config) {
         url: urlConfig.getAPIPath('authentication')
     });
 
-    var store = new PersistenceService(serviceOptions.store);
+    var store = new StorageService(serviceOptions.store);
     var EPI_COOKIE_KEY = 'epicenter.token';
 
     var token;
