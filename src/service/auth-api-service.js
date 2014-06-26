@@ -13,22 +13,23 @@
 (function() {
 var root = this;
 var F = root.F;
-var $, ConfigService, qutil, TransportFactory, StorageService;
+var $, ConfigService, qutil, TransportFactory, StorageFactory;
 if (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
     qutil = require('util/query-util');
-    StorageService = require('store/store-factory');
+    StorageFactory = require('store/store-factory');
 } else {
     $ = jQuery;
     ConfigService = F.service.Config;
     qutil = F.util.query;
     TransportFactory = F.factory.Transport;
-    StorageService= F.factory.Store;
+    StorageFactory= F.factory.Store;
 }
 
 
 var AuthService = function (config) {
+
     var defaults = {
         /**
          * Where to store user access tokens for temporary access. Defaults to `cookie`.
@@ -36,7 +37,6 @@ var AuthService = function (config) {
          */
         store: 'session'
     };
-
     var serviceOptions = $.extend({}, defaults, config);
 
     var urlConfig = ConfigService(serviceOptions).get('server');
@@ -44,19 +44,12 @@ var AuthService = function (config) {
         url: urlConfig.getAPIPath('authentication')
     });
 
-    var store = new StorageService(serviceOptions.store);
     var EPI_COOKIE_KEY = 'epicenter.token';
+    var store = new StorageFactory({synchronous: true});
+    var token = store.get(EPI_COOKIE_KEY) || '';
 
-    var token;
     var currentUsername;
     var currentPassword;
-
-    //See if we already have a token stashed
-    store.load(EPI_COOKIE_KEY).then(function(savedToken) {
-        if (savedToken) {
-            token = savedToken;
-        }
-    });
 
     var publicAPI = {
         store: store,
@@ -82,7 +75,7 @@ var AuthService = function (config) {
                 currentUsername = username;
 
                 token = response.access_token;
-                store.save(EPI_COOKIE_KEY, token);
+                store.set(EPI_COOKIE_KEY, token);
                 oldSuccessFn.apply(this, arguments);
             };
 
@@ -128,7 +121,7 @@ var AuthService = function (config) {
                 });
             }
             return $d.promise();
-        // },
+        },
 
         // *
         //  * TODO
