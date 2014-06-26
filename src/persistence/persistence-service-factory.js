@@ -16,7 +16,7 @@ else {
 }
 
 if (typeof exports !== 'undefined') {
-    module.exports = HTTPService;
+    module.exports = dataStore;
 }
 else {
     if (!root.F) { root.F = {};}

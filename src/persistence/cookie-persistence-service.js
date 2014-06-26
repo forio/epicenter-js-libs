@@ -36,27 +36,9 @@ var CookieService = function (config) {
          */
         root: '/',
 
-        /**
-         * For operations which require authentication, pass in token
-         * @see  Auth-service for getting tokens
-         * @type {String}
-         */
-        token: '',
-        apiKey: '',
-        domain: 'forio.com'
+        domain: '.forio.com'
     };
     var serviceOptions = $.extend({}, defaults, config);
-
-
-    var success = function($promise, callOptions /* others */) {
-        var argsArray = [].slice.call(arguments);
-        var successArgs = argsArray.slice(2);
-
-        $promise.resolve.apply(this, successArgs);
-        if (callOptions && callOptions.success) {
-            callOptions.success.apply(this, successArgs);
-        }
-    };
 
     var publicAPI = {
         // * TBD
@@ -80,102 +62,81 @@ var CookieService = function (config) {
          * Save cookie value
          * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
          * @param  {Object} value (Optional)
+         * @param {Object} options Overrides for service options
+         *
+         * @return {*} The saved value
          *
          * @example
-         *     cs.save('person', {firstName: 'john', lastName: 'smith'});
-         *     cs.save({name:'smith', age:'32'});
+         *     cs.set('person', {firstName: 'john', lastName: 'smith'});
+         *     cs.set({name:'smith', age:'32'});
          */
-        save: function (key, value, options) {
-            var $d = $.Deferred();
+        set: function (key, value, options) {
+            var setOptions = $.extend(true, {}, serviceOptions, options);
 
-            var domain = serviceOptions.domain;
-            var path = serviceOptions.root;
+            var domain = setOptions.domain;
+            var path = setOptions.root;
 
             document.cookie = encodeURIComponent(key) + '=' +
                                 encodeURIComponent(value) +
                                 (domain ? '; domain=' + domain : '') +
                                 (path ? '; path=' + path : '');
 
-            success.call(this, $d, options, value);
-            return $d.promise();
+            return value;
         },
 
         /**
          * Load cookie value
          * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-         * @param  {Object} value (Optional)
+         * @return {*} The value stored
          *
          * @example
-         *     cs.save('person', {firstName: 'john', lastName: 'smith'});
-         *     cs.save({name:'smith', age:'32'});
+         *     cs.get('person');
          */
-        load: function (key, options) {
-            var $d = $.Deferred();
-
-            var cookieReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
-            var val = document.cookie.replace(cookieReg, '$1');
-            val = decodeURIComponent(val) || null;
-
-            success.call(this, $d, options, val);
-            return $d.promise();
-        },
-
         get: function(key) {
             var cookieReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
             var val = document.cookie.replace(cookieReg, '$1');
             val = decodeURIComponent(val) || null;
-
             return val;
         },
 
         /**
          * Removes key from collection
          * @param {String} key key to remove
+         * @return {String} key The key removed
          *
          * @example
          *     cs.remove('person');
          */
         remove: function (key, options) {
-            var $d = $.Deferred();
+            var remOptions = $.extend(true, {}, serviceOptions, options);
 
-            var domain = serviceOptions.domain;
-            var path = serviceOptions.root;
+            var domain = remOptions.domain;
+            var path = remOptions.root;
 
             document.cookie = encodeURIComponent(key) +
                             '=; expires=Thu, 01 Jan 1970 00:00:00 GMT' +
                             ( domain ? '; domain=' + domain : '') +
                             ( path ? '; path=' + path : '');
-
-            success.call(this, $d, options, key);
-            return $d.promise();
+            return key;
         },
 
         /**
          * Removes collection being referenced
-         * @return null
+         * @return {Array} keys All the keys removed
          */
-        destroy: function (options) {
-            var $d = $.Deferred();
-
+        destroy: function () {
             var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);
             var promises = [];
 
             for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
                 var cookieKey = decodeURIComponent(aKeys[nIdx]);
-                var $deletePromise = this.remove(cookieKey);
-                promises.push($deletePromise);
+                this.remove(cookieKey);
             }
-
-            var me = this;
-            $.when.apply(null, promises).done(function() {
-                success.apply(me, [$d, options].concat([].slice.call(arguments)));
-            });
-
-            return $d.promise();
+            return aKeys;
         }
     };
 
-    return publicAPI;
+    $.extend(this, publicAPI);
 };
 
 
