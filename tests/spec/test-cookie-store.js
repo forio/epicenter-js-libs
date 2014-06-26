@@ -1,12 +1,12 @@
 (function() {
 
-    var CookieService = F.service.Cookie;
+    var CookieStore = F.store.Cookie;
 
     describe('Cookie Service', function () {
 
         var cs;
         before(function () {
-            cs = new CookieService({
+            cs = new CookieStore({
                 domain: null //for testing locally
             });
         });

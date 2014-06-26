@@ -1,14 +1,10 @@
 /**
- * @class Cookie Persistence Service
+ * @class Cookie Storage Service
  *
  * @example
- *      var people = require('data-service')({root: 'people'});
+ *      var people = require('cookie-store')({root: 'people'});
         people
-            .query({firstName: 'john'})
             .save({lastName: 'smith'})
-            .done(function(data) {
-                console.log('Queried and saved!')
-            });
 
  */
 
@@ -27,7 +23,7 @@ if (typeof require !== 'undefined') {
     httpTransport = F.transport.HTTP;
 }
 
-var CookieService = function (config) {
+var CookieStore = function (config) {
 
     var defaults = {
         /**
@@ -141,12 +137,12 @@ var CookieService = function (config) {
 
 
 if (typeof exports !== 'undefined') {
-    module.exports = CookieService;
+    module.exports = CookieStore;
 }
 else {
     if (!root.F) { root.F = {};}
-    if (!root.F.service) { root.F.service = {};}
-    root.F.service.Cookie = CookieService;
+    if (!root.F.store) { root.F.store = {};}
+    root.F.store.Cookie = CookieStore;
 }
 
 }).call(this);

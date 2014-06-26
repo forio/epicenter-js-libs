@@ -17,7 +17,7 @@
 var root = this;
 var F = root.F;
 
-var $, ConfigService, qutil, rutil, futil, httpTransport, VariablesService, PersistenceFactory;
+var $, ConfigService, qutil, rutil, futil, httpTransport, VariablesService, StorageFactory;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
@@ -25,7 +25,7 @@ if  (typeof require !== 'undefined') {
     qutil = require('util/query-util');
     rutil = require('util/run-util');
     futil = require('util/promisify-util');
-    PersistenceFactory= require('persistence/persistence-service-factory');
+    StorageFactory= require('store/store-factory');
 }
 else {
     $ = jQuery;
@@ -35,12 +35,12 @@ else {
     rutil = F.util.run;
     futil = F.util;
     httpTransport = F.transport.HTTP;
-    PersistenceFactory = F.service.Persistence;
+    StorageFactory = F.factory.Store;
 }
 
 var RunService = function (config) {
     // config || (config = configService.get());
-    var store = new PersistenceFactory({synchronous: true});
+    var store = new StorageFactory({synchronous: true});
 
     var defaults = {
         /**

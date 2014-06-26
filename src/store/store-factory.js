@@ -1,5 +1,5 @@
 /**
-    Decides type of persistence store to provide
+    Decides type of store to provide
 */
 
 (function(storeType){
@@ -9,10 +9,10 @@ var F = root.F;
 var dataStore;
 var isNode = false;
 if (typeof require !== 'undefined') {
-    dataStore =  (isNode) ? require('./session-store-service.js') : require('./cookie-store-service.js');
+    dataStore =  (isNode) ? require('./session-store.js') : require('./cookie-store.js');
 }
 else {
-    dataStore =  F.service.Cookie;
+    dataStore =  F.store.Cookie;
 }
 
 if (typeof exports !== 'undefined') {
@@ -20,8 +20,8 @@ if (typeof exports !== 'undefined') {
 }
 else {
     if (!root.F) { root.F = {};}
-    if (!root.F.service) { root.F.service = {};}
-    root.F.service.Persistence = dataStore;
+    if (!root.F.factory) { root.F.factory = {};}
+    root.F.factory.Store = dataStore;
 }
 
 }).call(this);
