@@ -9,7 +9,7 @@ var F = root.F;
 var dataStore;
 var isNode = false;
 if (typeof require !== 'undefined') {
-    dataStore =  (isNode) ? require('./session-persistence-service.js') : require('./cookie-persistence-service.js');
+    dataStore =  (isNode) ? require('./session-store-service.js') : require('./cookie-store-service.js');
 }
 else {
     dataStore =  F.service.Cookie;
