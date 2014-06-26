@@ -1,12 +1,16 @@
 /**
- * variable-api
+ * 
+ * ##Variables API Service
  *
- * To be usually used in conjunction with the Run API Service, though can also be used stand-alone if paired with the right run
+ * Used in conjunction with the [Run API Service](./run-api-service.html) to read, write, and search for specific model variables.
  *
  * @example
- *     var rs = require('service/run-api-service')
- *     var vs = require('service/variable-api-service')({runService: rs.create();})
- *
+ *     var rs = new F.service.Run();
+ *     rs.create('supply-chain-model.jl')
+ *          .then(function() {
+ *              var vs = rs.variables();
+ *              vs.save({sample_int: 4});
+ *          });
  *
  */
 
@@ -38,7 +42,7 @@ var VariablesService = function (config) {
 
     var defaults = {
         /**
-         * The runs object to apply the variable filters to
+         * The runs object to which the variable filters apply
          * @type {RunService}
          */
         runService: null
@@ -63,51 +67,60 @@ var VariablesService = function (config) {
     var publicAPI = {
 
         /**
-         * Get values for a variable
-         * @param {String} Variable to load
-         * @param {Object} filters filters & op modifiers
-         * @param {object} options Overrides for configuration options
-         * @example
-         *     vs.load('price');
+         * Get values for a variable.
+         *
+         * **Example**
+         *
+         *      vs.load('sample_int');  
+         *
+         * **Parameters**
+         * @param {String} `variable` Name of variable to load.
+         * @param {Object} `outputModifier` (Optional) Paging object. Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
-        load: function (variable, filters, options) {
+        load: function (variable, outputModifier, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
-            return http.get(filters, $.extend({}, httpOptions, {
+            return http.get(outputModifier, $.extend({}, httpOptions, {
                 url: getURL() + variable + '/'
             }));
         },
 
         /**
-         * Parameters to filter the list of runs by
-         * @param {Object | Array} Query
-         * @param {Object} filters filters & op modifiers
-         * @param {object} options Overrides for configuration options
+         * Returns particular variables, based on conditions specified in the `query` object.
          *
-         * @example
-         *     vs.query(['Price', 'Sales'])
-         *     vs.query({set: 'variableSet', include:['price', 'sales']});
-         *     vs.query({set: ['set1', 'set2'], include:['price', 'sales']});
+         * **Example**
+         *
+         *      vs.query(['price', 'sales']);
+         *      vs.query({include:['price', 'sales']});
+         *
+         * **Parameters**
+         * @param {Object|Array} `query` The names of the variables requested.
+         * @param {Object} `outputModifier` (Optional) Paging object. Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {object} `options` (Optional) Overrides for configuration options.
+         *
          */
-        query: function (query, filters, options) {
-            //Query and filters are both querystrings in the url; only calling them out separately here to be consistent with the other calls
+        query: function (query, outputModifier, options) {
+            //Query and outputModifier are both querystrings in the url; only calling them out separately here to be consistent with the other calls
             var httpOptions = $.extend(true, {}, serviceOptions, options);
 
             if ($.isArray(query)) {
                 query = {include: query};
             }
-            $.extend(query, filters);
+            $.extend(query, outputModifier);
             return http.get(query, httpOptions);
         },
 
         /**
-         * Save values to the api. Over-writes whatever is on there currently
-         * @param {Object|String} variable Object with attributes, or string key
-         * @param {Object} val Optional if prev parameter was a string, set value here
-         * @param {object} options Overrides for configuration options
+         * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../run_persistence/#runs-in-memory). (The preferred way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](./run-api-service.html) for calling methods from the model.)
          *
-         * @example
-         *     vs.save({price: 4, quantity: 5, products: [2,3,4]})
-         *     vs.save('price', 4);
+         * **Example**
+         *      vs.save('price', 4);
+         *      vs.save({price: 4, quantity: 5, products: [2,3,4]});
+         *
+         * **Parameters**
+         * @param {Object|String} `variable` An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
+         * @param {Object} `val` (Optional) If passing a string for `variable`, use this argument for the value to save.
+         * @param {Object} `options` (Optional) Overrides for configuration options.    
          */
         save: function (variable, val, options) {
             var attrs;
