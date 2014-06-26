@@ -26,7 +26,7 @@ var URLService= function (config) {
 
         host: (function() {
             host = window.location.host;
-            if (!host) host = 'forio.com';
+            if (!host || host.indexOf('localhost') !== -1) host = 'forio.com';
             return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : 'api.' + host;
         }()),
 
