@@ -128,23 +128,23 @@ var AuthService = function (config) {
                 });
             }
             return $d.promise();
-        },
+        // },
 
-        /**
-         * TODO
-         * Returns user information.
-         * @see <TBD> for return object syntax
-         *
-         * **Parameters**
-         * @param {String} `inputToken` User access token (use `login()` then `getToken()` to retrieve)
-         * @param {Object} `options` (Optional) Overrides for configuration options
-         */
-        getUserInfo: function (inputToken, options) {
-            var toDecode = (inputToken) ? inputToken : token;
-            var $d = $.Deferred();
-            $d.resolve(root.atob(toDecode));
-            return $d.promise();
-        }
+        // *
+        //  * TODO
+        //  * Returns user information.
+        //  * @see <TBD> for return object syntax
+        //  *
+        //  * **Parameters**
+        //  * @param {String} `inputToken` User access token (use `login()` then `getToken()` to retrieve)
+        //  * @param {Object} `options` (Optional) Overrides for configuration options
+
+        // getUserInfo: function (inputToken, options) {
+        //     var toDecode = (inputToken) ? inputToken : token;
+        //     var $d = $.Deferred();
+        //     $d.resolve(root.atob(toDecode));
+        //     return $d.promise();
+        // }
 
         // //TBD, need to be talked through
         // resetPassword: function (options) {
