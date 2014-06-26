@@ -37,7 +37,7 @@ For example:
 
 ####Examples of usage: Callbacks and Promises
 
-Often the best way to get started is by looking at some example code. Within Epicenter, you can [create a new project](TODO) and select to use one of the example projects. Each example project is written using the Epicenter API Adapters.
+Often the best way to get started is by looking at some example code. Within Epicenter, you can [create a new project](../project_admin/) and select to use one of the example projects. Each example project is written using the Epicenter API Adapters.
 
 There are two different patterns for using the service adapters: using callbacks or using promises. The example projects use promises.
 
