@@ -5,9 +5,9 @@
  * The Authentication API Service provides methods for logging in and creating user access tokens.
  * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../project_access/) for more information.)
  *
- * @example
  *      var auth = new F.service.Auth();
- *      auth.login({userName: 'jsmith@acmesimulations.com', password: 'passw0rd'});
+ *      auth.login({userName: 'jsmith@acmesimulations.com', 
+ *                  password: 'passw0rd'});
  *      var token = auth.getToken();
  */
 
@@ -39,13 +39,13 @@ var AuthService = function (config) {
         store: {synchronous: true},
 
         /**
-         * User name to use for logging in. Defaults to empty string.
+         * Email or username to use for logging in. Defaults to empty string.
          * @type {String}
          */
         userName: '',
 
         /**
-         * Password for specified userName. Defaults to empty string.
+         * Password for specified username. Defaults to empty string.
          * @type {String}
          */
         password: ''
@@ -66,11 +66,12 @@ var AuthService = function (config) {
         store: store,
 
         /**
-         * Logs user in to specified account. If no username or password was provided in the initial configuration options, they are required here.
+         * Logs user in. If no username or password was provided in the initial configuration options, they are required here.
          *
          * **Example**
          *
-         *      auth.login({userName: 'jsmith@acmesimulations.com', password: 'passw0rd'});
+         *      auth.login({userName: 'jsmith@acmesimulations.com', 
+         *                  password: 'passw0rd'});
          *
          * **Parameters**
          * @param {Object} `options` (Optional) Overrides for configuration options.
@@ -111,7 +112,7 @@ var AuthService = function (config) {
         },
 
         /**
-         * Returns existing user access token if already logged in, or creates a new one otherwise.
+         * Returns existing user access token if already logged in, or creates a new one otherwise. (See [more background on access tokens](../../project_access/)).
          *
          * **Example**
          *

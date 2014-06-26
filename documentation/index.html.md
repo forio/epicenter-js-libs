@@ -6,18 +6,18 @@ isPage: true
 
 ##API Adapters
 
-The Epicenter API Adapters are a JavaScript library that abstracts the underlying RESTful APIs ([Run](../aggregate_run_api/), [Data](../data_api/), and [Model](../model_apis/)) into a set of services and utilities. 
+The Epicenter API Adapters are a JavaScript library that abstracts the underlying Epicenter RESTful APIs ([Run](../aggregate_run_api/), [Data](../data_api/), and [Model](../model_apis/)) into a set of services and utilities. 
 
-If you are most comfortable with JavaScript, this library is the easiest way to connect your project's model and user interface.
+If you are most comfortable with JavaScript, this library is the easiest way to connect your project's [model](../writing_your_model/) and [user interface](../creating_your_interface).
 
-This overview highlights some information common to working with all of the API Adapaters. For details on particular services, select the reference page from the left.
+This overview highlights some information common to working with all of the API Adapaters. For details on particular services, select the service reference page from the left.
 
 ###Using API Adapters
 
 ####Including
-The Epicenter API Adapters library is available from our CDN: [cdn-common.forio.com/js-libs/1.0/epicenter.min.js](cdn-common.forio.com/js-libs/1.0/epicenter.min.js). To use it in your project, simply add
+The Epicenter API Adapters library is available from our CDN: [cdn-common.forio.com/js-libs/1.0/epicenter.min.js](https://cdn-common.forio.com/js-libs/1.0/epicenter.min.js). To use it in your project, simply add
 
-	      <script src="http://cdn-common.forio.com/js-libs/1.0/epicenter.min.js"></script>
+	<script src="https://cdn-common.forio.com/js-libs/1.0/epicenter.min.js"></script>
 	
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files). 
 
@@ -52,7 +52,10 @@ All services take in an ["options" configuration object](#configuration) as the 
 
 For example, you might write a sequence of operations using callbacks:
 
-	var rs = new F.service.Run({account: 'myTeamId', project: 'sales_forecaster'});
+	var rs = new F.service.Run({
+		account: 'myTeamId', 
+		project: 'sales_forecaster'
+	});
 	rs.create({'sales_forecaster.jl'}, {
 	    onSuccess: function (data, $run){
 	        $run.do('initialize_inputs', {
@@ -83,17 +86,20 @@ Every service call returns a promise. All services support the [jQuery Deferred 
 
 For example, you might write the same sequence of operations as above using promises:
 
-	var rs = new F.service.Run({account: 'myTeamId', project: 'sales_forecaster'});
+	var rs = new F.service.Run({
+		account: 'myTeamId', 
+		project: 'sales_forecaster'
+	});
 	rs.create('sales_forecaster.jl')
-      .then(function () { rs.do('initialize_inputs'); })
+      .then(function() { rs.do('initialize_inputs'); })
       .then(function() { rs.do('calculate_input_totals'); })
       .then(function() { rs.do('forecast_monthly_profit'); })
-      .done(function (){
+      .done(function() {
         var vs = rs.variables();
         vs.load('profit_histogram');
       });
 
-See for example [this blog](http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/) for more details on how promises work in JavaScript.
+See for example [this blog](http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/) for more background on how promises work in JavaScript.
 
 
 <a name="configuration"></a>

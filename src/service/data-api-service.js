@@ -5,10 +5,13 @@
  *
  * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, the `root` option contains the name of the collection. If you have multiple collections within each of your projects, you can pass the collection name as an option for each call.
  *
- * @example
  *      var ds = new F.service.Data({root: 'survey-responses'});
- *      ds.saveAs('user1', {'question1': 2, 'question2': 10, 'question3': false, 'question4': 'sometimes'} );
- *      ds.saveAs('user2', {'question1': 3, 'question2': 8, 'question3': true, 'question4': 'always'} );
+ *      ds.saveAs('user1', 
+ *          {'question1': 2, 'question2': 10, 
+ *           'question3': false, 'question4': 'sometimes'} );
+ *      ds.saveAs('user2', 
+ *          {'question1': 3, 'question2': 8, 
+ *           'question3': true, 'question4': 'always'} );
  *      ds.query('',{'question2': {'$gt': 9}});
  *
  */
@@ -76,20 +79,28 @@ var DataService = function (config) {
     var publicAPI = {
 
         /**
-         * Search for data within a project. 
+         * Search for data within a collection. 
          * 
          * Searching using comparison or logical operators (as opposed to exact matches) requires MongoDB syntax. See the underlying [Data API](../../data_api/#searching) for additional details.
          *
          * **Examples**
          *
          *      // request all data associated with document "user1"
-         *  ds.query('user1'); 
-         *      // exact matching: request all documents in collection where "question2" is 9
-         *  ds.query('', {'question2': 9}); 
-         *      // comparison operators: request all documents in collection where "question2" is greater than 9
-         *  ds.query('', {'question2': {'$gt': 9}}); 
-         *      // logical operators: request all documents in collection where "question2" is less than 10 and "question3" is false
-         *  ds.query('', {'$and': [ {'question2': {'$lt':10}}, {'question3': false}]});
+         *      ds.query('user1'); 
+         *
+         *      // exact matching: 
+         *      // request all documents in collection where "question2" is 9
+         *      ds.query('', {'question2': 9}); 
+         *
+         *      // comparison operators: 
+         *      // request all documents in collection 
+         *      // where "question2" is greater than 9
+         *      ds.query('', {'question2': {'$gt': 9}}); 
+         *
+         *      // logical operators: 
+         *      // request all documents in collection 
+         *      // where "question2" is less than 10, and "question3" is false
+         *      ds.query('', {'$and': [ {'question2': {'$lt':10}}, {'question3': false}]});
          *
          * **Parameters**
          * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
@@ -105,7 +116,9 @@ var DataService = function (config) {
         },
 
         /**
-         * Save data to an anonymous document within the collection. (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../data_api/) for additional background.) 
+         * Save data to an anonymous document within the collection. 
+         *
+         * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../data_api/) for additional background.)
          *
          * **Example**
          *
@@ -115,8 +128,8 @@ var DataService = function (config) {
          *
          * **Parameters**
          *
-         * @param {String|Object} `key` If `key` is a string, it is the id of the element to create or update in this document. If `key` is an object, the object is the data to save in this document. In both cases, the id for the document is generated automatically. 
-         * @param {Object} `value` (Optional) The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key`.
+         * @param {String|Object} `key` If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically. 
+         * @param {Object} `value` (Optional) The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
          * @param {object} `options` (Optional) Overrides for configuration options.
          */
         save: function (key, value, options) {
@@ -132,12 +145,18 @@ var DataService = function (config) {
         },
 
         /**
-         * Save data to a named document within the collection. (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../data_api/) for additional background.)
+         * Save data to a named document within the collection. 
+         *
+         * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../data_api/) for additional background.)
          *
          * **Example**
          *
-         *      ds.saveAs('user1', {'question1': 2, 'question2': 10, 'question3': false, 'question4': 'sometimes'} );
-         *      ds.saveAs('student1', {firstName: 'john', lastName: 'smith'}, {root: 'students'});
+         *      ds.saveAs('user1', 
+         *          {'question1': 2, 'question2': 10, 
+         *           'question3': false, 'question4': 'sometimes'} );
+         *      ds.saveAs('student1', 
+         *          {firstName: 'john', lastName: 'smith'}, 
+         *          {root: 'students'});
          *
          * **Parameters**
          *
@@ -173,7 +192,7 @@ var DataService = function (config) {
          *
          * **Example**
          *
-         *     ds.remove('user1'); // the collection "survey-responses" has documents "user1", "user2", ...
+         *     ds.remove('user1');
          *
          *
          * **Parameters**
