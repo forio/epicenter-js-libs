@@ -94,7 +94,7 @@
 
 /* ********** Run API Service ************************** */
 
-	//var rs = new F.service.Run({account: 'first-team', project: 'hello_world_aggpublic2', logLevel: 'DEBUG', server: {host: 'api.epicenter-stable.foriodev.com'}});
+	var rs = new F.service.Run({account: 'first-team', project: 'hello_world_aggpublic2', logLevel: 'DEBUG', server: {host: 'api.epicenter-stable.foriodev.com'}});
 
 	/* run.load */
 	//PASS. look up in Postman and see change from true --> false and back as edit below
@@ -158,8 +158,8 @@
 	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.do('addone')});
 
 	/* run.serial */
-	//FAIL -- sending body of "arguments: [null]". is this something Jaime was oing to fix? or Naren, b/c rs.do('addone') works?
-	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.serial(['addone', 'addone'])});
+	//FAIL -- sending body of "arguments: [null]". is this something Jaime was going to fix? or Naren, b/c rs.do('addone') works?
+	rs.load('e3ffe7e5-ba96-48e8-8da2-ec0b001dc7da').then(function() {rs.serial(['addone', 'addone'])});
 	//PASS
 	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.serial( [ {name: 'addone', params: []}, {name: 'init', params: [4]}] )});
 
