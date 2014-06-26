@@ -122,8 +122,6 @@ var CookieStore = function (config) {
          */
         destroy: function () {
             var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);
-            var promises = [];
-
             for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
                 var cookieKey = decodeURIComponent(aKeys[nIdx]);
                 this.remove(cookieKey);
