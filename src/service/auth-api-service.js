@@ -80,10 +80,10 @@ var AuthService = function (config) {
                 throw new Error('No username or password specified.');
             }
 
-            var oldSuccessFn = httpOptions.success || $.noop;
+            var oldSuccessFn = httpOptions.success;
             httpOptions.success = function(response) {
-                serviceOptions.password = password;
-                serviceOptions.userName = username;
+                serviceOptions.password = httpOptions.password;
+                serviceOptions.userName = httpOptions.userName;
 
                 token = response.access_token;
                 store.set(EPI_COOKIE_KEY, token);
