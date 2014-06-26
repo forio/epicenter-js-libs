@@ -17,7 +17,7 @@
 var root = this;
 var F = root.F;
 
-var $, ConfigService, qutil, rutil, futil, httpTransport, VariablesService;
+var $, ConfigService, qutil, rutil, futil, httpTransport, VariablesService, PersistenceFactory;
 if  (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
@@ -25,6 +25,7 @@ if  (typeof require !== 'undefined') {
     qutil = require('util/query-util');
     rutil = require('util/run-util');
     futil = require('util/promisify-util');
+    PersistenceFactory= require('persistence/persistence-service-factory');
 }
 else {
     $ = jQuery;
@@ -34,18 +35,20 @@ else {
     rutil = F.util.run;
     futil = F.util;
     httpTransport = F.transport.HTTP;
+    PersistenceFactory = F.service.Persistence;
 }
 
 var RunService = function (config) {
     // config || (config = configService.get());
+    var store = PersistenceFactory({synchronous: true});
 
     var defaults = {
         /**
-         * For functions that require authentication, pass in the user access token. Defaults to empty string.
+         * For functions that require authentication, pass in the user access token. If you're already logged in with a cookie set, loads from there
          * @see [Authentication API Service](./auth-api-service.html) for getting tokens.
          * @type {String}
          */
-        token: '',
+        token: store.get('epicenter.token') || '',
 
         /**
          * The account id. In the Epicenter UI, this is the "Team ID" (for team projects) or "User ID" (for personal projects). Defaults to empty string.

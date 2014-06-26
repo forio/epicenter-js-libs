@@ -120,6 +120,14 @@ var CookieService = function (config) {
             return $d.promise();
         },
 
+        get: function(key) {
+            var cookieReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
+            var val = document.cookie.replace(cookieReg, '$1');
+            val = decodeURIComponent(val) || null;
+
+            return val;
+        },
+
         /**
          * Removes key from collection
          * @param {String} key key to remove

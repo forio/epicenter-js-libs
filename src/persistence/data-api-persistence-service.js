@@ -19,19 +19,23 @@
 (function() {
 var root = this;
 var F = root.F;
-var $, ConfigService, qutil, httpTransport;
+var $, ConfigService, qutil, httpTransport, PersistenceFactory;
 if (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
     qutil = require('util/query-util');
+    PersistenceFactory= require('persistence/persistence-service-factory');
 } else {
     $ = jQuery;
     ConfigService = F.service.Config;
     qutil = F.util.query;
     httpTransport = F.transport.HTTP;
+    PersistenceFactory = F.service.Persistence;
 }
 
 var DataService = function (config) {
+
+    var store = PersistenceFactory({synchronous: true});
 
     var defaults = {
         /**
@@ -45,7 +49,8 @@ var DataService = function (config) {
          * @see [Authentication API Service](./auth-api-service.html) for getting tokens.
          * @type {String}
          */
-        token: '',
+        token: store.get('epicenter.token') || '',
+
         apiKey: '',
         domain: 'forio.com'
     };

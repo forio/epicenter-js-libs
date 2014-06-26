@@ -49,9 +49,16 @@ var VariablesService = function (config) {
     var getURL = function() {
         return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
     };
-    var http = httpTransport($.extend(true, config, {
+
+    var httpOptions = {
         url: getURL
-    }));
+    };
+    if (serviceOptions.token) {
+        httpOptions.headers = {
+            'Authorization': 'Bearer ' + serviceOptions.token
+        };
+    }
+    var http = httpTransport(httpOptions);
 
     var publicAPI = {
 
