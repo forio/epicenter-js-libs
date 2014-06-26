@@ -32,10 +32,23 @@ var AuthService = function (config) {
 
     var defaults = {
         /**
-         * Where to store user access tokens for temporary access. Defaults to `cookie`.
+         * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
          * @type {String}
          */
-        store: 'session'
+        store: {synchronous: true},
+
+        /**
+         * User name to use for loggin in
+         * @type {String}
+         */
+        userName: '',
+
+        /**
+         * Password for specified user name
+         * @type {String}
+         */
+        password: ''
+
     };
     var serviceOptions = $.extend({}, defaults, config);
 
@@ -45,41 +58,40 @@ var AuthService = function (config) {
     });
 
     var EPI_COOKIE_KEY = 'epicenter.token';
-    var store = new StorageFactory({synchronous: true});
+    var store = new StorageFactory(serviceOptions.store);
     var token = store.get(EPI_COOKIE_KEY) || '';
-
-    var currentUsername;
-    var currentPassword;
 
     var publicAPI = {
         store: store,
 
         /**
-         * Logs user in to specified account.
+         * Logs user in to specified account. If no username or password was provided in the intial configuration options, they're mandatory here
          *
          * **Example**
          *
-         *      auth.login('jsmith@acmesimulations.com', 'passw0rd');
+         *      auth.login({userName: 'jsmith@acmesimulations.com', password: 'passw0rd'});
          *
          * **Parameters**
-         * @param {String} `username` Email (for Epicenter authors and team members) or Username (for end users) of user
-         * @param {String} `password` Password
          * @param {Object} `options` (Optional) Overrides for configuration options
          */
-        login: function (username, password, options) {
+        login: function (options) {
             var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
+            if (!httpOptions.userName || !httpOptions.password) {
+                throw new Error('No username or password specified.');
+            }
 
             var oldSuccessFn = httpOptions.success || $.noop;
             httpOptions.success = function(response) {
-                currentPassword = password;
-                currentUsername = username;
+                serviceOptions.password = password;
+                serviceOptions.userName = username;
 
                 token = response.access_token;
                 store.set(EPI_COOKIE_KEY, token);
+
                 oldSuccessFn.apply(this, arguments);
             };
 
-            return http.post({userName: username, password: password}, httpOptions);
+            return http.post({userName: httpOptions.userName, password: httpOptions.password}, httpOptions);
         },
 
         /**
@@ -102,10 +114,9 @@ var AuthService = function (config) {
          *
          * **Example**
          *
-         *      var currToken = auth.getToken('jsmith@acmesimulations.com');
+         *      var currToken = auth.getToken();
          *
          * **Parameters**
-         * @param {String} `username` (Optional) Username of user to get the token for; if currently logged in as a single user, username is optional
          * @param {Object} `options` (Optional) Overrides for configuration options
          */
         getToken: function (options) {
@@ -116,33 +127,10 @@ var AuthService = function (config) {
                 $d.resolve(token);
             }
             else {
-                this.login(currentUsername, currentPassword, httpOptions).then(function() {
-                    $.resolve(token);
-                });
+                this.login(httpOptions).then($d.resolve);
             }
             return $d.promise();
-        },
-
-        // *
-        //  * TODO
-        //  * Returns user information.
-        //  * @see <TBD> for return object syntax
-        //  *
-        //  * **Parameters**
-        //  * @param {String} `inputToken` User access token (use `login()` then `getToken()` to retrieve)
-        //  * @param {Object} `options` (Optional) Overrides for configuration options
-
-        // getUserInfo: function (inputToken, options) {
-        //     var toDecode = (inputToken) ? inputToken : token;
-        //     var $d = $.Deferred();
-        //     $d.resolve(root.atob(toDecode));
-        //     return $d.promise();
-        // }
-
-        // //TBD, need to be talked through
-        // resetPassword: function (options) {
-
-        // }
+        }
     };
 
     $.extend(this, publicAPI);
