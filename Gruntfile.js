@@ -73,7 +73,7 @@ module.exports = function (grunt) {
                         src: 'src/service/auth-api-service.js', dest: 'documentation/generated/auth-api-service.html.md'
                     },
                     {
-                        src: 'src/service/variable-api-service.js', dest: 'documentation/generated/variable-api-service.html.md'
+                        src: 'src/service/variables-api-service.js', dest: 'documentation/generated/variables-api-service.html.md'
                     }
                 ]
             }
