@@ -4,30 +4,52 @@
 
     describe('Run Utilities', function () {
         describe('#normalizeOperations()', function () {
-        describe('objects', function () {
-            it('takes in multi anon object with [..]', function () {
-                var params =  {add: [1,2], subtract: [2,3]};
-                var result = rutil.normalizeOperations(params);
-                result.should.deep.equal({ops: ['add', 'subtract'], args: [[1,2], [2,3]]});
+            describe('#_normalizePlainObjects', function () {
+                it('takes in multi anon object with [..]', function () {
+                    var params =  {add: [1,2], subtract: [2,3]};
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add', 'subtract'], args: [[1,2], [2,3]]});
+                });
+                it('takes in multi anon object with []', function () {
+                    var params =  {add: 1, subtract: 2};
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add', 'subtract'], args: [[1], [2]]});
+                });
+                it('takes in single anon object with []', function () {
+                    var params =  {add: [1,2]};
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add'], args: [[1,2]]});
+                });
+                it('takes in single anon object with literal', function () {
+                    var params =  {add: [1]};
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add'], args: [[1]]});
+                });
             });
-            it('takes in multi anon object with []', function () {
-                var params =  {add: 1, subtract: 2};
-                var result = rutil.normalizeOperations(params);
-                result.should.deep.equal({ops: ['add', 'subtract'], args: [[1], [2]]});
+            describe('#_normalizeStructuredObjects', function () {
+                it('takes in single named single object with []', function () {
+                    var params =  {name: 'add', params: [3]} ;
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add'], args: [[3]] });
+                });
+                it('takes in single named single object with [..]', function () {
+                    var params =  {name: 'add', params: [3,3]} ;
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add'], args: [[3,3]] });
+                });
+                it('takes in single named single object with literal', function () {
+                    var params =  {name: 'add', params: 2} ;
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add'], args: [[2]] });
+                });
+                it('takes in single named single object with [[]]', function () {
+                    var params =  {name: 'add', params: [1,2]} ;
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add'], args: [[1, 2]] });
+                });
             });
-            it('takes in single anon object with []', function () {
-                var params =  {add: [1,2]};
-                var result = rutil.normalizeOperations(params);
-                result.should.deep.equal({ops: ['add'], args: [[1,2]]});
-            });
-            it('takes in single anon object with literal', function () {
-                var params =  {add: [1]};
-                var result = rutil.normalizeOperations(params);
-                result.should.deep.equal({ops: ['add'], args: [[1]]});
-            });
-        });
 
-            describe('arrays', function() {
+            describe('_normalizeArrays', function() {
                 it('takes in named object pairs', function () {
                     var params =  [{name: 'add', params: [1,2]}, {name: 'subtract', params: [2,3]}];
                     var result = rutil.normalizeOperations(params);
@@ -44,6 +66,11 @@
                     var params =  [{name: 'add', params: 1}];
                     var result = rutil.normalizeOperations(params);
                     result.should.deep.equal({ops: ['add'], args: [[1]] });
+                });
+                it('takes in single named single object literal pairs', function () {
+                    var params =  [{name: 'add', params: [3]} ];
+                    var result = rutil.normalizeOperations(params);
+                    result.should.deep.equal({ops: ['add'], args: [[3]] });
                 });
 
                 it('takes in single arrays', function () {
@@ -63,7 +90,7 @@
             });
 
 
-            describe('literals', function () {
+            describe('_normalizeLiterals', function () {
                 it('takes in string + arrays', function () {
                     var result = rutil.normalizeOperations('echo', ['hello','world']); //Call echo with 2 parameters, hello and world
                     result.should.deep.equal({ops: ['echo'], args: [['hello', 'world']] });
@@ -89,7 +116,7 @@
             });
 
 
-            it('takes in single arrays and objects', function() {
+            it('takes in a combination single arrays and objects', function() {
                 var params =  ['init', 'reset', {add: [1,2]}];
                 var result = rutil.normalizeOperations(params);
                 result.should.deep.equal({ops: ['init', 'reset', 'add'] , args:[[undefined], [undefined], [1,2]] });

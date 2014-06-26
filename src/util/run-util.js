@@ -29,39 +29,49 @@ var run= function () {
                 });
                 return returnList;
             };
+            //{name: 'add', params: [1]}
+            var _normalizeStructuredObjects = function(operation, returnList) {
+                if (!returnList) returnList = {ops: [], args: []};
+                returnList.ops.push(operation.name);
+                returnList.args.push([].concat(operation.params));
+                return returnList;
+            };
+
+            var _normalizeObject = function(operation, returnList) {
+                return ((operation.name) ? _normalizeStructuredObjects : _normalizePlainObjects)(operation, returnList);
+            };
+
+            var _normalizeLiterals = function(operation, args, returnList) {
+                if (!returnList) returnList = {ops: [], args: []};
+                returnList.ops.push(operation);
+                returnList.args.push([].concat(args));
+                return returnList;
+            };
 
 
-            if ($.isPlainObject(operations)) {
-                _normalizePlainObjects(operations, returnList);
-            }
-            else if($.isArray(operations)) {
-                // ['solve', 'reset']
+            var _normalizeArrays = function(operations, arg, returnList) {
+                if (!returnList) returnList = {ops: [], args: []};
                 $.each(operations, function(index, opn) {
                     if ($.isPlainObject(opn)) {
-                        //{name: add, params: [1,2]]}, {name: 'subtract', params:[2,3]}
-                        if (opn.name) {
-                            returnList.ops.push(opn.name);
-                            returnList.args.push([].concat(opn.params));
-                        }
-                        else {
-                            //{add: [1,2], subtract: [2,4]}
-                            _normalizePlainObjects(opn, returnList);
-                        }
+                        _normalizeObject(opn, returnList);
                     }
                     else {
-                        //'solve'
-                        returnList.ops.push(opn);
-                        returnList.args.push([].concat(args[index]));
+                        _normalizeLiterals(opn, args[index], returnList);
                     }
                 });
+                return returnList;
+            };
+
+            if ($.isPlainObject(operations)) {
+                _normalizeObject(operations, returnList);
+            }
+            else if($.isArray(operations)) {
+               _normalizeArrays(operations, args, returnList);
             }
             else {
-                //String opname;
-                returnList.ops.push(operations);
-                returnList.args.push([].concat(args));
+                _normalizeLiterals(operations, args, returnList);
             }
 
-            // if (returnList.ops.length === 1) returnList.ops = returnList.ops[0];
             return returnList;
         }
     };
