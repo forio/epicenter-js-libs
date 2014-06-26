@@ -14,7 +14,7 @@
  var root = this;
  var F = root.F;
 
- var $, ConfigService, qutil, rutil, futil, httpTransport;
+ var $, ConfigService, qutil, rutil, futil, TransportFactory;
  if  (typeof require !== 'undefined') {
      $ = require('jquery');
      configService = require('utils/configuration-service');
@@ -30,7 +30,7 @@
      rutil = F.util.run;
      futil = F.util;
 
-     httpTransport = F.transport.HTTP;
+     TransportFactory = F.factory.Transport;
  }
 
 
@@ -58,7 +58,7 @@ var VariablesService = function (config) {
             'Authorization': 'Bearer ' + serviceOptions.token
         };
     }
-    var http = httpTransport(httpOptions);
+    var http = new TransportFactory(httpOptions);
 
     var publicAPI = {
 

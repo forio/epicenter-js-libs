@@ -16,8 +16,8 @@ if (typeof exports !== 'undefined') {
 }
 else {
     if (!root.F) { root.F = {};}
-    if (!root.F.transport) { root.F.transport = {};}
-    root.F.transport.HTTP = transport;
+    if (!root.F.factory) { root.F.factory = {};}
+    root.F.factory.Transport = transport;
 }
 
 }).call(this);

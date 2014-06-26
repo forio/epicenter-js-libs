@@ -49,7 +49,7 @@ var AjaxHTTP= function (ajaxOptions) {
         return $.ajax(options);
     };
 
-    return {
+    var publicAPI = {
         /** All method paths will be relative to this **/
         basePath: '',
 
@@ -87,6 +87,8 @@ var AjaxHTTP= function (ajaxOptions) {
             return connect.apply(this, ['options'].concat([].slice.call(arguments)));
         }
     };
+
+    return $.extend(this, publicAPI);
 };
 
 if (typeof exports !== 'undefined') {

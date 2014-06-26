@@ -13,7 +13,7 @@
 (function() {
 var root = this;
 var F = root.F;
-var $, ConfigService, qutil, httpTransport, PersistenceService;
+var $, ConfigService, qutil, TransportFactory, PersistenceService;
 if (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
@@ -23,7 +23,7 @@ if (typeof require !== 'undefined') {
     $ = jQuery;
     ConfigService = F.service.Config;
     qutil = F.util.query;
-    httpTransport = F.transport.HTTP;
+    TransportFactory = F.factory.Transport;
     PersistenceService= F.service.Persistence;
 }
 
@@ -40,7 +40,7 @@ var AuthService = function (config) {
     var serviceOptions = $.extend({}, defaults, config);
 
     var urlConfig = ConfigService(serviceOptions).get('server');
-    var http = httpTransport({
+    var http = new TransportFactory({
         url: urlConfig.getAPIPath('authentication')
     });
 

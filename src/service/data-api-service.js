@@ -19,7 +19,7 @@
 (function() {
 var root = this;
 var F = root.F;
-var $, ConfigService, qutil, httpTransport, StorageFactory;
+var $, ConfigService, qutil, TransportFactory, StorageFactory;
 if (typeof require !== 'undefined') {
     $ = require('jquery');
     configService = require('util/configuration-service');
@@ -29,7 +29,7 @@ if (typeof require !== 'undefined') {
     $ = jQuery;
     ConfigService = F.service.Config;
     qutil = F.util.query;
-    httpTransport = F.transport.HTTP;
+    TransportFactory = F.factory.Transport;
     StorageFactory = F.factory.Store;
 }
 
@@ -74,7 +74,7 @@ var DataService = function (config) {
             'Authorization': 'Bearer ' + serviceOptions.token
         };
     }
-    var http = httpTransport(httpOptions);
+    var http = new TransportFactory(httpOptions);
 
     var publicAPI = {
 
