@@ -8,7 +8,7 @@
  *      var auth = new F.service.Auth();
  *      auth.login({userName: 'jsmith@acmesimulations.com', 
  *                  password: 'passw0rd'});
- *      var token = auth.getToken();
+ *      auth.getToken().then(function(token){ console.log('my token is', token); });
  */
 
 (function() {
@@ -116,7 +116,7 @@ var AuthService = function (config) {
          *
          * **Example**
          *
-         *      var currToken = auth.getToken();
+         *      auth.getToken().then(function(token){ console.log('my token is', token); });
          *
          * **Parameters**
          * @param {Object} `options` (Optional) Overrides for configuration options.

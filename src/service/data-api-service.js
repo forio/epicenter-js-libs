@@ -105,7 +105,7 @@ var DataService = function (config) {
          * **Parameters**
          * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
          * @param {Object} `query` The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../data_api/#searching) for additional examples.  
-         * @param {Object} `outputModifier` (Optional) Paging object. Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
@@ -179,7 +179,7 @@ var DataService = function (config) {
          * 
          * **Parameters**
          * @param  {String|Object} `key` The id of the data to return. Can be the id of a document, or a path to data within that document.
-         * @param {Object} `outputModifier` (Optional) Paging object. Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` Overrides for configuration options.
          */
         load: function (key, outputModifier, options) {

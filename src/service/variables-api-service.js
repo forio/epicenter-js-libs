@@ -74,7 +74,7 @@ var VariablesService = function (config) {
          *
          * **Parameters**
          * @param {String} `variable` Name of variable to load.
-         * @param {Object} `outputModifier` (Optional) Paging object. Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         load: function (variable, outputModifier, options) {
@@ -94,7 +94,7 @@ var VariablesService = function (config) {
          *
          * **Parameters**
          * @param {Object|Array} `query` The names of the variables requested.
-         * @param {Object} `outputModifier` (Optional) Paging object. Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {object} `options` (Optional) Overrides for configuration options.
          *
          */
@@ -110,7 +110,7 @@ var VariablesService = function (config) {
         },
 
         /**
-         * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../run_persistence/#runs-in-memory). (The preferred way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](./run-api-service.html) for calling methods from the model.)
+         * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](./run-api-service.html) for calling methods from the model.)
          *
          * **Example**
          *

@@ -11,7 +11,7 @@
  *          project: 'supply-chain-game'
  *      });
  *      rs.create('supply-chain-model.jl');
- *          .then(function() {rs.do('runmodel')});
+ *          .then(function() {rs.do('runmodel');});
  *
  */
 
@@ -131,7 +131,7 @@ var RunService = function (config) {
          *
          *  **Example**
          *
-         *      rs.create({ 'hello_world.jl' });
+         *      rs.create('hello_world.jl');
          *
          *  **Parameters**
          * @param {String} `model` The name of the primary [model file](../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project.
@@ -171,8 +171,8 @@ var RunService = function (config) {
          *       });
          *
          * **Parameters**
-         * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Note that querying for variables only applies to variables that are persisted (e.g. that have been `record`ed in your Julia model).
-         * @param {Object} `outputModifier` (Optional) Paging object. Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`). 
+         * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../run_persistence/#runs-in-memory) and for runs [in the database](../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`). 
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         query: function (qs, outputModifier, options) {
@@ -187,8 +187,8 @@ var RunService = function (config) {
          * Similar to `.query()`.
          *
          * **Parameters**
-         * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Note that filtering for variables only applies to variables that are persisted (e.g. that have been `record`ed in your Julia model).
-         * @param {Object} `outputModifier` (Optional) Paging object. Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../run_persistence/#runs-in-memory) and for runs [in the database](../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         filter: function (filter, outputModifier, options) {
@@ -213,7 +213,7 @@ var RunService = function (config) {
          *
          * **Parameters**
          * @param {String} `runID` The run id.
-         * @param {Object} `filters` (Optional) Filters & op modifiers. Use key `include` to list model variables that you want to include in the response.
+         * @param {Object} `filters` (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         load: function (runID, filters, options) {
@@ -316,7 +316,7 @@ var RunService = function (config) {
          *                  {name: 'runmodel', params: []} ]); 
          *
          * **Parameters**
-         * @param {Array[String]|Array[Object]} `operations` If all of the methods do not take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
+         * @param {Array[String]|Array[Object]} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         serial: function (operations, params, options) {
@@ -368,7 +368,7 @@ var RunService = function (config) {
          *     rs.parallel({add: [1,2], subtract: [2,4]}); 
          *
          * **Parameters**
-         * @param {Array|Object} `operations` If all of the methods do not take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
+         * @param {Array|Object} `operations` If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         parallel: function (operations, params, options) {
