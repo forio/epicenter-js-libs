@@ -56,7 +56,7 @@
         };
         var serviceOptions = $.extend({}, defaults, config);
 
-        var urlConfig = ConfigService(serviceOptions).get('server');
+        var urlConfig = new ConfigService(serviceOptions).get('server');
         var http = new TransportFactory({
             url: urlConfig.getAPIPath('authentication')
         });

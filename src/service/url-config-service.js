@@ -19,7 +19,6 @@
             'forio.com': 'api.forio.com',
             'foriodev.com': 'api.epicenter.foriodev.com'
         };
-        var me = this;
 
         var publicExports = {
             protocol: API_PROTOCOL,

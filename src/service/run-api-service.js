@@ -97,7 +97,7 @@
 
         var serviceOptions = $.extend({}, defaults, config);
 
-        var urlConfig = ConfigService(serviceOptions).get('server');
+        var urlConfig = new ConfigService(serviceOptions).get('server');
         if (serviceOptions.account) {
             urlConfig.accountPath = serviceOptions.account;
         }
