@@ -13,7 +13,6 @@
 
 (function() {
 var root = this;
-var F = root.F;
 var $, ConfigService, qutil, TransportFactory, StorageFactory;
 if (typeof require !== 'undefined') {
     $ = require('jquery');

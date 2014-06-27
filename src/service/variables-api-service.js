@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * ##Variables API Service
  *
  * Used in conjunction with the [Run API Service](./run-api-service.html) to read, write, and search for specific model variables.
@@ -70,7 +70,7 @@ var VariablesService = function (config) {
          *
          * **Example**
          *
-         *      vs.load('sample_int');  
+         *      vs.load('sample_int');
          *
          * **Parameters**
          * @param {String} `variable` Name of variable to load.
@@ -120,7 +120,7 @@ var VariablesService = function (config) {
          * **Parameters**
          * @param {Object|String} `variable` An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
          * @param {Object} `val` (Optional) If passing a string for `variable`, use this argument for the value to save.
-         * @param {Object} `options` (Optional) Overrides for configuration options.    
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         save: function (variable, val, options) {
             var attrs;

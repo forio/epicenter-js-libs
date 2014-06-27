@@ -1,6 +1,5 @@
 (function(){
 var root = this;
-var F = root.F;
 
 var transport;
 var isNode = false;
@@ -12,7 +11,7 @@ else {
 }
 
 if (typeof exports !== 'undefined') {
-    module.exports = HTTPService;
+    module.exports = transport;
 }
 else {
     if (!root.F) { root.F = {};}

@@ -3,11 +3,7 @@ var root = this;
 var F = root.F;
 var qutils = F.util.query;
 
-var AjaxHTTP= function (ajaxOptions) {
-
-    var result = function(d) {
-        return ($.isFunction(d)) ? d() : d;
-    };
+var AjaxHTTP= function (config) {
 
     var defaults = {
         url: '',
@@ -17,11 +13,19 @@ var AjaxHTTP= function (ajaxOptions) {
         statusCode: {
             404: $.noop
         },
+
+        /**
+         * ONLY for strings in the url. All GET & DELETE params are run through this
+         * @type {[type]}
+         */
         parameterParser: qutils.toQueryFormat
     };
 
-    //TODO: Add config service to switch between locations by url
-    var transportOptions = $.extend({}, defaults, ajaxOptions);
+    var transportOptions = $.extend({}, defaults, config);
+
+    var result = function(d) {
+        return ($.isFunction(d)) ? d() : d;
+    };
 
     var connect = function (method, params, connectOptions) {
         params = result(params);
@@ -50,13 +54,6 @@ var AjaxHTTP= function (ajaxOptions) {
     };
 
     var publicAPI = {
-        /** All method paths will be relative to this **/
-        basePath: '',
-
-        statusHandlers: {
-
-        },
-
         get:function (params, ajaxOptions) {
             var options = $.extend({}, transportOptions, ajaxOptions);
             params = options.parameterParser(result(params));
@@ -72,6 +69,7 @@ var AjaxHTTP= function (ajaxOptions) {
             return connect.apply(this, ['put'].concat([].slice.call(arguments)));
         },
         delete: function (params, ajaxOptions) {
+            //DELETE doesn't support body params, but jQuery thinks it does.
             var options = $.extend({}, transportOptions, ajaxOptions);
             params = options.parameterParser(result(params));
             if ($.trim(params)) {

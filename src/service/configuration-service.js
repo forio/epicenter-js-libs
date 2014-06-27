@@ -31,13 +31,12 @@
  var root = this;
  var F = root.F;
 
-
  var urlService;
- if  (typeof require !== 'undefined') {
-     urlService = require('service/urlService');
+ if (typeof require !== 'undefined') {
+    urlService = require('service/urlService');
  }
  else {
-     urlService = F.service.URL;
+    urlService = F.service.URL;
  }
 
 var ConfigurationService = function (config) {
