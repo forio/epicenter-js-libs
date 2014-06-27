@@ -6,9 +6,9 @@
  * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../project_access/) for more information.)
  *
  *      var auth = new F.service.Auth();
- *      auth.login({userName: 'jsmith@acmesimulations.com', 
+ *      auth.login({userName: 'jsmith@acmesimulations.com',
  *                  password: 'passw0rd'});
- *      auth.getToken().then(function(token){ console.log('my token is', token); });
+ *      auth.logout();
  */
 
 (function() {
@@ -70,7 +70,7 @@ var AuthService = function (config) {
          *
          * **Example**
          *
-         *      auth.login({userName: 'jsmith@acmesimulations.com', 
+         *      auth.login({userName: 'jsmith@acmesimulations.com',
          *                  password: 'passw0rd'});
          *
          * **Parameters**
@@ -104,10 +104,9 @@ var AuthService = function (config) {
          *      auth.logout();
          *
          * **Parameters**
-         * @param {String} `username` (Optional) If provided only logs specific username out, otherwise logs out all usernames associated with session.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
-        logout: function (username, options) {
+        logout: function (options) {
             return store.remove(EPI_COOKIE_KEY, options);
         },
 
