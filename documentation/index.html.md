@@ -86,22 +86,22 @@ Every service call returns a promise. All services support the [jQuery Deferred 
 
 For example, you might write the same sequence of operations as above using promises:
 
-var rs = new F.service.Run({
-    account: 'myTeamId',
-    project: 'sales_forecaster'
-});
-rs.create('sales_forecaster.jl')
-    .then(function() {
-        rs.serial(['initialize_inputs', 'calculate_input_totals', 'forecast_monthly_profit'])
-            .then(displayUI)
-            .then(hideLoadingScreen)
-            .then(function () {
-                rs.variables().load('profit_histogram');
-            })
-            .fail(function() {
-                console.log('Oops! Something went wrong with the operations');
-            });
-    });
+	var rs = new F.service.Run({
+	    account: 'myTeamId',
+	    project: 'sales_forecaster'
+	});
+	rs.create('sales_forecaster.jl')
+	    .then(function() {
+	        rs.serial(['initialize_inputs', 'calculate_input_totals', 'forecast_monthly_profit'])
+	            .then(displayUI)
+	            .then(hideLoadingScreen)
+	            .then(function () {
+	                rs.variables().load('profit_histogram');
+	            })
+	            .fail(function() {
+	                console.log('Oops! Something went wrong with the operations');
+	            });
+	    });
 
 See for example [this blog](http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/) for more background on how promises work in JavaScript.
 
