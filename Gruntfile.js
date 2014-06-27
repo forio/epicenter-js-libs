@@ -1,8 +1,11 @@
 module.exports = function (grunt) {
+    'use strict';
+
     grunt.loadNpmTasks('grunt-mocha');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-markdox');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
     grunt.initConfig({
         watch: {
@@ -13,6 +16,27 @@ module.exports = function (grunt) {
             tests: {
                 files: ['tests/spec/**/*.js'],
                 tasks: ['mocha:test']
+            }
+        },
+        jshint : {
+            options: {
+                jshintrc: './.jshintrc',
+                reporter: require('jshint-stylish')
+            },
+            source: {
+                files: {
+                    src: ['src/**/*.js']
+                }
+            },
+            tests: {
+                files: {
+                    src: ['tests/spec/**/*.js']
+                }
+            },
+            all: {
+                files: {
+                    src: ['src/**/*.js', 'tests/spec/**/*.js']
+                }
             }
         },
         uglify: {
@@ -48,15 +72,15 @@ module.exports = function (grunt) {
 
                         'src/service/auth-api-service.js',
                         'src/service/variables-api-service.js',
-                        'src/service/run-api-service.js',
+                        'src/service/run-api-service.js'
                     ]
                 }
             }
         },
         markdox: {
             options: {
-               // Task-specific options go here.
-               template: 'documentation/template.ejs'
+                // Task-specific options go here.
+                template: 'documentation/template.ejs'
             },
             target: {
                 files:  [
@@ -64,27 +88,31 @@ module.exports = function (grunt) {
                     //     src: 'src/service/configuration-service.js', dest: 'documentation/generated/configuration-service.html.md'
                     // },
                     {
-                        src: 'src/service/run-api-service.js', dest: 'documentation/generated/run-api-service.html.md'
+                        src: 'src/service/run-api-service.js',
+                        dest: 'documentation/generated/run-api-service.html.md'
                     },
                     {
-                        src: 'src/service/data-api-service.js', dest: 'documentation/generated/data-api-service.html.md'
+                        src: 'src/service/data-api-service.js',
+                        dest: 'documentation/generated/data-api-service.html.md'
                     },
                     {
-                        src: 'src/service/auth-api-service.js', dest: 'documentation/generated/auth-api-service.html.md'
+                        src: 'src/service/auth-api-service.js',
+                        dest: 'documentation/generated/auth-api-service.html.md'
                     },
                     {
-                        src: 'src/service/variables-api-service.js', dest: 'documentation/generated/variables-api-service.html.md'
+                        src: 'src/service/variables-api-service.js',
+                        dest: 'documentation/generated/variables-api-service.html.md'
                     }
                 ]
             }
         },
         mocha: {
-          test: {
-            src: ['tests/index.html'],
-            options: {
-                run: true
+            test: {
+                src: ['tests/index.html'],
+                options: {
+                    run: true
+                }
             }
-          },
         }
     });
 
