@@ -5,9 +5,10 @@
  * The Authentication API Service provides methods for logging in and creating user access tokens.
  * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../project_access/) for more information.)
  *
- * @example
- *      var auth = require('authentication-service')();
- *      auth.login()
+ *      var auth = new F.service.Auth();
+ *      auth.login({userName: 'jsmith@acmesimulations.com', 
+ *                  password: 'passw0rd'});
+ *      auth.getToken().then(function(token){ console.log('my token is', token); });
  */
 
 (function() {
@@ -38,13 +39,13 @@ var AuthService = function (config) {
         store: {synchronous: true},
 
         /**
-         * User name to use for loggin in
+         * Email or username to use for logging in. Defaults to empty string.
          * @type {String}
          */
         userName: '',
 
         /**
-         * Password for specified user name
+         * Password for specified username. Defaults to empty string.
          * @type {String}
          */
         password: ''
@@ -65,14 +66,15 @@ var AuthService = function (config) {
         store: store,
 
         /**
-         * Logs user in to specified account. If no username or password was provided in the intial configuration options, they're mandatory here
+         * Logs user in. If no username or password was provided in the initial configuration options, they are required here.
          *
          * **Example**
          *
-         *      auth.login({userName: 'jsmith@acmesimulations.com', password: 'passw0rd'});
+         *      auth.login({userName: 'jsmith@acmesimulations.com', 
+         *                  password: 'passw0rd'});
          *
          * **Parameters**
-         * @param {Object} `options` (Optional) Overrides for configuration options
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         login: function (options) {
             var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
@@ -102,22 +104,22 @@ var AuthService = function (config) {
          *      auth.logout();
          *
          * **Parameters**
-         * @param {String} `username` (Optional) If provided only logs specific username out, otherwise logs out all usernames associated with session
-         * @param {Object} `options` (Optional) Overrides for configuration options
+         * @param {String} `username` (Optional) If provided only logs specific username out, otherwise logs out all usernames associated with session.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         logout: function (username, options) {
             return store.remove(EPI_COOKIE_KEY, options);
         },
 
         /**
-         * Returns existing user access token if already logged in, or creates a new one otherwise.
+         * Returns existing user access token if already logged in, or creates a new one otherwise. (See [more background on access tokens](../../project_access/)).
          *
          * **Example**
          *
-         *      var currToken = auth.getToken();
+         *      auth.getToken().then(function(token){ console.log('my token is', token); });
          *
          * **Parameters**
-         * @param {Object} `options` (Optional) Overrides for configuration options
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         getToken: function (options) {
             var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);

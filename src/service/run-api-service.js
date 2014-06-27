@@ -5,11 +5,13 @@
  * The Run API Service allows you to perform common tasks around creating and updating runs, variables, and data.
  *
  * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults.
- * @example
- *     var rs = require('run-service')({
  *
- *     });
- *
+ *      var rs = new F.service.Run({
+ *          account: 'acme-simulations', 
+ *          project: 'supply-chain-game'
+ *      });
+ *      rs.create('supply-chain-model.jl');
+ *          .then(function() {rs.do('runmodel');});
  *
  */
 
@@ -44,7 +46,7 @@ var RunService = function (config) {
 
     var defaults = {
         /**
-         * For functions that require authentication, pass in the user access token. If you're already logged in with a cookie set, loads from there
+         * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../project_access/)).
          * @see [Authentication API Service](./auth-api-service.html) for getting tokens.
          * @type {String}
          */
@@ -63,12 +65,14 @@ var RunService = function (config) {
         project: '',
 
         /**
-         * Criteria to filter runs by
+         * Criteria by which to to filter runs. Defaults to empty string.
          * @type {String}
          */
         filter: '',
 
-        /** Called when the call completes successfully **/
+        /** 
+         * Called when the call completes successfully. Defaults to `$.noop`.
+         */
         success: $.noop,
 
         /**
@@ -127,12 +131,10 @@ var RunService = function (config) {
          *
          *  **Example**
          *
-         *      rs.create({
-         *          model: 'hello_world.jl'
-         *      })
+         *      rs.create('hello_world.jl');
          *
          *  **Parameters**
-         * @param {Object} `model` The name of the primary [model file](../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your project.
+         * @param {String} `model` The name of the primary [model file](../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
@@ -152,34 +154,26 @@ var RunService = function (config) {
         /**
          * Returns particular runs, based on conditions specified in the `qs` object.
          *
-         * The elements of the `qs` object are ANDed together within a single call to `.query()`, but are ORed across multiple chained calls to `.query()`. See the examples.
+         * The elements of the `qs` object are ANDed together within a single call to `.query()`.
          *
-         * **Examples**
+         * **Example**
          *
-         *      // returns runs with saved = true and price > 1.
+         *      // returns runs with saved = true and variables.price > 1, 
+         *      // where variables.price has been persisted (recorded)
+         *      // in the model.
          *     rs.query({
          *          'saved': 'true',
-         *          'price': '>1'
+         *          '.price': '>1'
          *       },
          *       {
-         *          limit: 5,
-         *          page: 2
-         *       });
-         *
-         *      // returns runs with saved = true and price > 1;
-         *      // also returns runs with sales < 50.
-         *     rs.query({
-         *          'saved': true,
-         *          'price': '>1'
-         *       });
-         *      .query({
-         *          'sales': '<50'
+         *          startrecord: 2,
+         *          endrecord: 5
          *       });
          *
          * **Parameters**
-         * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run. (See [more on run persistence](../../run_persistence).) Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.)
-         * @param {Object} `outputModifier` (Optional) Paging object. Can include `limit`, `page`, and `sort`.
-         * @param {object} `options` (Optional) Overrides for configuration options
+         * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../run_persistence/#runs-in-memory) and for runs [in the database](../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`). 
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         query: function (qs, outputModifier, options) {
             serviceOptions.filter = qs; //shouldn't be able to over-ride
@@ -190,25 +184,12 @@ var RunService = function (config) {
         /**
          * Returns particular runs, based on conditions specified in the `qs` object.
          *
-         * Similar to `.query()`, except merges parameters instead of overwriting them when calls are chained.
-         *
-         * **Example**
-         *
-         *     rs.query({
-         *         'saved': true
-         *     })   // Get all saved runs
-         *     .filter({
-         *         '.price': '>1'
-         *     })   // Get all saved runs with price > 1
-         *     .filter({
-         *         'user.firstName': 'John'
-         *     });  // Get all saved runs with price > 1,
-         *          // and belonging to users with first name John
+         * Similar to `.query()`.
          *
          * **Parameters**
-         * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run. (See [more on run persistence](../../run_persistence).) Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.)
-         * @param {Object} `outputModifier` (Optional) Paging object. Can include `limit`, `page`, and `sort`.
-         * @param {object} `options` (Optional) Overrides for configuration options
+         * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../run_persistence/#runs-in-memory) and for runs [in the database](../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         filter: function (filter, outputModifier, options) {
             if ($.isPlainObject(serviceOptions.filter)) {
@@ -222,16 +203,18 @@ var RunService = function (config) {
         },
 
         /**
-         * Get data for a specific run. This includes standard data such as the account, model, project, and created and last modified dates, as well as variables from the default variable set. To request additional variables or variable sets, pass them as part of the `filters` object.
+         * Get data for a specific run. This includes standard run data such as the account, model, project, and created and last modified dates. To request specific model variables, pass them as part of the `filters` parameter. 
+         *
+         * Note that if the run is [in memory](../../run_persistence/#runs-in-memory), any model variables are available; if the run is [in the database](../../run_persistence/#runs-in-db), only model variables that have been persisted &mdash; that is, `record`ed in your Julia model &mdash; are available.
          *
          * **Example**
          *
-         *     rs.load('<runid>', {include: '.score', set: 'xyz'});
+         *     rs.load('bb589677-d476-4971-a68e-0c58d191e450', {include: '.price,.sales'});
          *
          * **Parameters**
-         * @param {String} `runID` The run id
-         * @param {Object} `filters` (Optional) Filters & op modifiers
-         * @param {object} `options` (Optional) Overrides for configuration options
+         * @param {String} `runID` The run id.
+         * @param {Object} `filters` (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         load: function (runID, filters, options) {
             serviceOptions.filter = runID; //shouldn't be able to over-ride
@@ -242,17 +225,16 @@ var RunService = function (config) {
 
         //Saving data
         /**
-         * Save attributes (data, variables) of the run.
+         * Save attributes (data, model variables) of the run.
          *
-         * **Example**
+         * **Examples**
          *
          *     rs.save({completed: true});
          *     rs.save({saved: true, variables: {a: 23, b: 23}});
-         *     rs.save({saved: true, '.a': 23, '.b': 23}}); //equivalent to above
          *
          * **Parameters**
-         * @param {Object} `attributes` The run data and variables to save. Preface model variables with `.` or include them in a `variables` field within the `attributes` object.
-         * @param {object} `options` (Optional) Overrides for configuration options
+         * @param {Object} `attributes` The run data and variables to save. Model variables must be included in a `variables` field within the `attributes` object (otherwise they are treated as run data and added to the run record directly).
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         save: function (attributes, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
@@ -266,18 +248,27 @@ var RunService = function (config) {
          *
          * The method must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../writing_your_model/)) in the model file in order to be called through the API.
          *
-         * Note that you can combine the `operation` and `params` arguments into a single object if you prefer, as in the third example.
+         * The `params` argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
          *
-         * **Example**
+         * Note that you can combine the `operation` and `params` arguments into a single object if you prefer, as in the last example.
          *
-         *     rs.do('solve');
-         *     rs.do('add', [1,2]);
-         *     rs.do({name:'add', arguments:[2,4]});
+         * **Examples**
+         *
+         *      // method "solve" takes no arguments
+         *     rs.do('solve'); 
+         *      // method "echo" takes one argument, a string
+         *     rs.do('echo', ['hello']); 
+         *      // method "echo" takes one argument, a string
+         *     rs.do('echo', 'hello'); 
+         *      // method "sumArray" takes one argument, an array
+         *     rs.do('sumArray', [[4,2,1]]); 
+         *      // method "add" takes two arguments, both integers
+         *     rs.do({name:'add', params:[2,4]}); 
          *
          * **Parameters**
          * @param {String} `operation` Name of method.
-         * @param {Array} `params` (Optional) Any parameters the operation takes, passed as an array.
-         * @param {object} `options` (Optional) Overrides for configuration options
+         * @param {Array} `params` (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         do: function(operation, params, options) {
             // console.log('do', operation, params);
@@ -312,15 +303,21 @@ var RunService = function (config) {
          *
          * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../writing_your_model/)) in the model file in order to be called through the API.
          *
-         * **Example**
+         * **Examples**
          *
-         *     rs.serial(['initialize', 'solve', 'reset']);
+         *      // methods "initialize" and "solve" do not take any arguments
+         *     rs.serial(['initialize', 'solve']);
+         *      // methods "init" and "reset" take two arguments each
          *     rs.serial([  {name: 'init', params: [1,2]},
-         *                  {name: 'reset', params: [2,3]} ]);
+         *                  {name: 'reset', params: [2,3]} ]); 
+         *      // method "init" takes two arguments, 
+         *      // method "runmodel" takes none
+         *     rs.serial([  {name: 'init', params: [1,2]},
+         *                  {name: 'runmodel', params: []} ]); 
          *
          * **Parameters**
-         * @param {Array[string]|Array[object]} `operations` If the methods do not take parameters, pass an array of the method names. If the methods do take parameters, pass an array of objects, each of which contains a method name and its own array of arguments.
-         * @param {object} `options` (Optional) Overrides for configuration options
+         * @param {Array[String]|Array[Object]} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         serial: function (operations, params, options) {
             var opParams = rutil.normalizeOperations(operations, params);
@@ -362,14 +359,17 @@ var RunService = function (config) {
          *
          * **Example**
          *
-         *     rs.parallel(['solve', 'reset']);
-         *     rs.parallel({add: [1,2], subtract: [2,4]});
+         *      // methods "solve" and "reset" do not take any arguments
+         *     rs.parallel(['solve', 'reset']); 
+         *      // methods "add" and "subtract" take two arguments each
          *     rs.parallel([ {name: 'add', params: [1,2]},
-         *                   {name: 'subtract', params:[2,3]} ]);
+         *                   {name: 'subtract', params:[2,3]} ]); 
+         *      // methods "add" and "subtract" take two arguments each
+         *     rs.parallel({add: [1,2], subtract: [2,4]}); 
          *
          * **Parameters**
-         * @param {Array|Object} `operations` If the methods do not take parameters, pass an array of the method names. If the methods do take parameters, pass an array of objects, each of which contains a method name and its own array of arguments. The `name` and `params` can be explicit or implied.
-         * @param {object} `options` (Optional) Overrides for configuration options
+         * @param {Array|Object} `operations` If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         parallel: function (operations, params, options) {
             var $d = $.Deferred();
@@ -401,11 +401,15 @@ var RunService = function (config) {
 
     var publicSyncAPI = {
         /**
-         * Returns a variable object.
+         * Returns a variable object. Use the variables object to read, write, and search for specific model variables. See the [Variable API Service](./variables-api-service.html) for more information.
+         *
+         * **Example**
+         *
+         *      var vs = rs.variables();
+         *      vs.save({sample_int: 4});  
          *
          * **Parameters**
-         * @param {object} `config` (Optional) Overrides for configuration options
-         * @see [Variable API Service](./variable-api-service.html) for more information.
+         * @param {Object} `config` (Optional) Overrides for configuration options.
          */
 
         variables: function (config) {

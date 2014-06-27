@@ -12,12 +12,7 @@
     <?= moduleDoc.description ?>
 
     <? var firstTag = moduleDoc.raw.tags[0] ?>
-    <? if (firstTag.type === 'example') { ?>
-    ```
-        <? moduleDoc.raw.tags.forEach(function(code) { ?> <?= code.string ?>
-        <? }) ?>
-    ```
-    <? } ?>
+
 
     ##Configuration Options
     <? doc.javadoc.forEach(function(block) { ?>

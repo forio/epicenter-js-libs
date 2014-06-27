@@ -2,15 +2,18 @@
 
 /* ********** Auth API Service ************************** */
 
-/*
-	var auth = new F.service.Auth({account: 'first-team', project: 'hello_world_aggpublic2', logLevel: 'DEBUG', server: {host: 'api.epicenter-stable.foriodev.com'}});
-	auth.login('mjonesJune2@forio.com', 'passw0rd')
-		.then(function() {
-			//auth.getToken();
+	//PASS
+	//var auth = new F.service.Auth({account: 'first-team', project: 'hello_world_aggpublic2', logLevel: 'DEBUG', server: {host: 'api.epicenter-stable.foriodev.com'}});
+	//PASS
+	//var auth = new F.service.Auth({account: 'first-team', project: 'hello_world_aggpublic2', logLevel: 'DEBUG', server: {host: 'api.epicenter-stable.foriodev.com'}, userName: 'mjonesJune2@forio.com', password: 'passw0rd'});
+	//PASS
+	//auth.login({userName: 'mjonesJune2@forio.com', password: 'passw0rd'});
+	//PASS i think -- token is a giant object
+	//var token = auth.getToken();
+	//console.log(token);
 			//auth.logout();
-			//auth.getUserInfo();
-		});
-*/
+
+
 
 /* ********** Variables API Service ************************** */
 
@@ -21,6 +24,7 @@
 			var vs = rs.variables();
 			//PASS
 			//vs.save({sample_int: 4});
+			//vs.save('sample_int', 4)
 			//PASS
 			//vs.save({sample_int: 5, sample_string: 'goodbye world'});
 			//PASS
@@ -102,7 +106,7 @@
 	//FAILS, only includes one (is this the design?)
 	//rs.load('67d5d05a-6a9c-459e-acc2-18d74c8f925c', {include: 'sample_int', include: 'sample_string'});
 	//PASS
-	//rs.load('c3c3d8d6-05a8-46f3-8179-2c0da3b935bb', {include: 'sample_int,sample_string'});
+	//rs.load('bb589677-d476-4971-a68e-0c58d191e450', {include: 'sample_int,sample_string'});
 
 
 	/* run.create */
@@ -116,7 +120,7 @@
 	//PASS
 	//rs.query({}, {startrecord: 2, endrecord: 3}) 
 	//PASS
-	//rs.query({'saved': false}, {startrecord: 2, endrecord: 3, sort: 'id', direction: 'desc'})
+	//rs.query({'saved': false, '.sample_int': '>5'}, {startrecord: 2, endrecord: 3, sort: 'id', direction: 'desc'})
 	//PASS
 	//rs.query({'saved': false, '.sample_int': '>5'});
 	//rs.query({'saved': false, 'sample_int': 11}); //searching for top-level data in run called "sample_int"
@@ -137,7 +141,7 @@
 	//rs.save({variables: {'sample_string': 'hi again, world'}});	
 	//PASS (SLOW). it takes a little bit to see this in the lookup.
 	//rs.save({'sample_string': 'goodbye, world'});
-	//FAIL. Naren is fixing.
+	//FAIL. per Naren, won't fix for launch.
 	//rs.save({'.sample_int': 35});
 
 	/* run.filter */
@@ -147,29 +151,44 @@
 
 	/* run.do */
 	//PASS. 
-	//rs.load('d7962759-7d35-4175-8b59-2864f2f00338').then(function() {rs.do('init', [4])});
-	//FAILS. is treating "name" as the method name. 
-	//rs.load('c3c3d8d6-05a8-46f3-8179-2c0da3b935bb').then(function() {rs.do({name: 'init', params: [3]} )});
+	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.do('init', [4])});
+	//PASS. 
+	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.do({name: 'init', params: [3]} )});
 	//PASS
-	//rs.load('c3c3d8d6-05a8-46f3-8179-2c0da3b935bb').then(function() {rs.do('addone')});
+	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.do('addone')});
 
 	/* run.serial */
-	//PASS (presumably -- both functions called, but I haven't confirmed which is called first)
-	//rs.load('3c38e165-dc72-4474-8e47-ae5ce6547474').then(function() {rs.serial(['addone', 'addone'])});
-	//expecting FAIL. retest after "name" bug above is fixed.
-	//rs.load('ID').then(function() {rs.serial( [ {name: 'addone', params: []}, {name: 'init', params: [4]}] )});
+	//FAIL -- sending body of "arguments: [null]". is this something Jaime was going to fix? or Naren, b/c rs.do('addone') works?
+	rs.load('e3ffe7e5-ba96-48e8-8da2-ec0b001dc7da').then(function() {rs.serial(['addone', 'addone'])});
+	//PASS
+	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.serial( [ {name: 'addone', params: []}, {name: 'init', params: [4]}] )});
 
 	/* run.parallel */
+	//FAIL -- sending body of "arguments: [null]".
+	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.parallel(['addone','addone'])});
 	//PASS
-	//rs.load('3c38e165-dc72-4474-8e47-ae5ce6547474').then(function() {rs.parallel(['addone','addone'])});
-	//expecting FAIL. retest after "name" bug above is fixed.
-	//rs.load('ID').then(function() {rs.parallel({init: [3], addone: []})});
-	//rs.load('ID').then(function() {rs.parallel([ {name: 'addone', params: []}, {name: 'init', params: [4]}])});
+	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.parallel({init: [3], addone: []})});
+	//PASS
+	//rs.load('865a258f-0d9c-4ac1-8c6f-735d6b2da48b').then(function() {rs.parallel([ {name: 'addone', params: []}, {name: 'init', params: [4]}])});
 
 	/* run.variables */
 	//PASS
 	//rs.load('c3c3d8d6-05a8-46f3-8179-2c0da3b935bb');
 	//var vs = rs.variables();
 	//vs.load('sample_int');
+
+/* ****** readme code ********* */
+/*
+	var rs = new F.service.Run({account: 'first-team', project: 'sales_forecaster_new', logLevel: 'DEBUG', server: {host: 'api.epicenter-stable.foriodev.com'}});
+	rs.create('sales_forecaster.jl')
+      .then(function () { rs.do('initialize_inputs'); })
+      .then(function() { rs.do('calculate_input_totals'); })
+      .then(function() { rs.do('forecast_monthly_profit'); })
+      .done(function() {
+      	var vs = rs.variables();
+        vs.load('profit_histogram');
+      });	
+
+  */
 
 })();
