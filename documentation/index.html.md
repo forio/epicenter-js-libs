@@ -4,25 +4,25 @@ layout: "default"
 isPage: true
 ---
 
-##API Adapters
+##API Adapters: epicenter.js
 
-The Epicenter API Adapters are a JavaScript library that abstracts the underlying Epicenter RESTful APIs ([Run](../aggregate_run_api/), [Data](../data_api/), [Model](../model_apis/), [Authentication](../project_access/)) into a set of services and utilities. 
+The Epicenter API Adapters are part of the epicenter.js library. This library abstracts the underlying Epicenter RESTful APIs ([Run](../aggregate_run_api/), [Data](../data_api/), [Model](../model_apis/), [Authentication](../project_access/)) into a set of services and utilities. 
 
-If you are comfortable with JavaScript, this library is the easiest way to connect your project's [model](../writing_your_model/), [data](../data_api/), and [user interface](../creating_your_interface).
+If you are comfortable with JavaScript, the epicenter.js library is the easiest way to connect your project's [model](../writing_your_model/), [data](../data_api/), and [user interface](../creating_your_interface).
 
 This overview highlights some information common to working with all of the API Adapters, including some [example code](#example). For details on particular services, select the service reference page from the left.
 
 
-###Using API Adapters
+###Using epicenter.js
 
 ####Including
-The Epicenter API Adapters library is available from our CDN: [cdn-common.forio.com/js-libs/1.0/epicenter.min.js](https://cdn-common.forio.com/js-libs/1.0/epicenter.min.js). To use it in your project, simply add
+The epicenter.js library is available from our CDN: [cdn-common.forio.com/js-libs/1.0/epicenter.min.js](https://cdn-common.forio.com/js-libs/1.0/epicenter.min.js). To use it in your project, simply add
 
 	<script src="https://cdn-common.forio.com/js-libs/1.0/epicenter.min.js"></script>
 	
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files). 
 
-The Epicenter API Adapters library depends on jQuery, so you'll also need to download jQuery for yourself, or use a hosted version. To use a hosted version, add
+The epicenter.js library depends on jQuery, so you'll also need to download jQuery for yourself, or use a hosted version. To use a hosted version, add
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
@@ -38,7 +38,7 @@ For example:
 <a name="example"></a>
 ####Examples of usage: Callbacks and Promises
 
-Often the best way to get started is by looking at some example code. Within Epicenter, you can [create a new project](../project_admin/) and select to use one of the example projects. Each example project uses the Epicenter API Adapters.
+Often the best way to get started is by looking at some example code. Within Epicenter, you can [create a new project](../project_admin/) and select to use one of the example projects. Each example project uses epicenter.js.
 
 There are two different patterns for using the service adapters: using callbacks or using promises. The example projects use promises.
 
