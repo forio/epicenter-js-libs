@@ -7,11 +7,13 @@
  * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults.
  *
  *      var rs = new F.service.Run({
- *          account: 'acme-simulations', 
+ *          account: 'acme-simulations',
  *          project: 'supply-chain-game'
  *      });
  *      rs.create('supply-chain-model.jl');
- *          .then(function() {rs.do('runmodel');});
+ *          .then(function() {
+ *              rs.do('runmodel');
+ *           });
  *
  */
 
@@ -70,7 +72,7 @@ var RunService = function (config) {
          */
         filter: '',
 
-        /** 
+        /**
          * Called when the call completes successfully. Defaults to `$.noop`.
          */
         success: $.noop,
@@ -158,7 +160,7 @@ var RunService = function (config) {
          *
          * **Example**
          *
-         *      // returns runs with saved = true and variables.price > 1, 
+         *      // returns runs with saved = true and variables.price > 1,
          *      // where variables.price has been persisted (recorded)
          *      // in the model.
          *     rs.query({
@@ -172,7 +174,7 @@ var RunService = function (config) {
          *
          * **Parameters**
          * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../run_persistence/#runs-in-memory) and for runs [in the database](../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`). 
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         query: function (qs, outputModifier, options) {
@@ -203,13 +205,13 @@ var RunService = function (config) {
         },
 
         /**
-         * Get data for a specific run. This includes standard run data such as the account, model, project, and created and last modified dates. To request specific model variables, pass them as part of the `filters` parameter. 
+         * Get data for a specific run. This includes standard run data such as the account, model, project, and created and last modified dates. To request specific model variables, pass them as part of the `filters` parameter.
          *
          * Note that if the run is [in memory](../../run_persistence/#runs-in-memory), any model variables are available; if the run is [in the database](../../run_persistence/#runs-in-db), only model variables that have been persisted &mdash; that is, `record`ed in your Julia model &mdash; are available.
          *
          * **Example**
          *
-         *     rs.load('bb589677-d476-4971-a68e-0c58d191e450', {include: '.price,.sales'});
+         *     rs.load('bb589677-d476-4971-a68e-0c58d191e450', {include: ['.price', '.sales']});
          *
          * **Parameters**
          * @param {String} `runID` The run id.
@@ -255,15 +257,15 @@ var RunService = function (config) {
          * **Examples**
          *
          *      // method "solve" takes no arguments
-         *     rs.do('solve'); 
+         *     rs.do('solve');
          *      // method "echo" takes one argument, a string
-         *     rs.do('echo', ['hello']); 
+         *     rs.do('echo', ['hello']);
          *      // method "echo" takes one argument, a string
-         *     rs.do('echo', 'hello'); 
+         *     rs.do('echo', 'hello');
          *      // method "sumArray" takes one argument, an array
-         *     rs.do('sumArray', [[4,2,1]]); 
+         *     rs.do('sumArray', [[4,2,1]]);
          *      // method "add" takes two arguments, both integers
-         *     rs.do({name:'add', params:[2,4]}); 
+         *     rs.do({name:'add', params:[2,4]});
          *
          * **Parameters**
          * @param {String} `operation` Name of method.
@@ -309,11 +311,11 @@ var RunService = function (config) {
          *     rs.serial(['initialize', 'solve']);
          *      // methods "init" and "reset" take two arguments each
          *     rs.serial([  {name: 'init', params: [1,2]},
-         *                  {name: 'reset', params: [2,3]} ]); 
-         *      // method "init" takes two arguments, 
+         *                  {name: 'reset', params: [2,3]} ]);
+         *      // method "init" takes two arguments,
          *      // method "runmodel" takes none
          *     rs.serial([  {name: 'init', params: [1,2]},
-         *                  {name: 'runmodel', params: []} ]); 
+         *                  {name: 'runmodel', params: []} ]);
          *
          * **Parameters**
          * @param {Array[String]|Array[Object]} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
@@ -360,12 +362,12 @@ var RunService = function (config) {
          * **Example**
          *
          *      // methods "solve" and "reset" do not take any arguments
-         *     rs.parallel(['solve', 'reset']); 
+         *     rs.parallel(['solve', 'reset']);
          *      // methods "add" and "subtract" take two arguments each
          *     rs.parallel([ {name: 'add', params: [1,2]},
-         *                   {name: 'subtract', params:[2,3]} ]); 
+         *                   {name: 'subtract', params:[2,3]} ]);
          *      // methods "add" and "subtract" take two arguments each
-         *     rs.parallel({add: [1,2], subtract: [2,4]}); 
+         *     rs.parallel({add: [1,2], subtract: [2,4]});
          *
          * **Parameters**
          * @param {Array|Object} `operations` If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
@@ -401,19 +403,19 @@ var RunService = function (config) {
 
     var publicSyncAPI = {
         /**
-         * Returns a variable object. Use the variables object to read, write, and search for specific model variables. See the [Variable API Service](./variables-api-service.html) for more information.
+         * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](./variables-api-service.html) for more information.
          *
          * **Example**
          *
          *      var vs = rs.variables();
-         *      vs.save({sample_int: 4});  
+         *      vs.save({sample_int: 4});
          *
          * **Parameters**
          * @param {Object} `config` (Optional) Overrides for configuration options.
          */
 
         variables: function (config) {
-            var vs = new VariablesService($.extend({}, serviceOptions, config, {
+            var vs = new VariablesService($.extend(true, {}, serviceOptions, config, {
                 runService: this
             }));
             return vs;
