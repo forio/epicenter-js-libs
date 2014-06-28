@@ -21,6 +21,8 @@
             token = null;
         });
 
+        afterEach(function() {
+        });
         describe('#login', function () {
             it('should require username and password', function () {
                 var as = new AuthService();
@@ -112,6 +114,9 @@
                 server.requests = [];
                 as.getToken();
                 server.requests.length.should.equal(0);
+
+                //TODO: How do I move this to destroy?
+                as.store.destroy();
             });
         });
     });
