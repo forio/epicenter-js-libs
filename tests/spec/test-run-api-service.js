@@ -16,13 +16,13 @@
             });
             server.respondWith('POST',  /(.*)\/run\/(.*)\/(.*)/,  function (xhr, id){
                 var resp = {
-                    "id": "065dfe50-d29d-4b55-a0fd-30868d7dd26c",
-                    "model": "model.vmf",
-                    "account": "mit",
-                    "project": "afv",
-                    "saved": false,
-                    "lastModified": "2014-06-20T04:09:45.738Z",
-                    "created": "2014-06-20T04:09:45.738Z"
+                    'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                    'model': 'model.vmf',
+                    'account': 'mit',
+                    'project': 'afv',
+                    'saved': false,
+                    'lastModified': '2014-06-20T04:09:45.738Z',
+                    'created': '2014-06-20T04:09:45.738Z'
                 };
                 xhr.respond(201, { 'Content-Type': 'application/json'}, JSON.stringify(resp));
             });
@@ -60,13 +60,13 @@
 
             callback.should.have.been.called;
             callback.should.have.been.calledWith({
-                    "id": "065dfe50-d29d-4b55-a0fd-30868d7dd26c",
-                    "model": "model.vmf",
-                    "account": "mit",
-                    "project": "afv",
-                    "saved": false,
-                    "lastModified": "2014-06-20T04:09:45.738Z",
-                    "created": "2014-06-20T04:09:45.738Z"
+                    'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                    'model': 'model.vmf',
+                    'account': 'mit',
+                    'project': 'afv',
+                    'saved': false,
+                    'lastModified': '2014-06-20T04:09:45.738Z',
+                    'created': '2014-06-20T04:09:45.738Z'
                 });
             // callback.should.have.been.calledOn(rs);
 
@@ -212,11 +212,12 @@
         describe('#save()', function () {
             it('should require a filter', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                (function() {rs.save({completed: true});}).should.throw(Error);
+                var ret = function() {rs.save({completed: true});};
+                ret.should.throw(Error);
             });
             it('should allow passing in filter through options', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                var r = rs.save({completed: true}, {filter: {saved:true}});
+                rs.save({completed: true}, {filter: {saved:true}});
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/');
@@ -257,7 +258,8 @@
             describe('#do', function() {
                 it('should require a filter', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs'});
-                    (function() {rs.do('solve');}).should.throw(Error);
+                    var ret = function() {rs.do('solve');};
+                    ret.should.throw(Error);
                 });
 
                 it('should do a POST', function() {
@@ -289,7 +291,8 @@
             describe('#serial', function () {
                 it('should require a filter', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs'});
-                    (function() {rs.serial(['init', 'solve']);}).should.throw(Error);
+                    var ret = function() {rs.serial(['init', 'solve']);};
+                    ret.should.throw(Error);
                 });
 
                 it('should send multiple operations calls once by one', function () {
@@ -309,7 +312,8 @@
             describe('#parallel', function () {
                 it('should require a filter', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs'});
-                    (function() {rs.parallel(['init', 'solve']);}).should.throw(Error);
+                    var ret = function() {rs.parallel(['init', 'solve']);};
+                    ret.should.throw(Error);
                 });
 
                 it('should send multiple operations calls once by one', function () {

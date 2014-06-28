@@ -1,4 +1,6 @@
 (function() {
+    'use strict';
+
     var futil = F.util;
 
     describe('Promisify utilities', function () {
@@ -72,7 +74,7 @@
                 var cb1 = sinon.spy();
                 var cb2 = sinon.spy();
                 var mf = new MockFunction();
-                var ret = mf.doFast('fast').then(cb1).then(cb2);
+                mf.doFast('fast').then(cb1).then(cb2);
 
                 clock.tick(FAST);
 
@@ -87,7 +89,7 @@
                 var cb2 = sinon.spy();
                 var cb3 = sinon.spy();
                 var mf = new MockFunction();
-                var ret = mf.doFast('fast').then(cb1).then(cb2).then(cb3);
+                mf.doFast('fast').then(cb1).then(cb2).then(cb3);
 
                 clock.tick(FAST);
 
@@ -99,7 +101,6 @@
 
             it('should return itself on then', function () {
                 var cb1 = sinon.spy();
-                var cb2 = sinon.spy();
                 var mf = new MockFunction();
                 var ret = mf.doFast('fast').then(cb1);
 
@@ -120,7 +121,7 @@
             var fast = fastSpy('fast');
 
             var mediumSpy = sinon.spy(fast, 'doMedium');
-            var medium = mediumSpy('medium');
+            mediumSpy('medium');
 
             slowSpy.should.have.been.called;
             slowSpy.should.have.been.calledWith('slow');
@@ -138,7 +139,7 @@
             var cb2 = sinon.spy();
             var mf = new MockFunction();
             // var ret = mf.doFast('fast').then(cb1);
-            var ret = mf.doSlow('slow').then(cb1).doFast('fast').then(cb2);
+            mf.doSlow('slow').then(cb1).doFast('fast').then(cb2);
 
             clock.tick(SLOW);
             cb1.should.have.been.called;
@@ -163,7 +164,7 @@
             var fast = fastSpy('fast');
 
             var mediumSpy = sinon.spy(fast, 'doMedium');
-            var medium = mediumSpy('medium');
+            mediumSpy('medium');
 
             slowSpy.should.have.been.calledBefore(fastSpy);
             slowSpy.should.have.been.calledBefore(mediumSpy);

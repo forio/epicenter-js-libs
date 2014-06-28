@@ -1,4 +1,5 @@
 (function() {
+    'use strict';
 
     var DataService = F.service.Data;
 

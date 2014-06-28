@@ -1,4 +1,5 @@
 (function() {
+    'use strict';
 
     var AuthService = F.service.Auth ;
 
@@ -9,7 +10,7 @@
             server = sinon.fakeServer.create();
             server.respondWith(/(.*)\/authentication/, function (xhr, id){
                 xhr.respond(201, { 'Content-Type': 'application/json'}, JSON.stringify(
-                    {"refresh_token":"snip-refresh","access_token": token,"expires":43199}
+                    {'refresh_token':'snip-refresh','access_token': token,'expires':43199}
                     ));
             });
             server.autoRespond = true;
@@ -23,7 +24,8 @@
         describe('#login', function () {
             it('should require username and password', function () {
                 var as = new AuthService();
-                (function(){ as.login();}).should.throw(Error);
+                var ret = function(){ as.login();};
+                ret.should.throw(Error);
             });
 
             it('should do a POST', function () {

@@ -2,7 +2,6 @@
     'use strict';
 
     var RunService = F.service.Run;
-    var VariablesService = F.service.Variables;
 
     describe('Run API Service', function () {
         var server;
@@ -16,13 +15,13 @@
             });
             server.respondWith('POST',  /(.*)\/run\/forio\/(.*)/,  function (xhr, id){
                 var resp = {
-                    "id": "065dfe50-d29d-4b55-a0fd-30868d7dd26c",
-                    "model": "model.vmf",
-                    "account": "mit",
-                    "project": "afv",
-                    "saved": false,
-                    "lastModified": "2014-06-20T04:09:45.738Z",
-                    "created": "2014-06-20T04:09:45.738Z"
+                    'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                    'model': 'model.vmf',
+                    'account': 'mit',
+                    'project': 'afv',
+                    'saved': false,
+                    'lastModified': '2014-06-20T04:09:45.738Z',
+                    'created': '2014-06-20T04:09:45.738Z'
                 };
                 xhr.respond(201, { 'Content-Type': 'application/json'}, JSON.stringify(resp));
             });

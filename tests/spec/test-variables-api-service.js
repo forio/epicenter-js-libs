@@ -1,6 +1,6 @@
 (function() {
+    'use strict';
 
-    var rutil = F.util.run;
     var RunService = F.service.Run;
 
     describe('Variables Service', function () {

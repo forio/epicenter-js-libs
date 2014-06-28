@@ -20,7 +20,7 @@ module.exports = function (grunt) {
         },
         jshint : {
             options: {
-                jshintrc: './.jshintrc',
+                jshintrc: true,
                 reporter: require('jshint-stylish')
             },
             source: {
@@ -118,7 +118,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', ['mocha']);
     grunt.registerTask('documentation', ['markdox']);
-    grunt.registerTask('production', ['uglify:production']);
+    grunt.registerTask('production', ['jshint:all', 'test', 'uglify:production']);
     grunt.registerTask('default', ['watch']);
 
 };
