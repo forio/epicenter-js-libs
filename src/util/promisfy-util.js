@@ -2,7 +2,15 @@
     'use strict';
 
     var root = this;
-    var _ = root._;
+    var _, $;
+    if (typeof require !== 'undefined') {
+        _ = require('underscore');
+        $ = require('jQuery');
+    }
+    else {
+        _ = root._;
+        $ = root.jQuery;
+    }
 
     var promisify= function (context) {
         var pending = [];

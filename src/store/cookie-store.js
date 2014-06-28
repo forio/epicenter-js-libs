@@ -18,7 +18,7 @@
         $ = require('jquery');
         ConfigService = require('util/configuration-service');
     } else {
-        $ = jQuery;
+        $ = root.jQuery;
         ConfigService = F.service.Config;
     }
 

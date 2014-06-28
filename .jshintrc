@@ -21,6 +21,5 @@
     "unused": "vars",
     "strict": true,
     "trailing": true,
-    "eqnull": true,
-    "predef": ["jQuery", "$"]
+    "eqnull": true
 }

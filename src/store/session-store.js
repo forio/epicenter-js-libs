@@ -15,7 +15,7 @@
         ConfigService = require('util/configuration-service');
         qutil = require('util/query-util');
     } else {
-        $ = jQuery;
+        $ = root.jQuery;
         ConfigService = F.service.Config;
         qutil = F.util.query;
         httpTransport = F.transport.HTTP;

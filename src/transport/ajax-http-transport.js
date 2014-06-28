@@ -3,8 +3,9 @@
 
     var root = this;
     var F = root.F;
-    var $ = window.jQuery;
+    var $ = root.jQuery;
     var qutils = F.util.query;
+
 
 
     var AjaxHTTP= function (config) {

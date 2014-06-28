@@ -5,6 +5,13 @@
     'use strict';
 
     var root = this;
+    var $;
+    if (typeof require !== 'undefined') {
+        $ = require('jQuery');
+    }
+    else {
+        $ = root.jQuery;
+    }
 
     var query= (function () {
 

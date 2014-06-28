@@ -28,7 +28,7 @@
         qutil = require('util/query-util');
         StorageFactory= require('store/store-factory');
     } else {
-        $ = jQuery;
+        $ = root.jQuery;
         ConfigService = F.service.Config;
         qutil = F.util.query;
         TransportFactory = F.factory.Transport;

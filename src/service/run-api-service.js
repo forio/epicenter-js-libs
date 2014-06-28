@@ -34,7 +34,7 @@
         StorageFactory= require('store/store-factory');
     }
     else {
-        $ = jQuery;
+        $ = root.jQuery;
         ConfigService = F.service.Config;
         VariablesService = F.service.Variables;
         qutil = F.util.query;

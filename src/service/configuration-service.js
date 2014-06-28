@@ -38,7 +38,7 @@
         $ = require('jquery');
     }
     else {
-        $ = jQuery;
+        $ = root.jQuery;
     }
 
     var urlService;

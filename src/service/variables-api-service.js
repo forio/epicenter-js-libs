@@ -29,7 +29,7 @@
 
     }
     else {
-        $ = jQuery;
+        $ = root.jQuery;
         ConfigService = F.service.Config;
         qutil = F.util.query;
         rutil = F.util.run;

@@ -8,7 +8,7 @@
         $ = require('jquery');
     }
     else {
-        $ = jQuery;
+        $ = root.jQuery;
     }
 
     var URLService= function (config) {
