@@ -306,8 +306,8 @@
 
                 setFilterOrThrowError(httpOptions);
 
-                var prms = (result.args[0].length) ? {arguments: result.args[0]} : undefined;
-                return http.post(prms, $.extend(true, {}, httpOptions, {
+                var prms = (result.args[0].length && (result.args[0] !== null && result.args[0] !== undefined)) ? result.args[0] : [];
+                return http.post({arguments: prms}, $.extend(true, {}, httpOptions, {
                     url: urlConfig.getFilterURL() + 'operations/' + result.ops[0] + '/'
                 }));
             },
@@ -345,6 +345,7 @@
                 var doSingleOp = function() {
                     var op = ops.shift();
                     var arg = args.shift();
+
                     me.do(op, arg, {
                         success: function() {
                             if (ops.length) {

@@ -286,6 +286,16 @@
                     req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/echo/');
                     req.requestBody.should.equal(JSON.stringify({arguments: ['hello']}));
                 });
+
+                it('should send operations without any parameters', function() {
+                    var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
+                    rs.do('init');
+
+                    server.respond();
+                    var req = server.requests.pop();
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/init/');
+                    req.requestBody.should.equal(JSON.stringify({arguments: []}));
+                });
             });
 
             describe('#serial', function () {
@@ -304,8 +314,20 @@
 
                     server.requests.length.should.equal(2);
                     server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/first/');
-                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/second/');
+                    server.requests[0].requestBody.should.equal(JSON.stringify({arguments: [1,2]}));
 
+                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/second/');
+                    server.requests[1].requestBody.should.equal(JSON.stringify({arguments: [2,3]}));
+                });
+
+                it('should send operations without any parameters', function() {
+                    var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
+                    rs.serial(['init']);
+                    server.respond();
+
+                    var req = server.requests.pop();
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/init/');
+                    req.requestBody.should.equal(JSON.stringify({arguments: []}));
                 });
             });
 
