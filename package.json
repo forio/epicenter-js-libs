@@ -13,6 +13,10 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-markdox": "^1.2.1",
     "grunt-mocha": "^0.4.11",
+    "husky": "^0.5.1",
     "jshint-stylish": "^0.2.0"
-  }
+  },
+  "scripts": {
+      "prepush": "grunt validate"
+    }
 }

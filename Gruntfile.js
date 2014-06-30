@@ -118,7 +118,8 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', ['mocha']);
     grunt.registerTask('documentation', ['markdox']);
-    grunt.registerTask('production', ['jshint:all', 'test', 'uglify:production']);
+    grunt.registerTask('validate', ['jshint:all', 'test']);
+    grunt.registerTask('production', [ 'validate', 'uglify:production', 'documentation']);
     grunt.registerTask('default', ['watch']);
 
 };
