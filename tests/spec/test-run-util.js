@@ -77,8 +77,7 @@
                 it('takes in single arrays', function () {
                     var params =  ['init', 'reset'];
                     var result = rutil.normalizeOperations(params);
-                    //TODO: Check what the server expects for this;
-                    result.should.deep.equal({ops: ['init', 'reset'], args:[[undefined], [undefined]] });
+                    result.should.deep.equal({ops: ['init', 'reset'], args:[[], []] });
                 });
 
                 it('takes in array pairs', function () {
@@ -114,13 +113,17 @@
                     var result = rutil.normalizeOperations('echo', [['hello'] ]); //Call echo with 1 parameter, [hello]
                     result.should.deep.equal({ops: ['echo'], args: [[['hello']]] });
                 });
+                it('takes in string  + nothing', function () {
+                    var result = rutil.normalizeOperations('echo'); //Call echo with no parameters
+                    result.should.deep.equal({ops: ['echo'], args: [[]] });
+                });
             });
 
 
             it('takes in a combination single arrays and objects', function() {
                 var params =  ['init', 'reset', {add: [1,2]}];
                 var result = rutil.normalizeOperations(params);
-                result.should.deep.equal({ops: ['init', 'reset', 'add'] , args:[[undefined], [undefined], [1,2]] });
+                result.should.deep.equal({ops: ['init', 'reset', 'add'] , args:[[], [], [1,2]] });
             });
         });
     });

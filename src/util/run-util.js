@@ -29,6 +29,10 @@
                     args: []
                 };
 
+                var _concat = function(arr) {
+                    return (arr !== null && arr !== undefined) ? [].concat(arr) : [];
+                };
+
                 //{add: [1,2], subtract: [2,4]}
                 var _normalizePlainObjects = function(operations, returnList) {
                     if (!returnList) {
@@ -36,7 +40,7 @@
                     }
                     $.each(operations, function(opn, arg) {
                         returnList.ops.push(opn);
-                        returnList.args.push([].concat(arg));
+                        returnList.args.push(_concat(arg));
                     });
                     return returnList;
                 };
@@ -46,7 +50,7 @@
                         returnList = {ops: [], args: []};
                     }
                     returnList.ops.push(operation.name);
-                    returnList.args.push([].concat(operation.params));
+                    returnList.args.push(_concat(operation.params));
                     return returnList;
                 };
 
@@ -59,7 +63,7 @@
                         returnList = {ops: [], args: []};
                     }
                     returnList.ops.push(operation);
-                    returnList.args.push([].concat(args));
+                    returnList.args.push(_concat(args));
                     return returnList;
                 };
 
