@@ -42,6 +42,11 @@
                 return mtrx;
             },
 
+            /**
+             * Converts strings/arrays/objects to type 'a=b&b=c'
+             * @param  {String|Array|Object} qs
+             * @return {String}
+             */
             toQueryFormat: function(qs) {
                 if (qs === null || qs === undefined) {
                     return '';
@@ -66,6 +71,11 @@
                 return result;
             },
 
+            /**
+             * Converts strings of type 'a=b&b=c' to {a:b, b:c}
+             * @param  {string} qs
+             * @return {object}
+             */
             qsToObject: function(qs) {
                 if (qs === null || qs === undefined || qs === '') {
                     return {};
@@ -87,6 +97,12 @@
                 return returnObj;
             },
 
+            /**
+             * Normalizes and merges strings of type 'a=b', {b:c} to {a:b, b:c}
+             * @param  {String|Array|Object} qs1
+             * @param  {String|Array|Object} qs2
+             * @return {Object}
+             */
             mergeQS: function(qs1, qs2) {
                 var obj1 = this.qsToObject(this.toQueryFormat(qs1));
                 var obj2 = this.qsToObject(this.toQueryFormat(qs2));
