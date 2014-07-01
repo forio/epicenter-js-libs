@@ -81,5 +81,17 @@
                 qutils.mergeQS(null, null).should.deep.equal({});
             });
         });
+
+        describe('#addTrailingSlash', function () {
+            it('should add slashes to urls without it', function () {
+                qutils.addTrailingSlash('forio.com').should.equal('forio.com/');
+            });
+            it('should accept existing slashes', function () {
+                qutils.addTrailingSlash('forio.com/').should.equal('forio.com/');
+            });
+            it('should no nothing for empty strings', function () {
+                qutils.addTrailingSlash('').should.equal('');
+            });
+        });
     });
 })();

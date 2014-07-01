@@ -107,6 +107,13 @@
                 var obj1 = this.qsToObject(this.toQueryFormat(qs1));
                 var obj2 = this.qsToObject(this.toQueryFormat(qs2));
                 return $.extend(true, {}, obj1, obj2);
+            },
+
+            addTrailingSlash: function(url) {
+                if (!url) {
+                    return '';
+                }
+                return (url.charAt(url.length - 1) === '/') ? url : (url + '/');
             }
         };
     }());
