@@ -41,6 +41,14 @@
                 req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/name/');
             });
 
+            it('should allow overriding the root', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.load('name', null, {root: 'people/me/'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/people/me/name/');
+            });
+
             it('should support nested urls', function () {
                 var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
                 ds.load('first/name');
@@ -90,6 +98,16 @@
                 var req = server.requests.pop();
                 req.requestBody.should.equal(JSON.stringify(params));
             });
+
+            it('should allow overriding the root', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.save('name', 'john', {root: 'people/me/'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/people/me/');
+                req.requestBody.should.equal(JSON.stringify({name: 'john'}));
+
+            });
         });
 
         describe('#saveAs', function () {
@@ -106,6 +124,15 @@
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/user/');
+                req.requestBody.should.equal(JSON.stringify({name: 'john'}));
+            });
+
+            it('should allow overriding the root', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.saveAs('user', {name: 'john'}, {root: 'people/me'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/people/me/user/');
                 req.requestBody.should.equal(JSON.stringify({name: 'john'}));
             });
         });
@@ -142,6 +169,14 @@
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/');
             });
+
+            it('should allow overriding the root', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.remove('user', {root: 'people/me'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/people/me/user/');
+            });
         });
 
         describe('#query', function () {
@@ -172,6 +207,14 @@
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/a/b/?q={"name":"john","age":"10"}&page=1');
+            });
+
+            it('should allow overriding the root', function () {
+                var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});
+                ds.query('user', {name: 'john', age:'10'}, null, {root: 'people/me'});
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/people/me/user/?q=' + JSON.stringify({name: 'john', age:'10'}));
             });
         });
         describe('Callbacks', function () {

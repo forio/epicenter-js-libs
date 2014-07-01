@@ -66,10 +66,13 @@
             urlConfig.projectPath = serviceOptions.project;
         }
 
-        var getURL = function(key) {
-            var url = urlConfig.getAPIPath('data') + serviceOptions.root + '/';
+        var getURL = function(key, root) {
+            if (!root) {
+                root = serviceOptions.root;
+            }
+            var url = urlConfig.getAPIPath('data') + qutil.addTrailingSlash(root);
             if (key) {
-                url+= key + '/';
+                url+= qutil.addTrailingSlash(key);
             }
             return url;
         };
@@ -119,7 +122,8 @@
              */
             query: function (key, query, outputModifier, options) {
                 var params = $.extend(true, {q: query}, outputModifier);
-                var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
+                var httpOptions = $.extend(true, {}, serviceOptions, options);
+                httpOptions.url = getURL(key, httpOptions.root);
                 return http.get(params, httpOptions);
             },
 
@@ -149,6 +153,8 @@
                     (attrs = {})[key] = value;
                 }
                 var httpOptions = $.extend(true, {}, serviceOptions, options);
+                httpOptions.url = getURL('', httpOptions.root);
+
                 return http.post(attrs, httpOptions);
             },
 
@@ -173,7 +179,9 @@
              * @param {object} `options` (Optional) Overrides for configuration options.
              */
             saveAs: function (key, value, options) {
-                var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
+                var httpOptions = $.extend(true, {}, serviceOptions, options);
+                httpOptions.url = getURL(key, httpOptions.root);
+
                 return http.put(value, httpOptions);
             },
 
@@ -191,7 +199,8 @@
              * @param {Object} `options` Overrides for configuration options.
              */
             load: function (key, outputModifier, options) {
-                var httpOptions = $.extend(true, {}, serviceOptions, options, {url: getURL(key)});
+                var httpOptions = $.extend(true, {}, serviceOptions, options);
+                httpOptions.url = getURL(key, httpOptions.root);
                 return http.get(outputModifier, httpOptions);
             },
 
@@ -216,7 +225,7 @@
                 }
                 else {
                     params = '';
-                    httpOptions.url = getURL(keys);
+                    httpOptions.url = getURL(keys, httpOptions.root);
                 }
                 return http.delete(params, httpOptions);
             }
