@@ -96,22 +96,27 @@
              *
              * **Examples**
              *
-             *      // request all data associated with document "user1"
+             *      // request all data associated with document 'user1'
              *      ds.query('user1');
              *
              *      // exact matching:
-             *      // request all documents in collection where "question2" is 9
+             *      // request all documents in collection where 'question2' is 9
              *      ds.query('', {'question2': 9});
              *
              *      // comparison operators:
              *      // request all documents in collection
-             *      // where "question2" is greater than 9
+             *      // where 'question2' is greater than 9
              *      ds.query('', {'question2': {'$gt': 9}});
              *
              *      // logical operators:
              *      // request all documents in collection
-             *      // where "question2" is less than 10, and "question3" is false
+             *      // where 'question2' is less than 10, and 'question3' is false
              *      ds.query('', {'$and': [ {'question2': {'$lt':10}}, {'question3': false}]});
+             *
+             *      // regular expresssions: use any Perl-compatible regular expressions
+             *      // request all documents in collection
+             *      // where 'question5' contains the string '*day'
+             *      ds.query('', {'question5': {'$regex': '*day'}});
              *
              * **Parameters**
              * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
@@ -159,7 +164,7 @@
             },
 
             /**
-             * Save data to a named document within the collection.
+             * Save data to a named document or element within the collection. The `root` of the collection must be specified separately in configuration options, either as part of the call or as part of the initialization of ds.
              *
              * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../data_api/) for additional background.)
              *
@@ -171,6 +176,9 @@
              *      ds.saveAs('student1',
              *          {firstName: 'john', lastName: 'smith'},
              *          {root: 'students'});
+             *      ds.saveAs('mgmt100/groupB', 
+             *          {scenarioYear: '2015'}, 
+             *          {root: 'myclasses'});
              *
              * **Parameters**
              *
