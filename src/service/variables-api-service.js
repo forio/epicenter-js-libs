@@ -2,7 +2,7 @@
  *
  * ##Variables API Service
  *
- * Used in conjunction with the [Run API Service](./run-api-service.html) to read, write, and search for specific model variables.
+ * Used in conjunction with the [Run API Service](../run-api-service/) to read, write, and search for specific model variables.
  *
  *     var rs = new F.service.Run();
  *     rs.create('supply-chain-model.jl')
@@ -111,7 +111,7 @@
             },
 
             /**
-             * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](./run-api-service.html) for calling methods from the model.)
+             * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](../run-api-service/) for calling methods from the model.)
              *
              * **Example**
              *

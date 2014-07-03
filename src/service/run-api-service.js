@@ -50,8 +50,8 @@
 
         var defaults = {
             /**
-             * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../project_access/)).
-             * @see [Authentication API Service](./auth-api-service.html) for getting tokens.
+             * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
+             * @see [Authentication API Service](../auth-api-service/) for getting tokens.
              * @type {String}
              */
             token: store.get('epicenter.token') || '',
@@ -146,7 +146,7 @@
              *      rs.create('hello_world.jl');
              *
              *  **Parameters**
-             * @param {String} `model` The name of the primary [model file](../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project.
+             * @param {String} `model` The name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project.
              * @param {Object} `options` (Optional) Overrides for configuration options.
              *
              */
@@ -185,7 +185,7 @@
              *       });
              *
              * **Parameters**
-             * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../run_persistence/#runs-in-memory) and for runs [in the database](../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+             * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
              * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
              * @param {Object} `options` (Optional) Overrides for configuration options.
              */
@@ -201,7 +201,7 @@
              * Similar to `.query()`.
              *
              * **Parameters**
-             * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../run_persistence/#runs-in-memory) and for runs [in the database](../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+             * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
              * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
              * @param {Object} `options` (Optional) Overrides for configuration options.
              */
@@ -219,7 +219,7 @@
             /**
              * Get data for a specific run. This includes standard run data such as the account, model, project, and created and last modified dates. To request specific model variables, pass them as part of the `filters` parameter.
              *
-             * Note that if the run is [in memory](../../run_persistence/#runs-in-memory), any model variables are available; if the run is [in the database](../../run_persistence/#runs-in-db), only model variables that have been persisted &mdash; that is, `record`ed in your Julia model &mdash; are available.
+             * Note that if the run is [in memory](../../../run_persistence/#runs-in-memory), any model variables are available; if the run is [in the database](../../../run_persistence/#runs-in-db), only model variables that have been persisted &mdash; that is, `record`ed in your Julia model &mdash; are available.
              *
              * **Example**
              *
@@ -260,7 +260,7 @@
             /**
              * Call a method from the model.
              *
-             * The method must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../writing_your_model/)) in the model file in order to be called through the API.
+             * The method must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
              *
              * The `params` argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
              *
@@ -315,7 +315,7 @@
             /**
              * Call several methods from the model, sequentially.
              *
-             * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../writing_your_model/)) in the model file in order to be called through the API.
+             * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
              *
              * **Examples**
              *
@@ -370,7 +370,7 @@
             /**
              * Call several methods from the model, executing them in parallel.
              *
-             * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../writing_your_model/)) in the model file in order to be called through the API.
+             * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
              *
              * **Example**
              *
@@ -416,7 +416,7 @@
 
         var publicSyncAPI = {
             /**
-             * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](./variables-api-service.html) for more information.
+             * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.
              *
              * **Example**
              *

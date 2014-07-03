@@ -89,19 +89,19 @@ module.exports = function (grunt) {
                     // },
                     {
                         src: 'src/service/run-api-service.js',
-                        dest: 'documentation/generated/run-api-service.html.md'
+                        dest: 'documentation/generated/run-api-service/index.html.md'
                     },
                     {
                         src: 'src/service/data-api-service.js',
-                        dest: 'documentation/generated/data-api-service.html.md'
+                        dest: 'documentation/generated/data-api-service/index.html.md'
                     },
                     {
                         src: 'src/service/auth-api-service.js',
-                        dest: 'documentation/generated/auth-api-service.html.md'
+                        dest: 'documentation/generated/auth-api-service/index.html.md'
                     },
                     {
                         src: 'src/service/variables-api-service.js',
-                        dest: 'documentation/generated/variables-api-service.html.md'
+                        dest: 'documentation/generated/variables-api-service/index.html.md'
                     }
                 ]
             }

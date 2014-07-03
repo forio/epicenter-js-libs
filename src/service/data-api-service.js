@@ -1,7 +1,7 @@
 /**
  * ##Data API Service
  *
- * The Data API Service allows you to create, access, and manipulate data related to any of your projects. Data are organized in collections. Each collection contains a document; each element of this top-level document is a JSON object. (See additional information on the underlying [Data API](../../data_api/).)
+ * The Data API Service allows you to create, access, and manipulate data related to any of your projects. Data are organized in collections. Each collection contains a document; each element of this top-level document is a JSON object. (See additional information on the underlying [Data API](../../../data_api/).)
  *
  * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, the `root` option contains the name of the collection. If you have multiple collections within each of your projects, you can pass the collection name as an option for each call.
  *
@@ -47,8 +47,8 @@
             root: '/',
 
             /**
-             * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../project_access/)).
-             * @see [Authentication API Service](./auth-api-service.html) for getting tokens.
+             * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
+             * @see [Authentication API Service](../auth-api-service/) for getting tokens.
              * @type {String}
              */
             token: store.get('epicenter.token') || '',
@@ -92,7 +92,7 @@
             /**
              * Search for data within a collection.
              *
-             * Searching using comparison or logical operators (as opposed to exact matches) requires MongoDB syntax. See the underlying [Data API](../../data_api/#searching) for additional details.
+             * Searching using comparison or logical operators (as opposed to exact matches) requires MongoDB syntax. See the underlying [Data API](../../../data_api/#searching) for additional details.
              *
              * **Examples**
              *
@@ -115,7 +115,7 @@
              *
              * **Parameters**
              * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
-             * @param {Object} `query` The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../data_api/#searching) for additional examples.
+             * @param {Object} `query` The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../data_api/#searching) for additional examples.
              * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
              * @param {Object} `options` (Optional) Overrides for configuration options.
              *
@@ -130,7 +130,7 @@
             /**
              * Save data to an anonymous document within the collection.
              *
-             * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../data_api/) for additional background.)
+             * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../data_api/) for additional background.)
              *
              * **Example**
              *
@@ -161,7 +161,7 @@
             /**
              * Save data to a named document within the collection.
              *
-             * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../data_api/) for additional background.)
+             * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../data_api/) for additional background.)
              *
              * **Example**
              *
