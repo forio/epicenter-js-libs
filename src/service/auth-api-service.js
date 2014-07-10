@@ -51,12 +51,22 @@
              * Password for specified username. Defaults to empty string.
              * @type {String}
              */
-            password: ''
+            password: '',
+
+            /**
+             * Account to log-in into. Required to log-in as an end-user. Defaults to picking it up from the path.
+             * @type {String}
+             */
+            account: ''
 
         };
         var serviceOptions = $.extend({}, defaults, config);
 
         var urlConfig = new ConfigService(serviceOptions).get('server');
+        if (!serviceOptions.account) {
+            serviceOptions.account = urlConfig.accountPath;
+        }
+
         var http = new TransportFactory({
             url: urlConfig.getAPIPath('authentication')
         });
@@ -74,7 +84,8 @@
              * **Example**
              *
              *      auth.login({userName: 'jsmith@acmesimulations.com',
-             *                  password: 'passw0rd'});
+             *                  password: 'passw0rd',
+             *                  account: 'acme'});
              *
              * **Parameters**
              * @param {Object} `options` (Optional) Overrides for configuration options.
@@ -83,6 +94,15 @@
                 var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
                 if (!httpOptions.userName || !httpOptions.password) {
                     throw new Error('No username or password specified.');
+                }
+
+                var postParams = {
+                    userName: httpOptions.userName,
+                    password: httpOptions.password,
+                };
+                if (httpOptions.account) {
+                    //pass in null for account under options if you don't want it to be sent
+                    postParams.account = httpOptions.account;
                 }
 
                 var oldSuccessFn = httpOptions.success;
@@ -97,7 +117,7 @@
                     oldSuccessFn.apply(this, arguments);
                 };
 
-                return http.post({userName: httpOptions.userName, password: httpOptions.password}, httpOptions);
+                return http.post(postParams, httpOptions);
             },
 
             /**

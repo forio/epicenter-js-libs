@@ -46,7 +46,15 @@
             });
             it('should send requests to body', function () {
                 var as = new AuthService();
-                as.login({userName: 'john', password: 'y'});
+                as.login({userName: 'john', password: 'y', account: 'x'});
+
+                var req = server.requests.pop();
+                req.requestBody.should.equal(JSON.stringify({userName: 'john', password: 'y', account: 'x'}));
+            });
+
+            it('should allow logging in with no account', function () {
+                var as = new AuthService();
+                as.login({userName: 'john', password: 'y', account: null});
 
                 var req = server.requests.pop();
                 req.requestBody.should.equal(JSON.stringify({userName: 'john', password: 'y'}));
