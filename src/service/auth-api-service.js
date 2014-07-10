@@ -3,7 +3,7 @@
  * ##Authentication API Service
  *
  * The Authentication API Service provides methods for logging in and creating user access tokens.
- * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../project_access/) for more information.)
+ * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../../project_access/) for more information.)
  *
  *      var auth = new F.service.Auth();
  *      auth.login({userName: 'jsmith@acmesimulations.com',
@@ -135,7 +135,7 @@
             },
 
             /**
-             * Returns existing user access token if already logged in, or creates a new one otherwise. (See [more background on access tokens](../../project_access/)).
+             * Returns existing user access token if already logged in, or creates a new one otherwise. (See [more background on access tokens](../../../project_access/)).
              *
              * **Example**
              *
