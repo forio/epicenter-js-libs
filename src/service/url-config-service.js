@@ -34,7 +34,7 @@
             }()),
 
             accountPath: (function () {
-                var accnt = 'test';
+                var accnt = '';
                 var path = window.location.pathname.split('\/');
                 if (path && path[1] === 'app') {
                     accnt = path[2];
@@ -43,7 +43,7 @@
             }()),
 
             projectPath: (function () {
-                var prj = 'test';
+                var prj = '';
                 var path = window.location.pathname.split('\/');
                 if (path && path[1] === 'app') {
                     prj = path[3];
