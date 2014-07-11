@@ -54,7 +54,7 @@
             password: '',
 
             /**
-             * Account to log-in into. Required to log-in as an end-user. Defaults to picking it up from the path.
+             * Account to log in into. Required to log in as an end user. Defaults to picking it up from the path.
              * @type {String}
              */
             account: ''
@@ -110,7 +110,7 @@
                     serviceOptions.password = httpOptions.password;
                     serviceOptions.userName = httpOptions.userName;
 
-                    /*jshint camelcase: false */
+                    //jshint camelcase: false 
                     token = response.access_token;
                     store.set(EPI_COOKIE_KEY, token);
 
