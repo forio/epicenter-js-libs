@@ -89,10 +89,9 @@
              */
             complete: $.noop,
 
-            /**
-             * Called at any significant point in the progress of the call, usually before and after server requests. Defaults to `$.noop`.
-             */
-            progress: $.noop
+
+            //Options to pass on to the underlying transport layer
+            transport: {}
         };
 
         var serviceOptions = $.extend({}, defaults, config);
@@ -116,9 +115,10 @@
             return url;
         };
 
-        var httpOptions = {
+        var httpOptions = $.extend(true, {}, serviceOptions.transport, {
             url: urlConfig.getFilterURL
-        };
+        });
+
         if (serviceOptions.token) {
             httpOptions.headers = {
                 'Authorization': 'Bearer ' + serviceOptions.token
