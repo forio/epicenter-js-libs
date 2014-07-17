@@ -57,8 +57,10 @@
              * Account to log-in into. Required to log-in as an end-user. Defaults to picking it up from the path.
              * @type {String}
              */
-            account: ''
+            account: '',
 
+            //Options to pass on to the underlying transport layer
+            transport: {}
         };
         var serviceOptions = $.extend({}, defaults, config);
 
@@ -67,9 +69,10 @@
             serviceOptions.account = urlConfig.accountPath;
         }
 
-        var http = new TransportFactory({
+        var httpOptions = $.extend(true, {}, serviceOptions.transport, {
             url: urlConfig.getAPIPath('authentication')
         });
+        var http = new TransportFactory(httpOptions);
 
         var EPI_COOKIE_KEY = 'epicenter.token';
         var store = new StorageFactory(serviceOptions.store);

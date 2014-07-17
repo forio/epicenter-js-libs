@@ -89,7 +89,6 @@
              */
             complete: $.noop,
 
-
             //Options to pass on to the underlying transport layer
             transport: {}
         };

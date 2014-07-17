@@ -24,6 +24,15 @@
             req.requestHeaders.Authorization.should.equal('Bearer abc');
         });
 
+        it('should pass in transport options to the underlying ajax handler', function () {
+            var callback = sinon.spy();
+            var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs', transport: {beforeSend: callback}});
+            ds.load('name');
+
+            server.respond();
+            callback.should.have.been.called;
+        });
+
         describe('#load', function () {
             it('Should do a GET', function () {
                 var ds = new DataService({ root: 'person', account: 'forio', project: 'js-libs'});

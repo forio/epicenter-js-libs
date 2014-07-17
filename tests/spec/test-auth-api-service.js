@@ -21,8 +21,15 @@
             token = null;
         });
 
-        afterEach(function() {
+        it('should pass in transport options to the underlying ajax handler', function () {
+            var callback = sinon.spy();
+            var as = new AuthService({transport: {beforeSend: callback}});
+            as.login({userName: 'john', password: 'y'});
+
+            server.respond();
+            callback.should.have.been.called;
         });
+
         describe('#login', function () {
             it('should require username and password', function () {
                 var as = new AuthService();

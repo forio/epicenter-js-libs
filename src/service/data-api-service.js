@@ -54,7 +54,10 @@
             token: store.get('epicenter.token') || '',
 
             apiKey: '',
-            domain: 'forio.com'
+            domain: 'forio.com',
+
+            //Options to pass on to the underlying transport layer
+            transport: {}
         };
         var serviceOptions = $.extend({}, defaults, config);
 
@@ -77,9 +80,9 @@
             return url;
         };
 
-        var httpOptions = {
+        var httpOptions = $.extend(true, {}, serviceOptions.transport, {
             url: getURL
-        };
+        });
         if (serviceOptions.token) {
             httpOptions.headers = {
                 'Authorization': 'Bearer ' + serviceOptions.token
@@ -176,8 +179,8 @@
              *      ds.saveAs('student1',
              *          {firstName: 'john', lastName: 'smith'},
              *          {root: 'students'});
-             *      ds.saveAs('mgmt100/groupB', 
-             *          {scenarioYear: '2015'}, 
+             *      ds.saveAs('mgmt100/groupB',
+             *          {scenarioYear: '2015'},
              *          {root: 'myclasses'});
              *
              * **Parameters**
