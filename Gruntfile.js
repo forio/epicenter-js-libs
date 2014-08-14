@@ -59,6 +59,8 @@ module.exports = function (grunt) {
                     'dist/epicenter.min.js' : [
                         'src/util/query-util.js',
                         'src/util/run-util.js',
+                        'src/util/inherit.js',
+                        'src/util/make-sequence.js',
 
                         'src/service/url-config-service.js',
                         'src/service/configuration-service.js',
@@ -73,7 +75,15 @@ module.exports = function (grunt) {
 
                         'src/service/auth-api-service.js',
                         'src/service/variables-api-service.js',
-                        'src/service/run-api-service.js'
+                        'src/service/run-api-service.js',
+
+                        'src/managers/run-strategies/identity-strategy.js',
+                        'src/managers/run-strategies/conditional-creation-strategy.js',
+                        'src/managers/run-strategies/**/*.js',
+                        'src/managers/run-manager.js',
+                        'src/managers/scenario-manager.js',
+                        'src/managers/**/*.js',
+
                     ]
                 }
             }
