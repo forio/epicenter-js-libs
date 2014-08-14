@@ -12,13 +12,13 @@
 
     if (typeof require !== 'undefined') {
         $ = require('jquery');
-        cookies = new require('../../store/cookie-store')();
+        cookies = new require('../../store/cookie-store')({domain: null});
         makeSeq = require('../../util/make-sequence');
         classFrom = require('../util/inherit');
         Base = require('./identity-strategy');
     } else {
         $ = root.jQuery;
-        cookies = new F.store.Cookie();
+        cookies = new F.store.Cookie({domain: null});
         makeSeq = F.util.makeSequence;
         classFrom = F.util.classFrom;
         Base = F.manager.strategy.identity;
