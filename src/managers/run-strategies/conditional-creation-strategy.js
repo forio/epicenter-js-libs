@@ -58,6 +58,7 @@
                 .create({ model: this.options.model, runId: (session ? session.runId : null)})
                 .then(function (run) {
                     setRunCookie(_this.options.cookieName, run);
+                    run.freshlyCreated = true;
                     return run;
                 })
                 .start();
