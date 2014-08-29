@@ -90,6 +90,7 @@
                         return _this.run.original.create(model)
                             .then(function (run) {
                                 setRunCookie(_this.options.cookieName, run);
+                                run.freshlyCreated = true;
                                 return run;
                             });
                     }
