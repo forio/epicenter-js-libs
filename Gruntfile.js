@@ -43,18 +43,25 @@ module.exports = function (grunt) {
         uglify: {
             options: {
                 compress: false,
+                mangle: false,
+                beautify: {
+                  width: 80,
+                  beautify: true
+                },
                 sourceMap: false,
-                sourceMapIncludeSources: false
+                sourceMapIncludeSources: true
             },
             dev: {
                 files: []
             },
             production: {
-                options: {
-                    compress: true,
-                    sourceMap: true,
-                    sourceMapIncludeSources: true
-                },
+                // options: {
+                //     // compress: false,
+                //     mangle: true,
+                //     // beutify: true,
+                //     sourceMap: true,
+                //     sourceMapIncludeSources: true
+                // },
                 files: {
                     'dist/epicenter.min.js' : [
                         'src/util/query-util.js',
