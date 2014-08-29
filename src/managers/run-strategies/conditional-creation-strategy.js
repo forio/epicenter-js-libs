@@ -29,7 +29,7 @@
     };
 
     function setRunCookie(cookieName, run) {
-        cookies.set(cookieName, { runId: run.id });
+        cookies.set(cookieName, JSON.stringify({ runId: run.id }));
     }
 
     /**
@@ -65,7 +65,7 @@
         },
 
         getRun: function (model) {
-            var session = cookies.get(this.options.cookieName);
+            var session = JSON.parse(cookies.get(this.options.cookieName));
 
             if (session && session.runId) {
                 return this._loadAndCheck(session, model);
