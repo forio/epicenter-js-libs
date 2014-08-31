@@ -29,7 +29,18 @@
     };
 
     function setRunCookie(cookieName, run) {
-        cookies.set(cookieName, JSON.stringify({ runId: run.id }));
+        var path = '/';
+        if (window) {
+            if (/\.html/.test(window.location.pathname.split('/'))) {
+                var parts = window.location.pathname.split('/');
+                parts.pop();
+                path = parts.join('/');
+            } else {
+                path =window.location.pathname;
+            }
+        }
+
+        cookies.set(cookieName, JSON.stringify({ runId: run.id }), { root: path });
     }
 
     /**
