@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
     'use strict';
 
     grunt.loadNpmTasks('grunt-mocha');
@@ -8,111 +8,113 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jscs-checker');
 
-    grunt.initConfig({
-        watch: {
-            source: {
-                files: ['src/**/*.js'],
-                tasks: ['mocha:test', 'uglify:production']
-            },
-            tests: {
-                files: ['tests/spec/**/*.js'],
-                tasks: ['mocha:test']
+    grunt.initConfig({});
+
+    grunt.config.set('watch', {
+        source: {
+            files: ['src/**/*.js'],
+            tasks: ['mocha:test', 'uglify:production']
+        },
+        tests: {
+            files: ['tests/spec/**/*.js'],
+            tasks: ['mocha:test']
+        }
+    });
+
+
+    grunt.config.set('jshint', {
+        options: {
+            jshintrc: true,
+            reporter: require('jshint-stylish')
+        },
+        source: {
+            files: {
+                src: ['src/**/*.js']
             }
         },
-        jshint : {
-            options: {
-                jshintrc: true,
-                reporter: require('jshint-stylish')
-            },
-            source: {
-                files: {
-                    src: ['src/**/*.js']
-                }
-            },
-            tests: {
-                files: {
-                    src: ['tests/spec/**/*.js']
-                }
-            },
-            all: {
-                files: {
-                    src: ['src/**/*.js', 'tests/spec/**/*.js']
-                }
+        tests: {
+            files: {
+                src: ['tests/spec/**/*.js']
             }
         },
-        uglify: {
-            options: {
-                compress: false,
-                sourceMap: false,
-                sourceMapIncludeSources: false
-            },
-            dev: {
-                files: []
-            },
-            production: {
-                options: {
-                    compress: true,
-                    sourceMap: true,
-                    sourceMapIncludeSources: true
-                },
-                files: {
-                    'dist/epicenter.min.js' : [
-                        'src/util/query-util.js',
-                        'src/util/run-util.js',
-
-                        'src/service/url-config-service.js',
-                        'src/service/configuration-service.js',
-
-                        'src/transport/ajax-http-transport.js',
-                        'src/transport/http-transport-factory.js',
-
-                        'src/store/cookie-store.js',
-                        'src/store/store-factory.js',
-                        'src/service/data-api-service.js',
-
-
-                        'src/service/auth-api-service.js',
-                        'src/service/variables-api-service.js',
-                        'src/service/run-api-service.js'
-                    ]
-                }
+        all: {
+            files: {
+                src: ['src/**/*.js', 'tests/spec/**/*.js']
             }
+        }
+    });
+
+    grunt.config.set('uglify', {
+        options: {
+            compress: false,
+            sourceMap: false,
+            sourceMapIncludeSources: false
         },
-        markdox: {
+        dev: {
+            files: []
+        },
+        production: {
             options: {
-                // Task-specific options go here.
-                template: 'documentation/template.ejs'
+                compress: true,
+                sourceMap: true,
+                sourceMapIncludeSources: true
             },
-            target: {
-                files:  [
-                    // {
-                    //     src: 'src/service/configuration-service.js', dest: 'documentation/generated/configuration-service.html.md'
-                    // },
-                    {
-                        src: 'src/service/run-api-service.js',
-                        dest: 'documentation/generated/run-api-service/index.html.md'
-                    },
-                    {
-                        src: 'src/service/data-api-service.js',
-                        dest: 'documentation/generated/data-api-service/index.html.md'
-                    },
-                    {
-                        src: 'src/service/auth-api-service.js',
-                        dest: 'documentation/generated/auth-api-service/index.html.md'
-                    },
-                    {
-                        src: 'src/service/variables-api-service.js',
-                        dest: 'documentation/generated/variables-api-service/index.html.md'
-                    }
+            files: {
+                'dist/epicenter.min.js': [
+                    'src/util/query-util.js',
+                    'src/util/run-util.js',
+
+                    'src/service/url-config-service.js',
+                    'src/service/configuration-service.js',
+
+                    'src/transport/ajax-http-transport.js',
+                    'src/transport/http-transport-factory.js',
+
+                    'src/store/cookie-store.js',
+                    'src/store/store-factory.js',
+                    'src/service/data-api-service.js',
+
+
+                    'src/service/auth-api-service.js',
+                    'src/service/variables-api-service.js',
+                    'src/service/run-api-service.js'
                 ]
             }
+        }
+    });
+
+    grunt.config.set('markdox', {
+        options: {
+            // Task-specific options go here.
+            template: 'documentation/template.ejs'
         },
-        mocha: {
-            test: {
-                src: ['tests/index.html'],
-                options: {
-                    run: true
+        target: {
+            files: [
+                // {
+                //     src: 'src/service/configuration-service.js', dest: 'documentation/generated/configuration-service.html.md'
+                // },
+                {
+                    src: 'src/service/run-api-service.js',
+                    dest: 'documentation/generated/run-api-service/index.html.md'
+                }, {
+                    src: 'src/service/data-api-service.js',
+                    dest: 'documentation/generated/data-api-service/index.html.md'
+                }, {
+                    src: 'src/service/auth-api-service.js',
+                    dest: 'documentation/generated/auth-api-service/index.html.md'
+                }, {
+                    src: 'src/service/variables-api-service.js',
+                    dest: 'documentation/generated/variables-api-service/index.html.md'
                 }
+            ]
+        }
+    });
+
+    grunt.config.set('mocha', {
+        test: {
+            src: ['tests/index.html'],
+            options: {
+                run: true
             }
         }
     });
@@ -120,7 +122,6 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['mocha']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'test']);
-    grunt.registerTask('production', [ 'validate', 'uglify:production', 'documentation']);
+    grunt.registerTask('production', ['validate', 'uglify:production', 'documentation']);
     grunt.registerTask('default', ['watch']);
-
 };
