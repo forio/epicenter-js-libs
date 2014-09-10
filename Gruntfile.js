@@ -10,6 +10,14 @@ module.exports = function(grunt) {
 
     grunt.initConfig({});
 
+    grunt.loadNpmTasks('grunt-conventional-changelog');
+    grunt.config.set('changelog',{
+        options: {
+            dest: 'dist/CHANGELOG.md',
+            editor: 'sublime -w'
+        }
+    });
+
     grunt.config.set('watch', {
         source: {
             files: ['src/**/*.js'],
@@ -119,9 +127,29 @@ module.exports = function(grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-bump');
+    grunt.config.set('bump', {
+        options: {
+            files: ['package.json', 'bower.json'],
+            pushTo: 'master',
+            updateConfigs: ['pkg'],
+            commitFiles: ['-a']
+
+        }
+    });
+
     grunt.registerTask('test', ['mocha']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'test']);
     grunt.registerTask('production', ['validate', 'uglify:production', 'documentation']);
+
+    grunt.registerTask('release', function (type) {
+        //TODO: Integrate 'changelog' in here when it's stable
+        type = type ? type : 'patch';
+        ['production', 'bump-only:' + type, 'bump-commit'].forEach(function (task) {
+            grunt.task.run(task);
+        });
+    });
+
     grunt.registerTask('default', ['watch']);
 };
