@@ -74,7 +74,7 @@
         });
         var http = new TransportFactory(httpOptions);
 
-        var EPI_COOKIE_KEY = 'epicenter.token';
+        var EPI_COOKIE_KEY = 'epicenter.project.token';
         var store = new StorageFactory(serviceOptions.store);
         var token = store.get(EPI_COOKIE_KEY) || '';
 

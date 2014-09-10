@@ -51,7 +51,7 @@
              * @see [Authentication API Service](../auth-api-service/) for getting tokens.
              * @type {String}
              */
-            token: store.get('epicenter.token') || '',
+            token: store.get('epicenter.project.token') || '',
 
             apiKey: '',
             domain: 'forio.com',

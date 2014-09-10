@@ -83,7 +83,7 @@
                 server.respond();
 
                 var store = as.store;
-                var storeToken = store.get('epicenter.token');
+                var storeToken = store.get('epicenter.project.token');
                 storeToken.should.equal(token);
             });
 
@@ -98,11 +98,11 @@
                 server.respond();
 
                 var store = as.store;
-                var storeToken = store.get('epicenter.token');
+                var storeToken = store.get('epicenter.project.token');
                 storeToken.should.equal(token);
 
                 as.logout();
-                should.not.exist(store.get('epicenter.token'));
+                should.not.exist(store.get('epicenter.project.token'));
             });
         });
 
