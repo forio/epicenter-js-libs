@@ -72,16 +72,52 @@
 
         });
 
-        it('should pass in transport options to the underlying ajax handler', function () {
-            var beforeSend = sinon.spy();
-            var complete = sinon.spy();
-            var rs = new RunService({account: 'forio', project: 'js-libs', transport: {beforeSend: beforeSend, complete: complete}});
-            rs.create('model.jl');
+        describe('transport.options', function () {
+            it('should pass in transport options to the underlying ajax handler', function () {
+                var beforeSend = sinon.spy();
+                var complete = sinon.spy();
+                var rs = new RunService({account: 'forio', project: 'js-libs', transport: {beforeSend: beforeSend, complete: complete}});
+                rs.create('model.jl');
 
-            server.respond();
-            beforeSend.should.have.been.called;
-            complete.should.have.been.called;
+                server.respond();
+                beforeSend.should.have.been.called;
+                complete.should.have.been.called;
+            });
+
+            it('should allow over-riding transport options', function () {
+                var originalComplete = sinon.spy();
+                var complete = sinon.spy();
+                var rs = new RunService({account: 'forio', project: 'js-libs', transport: {complete: originalComplete}});
+                rs.create('model.jl', {complete: complete});
+
+                server.respond();
+                originalComplete.should.not.have.been.called;
+                complete.should.have.been.called;
+            });
+
+            it('should allow over-riding transport options', function () {
+                var originalComplete = sinon.spy();
+                var complete = sinon.spy();
+                var rs = new RunService({account: 'forio', project: 'js-libs', transport: {complete: originalComplete}});
+                rs.create('model.jl', {complete: complete});
+
+                server.respond();
+                originalComplete.should.not.have.been.called;
+                complete.should.have.been.called;
+            });
+
+            it('should respect sequence of success handlers', function () {
+                var originalSuccess = sinon.spy();
+                var transportSuccess = sinon.spy();
+                var rs = new RunService({account: 'forio', project: 'js-libs', success: originalSuccess, transport: {complete: transportSuccess}});
+                rs.create('model.jl');
+
+                server.respond();
+                originalSuccess.should.have.been.called;
+                transportSuccess.should.have.been.called;
+            });
         });
+
 
         describe('#create()', function () {
             it('should do a POST', function() {
