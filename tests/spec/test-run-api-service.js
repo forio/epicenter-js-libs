@@ -73,12 +73,14 @@
         });
 
         it('should pass in transport options to the underlying ajax handler', function () {
-            var callback = sinon.spy();
-            var rs = new RunService({account: 'forio', project: 'js-libs', transport: {beforeSend: callback}});
+            var beforeSend = sinon.spy();
+            var complete = sinon.spy();
+            var rs = new RunService({account: 'forio', project: 'js-libs', transport: {beforeSend: beforeSend, complete: complete}});
             rs.create('model.jl');
 
             server.respond();
-            callback.should.have.been.called;
+            beforeSend.should.have.been.called;
+            complete.should.have.been.called;
         });
 
         describe('#create()', function () {

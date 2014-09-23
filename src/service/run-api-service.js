@@ -84,11 +84,6 @@
              */
             error: $.noop,
 
-            /**
-             * Called when the call completes, regardless of success or failure. Defaults to `$.noop`.
-             */
-            complete: $.noop,
-
             //Options to pass on to the underlying transport layer
             transport: {}
         };
