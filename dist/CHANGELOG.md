@@ -1,3 +1,20 @@
+<a name="1.0.2"></a>
+## 1.0.2 (2014-09-22)
+- Build process generates `epicenter.js` (un-minified concatenated file) in addition to `epicenter.min.js`
+- Fixed bug where transport option for `complete` was not being passed through on Run API Service
+- You can now set default transport options for Run Service and over-ride on a per-call level. For e.g.,
+
+```javascript
+var originalComplete = sinon.spy();
+var complete = sinon.spy();
+var rs = new RunService({account: 'forio', project: 'js-libs', transport: {complete: originalComplete}});
+rs.create('model.jl', {complete: complete});
+
+originalComplete.should.not.have.been.called;
+complete.should.have.been.called;
+```
+
+
 <a name="1.0.1"></a>
 ## 1.0.1 (2014-09-09)
 
