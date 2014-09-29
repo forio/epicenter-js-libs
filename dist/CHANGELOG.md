@@ -1,3 +1,8 @@
+<a name="1.1.0"></a>
+## 1.1.0 (2014-09-29)
+
+- Epicenter.js now includes the Run Manager and the Scenario Manager (documentation pending)
+
 <a name="1.0.2"></a>
 ## 1.0.2 (2014-09-22)
 - Build process generates `epicenter.js` (un-minified concatenated file) in addition to `epicenter.min.js`
