@@ -23,7 +23,13 @@
              * ONLY for strings in the url. All GET & DELETE params are run through this
              * @type {[type]}
              */
-            parameterParser: qutils.toQueryFormat
+            parameterParser: qutils.toQueryFormat,
+
+            // To allow epicenter.token and other session cookies to be passed
+            // with the requests
+            xhrFields: {
+                withCredentials: true
+            }
         };
 
         var transportOptions = $.extend({}, defaults, config);
