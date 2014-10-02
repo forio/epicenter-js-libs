@@ -1,3 +1,8 @@
+<a name="1.1.1"></a>
+### 1.1.1 (2014-10-02)
+
+Bug-fix to prevent passing in run-ids while creating a run
+
 <a name="1.1.0"></a>
 ## 1.1.0 (2014-09-29)
 
