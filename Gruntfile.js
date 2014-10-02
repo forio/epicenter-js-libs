@@ -58,6 +58,7 @@ module.exports = function(grunt) {
         options: {
             compress: false,
             sourceMap: false,
+            mangle:false,
             sourceMapIncludeSources: false
         },
         dev: {
@@ -66,12 +67,17 @@ module.exports = function(grunt) {
         unminified: {
             options: {
                 compress: false,
-                mangle: false
+                mangle: false,
+                sourceMap: false,
+                beautify: true
             },
             files: {
                 'dist/epicenter.js': [
                     'src/util/query-util.js',
                     'src/util/run-util.js',
+                    'src/util/inherit.js',
+                    'src/util/make-sequence.js',
+
                     'src/service/url-config-service.js',
                     'src/service/configuration-service.js',
 
