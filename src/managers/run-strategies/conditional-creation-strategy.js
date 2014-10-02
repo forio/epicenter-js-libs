@@ -62,11 +62,10 @@
         },
 
         reset: function () {
-            var session = cookies.get(this.options.cookieName);
             var _this = this;
 
             return this.run
-                .create({ model: this.options.model, runId: (session ? session.runId : null)})
+                .create({ model: this.options.model })
                 .then(function (run) {
                     setRunCookie(_this.options.cookieName, run);
                     run.freshlyCreated = true;
