@@ -36,7 +36,12 @@
                 parts.pop();
                 path = parts.join('/');
             } else {
-                path =window.location.pathname;
+                path = window.location.pathname;
+                // make sure we don't get a trailing slash to be consistent with
+                // the path when we have an html file at the end
+                if (path[path.length - 1] === '/') {
+                    path = path.substr(0, path.length-1);
+                }
             }
         }
 
