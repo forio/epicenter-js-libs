@@ -62,7 +62,6 @@
     } else {
         if (!root.F) { root.F = {};}
         if (!root.F.manager) { root.F.manager = {};}
-        if (!root.F.manager.strategy) { root.F.manager.strategy = {};}
         root.F.manager.ScenarioManager = ScenarioManager;
     }
 }).call(this);
