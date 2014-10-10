@@ -13,16 +13,23 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-jscs-checker');
 
 
-    grunt.loadNpmTasks('grunt-browserify2');
+    grunt.loadNpmTasks('grunt-browserify');
     var UglifyJS = require('uglify-js');
 
-    grunt.config.set('browserify2', {
+    grunt.config.set('browserify', {
         options: {
-            expose: {
-
-            },
-            entry: './src/app.js'
+            external: ['jquery'],
+            browserifyOptions: {
+                bundleExternal: false,
+            }
         },
+        min: {
+            options: {
+            },
+            src: './src/app.js',
+            dest: './dist/epicenter.min.js',
+        }
+
         // tests: {
         //     options: {
 
@@ -48,26 +55,26 @@ module.exports = function(grunt) {
         //         return banner + src;
         //     }
         // },
-        min: {
-            options: {
-                debug: false,
-                compile: './dist/epicenter.min.js'
-            },
-            afterHook: function(src) {
-                var result = UglifyJS.minify(src, {
-                    fromString: true,
-                    warnings: true,
-                    mangle: true,
-                    compress:{
-                        pure_funcs: [ 'console.log' ]
-                    }
-                });
-                var code = result.code;
-                // var banner = grunt.file.read('./banner.js');
-                // banner = grunt.template.process(banner, {data: grunt.file.readJSON('package.json')});
-                return code;
-            }
-        }
+        // min: {
+        //     options: {
+        //         debug: false,
+        //         compile: './dist/epicenter.min.js'
+        //     },
+        //     afterHook: function(src) {
+        //         var result = UglifyJS.minify(src, {
+        //             fromString: true,
+        //             warnings: true,
+        //             mangle: true,
+        //             compress:{
+        //                 pure_funcs: [ 'console.log' ]
+        //             }
+        //         });
+        //         var code = result.code;
+        //         // var banner = grunt.file.read('./banner.js');
+        //         // banner = grunt.template.process(banner, {data: grunt.file.readJSON('package.json')});
+        //         return code;
+        //     }
+        // }
     });
 
 
