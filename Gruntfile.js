@@ -23,7 +23,7 @@ module.exports = function(grunt) {
     grunt.config.set('watch', {
         source: {
             files: ['src/**/*.js'],
-            tasks: ['mocha:test', 'uglify:production']
+            tasks: ['mocha:test', 'uglify']
         },
         tests: {
             files: ['tests/spec/**/*.js'],
@@ -201,5 +201,5 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('default', ['watch']);
+    grunt.registerTask('default', ['mocha:test', 'uglify', 'watch']);
 };
