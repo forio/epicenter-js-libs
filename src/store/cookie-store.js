@@ -9,8 +9,7 @@
  */
 
 
- 'use strict';
- var $ = require('jquery');
+'use strict';
 
 module.exports = function (config) {
     var defaults = {

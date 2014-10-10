@@ -1,7 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-
 module.exports = function (config) {
     //TODO: urlutils to get host, since no window on node
 

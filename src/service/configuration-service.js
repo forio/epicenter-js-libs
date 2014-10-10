@@ -28,7 +28,6 @@
  */
 
 'use strict';
-var $ = require('jquery');
 var urlService = require('./url-config-service');
 
 module.exports = function (config) {

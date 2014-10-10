@@ -1,6 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
 var qutils = require('../util/query-util');
 
 module.exports = function (config) {

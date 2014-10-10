@@ -16,15 +16,12 @@ module.exports = function(grunt) {
 
     grunt.config.set('browserify', {
         options: {
-            // external: ['jquery'],
             browserifyOptions: {
-                // bundleExternal: true,
+                // bundleExternal: false,
                 debug: true,
             }
         },
         min: {
-            options: {
-            },
             src: './src/app.js',
             dest: './dist/epicenter.min.js',
         }

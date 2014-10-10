@@ -2,8 +2,6 @@
 module.exports = function () {
     /*jshint loopfunc:false */
 
-    var $ = require('jquery');
-
     function _w(val) {
         if (val && val.then) {
             return val;

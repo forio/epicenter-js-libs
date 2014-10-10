@@ -2,7 +2,6 @@
  * Utilities for working with the run service
 */
 'use strict';
-var $ = require('jquery');
 
 module.exports = (function () {
     return {

@@ -23,7 +23,6 @@ var ConfigService = require('./configuration-service');
 var StorageFactory = require('../store/store-factory');
 var qutil = require('../util/query-util');
 var rutil = require('../util/run-util');
-var $ = require('jquery');
 var TransportFactory = require('../transport/http-transport-factory');
 var VariablesService = require('./variables-api-service');
 

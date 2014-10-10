@@ -1,6 +1,5 @@
 'use strict';
 var strategiesMap = require('./run-strategies/strategies-map');
-var $ = require('jquery');
 var RunService = require('../service/run-api-service');
 
 var defaults = {

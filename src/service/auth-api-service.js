@@ -15,7 +15,6 @@
 
 var ConfigService = require('./configuration-service');
 var StorageFactory = require('../store/store-factory');
-var $ = require('jquery');
 var TransportFactory = require('../transport/http-transport-factory');
 
 module.exports = function (config) {

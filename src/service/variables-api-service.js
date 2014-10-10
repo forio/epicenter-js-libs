@@ -16,7 +16,6 @@
 
  'use strict';
 
- var $ = require('jquery');
  var TransportFactory = require('../transport/http-transport-factory');
 
 module.exports = function (config) {
