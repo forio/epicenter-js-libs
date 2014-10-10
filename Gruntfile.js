@@ -12,65 +12,39 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-jscs-checker');
 
 
-    grunt.loadNpmTasks('grunt-browserify');
-
-    grunt.config.set('browserify', {
+    var UglifyJS = require('uglify-js');
+    grunt.loadNpmTasks('grunt-browserify2');
+    grunt.config.set('browserify2', {
         options: {
-            browserifyOptions: {
-                // bundleExternal: false,
+            entry: './src/app.js'
+        },
+
+        mapped: {
+            options: {
                 debug: true,
-            }
+                compile: './dist/epicenter.js'
+            },
         },
         min: {
-            src: './src/app.js',
-            dest: './dist/epicenter.min.js',
+            options: {
+                debug: false,
+                compile: './dist/epicenter.min.js'
+            },
+            afterHook: function(src) {
+                var result = UglifyJS.minify(src, {
+                    fromString: true,
+                    warnings: true,
+                    mangle: true,
+                    compress:{
+                        pure_funcs: [ 'console.log' ]
+                    }
+                });
+                var code = result.code;
+                // var banner = grunt.file.read('./banner.js');
+                // banner = grunt.template.process(banner, {data: grunt.file.readJSON('package.json')});
+                return code;
+            }
         }
-
-        // tests: {
-        //     options: {
-
-        //         entry: './tests/test-list.js',
-        //         compile: './tests/tests-browserify-bundle.js',
-        //         debug: true
-        //     }
-        // },
-        // edge: {
-        //     options: {
-        //         debug: true,
-        //         compile: './dist/flow-edge.js'
-        //     }
-        // },
-        // mapped: {
-        //     options: {
-        //         debug: true,
-        //         compile: './dist/flow.js'
-        //     },
-        //     afterHook: function(src) {
-        //         var banner = grunt.file.read('./banner.js');
-        //         banner = grunt.template.process(banner, {data: grunt.file.readJSON('package.json')});
-        //         return banner + src;
-        //     }
-        // },
-        // min: {
-        //     options: {
-        //         debug: false,
-        //         compile: './dist/epicenter.min.js'
-        //     },
-        //     afterHook: function(src) {
-        //         var result = UglifyJS.minify(src, {
-        //             fromString: true,
-        //             warnings: true,
-        //             mangle: true,
-        //             compress:{
-        //                 pure_funcs: [ 'console.log' ]
-        //             }
-        //         });
-        //         var code = result.code;
-        //         // var banner = grunt.file.read('./banner.js');
-        //         // banner = grunt.template.process(banner, {data: grunt.file.readJSON('package.json')});
-        //         return code;
-        //     }
-        // }
     });
 
 
@@ -168,7 +142,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test', ['mocha']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'test']);
-    grunt.registerTask('production', ['validate', 'documentation']);
+    grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
 
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
