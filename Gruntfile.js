@@ -18,9 +18,10 @@ module.exports = function(grunt) {
 
     grunt.config.set('browserify', {
         options: {
-            external: ['jquery'],
+            // external: ['jquery'],
             browserifyOptions: {
-                bundleExternal: false,
+                // bundleExternal: false,
+                debug: true,
             }
         },
         min: {

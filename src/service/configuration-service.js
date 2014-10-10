@@ -27,77 +27,47 @@
  *
  */
 
-(function(){
-    'use strict';
+'use strict';
+var $ = require('jquery');
+var urlService = require('./url-config-service');
 
-    var root = this;
-    var F = root.F;
-
-    var $;
-    if (typeof require !== 'undefined') {
-        $ = require('jquery');
-    }
-    else {
-        $ = root.jQuery;
-    }
-
-    var urlService;
-    if (typeof require !== 'undefined') {
-        urlService = require('service/urlService');
-    }
-    else {
-        urlService = F.service.URL;
-    }
-
-    var ConfigurationService = function (config) {
-
-        //TODO: Environments
-        var defaults = {
-            logLevel: 'NONE'
-        };
-        var serviceOptions = $.extend({}, defaults, config);
-        serviceOptions.server = urlService(serviceOptions.server);
-
-        return {
-
-            data: serviceOptions,
-
-            /**
-             * Set the environment key to get configuration options from
-             * @param {String} env
-             */
-            setEnv: function (env) {
-
-            },
-
-            /**
-             * Get configuration.
-             * @param  {String} property optional
-             * @return {*}          Value of property if specified, the entire config object otherwise
-             */
-            get: function (property) {
-                return serviceOptions[property];
-            },
-
-            /**
-             * Set configuration.
-             * @param  {String|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
-             * @param  {*} value  value for provided key
-             */
-            set: function (key, value) {
-                serviceOptions[key] = value;
-            }
-        };
+module.exports = function (config) {
+    //TODO: Environments
+    var defaults = {
+        logLevel: 'NONE'
     };
+    var serviceOptions = $.extend({}, defaults, config);
+    serviceOptions.server = urlService(serviceOptions.server);
 
-    if (typeof exports !== 'undefined') {
-        module.exports = ConfigurationService;
-    }
-    else {
-        if (!root.F) { root.F = {};}
-        if (!root.F.service) { root.F.service = {};}
-        root.F.service.Config = ConfigurationService;
-    }
+    return {
 
-}).call(this);
+        data: serviceOptions,
+
+        /**
+         * Set the environment key to get configuration options from
+         * @param {String} env
+         */
+        setEnv: function (env) {
+
+        },
+
+        /**
+         * Get configuration.
+         * @param  {String} property optional
+         * @return {*}          Value of property if specified, the entire config object otherwise
+         */
+        get: function (property) {
+            return serviceOptions[property];
+        },
+
+        /**
+         * Set configuration.
+         * @param  {String|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
+         * @param  {*} value  value for provided key
+         */
+        set: function (key, value) {
+            serviceOptions[key] = value;
+        }
+    };
+};
 
