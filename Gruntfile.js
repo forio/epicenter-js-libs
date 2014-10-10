@@ -18,7 +18,7 @@ module.exports = function(grunt) {
         options: {
             // external: ['jquery'],
             browserifyOptions: {
-                // bundleExternal: false,
+                // bundleExternal: true,
                 debug: true,
             }
         },

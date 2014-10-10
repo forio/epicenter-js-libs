@@ -4,8 +4,10 @@ var F = {
     transport: {},
     store: {},
     service: {},
-    manager: {},
-    strategy: {}
+    manager: {
+        strategy: {}
+    },
+
 };
 
 F.util.query = require('./util/query-util');

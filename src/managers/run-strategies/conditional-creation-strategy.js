@@ -1,12 +1,13 @@
 'use strict';
 
 var $ = require('jquery');
-var cookies = new require('../../store/cookie-store')({domain: null});
+var CookieStore = require('../../store/cookie-store');
 var makeSeq = require('../../util/make-sequence');
 var Base = require('./identity-strategy');
 
 var classFrom = require('../../util/inherit');
 
+var cookies = new CookieStore({domain: null});
 
 var defaults = {
     cookieName: 'epicenter-scenario'

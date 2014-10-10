@@ -3,7 +3,7 @@
 */
 'use strict';
 
-var $ = require('jQuery');
+var $ = require('jquery');
 module.exports = (function () {
 
     return {
