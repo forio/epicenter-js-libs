@@ -24,6 +24,17 @@
         Base = F.manager.strategy.identity;
     }
 
+    function _pick(obj, props) {
+        var res = {};
+        for(var p in obj) {
+            if (props.indexOf(p) !== -1) {
+                res[p] = obj[p];
+            }
+        }
+
+        return res;
+    }
+
     var defaults = {
         cookieName: 'epicenter-scenario'
     };
@@ -52,6 +63,8 @@
     /* jshint eqnull: true */
     var Strategy = classFrom(Base, {
         constructor: function Strategy(runService, condition, options) {
+            var runApiParams = ['account', 'project', 'model', 'scope', 'file'];
+
             if (condition == null) {
                 throw new Error('Conditional strategy needs a condition to createte a run');
             }
@@ -59,13 +72,14 @@
             this.run = makeSeq(runService);
             this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
             this.options = $.extend(true, {}, defaults, options);
+            this.runOptions = _pick(this.options, runApiParams);
         },
 
         reset: function () {
             var _this = this;
 
             return this.run
-                .create({ model: this.options.model })
+                .create(this.runOptions)
                 .then(function (run) {
                     setRunCookie(_this.options.cookieName, run);
                     run.freshlyCreated = true;
@@ -74,17 +88,17 @@
                 .start();
         },
 
-        getRun: function (model) {
+        getRun: function () {
             var session = JSON.parse(cookies.get(this.options.cookieName));
 
             if (session && session.runId) {
-                return this._loadAndCheck(session, model);
+                return this._loadAndCheck(session);
             } else {
                 return this.reset();
             }
         },
 
-        _loadAndCheck: function (session, model) {
+        _loadAndCheck: function (session) {
             var shouldCreate = false;
             var _this = this;
 
@@ -98,7 +112,7 @@
                     if (shouldCreate) {
                         // we need to do this, on the original runService (ie not sequencialized)
                         // so we don't get in the middle of the queue
-                        return _this.run.original.create(model)
+                        return _this.run.original.create(_this.runOptions)
                             .then(function (run) {
                                 setRunCookie(_this.options.cookieName, run);
                                 run.freshlyCreated = true;
