@@ -1,16 +1,8 @@
-(function () {
+'use strict';
+module.exports = function () {
     /*jshint loopfunc:false */
 
-    'use strict';
-
-    var root = this;
-    var $;
-
-    if (typeof require !== 'undefined') {
-        $ = require('jquery');
-    } else {
-        $ = root.jQuery;
-    }
+    var $ = require('jquery');
 
     function _w(val) {
         if (val && val.then) {
@@ -88,12 +80,4 @@
 
         return res;
     }
-
-    if (typeof require !== 'undefined') {
-        module.exports = MakeSeq;
-    } else {
-        if (!root.F) { root.F = {};}
-        if (!root.F.util) { root.F.util = {};}
-        root.F.util.makeSequence = MakeSeq;
-    }
-}).call(this);
+};

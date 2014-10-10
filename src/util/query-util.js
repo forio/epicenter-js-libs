@@ -4,7 +4,6 @@
 'use strict';
 
 var $ = require('jQuery');
-
 module.exports = (function () {
 
     return {
