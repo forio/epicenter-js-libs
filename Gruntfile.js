@@ -6,7 +6,6 @@ module.exports = function(grunt) {
     });
 
     grunt.loadNpmTasks('grunt-mocha');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-markdox');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -14,7 +13,6 @@ module.exports = function(grunt) {
 
 
     grunt.loadNpmTasks('grunt-browserify');
-    var UglifyJS = require('uglify-js');
 
     grunt.config.set('browserify', {
         options: {
@@ -122,92 +120,6 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.config.set('uglify', {
-        options: {
-            compress: false,
-            sourceMap: false,
-            mangle:false,
-            sourceMapIncludeSources: false
-        },
-        dev: {
-            files: []
-        },
-        unminified: {
-            options: {
-                compress: false,
-                mangle: false,
-                sourceMap: false,
-                beautify: true
-            },
-            files: {
-                'dist/epicenter.js': [
-                    'src/util/query-util.js',
-                    'src/util/run-util.js',
-                    'src/util/inherit.js',
-                    'src/util/make-sequence.js',
-
-                    'src/service/url-config-service.js',
-                    'src/service/configuration-service.js',
-
-                    'src/transport/ajax-http-transport.js',
-                    'src/transport/http-transport-factory.js',
-
-                    'src/store/cookie-store.js',
-                    'src/store/store-factory.js',
-                    'src/service/data-api-service.js',
-
-
-                    'src/service/auth-api-service.js',
-                    'src/service/variables-api-service.js',
-                    'src/service/run-api-service.js',
-
-                    'src/managers/run-strategies/identity-strategy.js',
-                    'src/managers/run-strategies/conditional-creation-strategy.js',
-                    'src/managers/run-strategies/**/*.js',
-                    'src/managers/run-manager.js',
-                    'src/managers/scenario-manager.js',
-                    'src/managers/**/*.js'
-                ]
-            }
-        },
-        production: {
-            options: {
-                compress: true,
-                sourceMap: true,
-                sourceMapIncludeSources: true
-            },
-            files: {
-                'dist/epicenter.min.js': [
-                    'src/util/query-util.js',
-                    'src/util/run-util.js',
-                    'src/util/inherit.js',
-                    'src/util/make-sequence.js',
-
-                    'src/service/url-config-service.js',
-                    'src/service/configuration-service.js',
-
-                    'src/transport/ajax-http-transport.js',
-                    'src/transport/http-transport-factory.js',
-
-                    'src/store/cookie-store.js',
-                    'src/store/store-factory.js',
-                    'src/service/data-api-service.js',
-
-
-                    'src/service/auth-api-service.js',
-                    'src/service/variables-api-service.js',
-                    'src/service/run-api-service.js',
-
-                    'src/managers/run-strategies/identity-strategy.js',
-                    'src/managers/run-strategies/conditional-creation-strategy.js',
-                    'src/managers/run-strategies/**/*.js',
-                    'src/managers/run-manager.js',
-                    'src/managers/scenario-manager.js',
-                    'src/managers/**/*.js'
-                ]
-            }
-        }
-    });
 
     grunt.config.set('markdox', {
         options: {
@@ -259,7 +171,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test', ['mocha']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'test']);
-    grunt.registerTask('production', ['validate', 'uglify:unminified', 'uglify:production', 'documentation']);
+    grunt.registerTask('production', ['validate', 'documentation']);
 
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
