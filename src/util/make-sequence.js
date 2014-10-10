@@ -1,81 +1,81 @@
 'use strict';
-module.exports = function () {
-    /*jshint loopfunc:false */
+/*jshint loopfunc:false */
 
-    function _w(val) {
-        if (val && val.then) {
-            return val;
-        }
-        var p = $.Deferred();
-        p.resolve(val);
-
-        return p.promise();
+function _w(val) {
+    if (val && val.then) {
+        return val;
     }
+    var p = $.Deferred();
+    p.resolve(val);
 
-    function seq() {
-        var list = Array.prototype.slice.apply(arguments);
+    return p.promise();
+}
 
-        function next(p) {
-            var cur = list.splice(0,1)[0];
+function seq() {
+    var list = Array.prototype.slice.apply(arguments);
 
-            if (!cur) {
-                return p;
-            }
+    function next(p) {
+        var cur = list.splice(0,1)[0];
 
-            return _w(cur(p)).then(next);
+        if (!cur) {
+            return p;
         }
 
-        return function (seed) {
-            return next(seed).fail(seq.fail);
-        };
+        return _w(cur(p)).then(next);
     }
 
-    function MakeSeq(obj) {
-        var res = {
-            __calls: [],
+    return function (seed) {
+        return next(seed).fail(seq.fail);
+    };
+}
 
-            original: obj,
+function MakeSeq(obj) {
+    var res = {
+        __calls: [],
 
-            then: function (fn) {
-                this.__calls.push(fn);
-                return this;
-            },
+        original: obj,
 
-            start: function () {
-                var _this = this;
+        then: function (fn) {
+            this.__calls.push(fn);
+            return this;
+        },
 
-                // clean up
-                this.then(function (run) {
-                    _this.__calls.length = 0;
-                    return run;
-                });
+        start: function () {
+            var _this = this;
 
-                return seq.apply(null, this.__calls)();
-            },
+            // clean up
+            this.then(function (run) {
+                _this.__calls.length = 0;
+                return run;
+            });
 
-            fail: function (fn) {
-                seq.fail = fn;
-                return this;
-            }
-        };
+            return seq.apply(null, this.__calls)();
+        },
 
-        var funcMaker = function (p, obj) {
-            var fn = obj[p].bind(obj);
-            return function () {
-                var args = Array.prototype.slice.apply(arguments);
-                this.__calls.push(Function.bind.apply(fn, [null].concat(args)));
-                return this;
-            };
-        };
-
-        for(var prop in obj) {
-            if (typeof obj[prop] === 'function') {
-                res[prop] = funcMaker(prop, obj);
-            } else {
-                res[prop] = obj[prop];
-            }
+        fail: function (fn) {
+            seq.fail = fn;
+            return this;
         }
+    };
 
-        return res;
+    var funcMaker = function (p, obj) {
+        var fn = obj[p].bind(obj);
+        return function () {
+            var args = Array.prototype.slice.apply(arguments);
+            this.__calls.push(Function.bind.apply(fn, [null].concat(args)));
+            return this;
+        };
+    };
+
+    for(var prop in obj) {
+        if (typeof obj[prop] === 'function') {
+            res[prop] = funcMaker(prop, obj);
+        } else {
+            res[prop] = obj[prop];
+        }
     }
-};
+
+    return res;
+}
+
+module.exports = MakeSeq;

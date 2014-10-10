@@ -23,6 +23,7 @@ var extend = function (dest /*, var_args*/) {
         }
 
         // do not wrap inner in dest.hasOwnProperty or bad things will happen
+        /*jshint -W089 */
         for (var key in current) {
             dest[key] = current[key];
         }
