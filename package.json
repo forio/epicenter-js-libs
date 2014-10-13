@@ -17,9 +17,13 @@
     "grunt-markdox": "^1.2.1",
     "grunt-mocha": "^0.4.11",
     "husky": "^0.5.1",
-    "jshint-stylish": "^0.2.0"
+    "jshint-stylish": "^0.2.0",
+    "uglify-js": "^2.4.15"
   },
   "scripts": {
     "prepush": "grunt validate"
+  },
+  "dependencies": {
+    "jquery": "^2.1.1"
   }
 }

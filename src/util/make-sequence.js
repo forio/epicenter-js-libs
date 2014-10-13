@@ -1,99 +1,81 @@
-(function () {
-    /*jshint loopfunc:false */
+'use strict';
+/*jshint loopfunc:false */
 
-    'use strict';
-
-    var root = this;
-    var $;
-
-    if (typeof require !== 'undefined') {
-        $ = require('jquery');
-    } else {
-        $ = root.jQuery;
+function _w(val) {
+    if (val && val.then) {
+        return val;
     }
+    var p = $.Deferred();
+    p.resolve(val);
 
-    function _w(val) {
-        if (val && val.then) {
-            return val;
-        }
-        var p = $.Deferred();
-        p.resolve(val);
+    return p.promise();
+}
 
-        return p.promise();
-    }
+function seq() {
+    var list = Array.prototype.slice.apply(arguments);
 
-    function seq() {
-        var list = Array.prototype.slice.apply(arguments);
+    function next(p) {
+        var cur = list.splice(0,1)[0];
 
-        function next(p) {
-            var cur = list.splice(0,1)[0];
-
-            if (!cur) {
-                return p;
-            }
-
-            return _w(cur(p)).then(next);
+        if (!cur) {
+            return p;
         }
 
-        return function (seed) {
-            return next(seed).fail(seq.fail);
-        };
+        return _w(cur(p)).then(next);
     }
 
-    function MakeSeq(obj) {
-        var res = {
-            __calls: [],
+    return function (seed) {
+        return next(seed).fail(seq.fail);
+    };
+}
 
-            original: obj,
+function MakeSeq(obj) {
+    var res = {
+        __calls: [],
 
-            then: function (fn) {
-                this.__calls.push(fn);
-                return this;
-            },
+        original: obj,
 
-            start: function () {
-                var _this = this;
+        then: function (fn) {
+            this.__calls.push(fn);
+            return this;
+        },
 
-                // clean up
-                this.then(function (run) {
-                    _this.__calls.length = 0;
-                    return run;
-                });
+        start: function () {
+            var _this = this;
 
-                return seq.apply(null, this.__calls)();
-            },
+            // clean up
+            this.then(function (run) {
+                _this.__calls.length = 0;
+                return run;
+            });
 
-            fail: function (fn) {
-                seq.fail = fn;
-                return this;
-            }
-        };
+            return seq.apply(null, this.__calls)();
+        },
 
-        var funcMaker = function (p, obj) {
-            var fn = obj[p].bind(obj);
-            return function () {
-                var args = Array.prototype.slice.apply(arguments);
-                this.__calls.push(Function.bind.apply(fn, [null].concat(args)));
-                return this;
-            };
-        };
-
-        for(var prop in obj) {
-            if (typeof obj[prop] === 'function') {
-                res[prop] = funcMaker(prop, obj);
-            } else {
-                res[prop] = obj[prop];
-            }
+        fail: function (fn) {
+            seq.fail = fn;
+            return this;
         }
+    };
 
-        return res;
+    var funcMaker = function (p, obj) {
+        var fn = obj[p].bind(obj);
+        return function () {
+            var args = Array.prototype.slice.apply(arguments);
+            this.__calls.push(Function.bind.apply(fn, [null].concat(args)));
+            return this;
+        };
+    };
+
+    for(var prop in obj) {
+        if (typeof obj[prop] === 'function') {
+            res[prop] = funcMaker(prop, obj);
+        } else {
+            res[prop] = obj[prop];
+        }
     }
 
-    if (typeof require !== 'undefined') {
-        module.exports = MakeSeq;
-    } else {
-        if (!root.F) { root.F = {};}
-        if (!root.F.util) { root.F.util = {};}
-        root.F.util.makeSequence = MakeSeq;
-    }
-}).call(this);
+    return res;
+}
+
+module.exports = MakeSeq;

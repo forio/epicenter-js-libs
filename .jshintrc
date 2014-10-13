@@ -21,5 +21,9 @@
     "unused": "vars",
     "strict": true,
     "trailing": true,
-    "eqnull": true
+    "eqnull": true,
+    "globals": {
+        "$": false,
+        "jQuery": false
+    }
 }
