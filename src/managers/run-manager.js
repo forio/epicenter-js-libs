@@ -1,10 +1,31 @@
 'use strict';
 var strategiesMap = require('./run-strategies/strategies-map');
+var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 
 var defaults = {
     strategy: 'new-if-simulated'
 };
+
+function patchRunService(service, manager) {
+    if (service.patched) {
+        return service;
+    }
+
+    var orig = service.do;
+    service.do = function(operation, params, options) {
+        var reservedOps = Object.keys(specialOperations);
+        if (reservedOps.indexOf(operation) === -1) {
+            return orig.apply(service, arguments);
+        } else {
+            return specialOperations[operation].call(service, params, options, manager);
+        }
+    };
+
+    service.patched = true;
+
+    return service;
+}
 
 /**
 * ## A Run Manager to help with run creation strategies depending on run state
@@ -51,6 +72,8 @@ function RunManager(options) {
     } else {
         this.run = new RunService(this.options.run);
     }
+
+    patchRunService(this.run, this);
 
     var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap[this.options.strategy];
 
