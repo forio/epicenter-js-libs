@@ -1,37 +1,17 @@
-(function () {
-    'use strict';
+'use strict';
+var classFrom = require('../../util/inherit');
+var ConditionalStrategy = require('./conditional-creation-strategy');
 
-    var root = this;
-    var F = root.F;
-    var classFrom, ConditionalStrategy;
+var __super = ConditionalStrategy.prototype;
 
-    if (typeof require !== 'undefined') {
-        classFrom = require('../../util/inherit');
-        ConditionalStrategy = require('./conditional-creation-strategy');
-    } else {
-        classFrom = F.util.classFrom;
-        ConditionalStrategy = F.manager.strategy['conditional-creation'];
+var Strategy = classFrom(ConditionalStrategy, {
+    constructor: function (runService, options) {
+        __super.constructor.call(this, runService, this.createIf, options);
+    },
+
+    createIf: function (run, headers) {
+        return headers.getResponseHeader('pragma') === 'persistent' || run.initialized;
     }
+});
 
-    var __super = ConditionalStrategy.prototype;
-
-    var Strategy = classFrom(ConditionalStrategy, {
-        constructor: function (runService, options) {
-            __super.constructor.call(this, runService, this.createIf, options);
-        },
-
-        createIf: function (run, headers) {
-            return headers.getResponseHeader('pragma') === 'persistent' || run.initialized;
-        }
-    });
-
-
-    if (typeof require !== 'undefined') {
-        module.exports = Strategy;
-    } else {
-        if (!root.F) { root.F = {};}
-        if (!root.F.manager) { root.F.manager = {};}
-        if (!root.F.manager.strategy) { root.F.manager.strategy = {};}
-        root.F.manager.strategy['new-if-simulated'] = Strategy;
-    }
-}).call(this);
+module.exports = Strategy;
