@@ -4,142 +4,114 @@
  *  Cookie equivalent for nodejs
  */
 
-(function() {
-    'use strict';
+'use strict';
 
-    var root = this;
-    var F = root.F;
-    var $, ConfigService, qutil, httpTransport;
-    if (typeof require !== 'undefined') {
-        $ = require('jquery');
-        ConfigService = require('util/configuration-service');
-        qutil = require('util/query-util');
-    } else {
-        $ = root.jQuery;
-        ConfigService = F.service.Config;
-        qutil = F.util.query;
-        httpTransport = F.transport.HTTP;
-    }
+module.exports = function (config) {
+    var defaults = {
+        /**
+         * Name of collection
+         * @type {String}
+         */
+        root: '/',
 
-    var SessionStore = function (config) {
+        domain: '.forio.com'
+    };
+    var serviceOptions = $.extend({}, defaults, config);
 
-        var defaults = {
-            /**
-             * Name of collection
-             * @type {String}
-             */
-            root: '/',
+    var publicAPI = {
+        // * TBD
+        //  * Query collection; uses MongoDB syntax
+        //  * @see  <TBD: Data API URL>
+        //  *
+        //  * @param {String} qs Query Filter
+        //  * @param {String} limiters @see <TBD: url for limits, paging etc>
+        //  *
+        //  * @example
+        //  *     cs.query(
+        //  *      {name: 'John', className: 'CSC101'},
+        //  *      {limit: 10}
+        //  *     )
 
-            domain: '.forio.com'
-        };
-        var serviceOptions = $.extend({}, defaults, config);
+        // query: function (qs, limiters) {
 
-        var publicAPI = {
-            // * TBD
-            //  * Query collection; uses MongoDB syntax
-            //  * @see  <TBD: Data API URL>
-            //  *
-            //  * @param {String} qs Query Filter
-            //  * @param {String} limiters @see <TBD: url for limits, paging etc>
-            //  *
-            //  * @example
-            //  *     cs.query(
-            //  *      {name: 'John', className: 'CSC101'},
-            //  *      {limit: 10}
-            //  *     )
+        // },
 
-            // query: function (qs, limiters) {
+        /**
+         * Save session value
+         * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
+         * @param  {Object} value (Optional)
+         * @param {Object} options Overrides for service options
+         *
+         * @return {*} The saved value
+         *
+         * @example
+         *     cs.set('person', {firstName: 'john', lastName: 'smith'});
+         *     cs.set({name:'smith', age:'32'});
+         */
+        set: function (key, value, options) {
+            var setOptions = $.extend(true, {}, serviceOptions, options);
 
-            // },
+            var domain = setOptions.domain;
+            var path = setOptions.root;
 
-            /**
-             * Save session value
-             * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-             * @param  {Object} value (Optional)
-             * @param {Object} options Overrides for service options
-             *
-             * @return {*} The saved value
-             *
-             * @example
-             *     cs.set('person', {firstName: 'john', lastName: 'smith'});
-             *     cs.set({name:'smith', age:'32'});
-             */
-            set: function (key, value, options) {
-                var setOptions = $.extend(true, {}, serviceOptions, options);
+            document.session = encodeURIComponent(key) + '=' +
+                                encodeURIComponent(value) +
+                                (domain ? '; domain=' + domain : '') +
+                                (path ? '; path=' + path : '');
 
-                var domain = setOptions.domain;
-                var path = setOptions.root;
+            return value;
+        },
 
-                document.session = encodeURIComponent(key) + '=' +
-                                    encodeURIComponent(value) +
-                                    (domain ? '; domain=' + domain : '') +
-                                    (path ? '; path=' + path : '');
+        /**
+         * Load session value
+         * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
+         * @return {*} The value stored
+         *
+         * @example
+         *     cs.get('person');
+         */
+        get: function(key) {
+            var sessionReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
+            var val = document.session.replace(sessionReg, '$1');
+            val = decodeURIComponent(val) || null;
+            return val;
+        },
 
-                return value;
-            },
+        /**
+         * Removes key from collection
+         * @param {String} key key to remove
+         * @return {String} key The key removed
+         *
+         * @example
+         *     cs.remove('person');
+         */
+        remove: function (key, options) {
+            var remOptions = $.extend(true, {}, serviceOptions, options);
 
-            /**
-             * Load session value
-             * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-             * @return {*} The value stored
-             *
-             * @example
-             *     cs.get('person');
-             */
-            get: function(key) {
-                var sessionReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
-                var val = document.session.replace(sessionReg, '$1');
-                val = decodeURIComponent(val) || null;
-                return val;
-            },
+            var domain = remOptions.domain;
+            var path = remOptions.root;
 
-            /**
-             * Removes key from collection
-             * @param {String} key key to remove
-             * @return {String} key The key removed
-             *
-             * @example
-             *     cs.remove('person');
-             */
-            remove: function (key, options) {
-                var remOptions = $.extend(true, {}, serviceOptions, options);
+            document.session = encodeURIComponent(key) +
+                            '=; expires=Thu, 01 Jan 1970 00:00:00 GMT' +
+                            ( domain ? '; domain=' + domain : '') +
+                            ( path ? '; path=' + path : '');
+            return key;
+        },
 
-                var domain = remOptions.domain;
-                var path = remOptions.root;
-
-                document.session = encodeURIComponent(key) +
-                                '=; expires=Thu, 01 Jan 1970 00:00:00 GMT' +
-                                ( domain ? '; domain=' + domain : '') +
-                                ( path ? '; path=' + path : '');
-                return key;
-            },
-
-            /**
-             * Removes collection being referenced
-             * @return {Array} keys All the keys removed
-             */
-            destroy: function () {
-                var aKeys = document.session.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);
-                for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
-                    var sessionKey = decodeURIComponent(aKeys[nIdx]);
-                    this.remove(sessionKey);
-                }
-                return aKeys;
+        /**
+         * Removes collection being referenced
+         * @return {Array} keys All the keys removed
+         */
+        destroy: function () {
+            var aKeys = document.session.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);
+            for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
+                var sessionKey = decodeURIComponent(aKeys[nIdx]);
+                this.remove(sessionKey);
             }
-        };
-
-        $.extend(this, publicAPI);
+            return aKeys;
+        }
     };
 
-
-    if (typeof exports !== 'undefined') {
-        module.exports = SessionStore;
-    }
-    else {
-        if (!root.F) { root.F = {};}
-        if (!root.F.store) { root.F.store = {};}
-        root.F.store.Session = SessionStore;
-    }
-
-}).call(this);
+    $.extend(this, publicAPI);
+};
 

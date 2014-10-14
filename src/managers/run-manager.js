@@ -1,38 +1,25 @@
-(function () {
-    'use strict';
+'use strict';
+var strategiesMap = require('./run-strategies/strategies-map');
+var RunService = require('../service/run-api-service');
 
-    var root = this;
-    var F = root.F;
+var defaults = {
+    strategy: 'new-if-simulated'
+};
 
-    var $, strategiesMap;
-
-    if (typeof require !== 'undefined') {
-        $ = require('jquery');
-        strategiesMap = require('./strategies/strategies-map');
-    } else {
-        $ = root.jQuery;
-        strategiesMap = F.manager.strategy.map;
-    }
-
-
-    var defaults = {
-        strategy: 'new-if-simulated'
-    };
-
-    /**
+/**
     * ## A Run Manager to help with run creation strategies depending on run state
-    *
+*
     * **parameters**
     * @param {object} `options` The options object to configure the manager and run
     *
     *   strategy: (optional) Run creation strategy. Default: new-if-persisted
     *
-    *   account: Epicenter account
-    *   project: Epicenter project
-    *   model: Simulation model to create the run against
+*   account: Epicenter account
+*   project: Epicenter project
+*   model: Simulation model to create the run against
     *   scope: (optional) scope object for the run
     *   file: (optional)
-    *
+*
     *   ... other options to pass to the run adapter ...
     *
     * **Example**
@@ -52,21 +39,21 @@
     *
     *           });
     *
-    **/
-    function RunManager(options) {
-        this.options = $.extend(true, {}, defaults, options);
+**/
+function RunManager(options) {
+    this.options = $.extend(true, {}, defaults, options);
         this.run = new F.service.Run(this.options);
 
-        var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap[this.options.strategy];
+    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap[this.options.strategy];
 
-        if (!StrategyCtor) {
-            throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
-        }
-
-        this.strategy = new StrategyCtor(this.run, this.options);
+    if (!StrategyCtor) {
+        throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
     }
 
-    RunManager.prototype = {
+    this.strategy = new StrategyCtor(this.run, this.options);
+}
+
+RunManager.prototype = {
         /**
          * Get a 'good' run.
          * A good run is defined by the strategy. For example if the strategy is always-new, the call
@@ -81,10 +68,10 @@
          *      });
          *
          */
-        getRun: function () {
-            return this.strategy
+    getRun: function () {
+        return this.strategy
                 .getRun();
-        },
+    },
 
         /**
          * Force to create a new run.
@@ -96,17 +83,9 @@
          *      });
          *
          */
-        reset: function () {
-            return this.strategy.reset();
-        }
-    };
+    reset: function () {
+        return this.strategy.reset();
+    }
+};
 
-    if (typeof exports !== 'undefined') {
-        module.exports = RunManager;
-    }
-    else {
-        if (!root.F) { root.F = {};}
-        if (!root.F.manager) { root.F.manager = {};}
-        root.F.manager.RunManager = RunManager;
-    }
-}).call(this);
+module.exports = RunManager;
