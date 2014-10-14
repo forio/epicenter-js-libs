@@ -20,29 +20,37 @@ var defaults = {
 *   scope: (optional) scope object for the run
 *   file: (optional)
 *
-*   ... other options to pass to the run adapter ...
+*   ... other options to pass to the run adapter instance (ie. options.run = runAdapter ) ...
 *
 * **Example**
 *      var rm = new F.manager.RunManager({
-*          account: 'acme-simulations',
-*          project: 'supply-chain-game',
-*          model: 'model.vmf',
-*          strategy: 'new-if-persisted',
-*          service: {
-*             host: 'api.forio.com'
-*          }
+*           run: {
+*              account: 'acme-simulations',
+*              project: 'supply-chain-game',
+*              model: 'model.vmf',
+*              service: {
+*                 host: 'api.forio.com'
+*              }
+*           }
+*           strategy: 'new-if-persisted',
+*           sessionKey: 'epicenter-session'
 *      });
 *
 *      rs.getRun()
 *          .then(function(run) {
 *              // start the game... we have a valid run
-*
 *           });
+*
 *
 **/
 function RunManager(options) {
     this.options = $.extend(true, {}, defaults, options);
-    this.run = new RunService(this.options);
+
+    if (this.options.run instanceof RunService) {
+        this.run = this.options.run;
+    } else {
+        this.run = new RunService(this.options.run);
+    }
 
     var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap[this.options.strategy];
 

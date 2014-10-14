@@ -9,17 +9,6 @@ var UrlService = require('../../service/url-config-service');
 var sessionStore = new SessionStore({});
 var urlService = new UrlService();
 
-function _pick(obj, props) {
-    var res = {};
-    for(var p in obj) {
-        if (props.indexOf(p) !== -1) {
-            res[p] = obj[p];
-        }
-    }
-
-    return res;
-}
-
 var defaults = {
     sessionKey: 'epicenter-scenario'
 };
@@ -43,7 +32,6 @@ function setRunInSession(sessionKey, run) {
 /* jshint eqnull: true */
 var Strategy = classFrom(Base, {
     constructor: function Strategy(runService, condition, options) {
-        var runApiParams = ['account', 'project', 'model', 'scope', 'file'];
 
         if (condition == null) {
             throw new Error('Conditional strategy needs a condition to createte a run');
@@ -52,7 +40,7 @@ var Strategy = classFrom(Base, {
         this.run = makeSeq(runService);
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
-        this.runOptions = _pick(this.options, runApiParams);
+        this.runOptions = this.options.run;
     },
 
     reset: function () {

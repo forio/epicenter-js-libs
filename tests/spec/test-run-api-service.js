@@ -139,7 +139,7 @@
             });
 
             it('Takes in object params', function() {
-                var params = {model: 'model.jl', user: 'x'};
+                var params = {model: 'model.jl', scope: { group: 'x' }};
 
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.create(params);

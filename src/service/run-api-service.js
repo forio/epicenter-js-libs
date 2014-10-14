@@ -26,6 +26,17 @@ var rutil = require('../util/run-util');
 var TransportFactory = require('../transport/http-transport-factory');
 var VariablesService = require('./variables-api-service');
 
+function _pick(obj, props) {
+    var res = {};
+    for(var p in obj) {
+        if (props.indexOf(p) !== -1) {
+            res[p] = obj[p];
+        }
+    }
+
+    return res;
+}
+
 module.exports = function (config) {
     // config || (config = configService.get());
     var store = new StorageFactory({synchronous: true});
@@ -127,9 +138,14 @@ module.exports = function (config) {
          *
          */
         create: function(params, options) {
+            var runApiParams = ['account', 'project', 'model', 'scope', 'file'];
             var createOptions = $.extend(true, {}, serviceOptions, options, {url: urlConfig.getAPIPath('run')});
             if (typeof params === 'string') {
+                // this is just the model name
                 params = {model: params};
+            } else {
+                // whitelist the fields that we actually can send to the api
+                params = _pick(params, runApiParams);
             }
 
             var oldSuccess = createOptions.success;
