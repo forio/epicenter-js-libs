@@ -7,7 +7,7 @@ var defaults = {
 
 function ScenarioManager(options) {
     this.options = $.extend(true, {}, defaults, options);
-    this.runService = new RunService(this.options);
+    this.runService = this.options.run || new RunService(this.options);
 }
 
 ScenarioManager.prototype = {

@@ -8,16 +8,16 @@ var classFrom = require('../../util/inherit');
 
 var cookies = new CookieStore({domain: null});
 
-    function _pick(obj, props) {
-        var res = {};
-        for(var p in obj) {
-            if (props.indexOf(p) !== -1) {
-                res[p] = obj[p];
-            }
+function _pick(obj, props) {
+    var res = {};
+    for(var p in obj) {
+        if (props.indexOf(p) !== -1) {
+            res[p] = obj[p];
         }
-
-        return res;
     }
+
+    return res;
+}
 
 var defaults = {
     cookieName: 'epicenter-scenario'
@@ -71,17 +71,17 @@ var Strategy = classFrom(Base, {
             .start();
     },
 
-        getRun: function () {
+    getRun: function () {
         var session = JSON.parse(cookies.get(this.options.cookieName));
 
         if (session && session.runId) {
-                return this._loadAndCheck(session);
+            return this._loadAndCheck(session);
         } else {
             return this.reset();
         }
     },
 
-        _loadAndCheck: function (session) {
+    _loadAndCheck: function (session) {
         var shouldCreate = false;
         var _this = this;
 
@@ -95,12 +95,12 @@ var Strategy = classFrom(Base, {
                 if (shouldCreate) {
                     // we need to do this, on the original runService (ie not sequencialized)
                     // so we don't get in the middle of the queue
-                        return _this.run.original.create(_this.runOptions)
-                        .then(function (run) {
-                            setRunCookie(_this.options.cookieName, run);
-                            run.freshlyCreated = true;
-                            return run;
-                        });
+                    return _this.run.original.create(_this.runOptions)
+                    .then(function (run) {
+                        setRunCookie(_this.options.cookieName, run);
+                        run.freshlyCreated = true;
+                        return run;
+                    });
                 }
 
                 return run;
