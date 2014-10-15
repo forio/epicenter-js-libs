@@ -138,8 +138,8 @@
 
             });
 
-            it('Takes in object params', function() {
-                var params = {model: 'model.jl', user: 'x'};
+            it('Takes in object params and passes them to the api', function() {
+                var params = {model: 'model.jl', scope: { group: 'x' }};
 
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.create(params);
@@ -149,6 +149,18 @@
                 req.requestBody.should.equal(JSON.stringify(params));
 
             });
+
+            it('Filters out invalid parameters from the api', function() {
+                var params = {model: 'model.jl', file: 'file', scope: { groupName: 'name' }, user: 'user1'};
+
+                var rs = new RunService({account: 'forio', project: 'js-libs'});
+                rs.create(params);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/');
+                req.requestBody.should.equal(JSON.stringify(_.omit(params, ['user'])));
+            });
+
         });
         describe('#query()', function () {
             it('should do a GET', function() {

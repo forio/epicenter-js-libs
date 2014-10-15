@@ -1,40 +1,26 @@
 'use strict';
 
-var CookieStore = require('../../store/cookie-store');
 var makeSeq = require('../../util/make-sequence');
 var Base = require('./identity-strategy');
-
+var SessionStore = require('../../store/store-factory');
 var classFrom = require('../../util/inherit');
+var UrlService = require('../../service/url-config-service');
 
-var cookies = new CookieStore({domain: null});
-
-function _pick(obj, props) {
-    var res = {};
-    for(var p in obj) {
-        if (props.indexOf(p) !== -1) {
-            res[p] = obj[p];
-        }
-    }
-
-    return res;
-}
+var sessionStore = new SessionStore({});
+var urlService = new UrlService();
 
 var defaults = {
-    cookieName: 'epicenter-scenario'
+    sessionKey: 'epicenter-scenario'
 };
 
-function setRunCookie(cookieName, run) {
-    var path = '/';
-    if (window) {
-        if (/\.html/.test(window.location.pathname.split('/'))) {
-            var parts = window.location.pathname.split('/');
-            parts.pop();
-            path = parts.join('/');
-        } else {
-            path =window.location.pathname;
-        }
-    }
-    cookies.set(cookieName, JSON.stringify({ runId: run.id }), { root: path });
+function setRunInSession(sessionKey, run) {
+    var path = '/' + [urlService.accountPath, urlService.projectPath].join('/');
+
+    // make sure we don't get consecuteive '/' so we have a valid path for the session
+    path = path.replace(/\/{2,}/g,'/');
+
+    // set the seesionKey for the run
+    sessionStore.set(sessionKey, JSON.stringify({ runId: run.id }), { root: path });
 }
 
 /**
@@ -46,7 +32,6 @@ function setRunCookie(cookieName, run) {
 /* jshint eqnull: true */
 var Strategy = classFrom(Base, {
     constructor: function Strategy(runService, condition, options) {
-        var runApiParams = ['account', 'project', 'model', 'scope', 'file'];
 
         if (condition == null) {
             throw new Error('Conditional strategy needs a condition to createte a run');
@@ -55,7 +40,7 @@ var Strategy = classFrom(Base, {
         this.run = makeSeq(runService);
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
-        this.runOptions = _pick(this.options, runApiParams);
+        this.runOptions = this.options.run;
     },
 
     reset: function () {
@@ -64,7 +49,7 @@ var Strategy = classFrom(Base, {
         return this.run
                 .create(this.runOptions)
             .then(function (run) {
-                setRunCookie(_this.options.cookieName, run);
+                setRunInSession(_this.options.sessionKey, run);
                 run.freshlyCreated = true;
                 return run;
             })
@@ -72,7 +57,7 @@ var Strategy = classFrom(Base, {
     },
 
     getRun: function () {
-        var session = JSON.parse(cookies.get(this.options.cookieName));
+        var session = JSON.parse(sessionStore.get(this.options.sessionKey));
 
         if (session && session.runId) {
             return this._loadAndCheck(session);
@@ -97,7 +82,7 @@ var Strategy = classFrom(Base, {
                     // so we don't get in the middle of the queue
                     return _this.run.original.create(_this.runOptions)
                     .then(function (run) {
-                        setRunCookie(_this.options.cookieName, run);
+                        setRunInSession(_this.options.sessionKey, run);
                         run.freshlyCreated = true;
                         return run;
                     });
