@@ -16,13 +16,18 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-browserify2');
     grunt.config.set('browserify2', {
         options: {
+            debug: true,
             entry: './src/app.js'
         },
 
         mapped: {
             options: {
-                debug: true,
                 compile: './dist/epicenter.js'
+            },
+        },
+        edge: {
+            options: {
+                compile: './dist/epicenter-edge.js'
             },
         },
         min: {
@@ -60,7 +65,7 @@ module.exports = function(grunt) {
     grunt.config.set('watch', {
         source: {
             files: ['src/**/*.js'],
-            tasks: ['mocha:test', 'uglify:production']
+            tasks: ['mocha:test', 'uglify:production', 'browserify2:edge']
         },
         tests: {
             files: ['tests/spec/**/*.js'],
