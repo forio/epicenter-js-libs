@@ -157,5 +157,5 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('default', ['mocha:test', 'uglify', 'watch']);
+    grunt.registerTask('default', ['mocha:test', 'watch']);
 };
