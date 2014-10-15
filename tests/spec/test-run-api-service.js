@@ -128,7 +128,7 @@
                 req.method.toUpperCase().should.equal('POST');
 
             });
-            it('POSTs to the base URL', function() {
+            it('should POST to the base URL', function() {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.create('model.jl');
 
@@ -138,7 +138,7 @@
 
             });
 
-            it('Takes in object params and passes them to the api', function() {
+            it('should take in white-listed params and passes them to the api', function() {
                 var params = {model: 'model.jl', scope: { group: 'x' }};
 
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
@@ -150,7 +150,7 @@
 
             });
 
-            it('Filters out invalid parameters from the api', function() {
+            it('should not pass in params which are not whitelisted', function() {
                 var params = {model: 'model.jl', file: 'file', scope: { groupName: 'name' }, user: 'user1'};
 
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
