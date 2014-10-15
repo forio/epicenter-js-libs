@@ -65,7 +65,7 @@ module.exports = function(grunt) {
     grunt.config.set('watch', {
         source: {
             files: ['src/**/*.js'],
-            tasks: ['mocha:test', 'uglify:production', 'browserify2:edge']
+            tasks: ['mocha:test', 'browserify2:edge']
         },
         tests: {
             files: ['tests/spec/**/*.js'],
@@ -128,7 +128,9 @@ module.exports = function(grunt) {
         test: {
             src: ['tests/index.html'],
             options: {
-                run: true
+                run: true,
+                growlOnSuccess: false,
+                reporter: 'Min'
             }
         }
     });
@@ -157,5 +159,5 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('default', ['mocha:test', 'watch']);
+    grunt.registerTask('default', ['browserify2:edge', 'watch', 'mocha:test']);
 };
