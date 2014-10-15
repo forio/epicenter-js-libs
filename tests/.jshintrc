@@ -26,6 +26,7 @@
     "predef": [
         "F",
         "$",
+        "_",
         "should",
         "sinon",
         "describe",         // Used by mocha
