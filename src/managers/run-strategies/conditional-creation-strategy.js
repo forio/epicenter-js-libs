@@ -14,7 +14,7 @@ var defaults = {
 };
 
 function setRunInSession(sessionKey, run) {
-    var path = '/' + [urlService.accountPath, urlService.projectPath].join('/');
+    var path = '/' + [urlService.appPath, urlService.accountPath, urlService.projectPath].join('/');
 
     // make sure we don't get consecuteive '/' so we have a valid path for the session
     path = path.replace(/\/{2,}/g,'/');

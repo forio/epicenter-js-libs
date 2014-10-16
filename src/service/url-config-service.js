@@ -22,6 +22,12 @@ module.exports = function (config) {
             return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : 'api.' + host;
         }()),
 
+        appPath: (function () {
+            var path = window.location.pathname.split('\/');
+
+            return path && path[1] || '';
+        }()),
+
         accountPath: (function () {
             var accnt = '';
             var path = window.location.pathname.split('\/');
