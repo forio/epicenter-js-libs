@@ -40,7 +40,7 @@ var Strategy = classFrom(Base, {
         this.run = makeSeq(runService);
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
-        this.runOptions = this.options.run;
+        this.runOptions = this.options;
     },
 
     reset: function () {
