@@ -43,11 +43,11 @@ var Strategy = classFrom(Base, {
         this.runOptions = this.options.run;
     },
 
-    reset: function () {
+    reset: function (runServiceOptions) {
         var _this = this;
 
         return this.run
-                .create(this.runOptions)
+                .create(this.runOptions, runServiceOptions)
             .then(function (run) {
                 setRunInSession(_this.options.sessionKey, run);
                 run.freshlyCreated = true;
