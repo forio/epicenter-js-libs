@@ -338,20 +338,19 @@ module.exports = function (config) {
                 var op = ops.shift();
                 var arg = args.shift();
 
-                me.do(op, arg, {
-                    success: function() {
+                me.do(op, arg)
+                    .then(function() {
                         if (ops.length) {
                             doSingleOp();
                         } else {
                             $d.resolve.apply(this, arguments);
                             postOptions.success.apply(this, arguments);
                         }
-                    },
-                    error: function() {
+                    })
+                    .fail(function() {
                         $d.reject.apply(this, arguments);
                         postOptions.error.apply(this, arguments);
-                    }
-                });
+                    });
             };
 
             doSingleOp();
