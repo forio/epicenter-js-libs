@@ -114,8 +114,8 @@ RunManager.prototype = {
      *      });
      *
      */
-    reset: function () {
-        return this.strategy.reset();
+    reset: function (runServiceOptions) {
+        return this.strategy.reset(runServiceOptions);
     }
 };
 

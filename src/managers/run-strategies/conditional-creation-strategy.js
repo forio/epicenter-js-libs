@@ -14,7 +14,7 @@ var defaults = {
 };
 
 function setRunInSession(sessionKey, run) {
-    var path = '/' + [urlService.accountPath, urlService.projectPath].join('/');
+    var path = '/' + [urlService.appPath, urlService.accountPath, urlService.projectPath].join('/');
 
     // make sure we don't get consecuteive '/' so we have a valid path for the session
     path = path.replace(/\/{2,}/g,'/');
@@ -40,14 +40,14 @@ var Strategy = classFrom(Base, {
         this.run = makeSeq(runService);
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
-        this.runOptions = this.options;
+        this.runOptions = this.options.run;
     },
 
-    reset: function () {
+    reset: function (runServiceOptions) {
         var _this = this;
 
         return this.run
-                .create(this.runOptions)
+                .create(this.runOptions, runServiceOptions)
             .then(function (run) {
                 setRunInSession(_this.options.sessionKey, run);
                 run.freshlyCreated = true;
