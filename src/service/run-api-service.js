@@ -138,7 +138,7 @@ module.exports = function (config) {
          *
          */
         create: function(params, options) {
-            var runApiParams = ['model', 'scope', 'file'];
+            var runApiParams = ['model', 'scope', 'files'];
             var createOptions = $.extend(true, {}, serviceOptions, options, {url: urlConfig.getAPIPath('run')});
             if (typeof params === 'string') {
                 // this is just the model name
