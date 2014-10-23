@@ -25,7 +25,7 @@ The epicenter.js library is a set of services and managers to help streamline yo
 
 * The [Run Service](./generated/run-api-service/), [Data Service](./generated/data-service/), [Auth Service](./generated/auth-api-service), and [Variables Service](./generated/variables-api-service/) are direct adaptations of the underlying [Run](../aggregate_run_api/), [Data](../data_api/), [Authentication](../project_access/), and [Variable](../model_apis/variable/) RESTful APIs.
 
-* The [Run Manager](./generated/run-manager/) adds functionality on top of the Run Service. Specifically, the Run Manager gives you control over run creation depending on run state. You can select run creation [stratgies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
+* The [Run Manager](./generated/run-manager/) adds functionality on top of the Run Service. Specifically, the Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
 
 
 <a name="using-epicenter-js"></a>
