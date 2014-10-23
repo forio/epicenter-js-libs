@@ -4,10 +4,16 @@
  *
  * Used in conjunction with the [Run API Service](../run-api-service/) to read, write, and search for specific model variables.
  *
- *     var rs = new F.service.Run();
- *     rs.create('supply-chain-model.jl')
+ *     var rm = new F.manager.RunManager({
+ *           run: {
+ *               account: 'acme-simulations',
+ *               project: 'supply-chain-game',
+ *               model: 'supply-chain-model.jl'    
+ *           }
+ *      });
+ *     rm.getRun()
  *       .then(function() {
- *          var vs = rs.variables();
+ *          var vs = rm.run.variables();
  *          vs.save({sample_int: 4});
  *        });
  *
