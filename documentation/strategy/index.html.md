@@ -87,7 +87,7 @@ Specifically, the strategy is:
 <a name="create-your-own"></a>
 #### Create your own
 
-Additionally, you can create your own strategy by passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. 
+You can create your own strategy by passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. 
 
 Strategy functions must return a boolean value for whether or not to create a new run.
 
