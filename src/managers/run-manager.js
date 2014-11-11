@@ -3,7 +3,7 @@
 * 
 * The Run Manager gives you control over run creation depending on run states. Specifically, you can select run creation strategies (rules) for which runs end users of your project work with when they log in to your project.
 *
-* Underlying Epicenter APIs -- including the [Model Run API](../../../model_apis/run/), the [Run API](../../../aggregate_run_api), and Epicenter.js's own [F.service.Run.create()](../run-api-service/) -- all allow you to create new runs. Of course, you can create new runs with the Run Manager. However, for some projects it makes more sense to pick up where the user left off, using an existing run. And in some projects, whether to create a new one or use an existing one is conditional, for example based on characteristics of the existing run or your own knowledge about the model. The Run Manager provides this level of control.
+* Underlying Epicenter APIs -- including the [Model Run API](../../../model_apis/run/), the [Run API](../../../aggregate_run_api), and Epicenter.js's own [F.service.Run.create()](../run-api-service/) -- all allow you to create new runs. However, for some projects it makes more sense to pick up where the user left off, using an existing run. And in some projects, whether to create a new one or use an existing one is conditional, for example based on characteristics of the existing run or your own knowledge about the model. The Run Manager provides this level of control.
 *
 * ### Using the Run Manager to create and access runs
 *
@@ -37,8 +37,8 @@
 *       });
 *       rm.getRun()
 *           .then(function(run) { 
-*               var thisRunId = run.id; // the return value of getRun() is the run object itself
-*               rm.run.do('runModel');  // the RunManager.run contains the instantiated Run Service, so any Run Service method is valid here
+*               var thisRunId = run.id; // the return value of getRun() is an instance of Run Service 
+*               rm.run.do('runModel');  // the RunManager.run also contains the instantiated Run Service, so any Run Service method is valid here
 *       })
 *
 */
@@ -117,7 +117,7 @@ RunManager.prototype = {
      *          var thisRunId = run.id;
      *
      *          // use the Run Service object
-     *          rm.run.do('runModel');
+     *          run.do('runModel');
      *      });
      *
      * **Parameters**
@@ -138,11 +138,11 @@ RunManager.prototype = {
      *          var thisRunId = run.id;
      *  
      *          // use the Run Service object
-     *          rm.run.do('runModel');
+     *          run.do('runModel');
      *      });
      *
      * **Parameters**
-     * @param {object} `runServiceOptions` The options object to configure the manager and run. See 
+     * @param {object} `runServiceOptions` The options object to configure the Run Service. See [Run API Service](../run-api-service/) for more.
      */
     reset: function (runServiceOptions) {
         return this.strategy.reset(runServiceOptions);

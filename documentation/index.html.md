@@ -78,16 +78,18 @@ For example, you might write a sequence of operations using callbacks:
     });
     rm.getRun({
         success: function() {
-            rm.serial(['initialize_inputs', 'calculate_input_totals', 'forecast_monthly_profit'], null, {
-                success: function(data) {
-                    displayUI(data, function () {
-                        hideLoadingScreen(function () {
-                            rm.variables().load('profit_histogram');
+            rm.getRun(function(run) {
+            	run.serial(['initialize_inputs', 'calculate_input_totals', 'forecast_monthly_profit'], null, {
+                    success: function(data) {
+                        displayUI(data, function () {
+                            hideLoadingScreen(function () {
+                                run.variables().load('profit_histogram');
+                            });
                         });
-                    });
-                },
-                error: function() {
-                    console.log('Oops! Something went wrong with the operations');
+                    },
+                    error: function() {
+                        console.log('Oops! Something went wrong with the operations');
+                    }
                 }
             });
         }

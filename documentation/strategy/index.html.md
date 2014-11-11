@@ -21,11 +21,11 @@ You can also [create your own](#create-your-own).
 <a name="always-new"></a>
 #### always-new
 
-The `always-new` strategy always creates a new run for this end user. This is equivalent to calling `F.service.Run.create()` from the [Run Service](../generated/run-api-service/) every time. 
+The `always-new` strategy always creates a new run for this end user irrespective of current state. This is equivalent to calling `F.service.Run.create()` from the [Run Service](../generated/run-api-service/) every time. 
 
 This strategy means that every time your end users refresh their browsers, they get a new run. 
 
-This strategy can be useful for basic, single-page projects. However, typically you will use one of the other strategies.
+This strategy can be useful for basic, single-page projects. This strategy is also useful for prototyping or project development: it creates a new run each time you refresh the page, and you can easily check the outputs of the model. However, typically you will use one of the other strategies for a production project.
 
 
 <a name="new-if-persisted"></a>
@@ -41,7 +41,8 @@ This strategy is useful for multi-page projects where end users play through a s
 
 Specifically, the strategy is:
 
-* Check the `sessionKey` cookie. 
+* Check the `sessionKey` cookie.
+	* This cookie is set by the [Run Manager](../generated/run-manager/) and configurable through its options.
 	* If the cookie exists, check whether the run is in memory or only persisted in the database. 
 		* If the run is in memory, use the run.
 		* If the run is only persisted (and not still in memory), create a new run for this end user. 
@@ -59,7 +60,8 @@ This strategy is useful if your project is structured such that immediately afte
 
 Specifically, the strategy is:
 
-* Check the `sessionKey` cookie. 
+* Check the `sessionKey` cookie.
+	* This cookie is set by the [Run Manager](../generated/run-manager/) and configurable through its options. 
 	* If the cookie exists, use the run id stored there. 
 	* If the cookie does not exist, create a new run for this end user. 
 
@@ -74,6 +76,7 @@ This strategy is useful if your project is structured such that immediately afte
 Specifically, the strategy is:
 
 * Check the `sessionKey` cookie. 
+	* This cookie is set by the [Run Manager](../generated/run-manager/) and configurable through its options.
 	* If the cookie exists, check whether the run is in memory or only persisted in the database. Additionally, check whether the run's `initialized` field is `true`. 
 		* If the run is in memory, use the run.
 		* If the run's `initialized` field is `true`, use the run.
