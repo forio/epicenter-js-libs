@@ -71,7 +71,7 @@ Specifically, the strategy is:
 
 The `new-if-simulated` strategy creates a new run if the current one is in memory or has its `initialized` field set to `true`. This field in the run record is automatically set to `true` at run creation for Vensim models; it can be set manually for other models.
 
-This strategy is useful if your project is structured such that immediately after a run is created, the model is executed completely (for example, a Vensim model is stepped to the end). It is very similar to the `new-if-missing` strategy, except that it additional checks a field of the run record. 
+This strategy is useful if your project is structured such that immediately after a run is created, the model is executed completely (for example, a Vensim model is stepped to the end). It is very similar to the `new-if-missing` strategy, except that it additionally checks a field of the run record. 
 
 Specifically, the strategy is:
 
