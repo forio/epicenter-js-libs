@@ -4,7 +4,7 @@ var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 
 var defaults = {
-    strategy: 'new-if-simulated'
+    strategy: 'new-if-initialized'
 };
 
 function patchRunService(service, manager) {
