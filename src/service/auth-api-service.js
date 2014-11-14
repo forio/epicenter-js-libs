@@ -43,7 +43,10 @@ module.exports = function (config) {
          */
         account: '',
 
-        //Options to pass on to the underlying transport layer
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {object}
+         */
         transport: {}
     };
     var serviceOptions = $.extend({}, defaults, config);
