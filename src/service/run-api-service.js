@@ -17,7 +17,8 @@
 *       });
 *       rm.getRun()
 *           .then(function() { 
-*               // the RunManager.run contains the instantiated Run Service, so any Run Service method is valid here
+*               // the RunManager.run contains the instantiated Run Service, 
+*               // so any Run Service method is valid here
 *               var rs = rm.run;
 *               rs.do('runModel');  
 *       })
