@@ -77,7 +77,7 @@ var defaults = {
      * @type {String}
      */
 
-    strategy: 'new-if-simulated'
+    strategy: 'new-if-initialized'
 };
 
 
