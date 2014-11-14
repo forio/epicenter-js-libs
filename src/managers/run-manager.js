@@ -16,7 +16,7 @@
 *       * `scope`: (optional) Scope object for the run, for example `scope.group` with value of the name of the group.
 *       * `files`: (optional) If and only if you are using a Vensim model and you have additional data to pass in to your model, you can pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (Note that you'll also need to add this same files object to your Vensim [configuration file](../../../model_code/vensim/).) See the [underlying Model Run API](../../../model_apis/run/#post-creating-a-new-run-for-this-project) for additional information. 
 *
-*   * `strategy`: (optional) Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../../strategy/) for details. Defaults to `new-if-simulated`.
+*   * `strategy`: (optional) Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../../strategy/) for details. Defaults to `new-if-initialized`.
 *
 *   * `sessionKey`: (optional) Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter.
 *
@@ -36,9 +36,12 @@
 *           sessionKey: 'epicenter-session'
 *       });
 *       rm.getRun()
-*           .then(function(run) { 
-*               var thisRunId = run.id; // the return value of getRun() is an instance of Run Service 
-*               rm.run.do('runModel');  // the RunManager.run also contains the instantiated Run Service, so any Run Service method is valid here
+*           .then(function(run) {
+*               // the return value of getRun() is an instance of Run Service 
+*               var thisRunId = run.id; 
+*               // the RunManager.run also contains the instantiated Run Service,
+*               // so any Run Service method is valid here
+*               rm.run.do('runModel');
 *       })
 *
 */
@@ -72,7 +75,7 @@ function patchRunService(service, manager) {
 
 var defaults = {
     /**
-     * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../../strategy/) for details. Defaults to `new-if-simulated`.
+     * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../../strategy/) for details. Defaults to `new-if-initialized`.
      * 
      * @type {String}
      */
