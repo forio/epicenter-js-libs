@@ -37,7 +37,7 @@ F.manager.strategy.identity = require('./managers/run-strategies/identity-strate
 F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if-missing-strategy');
 F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if-missing-strategy');
 F.manager.strategy['new-if-persisted'] = require('./managers/run-strategies/new-if-persisted-strategy');
-F.manager.strategy['new-if-simulated'] = require('./managers/run-strategies/new-if-simulated-strategy');
+F.manager.strategy['new-if-initialized'] = require('./managers/run-strategies/new-if-initialized-strategy');
 
 F.version = '<%= version %>';
 window.F = F;

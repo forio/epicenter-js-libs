@@ -151,7 +151,7 @@
             });
 
             it('should not pass in params which are not whitelisted', function () {
-                var params = { model: 'model.jl', file: 'file', scope: { groupName: 'name' }, user: 'user1' };
+                var params = { model: 'model.jl', files: 'file', scope: { groupName: 'name' }, user: 'user1' };
 
                 var rs = new RunService({ account: 'forio', project: 'js-libs' });
                 rs.create(params);

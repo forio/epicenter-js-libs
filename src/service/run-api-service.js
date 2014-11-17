@@ -6,14 +6,22 @@
  *
  * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults.
  *
- *      var rs = new F.service.Run({
- *          account: 'acme-simulations',
- *          project: 'supply-chain-game'
- *      });
- *      rs.create('supply-chain-model.jl');
- *          .then(function () {
- *              rs.do('runmodel');
- *           });
+ * Typically, you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager.
+ *
+ *       var rm = new F.manager.RunManager({
+ *           run: {
+ *               account: 'acme-simulations',
+ *               project: 'supply-chain-game',
+ *               model: 'supply-chain-model.jl'
+ *           }
+ *       });
+ *       rm.getRun()
+ *           .then(function() {
+ *               // the RunManager.run contains the instantiated Run Service,
+ *               // so any Run Service method is valid here
+ *               var rs = rm.run;
+ *               rs.do('runModel');
+ *       })
  *
  */
 
@@ -62,8 +70,8 @@ module.exports = function (config) {
         project: '',
 
         /**
-         * Criteria by which to to filter runs. Defaults to empty string.
-         * @type { string}
+         * Criteria by which to filter runs. Defaults to empty string.
+         * @type {String}
          */
         filter: '',
 
@@ -77,7 +85,10 @@ module.exports = function (config) {
          */
         error: $.noop,
 
-        //Options to pass on to the underlying transport layer
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {object}
+         */
         transport: {}
     };
 
@@ -128,6 +139,8 @@ module.exports = function (config) {
         /**
          * Create a new run.
          *
+         * NOTE: Typically this is not used! Use `RunManager.getRun()` with a `strategy` of `always-new`, or use `RunManager.reset()`. See [Run Manager](../run-manager/) for more details.
+         *
          *  **Example**
          *
          *      rs.create('hello_world.jl');
@@ -138,8 +151,8 @@ module.exports = function (config) {
          *
          */
         create: function (params, options) {
-            var runApiParams = ['model', 'scope', 'file'];
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath('run') });
+            var runApiParams = ['model', 'scope', 'files'];
             if (typeof params === 'string') {
                 // this is just the model name
                 params = { model: params };
