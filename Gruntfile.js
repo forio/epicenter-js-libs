@@ -151,7 +151,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', ['mocha']);
     grunt.registerTask('documentation', ['markdox']);
-    grunt.registerTask('validate', ['jshint:all', 'test']);
+    grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
 
     grunt.registerTask('release', function (type) {
