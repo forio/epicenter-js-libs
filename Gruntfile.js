@@ -149,7 +149,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('test', ['mocha']);
+    grunt.registerTask('test', ['browserify2:edge', 'mocha']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
@@ -162,5 +162,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['browserify2:edge', 'watch', 'mocha:test']);
+    grunt.registerTask('default', ['watch', 'mocha:test']);
 };
