@@ -79,7 +79,7 @@
                 ds.load('first/name', { page: 1, sort: { 'fieldName1': 1, 'fieldName2': -1 } });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/?page=1&sort={"fieldName1":1,"fieldName2":-1 }');
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/first/name/?page=1&sort={"fieldName1":1,"fieldName2":-1}');
             });
         });
 
@@ -168,7 +168,7 @@
                 ds.remove(['name', 'age']);
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/?id =name,age');
+                req.url.should.equal('https://api.forio.com/data/forio/js-libs/person/?id=name,age');
             });
 
             it('Should remove nested keys from collection', function () {

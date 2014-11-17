@@ -175,7 +175,7 @@
                 rs.query({ saved: true, '.price': '1' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true;.price=1/');
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price=1/');
             });
 
             it('should take matrix params with arithmetic operators', function () {
@@ -192,13 +192,13 @@
                 rs.query({ saved: true, '.price': '>1' });
                 server.respond();
 
-                server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true;.price>1/');
+                server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price>1/');
 
 
                 rs.query({ saved: false, '.sales': '<4' });
                 server.respond();
 
-                server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =false;.sales<4/');
+                server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.sales<4/');
                 server.requests = [];
 
             });
@@ -224,7 +224,7 @@
                 rs.filter({ saved: true, '.price': '1' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true;.price=1/');
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price=1/');
             });
             it('should convert op modifiers to query strings', function () {
                 var rs = new RunService({ account: 'forio', project: 'js-libs' });
@@ -240,13 +240,13 @@
                 rs.filter({ saved: true, '.price': '>1' });
                 server.respond();
 
-                server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true;.price>1/');
+                server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true;.price>1/');
 
 
                 rs.filter({ saved: false, '.sales': '<4' });
                 server.respond();
 
-                server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =false;.price>1;.sales<4/');
+                server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=false;.price>1;.sales<4/');
                 server.requests = [];
 
             });
@@ -280,7 +280,7 @@
                 rs.save({ completed: true }, { filter: { saved:true } });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true/');
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/');
             });
 
             it('should do an PATCH', function () {
@@ -297,7 +297,7 @@
                 rs.save(params);
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true/');
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/');
                 req.requestBody.should.equal(JSON.stringify(params));
 
             });
@@ -334,7 +334,7 @@
                     rs.do('add', [1,2]);
 
                     var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true/operations/add/');
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/add/');
                     req.requestBody.should.equal(JSON.stringify({ arguments: [1,2] }));
                 });
 
@@ -343,7 +343,7 @@
                     rs.do('echo', 'hello');
 
                     var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true/operations/echo/');
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/echo/');
                     req.requestBody.should.equal(JSON.stringify({ arguments: ['hello'] }));
                 });
 
@@ -353,7 +353,7 @@
 
                     server.respond();
                     var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true/operations/init/');
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/init/');
                     req.requestBody.should.equal(JSON.stringify({ arguments: [] }));
                 });
             });
@@ -373,10 +373,10 @@
                     server.respond();
 
                     server.requests.length.should.equal(2);
-                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true/operations/first/');
+                    server.requests[0].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/first/');
                     server.requests[0].requestBody.should.equal(JSON.stringify({ arguments: [1,2] }));
 
-                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true/operations/second/');
+                    server.requests[1].url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/second/');
                     server.requests[1].requestBody.should.equal(JSON.stringify({ arguments: [2,3] }));
                 });
 
@@ -386,7 +386,7 @@
                     server.respond();
 
                     var req = server.requests.pop();
-                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved =true/operations/init/');
+                    req.url.should.equal('https://api.forio.com/run/forio/js-libs/;saved=true/operations/init/');
                     req.requestBody.should.equal(JSON.stringify({ arguments: [] }));
                 });
             });
@@ -414,10 +414,10 @@
                 var rs = new RunService({ account: 'forio', project: 'js-libs' });
                 rs.query({ saved: true, '.price': '>1' });
 
-                rs.urlConfig.filter = ';saved =true;.price=>1';
+                rs.urlConfig.filter = ';saved=true;.price=>1';
 
                 rs.query({ saved: false, '.sales': '<4' });
-                rs.urlConfig.filter = ';saved =false;.sales=<4';
+                rs.urlConfig.filter = ';saved=false;.sales=<4';
             });
 
 
