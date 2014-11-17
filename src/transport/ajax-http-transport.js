@@ -15,7 +15,7 @@ module.exports = function (config) {
 
         /**
          * ONLY for strings in the url. All GET & DELETE params are run through this
-         * @type {[type]}
+         * @type {[type] }
          */
         parameterParser: qutils.toQueryFormat,
 

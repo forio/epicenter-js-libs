@@ -6,8 +6,8 @@
  * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../../project_access/) for more information.)
  *
  *      var auth = new F.service.Auth();
- *      auth.login({userName: 'jsmith@acmesimulations.com',
- *                  password: 'passw0rd'});
+ *      auth.login({ userName: 'jsmith@acmesimulations.com',
+ *                  password: 'passw0rd' });
  *      auth.logout();
  */
 
@@ -21,25 +21,25 @@ module.exports = function (config) {
     var defaults = {
         /**
          * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
-         * @type {String}
+         * @type { string}
          */
         store: { synchronous: true },
 
         /**
          * Email or username to use for logging in. Defaults to empty string.
-         * @type {String}
+         * @type { string}
          */
         userName: '',
 
         /**
          * Password for specified username. Defaults to empty string.
-         * @type {String}
+         * @type { string}
          */
         password: '',
 
         /**
          * Account to log in into. Required to log in as an end user. Defaults to picking it up from the path.
-         * @type {String}
+         * @type { string}
          */
         account: '',
 
@@ -70,9 +70,9 @@ module.exports = function (config) {
          *
          * **Example**
          *
-         *      auth.login({userName: 'jsmith@acmesimulations.com',
+         *      auth.login({ userName: 'jsmith@acmesimulations.com',
          *                  password: 'passw0rd',
-         *                  account: 'acme'});
+         *                  account: 'acme' });
          *
          * **Parameters**
          * @param  {Object} `options` (Optional) Overrides for configuration options.
@@ -126,7 +126,7 @@ module.exports = function (config) {
          *
          * **Example**
          *
-         *      auth.getToken().then(function (token){ console.log('my token is', token); });
+         *      auth.getToken().then(function (token) { console.log('my token is', token); });
          *
          * **Parameters**
          * @param {Object} `options` (Optional) Overrides for configuration options.

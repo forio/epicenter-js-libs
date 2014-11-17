@@ -18,7 +18,7 @@
                 var publicAPI = {
 
                     doSlow: function (echo) {
-                        var $d= $.Deferred();
+                        var $d = $.Deferred();
                         setTimeout(function () {
                             // console.log('slow');
                             $d.resolve(echo);
@@ -26,14 +26,14 @@
                         return $d.promise();
                     },
                     doMedium: function (echo) {
-                        var $d= $.Deferred();
+                        var $d = $.Deferred();
                         setTimeout(function () {
                             $d.resolve(echo);
                         }, MEDIUM);
                         return $d.promise();
                     },
                     doFast: function (echo) {
-                        var $d= $.Deferred();
+                        var $d = $.Deferred();
                         setTimeout(function () {
                             // console.log('fast');
                             $d.resolve(echo);

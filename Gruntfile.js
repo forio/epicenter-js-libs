@@ -45,7 +45,7 @@ module.exports = function (grunt) {
                 });
                 var code = result.code;
                 // var banner = grunt.file.read('./banner.js');
-                // banner = grunt.template.process(banner, {data: grunt.file.readJSON('package.json')});
+                // banner = grunt.template.process(banner, { data: grunt.file.readJSON('package.json')});
                 return code;
             }
         }
@@ -53,7 +53,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-jscs');
     grunt.config.set('jscs', {
-        src: ['src/*.js', 'src/**/*.js', 'tests/specs/*.js', 'tests/specs/**/*.js']
+        src: ['src/*.js', 'src/**/*.js', 'tests/spec/*.js', 'tests/spec/**/*.js']
     });
 
 

@@ -9,7 +9,7 @@ module.exports = (function () {
         /**
          * Converts to matrix format
          * @param  {Object} qs Object to convert to query string
-         * @return {String}    Matrix-format query parameters
+         * @return { string}    Matrix-format query parameters
          */
         toMatrixFormat: function (qs) {
             if (qs === null || qs === undefined || qs === '') {
@@ -34,8 +34,8 @@ module.exports = (function () {
 
         /**
          * Converts strings/arrays/objects to type 'a=b&b=c'
-         * @param  {String|Array|Object} qs
-         * @return {String}
+         * @param  { string|Array|Object} qs
+         * @return { string}
          */
         toQueryFormat: function (qs) {
             if (qs === null || qs === undefined) {
@@ -62,8 +62,8 @@ module.exports = (function () {
         },
 
         /**
-         * Converts strings of type 'a=b&b=c' to {a:b, b:c}
-         * @param  {string} qs
+         * Converts strings of type 'a=b&b=c' to { a:b, b:c}
+         * @param  { string} qs
          * @return {object}
          */
         qsToObject: function (qs) {
@@ -88,9 +88,9 @@ module.exports = (function () {
         },
 
         /**
-         * Normalizes and merges strings of type 'a=b', {b:c} to {a:b, b:c}
-         * @param  {String|Array|Object} qs1
-         * @param  {String|Array|Object} qs2
+         * Normalizes and merges strings of type 'a=b', { b:c} to { a:b, b:c}
+         * @param  { string|Array|Object} qs1
+         * @param  { string|Array|Object} qs2
          * @return {Object}
          */
         mergeQS: function (qs1, qs2) {

@@ -8,7 +8,7 @@
  *     rs.create('supply-chain-model.jl')
  *       .then(function () {
  *          var vs = rs.variables();
- *          vs.save({sample_int: 4});
+ *          vs.save({ sample_int: 4});
  *        });
  *
  */
@@ -22,7 +22,7 @@ module.exports = function (config) {
     var defaults = {
         /**
          * The runs object to which the variable filters apply. Defaults to null.
-         * @type {RunService}
+         * @type { runService }
          */
         runService: null
     };
@@ -52,7 +52,7 @@ module.exports = function (config) {
          *      vs.load('sample_int');
          *
          * **Parameters**
-         * @param {String} `variable` Name of variable to load.
+         * @param { string} `variable` Name of variable to load.
          * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
@@ -69,7 +69,7 @@ module.exports = function (config) {
          * **Example**
          *
          *      vs.query(['price', 'sales']);
-         *      vs.query({include:['price', 'sales']});
+         *      vs.query({ include:['price', 'sales'] });
          *
          * **Parameters**
          * @param {Object|Array} `query` The names of the variables requested.
@@ -94,7 +94,7 @@ module.exports = function (config) {
          * **Example**
          *
          *      vs.save('price', 4);
-         *      vs.save({price: 4, quantity: 5, products: [2,3,4]});
+         *      vs.save({ price: 4, quantity: 5, products: [2,3,4] });
          *
          * **Parameters**
          * @param {Object|String} `variable` An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
@@ -122,7 +122,7 @@ module.exports = function (config) {
         //  * @param {object} options Overrides for configuration options
         //  *
         //  * @example
-        //  *     vs.merge({price: 4, quantity: 5, products: [2,3,4]})
+        //  *     vs.merge({ price: 4, quantity: 5, products: [2,3,4] })
         //  *     vs.merge('price', 4);
 
         // merge: function (variable, val, options) {

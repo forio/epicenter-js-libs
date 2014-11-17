@@ -8,8 +8,8 @@ module.exports = (function () {
         /**
          * returns operations of the form [[op1,op2], [arg1, arg2]]
          * @param  {Object|Array|String} operations operations to perform
-         * @param  {Array} arugments for operation
-         * @return {String}    Matrix-format query parameters
+         * @param  { array} arugments for operation
+         * @return { string}    Matrix-format query parameters
          */
         normalizeOperations: function (operations, args) {
             if (!args) {
@@ -24,7 +24,7 @@ module.exports = (function () {
                 return (arr !== null && arr !== undefined) ? [].concat(arr) : [];
             };
 
-            //{add: [1,2], subtract: [2,4]}
+            //{ add: [1,2], subtract: [2,4] }
             var _normalizePlainObjects = function (operations, returnList) {
                 if (!returnList) {
                     returnList = { ops: [], args: [] };
@@ -35,7 +35,7 @@ module.exports = (function () {
                 });
                 return returnList;
             };
-            //{name: 'add', params: [1]}
+            //{ name: 'add', params: [1] }
             var _normalizeStructuredObjects = function (operation, returnList) {
                 if (!returnList) {
                     returnList = { ops: [], args: [] };

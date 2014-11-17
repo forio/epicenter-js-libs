@@ -44,7 +44,7 @@ module.exports = function (config) {
 
         /**
          * Set the environment key to get configuration options from
-         * @param {String} env
+         * @param { string} env
          */
         setEnv: function (env) {
 
@@ -52,7 +52,7 @@ module.exports = function (config) {
 
         /**
          * Get configuration.
-         * @param  {String} property optional
+         * @param  { string} property optional
          * @return {*}          Value of property if specified, the entire config object otherwise
          */
         get: function (property) {
@@ -61,7 +61,7 @@ module.exports = function (config) {
 
         /**
          * Set configuration.
-         * @param  {String|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
+         * @param  { string|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
          * @param  {*} value  value for provided key
          */
         set: function (key, value) {
