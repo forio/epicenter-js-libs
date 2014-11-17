@@ -40,7 +40,7 @@ F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if
 F.manager.strategy['new-if-persisted'] = require('./managers/run-strategies/new-if-persisted-strategy');
 F.manager.strategy['new-if-simulated'] = require('./managers/run-strategies/new-if-simulated-strategy');
 
-F.version = '<%= version %>';
+F.version = '1.1.2';
 window.F = F;
 
 
