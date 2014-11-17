@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     'use strict';
 
     grunt.initConfig({
@@ -9,7 +9,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-markdox');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-jscs-checker');
 
 
     var UglifyJS = require('uglify-js');
@@ -35,7 +34,7 @@ module.exports = function(grunt) {
                 debug: false,
                 compile: './dist/epicenter.min.js'
             },
-            afterHook: function(src) {
+            afterHook: function (src) {
                 var result = UglifyJS.minify(src, {
                     fromString: true,
                     warnings: true,
@@ -46,12 +45,16 @@ module.exports = function(grunt) {
                 });
                 var code = result.code;
                 // var banner = grunt.file.read('./banner.js');
-                // banner = grunt.template.process(banner, {data: grunt.file.readJSON('package.json')});
+                // banner = grunt.template.process(banner, { data: grunt.file.readJSON('package.json')});
                 return code;
             }
         }
     });
 
+    grunt.loadNpmTasks('grunt-jscs');
+    grunt.config.set('jscs', {
+        src: ['src/*.js', 'src/**/*.js', 'tests/spec/*.js', 'tests/spec/**/*.js']
+    });
 
 
     grunt.loadNpmTasks('grunt-conventional-changelog');
@@ -148,7 +151,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('test', ['mocha']);
     grunt.registerTask('documentation', ['markdox']);
-    grunt.registerTask('validate', ['jshint:all', 'test']);
+    grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
 
     grunt.registerTask('release', function (type) {

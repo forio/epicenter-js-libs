@@ -2,9 +2,9 @@
  * @class Cookie Storage Service
  *
  * @example
- *      var people = require('cookie-store')({root: 'people'});
+ *      var people = require('cookie-store')({ root: 'people' });
         people
-            .save({lastName: 'smith'})
+            .save({lastName: 'smith' })
 
  */
 
@@ -15,7 +15,7 @@ module.exports = function (config) {
     var defaults = {
         /**
          * Name of collection
-         * @type {String}
+         * @type { string}
          */
         root: '/',
 
@@ -28,12 +28,12 @@ module.exports = function (config) {
         //  * Query collection; uses MongoDB syntax
         //  * @see  <TBD: Data API URL>
         //  *
-        //  * @param {String} qs Query Filter
-        //  * @param {String} limiters @see <TBD: url for limits, paging etc>
+        //  * @param { string} qs Query Filter
+        //  * @param { string} limiters @see <TBD: url for limits, paging etc>
         //  *
         //  * @example
         //  *     cs.query(
-        //  *      {name: 'John', className: 'CSC101'},
+        //  *      { name: 'John', className: 'CSC101' },
         //  *      {limit: 10}
         //  *     )
 
@@ -43,15 +43,15 @@ module.exports = function (config) {
 
         /**
          * Save cookie value
-         * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
+         * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
          * @param  {Object} value (Optional)
          * @param {Object} options Overrides for service options
          *
          * @return {*} The saved value
          *
          * @example
-         *     cs.set('person', {firstName: 'john', lastName: 'smith'});
-         *     cs.set({name:'smith', age:'32'});
+         *     cs.set('person', { firstName: 'john', lastName: 'smith' });
+         *     cs.set({ name:'smith', age:'32' });
          */
         set: function (key, value, options) {
             var setOptions = $.extend(true, {}, serviceOptions, options);
@@ -69,13 +69,13 @@ module.exports = function (config) {
 
         /**
          * Load cookie value
-         * @param  {String|Object} key   If given a key save values under it, if given an object directly, save to top-level api
+         * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
          * @return {*} The value stored
          *
          * @example
          *     cs.get('person');
          */
-        get: function(key) {
+        get: function (key) {
             var cookieReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
             var val = document.cookie.replace(cookieReg, '$1');
             val = decodeURIComponent(val) || null;
@@ -84,8 +84,8 @@ module.exports = function (config) {
 
         /**
          * Removes key from collection
-         * @param {String} key key to remove
-         * @return {String} key The key removed
+         * @param { string} key key to remove
+         * @return { string} key The key removed
          *
          * @example
          *     cs.remove('person');
@@ -98,14 +98,14 @@ module.exports = function (config) {
 
             document.cookie = encodeURIComponent(key) +
                             '=; expires=Thu, 01 Jan 1970 00:00:00 GMT' +
-                            ( domain ? '; domain=' + domain : '') +
-                            ( path ? '; path=' + path : '');
+                            (domain ? '; domain=' + domain : '') +
+                            (path ? '; path=' + path : '');
             return key;
         },
 
         /**
          * Removes collection being referenced
-         * @return {Array} keys All the keys removed
+         * @return { array} keys All the keys removed
          */
         destroy: function () {
             var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);

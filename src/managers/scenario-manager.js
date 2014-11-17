@@ -41,7 +41,7 @@ ScenarioManager.prototype = {
     },
 
     getRun: function (runId) {
-        return new RunService($.extend(true, {},  this.options, {filter: runId}));
+        return new RunService($.extend(true, {},  this.options, { filter: runId }));
     }
 };
 

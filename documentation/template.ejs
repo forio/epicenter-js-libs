@@ -1,4 +1,4 @@
-<? docfiles.forEach(function(doc) { ?>
+<? docfiles.forEach(function (doc) { ?>
 
     <? var moduleName = doc.filename.split('/').pop().split('.')[0] ?>
     ---
@@ -15,14 +15,14 @@
 
 
     ##Configuration Options
-    <? doc.javadoc.forEach(function(block) { ?>
+    <? doc.javadoc.forEach(function (block) { ?>
         <? if (!block.paramStr) { ?>
             <? var methodName =  block.raw.code.split(':')[0] ?>
 
             ###<?= methodName ?>
             <?= block.description ?>
 
-            <? block.raw.tags.forEach(function(tag) { ?>
+            <? block.raw.tags.forEach(function (tag) { ?>
                 <? if (tag.type === 'type') { ?>
                     - *<?= tag.types[0] ?>*
                 <? } ?>
@@ -34,20 +34,20 @@
     <? }) ?>
 
     ##Methods
-    <? doc.javadoc.forEach(function(block) { ?>
+    <? doc.javadoc.forEach(function (block) { ?>
         <? if (block.paramStr) { ?>
             <? var methodName =  block.raw.code.split(':')[0] ?>
 
             ###<?= methodName ?>
             <?= block.description ?>
 
-            <? block.paramTags.forEach(function(tag) { ?>
+            <? block.paramTags.forEach(function (tag) { ?>
                 - <?= tag.name ?>: *<?= tag.joinedTypes ?>* <?= tag.description ?>
             <? }) ?>
 
             <? var isExample = false ?>
             <!-- ```` -->
-                <? block.raw.tags.forEach(function(tag) { ?>
+                <? block.raw.tags.forEach(function (tag) { ?>
                   <? if (tag.type === 'example') { ?>
                         <?  isExample = true ?>
                   <? } ?>

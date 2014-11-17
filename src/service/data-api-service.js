@@ -5,14 +5,14 @@
  *
  * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, the `root` option contains the name of the collection. If you have multiple collections within each of your projects, you can pass the collection name as an option for each call.
  *
- *      var ds = new F.service.Data({root: 'survey-responses'});
+ *      var ds = new F.service.Data({ root: 'survey-responses' });
  *      ds.saveAs('user1',
- *          {'question1': 2, 'question2': 10,
- *           'question3': false, 'question4': 'sometimes'} );
+ *          { 'question1': 2, 'question2': 10,
+ *           'question3': false, 'question4': 'sometimes' } );
  *      ds.saveAs('user2',
- *          {'question1': 3, 'question2': 8,
- *           'question3': true, 'question4': 'always'} );
- *      ds.query('',{'question2': {'$gt': 9}});
+ *          { 'question1': 3, 'question2': 8,
+ *           'question3': true, 'question4': 'always' } );
+ *      ds.query('',{ 'question2': { '$gt': 9} });
  *
  */
 
@@ -24,19 +24,19 @@ var qutil = require('../util/query-util');
 var TransportFactory = require('../transport/http-transport-factory');
 
 module.exports = function (config) {
-    var store = new StorageFactory({synchronous: true});
+    var store = new StorageFactory({ synchronous: true });
 
     var defaults = {
         /**
          * Name of collection. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`. Required.
-         * @type {String}
+         * @type { string}
          */
         root: '/',
 
         /**
          * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
+         * @type { string}
          */
         token: store.get('epicenter.project.token') || '',
 
@@ -56,7 +56,7 @@ module.exports = function (config) {
         urlConfig.projectPath = serviceOptions.project;
     }
 
-    var getURL = function(key, root) {
+    var getURL = function (key, root) {
         if (!root) {
             root = serviceOptions.root;
         }
@@ -91,32 +91,32 @@ module.exports = function (config) {
          *
          *      // exact matching:
          *      // request all documents in collection where 'question2' is 9
-         *      ds.query('', {'question2': 9});
+         *      ds.query('', { 'question2': 9});
          *
          *      // comparison operators:
          *      // request all documents in collection
          *      // where 'question2' is greater than 9
-         *      ds.query('', {'question2': {'$gt': 9}});
+         *      ds.query('', { 'question2': { '$gt': 9} });
          *
          *      // logical operators:
          *      // request all documents in collection
          *      // where 'question2' is less than 10, and 'question3' is false
-         *      ds.query('', {'$and': [ {'question2': {'$lt':10}}, {'question3': false}]});
+         *      ds.query('', { '$and': [ { 'question2': { '$lt':10} }, { 'question3': false }] });
          *
          *      // regular expresssions: use any Perl-compatible regular expressions
          *      // request all documents in collection
          *      // where 'question5' contains the string '*day'
-         *      ds.query('', {'question5': {'$regex': '*day'}});
+         *      ds.query('', { 'question5': { '$regex': '*day' } });
          *
          * **Parameters**
-         * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
+         * @param { string} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
          * @param {Object} `query` The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../data_api/#searching) for additional examples.
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @para m {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
         query: function (key, query, outputModifier, options) {
-            var params = $.extend(true, {q: query}, outputModifier);
+            var params = $.extend(true, { q: query }, outputModifier);
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions.url = getURL(key, httpOptions.root);
             return http.get(params, httpOptions);
@@ -130,12 +130,12 @@ module.exports = function (config) {
          * **Example**
          *
          *      ds.save('question1', 'yes');
-         *      ds.save({question1:'yes', question2: 32});
-         *      ds.save({name:'John', className: 'CS101'}, {root: 'students'});
+         *      ds.save({question1:'yes', question2: 32 });
+         *      ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
          *
          * **Parameters**
          *
-         * @param {String|Object} `key` If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
+         * @param { string|Object} `key` If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
          * @param {Object} `value` (Optional) The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
          * @param {object} `options` (Optional) Overrides for configuration options.
          */
@@ -161,18 +161,18 @@ module.exports = function (config) {
          * **Example**
          *
          *      ds.saveAs('user1',
-         *          {'question1': 2, 'question2': 10,
-         *           'question3': false, 'question4': 'sometimes'} );
+         *          { 'question1': 2, 'question2': 10,
+         *           'question3': false, 'question4': 'sometimes' } );
          *      ds.saveAs('student1',
-         *          {firstName: 'john', lastName: 'smith'},
-         *          {root: 'students'});
+         *          { firstName: 'john', lastName: 'smith' },
+         *          { root: 'students' });
          *      ds.saveAs('mgmt100/groupB',
-         *          {scenarioYear: '2015'},
-         *          {root: 'myclasses'});
+         *          { scenarioYear: '2015' },
+         *          { root: 'myclasses' });
          *
          * **Parameters**
          *
-         * @param {String} `key` Id of the document.
+         * @param { string} `key` Id of the document.
          * @param {Object} `value` (Optional) The data to save, in key:value pairs.
          * @param {object} `options` (Optional) Overrides for configuration options.
          */
@@ -192,7 +192,7 @@ module.exports = function (config) {
          *      ds.load('user1/question3');
          *
          * **Parameters**
-         * @param  {String|Object} `key` The id of the data to return. Can be the id of a document, or a path to data within that document.
+         * @param  { string|Object} `key` The id of the data to return. Can be the id of a document, or a path to data within that document.
          * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` Overrides for configuration options.
          */
@@ -212,16 +212,15 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param {String} `key` The id of the document to remove from this collection.
+         * @param { string} `key` The id of the document to remove from this collection.
          * @param {object} `options` (Optional) Overrides for configuration options.
          */
         remove: function (keys, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             var params;
             if ($.isArray(keys)) {
-                params = {id: keys};
-            }
-            else {
+                params = { id: keys };
+            } else {
                 params = '';
                 httpOptions.url = getURL(keys, httpOptions.root);
             }

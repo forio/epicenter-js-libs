@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     var CookieStore = F.store.Cookie;
@@ -28,7 +28,7 @@
                 cs.set('test', 'key');
                 cs.get('test').should.equal('key');
                 cs.remove('test');
-                should.not.exist( cs.get('test'));
+                should.not.exist(cs.get('test'));
             });
         });
 

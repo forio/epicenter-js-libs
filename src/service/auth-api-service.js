@@ -6,8 +6,8 @@
  * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../../project_access/) for more information.)
  *
  *      var auth = new F.service.Auth();
- *      auth.login({userName: 'jsmith@acmesimulations.com',
- *                  password: 'passw0rd'});
+ *      auth.login({ userName: 'jsmith@acmesimulations.com',
+ *                  password: 'passw0rd' });
  *      auth.logout();
  */
 
@@ -21,25 +21,25 @@ module.exports = function (config) {
     var defaults = {
         /**
          * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
-         * @type {String}
+         * @type { string}
          */
-        store: {synchronous: true},
+        store: { synchronous: true },
 
         /**
          * Email or username to use for logging in. Defaults to empty string.
-         * @type {String}
+         * @type { string}
          */
         userName: '',
 
         /**
          * Password for specified username. Defaults to empty string.
-         * @type {String}
+         * @type { string}
          */
         password: '',
 
         /**
          * Account to log in into. Required to log in as an end user. Defaults to picking it up from the path.
-         * @type {String}
+         * @type { string}
          */
         account: '',
 
@@ -70,15 +70,15 @@ module.exports = function (config) {
          *
          * **Example**
          *
-         *      auth.login({userName: 'jsmith@acmesimulations.com',
+         *      auth.login({ userName: 'jsmith@acmesimulations.com',
          *                  password: 'passw0rd',
-         *                  account: 'acme'});
+         *                  account: 'acme' });
          *
          * **Parameters**
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
         login: function (options) {
-            var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
+            var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
             if (!httpOptions.userName || !httpOptions.password) {
                 throw new Error('No username or password specified.');
             }
@@ -93,17 +93,17 @@ module.exports = function (config) {
             }
 
             var oldSuccessFn = httpOptions.success;
-            httpOptions.success = function(response) {
+            httpOptions.success = function (response) {
                 serviceOptions.password = httpOptions.password;
                 serviceOptions.userName = httpOptions.userName;
 
                 //jshint camelcase: false
+                //jscs:disable
                 token = response.access_token;
                 store.set(EPI_COOKIE_KEY, token);
 
                 oldSuccessFn.apply(this, arguments);
             };
-
             return http.post(postParams, httpOptions);
         },
 
@@ -126,19 +126,18 @@ module.exports = function (config) {
          *
          * **Example**
          *
-         *      auth.getToken().then(function(token){ console.log('my token is', token); });
+         *      auth.getToken().then(function (token) { console.log('my token is', token); });
          *
          * **Parameters**
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         getToken: function (options) {
-            var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
+            var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
 
             var $d = $.Deferred();
             if (token) {
                 $d.resolve(token);
-            }
-            else {
+            } else {
                 this.login(httpOptions).then($d.resolve);
             }
             return $d.promise();

@@ -67,7 +67,7 @@ function MakeSeq(obj) {
         };
     };
 
-    for(var prop in obj) {
+    for (var prop in obj) {
         if (typeof obj[prop] === 'function') {
             res[prop] = funcMaker(prop, obj);
         } else {

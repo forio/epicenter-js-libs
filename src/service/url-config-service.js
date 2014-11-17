@@ -14,7 +14,7 @@ module.exports = function (config) {
 
         api: '',
 
-        host: (function() {
+        host: (function () {
             var host = window.location.host;
             if (!host || host.indexOf('localhost') !== -1) {
                 host = 'forio.com';
@@ -46,7 +46,7 @@ module.exports = function (config) {
             return prj;
         }()),
 
-        getAPIPath: function(api) {
+        getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data'];
             var apiPath = this.protocol + '://' + this.host + '/' + api + '/';
 
