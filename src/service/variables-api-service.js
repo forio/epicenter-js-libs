@@ -6,7 +6,7 @@
  *
  *     var rs = new F.service.Run();
  *     rs.create('supply-chain-model.jl')
- *       .then(function() {
+ *       .then(function () {
  *          var vs = rs.variables();
  *          vs.save({sample_int: 4});
  *        });
@@ -28,7 +28,7 @@ module.exports = function (config) {
     };
     var serviceOptions = $.extend({}, defaults, config);
 
-    var getURL = function() {
+    var getURL = function () {
         return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
     };
 
@@ -82,7 +82,7 @@ module.exports = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
 
             if ($.isArray(query)) {
-                query = {include: query};
+                query = { include: query };
             }
             $.extend(query, outputModifier);
             return http.get(query, httpOptions);

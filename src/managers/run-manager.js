@@ -13,7 +13,7 @@ function patchRunService(service, manager) {
     }
 
     var orig = service.do;
-    service.do = function(operation, params, options) {
+    service.do = function (operation, params, options) {
         var reservedOps = Object.keys(specialOperations);
         if (reservedOps.indexOf(operation) === -1) {
             return orig.apply(service, arguments);
@@ -58,12 +58,13 @@ function patchRunService(service, manager) {
 *      });
 *
 *      rs.getRun()
-*          .then(function(run) {
+*          .then(function (run) {
 *              // start the game... we have a valid run
 *           });
 *
 *
 **/
+
 function RunManager(options) {
     this.options = $.extend(true, {}, defaults, options);
 

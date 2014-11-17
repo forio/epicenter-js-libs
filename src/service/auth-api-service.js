@@ -23,7 +23,7 @@ module.exports = function (config) {
          * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
          * @type {String}
          */
-        store: {synchronous: true},
+        store: { synchronous: true },
 
         /**
          * Email or username to use for logging in. Defaults to empty string.
@@ -75,10 +75,10 @@ module.exports = function (config) {
          *                  account: 'acme'});
          *
          * **Parameters**
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
         login: function (options) {
-            var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
+            var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
             if (!httpOptions.userName || !httpOptions.password) {
                 throw new Error('No username or password specified.');
             }
@@ -93,17 +93,17 @@ module.exports = function (config) {
             }
 
             var oldSuccessFn = httpOptions.success;
-            httpOptions.success = function(response) {
+            httpOptions.success = function (response) {
                 serviceOptions.password = httpOptions.password;
                 serviceOptions.userName = httpOptions.userName;
 
                 //jshint camelcase: false
+                //jscs:disable
                 token = response.access_token;
                 store.set(EPI_COOKIE_KEY, token);
 
                 oldSuccessFn.apply(this, arguments);
             };
-
             return http.post(postParams, httpOptions);
         },
 
@@ -126,19 +126,18 @@ module.exports = function (config) {
          *
          * **Example**
          *
-         *      auth.getToken().then(function(token){ console.log('my token is', token); });
+         *      auth.getToken().then(function (token){ console.log('my token is', token); });
          *
          * **Parameters**
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         getToken: function (options) {
-            var httpOptions = $.extend(true, {success: $.noop}, serviceOptions, options);
+            var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
 
             var $d = $.Deferred();
             if (token) {
                 $d.resolve(token);
-            }
-            else {
+            } else {
                 this.login(httpOptions).then($d.resolve);
             }
             return $d.promise();

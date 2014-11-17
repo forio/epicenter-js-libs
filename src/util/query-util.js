@@ -11,7 +11,7 @@ module.exports = (function () {
          * @param  {Object} qs Object to convert to query string
          * @return {String}    Matrix-format query parameters
          */
-        toMatrixFormat: function(qs) {
+        toMatrixFormat: function (qs) {
             if (qs === null || qs === undefined || qs === '') {
                 return ';';
             }
@@ -21,7 +21,7 @@ module.exports = (function () {
 
             var returnArray = [];
             var OPERATORS = ['<', '>', '!'];
-            $.each(qs, function(key, value) {
+            $.each(qs, function (key, value) {
                 if (typeof value !== 'string' || $.inArray($.trim(value).charAt(0), OPERATORS) === -1) {
                     value = '=' + value;
                 }
@@ -37,7 +37,7 @@ module.exports = (function () {
          * @param  {String|Array|Object} qs
          * @return {String}
          */
-        toQueryFormat: function(qs) {
+        toQueryFormat: function (qs) {
             if (qs === null || qs === undefined) {
                 return '';
             }
@@ -46,7 +46,7 @@ module.exports = (function () {
             }
 
             var returnArray = [];
-            $.each(qs, function(key, value) {
+            $.each(qs, function (key, value) {
                 if ($.isArray(value)) {
                     value = value.join(',');
                 }
@@ -66,14 +66,14 @@ module.exports = (function () {
          * @param  {string} qs
          * @return {object}
          */
-        qsToObject: function(qs) {
+        qsToObject: function (qs) {
             if (qs === null || qs === undefined || qs === '') {
                 return {};
             }
 
             var qsArray = qs.split('&');
             var returnObj = {};
-            $.each(qsArray, function(index, value) {
+            $.each(qsArray, function (index, value) {
                 var qKey = value.split('=')[0];
                 var qVal = value.split('=')[1];
 
@@ -93,13 +93,13 @@ module.exports = (function () {
          * @param  {String|Array|Object} qs2
          * @return {Object}
          */
-        mergeQS: function(qs1, qs2) {
+        mergeQS: function (qs1, qs2) {
             var obj1 = this.qsToObject(this.toQueryFormat(qs1));
             var obj2 = this.qsToObject(this.toQueryFormat(qs2));
             return $.extend(true, {}, obj1, obj2);
         },
 
-        addTrailingSlash: function(url) {
+        addTrailingSlash: function (url) {
             if (!url) {
                 return '';
             }

@@ -11,7 +11,7 @@
  *          project: 'supply-chain-game'
  *      });
  *      rs.create('supply-chain-model.jl');
- *          .then(function() {
+ *          .then(function () {
  *              rs.do('runmodel');
  *           });
  *
@@ -28,7 +28,7 @@ var VariablesService = require('./variables-api-service');
 
 function _pick(obj, props) {
     var res = {};
-    for(var p in obj) {
+    for (var p in obj) {
         if (props.indexOf(p) !== -1) {
             res[p] = obj[p];
         }
@@ -39,7 +39,7 @@ function _pick(obj, props) {
 
 module.exports = function (config) {
     // config || (config = configService.get());
-    var store = new StorageFactory({synchronous: true});
+    var store = new StorageFactory({ synchronous: true });
 
     var defaults = {
         /**
@@ -92,7 +92,7 @@ module.exports = function (config) {
     }
 
     urlConfig.filter = ';';
-    urlConfig.getFilterURL = function() {
+    urlConfig.getFilterURL = function () {
         var url = urlConfig.getAPIPath('run');
         var filter = qutil.toMatrixFormat(serviceOptions.filter);
 
@@ -113,7 +113,7 @@ module.exports = function (config) {
     }
     var http = new TransportFactory(httpOptions);
 
-    var setFilterOrThrowError = function(options) {
+    var setFilterOrThrowError = function (options) {
         if (options.filter) {
             serviceOptions.filter = options.filter;
         }
@@ -137,19 +137,19 @@ module.exports = function (config) {
          * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
-        create: function(params, options) {
+        create: function (params, options) {
             var runApiParams = ['model', 'scope', 'file'];
-            var createOptions = $.extend(true, {}, serviceOptions, options, {url: urlConfig.getAPIPath('run')});
+            var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath('run') });
             if (typeof params === 'string') {
                 // this is just the model name
-                params = {model: params};
+                params = { model: params };
             } else {
                 // whitelist the fields that we actually can send to the api
                 params = _pick(params, runApiParams);
             }
 
             var oldSuccess = createOptions.success;
-            createOptions.success = function(response) {
+            createOptions.success = function (response) {
                 serviceOptions.filter = response.id; //all future chained calls to operate on this id
                 return oldSuccess.apply(this, arguments);
             };
@@ -200,8 +200,7 @@ module.exports = function (config) {
         filter: function (filter, outputModifier, options) {
             if ($.isPlainObject(serviceOptions.filter)) {
                 $.extend(serviceOptions.filter, filter);
-            }
-            else {
+            } else {
                 serviceOptions.filter = filter;
             }
             var httpOptions = $.extend(true, {}, serviceOptions, options);
@@ -276,20 +275,18 @@ module.exports = function (config) {
          * @param {Array} `params` (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
-        do: function(operation, params, options) {
+        do: function (operation, params, options) {
             // console.log('do', operation, params);
             var opsArgs;
             var postOptions;
             if (options) {
                 opsArgs = params;
                 postOptions = options;
-            }
-            else {
+            } else {
                 if ($.isPlainObject(params)) {
                     opsArgs = null;
                     postOptions = params;
-                }
-                else {
+                } else {
                     opsArgs = params;
                 }
             }
@@ -299,7 +296,7 @@ module.exports = function (config) {
             setFilterOrThrowError(httpOptions);
 
             var prms = (result.args[0].length && (result.args[0] !== null && result.args[0] !== undefined)) ? result.args[0] : [];
-            return http.post({arguments: prms}, $.extend(true, {}, httpOptions, {
+            return http.post({ arguments: prms }, $.extend(true, {}, httpOptions, {
                 url: urlConfig.getFilterURL() + 'operations/' + result.ops[0] + '/'
             }));
         },
@@ -334,12 +331,12 @@ module.exports = function (config) {
             var $d = $.Deferred();
             var postOptions = $.extend(true, {}, serviceOptions, options);
 
-            var doSingleOp = function() {
+            var doSingleOp = function () {
                 var op = ops.shift();
                 var arg = args.shift();
 
                 me.do(op, arg, {
-                    success: function() {
+                    success: function () {
                         if (ops.length) {
                             doSingleOp();
                         } else {
@@ -347,7 +344,7 @@ module.exports = function (config) {
                             postOptions.success.apply(this, arguments);
                         }
                     },
-                    error: function() {
+                    error: function () {
                         $d.reject.apply(this, arguments);
                         postOptions.error.apply(this, arguments);
                     }
@@ -387,17 +384,17 @@ module.exports = function (config) {
             var postOptions = $.extend(true, {}, serviceOptions, options);
 
             var queue  = [];
-            for (var i=0; i< ops.length; i++) {
+            for (var i = 0; i< ops.length; i++) {
                 queue.push(
                     this.do(ops[i], args[i])
                 );
             }
             $.when.apply(this, queue)
-                .done(function() {
+                .done(function () {
                     $d.resolve.apply(this, arguments);
                     postOptions.success.apply(this.arguments);
                 })
-                .fail(function() {
+                .fail(function () {
                     $d.reject.apply(this, arguments);
                     postOptions.error.apply(this.arguments);
                 });

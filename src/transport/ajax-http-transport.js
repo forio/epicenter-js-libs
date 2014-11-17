@@ -28,8 +28,8 @@ module.exports = function (config) {
 
     var transportOptions = $.extend({}, defaults, config);
 
-    var result = function(d) {
-        return ($.isFunction(d)) ? d() : d;
+    var result = function (d) {
+        return ($.isfunction (d)) ? d() : d;
     };
 
     var connect = function (method, params, connectOptions) {
@@ -41,16 +41,16 @@ module.exports = function (config) {
             data: params
         });
         var ALLOWED_TO_BE_FUNCTIONS = ['data', 'url'];
-        $.each(options, function(key, value) {
-            if ($.isFunction(value) && $.inArray(key, ALLOWED_TO_BE_FUNCTIONS) !== -1) {
+        $.each(options, function (key, value) {
+            if ($.isfunction (value) && $.inArray(key, ALLOWED_TO_BE_FUNCTIONS) !== -1) {
                 options[key] = value();
             }
         });
 
-        if (options.logLevel && options.logLevel === 'DEBUG' ) {
+        if (options.logLevel && options.logLevel === 'DEBUG') {
             console.log(options.url);
             var oldSuccessFn = options.success || $.noop;
-            options.success = function(response, ajaxStatus, ajaxReq) {
+            options.success = function (response, ajaxStatus, ajaxReq) {
                 console.log(response);
                 oldSuccessFn.apply(this, arguments);
             };

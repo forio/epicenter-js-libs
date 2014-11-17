@@ -75,7 +75,7 @@ module.exports = function (config) {
          * @example
          *     cs.get('person');
          */
-        get: function(key) {
+        get: function (key) {
             var cookieReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
             var val = document.cookie.replace(cookieReg, '$1');
             val = decodeURIComponent(val) || null;
@@ -98,8 +98,8 @@ module.exports = function (config) {
 
             document.cookie = encodeURIComponent(key) +
                             '=; expires=Thu, 01 Jan 1970 00:00:00 GMT' +
-                            ( domain ? '; domain=' + domain : '') +
-                            ( path ? '; path=' + path : '');
+                            (domain ? '; domain=' + domain : '') +
+                            (path ? '; path=' + path : '');
             return key;
         },
 

@@ -17,7 +17,7 @@ function inherit(C, P) {
 var extend = function (dest /*, var_args*/) {
     var obj = Array.prototype.slice.call(arguments, 1);
     var current;
-    for (var j=0; j<obj.length; j++) {
+    for (var j = 0; j<obj.length; j++) {
         if (!(current = obj[j])) {
             continue;
         }

@@ -120,7 +120,7 @@
 
 
         describe('#create()', function () {
-            it('should do a POST', function() {
+            it('should do a POST', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.create('model.jl');
 
@@ -128,7 +128,7 @@
                 req.method.toUpperCase().should.equal('POST');
 
             });
-            it('should POST to the base URL', function() {
+            it('should POST to the base URL', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.create('model.jl');
 
@@ -138,7 +138,7 @@
 
             });
 
-            it('should take in white-listed params and passes them to the api', function() {
+            it('should take in white-listed params and passes them to the api', function () {
                 var params = {model: 'model.jl', scope: { group: 'x' }};
 
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
@@ -150,7 +150,7 @@
 
             });
 
-            it('should not pass in params which are not whitelisted', function() {
+            it('should not pass in params which are not whitelisted', function () {
                 var params = {model: 'model.jl', file: 'file', scope: { groupName: 'name' }, user: 'user1'};
 
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
@@ -163,7 +163,7 @@
 
         });
         describe('#query()', function () {
-            it('should do a GET', function() {
+            it('should do a GET', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.query({saved: true, '.price': '>1'});
 
@@ -212,7 +212,7 @@
         });
 
         describe('#filter', function () {
-            it('should do a GET', function() {
+            it('should do a GET', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
                 rs.filter({saved: true, '.price': '>1'});
 
@@ -272,7 +272,7 @@
         describe('#save()', function () {
             it('should require a filter', function () {
                 var rs = new RunService({account: 'forio', project: 'js-libs'});
-                var ret = function() {rs.save({completed: true});};
+                var ret = function () {rs.save({completed: true});};
                 ret.should.throw(Error);
             });
             it('should allow passing in filter through options', function () {
@@ -314,22 +314,22 @@
         });
 
         //Operations
-        describe('Run#Operations', function() {
-            describe('#do', function() {
+        describe('Run#Operations', function () {
+            describe('#do', function () {
                 it('should require a filter', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs'});
-                    var ret = function() {rs.do('solve');};
+                    var ret = function () {rs.do('solve');};
                     ret.should.throw(Error);
                 });
 
-                it('should do a POST', function() {
+                it('should do a POST', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.do('add', [1,2]);
 
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('POST');
                 });
-                it('should take in operation names and send to server', function() {
+                it('should take in operation names and send to server', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.do('add', [1,2]);
 
@@ -338,7 +338,7 @@
                     req.requestBody.should.equal(JSON.stringify({arguments: [1,2]}));
                 });
 
-                it('should take in operation names  with single values and send to server', function() {
+                it('should take in operation names  with single values and send to server', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.do('echo', 'hello');
 
@@ -347,7 +347,7 @@
                     req.requestBody.should.equal(JSON.stringify({arguments: ['hello']}));
                 });
 
-                it('should send operations without any parameters', function() {
+                it('should send operations without any parameters', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.do('init');
 
@@ -361,7 +361,7 @@
             describe('#serial', function () {
                 it('should require a filter', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs'});
-                    var ret = function() {rs.serial(['init', 'solve']);};
+                    var ret = function () {rs.serial(['init', 'solve']);};
                     ret.should.throw(Error);
                 });
 
@@ -380,7 +380,7 @@
                     server.requests[1].requestBody.should.equal(JSON.stringify({arguments: [2,3]}));
                 });
 
-                it('should send operations without any parameters', function() {
+                it('should send operations without any parameters', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs', filter: {saved: true}});
                     rs.serial(['init']);
                     server.respond();
@@ -394,7 +394,7 @@
             describe('#parallel', function () {
                 it('should require a filter', function () {
                     var rs = new RunService({account: 'forio', project: 'js-libs'});
-                    var ret = function() {rs.parallel(['init', 'solve']);};
+                    var ret = function () {rs.parallel(['init', 'solve']);};
                     ret.should.throw(Error);
                 });
 

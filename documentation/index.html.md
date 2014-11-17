@@ -58,16 +58,16 @@ For example, you might write a sequence of operations using callbacks:
         project: 'sales_forecaster'
     });
     rs.create('sales_forecaster.jl', {
-        success: function() {
+        success: function () {
             rs.serial(['initialize_inputs', 'calculate_input_totals', 'forecast_monthly_profit'], null, {
-                success: function(data) {
+                success: function (data) {
                     displayUI(data, function () {
                         hideLoadingScreen(function () {
                             rs.variables().load('profit_histogram');
                         });
                     });
                 },
-                error: function() {
+                error: function () {
                     console.log('Oops! Something went wrong with the operations');
                 }
             });
@@ -91,14 +91,14 @@ For example, you might write the same sequence of operations as above using prom
 	    project: 'sales_forecaster'
 	});
 	rs.create('sales_forecaster.jl')
-	    .then(function() {
+	    .then(function () {
 	        rs.serial(['initialize_inputs', 'calculate_input_totals', 'forecast_monthly_profit'])
 	            .then(displayUI)
 	            .then(hideLoadingScreen)
 	            .then(function () {
 	                rs.variables().load('profit_histogram');
 	            })
-	            .fail(function() {
+	            .fail(function () {
 	                console.log('Oops! Something went wrong with the operations');
 	            });
 	    });

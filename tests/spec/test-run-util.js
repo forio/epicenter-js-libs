@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     var rutil = F.util.run;
@@ -50,7 +50,7 @@
                 });
             });
 
-            describe('_normalizeArrays', function() {
+            describe('_normalizeArrays', function () {
                 it('takes in named object pairs', function () {
                     var params =  [{name: 'add', params: [1,2]}, {name: 'subtract', params: [2,3]}];
                     var result = rutil.normalizeOperations(params);
@@ -120,7 +120,7 @@
             });
 
 
-            it('takes in a combination single arrays and objects', function() {
+            it('takes in a combination single arrays and objects', function () {
                 var params =  ['init', 'reset', {add: [1,2]}];
                 var result = rutil.normalizeOperations(params);
                 result.should.deep.equal({ops: ['init', 'reset', 'add'] , args:[[], [], [1,2]] });

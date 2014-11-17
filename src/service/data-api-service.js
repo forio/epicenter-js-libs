@@ -24,7 +24,7 @@ var qutil = require('../util/query-util');
 var TransportFactory = require('../transport/http-transport-factory');
 
 module.exports = function (config) {
-    var store = new StorageFactory({synchronous: true});
+    var store = new StorageFactory({ synchronous: true });
 
     var defaults = {
         /**
@@ -56,7 +56,7 @@ module.exports = function (config) {
         urlConfig.projectPath = serviceOptions.project;
     }
 
-    var getURL = function(key, root) {
+    var getURL = function (key, root) {
         if (!root) {
             root = serviceOptions.root;
         }
@@ -111,12 +111,12 @@ module.exports = function (config) {
          * **Parameters**
          * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
          * @param {Object} `query` The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../data_api/#searching) for additional examples.
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @para m {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
         query: function (key, query, outputModifier, options) {
-            var params = $.extend(true, {q: query}, outputModifier);
+            var params = $.extend(true, { q: query }, outputModifier);
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions.url = getURL(key, httpOptions.root);
             return http.get(params, httpOptions);
@@ -219,9 +219,8 @@ module.exports = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             var params;
             if ($.isArray(keys)) {
-                params = {id: keys};
-            }
-            else {
+                params = { id: keys };
+            } else {
                 params = '';
                 httpOptions.url = getURL(keys, httpOptions.root);
             }

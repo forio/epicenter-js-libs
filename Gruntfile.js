@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     'use strict';
 
     grunt.initConfig({
@@ -9,7 +9,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-markdox');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-jscs-checker');
 
 
     var UglifyJS = require('uglify-js');
@@ -35,7 +34,7 @@ module.exports = function(grunt) {
                 debug: false,
                 compile: './dist/epicenter.min.js'
             },
-            afterHook: function(src) {
+            afterHook: function (src) {
                 var result = UglifyJS.minify(src, {
                     fromString: true,
                     warnings: true,
@@ -52,6 +51,10 @@ module.exports = function(grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-jscs');
+    grunt.config.set('jscs', {
+        src: ['src/*.js', 'src/**/*.js', 'tests/specs/*.js', 'tests/specs/**/*.js']
+    });
 
 
     grunt.loadNpmTasks('grunt-conventional-changelog');

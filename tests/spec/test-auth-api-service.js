@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     var AuthService = F.service.Auth ;
@@ -33,7 +33,7 @@
         describe('#login', function () {
             it('should require username and password', function () {
                 var as = new AuthService();
-                var ret = function(){ as.login();};
+                var ret = function (){ as.login();};
                 ret.should.throw(Error);
             });
 
@@ -90,7 +90,7 @@
 
         });
         describe('#logout', function () {
-            it('should remove cookies', function() {
+            it('should remove cookies', function () {
                 //need to set domain to blank for testing locally
                 var as = new AuthService({userName: 'john', password: 'y', store: {domain: ''}});
                 as.login();
