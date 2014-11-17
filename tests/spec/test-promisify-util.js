@@ -49,7 +49,7 @@
             };
 
             window.mf = MockFunction;
-            window.m  = new Mockfunction ();
+            window.m  = new MockFunction();
 
         });
         after(function () {
@@ -60,7 +60,7 @@
         describe('then', function () {
             it('should be thenable', function () {
                 var cb = sinon.spy();
-                var mf = new Mockfunction ();
+                var mf = new MockFunction();
                 mf.doFast('fast').then(cb);
 
                 clock.tick(FAST);
@@ -73,7 +73,7 @@
             it('should chain thens', function () {
                 var cb1 = sinon.spy();
                 var cb2 = sinon.spy();
-                var mf = new Mockfunction ();
+                var mf = new MockFunction();
                 mf.doFast('fast').then(cb1).then(cb2);
 
                 clock.tick(FAST);
@@ -88,7 +88,7 @@
                 });
                 var cb2 = sinon.spy();
                 var cb3 = sinon.spy();
-                var mf = new Mockfunction ();
+                var mf = new MockFunction();
                 mf.doFast('fast').then(cb1).then(cb2).then(cb3);
 
                 clock.tick(FAST);
@@ -101,7 +101,7 @@
 
             it('should return itself on then', function () {
                 var cb1 = sinon.spy();
-                var mf = new Mockfunction ();
+                var mf = new MockFunction();
                 var ret = mf.doFast('fast').then(cb1);
 
                 clock.tick(FAST);
@@ -112,7 +112,7 @@
 
 
         it('should chain its own functions', function () {
-            var mf = new Mockfunction ();
+            var mf = new MockFunction();
             var slowSpy = sinon.spy(mf, 'doSlow');
 
             var slow = slowSpy('slow');
@@ -137,7 +137,7 @@
         it('should not execute functions till previous completes', function () {
             var cb1 = sinon.spy();
             var cb2 = sinon.spy();
-            var mf = new Mockfunction ();
+            var mf = new MockFunction();
             // var ret = mf.doFast('fast').then(cb1);
             mf.doSlow('slow').then(cb1).doFast('fast').then(cb2);
 
@@ -152,7 +152,7 @@
         });
 
         it('should have executed chained functions in the right order', function () {
-            var mf = new Mockfunction ();
+            var mf = new MockFunction();
 
             // mf.doSlow().doFast().doMedium();
 
@@ -173,7 +173,7 @@
         });
 
         // it('should call the same fn twice', function () {
-        //     var mf = new Mockfunction ();
+        //     var mf = new MockFunction();
         //     var fastSpy = sinon.spy(mf, 'doFast');
         //     var fastSpy2 = sinon.spy(fastSpy, 'doFast');
 
@@ -186,7 +186,7 @@
 
 
         it.skip('should run multiple queries in parallel', function () {
-            var mf = new Mockfunction ();
+            var mf = new MockFunction();
             var cb1 = sinon.spy();
             var cb2 = sinon.spy();
 
@@ -200,7 +200,7 @@
         });
         // describe('Synchronous functions', function () {
         //     it('should not be thenable', function () {
-        //         var mf = new Mockfunction ();
+        //         var mf = new MockFunction();
         //         var ret = mf.doNow();
 
         //         ret.should.equal(42);

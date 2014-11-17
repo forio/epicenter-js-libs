@@ -23,6 +23,11 @@ module.exports = function (grunt) {
             options: {
                 compile: './dist/epicenter.js'
             },
+            afterHook: function (src) {
+                var banner = grunt.file.read('./banner.js');
+                banner = grunt.template.process(banner, { data: grunt.file.readJSON('package.json') });
+                return banner + src;
+            }
         },
         edge: {
             options: {
@@ -44,9 +49,9 @@ module.exports = function (grunt) {
                     }
                 });
                 var code = result.code;
-                // var banner = grunt.file.read('./banner.js');
-                // banner = grunt.template.process(banner, { data: grunt.file.readJSON('package.json')});
-                return code;
+                var banner = grunt.file.read('./banner.js');
+                banner = grunt.template.process(banner, { data: grunt.file.readJSON('package.json') });
+                return banner + code;
             }
         }
     });
@@ -149,6 +154,20 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.registerTask('incrementVersion', function () {
+        var files = this.options().files;
+        grunt.file.expand(files).forEach(function (file) {
+            var mainFile = grunt.file.read(file);
+            var updated = grunt.template.process(mainFile, { data: grunt.file.readJSON('package.json') });
+            grunt.file.write(file, updated);
+        });
+    });
+    grunt.config.set('incrementVersion', {
+        options: {
+            files:  ['./dist/*.js']
+        }
+    });
+
     grunt.registerTask('test', ['browserify2:edge', 'mocha']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
@@ -157,7 +176,7 @@ module.exports = function (grunt) {
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
         type = type ? type : 'patch';
-        ['production', 'bump-only:' + type, 'changelog', 'bump-commit'].forEach(function (task) {
+        ['bump-only:' + type, 'changelog', 'production', 'incrementVersion', 'bump-commit'].forEach(function (task) {
             grunt.task.run(task);
         });
     });

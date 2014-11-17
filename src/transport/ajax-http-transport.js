@@ -29,7 +29,7 @@ module.exports = function (config) {
     var transportOptions = $.extend({}, defaults, config);
 
     var result = function (d) {
-        return ($.isfunction (d)) ? d() : d;
+        return ($.isFunction(d)) ? d() : d;
     };
 
     var connect = function (method, params, connectOptions) {
@@ -42,7 +42,7 @@ module.exports = function (config) {
         });
         var ALLOWED_TO_BE_FUNCTIONS = ['data', 'url'];
         $.each(options, function (key, value) {
-            if ($.isfunction (value) && $.inArray(key, ALLOWED_TO_BE_FUNCTIONS) !== -1) {
+            if ($.isFunction(value) && $.inArray(key, ALLOWED_TO_BE_FUNCTIONS) !== -1) {
                 options[key] = value();
             }
         });
