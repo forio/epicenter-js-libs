@@ -19,12 +19,6 @@ var TransportFactory = require('../transport/http-transport-factory');
 module.exports = function (config) {
     var defaults = {
         /**
-         * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
-         * @type { string}
-         */
-        store: { synchronous: true },
-
-        /**
          * Email or username to use for logging in. Defaults to empty string.
          * @type { string}
          */
@@ -48,17 +42,13 @@ module.exports = function (config) {
          */
         transport: {}
     };
-    var serviceOptions = $.extend({}, defaults, config);
-
     var urlConfig = new ConfigService(serviceOptions).get('server');
-    if (!serviceOptions.account) {
-        serviceOptions.account = urlConfig.accountPath;
-    }
 
-    var httpOptions = $.extend(true, {}, serviceOptions.transport, {
+    var serviceOptions = $.extend({}, defaults, config);
+    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath('authentication')
     });
-    var http = new TransportFactory(httpOptions);
+    var http = new TransportFactory(transportOptions);
 
     var publicAPI = {
 
@@ -103,7 +93,7 @@ module.exports = function (config) {
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         logout: function (options) {
-            var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
+            var httpOptions = $.extend(true, serviceOptions, transportOptions, options);
             if (!httpOptions.token) {
                 throw new Error('No token was specified.');
             }
