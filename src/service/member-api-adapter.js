@@ -34,9 +34,9 @@ module.exports = function (config) {
          */
         transport: {}
     };
+    var serviceOptions = $.extend({}, defaults, config);
     var urlConfig = new ConfigService(serviceOptions).get('server');
 
-    var serviceOptions = $.extend({}, defaults, config);
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath('member/local')
     });

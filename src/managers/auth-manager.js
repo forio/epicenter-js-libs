@@ -69,7 +69,7 @@ AuthManager.prototype = {
             } else {
                 throw new Error('The atob function needs to be defined. Check the list of compatible browsers in the epicenter-js-libs documentation.');
             }
-        }
+        };
 
         var setSessionCookie = function (data) {
             saveSession(data);
@@ -158,7 +158,7 @@ AuthManager.prototype = {
             store.remove(EPI_COOKIE_KEY, adapterOptions);
             store.remove(EPI_SESSION_KEY, adapterOptions);
             token = '';
-        }
+        };
 
         var outSuccess = adapterOptions.success;
         adapterOptions.success = function (response) {
