@@ -95,6 +95,7 @@ AuthManager.prototype = {
 
                 // The group is not required if the user is not logging into a project
                 if (!adapterOptions.project) {
+                    outSuccess.apply(this, [data]);
                     $d.resolve(data);
                     return;
                 }
@@ -119,7 +120,7 @@ AuthManager.prototype = {
                     var groupSelection = group.groupId;
                     data.groupSelection[adapterOptions.project] = groupSelection;
                     setSessionCookie(data);
-                    outSuccess.apply(this, data);
+                    outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
                     handleGroupError('A group must be specified for this account', 403, data);
@@ -212,7 +213,7 @@ AuthManager.prototype = {
                 });
             }
 
-            outSuccess.apply(this, memberInfo);
+            outSuccess.apply(this, [memberInfo]);
             $d.resolve(memberInfo);
         };
 
