@@ -9,7 +9,7 @@
             var userInfo = {
                'jti':'23b6c85b-abcc-443f-93aa-a2bd5e5d4e4b',
                'sub':'550a2b8b-80f7-4a72-80be-033f87c79cf0',
-               'scope':[  
+               'scope':[
                   'oauth.approvals',
                   'openid'
                ],
@@ -22,7 +22,7 @@
                'iat':1417567152,
                'exp':1417610352,
                'iss':'http://localhost:9763/uaa/oauth/token',
-               'aud':[  
+               'aud':[
                   'oauth',
                   'openid'
                ]
@@ -62,7 +62,6 @@
                 var callback = sinon.spy();
                 var am = new AuthManager();
                 am.login({ userName: 'john', password: 'y', project: null, success: callback });
-                
                 server.respond();
                 // There is a call to the member API inside the sucesss of the first request which makes
                 // the server to not respond immediately, need to investigate if it's possible for the server to respond

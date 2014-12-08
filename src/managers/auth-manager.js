@@ -16,7 +16,6 @@ var defaults = {
      * @type { string}
      */
     store: { synchronous: true }
-    
 };
 
 var EPI_COOKIE_KEY = 'epicenter.project.token';
@@ -57,14 +56,14 @@ AuthManager.prototype = {
     login: function (options) {
         var _this = this;
         var $d = $.Deferred();
-        var adapterOptions = $.extend(true, {success: $.noop, error: $.noop }, this.options, options);
+        var adapterOptions = $.extend(true, { success: $.noop, error: $.noop }, this.options, options);
         var outSuccess = adapterOptions.success;
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
-            if ( typeof window.atob === 'function' ) {
+            if (typeof window.atob === 'function') {
                 return JSON.parse(atob(encoded));
             } else {
                 throw new Error('The atob function needs to be defined. Check the list of compatible browsers in the epicenter-js-libs documentation.');
@@ -77,7 +76,7 @@ AuthManager.prototype = {
 
         var handleGroupError = function (message, statusCode, data) {
             // logout the user since it's in an invalid state with no group selected
-            _this.logout().then( function () {
+            _this.logout().then(function () {
                 var error = $.extend(true, {}, data, { message: message, statusCode: statusCode });
                 $d.reject(error);
             });
