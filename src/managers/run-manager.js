@@ -12,7 +12,7 @@
 *   * `run`: (required) Run object. Must contain:
 *       * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
 *       * `project`: Epicenter project id.
-*       * `model`: The name of your primary model file. (See more on [Writing your Model](../../writing_your_model/).)
+*       * `model`: The name of your primary model file. (See more on [Writing your Model](../../../writing_your_model/).)
 *       * `scope`: (optional) Scope object for the run, for example `scope.group` with value of the name of the group.
 *       * `files`: (optional) If and only if you are using a Vensim model and you have additional data to pass in to your model, you can pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (Note that you'll also need to add this same files object to your Vensim [configuration file](../../../model_code/vensim/).) See the [underlying Model Run API](../../../model_apis/run/#post-creating-a-new-run-for-this-project) for additional information.
 *
