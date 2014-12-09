@@ -21,31 +21,30 @@ module.exports = function (config) {
     var defaults = {
         /**
          * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
-         * @type { string}
          */
         store: { synchronous: true },
 
         /**
          * Email or username to use for logging in. Defaults to empty string.
-         * @type { string}
+         * @type {String}
          */
         userName: '',
 
         /**
          * Password for specified username. Defaults to empty string.
-         * @type { string}
+         * @type {String}
          */
         password: '',
 
         /**
          * Account to log in into. Required to log in as an end user. Defaults to picking it up from the path.
-         * @type { string}
+         * @type {String}
          */
         account: '',
 
         /**
          * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
+         * @type {Object}
          */
         transport: {}
     };
