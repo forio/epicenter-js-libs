@@ -29,14 +29,14 @@ module.exports = function (config) {
     var defaults = {
         /**
          * Name of collection. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`. Required.
-         * @type { string}
+         * @type {String}
          */
         root: '/',
 
         /**
          * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type { string}
+         * @type {String}
          */
         token: store.get('epicenter.project.token') || '',
 
@@ -109,9 +109,9 @@ module.exports = function (config) {
          *      ds.query('', { 'question5': { '$regex': '*day' } });
          *
          * **Parameters**
-         * @param { string} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
+         * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
          * @param {Object} `query` The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../data_api/#searching) for additional examples.
-         * @para m {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
@@ -135,9 +135,9 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param { string|Object} `key` If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
+         * @param {String|Object} `key` If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
          * @param {Object} `value` (Optional) The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
-         * @param {object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         save: function (key, value, options) {
             var attrs;
@@ -172,9 +172,9 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param { string} `key` Id of the document.
+         * @param {String} `key` Id of the document.
          * @param {Object} `value` (Optional) The data to save, in key:value pairs.
-         * @param {object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         saveAs: function (key, value, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
@@ -192,7 +192,7 @@ module.exports = function (config) {
          *      ds.load('user1/question3');
          *
          * **Parameters**
-         * @param  { string|Object} `key` The id of the data to return. Can be the id of a document, or a path to data within that document.
+         * @param  {String|Object} `key` The id of the data to return. Can be the id of a document, or a path to data within that document.
          * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` Overrides for configuration options.
          */
@@ -212,8 +212,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param { string} `key` The id of the document to remove from this collection.
-         * @param {object} `options` (Optional) Overrides for configuration options.
+         * @param {String} `key` The id of the document to remove from this collection.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         remove: function (keys, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);

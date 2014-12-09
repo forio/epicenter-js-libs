@@ -53,19 +53,19 @@ module.exports = function (config) {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type { string}
+         * @type {String}
          */
         token: store.get('epicenter.project.token') || '',
 
         /**
          * The account id. In the Epicenter UI, this is the "Team ID" (for team projects) or "User ID" (for personal projects). Defaults to empty string.
-         * @type { string}
+         * @type {String}
          */
         account: '',
 
         /**
          * The project id. Defaults to empty string.
-         * @type { string}
+         * @type {String}
          */
         project: '',
 
@@ -87,7 +87,7 @@ module.exports = function (config) {
 
         /**
          * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
+         * @type {Object}
          */
         transport: {}
     };
@@ -146,7 +146,7 @@ module.exports = function (config) {
          *      rs.create('hello_world.jl');
          *
          *  **Parameters**
-         * @param { string} `model` The name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project.
+         * @param {String} `model` The name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
@@ -230,7 +230,7 @@ module.exports = function (config) {
          *     rs.load('bb589677-d476-4971-a68e-0c58d191e450', { include: ['.price', '.sales'] });
          *
          * **Parameters**
-         * @param { string} `runID` The run id.
+         * @param {String} `runID` The run id.
          * @param {Object} `filters` (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
@@ -284,8 +284,8 @@ module.exports = function (config) {
          *     rs.do({ name:'add', params:[2,4] });
          *
          * **Parameters**
-         * @param { string} `operation` Name of method.
-         * @param { array} `params` (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
+         * @param {String} `operation` Name of method.
+         * @param {Array} `params` (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         do: function (operation, params, options) {
@@ -332,7 +332,7 @@ module.exports = function (config) {
          *                  { name: 'runmodel', params: [] }]);
          *
          * **Parameters**
-         * @param { array[String]|Array[Object] } `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
+         * @param {Array[String]|Array[Object]} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         serial: function (operations, params, options) {
@@ -385,7 +385,7 @@ module.exports = function (config) {
          *     rs.parallel({ add: [1,2], subtract: [2,4] });
          *
          * **Parameters**
-         * @param { array|Object} `operations` If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
+         * @param {Array|Object} `operations` If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         parallel: function (operations, params, options) {
