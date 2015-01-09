@@ -1,5 +1,5 @@
 /**
-* ## Auth Manager
+* ## Authorization Manager
 *
 *
 */
@@ -9,6 +9,7 @@ var ConfigService = require('../service/configuration-service');
 var AuthAdapter = require('../service/auth-api-service');
 var MemberAdapter = require('../service/member-api-adapter');
 var StorageFactory = require('../store/store-factory');
+var Buffer = require('buffer').Buffer;
 
 var defaults = {
     /**
@@ -63,11 +64,7 @@ AuthManager.prototype = {
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
-            if (typeof window.atob === 'function') {
-                return JSON.parse(atob(encoded));
-            } else {
-                throw new Error('The atob function needs to be defined. Check the list of compatible browsers in the epicenter-js-libs documentation.');
-            }
+            return new Buffer(encoded, 'base64').toString('ascii');
         };
 
         var setSessionCookie = function (data) {
@@ -122,7 +119,7 @@ AuthManager.prototype = {
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
-                    handleGroupError('A group must be specified for this account', 403, data);
+                    handleGroupError('This account is associated with more that one group. Please specify a group id to log into and try again', 403, data);
                 }
             }).fail($d.reject);
         };
@@ -216,7 +213,7 @@ AuthManager.prototype = {
             $d.resolve(memberInfo);
         };
 
-        this.memberAdapter.getUserDetails(adapterOptions).fail($d.reject);
+        this.memberAdapter.getGroupsByUser(adapterOptions).fail($d.reject);
         return $d.promise();
     },
 

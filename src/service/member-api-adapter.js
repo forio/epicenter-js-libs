@@ -5,7 +5,7 @@
  * The Member API Adapter provides methods to lookup user details or group details
  *
  *      var auth = new F.adapter.Member();
- *      auth.getUserDetails({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
+ *      auth.getGroupsByUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
  *      auth.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
  */
 
@@ -44,7 +44,7 @@ module.exports = function (config) {
 
     var publicAPI = {
 
-        getUserDetails: function (options) {
+        getGroupsByUser: function (options) {
             var httpOptions = $.extend(true, serviceOptions, options);
             if (!httpOptions.userId) {
                 throw new Error('No userId specified.');
