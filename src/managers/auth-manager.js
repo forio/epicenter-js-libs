@@ -64,7 +64,13 @@ AuthManager.prototype = {
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
-            return new Buffer(encoded, 'base64').toString('ascii');
+            while (encoded.length % 4 !== 0) {
+                encoded += '=';
+            }
+
+            var decode = window.atob ? window.atob : function (encoded) { return new Buffer(encoded, 'base64').toString('ascii'); };
+
+            return JSON.parse(decode(encoded));
         };
 
         var setSessionCookie = function (data) {
