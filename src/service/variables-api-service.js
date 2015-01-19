@@ -28,7 +28,7 @@ module.exports = function (config) {
     var defaults = {
         /**
          * The runs object to which the variable filters apply. Defaults to null.
-         * @type { runService }
+         * @type {runService}
          */
         runService: null
     };
@@ -58,7 +58,7 @@ module.exports = function (config) {
          *      vs.load('sample_int');
          *
          * **Parameters**
-         * @param { string} `variable` Name of variable to load.
+         * @param {String} `variable` Name of variable to load.
          * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
@@ -80,7 +80,7 @@ module.exports = function (config) {
          * **Parameters**
          * @param {Object|Array} `query` The names of the variables requested.
          * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
         query: function (query, outputModifier, options) {
@@ -125,7 +125,7 @@ module.exports = function (config) {
         //  * Save values to the api. Merges arrays, but otherwise same as save
         //  * @param {Object|String} variable Object with attributes, or string key
         //  * @param {Object} val Optional if prev parameter was a string, set value here
-        //  * @param {object} options Overrides for configuration options
+        //  * @param {Object} options Overrides for configuration options
         //  *
         //  * @example
         //  *     vs.merge({ price: 4, quantity: 5, products: [2,3,4] })
