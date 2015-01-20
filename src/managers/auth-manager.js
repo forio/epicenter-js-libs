@@ -80,7 +80,7 @@ AuthManager.prototype = {
         var handleGroupError = function (message, statusCode, data) {
             // logout the user since it's in an invalid state with no group selected
             _this.logout().then(function () {
-                var error = $.extend(true, {}, data, { message: message, statusCode: statusCode });
+                var error = $.extend(true, {}, data, { statusText: message, status: statusCode });
                 $d.reject(error);
             });
         };
