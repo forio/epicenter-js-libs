@@ -67,7 +67,12 @@ module.exports = function (config) {
         login: function (options) {
             var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
             if (!httpOptions.userName || !httpOptions.password) {
-                throw new Error('No username or password specified.');
+                var resp = { status: 401, statusMessage: 'No username or password specified.' };
+                if (options.error) {
+                    options.error.call(this, resp);
+                }
+
+                return $.Deferred().reject(resp).promise();
             }
 
             var postParams = {
