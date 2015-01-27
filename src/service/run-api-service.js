@@ -31,19 +31,9 @@ var ConfigService = require('./configuration-service');
 var StorageFactory = require('../store/store-factory');
 var qutil = require('../util/query-util');
 var rutil = require('../util/run-util');
+var _pick = require('../util/object-util')._pick;
 var TransportFactory = require('../transport/http-transport-factory');
 var VariablesService = require('./variables-api-service');
-
-function _pick(obj, props) {
-    var res = {};
-    for (var p in obj) {
-        if (props.indexOf(p) !== -1) {
-            res[p] = obj[p];
-        }
-    }
-
-    return res;
-}
 
 module.exports = function (config) {
     // config || (config = configService.get());
