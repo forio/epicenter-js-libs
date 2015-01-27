@@ -24,12 +24,15 @@ F.service.Run = require('./service/run-api-service');
 F.service.Variables = require('./service/variables-api-service');
 F.service.Data = require('./service/data-api-service');
 F.service.Auth = require('./service/auth-api-service');
+F.service.Game = require('./service/game-api-adapter');
 
 F.store.Cookie = require('./store/cookie-store');
 F.factory.Store = require('./store/store-factory');
 
 F.manager.ScenarioManager = require('./managers/scenario-manager');
 F.manager.RunManager = require('./managers/run-manager');
+F.manager.AuthManager = require('./managers/auth-manager');
+F.manager.GameManager = require('./managers/game-manager');
 
 F.manager.strategy['always-new'] = require('./managers/run-strategies/always-new-strategy');
 F.manager.strategy['conditional-creation'] = require('./managers/run-strategies/conditional-creation-strategy');
@@ -38,8 +41,6 @@ F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if
 F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if-missing-strategy');
 F.manager.strategy['new-if-persisted'] = require('./managers/run-strategies/new-if-persisted-strategy');
 F.manager.strategy['new-if-initialized'] = require('./managers/run-strategies/new-if-initialized-strategy');
-
-F.manager.AuthManager = require('./managers/auth-manager');
 
 F.version = '<%= version %>';
 window.F = F;
