@@ -24,6 +24,7 @@
     "eqnull": true,
     "globals": {
         "$": false,
-        "jQuery": false
+        "jQuery": false,
+        "F": true
     }
 }
