@@ -55,8 +55,25 @@ module.exports = function (config) {
 
     var http = new TransportFactory(transportOptions);
 
+    var setFilterOrThrowError = function (options) {
+        if (options.filter) {
+            serviceOptions.filter = options.filter;
+        }
+        if (!serviceOptions.filter) {
+            throw new Error('No filter specified to apply operations against');
+        }
+    };
+
     var publicAPI = {
 
+        /**
+        * Create a new Game
+        *
+        *   ** Example **
+        *   var gm = new F.service.Game({ account: 'account', project: 'project' });
+        *   gm.create({ model: 'model.py' });
+        *
+        */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath('game') });
             var gameApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers'];
@@ -80,8 +97,24 @@ module.exports = function (config) {
             return http.post(params, createOptions);
         },
 
-        update: function () {
+        /**
+        * Update a Game object, for example to add the roles to the game
+        *
+        */
+        update: function (params, options) {
+            var whitelist = ['roles', 'optionalRoles', 'minUsers'];
+            options = options || {};
+            setFilterOrThrowError(options);
 
+            var updateOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath('game') + serviceOptions.filter }
+            );
+
+            params = _pick(params || {}, whitelist);
+
+            return http.patch(params, updateOptions);
         },
 
         delete: function () {
