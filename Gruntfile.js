@@ -73,7 +73,7 @@ module.exports = function (grunt) {
     grunt.config.set('watch', {
         source: {
             files: ['src/**/*.js'],
-            tasks: ['mocha:test', 'browserify2:edge']
+            tasks: ['browserify2:edge', 'mocha:test']
         },
         tests: {
             files: ['tests/spec/**/*.js'],
@@ -185,5 +185,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['watch', 'mocha:test']);
+    grunt.registerTask('default', ['browserify2:edge', 'mocha:test', 'watch']);
 };
