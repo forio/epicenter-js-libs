@@ -121,6 +121,58 @@
                 /project=js-libs/.test(req.url).should.be.true;
             });
         });
+
+        describe('getGamesForUser', function () {
+            it('should call GET on the GameAPI with the user paramter', function () {
+                createGameService({ group: '123' })
+                    .getGamesForUser({ userId: 'abc999' });
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+                /\/game\//.test(req.url).should.be.true;
+                /group=123/.test(req.url).should.be.true;
+                /account=forio/.test(req.url).should.be.true;
+                /project=js-libs/.test(req.url).should.be.true;
+                /userId=abc999/.test(req.url).should.be.true;
+            });
+        });
+
+        describe('addUsers', function () {
+            it('should POST to the Game API users end point with the correct params', function () {
+                var users = [{ userId: '1', role: 'a' }];
+
+                createGameService({ filter: 'gameid1' }).addUsers(users);
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+                /\/game\/gameid1/.test(req.url).should.be.true;
+                var body = JSON.parse(req.requestBody);
+
+                body.should.be.instanceof(Array);
+                body.should.be.length(1);
+                body.should.be.eql(users);
+            });
+        });
+
+        describe('removeUser', function () {
+            it('should call DELETE on the Game API users end point', function () {
+                createGameService({ filter: 'gameid1' }).removeUser({ userId: '123' });
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+                /\/game\/gameid1\/users\/123/.test(req.url).should.be.true;
+            });
+        });
+
+        describe('getCurrentRun', function () {
+            it('should POST to the Game APIs run end point', function () {
+                createGameService({ filter: 'gameid1' }).getCurrentRun();
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+                /\/game\/gameid1\/run/.test(req.url).should.be.true;
+            });
+        });
     });
 
 })();

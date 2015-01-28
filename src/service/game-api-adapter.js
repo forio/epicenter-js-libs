@@ -119,6 +119,10 @@ module.exports = function (config) {
             return http.patch(params, updateOptions);
         },
 
+        /**
+        * Delete an existing game
+        *
+        */
         delete: function (options) {
             options = options || {};
             setFilterOrThrowError(options);
@@ -132,6 +136,11 @@ module.exports = function (config) {
             return http.delete(null, deleteOptions);
         },
 
+        /**
+        * List all games for a given account/project/group
+        *
+        *
+        */
         list: function (options) {
             options = options || {};
 
@@ -146,28 +155,91 @@ module.exports = function (config) {
             return http.get(filters, getOptions);
         },
 
-        getGamesForUser: function () {
+        /**
+        * Get all games that a user belongs to for the given account/project/group
+        *
+        */
+        getGamesForUser: function (params, options) {
+            options = options || {};
 
+            var getOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath('game') }
+            );
+
+            var filters = $.extend(
+                _pick(getOptions, ['account', 'project', 'group']),
+                _pick(params, ['userId'])
+            );
+
+            return http.get(filters, getOptions);
         },
 
-        addUsers: function () {
+        /**
+        * Add a user or list of users to a given game
+        *
+        */
+        addUsers: function (params, options) {
+            options = options || {};
 
+            setFilterOrThrowError(options);
+
+            var updateOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath('game') + serviceOptions.filter + '/users' }
+            );
+
+            return http.post(params, updateOptions);
         },
 
-        removeUsers: function () {
-
+        /**
+        * Update the role for a user in a given game
+        *
+        */
+        updateUser: function (params, options) {
+            throw new Error('not implemented');
         },
 
-        getCurrentRun: function () {
+        /**
+        * Remove a user from a given game
+        *
+        */
+        removeUser: function (params, options) {
+            options = options || {};
 
+            var getOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath('game')  + serviceOptions.filter + '/users/' + params.userId }
+            );
+
+            return http.delete(null, getOptions);
         },
 
-        getAllRuns: function () {
+        /**
+        * Get's (or creates) the current run for the given game
+        *
+        */
+        getCurrentRun: function (options) {
+            options = options || {};
 
+            var getOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath('game')  + serviceOptions.filter + '/run' }
+            );
+
+            return http.post(null, getOptions);
         },
 
+        /**
+        * Delete's the current run from the game
+        *
+        */
         deleteRun: function () {
-
+            throw new Error('not implemented');
         }
     };
 
