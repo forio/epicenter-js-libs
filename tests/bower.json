@@ -5,7 +5,8 @@
     "chai": "~1.8.0",
     "mocha": "~1.20.0",
     "sinon": "http://sinonjs.org/releases/sinon-1.9.0.js",
-    "sinon-chai": "~2.5.0"
+    "sinon-chai": "~2.5.0",
+    "underscore": "~1.7.0"
   },
   "devDependencies": {}
 }

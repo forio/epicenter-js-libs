@@ -14,16 +14,10 @@
 'use strict';
 
 var ConfigService = require('./configuration-service');
-var StorageFactory = require('../store/store-factory');
 var TransportFactory = require('../transport/http-transport-factory');
 
 module.exports = function (config) {
     var defaults = {
-        /**
-         * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
-         */
-        store: { synchronous: true },
-
         /**
          * Email or username to use for logging in. Defaults to empty string.
          * @type {String}
@@ -49,23 +43,14 @@ module.exports = function (config) {
         transport: {}
     };
     var serviceOptions = $.extend({}, defaults, config);
-
     var urlConfig = new ConfigService(serviceOptions).get('server');
-    if (!serviceOptions.account) {
-        serviceOptions.account = urlConfig.accountPath;
-    }
 
-    var httpOptions = $.extend(true, {}, serviceOptions.transport, {
+    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath('authentication')
     });
-    var http = new TransportFactory(httpOptions);
-
-    var EPI_COOKIE_KEY = 'epicenter.project.token';
-    var store = new StorageFactory(serviceOptions.store);
-    var token = store.get(EPI_COOKIE_KEY) || '';
+    var http = new TransportFactory(transportOptions);
 
     var publicAPI = {
-        store: store,
 
         /**
          * Logs user in. If no username or password was provided in the initial configuration options, they are required here.
@@ -94,18 +79,6 @@ module.exports = function (config) {
                 postParams.account = httpOptions.account;
             }
 
-            var oldSuccessFn = httpOptions.success;
-            httpOptions.success = function (response) {
-                serviceOptions.password = httpOptions.password;
-                serviceOptions.userName = httpOptions.userName;
-
-                //jshint camelcase: false
-                //jscs:disable
-                token = response.access_token;
-                store.set(EPI_COOKIE_KEY, token);
-
-                oldSuccessFn.apply(this, arguments);
-            };
             return http.post(postParams, httpOptions);
         },
 
@@ -120,29 +93,15 @@ module.exports = function (config) {
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         logout: function (options) {
-            return store.remove(EPI_COOKIE_KEY, options);
-        },
-
-        /**
-         * Returns existing user access token if already logged in, or creates a new one otherwise. (See [more background on access tokens](../../../project_access/)).
-         *
-         * **Example**
-         *
-         *      auth.getToken().then(function (token) { console.log('my token is', token); });
-         *
-         * **Parameters**
-         * @param {Object} `options` (Optional) Overrides for configuration options.
-         */
-        getToken: function (options) {
-            var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
-
-            var $d = $.Deferred();
-            if (token) {
-                $d.resolve(token);
-            } else {
-                this.login(httpOptions).then($d.resolve);
+            var httpOptions = $.extend(true, serviceOptions, transportOptions, options);
+            if (!httpOptions.token) {
+                throw new Error('No token was specified.');
             }
-            return $d.promise();
+            var slash = httpOptions.url.slice(-1) === '/' ? '' : '/';
+            httpOptions.url = httpOptions.url + slash + httpOptions.token;
+            var deleteParams = {};
+
+            return http.delete(deleteParams, httpOptions);
         }
     };
 

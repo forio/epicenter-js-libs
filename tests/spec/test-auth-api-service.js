@@ -74,65 +74,9 @@
                 var req = server.requests.pop();
                 req.requestBody.should.equal(JSON.stringify({ userName: 'john', password: 'y' }));
             });
-
-            it('should set a cookie after being logged in', function () {
-                //need to set domain to blank for testing locally
-                var as = new AuthService({ userName: 'john', password: 'y', store: { domain: '' } });
-                as.login();
-
-                server.respond();
-
-                var store = as.store;
-                var storeToken = store.get('epicenter.project.token');
-                storeToken.should.equal(token);
-            });
-
-
         });
         describe('#logout', function () {
-            it('should remove cookies', function () {
-                //need to set domain to blank for testing locally
-                var as = new AuthService({ userName: 'john', password: 'y', store: { domain: '' } });
-                as.login();
-
-                server.respond();
-
-                var store = as.store;
-                var storeToken = store.get('epicenter.project.token');
-                storeToken.should.equal(token);
-
-                as.logout();
-                should.not.exist(store.get('epicenter.project.token'));
-            });
-        });
-
-        describe('#getToken', function () {
-            it('should call the server if not called before', function () {
-                server.requests = [];
-
-                var as = new AuthService({ userName: 'john', password: 'y', store: { domain: '' } });
-                as.getToken();
-
-                server.respond();
-
-                server.requests.length.should.equal(1);
-                var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/authentication/');
-            });
-
-            it('should return existing token if it exists', function () {
-                var as = new AuthService({ userName: 'john', password: 'y', store: { domain: '' } });
-                as.login();
-
-                server.respond();
-
-                server.requests = [];
-                as.getToken();
-                server.requests.length.should.equal(0);
-
-                //TODO: How do I move this to destroy?
-                as.store.destroy();
-            });
+            // TODO: Test we are calling the API
         });
     });
 }());
