@@ -99,6 +99,28 @@
                 expect(body.other).to.be.undefined;
             });
         });
+
+        describe('delete', function () {
+            it('should call DELETE on the API with the correct Game ID', function () {
+                createGameService({ filter: 'gameid1' }).delete();
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+                /\/game\/gameid1/.test(req.url).should.be.true;
+            });
+        });
+
+        describe('list', function () {
+            it('should call GET on the Game API with an account and project', function () {
+                createGameService({ group: '123' }).list();
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+                /\/game\//.test(req.url).should.be.true;
+                /group=123/.test(req.url).should.be.true;
+                /account=forio/.test(req.url).should.be.true;
+                /project=js-libs/.test(req.url).should.be.true;
+            });
+        });
     });
 
 })();

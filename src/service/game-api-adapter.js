@@ -28,6 +28,8 @@ module.exports = function (config) {
 
        account: '',
 
+       group: '',
+
 //        apiKey: '',
 
 //        domain: 'forio.com',
@@ -117,15 +119,34 @@ module.exports = function (config) {
             return http.patch(params, updateOptions);
         },
 
-        delete: function () {
+        delete: function (options) {
+            options = options || {};
+            setFilterOrThrowError(options);
 
+            var deleteOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath('game') + serviceOptions.filter }
+            );
+
+            return http.delete(null, deleteOptions);
         },
 
-        list: function () {
+        list: function (options) {
+            options = options || {};
 
+            var getOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath('game') }
+            );
+
+            var filters = _pick(getOptions, ['account', 'project', 'group']);
+
+            return http.get(filters, getOptions);
         },
 
-        getGameForUser: function () {
+        getGamesForUser: function () {
 
         },
 
