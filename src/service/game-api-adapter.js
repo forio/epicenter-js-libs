@@ -16,6 +16,7 @@ var StorageFactory = require('../store/store-factory');
 var TransportFactory = require('../transport/http-transport-factory');
 var _pick = require('../util/object-util')._pick;
 
+var apiEndpoint = 'multiplayer/game'
 
 module.exports = function (config) {
     var store = new StorageFactory({ synchronous: true });
@@ -46,7 +47,7 @@ module.exports = function (config) {
     var urlConfig = new ConfigService(serviceOptions).get('server');
 
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath('game')
+        url: urlConfig.getAPIPath(apiEndpoint)
     });
 
     if (serviceOptions.token) {
@@ -71,14 +72,23 @@ module.exports = function (config) {
         /**
         * Create a new Game
         *
-        *   ** Example **
+        * ** Example **
         *   var gm = new F.service.Game({ account: 'account', project: 'project' });
-        *   gm.create({ model: 'model.py' });
+        *   gm.create({ model: 'model.py', group: 'group-name' });
+        *
+        * ** Parameters **
+        * @param {object} `params` Parameters to create the game
+        * @param {string} `params.model` The model file to use to create runs in this game
+        * @param {string} `params.group` the group _name_ to create this game under
+        * @param {string} `params.roles` (Optional) The list of roles for this game
+        * @param {string} `params.opionalRoles` (Optional) The list of optional roles for this game
+        * @param {string} `params.minUsers` (Optional) The minimum number of users for the game
+        * @param {object} `options` Options object to override global options
         *
         */
         create: function (params, options) {
-            var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath('game') });
-            var gameApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers'];
+            var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
+            var gameApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group'];
             if (typeof params === 'string') {
                 // this is just the model name
                 params = { model: params };
@@ -111,7 +121,7 @@ module.exports = function (config) {
             var updateOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath('game') + serviceOptions.filter }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter }
             );
 
             params = _pick(params || {}, whitelist);
@@ -130,7 +140,7 @@ module.exports = function (config) {
             var deleteOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath('game') + serviceOptions.filter }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter }
             );
 
             return http.delete(null, deleteOptions);
@@ -147,7 +157,7 @@ module.exports = function (config) {
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath('game') }
+                { url: urlConfig.getAPIPath(apiEndpoint) }
             );
 
             var filters = _pick(getOptions, ['account', 'project', 'group']);
@@ -158,6 +168,10 @@ module.exports = function (config) {
         /**
         * Get all games that a user belongs to for the given account/project/group
         *
+        * ** Parameters **
+        * @param {object} `params` - the parameters object for the api call
+        * @param {string} `params.userId` - userId of the user you need the game for
+        * @param {object} `options` (optional) - overrides to the global options object
         */
         getGamesForUser: function (params, options) {
             options = options || {};
@@ -165,7 +179,7 @@ module.exports = function (config) {
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath('game') }
+                { url: urlConfig.getAPIPath(apiEndpoint) }
             );
 
             var filters = $.extend(
@@ -188,7 +202,7 @@ module.exports = function (config) {
             var updateOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath('game') + serviceOptions.filter + '/users' }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users' }
             );
 
             return http.post(params, updateOptions);
@@ -209,10 +223,12 @@ module.exports = function (config) {
         removeUser: function (params, options) {
             options = options || {};
 
+            setFilterOrThrowError(options);
+
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath('game')  + serviceOptions.filter + '/users/' + params.userId }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + params.userId }
             );
 
             return http.delete(null, getOptions);
@@ -225,10 +241,12 @@ module.exports = function (config) {
         getCurrentRun: function (options) {
             options = options || {};
 
+            setFilterOrThrowError(options);
+
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath('game')  + serviceOptions.filter + '/run' }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/run' }
             );
 
             return http.post(null, getOptions);

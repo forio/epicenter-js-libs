@@ -27,7 +27,7 @@
 
         describe('create', function () {
             it('POST to game API with the correct parameters (account, project and model)', function () {
-                createGameService().create({ model: 'model_file' });
+                createGameService().create({ model: 'model_file', group: 'group-name' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -35,6 +35,7 @@
                 body.model.should.equal('model_file');
                 body.account.should.equal('forio');
                 body.project.should.equal('js-libs');
+                body.group.should.equal('group-name');
             });
 
             it('should pass the optional parameters to the API', function () {
@@ -152,6 +153,14 @@
                 body.should.be.length(1);
                 body.should.be.eql(users);
             });
+
+            it('should take the gameId from the service options or the override options', function () {
+                createGameService().addUsers([{ userId: '1', role: '1' }], { filter: 'gameid1' });
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+                req.url.should.match(/\/game\/gameid1\/users/);
+            });
         });
 
         describe('removeUser', function () {
@@ -160,7 +169,15 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                /\/game\/gameid1\/users\/123/.test(req.url).should.be.true;
+                req.url.should.match(/\/game\/gameid1\/users\/123/);
+            });
+
+            it('should take the gameId from the service options or the override options', function () {
+                createGameService().removeUser({ userId: '123' }, { filter: 'gameid1' });
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+                req.url.should.match(/\/game\/gameid1\/users/);
             });
         });
 
@@ -170,7 +187,15 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/game\/gameid1\/run/.test(req.url).should.be.true;
+                req.url.should.match(/\/game\/gameid1\/run/);
+            });
+
+            it('should take the gameId from the service options or the override options', function () {
+                createGameService().getCurrentRun({ filter: 'gameid1' });
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+                req.url.should.match(/\/game\/gameid1\/run/);
             });
         });
     });
