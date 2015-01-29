@@ -53,6 +53,17 @@ function AuthManager(options) {
     token = store.get(EPI_COOKIE_KEY) || '';
 }
 
+var _findUserInGroup = function (members, id) {
+    for (var j = 0; j<members.length; j++) {
+        if (members[j].userId === id) {
+            return members[j];
+        }
+    }
+
+
+    return null;
+};
+
 AuthManager.prototype = {
     login: function (options) {
         var _this = this;
@@ -121,7 +132,16 @@ AuthManager.prototype = {
                 if (group) {
                     var groupSelection = group.groupId;
                     data.groupSelection[adapterOptions.project] = groupSelection;
-                    setSessionCookie(data);
+                    var sessionCookie = {
+                        'auth_token': token,
+                        'account': adapterOptions.account,
+                        'project': adapterOptions.project,
+                        'userId': userInfo.user_id,
+                        'groupId': group.groupId,
+                        'groupName': group.name,
+                        'isFac': _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator'
+                    };
+                    setSessionCookie(sessionCookie);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
