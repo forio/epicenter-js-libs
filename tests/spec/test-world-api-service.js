@@ -1,9 +1,7 @@
 (function () {
     'use strict';
 
-    var GameService = F.service.Game;
-
-    describe('Game API Service', function () {
+    describe('World API Service', function () {
         var server;
         before(function () {
             server = sinon.fakeServer.create();
@@ -18,16 +16,16 @@
             server.restore();
         });
 
-        function createGameService(options) {
-            return new GameService(_.extend({
+        function createWorldAdapter(options) {
+            return new F.service.World(_.extend({
                 account: 'forio',
                 project: 'js-libs'
             }, options));
         }
 
         describe('create', function () {
-            it('POST to game API with the correct parameters (account, project and model)', function () {
-                createGameService().create({ model: 'model_file', group: 'group-name' });
+            it('POST to world API with the correct parameters (account, project and model)', function () {
+                createWorldAdapter().create({ model: 'model_file', group: 'group-name' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -40,7 +38,7 @@
 
             it('should pass the optional parameters to the API', function () {
                 var params = { model: 'model_file', roles: ['role1', 'role2'], optionalRoles: ['observer'], minUsers: 2 };
-                createGameService().create(params);
+                createWorldAdapter().create(params);
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -52,15 +50,15 @@
             });
 
             it('should accept a string as the model parameter', function () {
-                createGameService().create('model_file');
+                createWorldAdapter().create('model_file');
 
                 var req = server.requests.pop();
                 var body = JSON.parse(req.requestBody);
                 body.model.should.equal('model_file');
             });
 
-            it('should pass the new game reponse to the callback', function (done) {
-                createGameService().create({ model: 'model_file' })
+            it('should pass the new world reponse to the callback', function (done) {
+                createWorldAdapter().create({ model: 'model_file' })
                     .then(function (resp) {
                         resp.newGame.should.equal(true);
                         done();
@@ -69,8 +67,8 @@
         });
 
         describe('update', function () {
-            it('should call the PATCH API with the correct Game Id', function () {
-                var gs = createGameService({ filter: 'abc1' });
+            it('should call the PATCH API with the correct World Id', function () {
+                var gs = createWorldAdapter({ filter: 'abc1' });
                 gs.update({ roles: ['role1'] });
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('PATCH');
@@ -78,14 +76,14 @@
             });
 
             it('should trow if no filter is specified', function () {
-                var gs = createGameService();
+                var gs = createWorldAdapter();
                 var ret = function () { gs.update({ roles: ['a'] }); };
 
                 ret.should.throw(Error);
             });
 
             it('should only pass whitelisted parameters', function () {
-                var gs = createGameService({ filter: 'abc1' });
+                var gs = createWorldAdapter({ filter: 'abc1' });
                 var params = { other: 'other', roles: ['role1'], optionalRoles: ['role2'], minUsers: 4 };
 
                 gs.update(params);
@@ -102,8 +100,8 @@
         });
 
         describe('delete', function () {
-            it('should call DELETE on the API with the correct Game ID', function () {
-                createGameService({ filter: 'gameid1' }).delete();
+            it('should call DELETE on the API with the correct World ID', function () {
+                createWorldAdapter({ filter: 'gameid1' }).delete();
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
                 /\/game\/gameid1/.test(req.url).should.be.true;
@@ -111,8 +109,8 @@
         });
 
         describe('list', function () {
-            it('should call GET on the Game API with an account and project', function () {
-                createGameService({ group: '123' }).list();
+            it('should call GET on the world API with an account and project', function () {
+                createWorldAdapter({ group: '123' }).list();
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
@@ -123,10 +121,10 @@
             });
         });
 
-        describe('getGamesForUser', function () {
-            it('should call GET on the GameAPI with the user paramter', function () {
-                createGameService({ group: '123' })
-                    .getGamesForUser({ userId: 'abc999' });
+        describe('getWorldsForUser', function () {
+            it('should call GET on the World API with the user paramter', function () {
+                createWorldAdapter({ group: '123' })
+                    .getWorldsForUser({ userId: 'abc999' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
@@ -139,10 +137,10 @@
         });
 
         describe('addUsers', function () {
-            it('should POST to the Game API users end point with the correct params', function () {
+            it('should POST to the world API users end point with the correct params', function () {
                 var users = [{ userId: '1', role: 'a' }];
 
-                createGameService({ filter: 'gameid1' }).addUsers(users);
+                createWorldAdapter({ filter: 'gameid1' }).addUsers(users);
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -155,7 +153,7 @@
             });
 
             it('should take the gameId from the service options or the override options', function () {
-                createGameService().addUsers([{ userId: '1', role: '1' }], { filter: 'gameid1' });
+                createWorldAdapter().addUsers([{ userId: '1', role: '1' }], { filter: 'gameid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -164,8 +162,8 @@
         });
 
         describe('removeUser', function () {
-            it('should call DELETE on the Game API users end point', function () {
-                createGameService({ filter: 'gameid1' }).removeUser({ userId: '123' });
+            it('should call DELETE on the world API users end point', function () {
+                createWorldAdapter({ filter: 'gameid1' }).removeUser({ userId: '123' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
@@ -173,7 +171,7 @@
             });
 
             it('should take the gameId from the service options or the override options', function () {
-                createGameService().removeUser({ userId: '123' }, { filter: 'gameid1' });
+                createWorldAdapter().removeUser({ userId: '123' }, { filter: 'gameid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
@@ -182,8 +180,8 @@
         });
 
         describe('getCurrentRun', function () {
-            it('should POST to the Game APIs run end point', function () {
-                createGameService({ filter: 'gameid1' }).getCurrentRun();
+            it('should POST to the world APIs run end point', function () {
+                createWorldAdapter({ filter: 'gameid1' }).getCurrentRun();
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -191,7 +189,7 @@
             });
 
             it('should take the gameId from the service options or the override options', function () {
-                createGameService().getCurrentRun({ filter: 'gameid1' });
+                createWorldAdapter().getCurrentRun({ filter: 'gameid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');

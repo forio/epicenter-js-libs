@@ -1,9 +1,9 @@
 /**
- * ##Game API Adapter
+ * ##World API Adapter
  *
- * The Game API Adapter allows you to create, access, and manipulate multiplayer games its users and runs
+ * The World API Adapter allows you to create, access, and manipulate multiplayer worlds its users and runs
  *
- * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Game API Service defaults.
+ * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the World API Service defaults.
  *
  *
  */
@@ -16,7 +16,7 @@ var StorageFactory = require('../store/store-factory');
 var TransportFactory = require('../transport/http-transport-factory');
 var _pick = require('../util/object-util')._pick;
 
-var apiEndpoint = 'multiplayer/game'
+var apiEndpoint = 'multiplayer/game';
 
 module.exports = function (config) {
     var store = new StorageFactory({ synchronous: true });
@@ -70,31 +70,31 @@ module.exports = function (config) {
     var publicAPI = {
 
         /**
-        * Create a new Game
+        * Create a new World
         *
         * ** Example **
-        *   var gm = new F.service.Game({ account: 'account', project: 'project' });
+        *   var gm = new F.service.World({ account: 'account', project: 'project' });
         *   gm.create({ model: 'model.py', group: 'group-name' });
         *
         * ** Parameters **
-        * @param {object} `params` Parameters to create the game
-        * @param {string} `params.model` The model file to use to create runs in this game
-        * @param {string} `params.group` the group _name_ to create this game under
-        * @param {string} `params.roles` (Optional) The list of roles for this game
-        * @param {string} `params.opionalRoles` (Optional) The list of optional roles for this game
-        * @param {string} `params.minUsers` (Optional) The minimum number of users for the game
+        * @param {object} `params` Parameters to create the world
+        * @param {string} `params.model` The model file to use to create runs in this world
+        * @param {string} `params.group` the group _name_ to create this world under
+        * @param {string} `params.roles` (Optional) The list of roles for this world
+        * @param {string} `params.opionalRoles` (Optional) The list of optional roles for this world
+        * @param {string} `params.minUsers` (Optional) The minimum number of users for the world
         * @param {object} `options` Options object to override global options
         *
         */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
-            var gameApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group'];
+            var worldApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group'];
             if (typeof params === 'string') {
                 // this is just the model name
                 params = { model: params };
             } else {
                 // whitelist the fields that we actually can send to the api
-                params = _pick(params, gameApiParams);
+                params = _pick(params, worldApiParams);
             }
 
             // account and project go in the body, not in the url
@@ -110,7 +110,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Update a Game object, for example to add the roles to the game
+        * Update a World object, for example to add the roles to the world
         *
         */
         update: function (params, options) {
@@ -130,7 +130,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Delete an existing game
+        * Delete an existing world
         *
         */
         delete: function (options) {
@@ -147,7 +147,7 @@ module.exports = function (config) {
         },
 
         /**
-        * List all games for a given account/project/group
+        * List all worlds for a given account/project/group
         *
         *
         */
@@ -166,14 +166,14 @@ module.exports = function (config) {
         },
 
         /**
-        * Get all games that a user belongs to for the given account/project/group
+        * Get all worlds that a user belongs to for the given account/project/group
         *
         * ** Parameters **
         * @param {object} `params` - the parameters object for the api call
-        * @param {string} `params.userId` - userId of the user you need the game for
+        * @param {string} `params.userId` - userId of the user you need the world for
         * @param {object} `options` (optional) - overrides to the global options object
         */
-        getGamesForUser: function (params, options) {
+        getWorldsForUser: function (params, options) {
             options = options || {};
 
             var getOptions = $.extend(true, {},
@@ -191,7 +191,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Add a user or list of users to a given game
+        * Add a user or list of users to a given world
         *
         */
         addUsers: function (params, options) {
@@ -209,7 +209,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Update the role for a user in a given game
+        * Update the role for a user in a given world
         *
         */
         updateUser: function (params, options) {
@@ -217,7 +217,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Remove a user from a given game
+        * Remove a user from a given world
         *
         */
         removeUser: function (params, options) {
@@ -235,7 +235,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Get's (or creates) the current run for the given game
+        * Get's (or creates) the current run for the given world
         *
         */
         getCurrentRun: function (options) {
@@ -253,7 +253,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Delete's the current run from the game
+        * Delete's the current run from the world
         *
         */
         deleteRun: function () {

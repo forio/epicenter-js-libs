@@ -4,7 +4,7 @@ var classFrom = require('../../util/inherit');
 
 var IdentityStrategy = require('./identity-strategy');
 var StorageFactory = require('../../store/store-factory');
-var GameApiAdapter = require('../../service/game-api-adapter');
+var WorldApiAdapter = require('../../service/world-api-adapter');
 var keyNames = require('../key-names');
 var _pick = require('../../util/object-util')._pick;
 
@@ -38,20 +38,20 @@ var Strategy = classFrom(IdentityStrategy, {
         var dtd = $.Deferred();
 
         if (!curUserId) {
-            return dtd.reject({ statusCode: 400, error: 'We need an authenticated user to join a multiplayer game. (ERR: no userId in session)' }, session).promise();
+            return dtd.reject({ statusCode: 400, error: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
         }
 
-        var game = new GameApiAdapter(opt);
+        var worldApi = new WorldApiAdapter(opt);
 
-        var restoreInitRun = function (games, msg, xhr) {
-            if (!games || !games.length) {
-                return dtd.reject({ statusCode: 404, error: 'The user is not in any game.' }, { options: opt, session: session, xhr: xhr });
+        var restoreInitRun = function (worlds, msg, xhr) {
+            if (!worlds || !worlds.length) {
+                return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: opt, session: session, xhr: xhr });
             }
 
-            // assume the most recent game as the 'active' game
-            games.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
+            // assume the most recent world as the 'active' world
+            worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
 
-            return game.getCurrentRun({ filter: games[0].id })
+            return worldApi.getCurrentRun({ filter: worlds[0].id })
                 .then(dtd.resolve)
                 .fail(dtd.reject);
         };
@@ -61,7 +61,7 @@ var Strategy = classFrom(IdentityStrategy, {
             dtd.reject(error, session, opt);
         };
 
-        game.getGamesForUser({ userId: curUserId })
+        worldApi.getWorldsForUser({ userId: curUserId })
             .then(restoreInitRun)
             .fail(serverError);
 
