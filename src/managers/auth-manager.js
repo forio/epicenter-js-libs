@@ -64,7 +64,13 @@ AuthManager.prototype = {
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
-            return new Buffer(encoded, 'base64').toString('ascii');
+            while (encoded.length % 4 !== 0) {
+                encoded += '=';
+            }
+
+            var decode = window.atob ? window.atob : function (encoded) { return new Buffer(encoded, 'base64').toString('ascii'); };
+
+            return JSON.parse(decode(encoded));
         };
 
         var setSessionCookie = function (data) {
@@ -74,7 +80,7 @@ AuthManager.prototype = {
         var handleGroupError = function (message, statusCode, data) {
             // logout the user since it's in an invalid state with no group selected
             _this.logout().then(function () {
-                var error = $.extend(true, {}, data, { message: message, statusCode: statusCode });
+                var error = $.extend(true, {}, data, { statusText: message, status: statusCode });
                 $d.reject(error);
             });
         };

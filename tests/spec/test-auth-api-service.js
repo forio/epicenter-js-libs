@@ -31,11 +31,11 @@
         });
 
         describe('#login', function () {
-            it('should require username and password', function () {
-                var as = new AuthService();
-                var ret = function () { as.login();};
-                ret.should.throw(Error);
-            });
+            // it('should require username and password', function () {
+            //     var as = new AuthService();
+            //     var ret = function () { as.login();};
+            //     ret.should.throw(Error);
+            // });
 
             it('should do a POST', function () {
                 var as = new AuthService();
