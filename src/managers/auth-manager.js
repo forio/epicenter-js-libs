@@ -10,6 +10,7 @@ var AuthAdapter = require('../service/auth-api-service');
 var MemberAdapter = require('../service/member-api-adapter');
 var StorageFactory = require('../store/store-factory');
 var Buffer = require('buffer').Buffer;
+var keyNames = require('./key-names');
 
 var defaults = {
     /**
@@ -19,8 +20,8 @@ var defaults = {
     store: { synchronous: true }
 };
 
-var EPI_COOKIE_KEY = 'epicenter.project.token';
-var EPI_SESSION_KEY = 'epicenter.user.session';
+var EPI_COOKIE_KEY = keyNames.EPI_COOKIE_KEY;
+var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var store;
 var token;
 
