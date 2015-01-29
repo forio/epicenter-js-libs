@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     'use strict';
 
     var groupSelectionTemplate;
@@ -116,4 +116,4 @@
         </div> \
     </form> \
     ';
-})();
+});

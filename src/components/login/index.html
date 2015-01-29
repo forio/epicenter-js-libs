@@ -7,66 +7,15 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <style>
-            /*
-            This styling is provided as an example for the html login control
-            you can style your login form as you like as long as you include
-            the form and controls outlined below
-            */
-            body {
-                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                font-size: 14px;
-            }
-
-            .control {
-                display: block;
-                margin-bottom: 20px;
-            }
-            .control label {
-                display: inline-block;
-                width: 10em;
-                text-align: right;
-                margin-right: 5px;
-            }
-
-            .control input {
-                line-height: 1.6;
-                font-size: 16px;
-                min-width: 15em;
-            }
-
-            .control button,
-            .btn {
-                line-height: 1.6;
-                padding: 5px 20px;
-                font-size: 16px;
-                border-radius: 5px;
-                background-color: #0587CA;
-                box-shadow: 1px 1px 1px rgba(0,0,0,.5);
-                border: none;
-                color: white;
-                outline: none;
-            }
-
-            .control button.disabled,
-            .btn.disabled {
-                opacity: .5;
-            }
-
-
-            .control button:active,
-            .btn:active {
-                box-shadow: inset 1px 2px 2px rgba(0,0,0,.5);
-            }
-        </style>
-
         <!-- login.css provides styling for the group selector pop over dialog -->
         <link rel="stylesheet" href="login.css">
 
-
         <!-- the inserted pop over is compatible with bootstrap classes, so optionally you can include bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
+        <!-- make sure to include jquery, epicenter.js and login.js -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="../../../dist/epicenter.min.js"></script>
+        <script src="login.js"></script>
     </head>
     <body>
         <!--
@@ -100,11 +49,5 @@
                 <div id="login-message" class="alert alert-danger" style="display:none;"></div>
             </div>
         </form>
-
-        <!-- make sure to include jquery, epicenter.js and login.js -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script src="../../../dist/epicenter.min.js"></script>
-        <script src="login.js"></script>
-
     </body>
 </html>
