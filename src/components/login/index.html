@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,7 +8,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <style>
-            /* this styling is provided as an example for the html login control */
+            /*
+            This styling is provided as an example for the html login control
+            you can style your login form as you like as long as you include
+            the form and controls outlined below
+            */
             body {
                 font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 font-size: 14px;
@@ -59,35 +60,49 @@
             }
         </style>
 
+        <!-- login.css provides styling for the group selector pop over dialog -->
         <link rel="stylesheet" href="login.css">
+
+
+        <!-- the inserted pop over is compatible with bootstrap classes, so optionally you can include bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
     </head>
     <body>
-        <form id="login">
+        <!--
+            The main login form. Make sure you make the id="login". Also you can specify a
+            page to redirect to after logging in using the action property.
+
+            Inside the form specify the username and password fields that the javascript
+            will use as credentials to login. Optionally you can specify an account
+            and project to override the url.
+
+            The login action happens on the submit event for the form.
+        -->
+        <form id="login" action="simulation.html">
             <div>
                 <div class="control">
                     <label for="">Username:</label>
-                    <input id="forio-login-username" type="text" value="jaimedp">
+                    <input id="username" type="text">
                 </div>
                 <div class="control">
                     <label for="">Password:</label>
-                    <input id="forio-login-password" type="password" value="jaime123">
+                    <input id="password" type="password">
                 </div>
-                <!-- account and project fields are optional -->
-                <input type="hidden" id="forio-login-account" value="forio-dev">
-                <input type="hidden" id="forio-login-project" value="rdemo">
+                <!-- account and project fields are optional, normally account/project would be extracted form the url -->
+                <input type="hidden" id="account">
+                <input type="hidden" id="project">
 
                 <div class="control">
                     <label for="">&nbsp;</label><button class="btn btn-primary" type="submit">Login</button>
                 </div>
-                <div id="login-message" class="alert alert-danger" style="display:none;">
-                </div>
+                <!-- add a login-message div if you want to display login failed errors (ie. wrong username or password) -->
+                <div id="login-message" class="alert alert-danger" style="display:none;"></div>
             </div>
         </form>
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-
+        <!-- make sure to include jquery, epicenter.js and login.js -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="../../../dist/epicenter.min.js"></script>
         <script src="login.js"></script>
 
