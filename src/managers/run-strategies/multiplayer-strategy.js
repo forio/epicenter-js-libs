@@ -20,6 +20,7 @@ var Strategy = classFrom(IdentityStrategy, {
         this.runService = runService;
         this.options = $.extend(true, {}, defaults, options);
         this._store = new StorageFactory(this.options.store);
+        this._loadRun = this._loadRun.bind(this);
     },
 
     reset: function () {
@@ -35,6 +36,7 @@ var Strategy = classFrom(IdentityStrategy, {
             group: session.groupName
         }, _pick(this.options, ['account', 'project', 'group']));
 
+        var _this = this;
         var dtd = $.Deferred();
 
         if (!curUserId) {
@@ -52,6 +54,9 @@ var Strategy = classFrom(IdentityStrategy, {
             worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
 
             return worldApi.getCurrentRun({ filter: worlds[0].id })
+                .then(function (runId) {
+                    return _this._loadRun(runId);
+                })
                 .then(dtd.resolve)
                 .fail(dtd.reject);
         };
@@ -66,6 +71,10 @@ var Strategy = classFrom(IdentityStrategy, {
             .fail(serverError);
 
         return dtd.promise();
+    },
+
+    _loadRun: function (id, options) {
+        return this.runService.load(id, null, options);
     }
 });
 
