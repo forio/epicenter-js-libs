@@ -58,7 +58,7 @@ module.exports = function (config) {
 
     var http = new TransportFactory(transportOptions);
 
-    var setFilterOrThrowError = function (options) {
+    var setIdFilterOrThrowError = function (options) {
         if (options.filter) {
             serviceOptions.filter = options.filter;
         }
@@ -116,7 +116,7 @@ module.exports = function (config) {
         update: function (params, options) {
             var whitelist = ['roles', 'optionalRoles', 'minUsers'];
             options = options || {};
-            setFilterOrThrowError(options);
+            setIdFilterOrThrowError(options);
 
             var updateOptions = $.extend(true, {},
                 serviceOptions,
@@ -135,7 +135,7 @@ module.exports = function (config) {
         */
         delete: function (options) {
             options = options || {};
-            setFilterOrThrowError(options);
+            setIdFilterOrThrowError(options);
 
             var deleteOptions = $.extend(true, {},
                 serviceOptions,
@@ -173,7 +173,7 @@ module.exports = function (config) {
         * @param {string} `params.userId` - userId of the user you need the world for
         * @param {object} `options` (optional) - overrides to the global options object
         */
-        getWorldsForUser: function (params, options) {
+        getWorldsForUser: function (userId, options) {
             options = options || {};
 
             var getOptions = $.extend(true, {},
@@ -184,7 +184,7 @@ module.exports = function (config) {
 
             var filters = $.extend(
                 _pick(getOptions, ['account', 'project', 'group']),
-                _pick(params, ['userId'])
+                { userId: userId }
             );
 
             return http.get(filters, getOptions);
@@ -194,10 +194,10 @@ module.exports = function (config) {
         * Add a user or list of users to a given world
         *
         */
-        addUsers: function (params, options) {
+        addUsers: function (users, options) {
             options = options || {};
 
-            setFilterOrThrowError(options);
+            setIdFilterOrThrowError(options);
 
             var updateOptions = $.extend(true, {},
                 serviceOptions,
@@ -205,30 +205,22 @@ module.exports = function (config) {
                 { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users' }
             );
 
-            return http.post(params, updateOptions);
-        },
-
-        /**
-        * Update the role for a user in a given world
-        *
-        */
-        updateUser: function (params, options) {
-            throw new Error('not implemented');
+            return http.post(users, updateOptions);
         },
 
         /**
         * Remove a user from a given world
         *
         */
-        removeUser: function (params, options) {
+        removeUser: function (userId, options) {
             options = options || {};
 
-            setFilterOrThrowError(options);
+            setIdFilterOrThrowError(options);
 
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + params.userId }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + userId }
             );
 
             return http.delete(null, getOptions);
@@ -241,7 +233,7 @@ module.exports = function (config) {
         getCurrentRun: function (options) {
             options = options || {};
 
-            setFilterOrThrowError(options);
+            setIdFilterOrThrowError(options);
 
             var getOptions = $.extend(true, {},
                 serviceOptions,

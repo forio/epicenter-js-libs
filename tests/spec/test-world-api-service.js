@@ -124,7 +124,7 @@
         describe('getWorldsForUser', function () {
             it('should call GET on the World API with the user paramter', function () {
                 createWorldAdapter({ group: '123' })
-                    .getWorldsForUser({ userId: 'abc999' });
+                    .getWorldsForUser('abc999');
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
@@ -163,7 +163,7 @@
 
         describe('removeUser', function () {
             it('should call DELETE on the world API users end point', function () {
-                createWorldAdapter({ filter: 'gameid1' }).removeUser({ userId: '123' });
+                createWorldAdapter({ filter: 'gameid1' }).removeUser('123');
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');

@@ -61,7 +61,7 @@ var Strategy = classFrom(IdentityStrategy, {
             dtd.reject(error, session, opt);
         };
 
-        worldApi.getWorldsForUser({ userId: curUserId })
+        worldApi.getWorldsForUser(curUserId)
             .then(restoreInitRun)
             .fail(serverError);
 
