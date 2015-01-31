@@ -230,7 +230,7 @@ module.exports = function (config) {
         * Get's (or creates) the current run for the given world
         *
         */
-        getCurrentRun: function (options) {
+        getCurrentRunId: function (options) {
             options = options || {};
 
             setIdFilterOrThrowError(options);

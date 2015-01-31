@@ -179,9 +179,9 @@
             });
         });
 
-        describe('getCurrentRun', function () {
+        describe('getCurrentRunId', function () {
             it('should POST to the world APIs run end point', function () {
-                createWorldAdapter({ filter: 'gameid1' }).getCurrentRun();
+                createWorldAdapter({ filter: 'gameid1' }).getCurrentRunId();
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -189,7 +189,7 @@
             });
 
             it('should take the gameId from the service options or the override options', function () {
-                createWorldAdapter().getCurrentRun({ filter: 'gameid1' });
+                createWorldAdapter().getCurrentRunId({ filter: 'gameid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');

@@ -53,7 +53,7 @@ var Strategy = classFrom(IdentityStrategy, {
             // assume the most recent world as the 'active' world
             worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
 
-            return worldApi.getCurrentRun({ filter: worlds[0].id })
+            return worldApi.getCurrentRunId({ filter: worlds[0].id })
                 .then(function (runId) {
                     return _this._loadRun(runId);
                 })
