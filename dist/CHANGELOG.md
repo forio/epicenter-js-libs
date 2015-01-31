@@ -1,3 +1,7 @@
+<a name="1.2.0"></a>
+## 1.2.0 (2015-01-30)
+Authentication Manager and components. Docs forthcoming.
+
 <a name="1.1.2"></a>
 ### 1.1.2 (2014-10-17)
 
