@@ -55,6 +55,15 @@ module.exports = function (config) {
                 oldSuccessFn.apply(this, arguments);
             };
         }
+
+        var beforeSend = options.beforeSend;
+        options.beforeSend = function (xhr, settings) {
+            xhr.requestUrl = (connectOptions || {}).url;
+            if (beforeSend) {
+                beforeSend.apply(this, arguments);
+            }
+        };
+
         return $.ajax(options);
     };
 
