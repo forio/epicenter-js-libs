@@ -36,3 +36,4 @@ documentation/generated
 
 # ides
 *.sublime-*
+local/

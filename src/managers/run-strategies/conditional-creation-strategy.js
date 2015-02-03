@@ -8,9 +8,10 @@ var UrlService = require('../../service/url-config-service');
 
 var sessionStore = new SessionStore({});
 var urlService = new UrlService();
+var keyNames = require('../key-names');
 
 var defaults = {
-    sessionKey: 'epicenter-scenario'
+    sessionKey: keyNames.STRATEGY_SESSION_KEY
 };
 
 function setRunInSession(sessionKey, run) {

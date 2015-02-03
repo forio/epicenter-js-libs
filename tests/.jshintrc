@@ -28,6 +28,7 @@
         "$",
         "_",
         "should",
+        "expect",
         "sinon",
         "describe",         // Used by mocha
         "it",               // Used by mocha
