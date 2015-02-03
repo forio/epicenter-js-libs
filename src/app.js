@@ -25,6 +25,7 @@ F.service.Variables = require('./service/variables-api-service');
 F.service.Data = require('./service/data-api-service');
 F.service.Auth = require('./service/auth-api-service');
 F.service.World = require('./service/world-api-adapter');
+F.service.User = require('./service/user-api-adapter');
 
 F.store.Cookie = require('./store/cookie-store');
 F.factory.Store = require('./store/store-factory');
