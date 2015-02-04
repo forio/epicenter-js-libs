@@ -64,7 +64,20 @@ module.exports = function (config) {
                 return res;
             };
 
-            var getFilters = qutil.toQueryFormat($.extend(true, {}, _pick(getOptions, 'account'), _pick(filter, 'id'), toQFilter(filter)));
+            var toIdFilters = function (id) {
+                if (!id) {
+                    return '';
+                }
+
+                id = $.isArray(id) ? id : [id];
+                return 'id=' + id.join('&id=');
+            };
+
+            var getFilters = [
+                'account=' + getOptions.account,
+                toIdFilters(filter.id),
+                qutil.toQueryFormat(toQFilter(filter))
+            ].join('&');
 
             return http.get(getFilters, getOptions);
         },

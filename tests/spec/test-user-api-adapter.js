@@ -47,6 +47,13 @@
             req.url.should.match(/id=123/);
         });
 
+        it('should GET with multiple ids if filter.id is an array of ids', function () {
+            createUserAdapter().get({ id: ['123', '345'] });
+
+            var req = server.requests.pop();
+            req.url.should.match(/id=123&id=345/);
+        });
+
         it('should GET with q=<string> if username is passed in filters', function () {
             createUserAdapter().get({ userName: 'u12' });
 
