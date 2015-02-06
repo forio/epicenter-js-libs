@@ -60,7 +60,7 @@ module.exports = function (grunt) {
     var BASE_COMETD_PATH = 'vendor/cometd-jquery/cometd-javascript/common/src/main/js/org/cometd/';
     var COMETD_PLUGINS_PATH = 'vendor/cometd-jquery/cometd-javascript/jquery/src/main/webapp/jquer';
     grunt.config.set('uglify', {
-        production: {
+        cometd: {
             options: {
                 sourceMap: false,
                 mangle: true,
@@ -205,7 +205,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['browserify2:edge', 'mocha']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
-    grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
+    grunt.registerTask('production', ['uglify:cometd', 'validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
 
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
@@ -215,5 +215,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['browserify2:edge', 'mocha:test', 'watch']);
+    grunt.registerTask('default', ['uglify:cometd', 'browserify2:edge', 'mocha:test', 'watch']);
 };
