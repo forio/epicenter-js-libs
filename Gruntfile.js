@@ -58,7 +58,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     var BASE_COMETD_PATH = 'vendor/cometd-jquery/cometd-javascript/common/src/main/js/org/cometd/';
-    var COMETD_PLUGINS_PATH = 'vendor/cometd-jquery/cometd-javascript/jquery/src/main/webapp/jquer';
+    var COMETD_PLUGINS_PATH = 'vendor/cometd-jquery/cometd-javascript/jquery/src/main/webapp/jquery';
     grunt.config.set('uglify', {
         cometd: {
             options: {
