@@ -1,4 +1,10 @@
-var runChannel = ChannelManager.getChannel(rs);
+var cm = new ChannelManager({
+   url: ""
+});
+cm.on('connect', function (){ });
+cm.on('disconnect', function (){ });
+
+var runChannel = cm.getChannel(rs);
 runChannel.subscribe("completed", fn);
 
 runChannel.subscribe("variables/price", fn);
@@ -16,24 +22,24 @@ runChannel.publish({completed: true}); //alias for rs.save()
 runChannel.publish("variables/price", 10); //alias for rs.variables().save()
 runChannel.publish("operations/add", [10,10]); //alias for rs.do();
 
-var variablesChannel = ChannelManager.getChannel(rs.variables())
+var variablesChannel = cm.getChannel(rs.variables())
 variablesChannel.subscribe("price");
 variablesChannel.publish("price", 20); //alias for rs.variables.save();
 
-var invoicesChannel = ChannelManager.getChannel('invoices');
+var invoicesChannel = cm.getChannel('invoices');
 invoicesChannel.publish({msg: "Hey all, I just published an invoice", data: {invoiceID: 1}});
 invoicesChannel.subscribe(function (evt, data) {
     console.log(data.originator, data.payload);
 });
 
 
-var worldChannel = ChannelManager.getWorldChannel();
+var worldChannel = cm.getWorldChannel();
 worldChannel.subscribe("randomTopic")
 worldChannel.subscribe("run/*")
 worldChannel.subscribe("run/variables/*")
 worldChannel.subscribe("run/operations/*")
 
-var groupChannel = ChannelManager.getGroupChannel("randomTopic");
+var groupChannel = cm.getGroupChannel("randomTopic");
 
-ChannelManager.getChannel("randomTopic", {scope: "world"});
-ChannelManager.getChannel("randomTopic", {scope: "group"});
+cm.getChannel("randomTopic", {scope: "world"});
+cm.getChannel("randomTopic", {scope: "group"});
