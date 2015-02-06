@@ -40,3 +40,5 @@ local/
 
 dist/epicenter-edge.js
 dist/epicenter-multiplayer-dependencies.js
+dist/epicenter-multiplayer-dependencies.js.map
+dist/epicenter-multiplayer-dependencies.min.js
