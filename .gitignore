@@ -37,3 +37,5 @@ documentation/generated
 # ides
 *.sublime-*
 local/
+
+dist/epicenter-edge.js
