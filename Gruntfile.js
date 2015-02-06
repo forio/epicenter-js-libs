@@ -1,11 +1,12 @@
 module.exports = function (grunt) {
     'use strict';
+    var istanbul = require('istanbul');
+    var fs = require('fs');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json')
     });
 
-    grunt.loadNpmTasks('grunt-mocha');
     grunt.loadNpmTasks('grunt-markdox');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -136,16 +137,21 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-mocha-phantom-istanbul');
     grunt.config.set('mocha', {
         test: {
             src: ['tests/index.html'],
             options: {
                 run: true,
                 growlOnSuccess: false,
-                reporter: 'Min'
+                reporter: 'Min',
+                coverage: {
+                    coverageFile: 'coverage.json'
+                }
             }
         }
     });
+
 
     grunt.loadNpmTasks('grunt-bump');
     grunt.config.set('bump', {
@@ -171,8 +177,30 @@ module.exports = function (grunt) {
             files:  ['./dist/*.js']
         }
     });
+    grunt.registerTask('instrument',
+        'using isntanbul to instrument sourcefile',
+            function () {
+                var instrumenter = new istanbul.Instrumenter();
+                var file = fs.readFileSync( './dist/epicenter-edge.js', 'utf8');
+                instrumenter.instrument(file, './dist/epicenter-edge.js',
+                    function (err, code) {
+                        fs.writeFileSync('./dist/epicenter-edge-instrument.js', code);
+                    });
+    });
 
-    grunt.registerTask('test', ['browserify2:edge', 'mocha']);
+    grunt.registerTask('coverage-report',
+        'uses istanbul to generate new report',
+        function () {
+            var collector = new istanbul.Collector();
+            var reporter = new istanbul.Reporter(false, 'coverage');
+            collector.add(JSON.parse(fs.readFileSync('coverage.json', 'utf8')));
+            reporter.add('html');
+            reporter.write(collector, true, function () {
+                //empty callback so it doesnt error out
+            });
+    });
+
+    grunt.registerTask('test', ['browserify2:edge', 'instrument', 'mocha', 'coverage-report']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);

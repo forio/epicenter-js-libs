@@ -36,3 +36,9 @@ documentation/generated
 
 # ides
 *.sublime-*
+
+#instanbul related
+coverage/
+coverage.json
+.DS_Store
+dist/epicenter-edge-instrument.js
