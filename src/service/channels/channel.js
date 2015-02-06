@@ -10,6 +10,9 @@ var Channel = function (options) {
     this.channelOptions = $.extend(true, {}, defaults, options);
 };
 
+var makeName = function (channelName, topic) {
+    return (channelName + '/' + topic).replace(/\/\//g,'');
+};
 
 /**
  * Subscribe to changes on a topic.
@@ -36,7 +39,7 @@ var Channel = function (options) {
  *
  */
 Channel.prototype.subscribe = function (topic, callback, context, options) {
-    topic = this.channelOptions.name + '/' + topic;
+    topic = makeName(this.channelOptions.name, topic);
     this.channelOptions.transport.subscribe(topic,callback);
 };
 
@@ -50,7 +53,7 @@ Channel.prototype.subscribe = function (topic, callback, context, options) {
  * publish('run/variables', {price: 50});
  */
 Channel.prototype.publish = function (topic, data) {
-    topic = this.channelOptions.name + '/' + topic;
+    topic = makeName(this.channelOptions.name, topic);
     this.channelOptions.transport.publish(topic, data);
 };
 
