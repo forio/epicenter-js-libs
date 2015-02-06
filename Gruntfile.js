@@ -9,6 +9,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-markdox');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
 
     var UglifyJS = require('uglify-js');
@@ -53,6 +54,19 @@ module.exports = function (grunt) {
                 banner = grunt.template.process(banner, { data: grunt.file.readJSON('package.json') });
                 return banner + code;
             }
+        },
+
+        components: {
+            options: {
+                entry: './src/components/assignment/js/npm.js',
+                compile: './dist/components/assignment/assignment.js',
+                expose: {
+                    'inherit': './src/util/inherit',
+                    'base-view': './src/components/lib/base-view',
+                    'base-model': './src/components/lib/base-model',
+                    'base-collection': './src/components/lib/base-collection',
+                }
+            }
         }
     });
 
@@ -70,10 +84,26 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.config.set('copy', {
+        components: {
+            files: [{
+                cwd: './src/components',
+                expand: true,
+                src: ['**/*', '!**/*.js'],
+                dest: './dist/components'
+            }]
+        }
+    });
+
     grunt.config.set('watch', {
         source: {
             files: ['src/**/*.js'],
-            tasks: ['browserify2:edge', 'mocha:test']
+            tasks: ['browserify2:edge', 'browserify2:components', 'mocha:test']
+        },
+        components: {
+            files: ['src/components/**/*', '!src/components/**/*.js'],
+            tasks: ['copy:components']
         },
         tests: {
             files: ['tests/spec/**/*.js'],
@@ -175,7 +205,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['browserify2:edge', 'mocha']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
-    grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
+    grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'browserify2:components', 'copy:components', 'documentation']);
 
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
@@ -185,5 +215,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['browserify2:edge', 'mocha:test', 'watch']);
+    grunt.registerTask('default', ['browserify2:edge', 'browserify2:components', 'copy:components', 'mocha:test', 'watch']);
 };
