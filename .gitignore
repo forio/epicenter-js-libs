@@ -39,3 +39,4 @@ documentation/generated
 local/
 
 dist/epicenter-edge.js
+dist/epicenter-multiplayer-dependencies.js
