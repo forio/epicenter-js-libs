@@ -43,13 +43,12 @@ var ChannelManager = function (options) {
         }
     }.bind(this));
 
-    cometd.addListener('/meta/disconnect', function () {
-        console.log('/meta');
-    });
+    cometd.addListener('/meta/disconnect', connectionBroken);
 
     cometd.addListener('/meta/handshake', function (message) {
-        console.log('shake it', message);
         if (message.successful) {
+            //http://docs.cometd.org/reference/javascript_subscribe.html#javascript_subscribe_meta_channels
+            //dynamic subscriptions are cleared (like any other subscription) and the application needs to figure out which dynamic subscription must be performed again
             cometd.batch(function () {
                 $(me.currentSubscriptions).each(function (index, subs) {
                     cometd.resubscribe(subs);
@@ -57,9 +56,20 @@ var ChannelManager = function (options) {
             });
         }
     });
-    // cometd.addListener('/meta/subscribe', function (message) {
-    //     console.log('/meta/subscribe', message);
-    // });
+
+    //Other interesting events for reference
+    cometd.addListener('/meta/subscribe', function (message) {
+        $(me).trigger('subscribe', message);
+    });
+    cometd.addListener('/meta/unsubscribe', function (message) {
+        $(me).trigger('unsubscribe', message);
+    });
+    cometd.addListener('/meta/publish', function (message) {
+        $(me).trigger('publish', message);
+    });
+    cometd.addListener('/meta/unsuccessful', function (message) {
+        $(me).trigger('error', message);
+    });
 
     cometd.handshake();
 
