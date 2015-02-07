@@ -11,7 +11,7 @@ var ChannelManager = function (options) {
     var defaults = {
         url: 'https://api.forio.com/channel/subscribe/',
         logLevel: 'info',
-        websocketEnabled: false
+        websocketEnabled: false //needs to be turned on on the server
     };
     var defaultCometOptions = $.extend(true, {}, options, defaults);
 
@@ -32,19 +32,19 @@ var ChannelManager = function (options) {
      * Use to listen for error messages from server. E.g: Network error
      */
     cometd.addListener('/meta/connect', function (message) {
-        var isConnected = this.isConnected;
-        var wasConnected = isConnected;
-        isConnected = (message.successful === true);
-        if (!wasConnected && isConnected) { //Connecting for the first time
+        var wasConnected = this.isConnected;
+        this.isConnected = (message.successful === true);
+        if (!wasConnected && this.isConnected) { //Connecting for the first time
             connectionSucceeded(message);
-        } else if (wasConnected && !isConnected) {
+        } else if (wasConnected && !this.isConnected) { //Only throw disconnected message fro the first disconnect, not once per try
             connectionBroken(message);
         }
+    }.bind(this));
+
+    cometd.addListener('/meta/disconnect', function () {
+        console.log('/meta');
     });
 
-    /* Service channels are for request-response type commn.
-     *
-     */
     cometd.handshake();
 
     this.cometd = cometd;
@@ -55,6 +55,17 @@ ChannelManager.prototype.getChannel = function (options) {
         transport: this.cometd
     };
     return new Channel($.extend(true, {}, defaults, options));
+};
+
+//Make this a event source
+ChannelManager.prototype.on = function () {
+    $(this).on.apply($(this), arguments);
+};
+ChannelManager.prototype.off = function () {
+    $(this).off.apply($(this), arguments);
+};
+ChannelManager.prototype.trigger = function () {
+    $(this).trigger.apply($(this), arguments);
 };
 
 module.exports = ChannelManager;

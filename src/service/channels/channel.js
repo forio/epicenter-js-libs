@@ -40,7 +40,7 @@ var makeName = function (channelName, topic) {
  */
 Channel.prototype.subscribe = function (topic, callback, context, options) {
     topic = makeName(this.channelOptions.name, topic);
-    this.channelOptions.transport.subscribe(topic,callback);
+    this.channelOptions.transport.subscribe(topic, callback);
 };
 
 /**
