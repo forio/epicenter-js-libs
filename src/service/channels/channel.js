@@ -57,4 +57,13 @@ Channel.prototype.publish = function (topic, data) {
     return this.channelOptions.transport.publish(topic, data);
 };
 
+/**
+ * Unsubscribe from changes
+ * @param  {String} token
+ */
+Channel.prototype.unsubscribe = function (token) {
+    this.channelOptions.transport.unsubscribe(token);
+    return token;
+};
+
 module.exports = Channel;

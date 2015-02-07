@@ -14,7 +14,7 @@ runChannel.subscribe("operations/add", fn);
 runChannel.subscribe("operations/*", fn);
 
 runChannel.subscribe("*", fn); //updates on top-level items
-runChannel.subscribe("*/*", fn); //updates on all items
+runChannel.subscribe("**", fn); //updates on all items
 
 runChannel.subscribe(fn);
 

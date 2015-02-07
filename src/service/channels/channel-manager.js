@@ -92,12 +92,12 @@ ChannelManager.prototype.getChannel = function (options) {
     }.bind(this);
 
 
-    var unsubs = channel.subscribe;
+    var unsubs = channel.unsubscribe;
     channel.unsubscribe = function () {
         var removed = unsubs.apply(channel, arguments);
-        for (var i = 0; i < subs.length; i++) {
-            if (subs[i].id === removed.id) {
-                subs[i].splice(i, 1);
+        for (var i = 0; i < this.currentSubscriptions.length; i++) {
+            if (this.currentSubscriptions[i].id === removed.id) {
+                this.currentSubscriptions.splice(i, 1);
             }
         }
         return removed;
