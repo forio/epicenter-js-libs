@@ -40,7 +40,7 @@ var makeName = function (channelName, topic) {
  */
 Channel.prototype.subscribe = function (topic, callback, context, options) {
     topic = makeName(this.channelOptions.name, topic);
-    this.channelOptions.transport.subscribe(topic, callback);
+    return this.channelOptions.transport.subscribe(topic, callback);
 };
 
 /**
@@ -54,7 +54,7 @@ Channel.prototype.subscribe = function (topic, callback, context, options) {
  */
 Channel.prototype.publish = function (topic, data) {
     topic = makeName(this.channelOptions.name, topic);
-    this.channelOptions.transport.publish(topic, data);
+    return this.channelOptions.transport.publish(topic, data);
 };
 
 module.exports = Channel;

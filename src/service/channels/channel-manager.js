@@ -18,6 +18,7 @@ var ChannelManager = function (options) {
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
 
     this.isConnected = false;
+    this.currentSubscriptions = [];
 
     var connectionBroken = function (message) {
         $(this).trigger('disconnect', message);
@@ -25,6 +26,7 @@ var ChannelManager = function (options) {
     var connectionSucceeded = function (message) {
         $(this).trigger('connect', message);
     };
+    var me = this;
 
     cometd.configure(defaultCometOptions);
 
@@ -45,6 +47,20 @@ var ChannelManager = function (options) {
         console.log('/meta');
     });
 
+    cometd.addListener('/meta/handshake', function (message) {
+        console.log('shake it', message);
+        if (message.successful) {
+            cometd.batch(function () {
+                $(me.currentSubscriptions).each(function (index, subs) {
+                    cometd.resubscribe(subs);
+                });
+            });
+        }
+    });
+    // cometd.addListener('/meta/subscribe', function (message) {
+    //     console.log('/meta/subscribe', message);
+    // });
+
     cometd.handshake();
 
     this.cometd = cometd;
@@ -54,7 +70,30 @@ ChannelManager.prototype.getChannel = function (options) {
     var defaults = {
         transport: this.cometd
     };
-    return new Channel($.extend(true, {}, defaults, options));
+    var channel = new Channel($.extend(true, {}, defaults, options));
+
+
+    //Wrap subs and unsubs so we can use it to re-attach handlers after being disconnected
+    var subs = channel.subscribe;
+    channel.subscribe = function () {
+        var subid = subs.apply(channel, arguments);
+        this.currentSubscriptions.push(subid);
+        return subid;
+    }.bind(this);
+
+
+    var unsubs = channel.subscribe;
+    channel.unsubscribe = function () {
+        var removed = unsubs.apply(channel, arguments);
+        for (var i = 0; i < subs.length; i++) {
+            if (subs[i].id === removed.id) {
+                subs[i].splice(i, 1);
+            }
+        }
+        return removed;
+    }.bind(this);
+
+    return channel;
 };
 
 //Make this a event source
