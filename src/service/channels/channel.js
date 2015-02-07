@@ -39,8 +39,17 @@ var makeName = function (channelName, topic) {
  *
  */
 Channel.prototype.subscribe = function (topic, callback, context, options) {
-    topic = makeName(this.channelOptions.name, topic);
-    return this.channelOptions.transport.subscribe(topic, callback);
+    var topics = [].concat(topic);
+    var me = this;
+    var subscriptionIds = [];
+
+    me.channelOptions.transport.batch(function () {
+        $.each(topics, function (index, topic) {
+            topic = makeName(me.channelOptions.name, topic);
+            subscriptionIds.push(me.channelOptions.transport.subscribe(topic, callback));
+        });
+    });
+    return (subscriptionIds[1] ? subscriptionIds : subscriptionIds[0]);
 };
 
 /**

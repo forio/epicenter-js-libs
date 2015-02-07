@@ -87,7 +87,7 @@ ChannelManager.prototype.getChannel = function (options) {
     var subs = channel.subscribe;
     channel.subscribe = function () {
         var subid = subs.apply(channel, arguments);
-        this.currentSubscriptions.push(subid);
+        this.currentSubscriptions  = this.currentSubscriptions.concat(subid);
         return subid;
     }.bind(this);
 
