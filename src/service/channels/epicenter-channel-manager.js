@@ -21,14 +21,24 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
 
         var urlOpts = urlService(defaultCometOptions.server);
         if (!defaultCometOptions.url) {
-            defaultCometOptions.url = urlOpts.protocol + '://' + urlOpts.host + '/channel/subscribe/';
+            defaultCometOptions.url = urlOpts.protocol + '://' + urlOpts.host + '/channel/subscribe/project/';
         }
 
         __super.constructor.call(this, defaultCometOptions);
     },
 
+    getGameChannel: function () {
+
+    },
+    getGroupChannel: function () {
+
+    },
+    getUserChannel: function () {
+
+    },
+
     magic: function () {
-        console.log('Book');
+        console.log('Boo!');
     }
 });
 
