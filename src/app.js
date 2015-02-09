@@ -13,7 +13,7 @@ var F = {
 F.util.query = require('./util/query-util');
 F.util.makeSequence = require('./util/make-sequence');
 F.util.run = require('./util/run-util');
-F.util.classForm = require('./util/inherit');
+F.util.classFrom = require('./util/inherit');
 
 F.factory.Transport = require('./transport/http-transport-factory');
 F.transport.Ajax = require('./transport/ajax-http-transport');

@@ -11,7 +11,12 @@ var ChannelManager = function (options) {
     var defaults = {
         url: 'https://api.forio.com/channel/subscribe/',
         logLevel: 'info',
-        websocketEnabled: false //needs to be turned on on the server
+        websocketEnabled: false, //needs to be turned on on the server
+
+        //Everything provided here will be provided as defaults for channel created through getChannel
+        channel: {
+
+        }
     };
     var defaultCometOptions = $.extend(true, {}, options, defaults);
 
@@ -19,6 +24,7 @@ var ChannelManager = function (options) {
 
     this.isConnected = false;
     this.currentSubscriptions = [];
+    this.options = defaultCometOptions;
 
     var connectionBroken = function (message) {
         $(this).trigger('disconnect', message);
@@ -48,7 +54,7 @@ var ChannelManager = function (options) {
     cometd.addListener('/meta/handshake', function (message) {
         if (message.successful) {
             //http://docs.cometd.org/reference/javascript_subscribe.html#javascript_subscribe_meta_channels
-            //dynamic subscriptions are cleared (like any other subscription) and the application needs to figure out which dynamic subscription must be performed again
+            // ^ "dynamic subscriptions are cleared (like any other subscription) and the application needs to figure out which dynamic subscription must be performed again"
             cometd.batch(function () {
                 $(me.currentSubscriptions).each(function (index, subs) {
                     cometd.resubscribe(subs);
@@ -80,7 +86,7 @@ ChannelManager.prototype.getChannel = function (options) {
     var defaults = {
         transport: this.cometd
     };
-    var channel = new Channel($.extend(true, {}, defaults, options));
+    var channel = new Channel($.extend(true, {}, this.options.channel, defaults, options));
 
 
     //Wrap subs and unsubs so we can use it to re-attach handlers after being disconnected
