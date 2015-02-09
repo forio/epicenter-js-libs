@@ -27,7 +27,7 @@ var makeName = function (channelName, topic) {
  *
  *  **Examples**
  *  subscribe('run', cb) - subscribe to changes on a top-level 'run' topic
- *  subscribe('run/*') - changes on children of the run object. Note this will also be triggered for changes to run.x.y.z
+ *  subscribe('run/*') - changes on children of the run object. Note this not also be triggered for changes to run.x.y.z
  *  subscribe(['run', 'run/*']) - changes to run and children
  *  subscribe('run/variables/price', cb) - changes to price
  *
