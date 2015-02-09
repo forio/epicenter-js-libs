@@ -31,7 +31,7 @@ function saveSession(userInfo) {
 }
 
 function getSession() {
-    var session = store.get(EPI_COOKIE_KEY) || '{}';
+    var session = store.get(EPI_SESSION_KEY) || '{}';
     return JSON.parse(session);
 }
 
