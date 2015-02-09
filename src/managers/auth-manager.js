@@ -31,7 +31,7 @@ function saveSession(userInfo) {
 }
 
 function getSession() {
-    var session = store.get(EPI_COOKIE_KEY) || '{}';
+    var session = store.get(EPI_SESSION_KEY) || '{}';
     return JSON.parse(session);
 }
 
@@ -85,10 +85,6 @@ AuthManager.prototype = {
             return JSON.parse(decode(encoded));
         };
 
-        var setSessionCookie = function (data) {
-            saveSession(data);
-        };
-
         var handleGroupError = function (message, statusCode, data) {
             // logout the user since it's in an invalid state with no group selected
             _this.logout().then(function () {
@@ -107,8 +103,15 @@ AuthManager.prototype = {
             _this.getUserGroups(userGroupOpts).done( function (memberInfo) {
                 var data = {auth: response, user: userInfo, userGroups: memberInfo, groupSelection: {} };
 
+                var sessionInfo = {
+                    'auth_token': token,
+                    'account': adapterOptions.account,
+                    'project': adapterOptions.project,
+                    'userId': userInfo.user_id
+                };
                 // The group is not required if the user is not logging into a project
                 if (!adapterOptions.project) {
+                    saveSession(sessionInfo);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                     return;
@@ -133,16 +136,12 @@ AuthManager.prototype = {
                 if (group) {
                     var groupSelection = group.groupId;
                     data.groupSelection[adapterOptions.project] = groupSelection;
-                    var sessionCookie = {
-                        'auth_token': token,
-                        'account': adapterOptions.account,
-                        'project': adapterOptions.project,
-                        'userId': userInfo.user_id,
+                    var sessionInfoWithGroup = $.extend({}, sessionInfo, {
                         'groupId': group.groupId,
                         'groupName': group.name,
                         'isFac': _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator'
-                    };
-                    setSessionCookie(sessionCookie);
+                    });
+                    saveSession(sessionInfoWithGroup);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
