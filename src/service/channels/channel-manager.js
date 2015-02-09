@@ -7,9 +7,12 @@ var ChannelManager = function (options) {
     if (!cometd) {
         throw new Error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
     }
+    if (!options || !options.url) {
+        throw new Error('Please provide an url for the cometd server');
+    }
 
     var defaults = {
-        url: 'https://api.forio.com/channel/subscribe/',
+        url: '',
         logLevel: 'info',
         websocketEnabled: false, //needs to be turned on on the server
 
@@ -18,7 +21,7 @@ var ChannelManager = function (options) {
 
         }
     };
-    var defaultCometOptions = $.extend(true, {}, options, defaults);
+    var defaultCometOptions = $.extend(true, {}, defaults, options);
 
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
 
