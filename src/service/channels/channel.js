@@ -62,8 +62,17 @@ Channel.prototype.subscribe = function (topic, callback, context, options) {
  * publish('run/variables', {price: 50});
  */
 Channel.prototype.publish = function (topic, data) {
-    topic = makeName(this.channelOptions.name, topic);
-    return this.channelOptions.transport.publish(topic, data);
+    var topics = [].concat(topic);
+    var me = this;
+    var returnObjs = [];
+
+    me.channelOptions.transport.batch(function () {
+        $.each(topics, function (index, topic) {
+            topic = makeName(me.channelOptions.name, topic);
+            returnObjs.push(me.channelOptions.transport.publish(topic, data));
+        });
+    });
+    return (returnObjs[1] ? returnObjs : returnObjs[0]);
 };
 
 /**
