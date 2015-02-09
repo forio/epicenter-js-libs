@@ -21,7 +21,7 @@ var Channel = function (options) {
 };
 
 var makeName = function (channelName, topic) {
-    return (channelName + '/' + topic).replace(/\/\//g, '').replace(/^\//, '');
+    return (channelName ? (channelName + '/' + topic) : topic).replace(/\/\//g, '');
 };
 
 /**
