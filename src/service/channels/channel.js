@@ -2,7 +2,7 @@
 
 var Channel = function (options) {
     var defaults = {
-        name: '',
+        base: '',
 
         /**
          * A function into which all 'topics' passed into the `publish` and `subscribe` methods are sent through. By default it just echoes
@@ -56,7 +56,7 @@ Channel.prototype.subscribe = function (topic, callback, context, options) {
 
     opts.transport.batch(function () {
         $.each(topics, function (index, topic) {
-            topic = makeName(opts.name, opts.topicResolver(topic));
+            topic = makeName(opts.base, opts.topicResolver(topic));
             subscriptionIds.push(opts.transport.subscribe(topic, callback));
         });
     });
@@ -81,7 +81,7 @@ Channel.prototype.publish = function (topic, data) {
 
     opts.transport.batch(function () {
         $.each(topics, function (index, topic) {
-            topic = makeName(opts.name, opts.topicResolver(topic));
+            topic = makeName(opts.base, opts.topicResolver(topic));
             returnObjs.push(opts.transport.publish(topic, data));
         });
     });

@@ -14,8 +14,8 @@ var __super = ChannelManager.prototype;
 
 var EpicenterChannelManager = classFrom(ChannelManager, {
     constructor: function (options) {
-        this.session = new AuthManager();
-        var userInfo = this.session.getCurrentUserSessionInfo();
+        var am = new AuthManager();
+        var userInfo = am.getCurrentUserSessionInfo();
 
         var defaults = {
             //See docs for url config service
@@ -48,7 +48,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         }
 
         var baseTopic = '/project/' + this.options.server.account + '/' + this.options.server.project + '/' + groupName;
-        return __super.getChannel.call(this, { name: baseTopic });
+        return __super.getChannel.call(this, { base: baseTopic });
     },
     getUserChannel: function () {
 
