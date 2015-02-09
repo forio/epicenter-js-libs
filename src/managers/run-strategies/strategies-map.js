@@ -4,4 +4,5 @@ module.exports = {
     'new-if-missing': require('./new-if-missing-strategy'),
     'always-new': require('./always-new-strategy'),
     'multiplayer': require('./multiplayer-strategy'),
+    'none': require('./identity-strategy')
 };
