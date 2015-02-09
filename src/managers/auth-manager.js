@@ -243,8 +243,8 @@ AuthManager.prototype = {
         return $d.promise();
     },
 
-    getUserSession: function (options) {
-        return getSession();
+    getCurrentUserSessionInfo: function (options) {
+        return getSession(options);
     }
 };
 
