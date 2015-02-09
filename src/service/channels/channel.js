@@ -4,6 +4,16 @@ var Channel = function (options) {
     var defaults = {
         name: '',
 
+        /**
+         * A function into which all 'topics' passed into the `publish` and `subscribe` methods are sent through. By default it just echoes
+         * This is useful if you want to implement your own serialize functions for converting custom objects to topic names.
+         * @param  {*} token Token to parse
+         * @return {String} this function should return a string topic
+         */
+        topicResolver: function (topic) {
+            return topic;
+        },
+
         //cometd instance
         transport: null
     };
@@ -11,7 +21,7 @@ var Channel = function (options) {
 };
 
 var makeName = function (channelName, topic) {
-    return (channelName + '/' + topic).replace(/\/\//g,'');
+    return (channelName + '/' + topic).replace(/\/\//g, '').replace(/^\//, '');
 };
 
 /**

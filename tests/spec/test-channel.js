@@ -21,12 +21,19 @@
            });
         });
 
+        describe('topicResolver', function () {
+            it('should default to echo-ing topics', function () {
+                c.subscribe('topic', $.noop);
+                mockCometd.subscribe.should.have.been.calledWith('topic', $.noop);
+            });
+        });
+
         describe('#subscribe', function () {
             it('should pass on string topics', function () {
                 c.subscribe('topic', $.noop);
 
                 mockCometd.subscribe.should.have.been.calledOnce;
-                mockCometd.subscribe.should.have.been.calledWith('/topic', $.noop);
+                mockCometd.subscribe.should.have.been.calledWith('topic', $.noop);
             });
 
             it('should pass on array topics', function () {
@@ -42,7 +49,7 @@
                 c.publish('topic', { a: 1 });
 
                 mockCometd.publish.should.have.been.calledOnce;
-                mockCometd.publish.should.have.been.calledWith('/topic', { a: 1 });
+                mockCometd.publish.should.have.been.calledWith('topic', { a: 1 });
             });
 
             it('should pass on array topics', function () {
