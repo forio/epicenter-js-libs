@@ -52,11 +52,12 @@ Channel.prototype.subscribe = function (topic, callback, context, options) {
     var topics = [].concat(topic);
     var me = this;
     var subscriptionIds = [];
+    var opts = me.channelOptions;
 
-    me.channelOptions.transport.batch(function () {
+    opts.transport.batch(function () {
         $.each(topics, function (index, topic) {
-            topic = makeName(me.channelOptions.name, topic);
-            subscriptionIds.push(me.channelOptions.transport.subscribe(topic, callback));
+            topic = makeName(opts.name, opts.topicResolver(topic));
+            subscriptionIds.push(opts.transport.subscribe(topic, callback));
         });
     });
     return (subscriptionIds[1] ? subscriptionIds : subscriptionIds[0]);
@@ -75,11 +76,13 @@ Channel.prototype.publish = function (topic, data) {
     var topics = [].concat(topic);
     var me = this;
     var returnObjs = [];
+    var opts = me.channelOptions;
 
-    me.channelOptions.transport.batch(function () {
+
+    opts.transport.batch(function () {
         $.each(topics, function (index, topic) {
-            topic = makeName(me.channelOptions.name, topic);
-            returnObjs.push(me.channelOptions.transport.publish(topic, data));
+            topic = makeName(opts.name, opts.topicResolver(topic));
+            returnObjs.push(opts.transport.publish(topic, data));
         });
     });
     return (returnObjs[1] ? returnObjs : returnObjs[0]);

@@ -26,6 +26,27 @@
                 c.subscribe('topic', $.noop);
                 mockCometd.subscribe.should.have.been.calledWith('topic', $.noop);
             });
+            it('can be over-ridden with custom functions to subscribe', function () {
+                var c = new Channel({
+                    transport: mockCometd,
+                    topicResolver: function (topic) {
+                        return topic.split('').reverse().join('');
+                    }
+                });
+                c.subscribe('topic', $.noop);
+                mockCometd.subscribe.should.have.been.calledWith('cipot', $.noop);
+            });
+
+            it('can be over-ridden with custom functions to subscribe', function () {
+                var c = new Channel({
+                    transport: mockCometd,
+                    topicResolver: function (topic) {
+                        return topic.split('').reverse().join('');
+                    }
+                });
+                c.publish('topic', { a:1 });
+                mockCometd.publish.should.have.been.calledWith('cipot', { a:1 });
+            });
         });
 
         describe('#subscribe', function () {
