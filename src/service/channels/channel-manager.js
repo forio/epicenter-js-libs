@@ -46,9 +46,9 @@ var ChannelManager = function (options) {
         var wasConnected = this.isConnected;
         this.isConnected = (message.successful === true);
         if (!wasConnected && this.isConnected) { //Connecting for the first time
-            connectionSucceeded(message);
+            connectionSucceeded.call(this, message);
         } else if (wasConnected && !this.isConnected) { //Only throw disconnected message fro the first disconnect, not once per try
-            connectionBroken(message);
+            connectionBroken.call(this, message);
         }
     }.bind(this));
 
