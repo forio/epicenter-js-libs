@@ -1,8 +1,26 @@
-var cm = new ChannelManager({
-   url: ""
-});
+var cm = new ChannelManager();
 cm.on('connect', function (){ });
 cm.on('disconnect', function (){ });
+
+var wm = new WorldManager();
+wm.getCurrentWorld(function (world) {
+
+    var worldChannel = cm.getWorldChannel(world.id);
+    worldChannel.subscribe("runEvents", fn);
+
+    var usersChannel = cm.getUsersChannel(world.users);
+
+})
+
+wm.getCurrentRun().then(function (run) {
+
+    var rs = new RunService(run.id);
+
+    var runChannel = cm.getRunChannel(rs);
+    runChannel.subscribe("completed", fn);
+
+    var variablesChannel = cm
+})
 
 var runChannel = cm.getChannel(rs);
 runChannel.subscribe("completed", fn);

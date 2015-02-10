@@ -35,9 +35,22 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         return __super.constructor.call(this, defaultCometOptions);
     },
 
-    getGameChannel: function () {
-
+    getWorldChannel: function (world, groupName) {
+        var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
+        if (!worldid) {
+            throw new Error('Please specify a world id');
+        }
+        if (!groupName) {
+            if (this.options.groupName) {
+                groupName = this.options.groupName;
+            } else {
+                throw new Error('Group id not found. Please log-in again, or specify group name explicitly');
+            }
+        }
+        var baseTopic = ['/project', this.options.server.account, this.options.server.project, groupName, worldid].join('/');
+        return __super.getChannel.call(this, { base: baseTopic });
     },
+
     getGroupChannel: function (groupName) {
         if (!groupName) {
             if (this.options.groupName) {
@@ -46,16 +59,27 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                 throw new Error('Please specify a group name');
             }
         }
-
-        var baseTopic = '/project/' + this.options.server.account + '/' + this.options.server.project + '/' + groupName;
+        var baseTopic = ['/project', this.options.server.account, this.options.server.project, groupName].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
-    getUserChannel: function () {
-
-    },
-
-    magic: function () {
-        console.log('Boo!');
+    getUserChannel: function (user, world, groupName) {
+        var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
+        var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
+        if (!worldid) {
+            throw new Error('Please specify a world id');
+        }
+        if (!userid) {
+            throw new Error('Please specify a user id');
+        }
+        if (!groupName) {
+            if (this.options.groupName) {
+                groupName = this.options.groupName;
+            } else {
+                throw new Error('Group id not found. Please log-in again, or specify group name explicitly');
+            }
+        }
+        var baseTopic = ['/project', this.options.server.account, this.options.server.project, groupName, worldid, userid].join('/');
+        return __super.getChannel.call(this, { base: baseTopic });
     }
 });
 
