@@ -61,10 +61,7 @@ module.exports = function (grunt) {
                 entry: './src/components/assignment/js/npm.js',
                 compile: './dist/components/assignment/assignment.js',
                 expose: {
-                    'inherit': './src/util/inherit',
-                    'base-view': './src/components/lib/base-view',
-                    'base-model': './src/components/lib/base-model',
-                    'base-collection': './src/components/lib/base-collection',
+                    'inherit': './src/util/inherit'
                 }
             }
         }
