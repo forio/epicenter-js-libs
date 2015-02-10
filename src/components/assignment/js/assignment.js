@@ -1,7 +1,7 @@
 'use strict';
 
-var templates = require('./templates');
 var UsersCollection = require('./users-collection');
+var AssignemntRow = require('./assignment-row');
 
 var Assignment = function (options) {
     this.initialize(options);
@@ -34,14 +34,14 @@ Assignment.prototype = {
     },
 
     renderTable: function () {
-        var rowTemplate = templates.userRow;
 
         var rows = [];
         this.users.each(function (u) {
-            rows.push(rowTemplate(u.toJSON()));
+            var view = new AssignemntRow({ model: u });
+            rows.push(view.render().el);
         });
 
-        this.$('table tbody').html(rows.join(''));
+        this.$('table tbody').append(rows);
     }
 
 };

@@ -1,10 +1,10 @@
 
 
-tr .actions {
+tr .auto-hide {
     opacity: 0;
     transition: opacity 0.1s;
 }
 
-tr:hover .actions {
+tr:hover .auto-hide {
     opacity: 1;
 }
