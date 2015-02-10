@@ -2,13 +2,13 @@
     'use strict';
 
     var server;
-    var setupResponse = function (verb, endpoint, statusCode, resp, respHeaders) {
-        server.respondWith(verb, endpoint, function (xhr, id) {
-            var headers = _.extend({}, { 'Content-Type': 'application/json' }, respHeaders);
-            var body = typeof resp === 'object' ? JSON.stringify(resp) : resp;
-            xhr.respond(statusCode, headers, body);
-        });
-    };
+    // var setupResponse = function (verb, endpoint, statusCode, resp, respHeaders) {
+    //     server.respondWith(verb, endpoint, function (xhr, id) {
+    //         var headers = _.extend({}, { 'Content-Type': 'application/json' }, respHeaders);
+    //         var body = typeof resp === 'object' ? JSON.stringify(resp) : resp;
+    //         xhr.respond(statusCode, headers, body);
+    //     });
+    // };
     describe('User API Service', function () {
         before(function () {
             server = sinon.fakeServer.create();

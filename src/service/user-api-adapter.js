@@ -9,7 +9,6 @@
 
 var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
-var _pick = require('../util/object-util')._pick;
 var qutil = require('../util/query-util');
 
 module.exports = function (config) {
