@@ -61,3 +61,11 @@ var groupChannel = cm.getGroupChannel("randomTopic");
 
 cm.getChannel("randomTopic", {scope: "world"});
 cm.getChannel("randomTopic", {scope: "group"});
+
+
+** EPI Bugs
+
+Cannot publish to top-level group channel
+Publishing to /project/team-naren/multiplayer-test/default-feb-2015/something works - I can publish without errors and all subscribers are notified
+Publishing to /project/team-naren/multiplayer-test/default-feb-2015/ does not work - I can publish but no subscribers are notified
+
