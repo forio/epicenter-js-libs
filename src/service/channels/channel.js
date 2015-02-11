@@ -21,7 +21,8 @@ var Channel = function (options) {
 };
 
 var makeName = function (channelName, topic) {
-    return (channelName ? (channelName + '/' + topic) : topic).replace(/\/\//g, '');
+    var newName = (channelName ? (channelName + '/' + topic) : topic).replace(/\/\//g, '');
+    return newName;
 };
 
 /**
@@ -82,6 +83,10 @@ Channel.prototype.publish = function (topic, data) {
     opts.transport.batch(function () {
         $.each(topics, function (index, topic) {
             topic = makeName(opts.base, opts.topicResolver(topic));
+            if (topic.charAt(topic.length - 1) === '*') {
+                topic = topic.replace(/\*+$/, '');
+                console.warn('You can cannot publish to channels with wildcards. Publishing to ', topic, 'instead');
+            }
             returnObjs.push(opts.transport.publish(topic, data));
         });
     });
