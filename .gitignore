@@ -37,6 +37,11 @@ documentation/generated
 # ides
 *.sublime-*
 
+#Uglify js compiled files
+dist/epicenter-edge.js
+dist/epicenter.js
+dist/epicenter.min.js
+
 #instanbul related
 coverage/
 coverage.json
