@@ -39,3 +39,9 @@ documentation/generated
 local/
 
 dist/epicenter-edge.js
+
+#instanbul related
+coverage/
+coverage.json
+.DS_Store
+dist/epicenter-edge-instrument.js
