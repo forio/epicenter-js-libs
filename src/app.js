@@ -32,6 +32,7 @@ F.factory.Store = require('./store/store-factory');
 F.manager.ScenarioManager = require('./managers/scenario-manager');
 F.manager.RunManager = require('./managers/run-manager');
 F.manager.AuthManager = require('./managers/auth-manager');
+F.manager.WorldManager = require('./managers/world-manager');
 
 F.manager.strategy['always-new'] = require('./managers/run-strategies/always-new-strategy');
 F.manager.strategy['conditional-creation'] = require('./managers/run-strategies/conditional-creation-strategy');
