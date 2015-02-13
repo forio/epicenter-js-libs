@@ -26,20 +26,23 @@ $(function() {
             project: $('#txtProject').val()
         }).done(function () {
             window.alert('login successful');
-
-            var gc = cm.getGroupChannel();
-            var bindElementToTopic = function (elem, topic) {
-                var $elem = $(elem);
-                gc.subscribe(topic, function (payload) {
-                    $elem.html($elem.val() + payload.data);
-                });
-                $elem.change(function () {
-                    gc.publish(topic, $elem.val());
-                });
-            };
-            bindElementToTopic('#txtGroupTextAll', '*');
-            bindElementToTopic('#txtGroupTextSpecific', 'specificTopic');
         });
+    });
+
+    $('#btnBindGroupChannel').click(function (evt) {
+        evt.preventDefault();
+        var gc = cm.getGroupChannel();
+        var bindElementToTopic = function (elem, topic) {
+            var $elem = $(elem);
+            gc.subscribe(topic, function (payload) {
+                $elem.html($elem.val() + payload.data);
+            });
+            $elem.change(function () {
+                gc.publish(topic, $elem.val());
+            });
+        };
+        bindElementToTopic('#txtGroupTextAll', '*');
+        bindElementToTopic('#txtGroupTextSpecific', 'specificTopic');
     });
 
     $('#logout').click(function (evt) {
@@ -49,6 +52,29 @@ $(function() {
         });
     });
 
+    var rm = new F.manager.RunManager({
+        strategy: 'multiplayer',
+        run: $.extend({}, {
+            account: 'team-naren',
+            project: 'multiplayer-test'
+        }, server)
+    });
+    rm.getRun().then(function (run) {
+        var rs = new F.service.Run(
+            $.extend({}, {
+                account: 'team-naren',
+                project: 'multiplayer-test'
+            }, server));
+        rs.load(run.id).then(function () {
+            window.rs = rs;
+        });
+        console.log('run', arguments);
+    }).fail(function () { console.log('Run creation failed', arguments); });
 
-
+    var worldChannel = cm.getWorldChannel('54de2bc1fac2a4b948000005');
+    worldChannel.subscribe('', function (data) {
+       console.log('World channel', data);
+    });
+    window.wc = worldChannel;
+    window.rm = rm;
 });
