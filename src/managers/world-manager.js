@@ -44,8 +44,15 @@ function buildStrategy(worldId, dtd) {
 
 
 module.exports = function (options) {
-    worldApi = new WorldApi(options);
+    this.options = options || {};
+
+    $.extend(true, this.options, options.run);
+    $.extend(true, this.options, options.world);
+
+
+    worldApi = new WorldApi(this.options);
     this._auth = new AuthManager();
+    var _this = this;
 
     var api = {
         getCurrentWorld: function (userId, groupName) {
@@ -63,7 +70,7 @@ module.exports = function (options) {
                 var strategy = buildStrategy(currentWorldId, dtd);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,
-                    run: options
+                    run: _this.options
                 });
                 var rm = new RunManager(opt);
 

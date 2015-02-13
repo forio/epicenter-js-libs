@@ -79,6 +79,58 @@
             return wm;
         }
 
+        describe('constructor', function () {
+            it('should take options at the top level of the options object', function () {
+                var options = {
+                    account: 'forio',
+                    project: 'js-libs',
+                    group: 'group-321'
+                };
+
+                var wm = new F.manager.WorldManager(options);
+                wm._auth = fakeAuth;
+
+                wm.getCurrentRun();
+
+                // we need to check that the correct options are passed to the run
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+                req.url.should.match(/\/game\//);
+                req.url.should.match(/group=group\-321/);
+                req.url.should.match(/account=forio/);
+                req.url.should.match(/project=js-libs/);
+                req.url.should.match(/userId=user\-123/);
+
+            });
+
+            it('should allow to override run options with a nested run object in the main options object', function () {
+                var options = {
+                    account: 'forio',
+                    project: 'js-libs',
+                    run: {
+                        account: 'other-account',
+                    },
+                    world: {
+                        project: 'other-project',
+                    }
+                };
+
+                var wm = new F.manager.WorldManager(options);
+                wm._auth = fakeAuth;
+
+                wm.getCurrentRun();
+
+                // we need to check that the correct options are passed to the run
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+                req.url.should.match(/\/game\//);
+                req.url.should.match(/group=group\-321/);
+                req.url.should.match(/account=other\-account/);
+                req.url.should.match(/project=other\-project/);
+                req.url.should.match(/userId=user\-123/);
+            });
+        });
+
         describe('getCurrentRun', function (done) {
             it('should return the current run object and runService of the run of the current world', function (done) {
                 createWorldManager().getCurrentRun()
