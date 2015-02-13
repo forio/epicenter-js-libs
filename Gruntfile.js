@@ -212,5 +212,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['browserify2:edge', 'mocha:test', 'watch']);
+    grunt.registerTask('default', ['browserify2:edge', 'watch']);
 };

@@ -169,8 +169,7 @@ module.exports = function (config) {
         * Get all worlds that a user belongs to for the given account/project/group
         *
         * ** Parameters **
-        * @param {object} `params` - the parameters object for the api call
-        * @param {string} `params.userId` - userId of the user you need the world for
+        * @param {string} `userId` - userId of the user you need the world for
         * @param {object} `options` (optional) - overrides to the global options object
         */
         getWorldsForUser: function (userId, options) {
@@ -245,11 +244,37 @@ module.exports = function (config) {
         },
 
         /**
+        * Get's the current (latest) world for the given user at the given group
+        *
+        */
+        getCurrentWorldForUser: function (userId, groupName) {
+            var dtd = $.Deferred();
+
+            this.getWorldsForUser(userId, { group: groupName })
+                .then(function (worlds) {
+                    // assume the most recent world as the 'active' world
+                    worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
+                    var currentWorld = worlds[0];
+                    dtd.resolve(currentWorld, this);
+                })
+                .fail(dtd.reject);
+
+            return dtd.promise();
+        },
+
+        /**
         * Delete's the current run from the world
         *
         */
-        deleteRun: function () {
+        deleteRun: function (worldId, options) {
             throw new Error('not implemented');
+        },
+
+        newRunForWorld: function (worldId, options) {
+            return this.deleteRun(worldId)
+                .then(function () {
+                    return this.getCurrentRunId({ filter: worldId });
+                });
         }
     };
 
