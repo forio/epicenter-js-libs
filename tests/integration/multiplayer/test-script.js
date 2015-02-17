@@ -35,7 +35,7 @@ $(function() {
         var bindElementToTopic = function (elem, topic) {
             var $elem = $(elem);
             gc.subscribe(topic, function (payload) {
-                $elem.html($elem.val() + payload.data);
+                $elem.val($elem.val() + payload.data);
             });
             $elem.change(function () {
                 gc.publish(topic, $elem.val());
