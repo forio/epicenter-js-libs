@@ -71,10 +71,16 @@ $(function() {
         console.log('run', arguments);
     }).fail(function () { console.log('Run creation failed', arguments); });
 
-    var worldChannel = cm.getWorldChannel('54de2bc1fac2a4b948000005');
-    worldChannel.subscribe('', function (data) {
-       console.log('World channel', data);
+
+    var worldManager = new F.manager.WorldManager({
+        run: $.extend({}, {
+            account: 'team-naren',
+            project: 'multiplayer-test'
+        }, server)
     });
-    window.wc = worldChannel;
-    window.rm = rm;
+    worldManager.getCurrentWorld().then(function () {
+        console.log('wm', arguments);
+    });
+
+
 });

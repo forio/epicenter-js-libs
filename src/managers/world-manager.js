@@ -56,12 +56,19 @@ module.exports = function (options) {
 
     var api = {
         getCurrentWorld: function (userId, groupName) {
+            var session = this._auth.getCurrentUserSessionInfo();
+            if (!userId) {
+                userId = session.userId;
+            }
+            if (!groupName) {
+                groupName = session.groupName;
+            }
             return worldApi.getCurrentWorldForUser(userId, groupName);
         },
 
         getCurrentRun: function () {
             var dtd = $.Deferred();
-            var session = this._auth.getUserSession();
+            var session = this._auth.getCurrentUserSessionInfo();
             var curUserId = session.userId;
             var curGroupName = session.groupName;
 
