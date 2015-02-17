@@ -48,7 +48,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                 throw new Error('Group id not found. Please log-in again, or specify group name explicitly');
             }
         }
-        var baseTopic = ['/project', this.options.server.account, this.options.server.project, groupName, worldid].join('/');
+        var baseTopic = ['/game', this.options.server.account, this.options.server.project, groupName, worldid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
@@ -61,7 +61,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                 throw new Error('Please specify a group name');
             }
         }
-        var baseTopic = ['/project', this.options.server.account, this.options.server.project, groupName].join('/');
+        var baseTopic = ['/group', this.options.server.account, this.options.server.project, groupName].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
     getUserChannel: function (user, world, groupName) {
@@ -81,7 +81,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                 throw new Error('Group id not found. Please log-in again, or specify group name explicitly');
             }
         }
-        var baseTopic = ['/project', this.options.server.account, this.options.server.project, groupName, worldid, userid].join('/');
+        var baseTopic = ['/users', this.options.server.account, this.options.server.project, groupName, worldid, userid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     }
 });
