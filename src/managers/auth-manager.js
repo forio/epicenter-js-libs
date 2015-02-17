@@ -65,7 +65,7 @@ var _findUserInGroup = function (members, id) {
     return null;
 };
 
-AuthManager.prototype = {
+AuthManager.prototype = $.extend(AuthManager.prototype, {
     login: function (options) {
         var _this = this;
         var $d = $.Deferred();
@@ -246,6 +246,6 @@ AuthManager.prototype = {
     getCurrentUserSessionInfo: function (options) {
         return getSession(options);
     }
-};
+});
 
 module.exports = AuthManager;
