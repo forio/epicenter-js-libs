@@ -86,6 +86,12 @@ var ChannelManager = function (options) {
 };
 
 ChannelManager.prototype.getChannel = function (options) {
+    //If you just want to pass in a string
+    if (options && !$.isPlainObject(options)) {
+        options = {
+            base: options
+        };
+    }
     var defaults = {
         transport: this.cometd
     };
