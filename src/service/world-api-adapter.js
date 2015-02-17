@@ -249,13 +249,13 @@ module.exports = function (config) {
         */
         getCurrentWorldForUser: function (userId, groupName) {
             var dtd = $.Deferred();
-
+            var me = this;
             this.getWorldsForUser(userId, { group: groupName })
                 .then(function (worlds) {
                     // assume the most recent world as the 'active' world
                     worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
                     var currentWorld = worlds[0];
-                    dtd.resolve(currentWorld, this);
+                    dtd.resolve(currentWorld, me);
                 })
                 .fail(dtd.reject);
 
