@@ -26,8 +26,10 @@
            $.Cometd = oldCometd;
         });
 
-        it('should', function () {
-
+        describe('#getChannel', function () {
+            it('should take in a string channel', function () {
+                //TODO: Find a better mocking solution so I don't have to recreate Channel
+            });
         });
     });
 }());
