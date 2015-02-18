@@ -20,6 +20,7 @@ var getFromSessionOrError = function (value, sessionKeyName) {
             throw new Error(sessionKeyName + ' not found. Please log-in again, or specify ' + sessionKeyName + ' explicitly');
         }
     }
+    return value;
 };
 var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
