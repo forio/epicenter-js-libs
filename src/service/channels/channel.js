@@ -1,11 +1,17 @@
 'use strict';
 
+/**
+ * A 'pub/sub' object
+ * @param {Object} options
+ * @param {String} options.base Base-topic. This will be pre-pended to all further topics you publish or subscribe to
+ * @param {Function} topicResolver A function into which all 'topics' passed into the `publish` and `subscribe` methods are sent through. By default it just echoes.
+ * @param {Cometd} transport instance of cometd to hook onto
+ */
 var Channel = function (options) {
     var defaults = {
         base: '',
 
         /**
-         * A function into which all 'topics' passed into the `publish` and `subscribe` methods are sent through. By default it just echoes
          * This is useful if you want to implement your own serialize functions for converting custom objects to topic names.
          * @param  {*} token Token to parse
          * @return {String} this function should return a string topic
@@ -21,6 +27,7 @@ var Channel = function (options) {
 };
 
 var makeName = function (channelName, topic) {
+    //Replace trailing/double slashes
     var newName = (channelName ? (channelName + '/' + topic) : topic).replace(/\/\//g, '/').replace(/\/$/,'');
     return newName;
 };
