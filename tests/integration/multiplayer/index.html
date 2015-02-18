@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Multiplayer test </title>
+</head>
+<body>
+
+    <script src="../../../vendor/jquery/dist/jquery.min.js"></script>
+    <script src="../../../dist/epicenter-multiplayer-dependencies.js"></script>
+    <script src="../../../dist/epicenter-edge.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <div id="content">
+        <h4> Online/offline Check</h4>
+        <span> You are currently </span> <em id="status"> </em>
+
+        <section>
+          <form action="">
+            <label for="">Account</label>
+            <input type="text" id="txtAccount"  value="team-naren">
+            <br/
+
+            <label for="">Project</label>
+            <input type="text" id="txtProject" value="multiplayer-test" >
+            <br/
+
+            <label for="">Username</label>
+            <input type="text" id="txtUsername" value="a1" >
+            <br/
+
+            <label for="">Password</label>
+            <input type="text" id="txtPassword" value="a1a1a1a1" >
+            <br/
+            <br/>
+            <button id="btnLogin"> Login </button>
+            <a href="#" id='logout'> Logout</a>
+          </form>
+        </section>
+
+
+        <section>
+            <button id="btnBindGroupChannel"> Bind group Channel</button>
+            <h4> Group Channel (listening on *) </h4>
+            <textarea id="txtGroupTextAll" id="" cols="30" rows="10"></textarea>
+        </section>
+        <section>
+            <h4> Group Channel (listening on 'sometopic') </h4>
+            <textarea id="txtGroupTextSpecific" id="" cols="30" rows="10"></textarea>
+        </section>
+    </div>
+    <script src="test-script.js"></script>
+
+</body>
+</html>

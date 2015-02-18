@@ -13,7 +13,7 @@ var F = {
 F.util.query = require('./util/query-util');
 F.util.makeSequence = require('./util/make-sequence');
 F.util.run = require('./util/run-util');
-F.util.classForm = require('./util/inherit');
+F.util.classFrom = require('./util/inherit');
 
 F.factory.Transport = require('./transport/http-transport-factory');
 F.transport.Ajax = require('./transport/ajax-http-transport');
@@ -42,6 +42,8 @@ F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if
 F.manager.strategy['new-if-persisted'] = require('./managers/run-strategies/new-if-persisted-strategy');
 F.manager.strategy['new-if-initialized'] = require('./managers/run-strategies/new-if-initialized-strategy');
 
+F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
+F.service.Channel = require('./service/channel-service');
 
 F.version = '<%= version %>';
 window.F = F;

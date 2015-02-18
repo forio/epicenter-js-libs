@@ -23,7 +23,7 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     reset: function () {
-        var session = this._auth.getUserSession();
+        var session = this._auth.getCurrentUserSessionInfo();
         var curUserId = session.userId;
         var curGroupName = session.groupName;
 
@@ -35,7 +35,7 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     getRun: function () {
-        var session = this._auth.getUserSession();
+        var session = this._auth.getCurrentUserSessionInfo();
         var curUserId = session.userId;
         var curGroupName = session.groupName;
         var worldApi = this.worldApi;

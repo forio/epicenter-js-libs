@@ -58,6 +58,47 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    var BASE_COMETD_PATH = 'vendor/cometd-jquery/cometd-javascript/common/src/main/js/org/cometd/';
+    var COMETD_PLUGINS_PATH = 'vendor/cometd-jquery/cometd-javascript/jquery/src/main/webapp/jquery';
+    var files = [
+        BASE_COMETD_PATH + '/cometd-header.js',
+        BASE_COMETD_PATH + '/cometd-namespace.js',
+        BASE_COMETD_PATH + '/cometd-json.js',
+        BASE_COMETD_PATH + '/Utils.js',
+        BASE_COMETD_PATH + '/TransportRegistry.js',
+        BASE_COMETD_PATH + '/Transport.js',
+        BASE_COMETD_PATH + '/RequestTransport.js',
+        BASE_COMETD_PATH + '/LongPollingTransport.js',
+        BASE_COMETD_PATH + '/CallbackPollingTransport.js',
+        BASE_COMETD_PATH + '/WebSocketTransport.js',
+        BASE_COMETD_PATH + '/Cometd.js',
+        COMETD_PLUGINS_PATH + '/jquery.cometd.js'
+    ];
+    grunt.config.set('uglify', {
+        cometdMin: {
+            options: {
+                sourceMap: false,
+                mangle: true,
+                beautify: false,
+                compress: true,
+            },
+            files: {
+                'dist/epicenter-multiplayer-dependencies.min.js': files
+            }
+        },
+        cometdDebug: {
+            options: {
+                sourceMap: true,
+                mangle: false,
+                compress: false,
+            },
+            files: {
+                'dist/epicenter-multiplayer-dependencies.js': files
+            }
+        }
+    });
+
     grunt.loadNpmTasks('grunt-jscs');
     grunt.config.set('jscs', {
         src: ['src/*.js', 'src/**/*.js', 'tests/spec/*.js', 'tests/spec/**/*.js']
@@ -156,7 +197,7 @@ module.exports = function (grunt) {
     'using isntanbul to instrument sourcefile',
         function () {
             var instrumenter = new istanbul.Instrumenter();
-            var file = fs.readFileSync( './dist/epicenter-edge.js', 'utf8');
+            var file = fs.readFileSync('./dist/epicenter-edge.js', 'utf8');
             instrumenter.instrument(file, './dist/epicenter-edge.js',
                 function (err, code) {
                     fs.writeFileSync('./dist/epicenter-edge-instrument.js', code);
@@ -202,7 +243,8 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['browserify2:edge','instrument', 'mocha', 'coverage-report']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
-    grunt.registerTask('production', ['validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
+    grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
+    grunt.registerTask('production', ['concatCometd', 'validate', 'browserify2:mapped', 'browserify2:min', 'documentation']);
 
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
@@ -212,5 +254,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['browserify2:edge', 'watch']);
+    grunt.registerTask('default', ['concatCometd', 'browserify2:edge', 'watch']);
 };

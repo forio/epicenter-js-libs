@@ -13,7 +13,7 @@
 
     var fakeAuth = {
         // get should return what's stoed in the session cookie
-        getUserSession: sinon.stub().returns(cookieContents)
+        getCurrentUserSessionInfo: sinon.stub().returns(cookieContents)
     };
 
 
