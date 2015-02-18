@@ -17,13 +17,14 @@ var Channel = require('./channel.js');
  * See http://docs.cometd.org/reference/javascript.html for other supported options
  */
 var ChannelManager = function (options) {
-    var cometd = $.cometd;
-    if (!cometd) {
+    if (!$.cometd) {
         throw new Error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
     }
     if (!options || !options.url) {
         throw new Error('Please provide an url for the cometd server');
     }
+
+    var cometd = new $.Cometd();
 
     var defaults = {
         url: '',
