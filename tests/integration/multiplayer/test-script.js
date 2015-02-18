@@ -7,7 +7,7 @@ $(function() {
         }
     };
 
-    var cm = new F.manager.Channel(server);
+    var cm = new F.manager.ChannelManager(server);
     cm.on('connect', function () {
         $('#status').html('connected');
     });

@@ -5,10 +5,10 @@
  */
 
 var ChannelManager = require('./channel-manager');
-var classFrom = require('../../util/inherit');
-var urlService = require('../url-config-service');
+var classFrom = require('../util/inherit');
+var urlService = require('../service/url-config-service');
 
-var AuthManager = require('../../managers/auth-manager');
+var AuthManager = require('./auth-manager');
 
 var session = new AuthManager();
 var getFromSessionOrError = function (value, sessionKeyName) {

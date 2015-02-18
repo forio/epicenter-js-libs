@@ -42,8 +42,8 @@ F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if
 F.manager.strategy['new-if-persisted'] = require('./managers/run-strategies/new-if-persisted-strategy');
 F.manager.strategy['new-if-initialized'] = require('./managers/run-strategies/new-if-initialized-strategy');
 
-F.manager.Channel = require('./service/channels/epicenter-channel-manager');
-F.service.Channel = require('./service/channels/channel');
+F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
+F.service.Channel = require('./service/channel-service');
 
 F.version = '<%= version %>';
 window.F = F;

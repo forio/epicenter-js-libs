@@ -1,6 +1,6 @@
 'use strict';
 
-var Channel = require('./channel.js');
+var Channel = require('../service/channel-service');
 
 /**
  * Generic wrapper around $.cometd. This provides a few nice features the default cometd wrapper doesn't
