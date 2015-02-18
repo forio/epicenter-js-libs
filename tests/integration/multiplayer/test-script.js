@@ -52,35 +52,28 @@ $(function() {
         });
     });
 
-    var rm = new F.manager.RunManager({
-        strategy: 'multiplayer',
-        run: $.extend({}, {
-            account: 'team-naren',
-            project: 'multiplayer-test'
-        }, server)
-    });
-    rm.getRun().then(function (run) {
-        var rs = new F.service.Run(
-            $.extend({}, {
-                account: 'team-naren',
-                project: 'multiplayer-test'
-            }, server));
-        rs.load(run.id).then(function () {
-            window.rs = rs;
-        });
-        console.log('run', arguments);
-    }).fail(function () { console.log('Run creation failed', arguments); });
-
-
     var worldManager = new F.manager.WorldManager({
         run: $.extend({}, {
             account: 'team-naren',
+            model: 'model.eqn',
             project: 'multiplayer-test'
         }, server)
     });
-    worldManager.getCurrentWorld().then(function () {
+    worldManager.getCurrentWorld().then(function (worldObject, worldService) {
         console.log('wm', arguments);
+        window.worldS = worldService;
+        var worldChannel = cm.getWorldChannel(worldObject);
+        worldChannel.subscribe('', function () {
+           console.log('stuff', arguments);
+        });
+        window.wc = worldChannel;
     });
+    worldManager.getCurrentRun().then(function (runObject, runservice) {
+       console.log('current run', arguments);
+       window.rs = runservice;
+    });
+
+    window.cm = cm;
 
 
 });
