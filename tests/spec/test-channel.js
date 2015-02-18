@@ -63,6 +63,19 @@
                 mockCometd.subscribe.should.have.been.calledThrice;
                 // mockCometd.subscribe.should.have.been.calledWith('/topic', $.noop);
             });
+
+
+        });
+
+        describe('makeName', function () {
+            it('should not have trailing slashes while subscribing', function () {
+                c.subscribe('topic/', $.noop);
+                mockCometd.subscribe.should.have.been.calledWith('topic', $.noop);
+            });
+            it('should not have wildcards in topics while publishing', function () {
+                c.publish('topic/*', $.noop);
+                mockCometd.publish.should.have.been.calledWith('topic/', $.noop);
+            });
         });
 
         describe('#publish', function () {
