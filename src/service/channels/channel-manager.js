@@ -2,6 +2,20 @@
 
 var Channel = require('./channel.js');
 
+/**
+ * Generic wrapper around $.cometd. This provides a few nice features the default cometd wrapper doesn't
+ *
+ * - Automatic re-subscription to channels if you lose your connection in-between
+ * - Online/ Offline notifications
+ * - 'Events' for cometd notifications, instead of having to listen on specific meta channels
+ *
+ * @param {Object} options
+ * @param {String} url Cometd endpoint url
+ * @param {Boolean} websocketEnabled Determine if websocket support is to be activated
+ * @param {Object} Channel Defaults to pass on to channel instances. See @ChannelService for more info
+ *
+ * See http://docs.cometd.org/reference/javascript.html for other supported options
+ */
 var ChannelManager = function (options) {
     var cometd = $.cometd;
     if (!cometd) {
@@ -39,9 +53,6 @@ var ChannelManager = function (options) {
 
     cometd.configure(defaultCometOptions);
 
-    /* /meta/connect is a bayeux-defined comet channel
-     * Use to listen for error messages from server. E.g: Network error
-     */
     cometd.addListener('/meta/connect', function (message) {
         var wasConnected = this.isConnected;
         this.isConnected = (message.successful === true);
@@ -121,13 +132,22 @@ ChannelManager.prototype.getChannel = function (options) {
     return channel;
 };
 
-//Make this a event source
+/**
+ * Listen for events on this instance. Signature is same as for jQuery Events. Supported events are:
+ *  connect, disconnect, subscribe, unsubscribe, publish, error
+ */
 ChannelManager.prototype.on = function () {
     $(this).on.apply($(this), arguments);
 };
+/**
+ * Stop listening for events. Signature is same as for jQuery Events
+ */
 ChannelManager.prototype.off = function () {
     $(this).off.apply($(this), arguments);
 };
+/**
+ * Trigger events. Signature is same as for jQuery Events
+ */
 ChannelManager.prototype.trigger = function () {
     $(this).trigger.apply($(this), arguments);
 };
