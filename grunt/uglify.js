@@ -18,12 +18,15 @@ module.exports = function (grunt) {
         COMETD_PLUGINS_PATH + '/jquery.cometd.js'
     ];
     grunt.config.set('uglify', {
+        options: {
+            sourceMap: true,
+            warnings: false
+        },
         cometdMin: {
             options: {
-                sourceMap: false,
-                mangle: true,
-                beautify: false,
-                compress: true,
+                compress: {
+                    drop_console: true
+                },
             },
             files: {
                 'dist/epicenter-multiplayer-dependencies.min.js': files
@@ -32,8 +35,8 @@ module.exports = function (grunt) {
         cometdDebug: {
             options: {
                 sourceMap: true,
-                mangle: false,
                 compress: false,
+                warnings: false
             },
             files: {
                 'dist/epicenter-multiplayer-dependencies.js': files
