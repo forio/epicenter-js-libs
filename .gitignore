@@ -42,9 +42,7 @@ dist/epicenter-edge.js
 dist/epicenter-multiplayer-dependencies.js
 dist/epicenter-multiplayer-dependencies.js.map
 dist/epicenter-multiplayer-dependencies.min.js
-dist/epicenter-edge-instrument.js
 
 #instanbul related
 coverage/
-coverage.json
 .DS_Store
