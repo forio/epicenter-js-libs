@@ -5,7 +5,7 @@ module.exports = function (grunt) {
     grunt.config.set('watch', {
         source: {
             files: ['src/**/*.js'],
-            tasks: ['browserify2:edge', 'mocha:test']
+            tasks: ['browserify:edge', 'mocha:test']
         },
         tests: {
             files: ['tests/spec/**/*.js'],

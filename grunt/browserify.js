@@ -9,7 +9,7 @@ module.exports = function (grunt) {
             browserifyOptions: {
                 debug: true
             },
-            banner: grunt.file.read('./banner.js')
+            // banner: grunt.file.read('./banner.js')
         },
         mapped: {
             files: {
