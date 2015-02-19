@@ -9,7 +9,10 @@ module.exports = function (grunt) {
             browserifyOptions: {
                 debug: true
             },
-            // banner: grunt.file.read('./banner.js')
+            postBundleCB: function (err, buffer, next) {
+                var code = grunt.template.process(buffer.toString(), { data: grunt.file.readJSON('package.json') });
+                next(err, code);
+            }
         },
         mapped: {
             files: {
