@@ -9,8 +9,7 @@ module.exports = function (grunt) {
         require('./' + task)(grunt);
     });
 
-    grunt.registerTask('test', ['browserify:edge','instrument', 'mocha', 'coverage-report']);
-    grunt.registerTask('coverage', ['browserify:edge', 'instrument', 'mocha:coverage', 'coverage-report']);
+    grunt.registerTask('test', ['browserify:edge', 'mocha', 'coverage-report']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);

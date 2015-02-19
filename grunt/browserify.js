@@ -1,6 +1,7 @@
 'use strict';
 
 var minifyify = require('minifyify');
+var istanbul = require('browserify-istanbul');
 
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-browserify');
@@ -22,6 +23,9 @@ module.exports = function (grunt) {
         edge: {
             files: {
                 './dist/epicenter-edge.js': './src/app.js'
+            },
+            options: {
+                transform: [istanbul]
             }
         },
         min: {

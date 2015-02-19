@@ -5,10 +5,7 @@ module.exports = function (grunt) {
         options: {
             run: true,
             growlOnSuccess: false,
-            reporter: 'Min'
-        },
-        coverage: {
-            src: ['tests/index.html'],
+            reporter: 'Min',
             options: {
                 coverage: {
                     coverageFile: 'coverage/coverage.json'
