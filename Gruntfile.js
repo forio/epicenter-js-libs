@@ -10,6 +10,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', ['browserify2:edge','instrument', 'mocha', 'coverage-report']);
+    grunt.registerTask('coverage', ['browserify2:edge', 'instrument', 'mocha:coverage', 'coverage-report']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
