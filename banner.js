@@ -1,5 +1,5 @@
 /**
  * Epicenter Javascript libraries
- * v<%= version %>
+ * v<%= pkg.version %>
  * https://github.com/forio/epicenter-js-libs
  */
