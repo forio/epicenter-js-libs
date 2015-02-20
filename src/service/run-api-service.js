@@ -254,7 +254,7 @@ module.exports = function (config) {
         /**
          * Call a method from the model.
          *
-         * The method must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
+         * Depending on the language in which you have written your model, the method may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * The `params` argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
          *
@@ -307,7 +307,7 @@ module.exports = function (config) {
         /**
          * Call several methods from the model, sequentially.
          *
-         * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
+         * Depending on the language in which you have written your model, the methods may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * **Examples**
          *
@@ -362,7 +362,7 @@ module.exports = function (config) {
         /**
          * Call several methods from the model, executing them in parallel.
          *
-         * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
+         * Depending on the language in which you have written your model, the methods may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * **Example**
          *
