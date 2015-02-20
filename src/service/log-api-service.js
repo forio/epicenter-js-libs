@@ -37,7 +37,7 @@ module.exports = function (config) {
             }
 
             if (httpOptions.range) {
-                httpOptions.headers['Range'] = httpOptions.range;
+                httpOptions.headers.range = httpOptions.range;
             }
 
             var getParams = {
