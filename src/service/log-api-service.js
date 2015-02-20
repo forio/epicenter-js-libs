@@ -47,7 +47,7 @@ module.exports = function (config) {
 
             $.each(['run', 'group', 'user', 'level', 'startDate', 'endDate', 'q'], function (i, el) {
                 if (httpOptions[el]) {
-                    getParams[el] = httpOptions[el]
+                    getParams[el] = httpOptions[el];
                 }
             });
 
