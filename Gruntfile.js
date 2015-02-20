@@ -9,7 +9,7 @@ module.exports = function (grunt) {
         require('./' + task)(grunt);
     });
 
-    grunt.registerTask('test', ['browserify:edge', 'mocha', 'coverage-report']);
+    grunt.registerTask('test', ['browserify:edge', 'browserify:instrumented', 'mocha', 'coverage-report']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
@@ -23,5 +23,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['concatCometd', 'browserify:edge', 'watch']);
+    grunt.registerTask('default', ['concatCometd', 'browserify:edge', 'browserify:instrumented', 'watch']);
 };

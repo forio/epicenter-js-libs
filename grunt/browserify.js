@@ -23,9 +23,15 @@ module.exports = function (grunt) {
         edge: {
             files: {
                 './dist/epicenter-edge.js': './src/app.js'
+            }
+        },
+        instrumented: {
+            files: {
+                './dist/epicenter-edge-instrumented.js': './src/app.js'
             },
             options: {
-                transform: [istanbul]
+                transform: [istanbul],
+                debug: false
             }
         },
         min: {
