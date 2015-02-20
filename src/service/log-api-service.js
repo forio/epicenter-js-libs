@@ -32,7 +32,7 @@ module.exports = function (config) {
             if (!httpOptions.project) {
                 throw new Error('No project specified.');
             }
-            if (httpOptions.level && !((httpOptions.level == 'DEBUG') || (httpOptions.level == 'INFO') || (httpOptions.level == 'WARN') || (httpOptions.level == 'ERROR') || (httpOptions.level == 'FATAL'))) {
+            if (httpOptions.level && !((httpOptions.level === 'DEBUG') || (httpOptions.level === 'INFO') || (httpOptions.level === 'WARN') || (httpOptions.level === 'ERROR') || (httpOptions.level === 'FATAL'))) {
                 throw new Error('The level must be one of DEBUG, INFO, WARN, ERROR, or FATAL');
             }
 
