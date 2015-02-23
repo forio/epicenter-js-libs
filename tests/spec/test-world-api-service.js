@@ -199,6 +199,19 @@
 
             });
 
+            it('should accept an array of string userIds and pass an array of objects to API call', function () {
+                createWorldAdapter({ filter: 'gameid1' }).addUsers(['user1', 'user2']);
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+                /\/game\/gameid1/.test(req.url).should.be.true;
+                var body = JSON.parse(req.requestBody);
+                body.should.be.instanceof(Array);
+                body.should.be.length(2);
+                body.should.be.eql([{ userId: 'user1' }, { userId: 'user2' }]);
+
+            });
+
             it('should take the worldId as the second parameter if its a string', function () {
                 createWorldAdapter().addUsers([{ userId: '1', role: '1' }], 'gameid1');
 
@@ -220,6 +233,13 @@
                 var ws = createWorldAdapter();
 
                 expect(ws.addUsers).to.throw(Error);
+            });
+
+            it('should throw error if not all users in the list are valid', function () {
+                var ws = createWorldAdapter();
+                var fn = _.partial(ws.addUsers, ['123', { userId: '532' }, 123]);
+
+                expect(fn).to.throw(Error);
             });
         });
 

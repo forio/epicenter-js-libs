@@ -195,6 +195,7 @@ module.exports = function (config) {
         * Supported format for users
         * wm.addUsers('123-123-123-123');
         * wm.addUsers({ userId: '123-123-123-123', role: 'abc' });
+        * wm.addUsers(['123-123-123-123', '312-321-321-321']);
         * wm.addUsers([{ userId: '123-123-123-123', role: 'abc' }, { userId: '312-321-321-321' }]);
         *
         * note that options can be passed as the second parameter, so these calls are both valid
@@ -216,10 +217,20 @@ module.exports = function (config) {
                 users = [users];
             }
 
-            if (!$.isArray(users)) {
+            if ($.isArray(users)) {
+                users = $.map(users, function (u) {
+                    if (typeof u === 'string') {
+                        return { userId: u };
+                    } else if ($.isPlainObject(u)) {
+                        return u;
+                    }
+
+                    throw new Error('Some of the users in the list are not in the valid format: ' + u);
+
+                });
+            } else {
                 throw new Error('Please provide a list of users to add to the world');
             }
-
 
             // check if options were passed as the second parameter
             if ($.isPlainObject(worldId) && !options) {
