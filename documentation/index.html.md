@@ -8,7 +8,7 @@ isPage: true
 
 The Epicenter API Adapters are part of the epicenter.js library. This library abstracts the underlying Epicenter RESTful APIs into a set of services and utilities.
 
-If you are comfortable with JavaScript, the epicenter.js library is an easy way to connect your project's [model](../writing_your_model/), [data](../data_api/), and [user interface](../creating_your_interface).
+If you are comfortable with JavaScript, the epicenter.js library is an easy way to connect your project's [model](../writing_your_model/), [data](../rest_apis/data_api/), and [user interface](../creating_your_interface).
 
 * [Concepts in epicenter.js](#concepts)
 * [Using epicenter.js](#using-epicenter-js)

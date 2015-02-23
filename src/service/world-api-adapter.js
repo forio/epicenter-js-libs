@@ -1,7 +1,7 @@
 /**
  * ##World API Adapter
  *
- * Epicenter includes support for multiplayer games. These are projects where multiple end users share a run and work together in the same "world." Only [team projects](../glossary/#teams) can be multiplayer.
+ * Epicenter includes support for multiplayer games. These are projects where multiple end users share a run and work together in the same "world." Only [team projects](../../../glossary/#team) can be multiplayer.
  *
  * The World API Adapter allows you to create, access, and manipulate multiplayer worlds, including end users and runs playing within the world.
  *
@@ -9,8 +9,11 @@
  *
  * Typically, you instantiate a World Adapter and then access the methods provided. Instantiating requires the account (**Team ID**), project (**Project ID**), and group (**Group Name**).
  * 
- *       var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' }); 
- *       gm1.create({ model: 'model.py' })
+ *       var gm = new F.service.World({ 
+ *          account: 'acme-simulations', 
+ *          project: 'supply-chain-game', 
+ *          group: 'team1' }); 
+ *       gm.create({ model: 'model.py' })
  *          .then(function(world) {
  *              // call services, e.g. gm.addUsers(), gm.newRunForWorld()    
  *          }); 
@@ -107,8 +110,14 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
-        *      gm.create({ model: 'model.py', roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
+        *      gm.create({ 
+        *           model: 'model.py', 
+        *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] 
+        *       });
         *
         *  **Parameters**
         * @param {object} `params` Parameters to create the world.
@@ -148,7 +157,10 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
         *      gm.create({ model: 'model.py' });
         *           .then(function(world) {
         *               gm.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
@@ -184,7 +196,10 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
         *      gm.create({ model: 'model.py' });
         *           .then(function(world) {
         *               gm.delete();
@@ -212,13 +227,16 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
         *      gm.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               // lists all worlds in acme-simulations/supply-chain-game/team1
+        *               // lists all worlds in group "team1"
         *               gm.list();
         *
-        *               // lists all worlds in acme-simulations/supply-chain-game/other-group-name
+        *               // lists all worlds in group "other-group-name"
         *               gm.list({ group: 'other-group-name' });
         *           });
         *
@@ -245,7 +263,10 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
         *      gm.create({ model: 'model.py' });
         *           .then(function(world) {
         *               gm.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
@@ -277,7 +298,10 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
         *      gm.create({ model: 'model.py' });
         *           .then(function(world) {
         *               // add one user
@@ -285,8 +309,10 @@ module.exports = function (config) {
         *
         *               // add several users
         *               gm.addUsers([
-        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', role: 'VP Marketing' }, 
-        *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee', role: 'VP Engineering' }
+        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', 
+        *                     role: 'VP Marketing' }, 
+        *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee', 
+        *                     role: 'VP Engineering' }
         *               ]);
         *           });
         *
@@ -315,10 +341,16 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
         *      gm.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               gm.addUsers({ userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44' }, { userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
+        *               gm.addUsers(
+        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44' }, 
+        *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee' }
+        *               );
         *               gm.removeUser('8f2604cf-96cd-449f-82fa-e331530734ee');
         *           });
         *
@@ -347,7 +379,10 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
         *      gm.create({ model: 'model.py' });
         *           .then(function(world) {
         *               gm.getCurrentRunId();
@@ -375,7 +410,10 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ account: 'acme-simulations', project: 'supply-chain-game', group: 'team1' });
+        *      var gm = new F.service.World({ 
+        *           account: 'acme-simulations', 
+        *           project: 'supply-chain-game', 
+        *           group: 'team1' });
         *      gm.create({ model: 'model.py' });
         *           .then(function(world) {
         *               gm.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee');
