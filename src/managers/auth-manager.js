@@ -28,6 +28,10 @@ var token;
 function saveSession(userInfo) {
     var serialized = JSON.stringify(userInfo);
     store.set(EPI_SESSION_KEY, serialized);
+
+    //jshint camelcase: false
+    //jscs:disable
+    store.set(EPI_COOKIE_KEY, userInfo.auth_token);
 }
 
 function getSession() {
