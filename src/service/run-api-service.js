@@ -48,7 +48,7 @@ module.exports = function (config) {
         token: store.get('epicenter.project.token') || '',
 
         /**
-         * The account id. In the Epicenter UI, this is the "Team ID" (for team projects) or "User ID" (for personal projects). Defaults to empty string.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
          * @type {String}
          */
         account: '',
