@@ -199,12 +199,27 @@
 
             });
 
+            it('should take the worldId as the second parameter if its a string', function () {
+                createWorldAdapter().addUsers([{ userId: '1', role: '1' }], 'gameid1');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+                req.url.should.match(/\/game\/gameid1\/users/);
+
+            });
+
             it('should take the gameId from the service options or the override options', function () {
                 createWorldAdapter().addUsers([{ userId: '1', role: '1' }], { filter: 'gameid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
                 req.url.should.match(/\/game\/gameid1\/users/);
+            });
+
+            it('should throw error if no users are specified', function () {
+                var ws = createWorldAdapter();
+
+                expect(ws.addUsers).to.throw(Error);
             });
         });
 

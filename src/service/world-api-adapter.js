@@ -196,9 +196,17 @@ module.exports = function (config) {
         * wm.addUsers('123-123-123-123');
         * wm.addUsers({ userId: '123-123-123-123', role: 'abc' });
         * wm.addUsers([{ userId: '123-123-123-123', role: 'abc' }, { userId: '312-321-321-321' }]);
+        *
+        * note that options can be passed as the second parameter, so these calls are both valid
+        *   wm.addUser('123-123-123', 'game1')
+        *   wm.addUser('123-123-123', { filter: game1 })
+        *
+        * @param users {string|object|array} the users to add to the world
+        * @param worldId {string} (optional) the worldId to add the users to.
+        *       If not specified it will take the filter paramter of the options or the filter populated from previous calls
+        * @param options {object} (optional)
         */
-        addUsers: function (users, options) {
-            options = options || {};
+        addUsers: function (users, worldId, options) {
 
             if (typeof users === 'string') {
                 users = [{ userId: users }];
@@ -206,6 +214,24 @@ module.exports = function (config) {
 
             if ($.isPlainObject(users)) {
                 users = [users];
+            }
+
+            if (!$.isArray(users)) {
+                throw new Error('Please provide a list of users to add to the world');
+            }
+
+
+            // check if options were passed as the second parameter
+            if ($.isPlainObject(worldId) && !options) {
+                options = worldId;
+                worldId = null;
+            }
+
+            options = options || {};
+
+            // we must have options by now
+            if (typeof worldId === 'string') {
+                options.filter = worldId;
             }
 
             setIdFilterOrThrowError(options);
