@@ -3,7 +3,7 @@
 *
 * The Run Manager gives you control over run creation depending on run states. Specifically, you can select run creation strategies (rules) for which runs end users of your project work with when they log in to your project.
 *
-* Underlying Epicenter APIs -- including the [Model Run API](../../../model_apis/run/), the [Run API](../../../aggregate_run_api), and Epicenter.js's own [F.service.Run.create()](../run-api-service/) -- all allow you to create new runs. However, for some projects it makes more sense to pick up where the user left off, using an existing run. And in some projects, whether to create a new one or use an existing one is conditional, for example based on characteristics of the existing run or your own knowledge about the model. The Run Manager provides this level of control.
+* Underlying Epicenter APIs -- including the [Model Run API](../../../rest_apis/other_apis/model_apis/run/), the [Run API](../../../rest_apis/aggregate_run_api), and Epicenter.js's own [F.service.Run.create()](../run-api-service/) -- all allow you to create new runs. However, for some projects it makes more sense to pick up where the user left off, using an existing run. And in some projects, whether to create a new one or use an existing one is conditional, for example based on characteristics of the existing run or your own knowledge about the model. The Run Manager provides this level of control.
 *
 * ### Using the Run Manager to create and access runs
 *
@@ -14,7 +14,7 @@
 *       * `project`: Epicenter project id.
 *       * `model`: The name of your primary model file. (See more on [Writing your Model](../../../writing_your_model/).)
 *       * `scope`: (optional) Scope object for the run, for example `scope.group` with value of the name of the group.
-*       * `files`: (optional) If and only if you are using a Vensim model and you have additional data to pass in to your model, you can pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (Note that you'll also need to add this same files object to your Vensim [configuration file](../../../model_code/vensim/).) See the [underlying Model Run API](../../../model_apis/run/#post-creating-a-new-run-for-this-project) for additional information.
+*       * `files`: (optional) If and only if you are using a Vensim model and you have additional data to pass in to your model, you can pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (Note that you'll also need to add this same files object to your Vensim [configuration file](../../../model_code/vensim/).) See the [underlying Model Run API](../../../rest_apis/other_apis/model_apis/run/#post-creating-a-new-run-for-this-project) for additional information.
 *
 *   * `strategy`: (optional) Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../../strategy/) for details. Defaults to `new-if-initialized`.
 *
