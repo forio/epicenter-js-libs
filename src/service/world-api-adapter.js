@@ -25,11 +25,11 @@ module.exports = function (config) {
 
        token: store.get('epicenter.project.token') || '',
 
-       project: '',
+       project: undefined,
 
-       account: '',
+       account: undefined,
 
-       group: '',
+       group: undefined,
 
 //        apiKey: '',
 
@@ -192,9 +192,21 @@ module.exports = function (config) {
         /**
         * Add a user or list of users to a given world
         *
+        * Supported format for users
+        * wm.addUsers('123-123-123-123');
+        * wm.addUsers({ userId: '123-123-123-123', role: 'abc' });
+        * wm.addUsers([{ userId: '123-123-123-123', role: 'abc' }, { userId: '312-321-321-321' }]);
         */
         addUsers: function (users, options) {
             options = options || {};
+
+            if (typeof users === 'string') {
+                users = [{ userId: users }];
+            }
+
+            if ($.isPlainObject(users)) {
+                users = [users];
+            }
 
             setIdFilterOrThrowError(options);
 
@@ -208,18 +220,33 @@ module.exports = function (config) {
         },
 
         /**
-        * Remove a user from a given world
+        * Remove a user from a given world (only one user at a time)
+        *
+        * Supported formats:
+        * ws.removeUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        * ws.removeUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3' });
+        *
+        * @param user {object|string} user object with userId field defined or string with userId
+        * @param options {object} (Optional) Options object to override global options
         *
         */
-        removeUser: function (userId, options) {
+        removeUser: function (user, options) {
             options = options || {};
+
+            if (typeof user === 'string') {
+                user = { userId: user };
+            }
+
+            if (!user.userId) {
+                throw new Error('You need to pass a userId to remove from the world');
+            }
 
             setIdFilterOrThrowError(options);
 
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + userId }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId }
             );
 
             return http.delete(null, getOptions);
