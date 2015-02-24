@@ -1,13 +1,15 @@
 /**
  * ##World API Adapter
  *
- * Epicenter includes support for multiplayer games. These are projects where multiple end users share a run and work together in the same "world." Only [team projects](../../../glossary/#team) can be multiplayer.
+ * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, calling operations, and generally advancing through this "world." In many projects, only one end user works in each world at one time; this is the default behavior.
  *
- * The World API Adapter allows you to create, access, and manipulate multiplayer worlds, including end users and runs playing within the world.
+ * However, Epicenter also includes support for multiplayer worlds. These are projects where multiple end users share the same run and work together in the same world. To use this feature in your project, you must explicitly create a multiplayer world, add end users to the world, and create runs within the world. Only [team projects](../../../glossary/#team) can be multiplayer.
  *
- * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the World API Service defaults.
+ * The World API Adapter allows you to create, access, and manipulate multiplayer worlds within your Epicenter project. You can use this to manage end users playing within the world, and access their runs.
  *
- * Typically, you instantiate a World Adapter and then access the methods provided. Instantiating requires the account (**Team ID**), project (**Project ID**), and group (**Group Name**).
+ * As with all the other [API Adapters](../../), all methods take in an "options" object as the last parameter. The options can be used to extend/override the World API Service defaults.
+ *
+ * Typically, you instantiate a World Adapter and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface), project id (**Project ID**), and group (**Group Name**).
  * 
  *       var gm = new F.service.World({ 
  *          account: 'acme-simulations', 
@@ -15,7 +17,7 @@
  *          group: 'team1' }); 
  *       gm.create({ model: 'model.py' })
  *          .then(function(world) {
- *              // call services, e.g. gm.addUsers(), gm.newRunForWorld()    
+ *              // call methods, e.g. gm.addUsers(), gm.newRunForWorld()    
  *          }); 
  */
 
@@ -41,19 +43,19 @@ module.exports = function (config) {
        token: store.get('epicenter.project.token') || '',
 
         /**
-         * The project id. Defaults to empty string.
+         * The project id. Defaults to undefined.
          * @type {String}
          */
        project: '',
 
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). Defaults to empty string.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). Defaults to undefined.
          * @type {String}
          */
        account: '',
 
         /**
-         * The group name. Defaults to empty string.
+         * The group name. Defaults to undefined.
          * @type {String}
          */
        group: '',
@@ -306,6 +308,7 @@ module.exports = function (config) {
         *           .then(function(world) {
         *               // add one user
         *               gm.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *               gm.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
         *
         *               // add several users
         *               gm.addUsers([
@@ -443,7 +446,7 @@ module.exports = function (config) {
         *
         *  **Example**: This method is not yet implemented.
         *
-        *  ** Parameters **
+        *  **Parameters**
         * @param {string} `worldId`
         * @param {object} `options` (Optional) Options object to override global options.
         */
@@ -456,7 +459,7 @@ module.exports = function (config) {
         *
         *  **Example**: This method is not yet implemented.
         *
-        *  ** Parameters **
+        *  **Parameters**
         * @param {string} `worldId`
         * @param {object} `options` (Optional) Options object to override global options.
         */
