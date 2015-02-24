@@ -9,13 +9,13 @@
  *
  * Typically, you instantiate a World Adapter and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface), project id (**Project ID**), and group (**Group Name**).
  * 
- *       var worldAdapter = new F.service.World({ 
+ *       var wa = new F.service.World({ 
  *          account: 'acme-simulations', 
  *          project: 'supply-chain-game', 
  *          group: 'team1' }); 
- *       worldAdapter.create({ model: 'model.py' })
+ *       wa.create({ model: 'model.py' })
  *          .then(function(world) {
- *              // call methods, e.g. worldAdapter.addUsers(), worldAdapter.newRunForWorld()    
+ *              // call methods, e.g. wa.addUsers()    
  *          }); 
  */
 
@@ -110,11 +110,11 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ 
+        *      wa.create({ 
         *           model: 'model.py', 
         *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] 
         *       });
@@ -157,13 +157,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ model: 'model.py' });
+        *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               worldAdapter.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
+        *               wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
         *           });
         *
         *  **Parameters**
@@ -196,13 +196,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ model: 'model.py' });
+        *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               worldAdapter.delete();
+        *               wa.delete();
         *           });
         *
         *  **Parameters**
@@ -227,17 +227,17 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ model: 'model.py' });
+        *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
         *               // lists all worlds in group "team1"
-        *               worldAdapter.list();
+        *               wa.list();
         *
         *               // lists all worlds in group "other-group-name"
-        *               worldAdapter.list({ group: 'other-group-name' });
+        *               wa.list({ group: 'other-group-name' });
         *           });
         *
         *  **Parameters**
@@ -263,13 +263,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ model: 'model.py' });
+        *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               worldAdapter.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
+        *               wa.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
         *           });
         *
         * ** Parameters **
@@ -298,18 +298,18 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ model: 'model.py' });
+        *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
         *               // add one user
-        *               worldAdapter.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
-        *               worldAdapter.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
+        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *               wa.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
         *
         *               // add several users
-        *               worldAdapter.addUsers([
+        *               wa.addUsers([
         *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', 
         *                     role: 'VP Marketing' }, 
         *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee', 
@@ -317,8 +317,8 @@ module.exports = function (config) {
         *               ]);
         *
         *               // add one user, using a filter to specify the world
-        *               worldAdapter.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', world.id);
-        *               worldAdapter.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', { filter: world.id });
+        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', world.id);
+        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', { filter: world.id });
         *           });
         *
         * ** Parameters **
@@ -346,18 +346,18 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ model: 'model.py' });
+        *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               worldAdapter.addUsers(
+        *               wa.addUsers(
         *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44' }, 
         *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee' }
         *               );
-        *               worldAdapter.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
-        *               worldAdapter.removeUser({ userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
+        *               wa.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
+        *               wa.removeUser({ userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
         *           });
         *
         * ** Parameters **
@@ -385,13 +385,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ model: 'model.py' });
+        *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               worldAdapter.getCurrentRunId();
+        *               wa.getCurrentRunId();
         *           });
         *
         * ** Parameters **
@@ -416,13 +416,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var worldAdapter = new F.service.World({ 
+        *      var wa = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      worldAdapter.create({ model: 'model.py' });
+        *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               worldAdapter.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee');
+        *               wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee');
         *           });
         *
         * ** Parameters **
