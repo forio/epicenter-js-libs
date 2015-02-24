@@ -209,28 +209,20 @@ module.exports = function (config) {
         */
         addUsers: function (users, worldId, options) {
 
-            if (typeof users === 'string') {
-                users = [{ userId: users }];
-            }
-
-            if ($.isPlainObject(users)) {
-                users = [users];
-            }
-
-            if ($.isArray(users)) {
-                users = $.map(users, function (u) {
-                    if (typeof u === 'string') {
-                        return { userId: u };
-                    } else if ($.isPlainObject(u)) {
-                        return u;
-                    }
-
-                    throw new Error('Some of the users in the list are not in the valid format: ' + u);
-
-                });
-            } else {
+            if (!users) {
                 throw new Error('Please provide a list of users to add to the world');
             }
+
+            // normalize the list of users to an array of user objects
+            users = $.map([].concat(users), function (u) {
+                var isObject = $.isPlainObject(u);
+
+                if (typeof u !== 'string' && !isObject) {
+                    throw new Error('Some of the users in the list are not in the valid format: ' + u);
+                }
+
+                return isObject ? u : { userId: u };
+            });
 
             // check if options were passed as the second parameter
             if ($.isPlainObject(worldId) && !options) {
