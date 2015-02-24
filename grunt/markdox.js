@@ -30,6 +30,9 @@ module.exports = function (grunt) {
                 }, {
                     src: 'src/managers/run-manager.js',
                     dest: 'documentation/generated/run-manager/index.html.md'
+                }, {
+                    src: 'src/managers/world-manager.js',
+                    dest: 'documentation/generated/world-manager/index.html.md'
                 }
 
             ]
