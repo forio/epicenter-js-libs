@@ -40,9 +40,9 @@ The epicenter.js library is a set of services (adapters) and managers to help st
 
 <a name="include"></a>
 ####Including
-The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.1.2/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.1.2/epicenter.min.js</a>. To use it in your project, simply add
+The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.3.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.3.0/epicenter.min.js</a>. To use it in your project, simply add
 
-    <script src="https://forio.com/tools/js-libs/1.1.2/epicenter.min.js"></script>
+    <script src="https://forio.com/tools/js-libs/1.3.0/epicenter.min.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
