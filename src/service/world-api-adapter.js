@@ -25,11 +25,11 @@ module.exports = function (config) {
 
        token: store.get('epicenter.project.token') || '',
 
-       project: '',
+       project: undefined,
 
-       account: '',
+       account: undefined,
 
-       group: '',
+       group: undefined,
 
 //        apiKey: '',
 
@@ -192,9 +192,50 @@ module.exports = function (config) {
         /**
         * Add a user or list of users to a given world
         *
+        * Supported format for users
+        * wm.addUsers('123-123-123-123');
+        * wm.addUsers({ userId: '123-123-123-123', role: 'abc' });
+        * wm.addUsers(['123-123-123-123', '312-321-321-321']);
+        * wm.addUsers([{ userId: '123-123-123-123', role: 'abc' }, { userId: '312-321-321-321' }]);
+        *
+        * note that options can be passed as the second parameter, so these calls are both valid
+        *   wm.addUser('123-123-123', 'game1')
+        *   wm.addUser('123-123-123', { filter: game1 })
+        *
+        * @param users {string|object|array} the users to add to the world
+        * @param worldId {string} (optional) the worldId to add the users to.
+        *       If not specified it will take the filter paramter of the options or the filter populated from previous calls
+        * @param options {object} (optional)
         */
-        addUsers: function (users, options) {
+        addUsers: function (users, worldId, options) {
+
+            if (!users) {
+                throw new Error('Please provide a list of users to add to the world');
+            }
+
+            // normalize the list of users to an array of user objects
+            users = $.map([].concat(users), function (u) {
+                var isObject = $.isPlainObject(u);
+
+                if (typeof u !== 'string' && !isObject) {
+                    throw new Error('Some of the users in the list are not in the valid format: ' + u);
+                }
+
+                return isObject ? u : { userId: u };
+            });
+
+            // check if options were passed as the second parameter
+            if ($.isPlainObject(worldId) && !options) {
+                options = worldId;
+                worldId = null;
+            }
+
             options = options || {};
+
+            // we must have options by now
+            if (typeof worldId === 'string') {
+                options.filter = worldId;
+            }
 
             setIdFilterOrThrowError(options);
 
@@ -208,18 +249,33 @@ module.exports = function (config) {
         },
 
         /**
-        * Remove a user from a given world
+        * Remove a user from a given world (only one user at a time)
+        *
+        * Supported formats:
+        * ws.removeUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        * ws.removeUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3' });
+        *
+        * @param user {object|string} user object with userId field defined or string with userId
+        * @param options {object} (Optional) Options object to override global options
         *
         */
-        removeUser: function (userId, options) {
+        removeUser: function (user, options) {
             options = options || {};
+
+            if (typeof user === 'string') {
+                user = { userId: user };
+            }
+
+            if (!user.userId) {
+                throw new Error('You need to pass a userId to remove from the world');
+            }
 
             setIdFilterOrThrowError(options);
 
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + userId }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId }
             );
 
             return http.delete(null, getOptions);
