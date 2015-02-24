@@ -37,6 +37,9 @@ module.exports = function (config) {
             }
 
             if (httpOptions.range) {
+                if (!httpOptions.headers) {
+                    httpOptions.headers = {};
+                }
                 httpOptions.headers.range = httpOptions.range;
             }
 
