@@ -1,23 +1,21 @@
 /**
  * ##World API Adapter
  *
- * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, calling operations, and generally advancing through this "world." In many projects, only one end user works in each world at one time; this is the default behavior.
+ * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. 
  *
- * However, Epicenter also includes support for multiplayer worlds. These are projects where multiple end users share the same run and work together in the same world. To use this feature in your project, you must explicitly create a multiplayer world, add end users to the world, and create runs within the world. Only [team projects](../../../glossary/#team) can be multiplayer.
- *
- * The World API Adapter allows you to create, access, and manipulate multiplayer worlds within your Epicenter project. You can use this to manage end users playing within the world, and access their runs.
+ * The World API Adapter allows you to create, access, and manipulate multiplayer worlds within your Epicenter project. You can use this to add and remove end users from the world, and to create, access, and remove their runs. (The related [World Manager](../world-manager/) provides an easy way to access runs and worlds for particular users.) Only [team projects](../../../glossary/#team) can be multiplayer.
  *
  * As with all the other [API Adapters](../../), all methods take in an "options" object as the last parameter. The options can be used to extend/override the World API Service defaults.
  *
  * Typically, you instantiate a World Adapter and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface), project id (**Project ID**), and group (**Group Name**).
  * 
- *       var gm = new F.service.World({ 
+ *       var worldAdapter = new F.service.World({ 
  *          account: 'acme-simulations', 
  *          project: 'supply-chain-game', 
  *          group: 'team1' }); 
- *       gm.create({ model: 'model.py' })
+ *       worldAdapter.create({ model: 'model.py' })
  *          .then(function(world) {
- *              // call methods, e.g. gm.addUsers(), gm.newRunForWorld()    
+ *              // call methods, e.g. worldAdapter.addUsers(), worldAdapter.newRunForWorld()    
  *          }); 
  */
 
@@ -112,11 +110,11 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ 
+        *      worldAdapter.create({ 
         *           model: 'model.py', 
         *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] 
         *       });
@@ -159,13 +157,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ model: 'model.py' });
+        *      worldAdapter.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               gm.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
+        *               worldAdapter.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
         *           });
         *
         *  **Parameters**
@@ -198,13 +196,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ model: 'model.py' });
+        *      worldAdapter.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               gm.delete();
+        *               worldAdapter.delete();
         *           });
         *
         *  **Parameters**
@@ -229,17 +227,17 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ model: 'model.py' });
+        *      worldAdapter.create({ model: 'model.py' });
         *           .then(function(world) {
         *               // lists all worlds in group "team1"
-        *               gm.list();
+        *               worldAdapter.list();
         *
         *               // lists all worlds in group "other-group-name"
-        *               gm.list({ group: 'other-group-name' });
+        *               worldAdapter.list({ group: 'other-group-name' });
         *           });
         *
         *  **Parameters**
@@ -265,13 +263,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ model: 'model.py' });
+        *      worldAdapter.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               gm.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
+        *               worldAdapter.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
         *           });
         *
         * ** Parameters **
@@ -300,23 +298,27 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ model: 'model.py' });
+        *      worldAdapter.create({ model: 'model.py' });
         *           .then(function(world) {
         *               // add one user
-        *               gm.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
-        *               gm.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
+        *               worldAdapter.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *               worldAdapter.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
         *
         *               // add several users
-        *               gm.addUsers([
+        *               worldAdapter.addUsers([
         *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', 
         *                     role: 'VP Marketing' }, 
         *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee', 
         *                     role: 'VP Engineering' }
         *               ]);
+        *
+        *               // add one user, using a filter to specify the world
+        *               worldAdapter.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', world.id);
+        *               worldAdapter.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', { filter: world.id });
         *           });
         *
         * ** Parameters **
@@ -344,21 +346,22 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ model: 'model.py' });
+        *      worldAdapter.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               gm.addUsers(
+        *               worldAdapter.addUsers(
         *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44' }, 
         *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee' }
         *               );
-        *               gm.removeUser('8f2604cf-96cd-449f-82fa-e331530734ee');
+        *               worldAdapter.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
+        *               worldAdapter.removeUser({ userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
         *           });
         *
         * ** Parameters **
-        * @param {string} `userId` The `userId` of the user to remove from the world.
+        * @param {object|string} `user` The `userId` of the user to remove from the world, or an object containing the `userId` field.
         * @param {object} `options` (Optional) Options object to override global options.
         */
         removeUser: function (userId, options) {
@@ -376,19 +379,19 @@ module.exports = function (config) {
         },
 
         /**
-        * Gets (or creates) the current run for the given world.
+        * Gets the run id of current run for the given world. If the world does not have a run, creates a new one and returns the run id.
         *
         * Remember that a [run](../../glossary/#run) is a collection of interactions with a project and its model. In the case of multiplayer projects, the run is shared by all end users in the world.
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ model: 'model.py' });
+        *      worldAdapter.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               gm.getCurrentRunId();
+        *               worldAdapter.getCurrentRunId();
         *           });
         *
         * ** Parameters **
@@ -413,17 +416,17 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var gm = new F.service.World({ 
+        *      var worldAdapter = new F.service.World({ 
         *           account: 'acme-simulations', 
         *           project: 'supply-chain-game', 
         *           group: 'team1' });
-        *      gm.create({ model: 'model.py' });
+        *      worldAdapter.create({ model: 'model.py' });
         *           .then(function(world) {
-        *               gm.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee');
+        *               worldAdapter.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee');
         *           });
         *
         * ** Parameters **
-        * @param {string} `userId` The `userId` of the user to remove from the world.
+        * @param {string} `userId` The `userId` of the user whose current (most recent) world is being retrieved.
         * @param {string} `groupName` (Optional) The name of the group. If not provided, defaults to the group used to create the service.
         */
         getCurrentWorldForUser: function (userId, groupName) {
