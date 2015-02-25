@@ -4,12 +4,8 @@ var classFrom = require('../../../util/inherit');
 
 var Model = require('./user-model');
 var Base = require('./base-collection');
-
 var tok = 'bG9naW46bG9naW5zZWNyZXQ=';
-var account = 'forio-dev';
-var project = 'test';
-var groupName = 'gr-1-feb-2015';
-var groupId = '9be7ae99-7c9a-463d-b3f4-09617efd642d';
+var env = require('./defaults');
 
 $.ajaxSetup({
     headers: {
@@ -17,17 +13,8 @@ $.ajaxSetup({
     }
 });
 
-var server = {
-    host: 'localhost:8080',
-    protocol: 'http'
-};
 
-var worldApi = new F.service.World({
-    account: account,
-    project: project,
-    group: groupName,
-    server: server
-});
+var worldApi = new F.service.World(env);
 
 module.exports = classFrom(Base, {
     model: Model,
@@ -43,8 +30,8 @@ module.exports = classFrom(Base, {
         var _worlds;
 
         var getGroupUsers = function () {
-            var memberApi = new F.service.Member({ groupId: groupId, server: server });
-            var userApi = new F.service.User({ account: account, server: server });
+            var memberApi = new F.service.Member(_.pick(env, ['groupId', 'server']));
+            var userApi = new F.service.User(_.pick(env, ['account', 'server']));
 
             var loadGroupMembers = function () {
                 return memberApi.getGroupDetails();
@@ -61,7 +48,7 @@ module.exports = classFrom(Base, {
         };
 
         var getWorlds = function () {
-            return worldApi.list({ group: groupName })
+            return worldApi.list(_.pick(env, ['group']))
                 .fail(dtd.reject);
         };
 
