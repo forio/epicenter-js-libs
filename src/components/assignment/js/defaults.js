@@ -1,10 +1,10 @@
 'use strict';
 
 
-var account = 'forio-dev';
+var account = 'forio-d';
 var project = 'test';
-var groupName = 'gr-1-feb-2015';
-var groupId = '9be7ae99-7c9a-463d-b3f4-09617efd642d';
+var groupName = 'test-feb-2015';
+var groupId = '79b06b71-ff2e-437a-8ddb-8be2272c9e88';
 
 
 module.exports = {
