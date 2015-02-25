@@ -249,6 +249,34 @@ module.exports = function (config) {
         },
 
         /**
+        * Updates a user from a given world (only one user at a time)
+        *
+        * Supported formats:
+        * ws.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        *
+        * @param user {object} user object with userId and the new role
+        * @param options {object} (Optional) Options object to override global options
+        *
+        */
+        updateUser: function (user, options) {
+            options = options || {};
+
+            if (!user || !user.userId) {
+                throw new Error('You need to pass a userId to remove from the world');
+            }
+
+            setIdFilterOrThrowError(options);
+
+            var patchOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId }
+            );
+
+            return http.patch(_pick(user, 'role'), patchOptions);
+        },
+
+        /**
         * Remove a user from a given world (only one user at a time)
         *
         * Supported formats:
@@ -311,6 +339,11 @@ module.exports = function (config) {
                     // assume the most recent world as the 'active' world
                     worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
                     var currentWorld = worlds[0];
+
+                    if (currentWorld) {
+                        serviceOptions.filter =  currentWorld.id;
+                    }
+
                     dtd.resolve(currentWorld, me);
                 })
                 .fail(dtd.reject);
@@ -323,7 +356,21 @@ module.exports = function (config) {
         *
         */
         deleteRun: function (worldId, options) {
-            throw new Error('not implemented');
+            options = options || {};
+
+            if (worldId) {
+                options.filter = worldId;
+            }
+
+            setIdFilterOrThrowError(options);
+
+            var deleteOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/run' }
+            );
+
+            return http.delete(null, deleteOptions);
         },
 
         newRunForWorld: function (worldId, options) {
