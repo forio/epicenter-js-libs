@@ -83,12 +83,13 @@ module.exports = function (config) {
         * @param {string} `params.roles` (Optional) The list of roles for this world
         * @param {string} `params.opionalRoles` (Optional) The list of optional roles for this world
         * @param {string} `params.minUsers` (Optional) The minimum number of users for the world
+        * @param {string} `params.name` (Optional) A name for the world
         * @param {object} `options` Options object to override global options
         *
         */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
-            var worldApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group'];
+            var worldApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
             if (typeof params === 'string') {
                 // this is just the model name
                 params = { model: params };

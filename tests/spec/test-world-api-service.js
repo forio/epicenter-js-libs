@@ -37,7 +37,7 @@
             });
 
             it('should pass the optional parameters to the API', function () {
-                var params = { model: 'model_file', roles: ['role1', 'role2'], optionalRoles: ['observer'], minUsers: 2 };
+                var params = { model: 'model_file', roles: ['role1', 'role2'], optionalRoles: ['observer'], minUsers: 2, name: 'the-big-world' };
                 createWorldAdapter().create(params);
 
                 var req = server.requests.pop();
@@ -47,6 +47,7 @@
                 body.roles.should.eql(params.roles);
                 body.optionalRoles.should.eql(params.optionalRoles);
                 body.minUsers.should.equal(params.minUsers);
+                body.name.should.equal(params.name);
             });
 
             it('should accept a string as the model parameter', function () {
