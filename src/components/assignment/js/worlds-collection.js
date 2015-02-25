@@ -53,10 +53,10 @@ module.exports = classFrom(Base, {
     },
 
     getWorldByUser: function (user) {
-        var userName = user.get('userName');
+        var id = user.get('id');
         return this.find(function (world) {
             return _.find(world.get('users'), function (u) {
-                return u.get('userName') === userName;
+                return u.get('id') === id;
             });
         });
     },

@@ -13,7 +13,13 @@ module.exports = classFrom(Base, {
 
     initialize: function () {
         __super.initialize.apply(this, arguments);
+
         this._worldApi = new F.service.World(env);
+
+        var id = this.get('id');
+        if (id) {
+            this._worldApi.load(id);
+        }
     },
 
     addUser: function (user) {
@@ -24,7 +30,14 @@ module.exports = classFrom(Base, {
     },
 
     removeUser: function (user) {
+        var users = _.remove(this.get('users'), function (u) {
+            return u.get('id') === user.get('id');
+        });
 
+        this.set('users', users);
+
+        return this._worldApi
+            .removeUser({ userId: user.get('id') });
     },
 
     save: function () {
@@ -44,17 +57,20 @@ module.exports = classFrom(Base, {
 
         var createWorld = _.partial(this._worldApi.create, this.pick(['model', 'name', 'minUsers']));
         var addUsers = _.partial(_this._worldApi.addUsers, mapUsers(), { filter: _this.get('id') });
-        // we need to create the world in the API and then add the users
         if (this.isNew()) {
+            // we need to create the world in the API and then add the users
             return createWorld()
                 .then(function (world) {
                     _this.set(world);
+                    _this._worldApi.load(world.id);
                 })
                 .then(addUsers)
                 .then(function (users) {
+                    // since we re-set the world, re-set the users
                     _this.get('users').push(users);
                 });
         } else {
+            // the world is already created just add the users
             return addUsers();
         }
     },
