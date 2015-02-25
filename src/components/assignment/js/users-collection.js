@@ -14,8 +14,6 @@ $.ajaxSetup({
 });
 
 
-var worldApi = new F.service.World(env);
-
 module.exports = classFrom(Base, {
     model: Model,
 
@@ -26,8 +24,6 @@ module.exports = classFrom(Base, {
     fetch: function () {
         var dtd = $.Deferred();
         var _this = this;
-        var _users;
-        var _worlds;
 
         var getGroupUsers = function () {
             var memberApi = new F.service.Member(_.pick(env, ['groupId', 'server']));
@@ -47,45 +43,13 @@ module.exports = classFrom(Base, {
                 .fail(dtd.reject);
         };
 
-        var getWorlds = function () {
-            return worldApi.list(_.pick(env, ['group']))
-                .fail(dtd.reject);
-        };
+        var sortFn = function (a, b) { return +a.world - +b.world; };
 
-        var join = _.after(2, function () {
-
-            var usersHash = {};
-            _.each(_users, function (u) {
-                u.world = '';
-                u.role = '';
-                return (usersHash[u.id] = u);
+        getGroupUsers()
+            .then(function (users) {
+                _this.set(users.sort(sortFn));
+                dtd.resolve(users, _this);
             });
-
-            _.each(_worlds, function (w, i) {
-                w.index = i;
-                _.each(w.users, function (u) {
-                    _.extend(usersHash[u.userId], { world: w.index + 1, role: u.role });
-                });
-            }, this);
-
-            _users.sort(function (a, b) { return +a.world - +b.world; });
-
-            _this.set(_users);
-            dtd.resolve(_users);
-        });
-
-        var usersLoaded = function (users) {
-            _users = users;
-            join();
-        };
-
-        var worldsLoaded = function (worlds) {
-            _worlds = worlds;
-            join();
-        };
-
-        getWorlds().then(worldsLoaded);
-        getGroupUsers().then(usersLoaded);
 
         return dtd.promise();
     }

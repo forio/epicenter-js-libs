@@ -27,8 +27,15 @@ Assignment.prototype = {
     },
 
     load: function () {
-        return this.users.fetch()
-            .then(this.render);
+
+        var join = _.after(2, function () {
+            this.worlds.joinUsers(this.users);
+
+            this.render();
+        }.bind(this));
+
+        this.worlds.fetch().then(join);
+        this.users.fetch().then(join);
     },
 
     saveEdit: function () {

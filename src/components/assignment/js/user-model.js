@@ -5,5 +5,9 @@ var Base = require('./base-model');
 
 
 module.exports = classFrom(Base, {
+    defaults: {
+        world: '',
+        role: ''
+    }
 
 });

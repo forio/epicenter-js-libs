@@ -43,7 +43,8 @@ module.exports = classFrom(Base, {
         }.bind(this);
 
         var createWorld = _.partial(this._worldApi.create, this.pick(['model', 'name', 'minUsers']));
-        var addUsers = _.partial(_this._worldApi.addUsers, mapUsers());
+        var addUsers = _.partial(_this._worldApi.addUsers, mapUsers(), { filter: _this.get('id') });
+        // we need to create the world in the API and then add the users
         if (this.isNew()) {
             return createWorld()
                 .then(function (world) {
@@ -53,6 +54,8 @@ module.exports = classFrom(Base, {
                 .then(function (users) {
                     _this.get('users').push(users);
                 });
+        } else {
+            return addUsers();
         }
     },
 
