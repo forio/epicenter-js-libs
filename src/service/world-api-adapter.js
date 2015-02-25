@@ -148,6 +148,24 @@ module.exports = function (config) {
         },
 
         /**
+        * Set the filter for the current instance of the world adapter
+        *
+        * **Example**
+        * var ws = new F.service.World({...}).load('123').addUser({ userId: '123' });
+        *
+        *
+        */
+        load: function (worldId) {
+            if (!worldId || typeof worldId !== 'string') {
+                throw new Error('load needs a worldId string to load (' + worldId + ')');
+            }
+
+            serviceOptions.filter = worldId;
+
+            return this;
+        },
+
+        /**
         * List all worlds for a given account/project/group
         *
         *
