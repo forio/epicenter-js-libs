@@ -1,6 +1,4 @@
 IMPLEMENTED
-
-```javascript
 var cm = new ChannelManager();
 cm.on('connect', function (){ });
 cm.on('disconnect', function (){ });
@@ -17,11 +15,8 @@ wm.getCurrentWorld(function (world) {
 })
 
 var groupChannel = cm.getGroupChannel("randomTopic");
-```
 
 NOT IMPLEMENTED
-
-``` javascript
 wm.getCurrentRun().then(function (run) {
     var runChannel = cm.getRunChannel(run);
     runChannel.subscribe("completed", fn);
@@ -54,7 +49,7 @@ invoicesChannel.publish({msg: "Hey all, I just published an invoice", data: {inv
 invoicesChannel.subscribe(function (evt, data) {
     console.log(data.originator, data.payload);
 });
-```
+
 
 ** EPI Bugs
 Cannot publish to top-level group channel
