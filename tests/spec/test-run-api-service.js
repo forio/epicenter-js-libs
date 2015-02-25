@@ -267,6 +267,13 @@
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/?include=score');
             });
+            it('should load a run without any filters', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                rs.load('myfancyrunid', null);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/');
+            });
         });
 
         describe('#save()', function () {

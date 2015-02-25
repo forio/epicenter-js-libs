@@ -28,10 +28,14 @@ var token;
 function saveSession(userInfo) {
     var serialized = JSON.stringify(userInfo);
     store.set(EPI_SESSION_KEY, serialized);
+
+    //jshint camelcase: false
+    //jscs:disable
+    store.set(EPI_COOKIE_KEY, userInfo.auth_token);
 }
 
 function getSession() {
-    var session = store.get(EPI_COOKIE_KEY) || '{}';
+    var session = store.get(EPI_SESSION_KEY) || '{}';
     return JSON.parse(session);
 }
 
@@ -65,7 +69,7 @@ var _findUserInGroup = function (members, id) {
     return null;
 };
 
-AuthManager.prototype = {
+AuthManager.prototype = $.extend(AuthManager.prototype, {
     login: function (options) {
         var _this = this;
         var $d = $.Deferred();
@@ -83,10 +87,6 @@ AuthManager.prototype = {
             var decode = window.atob ? window.atob : function (encoded) { return new Buffer(encoded, 'base64').toString('ascii'); };
 
             return JSON.parse(decode(encoded));
-        };
-
-        var setSessionCookie = function (data) {
-            saveSession(data);
         };
 
         var handleGroupError = function (message, statusCode, data) {
@@ -107,8 +107,15 @@ AuthManager.prototype = {
             _this.getUserGroups(userGroupOpts).done( function (memberInfo) {
                 var data = {auth: response, user: userInfo, userGroups: memberInfo, groupSelection: {} };
 
+                var sessionInfo = {
+                    'auth_token': token,
+                    'account': adapterOptions.account,
+                    'project': adapterOptions.project,
+                    'userId': userInfo.user_id
+                };
                 // The group is not required if the user is not logging into a project
                 if (!adapterOptions.project) {
+                    saveSession(sessionInfo);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                     return;
@@ -133,16 +140,12 @@ AuthManager.prototype = {
                 if (group) {
                     var groupSelection = group.groupId;
                     data.groupSelection[adapterOptions.project] = groupSelection;
-                    var sessionCookie = {
-                        'auth_token': token,
-                        'account': adapterOptions.account,
-                        'project': adapterOptions.project,
-                        'userId': userInfo.user_id,
+                    var sessionInfoWithGroup = $.extend({}, sessionInfo, {
                         'groupId': group.groupId,
                         'groupName': group.name,
                         'isFac': _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator'
-                    };
-                    setSessionCookie(sessionCookie);
+                    });
+                    saveSession(sessionInfoWithGroup);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
@@ -244,9 +247,9 @@ AuthManager.prototype = {
         return $d.promise();
     },
 
-    getUserSession: function (options) {
-        return getSession();
+    getCurrentUserSessionInfo: function (options) {
+        return getSession(options);
     }
-};
+});
 
 module.exports = AuthManager;

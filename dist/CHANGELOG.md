@@ -1,3 +1,7 @@
+<a name="1.3.0"></a>
+## 1.3.0 (2015-02-05)
+Multiplayer Game Manager
+
 <a name="1.2.0"></a>
 ## 1.2.0 (2015-01-30)
 Authentication Manager and components. Docs forthcoming.

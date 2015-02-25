@@ -16,9 +16,9 @@
         getGames: /multiplayer\/game\/\?((?:project=js-libs|account=forio-dev|group=group\-123|&userId=123)&?){4}/gi,
     };
 
-    var fakeStore = {
+    var fakeAuth = {
         // get should return what's stoed in the session cookie
-        get: sinon.stub().returns(JSON.stringify(cookieContents))
+        getCurrentUserSessionInfo: sinon.stub().returns(cookieContents)
     };
 
     var server;
@@ -71,14 +71,16 @@
 
         function createRunManager(options) {
             var rm = new F.manager.RunManager(_.extend({
-                account: 'forio-dev',
-                project: 'js-libs',
-                strategy: 'multiplayer'
+                strategy: 'multiplayer',
+                run: {
+                    account: 'forio-dev',
+                    project: 'js-libs',
+                }
             }, options));
 
             // this is briddle, it knows too much about the internals of the run manager
             // but replace the cookie store with a stub
-            rm.strategy._store = fakeStore;
+            rm.strategy._auth = fakeAuth;
 
             return rm;
         }

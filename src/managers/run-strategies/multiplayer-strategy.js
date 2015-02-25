@@ -3,10 +3,8 @@
 var classFrom = require('../../util/inherit');
 
 var IdentityStrategy = require('./identity-strategy');
-var StorageFactory = require('../../store/store-factory');
 var WorldApiAdapter = require('../../service/world-api-adapter');
-var keyNames = require('../key-names');
-var _pick = require('../../util/object-util')._pick;
+var AuthManager = require('../auth-manager');
 
 var defaults = {
     store: {
@@ -19,23 +17,28 @@ var Strategy = classFrom(IdentityStrategy, {
     constructor: function (runService, options) {
         this.runService = runService;
         this.options = $.extend(true, {}, defaults, options);
-        this._store = new StorageFactory(this.options.store);
+        this._auth = new AuthManager();
         this._loadRun = this._loadRun.bind(this);
+        this.worldApi = new WorldApiAdapter(this.options.run);
     },
 
     reset: function () {
-        throw new Error('Not supported. Reset should not be called from the end-user side');
+        var session = this._auth.getCurrentUserSessionInfo();
+        var curUserId = session.userId;
+        var curGroupName = session.groupName;
+
+        return this.worldApi
+            .getCurrentWorldForUser(curUserId, curGroupName)
+            .then(function (world) {
+                return this.worldApi.newRunForWorld(world.id);
+            }.bind(this));
     },
 
     getRun: function () {
-        var session = JSON.parse(this._store.get(keyNames.EPI_SESSION_KEY) || '{}');
+        var session = this._auth.getCurrentUserSessionInfo();
         var curUserId = session.userId;
-        var opt = $.extend({
-            account: session.account,
-            project: session.project,
-            group: session.groupName
-        }, _pick(this.options, ['account', 'project', 'group']));
-
+        var curGroupName = session.groupName;
+        var worldApi = this.worldApi;
         var _this = this;
         var dtd = $.Deferred();
 
@@ -43,31 +46,25 @@ var Strategy = classFrom(IdentityStrategy, {
             return dtd.reject({ statusCode: 400, error: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
         }
 
-        var worldApi = new WorldApiAdapter(opt);
-
-        var restoreInitRun = function (worlds, msg, xhr) {
-            if (!worlds || !worlds.length) {
-                return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: opt, session: session, xhr: xhr });
+        var loadRunFromWorld = function (world) {
+            if (!world) {
+                return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: this.options, session: session });
             }
 
-            // assume the most recent world as the 'active' world
-            worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
-
-            return worldApi.getCurrentRunId({ filter: worlds[0].id })
-                .then(function (runId) {
-                    return _this._loadRun(runId);
-                })
+            return worldApi.getCurrentRunId({ filter: world.id })
+                .then(_this._loadRun)
                 .then(dtd.resolve)
                 .fail(dtd.reject);
         };
 
         var serverError = function (error) {
             // is this possible?
-            dtd.reject(error, session, opt);
+            dtd.reject(error, session, this.options);
         };
 
-        worldApi.getWorldsForUser(curUserId)
-            .then(restoreInitRun)
+        this.worldApi
+            .getCurrentWorldForUser(curUserId, curGroupName)
+            .then(loadRunFromWorld)
             .fail(serverError);
 
         return dtd.promise();

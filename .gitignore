@@ -37,3 +37,13 @@ documentation/generated
 # ides
 *.sublime-*
 local/
+
+dist/epicenter-edge.js
+dist/epicenter-edge-instrumented.js
+dist/epicenter-multiplayer-dependencies.js
+dist/epicenter-multiplayer-dependencies.js.map
+dist/epicenter-multiplayer-dependencies.min.js
+
+#instanbul related
+coverage/
+.DS_Store
