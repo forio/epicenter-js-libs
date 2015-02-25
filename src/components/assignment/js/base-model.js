@@ -38,6 +38,14 @@ _.extend(BaseModel.prototype, {
         return this._data[key];
     },
 
+    remove: function () {
+        if (this.collection) {
+            this.collection.remove(this);
+        }
+
+        return this;
+    },
+
     toJSON: function () {
         return this._data;
     },

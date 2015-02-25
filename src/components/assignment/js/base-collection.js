@@ -21,6 +21,16 @@ _.extend(BaseCollection.prototype, {
         this.set(models);
     },
 
+    remove: function (model) {
+        _.remove(this._models, function (m) {
+            return m === model;
+        });
+
+        delete model.collection;
+
+        return model;
+    },
+
     set: function (models) {
         if (!models) {
             return;
@@ -36,6 +46,8 @@ _.extend(BaseCollection.prototype, {
             if (!(m instanceof this.model)) {
                 m = new this.model(m);
             }
+
+            m.collection = this;
 
             this._models.push(m);
         }, this);

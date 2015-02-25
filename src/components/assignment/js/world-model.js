@@ -30,14 +30,20 @@ module.exports = classFrom(Base, {
     },
 
     removeUser: function (user) {
-        var users = _.remove(this.get('users'), function (u) {
+        var checkWorld = function () {
+            if (!this.get('users').length) {
+                this.remove();
+                return this._worldApi.delete();
+            }
+        }.bind(this);
+
+        _.remove(this.get('users'), function (u) {
             return u.get('id') === user.get('id');
         });
 
-        this.set('users', users);
-
         return this._worldApi
-            .removeUser({ userId: user.get('id') });
+            .removeUser({ userId: user.get('id') })
+            .then(checkWorld);
     },
 
     save: function () {
@@ -57,6 +63,7 @@ module.exports = classFrom(Base, {
 
         var createWorld = _.partial(this._worldApi.create, this.pick(['model', 'name', 'minUsers']));
         var addUsers = _.partial(_this._worldApi.addUsers, mapUsers(), { filter: _this.get('id') });
+        var savedUsers = this.get('users');
         if (this.isNew()) {
             // we need to create the world in the API and then add the users
             return createWorld()
@@ -67,7 +74,7 @@ module.exports = classFrom(Base, {
                 .then(addUsers)
                 .then(function (users) {
                     // since we re-set the world, re-set the users
-                    _this.get('users').push(users);
+                    _this.set('users', savedUsers);
                 });
         } else {
             // the world is already created just add the users
