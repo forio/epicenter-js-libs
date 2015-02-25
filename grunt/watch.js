@@ -16,7 +16,7 @@ module.exports = function (grunt) {
             tasks: ['copy:components']
         },
         templates: {
-            files: ['src/components/templates/**/*.html'],
+            files: ['src/components/**/templates/**/*.html'],
             tasks: ['templates']
         }
     });
