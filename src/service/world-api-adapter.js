@@ -44,19 +44,19 @@ module.exports = function (config) {
          * The project id. Defaults to undefined.
          * @type {String}
          */
-       project: '',
+       project: undefined,
 
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). Defaults to undefined.
          * @type {String}
          */
-       account: '',
+       account: undefined,
 
         /**
          * The group name. Defaults to undefined.
          * @type {String}
          */
-       group: '',
+       group: undefined,
 
 //        apiKey: '',
 
@@ -306,6 +306,7 @@ module.exports = function (config) {
         *           .then(function(world) {
         *               // add one user
         *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *               wa.addUsers(['b1c19dda-2d2e-4777-ad5d-3929f17e86d3']);
         *               wa.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
         *
         *               // add several users
@@ -316,19 +317,46 @@ module.exports = function (config) {
         *                     role: 'VP Engineering' }
         *               ]);
         *
-        *               // add one user, using a filter to specify the world
+        *               // add one user to a specific world
         *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', world.id);
         *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', { filter: world.id });
         *           });
         *
         * ** Parameters **
-        * @param {object} `users` Object or array of objects of the users to add to this world.
-        * @param {string} `users.userId` The `userId` of the user being added to this world.
+        * @param {string|object|array} `users` User id, array of user ids, object, or array of objects of the users to add to this world.
         * @param {string} `users.role` The `role` the user should have in the world. It is up to the caller to ensure, if needed, that the `role` passed in is one of the `roles` or `optionalRoles` of this world.
+        * @param {string} `worldId` The world to which the users should be added. If not specified, the filter parameter of the `options` object is used.
         * @param {object} `options` (Optional) Options object to override global options.
         */
-        addUsers: function (users, options) {
+        addUsers: function (users, worldId, options) {
+
+            if (!users) {
+                throw new Error('Please provide a list of users to add to the world');
+            }
+
+            // normalize the list of users to an array of user objects
+            users = $.map([].concat(users), function (u) {
+                var isObject = $.isPlainObject(u);
+
+                if (typeof u !== 'string' && !isObject) {
+                    throw new Error('Some of the users in the list are not in the valid format: ' + u);
+                }
+
+                return isObject ? u : { userId: u };
+            });
+
+            // check if options were passed as the second parameter
+            if ($.isPlainObject(worldId) && !options) {
+                options = worldId;
+                worldId = null;
+            }
+
             options = options || {};
+
+            // we must have options by now
+            if (typeof worldId === 'string') {
+                options.filter = worldId;
+            }
 
             setIdFilterOrThrowError(options);
 
@@ -364,15 +392,23 @@ module.exports = function (config) {
         * @param {object|string} `user` The `userId` of the user to remove from the world, or an object containing the `userId` field.
         * @param {object} `options` (Optional) Options object to override global options.
         */
-        removeUser: function (userId, options) {
+        removeUser: function (user, options) {
             options = options || {};
+
+            if (typeof user === 'string') {
+                user = { userId: user };
+            }
+
+            if (!user.userId) {
+                throw new Error('You need to pass a userId to remove from the world');
+            }
 
             setIdFilterOrThrowError(options);
 
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + userId }
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId }
             );
 
             return http.delete(null, getOptions);
