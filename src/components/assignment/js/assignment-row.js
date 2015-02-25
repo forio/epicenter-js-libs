@@ -9,14 +9,15 @@ var AssignmentRow = function (options) {
 
     this.model = options.model;
     this.options = options;
+    this.worlds = options.worlds;
 
-    _.bindAll(this, ['setEditMode', 'removeEditMode', 'saveEdit', 'cancelEdit']);
+    _.bindAll(this, ['setEditMode', 'removeEditMode', 'saveEdit', 'cancelEdit', 'updateData']);
 
     this.bindEvents();
 
 };
 
-AssignmentRow.prototype = {
+_.extend(AssignmentRow.prototype, {
 
     template: templates['user-row'],
 
@@ -39,6 +40,8 @@ AssignmentRow.prototype = {
     },
 
     saveEdit: function () {
+        this.updateData();
+        this.worlds.updateUser(this.model);
         this.removeEditMode();
     },
 
@@ -51,8 +54,19 @@ AssignmentRow.prototype = {
         this.$el.html(templ(this.model.toJSON()));
 
         return this;
+    },
+
+    updateData: function () {
+        var _this = this;
+        this.$('[data-field]').each(function () {
+            var el = $(this);
+            var field = el.data('field');
+            var val = el.val();
+
+            _this.model.set(field, val);
+        });
     }
-};
+});
 
 
 module.exports = AssignmentRow;
