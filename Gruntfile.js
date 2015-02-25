@@ -9,11 +9,11 @@ module.exports = function (grunt) {
         require('./' + task)(grunt);
     });
 
-    grunt.registerTask('test', ['browserify:edge', 'browserify:instrumented', 'mocha', 'coverage-report']);
+    grunt.registerTask('test', ['browserify:edge', 'browserify:instrumented', 'browserify:components', 'mocha', 'coverage-report']);
     grunt.registerTask('documentation', ['markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
-    grunt.registerTask('production', ['concatCometd', 'validate', 'browserify:mapped', 'browserify:min', 'documentation']);
+    grunt.registerTask('production', ['concatCometd', 'validate', 'browserify:mapped', 'browserify:min', 'browserify:components', 'copy:components', 'documentation']);
 
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
@@ -23,5 +23,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['concatCometd', 'browserify:edge', 'browserify:instrumented', 'watch']);
+    grunt.registerTask('default', ['concatCometd', 'browserify:edge', 'browserify:instrumented', 'browserify:components', 'copy:components', 'watch']);
 };
