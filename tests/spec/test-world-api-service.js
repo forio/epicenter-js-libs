@@ -298,6 +298,24 @@
             });
         });
 
+        describe('deleteRun', function () {
+            it('should call DELETE on game/run', function () {
+                createWorldAdapter().deleteRun('gameid1');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+                req.url.should.match(/\/game\/gameid1\/run/);
+            });
+
+            it('should take the current filter if no worldId is passed in', function () {
+                createWorldAdapter({ filter: 'gameid1' }).deleteRun();
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+                req.url.should.match(/\/game\/gameid1\/run/);
+            });
+        });
+
     });
 
 })();
