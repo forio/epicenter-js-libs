@@ -261,6 +261,25 @@
             });
         });
 
+        describe('updateUser', function () {
+            it('should patch the correct user for the correct world', function () {
+                createWorldAdapter({ filter: 'gameid1' }).updateUser({ userId:'123', role: 'abc' });
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('PATCH');
+                req.url.should.match(/\/game\/gameid1\/users\/123/);
+            });
+
+            it('should patch the correct role', function () {
+                createWorldAdapter({ filter: 'gameid1' }).updateUser({ userId:'123', role: 'abc' });
+
+                var req = server.requests.pop();
+                var body = JSON.parse(req.requestBody);
+                body.should.eql({ role: 'abc' });
+            });
+
+        });
+
         describe('getCurrentRunId', function () {
             it('should POST to the world APIs run end point', function () {
                 createWorldAdapter({ filter: 'gameid1' }).getCurrentRunId();
@@ -278,6 +297,7 @@
                 req.url.should.match(/\/game\/gameid1\/run/);
             });
         });
+
     });
 
 })();
