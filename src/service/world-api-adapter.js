@@ -339,6 +339,11 @@ module.exports = function (config) {
                     // assume the most recent world as the 'active' world
                     worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
                     var currentWorld = worlds[0];
+
+                    if (currentWorld) {
+                        serviceOptions.filter =  currentWorld.id;
+                    }
+
                     dtd.resolve(currentWorld, me);
                 })
                 .fail(dtd.reject);
