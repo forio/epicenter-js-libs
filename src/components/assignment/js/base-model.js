@@ -40,6 +40,10 @@ _.extend(BaseModel.prototype, {
 
     toJSON: function () {
         return this._data;
+    },
+
+    pick: function (keys) {
+        return _.pick(this._data, keys);
     }
 
 });
