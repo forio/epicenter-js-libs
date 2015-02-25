@@ -18,9 +18,9 @@ var AssignmentRow = function (options) {
 
 AssignmentRow.prototype = {
 
-    template: templates.userRow,
+    template: templates['user-row'],
 
-    editTemplate: templates.editUserRow,
+    editTemplate: templates['edit-user-row'],
 
     bindEvents: function () {
         this.$el.on('click', 'button.edit', this.setEditMode);
