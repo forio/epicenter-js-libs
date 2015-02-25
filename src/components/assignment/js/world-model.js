@@ -29,10 +29,29 @@ module.exports = classFrom(Base, {
 
     save: function () {
         var _this = this;
+        var mapUsers = function () {
+            return _.map(this.get('users'), function (u) {
+                var res = { userId: u.get('id') };
+                var role = u.get('role');
+
+                if (role) {
+                    res.role = role;
+                }
+
+                return res;
+            });
+        }.bind(this);
+
+        var createWorld = _.partial(this._worldApi.create, this.pick(['model', 'name', 'minUsers']));
+        var addUsers = _.partial(_this._worldApi.addUsers, mapUsers());
         if (this.isNew()) {
-            return this._worldApi.create(this.pick(['model', 'users']))
+            return createWorld()
                 .then(function (world) {
                     _this.set(world);
+                })
+                .then(addUsers)
+                .then(function (users) {
+                    _this.get('users').push(users);
                 });
         }
     },
