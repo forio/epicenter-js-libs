@@ -19,9 +19,14 @@ module.exports = classFrom(Base, {
     updateUser: function (user) {
         var worldName = user.get('world');
         var dtd = $.Deferred();
-        var done = doneFn(dtd, 2);
         var prevWorld = this.getWorldByUser(user);
         var curWorld = this.getOrCreateWorldById(worldName);
+        var done = doneFn(dtd, prevWorld && curWorld ? 2 : 1);
+
+        // check if there's anything to do
+        if (!prevWorld && !curWorld) {
+            return dtd.resolve().promise();
+        }
 
         if (prevWorld) {
             prevWorld.removeUser(user)
@@ -37,6 +42,10 @@ module.exports = classFrom(Base, {
     },
 
     getOrCreateWorldById: function (worldName) {
+        if (!worldName) {
+            return;
+        }
+
         var world = this.getWordById(worldName);
 
         if (!world) {
@@ -53,10 +62,18 @@ module.exports = classFrom(Base, {
     },
 
     getWorldByUser: function (user) {
+        if (!user.get) {
+            throw new Error('getWorldByUser expectes a model (' + user + ')');
+        }
+
         var id = user.get('id');
+        return this.getWorldByUserId(id);
+    },
+
+    getWorldByUserId: function (userId) {
         return this.find(function (world) {
             return _.find(world.get('users'), function (u) {
-                return u.get('id') === id;
+                return u.get('id') === userId;
             });
         });
     },
