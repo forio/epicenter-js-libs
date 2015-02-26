@@ -17,7 +17,7 @@ module.exports = classFrom(Base, {
     model: Model,
 
     autoAssignAll: function () {
-
+        return worldApi.autoAssign({ maxUsers: '1' });
     },
 
     updateUser: function (user) {

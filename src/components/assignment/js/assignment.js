@@ -18,7 +18,7 @@ Assignment.prototype = {
         this.users = new UsersCollection();
         this.worlds = new WorldsCollection();
 
-        _.bindAll(this, ['render', 'renderTable', 'toggleControlls', 'saveEdit', 'selectAll', 'usassignSelected', '_showUpdating', '_hideUpdating', 'autoAssign']);
+        _.bindAll(this, ['render', 'renderTable', 'toggleControlls', 'saveEdit', 'selectAll', 'usassignSelected', '_showUpdating', '_hideUpdating', 'autoAssignAll']);
 
         this.bindEvents();
     },
@@ -48,8 +48,9 @@ Assignment.prototype = {
 
     autoAssignAll: function () {
         this._showUpdating();
-        return this.worlds.autoAssignAll()
-            .done(this._hideUpdating);
+        return this.worlds.autoAssignAll({ maxUsers: 1 })
+            .done(this._hideUpdating)
+            .fail(this._hideUpdating);
     },
 
     usassignSelected: function (e) {
@@ -109,9 +110,9 @@ Assignment.prototype = {
 
     updateAutoAssignButton: function () {
         if (this.users.allUsersAssigned()) {
-            this.$('.table-controls').hide();
+            this.$('.table-controls').css({ opacity: 0 });
         } else {
-            this.$('.table-controls').show();
+            this.$('.table-controls').css({ opacity: 1 });
         }
     },
 
