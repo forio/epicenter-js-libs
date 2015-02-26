@@ -18,7 +18,7 @@ Assignment.prototype = {
         this.users = new UsersCollection();
         this.worlds = new WorldsCollection();
 
-        _.bindAll(this, ['render', 'renderTable', 'toggleControlls', 'saveEdit', 'selectAll', 'usassignSelected']);
+        _.bindAll(this, ['render', 'renderTable', 'toggleControlls', 'saveEdit', 'selectAll', 'usassignSelected', '_showUpdating', '_hideUpdating', 'autoAssign']);
 
         this.bindEvents();
     },
@@ -28,6 +28,7 @@ Assignment.prototype = {
         this.$el.on('click', 'input:checkbox:not(#select-all)', this.toggleControlls);
         this.$el.on('click', '#select-all', this.selectAll);
         this.$el.on('click', '.unassign-user', this.usassignSelected);
+        this.$el.on('click', '.auto-assign-all', this.autoAssignAll);
     },
 
     load: function () {
@@ -41,7 +42,60 @@ Assignment.prototype = {
         this.users.fetch().then(join);
     },
 
+    saveEdit: function () {
+        this.updateControls();
+    },
+
+    autoAssignAll: function () {
+        this._showUpdating();
+        return this.worlds.autoAssignAll()
+            .done(this._hideUpdating);
+    },
+
+    usassignSelected: function (e) {
+        e.preventDefault();
+
+        var ids = this.$('tbody :checkbox:checked').map(function () {
+            return $(this).data('id');
+        });
+
+        var done = _.after(ids.length, function () {
+            this._hideUpdating();
+            this.render();
+        }.bind(this));
+
+        this._showUpdating();
+        _.each(ids, function (userId) {
+            var user = this.users.getById(userId);
+            user.set('world', '');
+            user.set('role', '');
+            this.worlds.updateUser(user).done(done);
+        }, this);
+    },
+
+    render: function () {
+        this.$('table tbody').empty();
+        this.renderTable();
+        this.toggleControlls();
+    },
+
+    renderTable: function () {
+        var rows = [];
+        this.users.each(function (u) {
+            var view = new AssignemntRow({ model: u, worlds: this.worlds });
+            rows.push(view.render().el);
+        }, this);
+
+        this.$('table tbody').append(rows);
+    },
+
+
     updateControls: function () {
+        this.updateControlsForSelection();
+        this.updateAutoAssignButton();
+    },
+
+    updateControlsForSelection: function () {
         if (this.$('tbody :checkbox:checked').length) {
             this.$('.component.controls').css({
                 opacity: 1,
@@ -50,6 +104,14 @@ Assignment.prototype = {
             this.$('.component.controls').css({
                 opacity: 0,
             });
+        }
+    },
+
+    updateAutoAssignButton: function () {
+        if (this.users.allUsersAssigned()) {
+            this.$('.table-controls').hide();
+        } else {
+            this.$('.table-controls').show();
         }
     },
 
@@ -71,50 +133,12 @@ Assignment.prototype = {
         this.updateControls();
     },
 
-    saveEdit: function () {
-
+    _showUpdating: function () {
+        this.$el.css({ opacity: 0.4 });
     },
 
-    usassignSelected: function (e) {
-        e.preventDefault();
-
-        var ids = this.$('tbody :checkbox:checked').map(function () {
-            return $(this).data('id');
-        });
-
-        var showUpdating = function () {
-            this.$el.css({ opacity: 0.4 });
-        }.bind(this);
-
-        var done = _.after(ids.length, function () {
-            this.$el.css({ opacity: 1 });
-            this.render();
-        }.bind(this));
-
-        showUpdating();
-        _.each(ids, function (userId) {
-            var user = this.users.getById(userId);
-            user.set('world', '');
-            user.set('role', '');
-            this.worlds.updateUser(user).done(done);
-        }, this);
-    },
-
-    render: function () {
-        this.$('table tbody').empty();
-        this.renderTable();
-        this.toggleControlls();
-    },
-
-    renderTable: function () {
-
-        var rows = [];
-        this.users.each(function (u) {
-            var view = new AssignemntRow({ model: u, worlds: this.worlds });
-            rows.push(view.render().el);
-        }, this);
-
-        this.$('table tbody').append(rows);
+    _hideUpdating: function () {
+        this.$el.css({ opacity: 1 });
     }
 
 };

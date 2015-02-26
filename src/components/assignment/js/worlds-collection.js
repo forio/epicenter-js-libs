@@ -16,6 +16,10 @@ var worldApi = new F.service.World(env);
 module.exports = classFrom(Base, {
     model: Model,
 
+    autoAssignAll: function () {
+
+    },
+
     updateUser: function (user) {
         var worldName = user.get('world');
         var dtd = $.Deferred();
