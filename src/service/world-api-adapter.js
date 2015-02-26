@@ -19,6 +19,7 @@ var _pick = require('../util/object-util')._pick;
 var apiBase = 'multiplayer/';
 var assignmentEndpoint = apiBase + 'assign';
 var apiEndpoint = apiBase + 'game';
+var projectEndpoint = apiBase + 'project';
 
 module.exports = function (config) {
     var store = new StorageFactory({ synchronous: true });
@@ -401,6 +402,11 @@ module.exports = function (config) {
                 });
         },
 
+        /**
+        * autoAssign users to worlds
+        *
+        *
+        */
         autoAssign: function (options) {
             options = options || {};
 
@@ -421,7 +427,27 @@ module.exports = function (config) {
             }
 
             return http.post(params, opt);
+        },
+
+        /**
+        * Get the project's multiuser configuration
+        *
+        *
+        */
+        getProjectSettings: function (options) {
+            options = options || {};
+
+            var opt = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(projectEndpoint) }
+            );
+
+            opt.url += [opt.account, opt.project].join('/');
+
+            return http.get(null, opt);
         }
+
     };
 
     $.extend(this, publicAPI);

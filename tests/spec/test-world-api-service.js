@@ -344,6 +344,16 @@
                 expect(body.maxUsers).to.be.equal(5);
             });
 
+            describe('getProjectSettings', function () {
+                it('should GET to multiplayer/project API with correct settings', function () {
+                    createWorldAdapter().getProjectSettings();
+
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('GET');
+                    req.url.should.match(/\/project\/forio\/js-libs/);
+                });
+            });
+
         });
 
     });
