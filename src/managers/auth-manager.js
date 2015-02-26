@@ -15,6 +15,7 @@
 *           userName: 'enduser1', 
 *           password: 'passw0rd' 
 *       });
+*       authMgr.getCurrentUserSessionInfo();
 *
 */
 
@@ -94,7 +95,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *
     * **Example**
     *
-    *       authMgr.login();
+    *       authMgr.login({
+    *           account: 'acme-simulations', 
+    *           userName: 'enduser1', 
+    *           password: 'passw0rd' 
+    *       });
     *
     *       authMgr.login()
     *           .then(function(authAdapter) {
@@ -256,7 +261,10 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *
      * **Example**
      *
-     *      authMgr.getToken().then(function (token) { console.log('My token is ', token); });
+     *      authMgr.getToken()
+     *          .then(function (token) { 
+     *              console.log('My token is ', token); 
+     *          });
      *
      * **Parameters**
      * @param {Object} `options` (Optional) Overrides for configuration options.
@@ -276,7 +284,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     /**
      * Returns an array of group records, one for each group of which the current user is a member. Each group record includes the group `name`, `account`, `project`, and `groupId`.
      *
-     * If some end users in your project are members of multiple groups, this is a useful method to call on your project's login page. When the user attempts to log in, you can use this to display the groups of which the user is member, and have the user select the correct group to log in with for this session.
+     * If some end users in your project are members of multiple groups, this is a useful method to call on your project's login page. When the user attempts to log in, you can use this to display the groups of which the user is member, and have the user select the correct group to log in to for this session.
      *
      * **Example**
      *

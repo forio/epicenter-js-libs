@@ -31,6 +31,7 @@ The epicenter.js library is a set of services (adapters) and managers to help st
 	* [World Adapter](./generated/world-api-adapter/)
 
 * The following managers add functionality on top of their respective services:
+	* [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to track and access user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
 	* [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
 	* [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users. 
 

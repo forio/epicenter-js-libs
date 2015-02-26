@@ -58,14 +58,17 @@ module.exports = function (config) {
         /**
          * Logs user in, returning the user access token. 
          *
-         * If no `userName` or `password` were provided in the initial configuration options, they are required in the options here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
+         * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
          *
          * **Example**
          *
-         *      auth.login({ userName: 'jsmith',
-         *                  password: 'passw0rd',
-         *                  account: 'acme-simulations' })
-         *          .then(function (token) { console.log("user access token is: ", token.access_token); });
+         *      auth.login({ 
+         *          userName: 'jsmith',
+         *          password: 'passw0rd',
+         *          account: 'acme-simulations' })
+         *      .then(function (token) { 
+         *          console.log("user access token is: ", token.access_token); 
+         *      });
          *
          * **Parameters**
          * @param {Object} `options` (Optional) Overrides for configuration options.
