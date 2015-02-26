@@ -8,3 +8,7 @@ tr .auto-hide {
 tr:hover .auto-hide {
     opacity: 1;
 }
+
+.controls {
+    transition: opacity 0.1s;
+}
