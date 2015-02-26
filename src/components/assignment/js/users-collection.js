@@ -21,6 +21,12 @@ module.exports = classFrom(Base, {
 
     },
 
+    allUsersAssigned: function () {
+        return this.all(function (u) {
+            return !!u.get('world');
+        });
+    },
+
     fetch: function () {
         var dtd = $.Deferred();
         var _this = this;
