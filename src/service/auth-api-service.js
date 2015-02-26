@@ -2,8 +2,11 @@
  *
  * ##Authentication API Service
  *
- * The Authentication API Service provides methods for logging in and creating user access tokens.
- * User access tokens are required for each call to Epicenter. (See [Creating access tokens](../../../project_access/) for more information.)
+ * The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token. 
+ *
+ * User access tokens are required for each call to Epicenter. (See [Project Access](../../../project_access/) for more information.)
+ *
+ * If you need additional functionality -- such as tracking session information, easily retrieving the user token, or getting the groups to which an end user belongs -- consider using the [Authorization Manager](../auth-manager/) instead.
  *
  *      var auth = new F.service.Auth();
  *      auth.login({ userName: 'jsmith@acmesimulations.com',
@@ -25,13 +28,13 @@ module.exports = function (config) {
         userName: '',
 
         /**
-         * Password for specified username. Defaults to empty string.
+         * Password for specified `userName`. Defaults to empty string.
          * @type {String}
          */
         password: '',
 
         /**
-         * Account to log in into. Required to log in as an end user. Defaults to picking it up from the path.
+         * The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects). Required if the `userName` is for an [end user](../../../glossary/#users). Defaults to empty string.
          * @type {String}
          */
         account: '',
@@ -53,16 +56,19 @@ module.exports = function (config) {
     var publicAPI = {
 
         /**
-         * Logs user in. If no username or password was provided in the initial configuration options, they are required here.
+         * Logs user in, returning the user access token. 
+         *
+         * If no `userName` or `password` were provided in the initial configuration options, they are required in the options here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
          *
          * **Example**
          *
-         *      auth.login({ userName: 'jsmith@acmesimulations.com',
+         *      auth.login({ userName: 'jsmith',
          *                  password: 'passw0rd',
-         *                  account: 'acme' });
+         *                  account: 'acme-simulations' })
+         *          .then(function (token) { console.log("user access token is: ", token.access_token); });
          *
          * **Parameters**
-         * @param  {Object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         login: function (options) {
             var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
