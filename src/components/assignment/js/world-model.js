@@ -7,12 +7,14 @@ var __super = Base.prototype;
 module.exports = classFrom(Base, {
 
     defaults: {
-        users: [],
+        users: null,
         model: 'model.eqn'
     },
 
     initialize: function () {
         __super.initialize.apply(this, arguments);
+
+        this._data.users = this._data.users || [];
 
         this._worldApi = new F.service.World(env);
 
