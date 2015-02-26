@@ -18,7 +18,7 @@ var _pick = require('../util/object-util')._pick;
 
 var apiBase = 'multiplayer/';
 var assignmentEndpoint = apiBase + 'assign';
-var apiEndpoint = apiBase + 'game';
+var apiEndpoint = apiBase + 'world';
 var projectEndpoint = apiBase + 'project';
 
 module.exports = function (config) {

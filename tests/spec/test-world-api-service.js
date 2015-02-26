@@ -5,7 +5,7 @@
         var server;
         beforeEach(function () {
             server = sinon.fakeServer.create();
-            server.respondWith('POST', /(.*)\/game/, function (xhr, id) {
+            server.respondWith('POST', /(.*)\/world/, function (xhr, id) {
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ newGame: true }));
             });
 
@@ -93,7 +93,7 @@
                 gs.update({ roles: ['role1'] });
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('PATCH');
-                /\/game\/abc1/.test(req.url).should.be.true;
+                /\/world\/abc1/.test(req.url).should.be.true;
             });
 
             it('should trow if no filter is specified', function () {
@@ -125,7 +125,7 @@
                 createWorldAdapter({ filter: 'gameid1' }).delete();
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                /\/game\/gameid1/.test(req.url).should.be.true;
+                /\/world\/gameid1/.test(req.url).should.be.true;
             });
         });
 
@@ -135,7 +135,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                /\/game\//.test(req.url).should.be.true;
+                /\/world\//.test(req.url).should.be.true;
                 /group=123/.test(req.url).should.be.true;
                 /account=forio/.test(req.url).should.be.true;
                 /project=js-libs/.test(req.url).should.be.true;
@@ -149,7 +149,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                /\/game\//.test(req.url).should.be.true;
+                /\/world\//.test(req.url).should.be.true;
                 /group=123/.test(req.url).should.be.true;
                 /account=forio/.test(req.url).should.be.true;
                 /project=js-libs/.test(req.url).should.be.true;
@@ -165,7 +165,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/game\/gameid1/.test(req.url).should.be.true;
+                /\/world\/gameid1/.test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
 
                 body.should.be.instanceof(Array);
@@ -179,7 +179,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/game\/gameid1/.test(req.url).should.be.true;
+                /\/world\/gameid1/.test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
                 body.should.be.instanceof(Array);
                 body.should.be.length(1);
@@ -192,7 +192,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/game\/gameid1/.test(req.url).should.be.true;
+                /\/world\/gameid1/.test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
                 body.should.be.instanceof(Array);
                 body.should.be.length(1);
@@ -205,7 +205,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/game\/gameid1/.test(req.url).should.be.true;
+                /\/world\/gameid1/.test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
                 body.should.be.instanceof(Array);
                 body.should.be.length(2);
@@ -218,7 +218,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/game\/gameid1\/users/);
+                req.url.should.match(/\/world\/gameid1\/users/);
 
             });
 
@@ -227,7 +227,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/game\/gameid1\/users/);
+                req.url.should.match(/\/world\/gameid1\/users/);
             });
 
             it('should throw error if no users are specified', function () {
@@ -250,7 +250,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                req.url.should.match(/\/game\/gameid1\/users\/123/);
+                req.url.should.match(/\/world\/gameid1\/users\/123/);
             });
 
             it('should take the gameId from the service options or the override options', function () {
@@ -258,7 +258,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                req.url.should.match(/\/game\/gameid1\/users\/123/);
+                req.url.should.match(/\/world\/gameid1\/users\/123/);
             });
         });
 
@@ -268,7 +268,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('PATCH');
-                req.url.should.match(/\/game\/gameid1\/users\/123/);
+                req.url.should.match(/\/world\/gameid1\/users\/123/);
             });
 
             it('should patch the correct role', function () {
@@ -287,7 +287,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/game\/gameid1\/run/);
+                req.url.should.match(/\/world\/gameid1\/run/);
             });
 
             it('should take the gameId from the service options or the override options', function () {
@@ -295,7 +295,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/game\/gameid1\/run/);
+                req.url.should.match(/\/world\/gameid1\/run/);
             });
         });
 
@@ -305,7 +305,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                req.url.should.match(/\/game\/gameid1\/run/);
+                req.url.should.match(/\/world\/gameid1\/run/);
             });
 
             it('should take the current filter if no worldId is passed in', function () {
@@ -313,7 +313,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                req.url.should.match(/\/game\/gameid1\/run/);
+                req.url.should.match(/\/world\/gameid1\/run/);
             });
         });
 
