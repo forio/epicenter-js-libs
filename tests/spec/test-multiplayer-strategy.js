@@ -12,8 +12,8 @@
     };
 
     var queryMatchers = {
-        gameEndpoint: /multiplayer\/game/i,
-        getGames: /multiplayer\/game\/\?((?:project=js-libs|account=forio-dev|group=group\-123|&userId=123)&?){4}/gi,
+        gameEndpoint: /multiplayer\/world/i,
+        getGames: /multiplayer\/world\/\?((?:project=js-libs|account=forio-dev|group=group\-123|&userId=123)&?){4}/gi,
     };
 
     var fakeAuth = {
@@ -52,8 +52,8 @@
 
         setupResponse('GET', queryMatchers.gameEndpoint, 200, games || []);
 
-        setupResponse('POST', /multiplayer\/game\/gameId1\/run/, 201, 'run1');
-        setupResponse('POST', /multiplayer\/game\/gameId2\/run/, 201, 'run2');
+        setupResponse('POST', /multiplayer\/world\/gameId1\/run/, 201, 'run1');
+        setupResponse('POST', /multiplayer\/world\/gameId2\/run/, 201, 'run2');
 
         server.autorespond = true;
     };
@@ -102,7 +102,7 @@
                 var req = server.requests.pop();
 
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/multiplayer\/game\/gameId2\/run/);
+                req.url.should.match(/multiplayer\/world\/gameId2\/run/);
 
             });
         });
@@ -116,7 +116,7 @@
 
                 req.method.toUpperCase().should.equal('POST');
 
-                req.url.should.match(/multiplayer\/game\/gameId2/);
+                req.url.should.match(/multiplayer\/world\/gameId2/);
             });
         });
 
