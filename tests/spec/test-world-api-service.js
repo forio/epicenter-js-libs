@@ -24,7 +24,7 @@
         }
 
         describe('create', function () {
-            it('should POST to world API with the correct parameters (account, project and model)', function () {
+            it('POST to world API with the correct parameters (account, project and model)', function () {
                 createWorldAdapter().create({ model: 'model_file', group: 'group-name' });
 
                 var req = server.requests.pop();
@@ -55,26 +55,6 @@
                 var req = server.requests.pop();
                 var body = JSON.parse(req.requestBody);
                 body.model.should.equal('model_file');
-            });
-
-            it('should accept group in the constructor ', function () {
-                var params = { model: 'model_file' };
-                createWorldAdapter({ group: 'group-name1' }).create(params);
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
-                var body = JSON.parse(req.requestBody);
-                expect(body.group).to.equal('group-name1');
-            });
-
-            it('should accept group in the create call', function () {
-                var params = { model: 'model_file', group: 'group-in-create' };
-                createWorldAdapter().create(params);
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
-                var body = JSON.parse(req.requestBody);
-                expect(body.group).to.equal('group-in-create');
             });
 
             it('should pass the new world reponse to the callback', function (done) {
@@ -172,74 +152,12 @@
                 body.should.be.eql(users);
             });
 
-            it('should accept a single user object and pass an array to the API call', function () {
-                var user = { userId: 'user1', role: 'abc' };
-                createWorldAdapter({ filter: 'gameid1' }).addUsers(user);
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
-                /\/game\/gameid1/.test(req.url).should.be.true;
-                var body = JSON.parse(req.requestBody);
-                body.should.be.instanceof(Array);
-                body.should.be.length(1);
-                body.should.be.eql([user]);
-
-            });
-
-            it('should accept a string with the userId and pass an array to the API call', function () {
-                createWorldAdapter({ filter: 'gameid1' }).addUsers('user1');
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
-                /\/game\/gameid1/.test(req.url).should.be.true;
-                var body = JSON.parse(req.requestBody);
-                body.should.be.instanceof(Array);
-                body.should.be.length(1);
-                body.should.be.eql([{ userId: 'user1' }]);
-
-            });
-
-            it('should accept an array of string userIds and pass an array of objects to API call', function () {
-                createWorldAdapter({ filter: 'gameid1' }).addUsers(['user1', 'user2']);
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
-                /\/game\/gameid1/.test(req.url).should.be.true;
-                var body = JSON.parse(req.requestBody);
-                body.should.be.instanceof(Array);
-                body.should.be.length(2);
-                body.should.be.eql([{ userId: 'user1' }, { userId: 'user2' }]);
-
-            });
-
-            it('should take the worldId as the second parameter if its a string', function () {
-                createWorldAdapter().addUsers([{ userId: '1', role: '1' }], 'gameid1');
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/game\/gameid1\/users/);
-
-            });
-
             it('should take the gameId from the service options or the override options', function () {
                 createWorldAdapter().addUsers([{ userId: '1', role: '1' }], { filter: 'gameid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
                 req.url.should.match(/\/game\/gameid1\/users/);
-            });
-
-            it('should throw error if no users are specified', function () {
-                var ws = createWorldAdapter();
-
-                expect(ws.addUsers).to.throw(Error);
-            });
-
-            it('should throw error if not all users in the list are valid', function () {
-                var ws = createWorldAdapter();
-                var fn = _.partial(ws.addUsers, ['123', { userId: '532' }, 123]);
-
-                expect(fn).to.throw(Error);
             });
         });
 
@@ -257,7 +175,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                req.url.should.match(/\/game\/gameid1\/users\/123/);
+                req.url.should.match(/\/game\/gameid1\/users/);
             });
         });
 

@@ -1,3 +1,39 @@
+/**
+* ## World Manager
+*
+* As discussed under the [World API Adapter](../world-api-adapter/), a [run](../../../glossary/#run) is a collection of end user interactions with a project and its model. For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
+* 
+* The [World API Adapter](../world-api-adapter/) handles creating multiplayer worlds, and adding and removing end users and runs from a world.
+*
+* The World Manager provides an easy way to track and access the current world and run for particular end users.
+*
+* ### Using the World Manager
+*
+* To use the World Manager, instantiate it. Then, make calls to any of the methods you need:
+*
+*       var wMgr = new F.manager.WorldManager()
+*       wMgr.getCurrentWorld();
+*       wMgr.getCurrentRun();
+*
+* Note that the World Manager does *not* create worlds automatically. (This is different than the [Run Manager](../run-manager).) However, you can pass in specific options to any runs created by the manager, using a `run` object.
+*
+* When you instantiate a World Manager, the world's account id, project id, and group are automatically taken from the session (thanks to the [Authorization Service](../auth-api-service)). However, you can override these by optionally passing in:
+*
+*   * `account`: The **Team ID** in the Epicenter user interface for this project.
+*   * `project`: The **Project ID** for this project.
+*   * `group`: The **Group Name** for this world.
+*   * `run`: Options to use when creating new runs with the manager, e.g. `run: {files: ['data.xls']}`.
+*
+* For example:
+*
+*       var wMgr = new F.manager.WorldManager({
+*          account: 'acme-simulations', 
+*          project: 'supply-chain-game', 
+*          group: 'team1'   
+*       });
+*
+*/
+
 'use strict';
 
 var WorldApi = require('../service/world-api-adapter');
@@ -28,6 +64,7 @@ function buildStrategy(worldId, dtd) {
 
             getRun: function () {
                 var _this = this;
+                //get or create!
                 return worldApi.getCurrentRunId({ filter: worldId })
                     .then(function (runId) {
                         return _this.runService.load(runId);
@@ -55,6 +92,23 @@ module.exports = function (options) {
     var _this = this;
 
     var api = {
+
+        /**
+        * Returns the current world (object) and an instance of the [World API Adapter](../world-api-adapter/).
+        *
+        * **Example**
+        *
+        *       var wMgr = new F.manager.WorldManager()
+        *       wMgr.getCurrentWorld()
+        *           .then(function(world, worldAdapter) {
+        *               console.log(world.id);
+        *               worldAdapter.getCurrentRunId();
+        *           });
+        *
+        * **Parameters**
+        * @param {string} `userId` (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
+        * @param {string} `groupName` (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session. 
+        */
         getCurrentWorld: function (userId, groupName) {
             var session = this._auth.getCurrentUserSessionInfo();
             if (!userId) {
@@ -66,6 +120,22 @@ module.exports = function (options) {
             return worldApi.getCurrentWorldForUser(userId, groupName);
         },
 
+        /**
+        * Returns the current run (object) and an instance of the [Run API Service](../run-api-service/).
+        *
+        * **Example**
+        *
+        *       var wMgr = new F.manager.WorldManager()
+        *       wMgr.getCurrentRun()
+        *           .then(function(run, runService) {
+        *               console.log(run.id);
+        *               runService.do('runModel');
+        *           });
+        *
+        * **Parameters**
+        * @param {string} `userId` (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
+        * @param {string} `groupName` (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session. 
+        */
         getCurrentRun: function () {
             var dtd = $.Deferred();
             var session = this._auth.getCurrentUserSessionInfo();
