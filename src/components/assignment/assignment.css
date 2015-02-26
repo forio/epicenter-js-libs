@@ -14,4 +14,5 @@ tr:hover .auto-hide {
 }
 
 .table-controls {
+    opacity: 0;
 }

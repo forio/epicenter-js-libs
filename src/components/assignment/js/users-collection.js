@@ -27,6 +27,12 @@ module.exports = classFrom(Base, {
         });
     },
 
+    getUnassignedUsersCount: function () {
+        return this.filter(function (u) {
+            return !u.get('world');
+        }).length;
+    },
+
     fetch: function () {
         var dtd = $.Deferred();
         var _this = this;

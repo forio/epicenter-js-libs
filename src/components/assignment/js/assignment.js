@@ -2,6 +2,7 @@
 
 var UsersCollection = require('./users-collection');
 var WorldsCollection = require('./worlds-collection');
+var ProjectModel = require('./project-model');
 var AssignemntRow = require('./assignment-row');
 
 var Assignment = function (options) {
@@ -17,6 +18,7 @@ Assignment.prototype = {
 
         this.users = new UsersCollection();
         this.worlds = new WorldsCollection();
+        this.project = new ProjectModel();
 
         _.bindAll(this, ['render', 'renderTable', 'toggleControlls', 'saveEdit', 'selectAll', 'usassignSelected', '_showUpdating', '_hideUpdating', 'autoAssignAll']);
 
@@ -48,7 +50,8 @@ Assignment.prototype = {
 
     autoAssignAll: function () {
         this._showUpdating();
-        return this.worlds.autoAssignAll({ maxUsers: 1 })
+        var maxUsers = +this.$('#max-users').val();
+        return this.worlds.autoAssignAll({ maxUsers: maxUsers })
             .done(this._hideUpdating)
             .fail(this._hideUpdating);
     },
@@ -94,6 +97,31 @@ Assignment.prototype = {
     updateControls: function () {
         this.updateControlsForSelection();
         this.updateAutoAssignButton();
+        this.updateStatus();
+    },
+
+    updateStatus: function () {
+        var incolpleteWorlds = this.worlds.getIncompleteWorldsCount();
+        var unassignedUsers = this.users.getUnassignedUsersCount();
+        var totalWorlds = this.worlds.length();
+
+        var usersText = unassignedUsers ? unassignedUsers === 1 ? '1 user needs assignment.' : unassignedUsers + ' users need assignment.' : 'All users have been assigned.';
+        var worldsText = !totalWorlds ? 'No worlds have been created.' : !incolpleteWorlds ? 'All worlds are complete.' : incolpleteWorlds === 1 ? '1 incomplete world needs attention.' : incolpleteWorlds + ' incomplete worlds need attention.';
+
+        this.$('#users-status').text(usersText);
+        this.$('#worlds-status').text(worldsText);
+
+        if (!unassignedUsers) {
+            this.$('#users-status').removeClass('incomplete');
+        } else {
+            this.$('#users-status').addClass('incomplete');
+        }
+
+        if (!incolpleteWorlds) {
+            this.$('#worlds-status').removeClass('incomplete');
+        } else {
+            this.$('#users-status').addClass('incomplete');
+        }
     },
 
     updateControlsForSelection: function () {
@@ -109,6 +137,16 @@ Assignment.prototype = {
     },
 
     updateAutoAssignButton: function () {
+
+        if (this.project.isDynamicAssignment()) {
+            this.$('.table-controls .dynamic').show();
+            this.$('.table-controls .single').hide();
+        } else {
+            this.$('.table-controls .dynamic').hide();
+            this.$('.table-controls .single').show();
+
+        }
+
         if (this.users.allUsersAssigned()) {
             this.$('.table-controls').css({ opacity: 0 });
         } else {

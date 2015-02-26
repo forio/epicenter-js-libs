@@ -16,8 +16,14 @@ var worldApi = new F.service.World(env);
 module.exports = classFrom(Base, {
     model: Model,
 
-    autoAssignAll: function () {
-        return worldApi.autoAssign({ maxUsers: '1' });
+    autoAssignAll: function (options) {
+        return worldApi.autoAssign(options);
+    },
+
+    getIncompleteWorldsCount: function () {
+        return this.filter(function (w) {
+            return !w.get('complete');
+        }).length;
     },
 
     updateUser: function (user) {
