@@ -3,7 +3,7 @@
 
     describe('World API Service', function () {
         var server;
-        before(function () {
+        beforeEach(function () {
             server = sinon.fakeServer.create();
             server.respondWith('POST', /(.*)\/game/, function (xhr, id) {
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ newGame: true }));
@@ -12,7 +12,7 @@
             server.autoRespond = true;
         });
 
-        after(function () {
+        afterEach(function () {
             server.restore();
         });
 
@@ -315,6 +315,35 @@
                 req.method.toUpperCase().should.equal('DELETE');
                 req.url.should.match(/\/game\/gameid1\/run/);
             });
+        });
+
+        describe('autoAssign', function () {
+            it('should POST to the assign API', function () {
+                createWorldAdapter().autoAssign();
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+                req.url.should.match(/multiplayer\/assign/);
+            });
+
+            it('should pass the account, project and group in body', function () {
+                createWorldAdapter({ group: 'group-name' }).autoAssign();
+
+                var req = server.requests.pop();
+                var body = JSON.parse(req.requestBody);
+                expect(body.account).to.be.equal('forio');
+                expect(body.project).to.be.equal('js-libs');
+                expect(body.group).to.be.equal('group-name');
+            });
+
+            it('should pass the maxUsers if specificed in options', function () {
+                createWorldAdapter({ group: 'group-name' }).autoAssign({ maxUsers: 5 });
+
+                var req = server.requests.pop();
+                var body = JSON.parse(req.requestBody);
+                expect(body.maxUsers).to.be.equal(5);
+            });
+
         });
 
     });
