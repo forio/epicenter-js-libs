@@ -12,3 +12,8 @@ tr:hover .auto-hide {
 .controls {
     transition: opacity 0.1s;
 }
+
+.table-controls {
+    text-align: center;
+    display: none;
+}
