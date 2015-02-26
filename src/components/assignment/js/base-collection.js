@@ -67,6 +67,10 @@ _.extend(BaseCollection.prototype, {
         return _.each(this._models, cb, ctx || this);
     },
 
+    all: function (cb, ctx) {
+        return _.all(this._models, cb, ctx || this);
+    },
+
     toJSON: function () {
         return _.invoke(this._models, 'toJSON');
     },
