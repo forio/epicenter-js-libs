@@ -7,6 +7,8 @@ var BaseCollection = function (models, options) {
 };
 
 _.extend(BaseCollection.prototype, {
+    idAttribute: 'id',
+
     initialize: function (models, options) {
     },
 
@@ -53,6 +55,12 @@ _.extend(BaseCollection.prototype, {
         }, this);
 
         return models;
+    },
+
+    getById: function (id) {
+        return _.find(this._models, function (m) {
+            return m.get(this.idAttribute) === id;
+        }, this);
     },
 
     each: function (cb, ctx) {
