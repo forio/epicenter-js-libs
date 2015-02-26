@@ -16,7 +16,9 @@ var StorageFactory = require('../store/store-factory');
 var TransportFactory = require('../transport/http-transport-factory');
 var _pick = require('../util/object-util')._pick;
 
-var apiEndpoint = 'multiplayer/game';
+var apiBase = 'multiplayer/';
+var assignmentEndpoint = apiBase + 'assign';
+var apiEndpoint = apiBase + 'game';
 
 module.exports = function (config) {
     var store = new StorageFactory({ synchronous: true });
@@ -397,6 +399,28 @@ module.exports = function (config) {
                 .then(function () {
                     return this.getCurrentRunId({ filter: worldId });
                 });
+        },
+
+        autoAssign: function (options) {
+            options = options || {};
+
+            var opt = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(assignmentEndpoint) }
+            );
+
+            var params = {
+                account: opt.account,
+                project: opt.project,
+                group: opt.group
+            };
+
+            if (opt.maxUsers) {
+                params.maxUsers = opt.maxUsers;
+            }
+
+            return http.post(params, opt);
         }
     };
 
