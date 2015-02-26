@@ -122,6 +122,8 @@ Assignment.prototype = {
         } else {
             this.$('#users-status').addClass('incomplete');
         }
+
+        this.$('.status-widget').css({ opacity: 1 });
     },
 
     updateControlsForSelection: function () {

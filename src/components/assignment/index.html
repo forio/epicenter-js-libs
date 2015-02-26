@@ -31,13 +31,15 @@
             <div class="col-xs-12">
                 <div id="assignment-component">
                     <div class="row">
-                        <div class="col-xs-12 table-controls">
-                            Automatically assign users
-                            <span class="single" style="display: none;">to a single world with maximum users per team
-                            <input type="number" class="form-control" id="max-users">
+                        <div class="col-xs-12">
+                            <span class="table-controls">
+                                Automatically assign users
+                                <span class="single" style="display: none;">to a single world with maximum users per team
+                                <input type="number" class="form-control" id="max-users">
+                                </span>
+                                <span class="dynamic" style="display: none;">to worlds dynamically based on roles</span>
+                                <button class="auto-assign-all btn">Assign</button>
                             </span>
-                            <span class="dynamic" style="display: none;">to worlds dynamically based on roles</span>
-                            <button class="auto-assign-all btn">Assign</button>
                             <span class="status-widget pull-right">
                                 <span id="users-status"></span>
                                 <span id="worlds-status"></span>

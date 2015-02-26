@@ -16,3 +16,7 @@ tr:hover .auto-hide {
 .table-controls {
     opacity: 0;
 }
+
+.status-widget {
+    opacity: 0;
+}
