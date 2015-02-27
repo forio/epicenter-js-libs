@@ -4,21 +4,20 @@ var classFrom = require('../../../util/inherit');
 
 var Model = require('./user-model');
 var Base = require('./base-collection');
-var tok = 'bG9naW46bG9naW5zZWNyZXQ=';
+var env = require('./defaults');
 var serviceLocator = require('./service-locator');
 
-$.ajaxSetup({
-    headers: {
-        Authorization: 'Basic ' + tok
-    }
-});
 
 
 module.exports = classFrom(Base, {
     model: Model,
 
     initialize: function () {
-
+        $.ajaxSetup({
+            headers: {
+                Authorization: 'Bearer ' + env.get().token
+            }
+        });
     },
 
     allUsersAssigned: function () {

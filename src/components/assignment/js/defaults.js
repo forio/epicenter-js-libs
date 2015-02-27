@@ -1,21 +1,14 @@
 'use strict';
 
-
-var account = '';
-var project = '';
-var groupName = '';
-var groupId = '';
-
-
-
 var env = {
-    account: account,
-    project: project,
-    group: groupName,
-    groupId: groupId,
+    account: '',
+    project: '',
+    group: '',
+    groupId: '',
+    token: '',
     server: {
-        host: 'localhost:8080',
-        protocol: 'http'
+        host: 'api.forio.com',
+        protocol: 'https'
     }
 };
 
