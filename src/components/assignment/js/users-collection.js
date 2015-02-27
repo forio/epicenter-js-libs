@@ -12,6 +12,16 @@ var serviceLocator = require('./service-locator');
 module.exports = classFrom(Base, {
     model: Model,
 
+    sortFn: function (a, b) {
+        var aw = a.get('world').toLowerCase();
+        var bw = b.get('world').toLowerCase();
+        if (aw !== bw) {
+            return aw < bw ? -1 : 1;
+        }
+
+        return b.get('userName') > a.get('userName') ? -1 : 1;
+    },
+
     initialize: function () {
         $.ajaxSetup({
             headers: {
@@ -54,11 +64,9 @@ module.exports = classFrom(Base, {
                 .fail(dtd.reject);
         };
 
-        var sortFn = function (a, b) { return +a.world - +b.world; };
-
         getGroupUsers()
             .then(function (users) {
-                _this.set(users.sort(sortFn));
+                _this.set(users);
                 dtd.resolve(users, _this);
             });
 

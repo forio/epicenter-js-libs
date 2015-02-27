@@ -116,6 +116,8 @@ module.exports = classFrom(Base, {
                 usersHash[u.get('userId')].set({ world: name, role: u.get('role') });
             });
         }, this);
+
+        usersCollection.sort();
     },
 
     fetch: function () {

@@ -54,7 +54,19 @@ _.extend(BaseCollection.prototype, {
             this._models.push(m);
         }, this);
 
+        this.sort.call(this);
+
         return models;
+    },
+
+    sortFn: function (a, b) {
+        return b._data[this.idAttribute] - a._data[this.idAttribute];
+    },
+
+    sort: function () {
+        this._models = this._models.sort(this.sortFn.bind(this));
+
+        return this._models;
     },
 
     getById: function (id) {
