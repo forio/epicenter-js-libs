@@ -226,7 +226,7 @@
                 var ws = createWorldAdapter();
 
                 expect(ws.addUsers).to.throw(Error);
-            });
+        });
 
             it('should throw error if not all users in the list are valid', function () {
                 var ws = createWorldAdapter();
@@ -298,7 +298,7 @@
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
                 req.url.should.match(/\/world\/gameid1\/run/);
-            });
+    });
 
             it('should take the current filter if no worldId is passed in', function () {
                 createWorldAdapter({ filter: 'gameid1' }).deleteRun();

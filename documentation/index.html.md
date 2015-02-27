@@ -8,7 +8,7 @@ isPage: true
 
 The Epicenter API Adapters are part of the epicenter.js library. This library abstracts the underlying Epicenter RESTful APIs into a set of services and utilities.
 
-If you are comfortable with JavaScript, the epicenter.js library is an easy way to connect your project's [model](../writing_your_model/), [data](../data_api/), and [user interface](../creating_your_interface).
+If you are comfortable with JavaScript, the epicenter.js library is an easy way to connect your project's [model](../writing_your_model/), [data](../rest_apis/data_api/), and [user interface](../creating_your_interface).
 
 * [Concepts in epicenter.js](#concepts)
 * [Using epicenter.js](#using-epicenter-js)
@@ -21,11 +21,18 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 <a name="concepts"></a>
 ###Concepts in Epicenter.js
 
-The epicenter.js library is a set of services and managers to help streamline your work with the underlying Epicenter APIs.
+The epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs.
 
-* The [Run Service](./generated/run-api-service/), [Data Service](./generated/data-api-service/), [Auth Service](./generated/auth-api-service), and [Variables Service](./generated/variables-api-service/) are direct adaptations of the underlying [Run](../aggregate_run_api/), [Data](../data_api/), [Authentication](../project_access/), and [Variable](../model_apis/variable/) RESTful APIs.
+* The following services are direct adaptations of the underlying [RESTful APIs](../rest_apis/): 
+	* [Run Service](./generated/run-api-service/)
+	* [Data Service](./generated/data-api-service/)
+	* [Auth Service](./generated/auth-api-service)
+	* [Variables Service](./generated/variables-api-service/)
+	* [World Adapter](./generated/world-api-adapter/)
 
-* The [Run Manager](./generated/run-manager/) adds functionality on top of the Run Service. Specifically, the Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
+* The following managers add functionality on top of their respective services:
+	* [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
+	* [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users. 
 
 
 <a name="using-epicenter-js"></a>
@@ -33,9 +40,9 @@ The epicenter.js library is a set of services and managers to help streamline yo
 
 <a name="include"></a>
 ####Including
-The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.1.2/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.1.2/epicenter.min.js</a>. To use it in your project, simply add
+The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.3.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.3.0/epicenter.min.js</a>. To use it in your project, simply add
 
-    <script src="https://forio.com/tools/js-libs/1.1.2/epicenter.min.js"></script>
+    <script src="https://forio.com/tools/js-libs/1.3.0/epicenter.min.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 

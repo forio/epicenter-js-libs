@@ -25,8 +25,14 @@ module.exports = function (grunt) {
                     src: 'src/service/variables-api-service.js',
                     dest: 'documentation/generated/variables-api-service/index.html.md'
                 }, {
+                    src: 'src/service/world-api-adapter.js',
+                    dest: 'documentation/generated/world-api-adapter/index.html.md'
+                }, {
                     src: 'src/managers/run-manager.js',
                     dest: 'documentation/generated/run-manager/index.html.md'
+                }, {
+                    src: 'src/managers/world-manager.js',
+                    dest: 'documentation/generated/world-manager/index.html.md'
                 }
 
             ]
