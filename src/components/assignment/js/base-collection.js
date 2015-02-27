@@ -99,6 +99,18 @@ _.extend(BaseCollection.prototype, {
         return this._models.length;
     },
 
+    map: function (fn, ctx) {
+        return _.map(this._models, function (model) {
+            return fn.call(ctx, model.toJSON());
+        });
+    },
+
+    pluck: function (field) {
+        return this.map(function (m) {
+            return m[field];
+        });
+    }
+
 });
 
 module.exports = BaseCollection;
