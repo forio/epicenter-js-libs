@@ -129,10 +129,10 @@ Assignment.prototype = {
             this.$('#users-status').removeClass('incomplete');
         }
 
-        if (incolpleteWorlds) {
+        if (incolpleteWorlds || !totalWorlds) {
             this.$('#worlds-status').addClass('incomplete');
         } else {
-            this.$('#users-status').removeClass('incomplete');
+            this.$('#worlds-status').removeClass('incomplete');
         }
 
         this.$('.status-widget').css({ opacity: 1 });
