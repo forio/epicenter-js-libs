@@ -24,7 +24,10 @@ module.exports = classFrom(Base, {
     },
 
     autoAssignAll: function (options) {
-        return worldApi.autoAssign(options);
+        return worldApi.autoAssign(options)
+            .then(function (worlds) {
+                this.reset(this.parse(worlds));
+            }.bind(this));
     },
 
     getIncompleteWorldsCount: function () {
@@ -95,9 +98,13 @@ module.exports = classFrom(Base, {
         });
     },
 
-    joinUsers: function (usersCollection) {
-        var usersHash = {};
+    setUsersCollection: function (usersCollection) {
+        this.usersCollection = usersCollection;
+    },
 
+    joinUsers: function () {
+        var usersHash = {};
+        var usersCollection = this.usersCollection;
         usersCollection.each(function (u) {
             return (usersHash[u.get('id')] = u);
         });
@@ -115,24 +122,28 @@ module.exports = classFrom(Base, {
         var _this = this;
         return worldApi.list()
             .then(function (worlds) {
-                if (worlds.length) {
-                    worlds = _.map(worlds, function (w) {
-                        var users = _.map(w.users, function (u) {
-                            // in the world api users Ids comes as userId
-                            // make sure we add it as id so we can use the
-                            // same code to access models that come from the
-                            // member/local api as with the world api
-                            u.id = u.userId;
-                            return new UserModel(u);
-                        });
+                this.set(this.parse(worlds));
+            }.bind(_this));
+    },
 
-                        w.users = users;
+    parse: function (worlds) {
+        if (worlds.length) {
+            worlds = _.map(worlds, function (w) {
+                var users = _.map(w.users, function (u) {
+                    // in the world api users Ids comes as userId
+                    // make sure we add it as id so we can use the
+                    // same code to access models that come from the
+                    // member/local api as with the world api
+                    u.id = u.userId;
+                    return new UserModel(u);
+                });
 
-                        return w;
-                    });
+                w.users = users;
 
-                    _this.set(worlds);
-                }
+                return w;
             });
+        }
+
+        return worlds;
     }
 });

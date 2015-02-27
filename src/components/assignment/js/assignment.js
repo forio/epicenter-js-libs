@@ -41,7 +41,8 @@ Assignment.prototype = {
 
     load: function () {
         var join = _.after(3, function () {
-            this.worlds.joinUsers(this.users);
+            this.worlds.setUsersCollection(this.users);
+            this.worlds.joinUsers();
 
             this.render();
         }.bind(this));
@@ -60,7 +61,11 @@ Assignment.prototype = {
         var maxUsers = +this.$('#max-users').val();
         return this.worlds.autoAssignAll({ maxUsers: maxUsers })
             .done(this._hideUpdating)
-            .fail(this._hideUpdating);
+            .fail(this._hideUpdating)
+            .then(function () {
+                this.worlds.joinUsers();
+                this.render();
+            }.bind(this));
     },
 
     usassignSelected: function (e) {

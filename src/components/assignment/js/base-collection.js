@@ -41,7 +41,7 @@ _.extend(BaseCollection.prototype, {
         models = [].concat(models);
 
         if (!models.length) {
-            throw new Error('Don\'t know what to set');
+            return;
         }
 
         _.each(models, function (m) {
