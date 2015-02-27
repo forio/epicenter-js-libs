@@ -32,10 +32,11 @@ module.exports = classFrom(Base, {
     },
 
     removeUser: function (user) {
+        var id = this.get('id');
         var checkWorld = function () {
             if (!this.get('users').length) {
                 this.remove();
-                return this._worldApi.delete();
+                return this._worldApi.load(id).delete();
             }
         }.bind(this);
 
@@ -44,6 +45,7 @@ module.exports = classFrom(Base, {
         });
 
         return this._worldApi
+            .load(id)
             .removeUser({ userId: user.get('id') })
             .then(checkWorld);
     },
