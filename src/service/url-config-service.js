@@ -16,7 +16,7 @@ module.exports = function (config) {
 
         host: (function () {
             var host = window.location.host;
-            if (!host || host.indexOf('localhost') !== -1) {
+            if (!host || host.indexOf('local') !== -1) {
                 host = 'forio.com';
             }
             return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : 'api.' + host;
