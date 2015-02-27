@@ -98,6 +98,30 @@ module.exports = classFrom(Base, {
         });
     },
 
+    getListOfWorlds: function () {
+        return this.pluck('name');
+    },
+
+    getNextWorldName: function () {
+        var pad = function (num, places) {
+            var zeros = '000000000000000000';
+            var digits = num.toString().length;
+            var needed = places - digits;
+            return zeros.substr(0, needed) + num;
+        };
+
+        var worlds = this.getListOfWorlds();
+
+        if (!worlds.length) {
+            return 'World001';
+        }
+
+        var properNames = _.filter(worlds, function (w) { return /World\d\d\d/.test(w); }).sort();
+        var lastWorld = properNames[properNames.length - 1];
+        var numWorld = +lastWorld.match(/World(\d\d\d)/)[1];
+        return 'World' + pad(numWorld + 1, 3);
+    },
+
     setUsersCollection: function (usersCollection) {
         this.usersCollection = usersCollection;
     },

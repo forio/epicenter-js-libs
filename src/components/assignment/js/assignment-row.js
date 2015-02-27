@@ -55,6 +55,7 @@ _.extend(AssignmentRow.prototype, {
         var vm = _.extend({
             roles: this.project.get('roles'),
             optionalRoles: this.project.get('optionalRoles'),
+            worlds: this.worlds.getListOfWorlds().concat(this.worlds.getNextWorldName())
         }, this.model.toJSON());
 
         this.$el.html(templ(vm));
