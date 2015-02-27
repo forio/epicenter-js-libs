@@ -24,13 +24,13 @@
         }
 
         describe('create', function () {
-            it('should POST to world API with the correct parameters (account, project and model)', function () {
+            it('should POST to world API with the correct parameters (account, project, group)', function () {
                 createWorldAdapter().create({ model: 'model_file', group: 'group-name' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
                 var body = JSON.parse(req.requestBody);
-                body.model.should.equal('model_file');
+                expect(body.model).to.be.undefined;
                 body.account.should.equal('forio');
                 body.project.should.equal('js-libs');
                 body.group.should.equal('group-name');
@@ -43,24 +43,16 @@
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
                 var body = JSON.parse(req.requestBody);
-                body.model.should.equal(params.model);
+                expect(body.model).to.be.undefined;
                 body.roles.should.eql(params.roles);
                 body.optionalRoles.should.eql(params.optionalRoles);
                 body.minUsers.should.equal(params.minUsers);
                 body.name.should.equal(params.name);
             });
 
-            it('should accept a string as the model parameter', function () {
-                createWorldAdapter().create('model_file');
-
-                var req = server.requests.pop();
-                var body = JSON.parse(req.requestBody);
-                body.model.should.equal('model_file');
-            });
 
             it('should accept group in the constructor ', function () {
-                var params = { model: 'model_file' };
-                createWorldAdapter({ group: 'group-name1' }).create(params);
+                createWorldAdapter({ group: 'group-name1' }).create();
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
@@ -69,7 +61,7 @@
             });
 
             it('should accept group in the create call', function () {
-                var params = { model: 'model_file', group: 'group-in-create' };
+                var params = { group: 'group-in-create' };
                 createWorldAdapter().create(params);
 
                 var req = server.requests.pop();
@@ -79,7 +71,7 @@
             });
 
             it('should pass the new world reponse to the callback', function (done) {
-                createWorldAdapter().create({ model: 'model_file' })
+                createWorldAdapter().create()
                     .then(function (resp) {
                         resp.newGame.should.equal(true);
                         done();

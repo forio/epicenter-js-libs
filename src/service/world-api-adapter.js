@@ -77,11 +77,10 @@ module.exports = function (config) {
         *
         * ** Example **
         *   var gm = new F.service.World({ account: 'account', project: 'project' });
-        *   gm.create({ model: 'model.py', group: 'group-name' });
+        *   gm.create({ group: 'group-name' });
         *
         * ** Parameters **
         * @param {object} `params` Parameters to create the world
-        * @param {string} `params.model` The model file to use to create runs in this world
         * @param {string} `params.group` the group _name_ to create this world under
         * @param {string} `params.roles` (Optional) The list of roles for this world
         * @param {string} `params.opionalRoles` (Optional) The list of optional roles for this world
@@ -92,14 +91,9 @@ module.exports = function (config) {
         */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
-            var worldApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
-            if (typeof params === 'string') {
-                // this is just the model name
-                params = { model: params };
-            } else {
-                // whitelist the fields that we actually can send to the api
-                params = _pick(params, worldApiParams);
-            }
+            var worldApiParams = ['scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
+            // whitelist the fields that we actually can send to the api
+            params = _pick(params, worldApiParams);
 
             // account and project go in the body, not in the url
             $.extend(params, _pick(serviceOptions, ['account', 'project', 'group']));
