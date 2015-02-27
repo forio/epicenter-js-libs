@@ -56,8 +56,11 @@ module.exports = function (config) {
         set: function (key, value, options) {
             var setOptions = $.extend(true, {}, serviceOptions, options);
 
-            var domain = setOptions.domain;
-            var path = setOptions.root;
+            // dont set path and domain if is local
+            if (window.location.host.match('localhost')) {
+                var domain = setOptions.domain;
+                var path = setOptions.root;
+            }
 
             document.cookie = encodeURIComponent(key) + '=' +
                                 encodeURIComponent(value) +
