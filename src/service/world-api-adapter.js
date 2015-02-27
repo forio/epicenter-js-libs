@@ -1,22 +1,22 @@
 /**
  * ##World API Adapter
  *
- * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. 
+ * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
  *
  * The World API Adapter allows you to create, access, and manipulate multiplayer worlds within your Epicenter project. You can use this to add and remove end users from the world, and to create, access, and remove their runs. (The related [World Manager](../world-manager/) provides an easy way to access runs and worlds for particular users.) Only [team projects](../../../glossary/#team) can be multiplayer.
  *
  * As with all the other [API Adapters](../../), all methods take in an "options" object as the last parameter. The options can be used to extend/override the World API Service defaults.
  *
  * Typically, you instantiate a World Adapter and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface), project id (**Project ID**), and group (**Group Name**).
- * 
- *       var wa = new F.service.World({ 
- *          account: 'acme-simulations', 
- *          project: 'supply-chain-game', 
- *          group: 'team1' }); 
+ *
+ *       var wa = new F.service.World({
+ *          account: 'acme-simulations',
+ *          project: 'supply-chain-game',
+ *          group: 'team1' });
  *       wa.create({ model: 'model.py' })
  *          .then(function(world) {
- *              // call methods, e.g. wa.addUsers()    
- *          }); 
+ *              // call methods, e.g. wa.addUsers()
+ *          });
  */
 
 'use strict';
@@ -110,13 +110,13 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ 
-        *           model: 'model.py', 
-        *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] 
+        *      wa.create({
+        *           model: 'model.py',
+        *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
         *       });
         *
         *  **Parameters**
@@ -157,9 +157,9 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
@@ -196,9 +196,9 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
@@ -227,9 +227,9 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
@@ -259,13 +259,13 @@ module.exports = function (config) {
         },
 
         /**
-        * Get all worlds that an end user belongs to for a given account, project, and group. 
+        * Get all worlds that an end user belongs to for a given account, project, and group.
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
@@ -298,9 +298,9 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
@@ -311,9 +311,9 @@ module.exports = function (config) {
         *
         *               // add several users
         *               wa.addUsers([
-        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', 
-        *                     role: 'VP Marketing' }, 
-        *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee', 
+        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44',
+        *                     role: 'VP Marketing' },
+        *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee',
         *                     role: 'VP Engineering' }
         *               ]);
         *
@@ -374,14 +374,14 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
         *               wa.addUsers(
-        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44' }, 
+        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44' },
         *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee' }
         *               );
         *               wa.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
@@ -421,9 +421,9 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
@@ -452,9 +452,9 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      var wa = new F.service.World({ 
-        *           account: 'acme-simulations', 
-        *           project: 'supply-chain-game', 
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({ model: 'model.py' });
         *           .then(function(world) {
