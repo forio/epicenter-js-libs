@@ -4,8 +4,14 @@ var UsersCollection = require('./users-collection');
 var WorldsCollection = require('./worlds-collection');
 var ProjectModel = require('./project-model');
 var AssignemntRow = require('./assignment-row');
+var env = require('./defaults');
+
+function setEnvironment(options) {
+    env.set(_.omit(options, 'el'));
+}
 
 var Assignment = function (options) {
+    setEnvironment(options);
     this.initialize(options);
 };
 
@@ -34,7 +40,7 @@ Assignment.prototype = {
     },
 
     load: function () {
-        var join = _.after(2, function () {
+        var join = _.after(3, function () {
             this.worlds.joinUsers(this.users);
 
             this.render();
@@ -42,6 +48,7 @@ Assignment.prototype = {
 
         this.worlds.fetch().then(join);
         this.users.fetch().then(join);
+        this.project.fetch().then(join);
     },
 
     saveEdit: function () {
@@ -86,7 +93,7 @@ Assignment.prototype = {
     renderTable: function () {
         var rows = [];
         this.users.each(function (u) {
-            var view = new AssignemntRow({ model: u, worlds: this.worlds });
+            var view = new AssignemntRow({ model: u, worlds: this.worlds, project: this.project });
             rows.push(view.render().el);
         }, this);
 
@@ -108,19 +115,19 @@ Assignment.prototype = {
         var usersText = unassignedUsers ? unassignedUsers === 1 ? '1 user needs assignment.' : unassignedUsers + ' users need assignment.' : 'All users have been assigned.';
         var worldsText = !totalWorlds ? 'No worlds have been created.' : !incolpleteWorlds ? 'All worlds are complete.' : incolpleteWorlds === 1 ? '1 incomplete world needs attention.' : incolpleteWorlds + ' incomplete worlds need attention.';
 
-        this.$('#users-status').text(usersText);
-        this.$('#worlds-status').text(worldsText);
+        this.$('#users-status .text').text(usersText);
+        this.$('#worlds-status .text').text(worldsText);
 
-        if (!unassignedUsers) {
-            this.$('#users-status').removeClass('incomplete');
-        } else {
+        if (unassignedUsers) {
             this.$('#users-status').addClass('incomplete');
+        } else {
+            this.$('#users-status').removeClass('incomplete');
         }
 
-        if (!incolpleteWorlds) {
-            this.$('#worlds-status').removeClass('incomplete');
+        if (incolpleteWorlds) {
+            this.$('#worlds-status').addClass('incomplete');
         } else {
-            this.$('#users-status').addClass('incomplete');
+            this.$('#users-status').removeClass('incomplete');
         }
 
         this.$('.status-widget').css({ opacity: 1 });

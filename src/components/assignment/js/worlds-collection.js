@@ -3,18 +3,25 @@
 var classFrom = require('../../../util/inherit');
 var Model = require('./world-model');
 var UserModel = require('./user-model');
+var serviceLocator = require('./service-locator');
+
+
 var Base = require('./base-collection');
-var env = require('./defaults');
+var __super = Base.prototype;
 
 var doneFn = function (dtd, after) {
     return _.after(after, dtd.resolve);
 };
 
-var worldApi = new F.service.World(env);
-
+var worldApi;
 
 module.exports = classFrom(Base, {
     model: Model,
+
+    initialize: function () {
+        __super.initialize.apply(this, arguments);
+        worldApi = serviceLocator.worldApi();
+    },
 
     autoAssignAll: function (options) {
         return worldApi.autoAssign(options);
@@ -106,7 +113,7 @@ module.exports = classFrom(Base, {
 
     fetch: function () {
         var _this = this;
-        return worldApi.list(_.pick(env, ['group']))
+        return worldApi.list()
             .then(function (worlds) {
                 if (worlds.length) {
                     worlds = _.map(worlds, function (w) {

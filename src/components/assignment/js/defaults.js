@@ -1,13 +1,14 @@
 'use strict';
 
 
-var account = 'forio-dev';
-var project = 'test';
-var groupName = 'test-feb-2015';
-var groupId = '81ab7281-3cad-4cea-822c-6ef967d8e2cc';
+var account = '';
+var project = '';
+var groupName = '';
+var groupId = '';
 
 
-module.exports = {
+
+var env = {
     account: account,
     project: project,
     group: groupName,
@@ -15,5 +16,15 @@ module.exports = {
     server: {
         host: 'localhost:8080',
         protocol: 'http'
+    }
+};
+
+module.exports = {
+    set: function (options) {
+        env = _.merge(env, options);
+    },
+
+    get: function () {
+        return env;
     }
 };

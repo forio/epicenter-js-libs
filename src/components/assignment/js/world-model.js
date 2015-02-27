@@ -1,5 +1,5 @@
 'use strict';
-var env = require('./defaults');
+var serviceLocator = require('./service-locator');
 var classFrom = require('../../../util/inherit');
 var Base = require('./base-model');
 var __super = Base.prototype;
@@ -16,7 +16,7 @@ module.exports = classFrom(Base, {
 
         this._data.users = this._data.users || [];
 
-        this._worldApi = new F.service.World(env);
+        this._worldApi = serviceLocator.worldApi();
 
         var id = this.get('id');
         if (id) {

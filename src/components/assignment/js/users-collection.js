@@ -5,7 +5,7 @@ var classFrom = require('../../../util/inherit');
 var Model = require('./user-model');
 var Base = require('./base-collection');
 var tok = 'bG9naW46bG9naW5zZWNyZXQ=';
-var env = require('./defaults');
+var serviceLocator = require('./service-locator');
 
 $.ajaxSetup({
     headers: {
@@ -38,8 +38,8 @@ module.exports = classFrom(Base, {
         var _this = this;
 
         var getGroupUsers = function () {
-            var memberApi = new F.service.Member(_.pick(env, ['groupId', 'server']));
-            var userApi = new F.service.User(_.pick(env, ['account', 'server']));
+            var memberApi = serviceLocator.memberApi();
+            var userApi = serviceLocator.userApi();
 
             var loadGroupMembers = function () {
                 return memberApi.getGroupDetails();

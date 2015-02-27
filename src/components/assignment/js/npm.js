@@ -1,5 +1,7 @@
-$(function () {
+(function () {
     'use strict';
     var App = require('./assignment.js');
-    new App({ el: '#assignment-component' }).load();
-});
+
+    window.forio = window.forio || {};
+    window.forio.MultiplayerAssignmentComponent = App;
+})();
