@@ -9,7 +9,7 @@ module.exports = function (grunt) {
         },
         source: {
             files: {
-                src: ['src/**/*.js']
+                src: ['src/**/*.js', '!src/**/templates.js']
             }
         },
         tests: {
@@ -19,7 +19,7 @@ module.exports = function (grunt) {
         },
         all: {
             files: {
-                src: ['src/**/*.js', 'tests/spec/**/*.js']
+                src: ['src/**/*.js', 'tests/spec/**/*.js', '!src/**/templates.js']
             },
         }
     });
