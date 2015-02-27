@@ -1,13 +1,21 @@
-<td><input type="checkbox" class="select" data-id="<%= id%>"</td>
+<td><input type="checkbox" class="select" data-id="<%= id %>"</td>
 <td>
-    <input type="text" data-field="world" value="<%= world %>">
+    <input type="text" class="form-control" data-field="world" value="<%= world %>">
 </td>
 <td>
-    <input type="text" data-field="role" value="<%= role %>">
+    <select name="roles" class="form-control" data-field="role">
+    <% _.each(roles, function (r) { %>
+        <option value="<%= r %>" <%= r === role ? 'selected' : '' %>> <%= r %> </option>
+    <% }); %>
+
+    <% _.each(optionalRoles, function (r) { %>
+        <option value="<%= r %>" <%= r === role ? 'selected' : '' %>> <%= r %> <i>(Optional)</i> </option>
+    <% }); %>
+    </select>
 </td>
 <td><%= lastName %></td>
 <td><%= userName %></td>
-<td></td>
+<td><%= !world ? '<em class="warning"></em>' : '' %></td>
 <td class="actions">
     <button class="btn btn-primary save">Save</button>
     <button class="btn cancel">Cancel</button>

@@ -10,6 +10,7 @@ var AssignmentRow = function (options) {
     this.model = options.model;
     this.options = options;
     this.worlds = options.worlds;
+    this.project = options.project;
 
     _.bindAll(this, ['setEditMode', 'removeEditMode', 'saveEdit', 'cancelEdit', 'updateData']);
 
@@ -51,7 +52,12 @@ _.extend(AssignmentRow.prototype, {
 
     render: function () {
         var templ = this.model.get('edit-mode') ? this.editTemplate : this.template;
-        this.$el.html(templ(this.model.toJSON()));
+        var vm = _.extend({
+            roles: this.project.get('roles'),
+            optionalRoles: this.project.get('optionalRoles'),
+        }, this.model.toJSON());
+
+        this.$el.html(templ(vm));
 
         return this;
     },
