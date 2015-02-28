@@ -3,18 +3,19 @@
     <select name="worlds" class="form-control" data-field="world">
 
     <% _.each(worlds, function (w) { %>
-        <option value="<%= w %>" <%= w === world ? 'selected' : '' %>> <%= w %> </option>
+        <option value="<%= w %>" <%= w === world ? 'selected' : '' %>><%= w %></option>
     <% }); %>
+        <option value="<%= newWorld %>" class="new-world-text"><i><%= newWorld %> - New -</i></option>
     </select>
 </td>
 <td>
     <select name="roles" class="form-control" data-field="role">
     <% _.each(roles, function (r) { %>
-        <option value="<%= r %>" <%= r === role ? 'selected' : '' %>> <%= r %> </option>
+        <option value="<%= r %>" <%= r === role ? 'selected' : '' %>><%= r %></option>
     <% }); %>
 
     <% _.each(optionalRoles, function (r) { %>
-        <option value="<%= r %>" <%= r === role ? 'selected' : '' %>> <%= r %> <i>(Optional)</i> </option>
+        <option value="<%= r %>" <%= r === role ? 'selected' : '' %>><%= r %> <i>(Optional)</i></option>
     <% }); %>
     </select>
 </td>
