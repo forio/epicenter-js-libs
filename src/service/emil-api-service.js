@@ -23,7 +23,7 @@ module.exports = function (config) {
     var http = new TransportFactory(httpOptions);
 
     var publicAPI = {
-        readPage: function (options) {
+        write: function (letter, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
 
             if (!httpOptions.account) {
@@ -32,34 +32,8 @@ module.exports = function (config) {
             if (!httpOptions.project) {
                 throw new Error('No project specified.');
             }
-            if (httpOptions.level && !((httpOptions.level === 'DEBUG') || (httpOptions.level === 'INFO') || (httpOptions.level === 'WARN') || (httpOptions.level === 'ERROR') || (httpOptions.level === 'FATAL'))) {
-                throw new Error('The level must be one of DEBUG, INFO, WARN, ERROR, or FATAL');
-            }
 
-            if (httpOptions.range) {
-                if (!httpOptions.headers) {
-                    httpOptions.headers = {};
-                }
-                httpOptions.headers.range = httpOptions.range;
-            }
-
-            var getParams = {
-                account: httpOptions.account,
-                project: httpOptions.project
-            };
-
-            $.each(['run', 'group', 'user', 'level', 'startDate', 'endDate', 'q'], function (i, el) {
-                if (httpOptions[el]) {
-                    getParams[el] = httpOptions[el];
-                }
-            });
-
-            return http.get(getParams, httpOptions);
-        },
-        log: function (records, options) {
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-
-            return http.post(records, httpOptions);
+            return http.post(letter, httpOptions);
         }
     };
 
