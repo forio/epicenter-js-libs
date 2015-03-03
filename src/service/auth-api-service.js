@@ -2,7 +2,7 @@
  *
  * ##Authentication API Service
  *
- * The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token. 
+ * The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token.
  *
  * User access tokens are required for each call to Epicenter. (See [Project Access](../../../project_access/) for more information.)
  *
@@ -56,18 +56,18 @@ module.exports = function (config) {
     var publicAPI = {
 
         /**
-         * Logs user in, returning the user access token. 
+         * Logs user in, returning the user access token.
          *
          * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
          *
          * **Example**
          *
-         *      auth.login({ 
+         *      auth.login({
          *          userName: 'jsmith',
          *          password: 'passw0rd',
          *          account: 'acme-simulations' })
-         *      .then(function (token) { 
-         *          console.log("user access token is: ", token.access_token); 
+         *      .then(function (token) {
+         *          console.log("user access token is: ", token.access_token);
          *      });
          *
          * **Parameters**
