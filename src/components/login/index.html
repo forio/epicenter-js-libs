@@ -22,7 +22,7 @@
             The main login form. Make sure you make the id="login". Also you can specify a
             page to redirect to after logging in using the action property.
 
-            Inside the form specify the username and password fields that the javascript
+            Inside the form, specify the username and password fields that the JavaScript
             will use as credentials to login. Optionally you can specify an account
             and project to override the url.
 
@@ -38,14 +38,14 @@
                     <label for="">Password:</label>
                     <input id="password" type="password">
                 </div>
-                <!-- account and project fields are optional, normally account/project would be extracted form the url -->
+                <!-- account and project fields are optional, normally account/project are extracted from the url -->
                 <input type="hidden" id="account">
                 <input type="hidden" id="project">
 
                 <div class="control">
                     <label for="">&nbsp;</label><button class="btn btn-primary" type="submit">Login</button>
                 </div>
-                <!-- add a login-message div if you want to display login failed errors (ie. wrong username or password) -->
+                <!-- add a login-message div if you want to display login failed errors (e.g. wrong username or password) -->
                 <div id="login-message" class="alert alert-danger" style="display:none;"></div>
             </div>
         </form>

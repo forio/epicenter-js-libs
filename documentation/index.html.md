@@ -13,6 +13,7 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 * [Concepts in epicenter.js](#concepts)
 * [Using epicenter.js](#using-epicenter-js)
 	* [Including](#include)
+	* [Provided Components](#components)
 	* [Accessing](#access)
 	* [Examples of usage: Callbacks and promises](#example)
 	* [Configuration options](#configuration)
@@ -31,7 +32,7 @@ The epicenter.js library is a set of services (adapters) and managers to help st
 	* [World Adapter](./generated/world-api-adapter/)
 
 * The following managers add functionality on top of their respective services:
-	* [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to track and access user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
+	* [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
 	* [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
 	* [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users. 
 
@@ -41,6 +42,7 @@ The epicenter.js library is a set of services (adapters) and managers to help st
 
 <a name="include"></a>
 ####Including
+
 The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.3.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.3.0/epicenter.min.js</a>. To use it in your project, simply add
 
     <script src="https://forio.com/tools/js-libs/1.3.0/epicenter.min.js"></script>
@@ -50,6 +52,18 @@ into any of your [interface](../creating_your_interface/) files (e.g. .html and 
 The epicenter.js library depends on jQuery, so you'll also need to download jQuery for yourself, or use a hosted version. To use a hosted version, add
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<a name="components"></a>
+####Provided Components
+
+In addition to the epicenter.js library itself, the Epicenter JS Libs project also includes reusable components. These HTML, CSS, and JS files are templates you can use to perform common actions. They can be copied directly to your project, often without modification.
+
+* **Login Component**: Provides a login form for team members and end users of your project. Includes a group selector for end users that are members of multiple groups.
+	* `index.html`: The login form.
+	* `login.css`: Provides styling for the group selector pop over dialog.
+	* `login.js`: Uses the [Authorization Manager](./generated/auth-manager/) to log in users.
+	
+The login component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/src/components/" target="_blank">GitHub</a>.
 
 
 <a name="access"></a>
