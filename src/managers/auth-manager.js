@@ -1,7 +1,31 @@
 /**
 * ## Authorization Manager
 *
+* The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
 *
+* The Authorization Manager is most useful for [team projects](../../../glossary/#team) with an access level of [Authenticated](../../../glossary/#access). These projects are accessed by [end users](../../../glossary/#users) who are members of one or more [groups](../../../glossary/#groups).
+*
+* ####Using the Authorization Manager
+*
+* To use the Authorization Manager, instantiate it. Then, make calls to any of the methods you need:
+*
+*       var authMgr = new F.manager.AuthManager({
+*           account: 'acme-simulations',
+*           userName: 'enduser1',
+*           password: 'passw0rd'
+*       });
+*       authMgr.login();
+*       authMgr.getCurrentUserSessionInfo();
+*
+* The `options` object passed to the `F.manager.AuthManager()` call can include:
+*
+*   * `account`: The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
+*   * `userName`: Email or username to use for logging in.
+*   * `password`: Password for specified `userName`.
+*   * `project`: The **Project ID** for the project to log this user into. Optional.
+*   * `group`: Name of the group to which `userName` belongs. Required for end users if the `project` is specified.
+*
+* If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
 */
 
 'use strict';
@@ -15,7 +39,7 @@ var keyNames = require('./key-names');
 var defaults = {
     /**
      * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
-     * @type { string}
+     * @type {string}
      */
     store: { synchronous: true }
 };
@@ -70,6 +94,39 @@ var _findUserInGroup = function (members, id) {
 };
 
 AuthManager.prototype = $.extend(AuthManager.prototype, {
+
+    /**
+    * Logs user in.
+    *
+    * **Example**
+    *
+    *       authMgr.login({
+    *           account: 'acme-simulations', 
+    *           userName: 'enduser1', 
+    *           password: 'passw0rd' 
+    *       });
+    *
+    *       authMgr.login()
+    *           .then(function(authAdapter) {
+    *               // if enduser1 belongs to exactly one group
+    *               // (or if the login() call is modified to include the group)
+    *               // continue here
+    *           })
+    *           .fail(function(authAdapter) {
+    *               // if enduser1 belongs to multiple groups, 
+    *               // the login() call fails 
+    *               // and returns all groups of which the user is a member
+    *           });
+    *
+    * **Parameters**
+    *
+    * @param {Object} `options` (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include: 
+    * @param {string} `options.account` The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
+    * @param {string} `options.userName` Email or username to use for logging in.
+    * @param {string} `options.password` Password for specified `userName`.
+    * @param {string} `options.project` (Optional) The **Project ID** for the project to log this user into.
+    * @param {string} `options.group` Name of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified, and for end users that are members of multiple [groups](../../../glossary/#groups), otherwise optional.
+    */
     login: function (options) {
         var _this = this;
         var $d = $.Deferred();
@@ -176,6 +233,17 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         return $d.promise();
     },
 
+    /**
+    * Logs user out.
+    *
+    * **Example**
+    *
+    *       authMgr.logout();
+    *
+    * **Parameters**
+    *
+    * @param {Object} `options` (Optional) Overrides for configuration options.
+    */
     logout: function (options) {
         var $d = $.Deferred();
         var adapterOptions = $.extend(true, {success: $.noop, token: token }, this.options, options);
@@ -205,11 +273,14 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     },
 
     /**
-     * Returns existing user access token if already logged in, or creates a new one otherwise. (See [more background on access tokens](../../../project_access/)).
+     * Returns the existing user access token if the user is already logged in. Otherwise, logs the user in, creating a new user access token, and returns the new token. (See [more background on access tokens](../../../project_access/)).
      *
      * **Example**
      *
-     *      auth.getToken().then(function (token) { console.log('my token is', token); });
+     *      authMgr.getToken()
+     *          .then(function (token) { 
+     *              console.log('My token is ', token); 
+     *          });
      *
      * **Parameters**
      * @param {Object} `options` (Optional) Overrides for configuration options.
@@ -226,6 +297,26 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         return $d.promise();
     },
 
+    /**
+     * Returns an array of group records, one for each group of which the current user is a member. Each group record includes the group `name`, `account`, `project`, and `groupId`.
+     *
+     * If some end users in your project are members of multiple groups, this is a useful method to call on your project's login page. When the user attempts to log in, you can use this to display the groups of which the user is member, and have the user select the correct group to log in to for this session.
+     *
+     * **Example**
+     *
+     *      // get groups for current user
+     *      authMgr.getUserGroups()
+     *          .then(function (groups) { 
+     *              for (var i=0; i < groups.length; i++) 
+     *                  { console.log(groups[i].name); }
+     *          });
+     *
+     *      // get groups for particular user
+     *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3'});
+     *
+     * **Parameters**
+     * @param {Object} `options` (Optional) Overrides for configuration options.
+     */
     getUserGroups: function (options) {
         var adapterOptions = $.extend(true, {success: $.noop }, this.options, options);
         var $d = $.Deferred();
@@ -247,6 +338,20 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         return $d.promise();
     },
 
+    /**
+     * Returns session information for the current user, including the `userId`, `account`, `project`, `groupId`, `groupName`, `isFac` (whether the end user is a facilitator of this group), and `auth_token` (user access token).
+     *
+     * *Important*: This method is synchronous. The session information is returned immediately in an object; no callbacks or promises are needed.
+     *
+     * By default, session information is stored in a cookie in the browser. You can change this with the `store` configuration option. 
+     *
+     * **Example**
+     *
+     *      var sessionObj = authMgr.getCurrentUserSessionInfo();
+     *
+     * **Parameters**
+     * @param {Object} `options` (Optional) Overrides for configuration options.
+     */
     getCurrentUserSessionInfo: function (options) {
         return getSession(options);
     }
