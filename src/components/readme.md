@@ -5,4 +5,4 @@ In addition to the epicenter.js library itself, the Epicenter JS Libs project al
 * **Login Component**: Provides a login form for team members and end users of your project. Includes a group selector for end users that are members of multiple groups.
 	* `index.html`: The login form.
 	* `login.css`: Provides styling for the group selector pop over dialog.
-	* `login.js`: Uses the [Authorization Manager](./generated/auth-manager/) log in users.
+	* `login.js`: Uses the [Authorization Manager](http://forio.com/epicenter/docs/public/api_adapters/generated/auth-manager/) to log in users.
