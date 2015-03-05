@@ -141,7 +141,7 @@ module.exports = function (config) {
             }
 
             // account and project go in the body, not in the url
-            $.extend(params, _pick(serviceOptions, ['account', 'project', 'group']));
+            $.extend(params, _pick(serviceOptions, ['account', 'project']));
 
             var oldSuccess = createOptions.success;
             createOptions.success = function (response) {

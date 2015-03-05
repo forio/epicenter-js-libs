@@ -13,6 +13,8 @@
 
 var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
+var _pick = require('../util/object-util')._pick;
+var apiEndpoint = 'member/local';
 
 module.exports = function (config) {
     var defaults = {
@@ -38,35 +40,49 @@ module.exports = function (config) {
     var urlConfig = new ConfigService(serviceOptions).get('server');
 
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath('member/local')
+        url: urlConfig.getAPIPath(apiEndpoint)
     });
-    var http = new TransportFactory(transportOptions);
+
+    var authorizationHeader = function (token) {
+        if (token) {
+            return {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            };
+        }
+        return {};
+    }
+    var http = new TransportFactory(transportOptions, authorizationHeader(serviceOptions.token));
 
     var publicAPI = {
 
-        getGroupsByUser: function (options) {
-            var httpOptions = $.extend(true, serviceOptions, options);
-            if (!httpOptions.userId) {
+        getGroupsByUser: function (params, options) {
+            options = options || {};
+            var httpOptions = $.extend(true, serviceOptions,
+                options,
+                authorizationHeader(options.token)
+            );
+            if (!params.userId) {
                 throw new Error('No userId specified.');
             }
 
-            var getParms = {
-                userId: httpOptions.userId
-            };
+            var getParms = _pick(params, 'userId');
             return http.get(getParms, httpOptions);
         },
 
-        getGroupDetails: function (options) {
-            var httpOptions = $.extend(true, serviceOptions, transportOptions, options);
-            if (!httpOptions.groupId) {
+        getGroupDetails: function (params, options) {
+            options = options || {};
+            if (!params.groupId) {
                 throw new Error('No groupId specified.');
             }
+            var httpOptions = $.extend(true, serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + params.groupId },
+                authorizationHeader(options.token)
+            );
 
-            var slash = httpOptions.url.slice(-1) === '/' ? '' : '/';
-            httpOptions.url = httpOptions.url + slash + httpOptions.groupId;
-
-            var getParms = {};
-            return http.get(getParms, httpOptions);
+            return http.get({}, httpOptions);
         }
     };
 
