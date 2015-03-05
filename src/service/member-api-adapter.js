@@ -52,7 +52,7 @@ module.exports = function (config) {
             };
         }
         return {};
-    }
+    };
     var http = new TransportFactory(transportOptions, authorizationHeader(serviceOptions.token));
 
     var publicAPI = {

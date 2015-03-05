@@ -81,7 +81,9 @@ function AuthManager(options) {
     store = new StorageFactory(this.options.store);
     session = getSession();
     token = store.get(EPI_COOKIE_KEY) || '';
-    this.authAdapter = new AuthAdapter(this.options, { token: session['auth_token'] });
+    //jshint camelcase: false
+    //jscs:disable
+    this.authAdapter = new AuthAdapter(this.options, { token: session.auth_token });
 }
 
 var _findUserInGroup = function (members, id) {
