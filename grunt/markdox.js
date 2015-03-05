@@ -28,6 +28,9 @@ module.exports = function (grunt) {
                     src: 'src/service/world-api-adapter.js',
                     dest: 'documentation/generated/world-api-adapter/index.html.md'
                 }, {
+                    src: 'src/service/channel-service.js',
+                    dest: 'documentation/generated/channel-service/index.html.md'
+                }, {
                     src: 'src/managers/run-manager.js',
                     dest: 'documentation/generated/run-manager/index.html.md'
                 }, {
@@ -36,6 +39,12 @@ module.exports = function (grunt) {
                 }, {
                     src: 'src/managers/world-manager.js',
                     dest: 'documentation/generated/world-manager/index.html.md'
+                }, {
+                    src: 'src/managers/channel-manager.js',
+                    dest: 'documentation/generated/channel-manager/index.html.md'
+                }, {
+                    src: 'src/managers/epicenter-channel-manager.js',
+                    dest: 'documentation/generated/epicenter-channel-manager/index.html.md'
                 }
 
             ]
