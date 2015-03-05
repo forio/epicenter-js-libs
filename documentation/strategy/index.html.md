@@ -14,6 +14,7 @@ There are several strategies included in epicenter.js:
 * [new-if-persisted](#new-if-persisted)
 * [new-if-missing](#new-if-missing)
 * [new-if-initialized](#new-if-initialized)
+* [none](#none)
 * [persistent-single-player](#persistent-single-player)
 
 You can also [create your own](#create-your-own).
@@ -83,6 +84,17 @@ Specifically, the strategy is:
 		* If the run's `initialized` field is `true`, use the run.
 		* If the run is only persisted (and not still in memory), and it is not `initialized`, create a new run for this end user.
 	* If the cookie does not exist, create a new run for this end user.
+
+
+<a name="none"></a>
+#### none
+
+The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../generated/run-service/).
+
+This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance. 
+
+Also, this strategy is necessary if you are working with a multiplayer project and using the [World Manager](../generated/world-manager/) &mdash; or other, similar situations where you do not have direct control over creating the [Run Service](../generated/run-service/) instance.
+
 
 <a name="persistent-single-player"></a>
 #### persistent-single-player
