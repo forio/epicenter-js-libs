@@ -89,19 +89,19 @@ Specifically, the strategy is:
 <a name="none"></a>
 #### none
 
-The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../generated/run-service/).
+The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../generated/run-api-service/).
 
 This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance. 
 
-Also, this strategy is necessary if you are working with a multiplayer project and using the [World Manager](../generated/world-manager/) &mdash; or other, similar situations where you do not have direct control over creating the [Run Service](../generated/run-service/) instance.
+Also, this strategy is necessary if you are working with a multiplayer project and using the [World Manager](../generated/world-manager/) &mdash; or other, similar situations where you do not have direct control over creating the [Run Service](../generated/run-api-service/) instance.
 
 
 <a name="persistent-single-player"></a>
 #### persistent-single-player
 
-The `persistent-single-player` strategy returns the latest (most recent) run for this user, whether it is in memory or not. If there are no runs for this user, it cretes a new one.
+The `persistent-single-player` strategy returns the latest (most recent) run for this user, whether it is in memory or not. If there are no runs for this user, it creates a new one.
 
-This strategy is useful if your project executes your model step by step (for example, as opposed to a project where the model is executed completely, such as a Vensim model that is immediately stepped to the end). It is useful if end users play with your project for an extended period of time, possibly over several sessions.
+This strategy is useful if your project executes your model step by step (as opposed to a project where the model is executed completely, for example, a Vensim model that is immediately stepped to the end). It is useful if end users play with your project for an extended period of time, possibly over several sessions.
 
 Specifically, the strategy is:
 
