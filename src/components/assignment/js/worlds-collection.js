@@ -133,6 +133,7 @@ module.exports = classFrom(Base, {
         var usersHash = {};
         var usersCollection = this.usersCollection;
         usersCollection.each(function (u) {
+            u.set({ isWorldComplete: true });
             return (usersHash[u.get('id')] = u);
         });
 
