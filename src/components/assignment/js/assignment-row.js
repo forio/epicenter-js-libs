@@ -41,9 +41,14 @@ _.extend(AssignmentRow.prototype, {
     },
 
     saveEdit: function () {
+        var _this = this;
         this.updateData();
-        this.worlds.updateUser(this.model);
-        this.removeEditMode();
+        this.worlds
+            .updateUser(this.model)
+            .then(function () {
+                _this.removeEditMode();
+                _this.$el.trigger('update', _this);
+            });
     },
 
     cancelEdit: function () {

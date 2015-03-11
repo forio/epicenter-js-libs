@@ -32,7 +32,7 @@ Assignment.prototype = {
     },
 
     bindEvents: function () {
-        this.$el.on('click', 'button.save', this.saveEdit);
+        this.$el.on('update', 'tr', this.saveEdit);
         this.$el.on('click', 'input:checkbox:not(#select-all)', this.toggleControlls);
         this.$el.on('click', '#select-all', this.selectAll);
         this.$el.on('click', '.unassign-user', this.usassignSelected);
@@ -53,7 +53,11 @@ Assignment.prototype = {
     },
 
     saveEdit: function () {
-        this.updateControls();
+        this.worlds.fetch()
+            .then(function () {
+                this.worlds.joinUsers();
+                this.updateControls();
+            }.bind(this));
     },
 
     autoAssignAll: function () {

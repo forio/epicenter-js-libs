@@ -41,7 +41,7 @@ module.exports = classFrom(Base, {
         var dtd = $.Deferred();
         var prevWorld = this.getWorldByUser(user);
         var curWorld = this.getOrCreateWorldById(worldName);
-        var done = doneFn(dtd, prevWorld && curWorld ? 2 : 1);
+        var done = doneFn(dtd, 1);
 
         // check if there's anything to do
         if (!prevWorld && !curWorld) {
@@ -50,10 +50,13 @@ module.exports = classFrom(Base, {
 
         if (prevWorld) {
             prevWorld.removeUser(user)
+                .then(function () {
+                    if (curWorld) {
+                        return curWorld.addUser(user);
+                    }
+                })
                 .then(done);
-        }
-
-        if (curWorld) {
+        } else if (curWorld) {
             curWorld.addUser(user)
                 .then(done);
         }
@@ -148,7 +151,7 @@ module.exports = classFrom(Base, {
         var _this = this;
         return worldApi.list()
             .then(function (worlds) {
-                this.set(this.parse(worlds));
+                this.reset(this.parse(worlds));
             }.bind(_this));
     },
 
