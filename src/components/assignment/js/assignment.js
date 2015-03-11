@@ -56,6 +56,7 @@ Assignment.prototype = {
         this.worlds.fetch()
             .then(function () {
                 this.worlds.joinUsers();
+                this.render();
                 this.updateControls();
             }.bind(this));
     },
@@ -80,8 +81,12 @@ Assignment.prototype = {
         });
 
         var done = _.after(ids.length, function () {
-            this._hideUpdating();
-            this.render();
+            this.worlds.fetch().then(function () {
+                this.worlds.joinUsers();
+                this._hideUpdating();
+                this.render();
+
+            }.bind(this));
         }.bind(this));
 
         this._showUpdating();
@@ -89,7 +94,8 @@ Assignment.prototype = {
             var user = this.users.getById(userId);
             user.set('world', '');
             user.set('role', '');
-            this.worlds.updateUser(user).done(done);
+            this.worlds.updateUser(user)
+                .done(done);
         }, this);
     },
 
