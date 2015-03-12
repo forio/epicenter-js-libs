@@ -490,7 +490,21 @@ module.exports = function (config) {
         * @param {object} `options` (Optional) Options object to override global options.
         */
         deleteRun: function (worldId, options) {
-            throw new Error('not implemented');
+            options = options || {};
+
+            if (worldId) {
+                options.filter = worldId;
+            }
+
+            setIdFilterOrThrowError(options);
+
+            var deleteOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/run' }
+            );
+
+            return http.delete(null, deleteOptions);
         },
 
         /**
