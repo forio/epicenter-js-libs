@@ -13,7 +13,7 @@
  *          account: 'acme-simulations',
  *          project: 'supply-chain-game',
  *          group: 'team1' });
- *       wa.create({ model: 'model.py' })
+ *       wa.create()
  *          .then(function(world) {
  *              // call methods, e.g. wa.addUsers()
  *          });
@@ -27,7 +27,7 @@ var StorageFactory = require('../store/store-factory');
 var TransportFactory = require('../transport/http-transport-factory');
 var _pick = require('../util/object-util')._pick;
 
-var apiEndpoint = 'multiplayer/game';
+var apiEndpoint = 'multiplayer/world';
 
 module.exports = function (config) {
     var store = new StorageFactory({ synchronous: true });
@@ -57,6 +57,12 @@ module.exports = function (config) {
          * @type {String}
          */
        group: undefined,
+
+       /**
+         * The model file to use to create runs in this world. Defaults to undefined.
+         * @type {String}
+         */
+        model: undefined,
 
 //        apiKey: '',
 
@@ -115,13 +121,11 @@ module.exports = function (config) {
         *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({
-        *           model: 'model.py',
         *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
         *       });
         *
         *  **Parameters**
         * @param {object} `params` Parameters to create the world.
-        * @param {string} `params.model` The model file to use to create runs in this world.
         * @param {string} `params.group` (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (new F.service.World()).
         * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
         * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some games have specific roles that **may** be filled by end users. Listing the optional roles as part of the game object allows you to autoassign users to games and ensure that all roles are filled in each game.
@@ -131,14 +135,9 @@ module.exports = function (config) {
         */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
-            var worldApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group'];
-            if (typeof params === 'string') {
-                // this is just the model name
-                params = { model: params };
-            } else {
-                // whitelist the fields that we actually can send to the api
-                params = _pick(params, worldApiParams);
-            }
+            var worldApiParams = ['scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group'];
+            // whitelist the fields that we actually can send to the api
+            params = _pick(params, worldApiParams);
 
             // account and project go in the body, not in the url
             $.extend(params, _pick(serviceOptions, ['account', 'project', 'group']));
@@ -161,7 +160,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ model: 'model.py' });
+        *      wa.create();
         *           .then(function(world) {
         *               wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
         *           });
@@ -200,7 +199,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ model: 'model.py' });
+        *      wa.create();
         *           .then(function(world) {
         *               wa.delete();
         *           });
@@ -231,7 +230,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ model: 'model.py' });
+        *      wa.create();
         *           .then(function(world) {
         *               // lists all worlds in group "team1"
         *               wa.list();
@@ -267,7 +266,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ model: 'model.py' });
+        *      wa.create();
         *           .then(function(world) {
         *               wa.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
         *           });
@@ -302,7 +301,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ model: 'model.py' });
+        *      wa.create();
         *           .then(function(world) {
         *               // add one user
         *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
@@ -378,7 +377,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ model: 'model.py' });
+        *      wa.create();
         *           .then(function(world) {
         *               wa.addUsers(
         *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44' },
@@ -425,17 +424,21 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ model: 'model.py' });
+        *      wa.create();
         *           .then(function(world) {
-        *               wa.getCurrentRunId();
+        *               wa.getCurrentRunId({ model: 'model.py' });
         *           });
         *
         * ** Parameters **
+        * @param {object} `params` Params objects sent to the get run Id.
+        * @param {object} `params.model` The model file to use to create a run if needed.
         * @param {object} `options` (Optional) Options object to override global options.
         */
-        getCurrentRunId: function (options) {
-            options = options || {};
+        getCurrentRunId: function (params, options) {
+            options = options || {}; 
+            params = params || {};
 
+            var modelName = params.model || serviceOptions.model;
             setIdFilterOrThrowError(options);
 
             var getOptions = $.extend(true, {},
@@ -444,7 +447,7 @@ module.exports = function (config) {
                 { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/run' }
             );
 
-            return http.post(null, getOptions);
+            return http.post({ model: modelName }, getOptions);
         },
 
         /**
@@ -456,7 +459,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create({ model: 'model.py' });
+        *      wa.create();
         *           .then(function(world) {
         *               wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee');
         *           });
@@ -513,13 +516,14 @@ module.exports = function (config) {
         *  **Example**: This method is not yet implemented.
         *
         *  **Parameters**
-        * @param {string} `worldId`
+        * @param {object} `params` worldId and model should be provided.
         * @param {object} `options` (Optional) Options object to override global options.
         */
-        newRunForWorld: function (worldId, options) {
+        newRunForWorld: function (params, options) {
+            var worldId = params.worldId;
             return this.deleteRun(worldId)
                 .then(function () {
-                    return this.getCurrentRunId({ filter: worldId });
+                    return this.getCurrentRunId({ model: params.model }, { filter: worldId });
                 });
         }
     };

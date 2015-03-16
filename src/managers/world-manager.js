@@ -51,7 +51,7 @@ var worldApi;
 // };
 
 
-function buildStrategy(worldId, dtd) {
+function buildStrategy(worldId, model, dtd) {
 
     return function Ctor(runService, options) {
         this.runService = runService;
@@ -65,7 +65,7 @@ function buildStrategy(worldId, dtd) {
             getRun: function () {
                 var _this = this;
                 //get or create!
-                return worldApi.getCurrentRunId({ filter: worldId })
+                return worldApi.getCurrentRunId({ model: model }, { filter: worldId })
                     .then(function (runId) {
                         return _this.runService.load(runId);
                     })
@@ -133,10 +133,9 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} `userId` (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
-        * @param {string} `groupName` (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @param {string} `model` The name of the model file.
         */
-        getCurrentRun: function () {
+        getCurrentRun: function (model) {
             var dtd = $.Deferred();
             var session = this._auth.getCurrentUserSessionInfo();
             var curUserId = session.userId;
@@ -144,7 +143,7 @@ module.exports = function (options) {
 
             function getAndRestoreLatestRun(world) {
                 var currentWorldId = world.id;
-                var strategy = buildStrategy(currentWorldId, dtd);
+                var strategy = buildStrategy(currentWorldId, model, dtd);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,
                     run: _this.options
