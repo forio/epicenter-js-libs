@@ -164,7 +164,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
             var userInfo = decodeToken(token);
             var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop, token: token });
-            _this.getUserGroups({ userId: userInfo.user_id }, userGroupOpts).done( function (memberInfo) {
+            _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).done( function (memberInfo) {
                 var data = {auth: response, user: userInfo, userGroups: memberInfo, groupSelection: {} };
 
                 var sessionInfo = {
@@ -318,7 +318,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3'});
      *
      * **Parameters**
-     * @param {Object or String} `params` (Optional) Object with a userId property or a userId string.
+     * @param {Object} `params` (Optional) Object with a userId and token properties.
      * @param {Object} `options` (Optional) Overrides for configuration options.
      */
     getUserGroups: function (params, options) {
@@ -338,11 +338,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             $d.resolve(memberInfo);
         };
 
-        var session = this.getCurrentUserSessionInfo();
-        //jshint camelcase: false
-        //jscs:disable
-        var memberAdapter = new MemberAdapter({ token: session.auth_token }, adapterOptions);
-        memberAdapter.getGroupsByUser(params).fail($d.reject);
+        var memberAdapter = new MemberAdapter({ token: params.token });
+        memberAdapter.getGroupsByUser(params, adapterOptions).fail($d.reject);
         return $d.promise();
     },
 
