@@ -130,12 +130,13 @@ module.exports = function (config) {
         * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
         * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some games have specific roles that **may** be filled by end users. Listing the optional roles as part of the game object allows you to autoassign users to games and ensure that all roles are filled in each game.
         * @param {integer} `params.minUsers` (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {string} `params.name` (Optional) The name for the World.
         * @param {object} `options` (Optional) Options object to override global options.
         *
         */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
-            var worldApiParams = ['scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group'];
+            var worldApiParams = ['scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
             // whitelist the fields that we actually can send to the api
             params = _pick(params, worldApiParams);
 
@@ -435,7 +436,7 @@ module.exports = function (config) {
         * @param {object} `options` (Optional) Options object to override global options.
         */
         getCurrentRunId: function (params, options) {
-            options = options || {}; 
+            options = options || {};
             params = params || {};
 
             var modelName = params.model || serviceOptions.model;

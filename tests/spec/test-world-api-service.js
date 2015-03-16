@@ -179,7 +179,7 @@
                 var body = JSON.parse(req.requestBody);
                 body.model.should.equal('model_file');
             });
-            
+
             it('should POST to the world APIs run end point', function () {
                 createWorldAdapter({ filter: 'gameid1' }).getCurrentRunId({ model: 'model_file' });
 
