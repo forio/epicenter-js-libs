@@ -52,7 +52,7 @@ var Strategy = classFrom(IdentityStrategy, {
                 return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: this.options, session: session });
             }
 
-            return worldApi.getCurrentRunId({ model: model }, { filter: world.id })
+            return worldApi.getCurrentRunId({ model: model, filter: world.id })
                 .then(_this._loadRun)
                 .then(dtd.resolve)
                 .fail(dtd.reject);

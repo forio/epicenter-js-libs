@@ -191,7 +191,7 @@
             });
 
             it('should take the gameId from the service options or the override options', function () {
-                createWorldAdapter().getCurrentRunId({ model: 'model_file' }, { filter: 'gameid1' });
+                createWorldAdapter().getCurrentRunId({ model: 'model_file', filter: 'gameid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');

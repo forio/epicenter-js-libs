@@ -65,7 +65,7 @@ function buildStrategy(worldId, model, dtd) {
             getRun: function () {
                 var _this = this;
                 //get or create!
-                return worldApi.getCurrentRunId({ model: model }, { filter: worldId })
+                return worldApi.getCurrentRunId({ model: model, filter: worldId })
                     .then(function (runId) {
                         return _this.runService.load(runId);
                     })
