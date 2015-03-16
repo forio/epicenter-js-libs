@@ -133,10 +133,9 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} `userId` (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
-        * @param {string} `groupName` (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @param {string} `model` The model to pass to the run manager
         */
-        getCurrentRun: function () {
+        getCurrentRun: function (model) {
             var dtd = $.Deferred();
             var session = this._auth.getCurrentUserSessionInfo();
             var curUserId = session.userId;
@@ -147,7 +146,7 @@ module.exports = function (options) {
                 var strategy = buildStrategy(currentWorldId, dtd);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,
-                    run: _this.options
+                    run: $.extend(true, {}, _this.options, { model: model })
                 });
                 var rm = new RunManager(opt);
 

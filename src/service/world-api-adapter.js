@@ -27,7 +27,10 @@ var StorageFactory = require('../store/store-factory');
 var TransportFactory = require('../transport/http-transport-factory');
 var _pick = require('../util/object-util')._pick;
 
-var apiEndpoint = 'multiplayer/game';
+var apiBase = 'multiplayer/';
+var assignmentEndpoint = apiBase + 'assign';
+var apiEndpoint = apiBase + 'world';
+var projectEndpoint = apiBase + 'project';
 
 module.exports = function (config) {
     var store = new StorageFactory({ synchronous: true });
@@ -115,13 +118,11 @@ module.exports = function (config) {
         *           project: 'supply-chain-game',
         *           group: 'team1' });
         *      wa.create({
-        *           model: 'model.py',
         *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
         *       });
         *
         *  **Parameters**
         * @param {object} `params` Parameters to create the world.
-        * @param {string} `params.model` The model file to use to create runs in this world.
         * @param {string} `params.group` (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (new F.service.World()).
         * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
         * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some games have specific roles that **may** be filled by end users. Listing the optional roles as part of the game object allows you to autoassign users to games and ensure that all roles are filled in each game.
@@ -131,14 +132,9 @@ module.exports = function (config) {
         */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
-            var worldApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group'];
-            if (typeof params === 'string') {
-                // this is just the model name
-                params = { model: params };
-            } else {
+            var worldApiParams = ['scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
                 // whitelist the fields that we actually can send to the api
                 params = _pick(params, worldApiParams);
-            }
 
             // account and project go in the body, not in the url
             $.extend(params, _pick(serviceOptions, ['account', 'project', 'group']));
@@ -220,6 +216,24 @@ module.exports = function (config) {
             );
 
             return http.delete(null, deleteOptions);
+        },
+
+        /**
+        * Set the filter for the current instance of the world adapter
+        *
+        * **Example**
+        * var ws = new F.service.World({...}).load('123').addUser({ userId: '123' });
+        *
+        *
+        */
+        load: function (worldId) {
+            if (!worldId || typeof worldId !== 'string') {
+                throw new Error('load needs a worldId string to load (' + worldId + ')');
+            }
+
+            serviceOptions.filter = worldId;
+
+            return this;
         },
 
         /**
@@ -370,6 +384,34 @@ module.exports = function (config) {
         },
 
         /**
+        * Updates a user from a given world (only one user at a time)
+        *
+        * Supported formats:
+        * ws.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        *
+        * @param user {object} user object with userId and the new role
+        * @param options {object} (Optional) Options object to override global options
+        *
+        */
+        updateUser: function (user, options) {
+            options = options || {};
+
+            if (!user || !user.userId) {
+                throw new Error('You need to pass a userId to remove from the world');
+            }
+
+            setIdFilterOrThrowError(options);
+
+            var patchOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId }
+            );
+
+            return http.patch(_pick(user, 'role'), patchOptions);
+        },
+
+        /**
         * Remove an end user from a given world.
         *
         *  **Example**
@@ -473,6 +515,11 @@ module.exports = function (config) {
                     // assume the most recent world as the 'active' world
                     worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
                     var currentWorld = worlds[0];
+
+                    if (currentWorld) {
+                        serviceOptions.filter =  currentWorld.id;
+                    }
+
                     dtd.resolve(currentWorld, me);
                 })
                 .fail(dtd.reject);
@@ -521,7 +568,54 @@ module.exports = function (config) {
                 .then(function () {
                     return this.getCurrentRunId({ filter: worldId });
                 });
+        },
+
+        /**
+        * autoAssign users to worlds
+        *
+        *
+        */
+        autoAssign: function (options) {
+            options = options || {};
+
+            var opt = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(assignmentEndpoint) }
+            );
+
+            var params = {
+                account: opt.account,
+                project: opt.project,
+                group: opt.group
+            };
+
+            if (opt.maxUsers) {
+                params.maxUsers = opt.maxUsers;
         }
+
+            return http.post(params, opt);
+        },
+
+        /**
+        * Get the project's multiuser configuration
+        *
+        *
+        */
+        getProjectSettings: function (options) {
+            options = options || {};
+
+            var opt = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(projectEndpoint) }
+            );
+
+            opt.url += [opt.account, opt.project].join('/');
+
+            return http.get(null, opt);
+        }
+
     };
 
     $.extend(this, publicAPI);
