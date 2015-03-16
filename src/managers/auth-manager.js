@@ -66,7 +66,6 @@ function getSession() {
 
 function AuthManager(options) {
     this.options = $.extend(true, {}, defaults, options);
-    this.memberAdapter = new MemberAdapter(this.options, {});
 
     var urlConfig = new ConfigService(this.options).get('server');
     if (!this.options.account) {
@@ -319,10 +318,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3'});
      *
      * **Parameters**
+     * @param {Object or String} `params` (Optional) Object with a userId property or a userId string.
      * @param {Object} `options` (Optional) Overrides for configuration options.
      */
     getUserGroups: function (params, options) {
-        var adapterOptions = $.extend(true, {success: $.noop }, this.options, options);
+        var adapterOptions = $.extend(true, { success: $.noop }, this.options, options);
         var $d = $.Deferred();
         var outSuccess = adapterOptions.success;
 
@@ -338,7 +338,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             $d.resolve(memberInfo);
         };
 
-        this.memberAdapter.getGroupsByUser(params, adapterOptions).fail($d.reject);
+        var session = this.getCurrentUserSessionInfo();
+        //jshint camelcase: false
+        //jscs:disable
+        var memberAdapter = new MemberAdapter({ token: session.auth_token }, adapterOptions);
+        memberAdapter.getGroupsByUser(params).fail($d.reject);
         return $d.promise();
     },
 

@@ -43,43 +43,47 @@ module.exports = function (config) {
         url: urlConfig.getAPIPath(apiEndpoint)
     });
 
-    var authorizationHeader = function (token) {
-        if (token) {
-            return {
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            };
+    if (serviceOptions.token) {
+        transportOptions.headers = {
+            'Authorization': 'Bearer ' + serviceOptions.token
+        };
+    }
+    var http = new TransportFactory(transportOptions, serviceOptions);
+
+    var getFinalParams = function (params) {
+        if (typeof params === 'object') {
+            return $.extend(true, serviceOptions, params);
         }
-        return {};
+        return serviceOptions;
     };
-    var http = new TransportFactory(transportOptions, authorizationHeader(serviceOptions.token));
 
     var publicAPI = {
 
         getGroupsByUser: function (params, options) {
             options = options || {};
-            var httpOptions = $.extend(true, serviceOptions,
-                options,
-                authorizationHeader(options.token)
-            );
-            if (!params.userId) {
+            var httpOptions = $.extend(true, serviceOptions, options);
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.userId) {
                 throw new Error('No userId specified.');
             }
 
-            var getParms = _pick(params, 'userId');
+            var getParms = isString ? { userId: params } : _pick(objParams, 'userId');
             return http.get(getParms, httpOptions);
         },
 
         getGroupDetails: function (params, options) {
             options = options || {};
-            if (!params.groupId) {
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.groupId) {
                 throw new Error('No groupId specified.');
             }
+
+            var groupId = isString ? params : objParams.groupId;
             var httpOptions = $.extend(true, serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + params.groupId },
-                authorizationHeader(options.token)
+                { url: urlConfig.getAPIPath(apiEndpoint) + groupId }
             );
 
             return http.get({}, httpOptions);
