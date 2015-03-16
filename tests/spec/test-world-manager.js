@@ -37,10 +37,10 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            var getGamesPattern = /multiplayer\/game\/\?((?:project=js-libs|account=forio|group=group\-321|&userId=user\-123)&?){4}/;
+            var getGamesPattern = /multiplayer\/world\/\?((?:project=js-libs|account=forio|group=group\-321|&userId=user\-123)&?){4}/;
 
             // get & load runId
-            server.respondWith('POST', /\/game\/gameId2\/run/, function (xhr) {
+            server.respondWith('POST', /\/world\/gameId2\/run/, function (xhr) {
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(gameSet[1].run));
 
             });
@@ -95,7 +95,7 @@
                 // we need to check that the correct options are passed to the run
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                req.url.should.match(/\/game\//);
+                req.url.should.match(/\/world\//);
                 req.url.should.match(/group=group\-321/);
                 req.url.should.match(/account=forio/);
                 req.url.should.match(/project=js-libs/);
@@ -123,7 +123,7 @@
                 // we need to check that the correct options are passed to the run
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                req.url.should.match(/\/game\//);
+                req.url.should.match(/\/world\//);
                 req.url.should.match(/group=group\-321/);
                 req.url.should.match(/account=other\-account/);
                 req.url.should.match(/project=other\-project/);
@@ -133,7 +133,7 @@
 
         describe('getCurrentRun', function (done) {
             it('should return the current run object and runService of the run of the current world', function (done) {
-                createWorldManager().getCurrentRun()
+                createWorldManager().getCurrentRun('model.py')
                     .then(function (run, runService) {
                         run.should.not.be.null;
                         run.id.should.be.equal('run2');
@@ -154,7 +154,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                req.url.should.match(/\/game\//);
+                req.url.should.match(/\/world\//);
                 req.url.should.match(/group=group\-321/);
                 req.url.should.match(/account=forio/);
                 req.url.should.match(/project=js-libs/);
