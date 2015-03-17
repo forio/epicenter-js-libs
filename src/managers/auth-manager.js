@@ -160,10 +160,10 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var handleSuccess = function (response) {
             //jshint camelcase: false
             //jscs:disable
-            token = response.access_token;
+            var authHeader = 'Bearer ' + token;
 
             var userInfo = decodeToken(token);
-            var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop, token: token });
+            var userGroupOpts = $.extend(true, {}, adapterOptions, { userId: userInfo.user_id, success: $.noop, headers: { Authorization: authHeader } });
             _this.getUserGroups({ userId: userInfo.user_id }, userGroupOpts).done( function (memberInfo) {
                 var data = {auth: response, user: userInfo, userGroups: memberInfo, groupSelection: {} };
 
