@@ -54,7 +54,7 @@
     <script>
         //Instrumented doesn't do sourcemaps, so put it in the console. Open up the nicer version in the browser
          if (navigator.userAgent.indexOf('PhantomJS') ===  -1) {
-            document.write('\x3Cscript type="text/javascript" src="../dist/epicenter-edge.js">\x3C/script>');
+            document.write('\x3Cscript type="text/javascript" src="../dist/epicenter.min.js">\x3C/script>');
          }
          else {
             document.write('\x3Cscript type="text/javascript" src="../dist/epicenter-edge-instrumented.js">\x3C/script>');
@@ -75,6 +75,7 @@
     <script src="spec/test-run-api-service.js"></script>
     <script src="spec/test-run-api-service-callbacks.js"></script>
     <script src="spec/test-variables-api-service.js"></script>
+    <script src="spec/test-member-api-service.js"></script>
     <script src="spec/test-cookie-store.js"></script>
 
     <script src="spec/test-channel-service.js"></script>

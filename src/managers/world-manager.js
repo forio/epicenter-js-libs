@@ -17,7 +17,7 @@
 *
 * Note that the World Manager does *not* create worlds automatically. (This is different than the [Run Manager](../run-manager).) However, you can pass in specific options to any runs created by the manager, using a `run` object.
 *
-* When you instantiate a World Manager, the world's account id, project id, and group are automatically taken from the session (thanks to the [Authorization Service](../auth-api-service)). However, you can override these by optionally passing in:
+* When you instantiate a World Manager, the world's account id, project id, and group are automatically taken from the session (thanks to the [Authentication Service](../auth-api-service)). However, you can override these by optionally passing in:
 *
 *   * `account`: The **Team ID** in the Epicenter user interface for this project.
 *   * `project`: The **Project ID** for this project.
