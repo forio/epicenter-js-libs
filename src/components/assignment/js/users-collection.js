@@ -55,7 +55,8 @@ module.exports = classFrom(Base, {
             };
 
             var loadUsersInfo = function (group) {
-                var users = _.pluck(group.members, 'userId');
+                var nonFac = function (u) { return u.role !== 'facilitator'; };
+                var users = _.pluck(_.filter(group.members, nonFac), 'userId');
                 return userApi.get({ id: users });
             };
 

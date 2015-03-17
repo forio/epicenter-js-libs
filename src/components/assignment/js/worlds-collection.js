@@ -142,7 +142,9 @@ module.exports = classFrom(Base, {
             var isComplete = w.get('complete');
             w.set({ index: i, name: name || (i + 1) + '' });
             _.each(w.get('users'), function (u) {
-                usersHash[u.get('userId')].set({ world: name, role: u.get('role'), isWorldComplete: isComplete });
+                if (usersHash[u.get('userId')]) {
+                    usersHash[u.get('userId')].set({ world: name, role: u.get('role'), isWorldComplete: isComplete });
+                }
             });
         }, this);
 
