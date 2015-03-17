@@ -40,16 +40,19 @@ Assignment.prototype = {
     },
 
     load: function () {
-        var join = _.after(3, function () {
+
+        var join = function () {
             this.worlds.setUsersCollection(this.users);
             this.worlds.joinUsers();
-
             this.render();
-        }.bind(this));
+        }.bind(this);
 
-        this.worlds.fetch().then(join);
-        this.users.fetch().then(join);
-        this.project.fetch().then(join);
+        return $.when(
+            this.worlds.fetch(),
+            this.users.fetch(),
+            this.project.fetch()
+        ).then(join);
+
     },
 
     saveEdit: function () {
@@ -163,11 +166,16 @@ Assignment.prototype = {
     updateAutoAssignButton: function () {
 
         if (this.project.isDynamicAssignment()) {
-            this.$('.table-controls .dynamic').show();
+            var hasRoles = this.project.hasRoles();
             this.$('.table-controls .single').hide();
+            this.$('.table-controls .dynamic').show();
+            this.$('.table-controls .dynamic-no-roles-text')[hasRoles ? 'hide' : 'show']();
+            this.$('.table-controls .no-roles')[hasRoles ? 'hide' : 'show']();
         } else {
             this.$('.table-controls .dynamic').hide();
+            this.$('.table-controls .dynamic-no-roles-text').hide();
             this.$('.table-controls .single').show();
+            this.$('.table-controls .no-roles').show();
 
         }
 

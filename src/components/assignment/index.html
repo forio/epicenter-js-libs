@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html class="no-js">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,10 +33,13 @@
 
                                 <span class="single" style="display: none;">
                                     to teams. Users/Team:
-                                    <input type="number" class="form-control" id="max-users" min="1">
                                 </span>
                                 <span class="dynamic" style="display: none;">
                                     to worlds.
+                                </span>
+                                <span class="dynamic-no-roles-text" style="display: none;"> Max User/World: </span>
+                                <span class="no-roles" style="display: none;">
+                                    <input type="number" class="form-control" id="max-users" min="1">
                                 </span>
 
                                 <button class="auto-assign-all btn">Assign</button>

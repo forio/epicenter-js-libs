@@ -12,6 +12,11 @@ module.exports = classFrom(Base, {
         return this.get('worlds') === 'dynamic';
     },
 
+    hasRoles: function () {
+        var roles = this.get('roles');
+        return roles && !!roles.length;
+    },
+
     fetch: function () {
         var api = serviceLocator.worldApi();
 
