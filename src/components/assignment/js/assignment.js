@@ -128,7 +128,7 @@ Assignment.prototype = {
     updateStatus: function () {
         var incolpleteWorlds = this.worlds.getIncompleteWorldsCount();
         var unassignedUsers = this.users.getUnassignedUsersCount();
-        var totalWorlds = this.worlds.length();
+        var totalWorlds = this.worlds.size();
 
         var usersText = unassignedUsers ? unassignedUsers === 1 ? '1 user needs assignment.' : unassignedUsers + ' users need assignment.' : 'All users have been assigned.';
         var worldsText = !totalWorlds ? 'No worlds have been created.' : !incolpleteWorlds ? 'All worlds are complete.' : incolpleteWorlds === 1 ? '1 incomplete world needs attention.' : incolpleteWorlds + ' incomplete worlds need attention.';
@@ -148,19 +148,12 @@ Assignment.prototype = {
             this.$('#worlds-status').removeClass('incomplete');
         }
 
-        this.$('.status-widget').css({ opacity: 1 });
+        this.$('.status-widget').addClass('visible');
     },
 
     updateControlsForSelection: function () {
-        if (this.$('tbody :checkbox:checked').length) {
-            this.$('.component.controls').css({
-                opacity: 1,
-            });
-        } else {
-            this.$('.component.controls').css({
-                opacity: 0,
-            });
-        }
+        var numSelected = this.$('tbody :checkbox:checked').length;
+        this.$('.component.controls')[numSelected ? 'addClass' : 'removeClass']('visible');
     },
 
     updateAutoAssignButton: function () {
@@ -180,9 +173,9 @@ Assignment.prototype = {
         }
 
         if (this.users.allUsersAssigned()) {
-            this.$('.table-controls').css({ opacity: 0 });
+            this.$('.table-controls').removeClass('visible');
         } else {
-            this.$('.table-controls').css({ opacity: 1 });
+            this.$('.table-controls').addClass('visible');
         }
     },
 

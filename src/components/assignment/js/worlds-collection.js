@@ -40,7 +40,7 @@ module.exports = classFrom(Base, {
         var worldName = user.get('world');
         var dtd = $.Deferred();
         var prevWorld = this.getWorldByUser(user);
-        var curWorld = this.getOrCreateWorldById(worldName);
+        var curWorld = this.getOrCreateWorld(worldName);
         var done = doneFn(dtd, 1);
 
         // check if there's anything to do
@@ -64,12 +64,12 @@ module.exports = classFrom(Base, {
         return dtd.promise();
     },
 
-    getOrCreateWorldById: function (worldName) {
+    getOrCreateWorld: function (worldName) {
         if (!worldName) {
             return;
         }
 
-        var world = this.getWordById(worldName);
+        var world = this.getWordByName(worldName);
 
         if (!world) {
             world = this.create({ name: worldName });
@@ -78,7 +78,7 @@ module.exports = classFrom(Base, {
         return world;
     },
 
-    getWordById: function (worldName) {
+    getWordByName: function (worldName) {
         return this.find(function (world) {
             return world.get('name') === worldName;
         });
@@ -101,7 +101,7 @@ module.exports = classFrom(Base, {
         });
     },
 
-    getListOfWorlds: function () {
+    getWorldNames: function () {
         return this.pluck('name');
     },
 
@@ -113,7 +113,7 @@ module.exports = classFrom(Base, {
             return zeros.substr(0, needed) + num;
         };
 
-        var worlds = this.getListOfWorlds();
+        var worlds = this.getWorldNames();
 
         if (!worlds.length) {
             return 'World001';
@@ -150,11 +150,10 @@ module.exports = classFrom(Base, {
     },
 
     fetch: function () {
-        var _this = this;
         return worldApi.list()
             .then(function (worlds) {
                 this.reset(this.parse(worlds));
-            }.bind(_this));
+            }.bind(this));
     },
 
     parse: function (worlds) {

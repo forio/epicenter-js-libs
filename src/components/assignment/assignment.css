@@ -21,6 +21,10 @@ tr:hover .auto-hide {
     opacity: 0;
 }
 
+.visible {
+    opacity: 1 !important;
+}
+
 #max-users {
     width: 4em;
 }

@@ -95,7 +95,7 @@ _.extend(BaseCollection.prototype, {
         return _.filter(this._models, fn);
     },
 
-    length: function () {
+    size: function () {
         return this._models.length;
     },
 

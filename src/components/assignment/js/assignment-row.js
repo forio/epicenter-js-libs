@@ -60,7 +60,7 @@ _.extend(AssignmentRow.prototype, {
         var vm = _.extend({
             roles: this.project.get('roles'),
             optionalRoles: this.project.get('optionalRoles'),
-            worlds: this.worlds.getListOfWorlds(),
+            worlds: this.worlds.getWorldNames(),
             newWorld: this.worlds.getNextWorldName()
         }, this.model.toJSON());
 
