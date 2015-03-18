@@ -65,7 +65,8 @@ function buildStrategy(worldId, dtd) {
             getRun: function () {
                 var _this = this;
                 //get or create!
-                return worldApi.getCurrentRunId({ filter: worldId })
+                // Model is required in the options
+                return worldApi.getCurrentRunId({ model: this.options.model, filter: worldId })
                     .then(function (runId) {
                         return _this.runService.load(runId);
                     })
@@ -133,10 +134,9 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} `userId` (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
-        * @param {string} `groupName` (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @param {string} `model` The name of the model file.
         */
-        getCurrentRun: function () {
+        getCurrentRun: function (model) {
             var dtd = $.Deferred();
             var session = this._auth.getCurrentUserSessionInfo();
             var curUserId = session.userId;
@@ -144,10 +144,11 @@ module.exports = function (options) {
 
             function getAndRestoreLatestRun(world) {
                 var currentWorldId = world.id;
+                var runOpts = $.extend(true, _this.options, { model: model });
                 var strategy = buildStrategy(currentWorldId, dtd);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,
-                    run: _this.options
+                    run: runOpts
                 });
                 var rm = new RunManager(opt);
 

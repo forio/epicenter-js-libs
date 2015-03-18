@@ -12,8 +12,8 @@
     };
 
     var queryMatchers = {
-        gameEndpoint: /multiplayer\/game/i,
-        getGames: /multiplayer\/game\/\?((?:project=js-libs|account=forio-dev|group=group\-123|&userId=123)&?){4}/gi,
+        worldEndpoint: /multiplayer\/world/i,
+        getWorlds: /multiplayer\/world\/\?((?:project=js-libs|account=forio-dev|group=group\-123|&userId=123)&?){4}/gi,
     };
 
     var fakeAuth = {
@@ -31,15 +31,15 @@
         });
     };
 
-    var gameSet = [{
-        id: 'gameId1',
+    var worldSet = [{
+        id: 'worldid1',
         lastModified: new Date(2014,1,1),
         run: 'run1',
         users: [{
             userId: '123', userName: 'userName', index: 0
         }]
     }, {
-        id: 'gameId2',
+        id: 'worldid2',
         lastModified: new Date(2015,1,1),
         run: 'run2',
         users: [{
@@ -47,13 +47,13 @@
         }]
     }];
 
-    var setupServer = function (games) {
+    var setupServer = function (worlds) {
         server = sinon.fakeServer.create();
 
-        setupResponse('GET', queryMatchers.gameEndpoint, 200, games || []);
+        setupResponse('GET', queryMatchers.worldEndpoint, 200, worlds || []);
 
-        setupResponse('POST', /multiplayer\/game\/gameId1\/run/, 201, 'run1');
-        setupResponse('POST', /multiplayer\/game\/gameId2\/run/, 201, 'run2');
+        setupResponse('POST', /multiplayer\/world\/worldid1\/run/, 201, 'run1');
+        setupResponse('POST', /multiplayer\/world\/worldid2\/run/, 201, 'run2');
 
         server.autorespond = true;
     };
@@ -65,7 +65,7 @@
 
 
     describe('Multiplayer strategy', function () {
-        beforeEach(_.partial(setupServer, gameSet));
+        beforeEach(_.partial(setupServer, worldSet));
         afterEach(teardownServer);
 
 
@@ -75,6 +75,7 @@
                 run: {
                     account: 'forio-dev',
                     project: 'js-libs',
+                    model: 'model_file'
                 }
             }, options));
 
@@ -85,30 +86,30 @@
             return rm;
         }
 
-        describe('with game/users setup correctly', function () {
-            it('should get the list of games for the current user first', function () {
+        describe('with world/users setup correctly', function () {
+            it('should get the list of worlds for the current user first', function () {
                 createRunManager().getRun();
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
 
-                req.url.should.match(queryMatchers.getGames);
+                req.url.should.match(queryMatchers.getWorlds);
             });
 
-            it('should post to the run endpoint after getting the game', function () {
+            it('should post to the run endpoint after getting the world', function () {
                 createRunManager().getRun();
 
                 server.respond();
                 var req = server.requests.pop();
 
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/multiplayer\/game\/gameId2\/run/);
+                req.url.should.match(/multiplayer\/world\/worldid2\/run/);
 
             });
         });
 
-        describe('with two games for the user', function () {
-            it('should use the latest game to retore the run', function () {
+        describe('with two worlds for the user', function () {
+            it('should use the latest world to retore the run', function () {
                 createRunManager().getRun();
 
                 server.respond();
@@ -116,11 +117,11 @@
 
                 req.method.toUpperCase().should.equal('POST');
 
-                req.url.should.match(/multiplayer\/game\/gameId2/);
+                req.url.should.match(/multiplayer\/world\/worldid2/);
             });
         });
 
-        describe('when user is not in any game', function () {
+        describe('when user is not in any world', function () {
             beforeEach(_.partial(setupServer, []));
             it('should fail the getRun request with proper error', function () {
                 var callback = sinon.spy();
