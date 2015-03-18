@@ -51,7 +51,7 @@ var worldApi;
 // };
 
 
-function buildStrategy(worldId, model, dtd) {
+function buildStrategy(worldId, dtd) {
 
     return function Ctor(runService, options) {
         this.runService = runService;
@@ -65,7 +65,8 @@ function buildStrategy(worldId, model, dtd) {
             getRun: function () {
                 var _this = this;
                 //get or create!
-                return worldApi.getCurrentRunId({ model: model, filter: worldId })
+                // Model is required in the options
+                return worldApi.getCurrentRunId({ model: this.options.model, filter: worldId })
                     .then(function (runId) {
                         return _this.runService.load(runId);
                     })
@@ -143,10 +144,11 @@ module.exports = function (options) {
 
             function getAndRestoreLatestRun(world) {
                 var currentWorldId = world.id;
-                var strategy = buildStrategy(currentWorldId, model, dtd);
+                var runOpts = $.extend(true, _this.options, { model: model });
+                var strategy = buildStrategy(currentWorldId, dtd);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,
-                    run: _this.options
+                    run: runOpts
                 });
                 var rm = new RunManager(opt);
 

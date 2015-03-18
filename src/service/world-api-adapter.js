@@ -109,6 +109,12 @@ module.exports = function (config) {
         }
     };
 
+    var validateModelOrThrowError = function (options) {
+        if (!options.model) {
+            throw new Error('No model specified to get the current run');
+        }
+    };
+
     var publicAPI = {
 
         /**
@@ -126,7 +132,6 @@ module.exports = function (config) {
         *
         *  **Parameters**
         * @param {object} `params` Parameters to create the world.
-        * @param {string} `params.model` The model file to use to create runs in this world.
         * @param {string} `params.group` (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (new F.service.World()).
         * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
         * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some games have specific roles that **may** be filled by end users. Listing the optional roles as part of the game object allows you to autoassign users to games and ensure that all roles are filled in each game.
@@ -136,7 +141,7 @@ module.exports = function (config) {
         */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
-            var worldApiParams = ['model', 'scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
+            var worldApiParams = ['scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
             // whitelist the fields that we actually can send to the api
             params = _pick(params, worldApiParams);
 
@@ -437,7 +442,6 @@ module.exports = function (config) {
         getCurrentRunId: function (options) {
             options = options || {};
 
-            var modelName = options.model || serviceOptions.model;
             setIdFilterOrThrowError(options);
 
             var getOptions = $.extend(true, {},
@@ -446,7 +450,8 @@ module.exports = function (config) {
                 { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/run' }
             );
 
-            return http.post({ model: modelName }, getOptions);
+            validateModelOrThrowError(getOptions);
+            return http.post(_pick(getOptions, 'model'), getOptions);
         },
 
         /**
@@ -515,14 +520,18 @@ module.exports = function (config) {
         *  **Example**: This method is not yet implemented.
         *
         *  **Parameters**
-        * @param {object} `params` worldId and model should be provided.
+        * @param {string} `worldId` worldId in which we create the new Run.
         * @param {object} `options` (Optional) Options object to override global options.
         */
-        newRunForWorld: function (params, options) {
+        newRunForWorld: function (worldId, options) {
             var worldId = params.worldId;
-            return this.deleteRun(worldId)
+            return this.deleteRun(worldId, options)
                 .then(function () {
-                    return this.getCurrentRunId({ model: params.model, filter: worldId });
+                    var currentRunOptions = $.extend(true, {},
+                        options,
+                        { filter: worldId }
+                    );
+                    return this.getCurrentRunId(currentRunOptions);
                 });
         }
     };
