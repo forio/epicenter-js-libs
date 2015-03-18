@@ -524,13 +524,13 @@ module.exports = function (config) {
         * @param {object} `options` (Optional) Options object to override global options.
         */
         newRunForWorld: function (worldId, options) {
-            var worldId = params.worldId;
+            var currentRunOptions = $.extend(true, {},
+                options,
+                { filter: worldId }
+            );
+            validateModelOrThrowError(currentRunOptions);
             return this.deleteRun(worldId, options)
                 .then(function () {
-                    var currentRunOptions = $.extend(true, {},
-                        options,
-                        { filter: worldId }
-                    );
                     return this.getCurrentRunId(currentRunOptions);
                 });
         }

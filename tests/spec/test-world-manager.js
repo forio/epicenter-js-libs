@@ -17,15 +17,15 @@
     };
 
 
-    var gameSet = [{
-        id: 'gameId1',
+    var worldSet = [{
+        id: 'worldid1',
         lastModified: new Date(2014,1,1),
         run: 'run1',
         users: [{
             userId: '123', userName: 'userName', index: 0
         }]
     }, {
-        id: 'gameId2',
+        id: 'worldid2',
         lastModified: new Date(2015,1,1),
         run: 'run2',
         users: [{
@@ -37,17 +37,17 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            var getGamesPattern = /multiplayer\/world\/\?((?:project=js-libs|account=forio|group=group\-321|&userId=user\-123)&?){4}/;
+            var getworldsPattern = /multiplayer\/world\/\?((?:project=js-libs|account=forio|group=group\-321|&userId=user\-123)&?){4}/;
 
             // get & load runId
-            server.respondWith('POST', /\/world\/gameId2\/run/, function (xhr) {
-                xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(gameSet[1].run));
+            server.respondWith('POST', /\/world\/worldid2\/run/, function (xhr) {
+                xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(worldSet[1].run));
 
             });
 
-            // get games
-            server.respondWith('GET', getGamesPattern, function (xhr, id) {
-                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(gameSet));
+            // get worlds
+            server.respondWith('GET', getworldsPattern, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(worldSet));
             });
 
             // get run header
@@ -71,7 +71,8 @@
             var wm = new F.manager.WorldManager(_.extend({
                 account: 'forio',
                 project: 'js-libs',
-                group: 'group-123'
+                group: 'group-123',
+                model: 'model_file'
             }, options));
 
             wm._auth = fakeAuth;
@@ -165,7 +166,7 @@
                 createWorldManager().getCurrentWorld('user-123', 'group-321')
                     .then(function (world) {
                         world.should.not.be.null;
-                        world.id.should.be.equal('gameId2');
+                        world.id.should.be.equal('worldid2');
                         done();
                     })
                     .fail(function () {

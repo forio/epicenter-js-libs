@@ -6,7 +6,10 @@
         before(function () {
             server = sinon.fakeServer.create();
             server.respondWith('POST', /(.*)\/world/, function (xhr, id) {
-                xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ newGame: true }));
+                xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ newWorld: true }));
+            });
+            server.respondWith('DELETE', /(.*)\/world/, function (xhr, id) {
+                xhr.respond(204, { 'Content-Type': 'application/json' }, null);
             });
 
             server.autoRespond = true;
@@ -50,7 +53,7 @@
             it('should pass the new world reponse to the callback', function (done) {
                 createWorldAdapter().create()
                     .then(function (resp) {
-                        resp.newGame.should.equal(true);
+                        resp.newWorld.should.equal(true);
                         done();
                     });
             });
@@ -91,10 +94,10 @@
 
         describe('delete', function () {
             it('should call DELETE on the API with the correct World ID', function () {
-                createWorldAdapter({ filter: 'gameid1' }).delete();
+                createWorldAdapter({ filter: 'worldid1' }).delete();
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                /\/world\/gameid1/.test(req.url).should.be.true;
+                /\/world\/worldid1/.test(req.url).should.be.true;
             });
         });
 
@@ -130,11 +133,11 @@
             it('should POST to the world API users end point with the correct params', function () {
                 var users = [{ userId: '1', role: 'a' }];
 
-                createWorldAdapter({ filter: 'gameid1' }).addUsers(users);
+                createWorldAdapter({ filter: 'worldid1' }).addUsers(users);
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/world\/gameid1/.test(req.url).should.be.true;
+                /\/world\/worldid1/.test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
 
                 body.should.be.instanceof(Array);
@@ -142,62 +145,82 @@
                 body.should.be.eql(users);
             });
 
-            it('should take the gameId from the service options or the override options', function () {
-                createWorldAdapter().addUsers([{ userId: '1', role: '1' }], { filter: 'gameid1' });
+            it('should take the worldid from the service options or the override options', function () {
+                createWorldAdapter().addUsers([{ userId: '1', role: '1' }], { filter: 'worldid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/world\/gameid1\/users/);
+                req.url.should.match(/\/world\/worldid1\/users/);
             });
         });
 
         describe('removeUser', function () {
             it('should call DELETE on the world API users end point', function () {
-                createWorldAdapter({ filter: 'gameid1' }).removeUser('123');
+                createWorldAdapter({ filter: 'worldid1' }).removeUser('123');
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                req.url.should.match(/\/world\/gameid1\/users\/123/);
+                req.url.should.match(/\/world\/worldid1\/users\/123/);
             });
 
-            it('should take the gameId from the service options or the override options', function () {
-                createWorldAdapter().removeUser({ userId: '123' }, { filter: 'gameid1' });
+            it('should take the worldid from the service options or the override options', function () {
+                createWorldAdapter().removeUser({ userId: '123' }, { filter: 'worldid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                req.url.should.match(/\/world\/gameid1\/users/);
+                req.url.should.match(/\/world\/worldid1\/users/);
             });
         });
 
         describe('getCurrentRunId', function () {
             it('should take the model file from the service options', function () {
-                createWorldAdapter({ filter: 'gameid1', model: 'model_file' }).getCurrentRunId();
+                createWorldAdapter({ filter: 'worldid1', model: 'model_file' }).getCurrentRunId();
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/world\/gameid1\/run/);
+                req.url.should.match(/\/world\/worldid1\/run/);
                 var body = JSON.parse(req.requestBody);
                 body.model.should.equal('model_file');
             });
 
             it('should POST to the world APIs run end point', function () {
-                createWorldAdapter({ filter: 'gameid1' }).getCurrentRunId({ model: 'model_file' });
+                createWorldAdapter({ filter: 'worldid1' }).getCurrentRunId({ model: 'model_file' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/world\/gameid1\/run/);
+                req.url.should.match(/\/world\/worldid1\/run/);
                 var body = JSON.parse(req.requestBody);
                 body.model.should.equal('model_file');
             });
 
-            it('should take the gameId from the service options or the override options', function () {
-                createWorldAdapter().getCurrentRunId({ model: 'model_file', filter: 'gameid1' });
+            it('should take the worldid from the service options or the override options', function () {
+                createWorldAdapter().getCurrentRunId({ model: 'model_file', filter: 'worldid1' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/\/world\/gameid1\/run/);
+                req.url.should.match(/\/world\/worldid1\/run/);
                 var body = JSON.parse(req.requestBody);
                 body.model.should.equal('model_file');
+            });
+
+            it('should throw an error if no model is supplied.', function () {
+                var adapter = createWorldAdapter();
+                var operation = function () {
+                    adapter.getCurrentRunId({ filter: 'worldid1' });
+                };
+
+                operation.should.throw(Error);
+            });
+        });
+
+        describe('newRunForWorld', function () {
+            it('should throw an error if no model is supplied.', function () {
+                var adapter = createWorldAdapter();
+                var operation = function () {
+                    adapter.newRunForWorld({ filter: 'worldid1' });
+                };
+
+                operation.should.throw(Error);
             });
         });
     });
