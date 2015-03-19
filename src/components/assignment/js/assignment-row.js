@@ -30,6 +30,23 @@ _.extend(AssignmentRow.prototype, {
         this.$el.on('click', 'button.cancel', this.cancelEdit);
     },
 
+    remove: function () {
+        this.$el.off('click', null, null);
+        // this only gives a delay to remove the tr
+        // animation of height of the tr does not work
+        this.$el.css({ opacity: 0.3 })
+            .animate({ height: 0 }, {
+                duration: 300,
+                complete: function () {
+                    this.remove();
+                }
+            });
+    },
+
+    makeInactive: function () {
+        return this.model.makeInactive();
+    },
+
     setEditMode: function () {
         this.model.set('edit-mode', true);
         this.render();

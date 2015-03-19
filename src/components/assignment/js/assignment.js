@@ -26,7 +26,7 @@ Assignment.prototype = {
         this.worlds = new WorldsCollection();
         this.project = new ProjectModel();
 
-        _.bindAll(this, ['render', 'renderTable', 'toggleControlls', 'saveEdit', 'selectAll', 'usassignSelected', '_showUpdating', '_hideUpdating', 'autoAssignAll']);
+        _.bindAll(this, ['render', 'renderTable', 'toggleControlls', 'saveEdit', 'selectAll', 'usassignSelected', '_showUpdating', '_hideUpdating', 'autoAssignAll', 'makeUserInactive']);
 
         this.bindEvents();
     },
@@ -37,6 +37,7 @@ Assignment.prototype = {
         this.$el.on('click', '#select-all', this.selectAll);
         this.$el.on('click', '.unassign-user', this.usassignSelected);
         this.$el.on('click', '.auto-assign-all', this.autoAssignAll);
+        this.$el.on('click', '.make-user-inactive', this.makeUserInactive);
     },
 
     load: function () {
@@ -76,23 +77,24 @@ Assignment.prototype = {
             }.bind(this));
     },
 
-    usassignSelected: function (e) {
-        e.preventDefault();
-
-        var ids = this.$('tbody :checkbox:checked').map(function () {
+    getSelectedIds: function () {
+        return this.$('tbody :checkbox:checked').map(function () {
             return $(this).data('id');
         });
+    },
 
+    findRowViews: function (ids) {
+        return _.map(ids, function (id) {
+            return this.rowViews[id];
+        }, this);
+    },
+
+    unassignUsers: function (ids) {
+        var dtd = $.Deferred();
         var done = _.after(ids.length, function () {
-            this.worlds.fetch().then(function () {
-                this.worlds.joinUsers();
-                this._hideUpdating();
-                this.render();
+            dtd.resolve();
+        });
 
-            }.bind(this));
-        }.bind(this));
-
-        this._showUpdating();
         _.each(ids, function (userId) {
             var user = this.users.getById(userId);
             user.set('world', '');
@@ -100,6 +102,52 @@ Assignment.prototype = {
             this.worlds.updateUser(user)
                 .done(done);
         }, this);
+
+        return dtd.promise();
+    },
+
+    usassignSelected: function (e) {
+        e.preventDefault();
+
+        var ids = this.getSelectedIds();
+
+        var done = function () {
+            this.worlds.fetch().then(function () {
+                this.worlds.joinUsers();
+                this._hideUpdating();
+                this.render();
+
+            }.bind(this));
+        }.bind(this);
+
+        this._showUpdating();
+
+        return this.unassignUsers(ids).then(done);
+    },
+
+    makeUserInactive: function (e) {
+        e.preventDefault();
+        var ids = this.getSelectedIds();
+        var done = _.after(ids.length, function () {
+        }.bind(this));
+
+        var makeUsersInactive = function () {
+            var rows = this.findRowViews(ids);
+            _.each(rows, function (view) {
+                var user = view.model;
+                view.makeInactive()
+                    .then(function () {
+                        user.remove();
+                        view.remove();
+                    })
+                    .then(done);
+            }, this);
+        }.bind(this);
+
+        return this.unassignUsers(ids)
+            .then(makeUsersInactive)
+            .then(done);
+
     },
 
     render: function () {
@@ -109,9 +157,11 @@ Assignment.prototype = {
     },
 
     renderTable: function () {
+        this.rowViews = {};
         var rows = [];
         this.users.each(function (u) {
             var view = new AssignemntRow({ model: u, worlds: this.worlds, project: this.project });
+            this.rowViews[u.get('id')] = view;
             rows.push(view.render().el);
         }, this);
 
