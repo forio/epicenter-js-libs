@@ -82,10 +82,10 @@ function buildStrategy(worldId, dtd) {
 
 
 module.exports = function (options) {
-    this.options = options || {};
+    this.options = options || { run: {}, world: {} };
 
-    $.extend(true, this.options, options.run);
-    $.extend(true, this.options, options.world);
+    $.extend(true, this.options, this.options.run);
+    $.extend(true, this.options, this.options.world);
 
 
     worldApi = new WorldApi(this.options);
