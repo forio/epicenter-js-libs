@@ -57,6 +57,14 @@ module.exports = function (config) {
         return serviceOptions;
     };
 
+    var patchUserActiveField = function (params, active, options) {
+        var httpOptions = $.extend(true, serviceOptions, options, {
+            url: urlConfig.getAPIPath(apiEndpoint) + params.groupId + '/' + params.userId
+        });
+
+        return http.patch({ active: active }, httpOptions);
+    };
+
     var publicAPI = {
 
         getGroupsByUser: function (params, options) {
@@ -87,6 +95,14 @@ module.exports = function (config) {
             );
 
             return http.get({}, httpOptions);
+        },
+
+        makeUserActive: function (params, options) {
+            return patchUserActiveField(params, true, options);
+        },
+
+        makeUserInactive: function (params, options) {
+            return patchUserActiveField(params, false, options);
         }
     };
 
