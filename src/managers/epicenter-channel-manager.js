@@ -90,7 +90,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             throw new Error('Please specify a world id');
         }
         groupName = getFromSessionOrError(groupName, 'groupName');
-        var baseTopic = ['/game', this.options.server.account, this.options.server.project, groupName, worldid].join('/');
+        var baseTopic = ['/world', this.options.server.account, this.options.server.project, groupName, worldid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
 

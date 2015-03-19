@@ -65,7 +65,8 @@ function buildStrategy(worldId, dtd) {
             getRun: function () {
                 var _this = this;
                 //get or create!
-                return worldApi.getCurrentRunId({ filter: worldId })
+                // Model is required in the options
+                return worldApi.getCurrentRunId({ model: this.options.model, filter: worldId })
                     .then(function (runId) {
                         return _this.runService.load(runId);
                     })
@@ -81,10 +82,10 @@ function buildStrategy(worldId, dtd) {
 
 
 module.exports = function (options) {
-    this.options = options || {};
+    this.options = options || { run: {}, world: {} };
 
-    $.extend(true, this.options, options.run);
-    $.extend(true, this.options, options.world);
+    $.extend(true, this.options, this.options.run);
+    $.extend(true, this.options, this.options.world);
 
 
     worldApi = new WorldApi(this.options);
@@ -133,7 +134,7 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} `model` The model to pass to the run manager
+        * @param {string} `model` The name of the model file.
         */
         getCurrentRun: function (model) {
             var dtd = $.Deferred();
@@ -143,10 +144,11 @@ module.exports = function (options) {
 
             function getAndRestoreLatestRun(world) {
                 var currentWorldId = world.id;
+                var runOpts = $.extend(true, _this.options, { model: model });
                 var strategy = buildStrategy(currentWorldId, dtd);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,
-                    run: $.extend(true, {}, _this.options, { model: model })
+                    run: runOpts
                 });
                 var rm = new RunManager(opt);
 

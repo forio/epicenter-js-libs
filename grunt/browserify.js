@@ -48,8 +48,7 @@ module.exports = function (grunt) {
                             warnings: true,
                             compress:{
                                 screw_ie8: true,
-                                drop_console: true,
-                                pure_funcs: [ 'console.log' ],
+                                join_vars: false
                             }
                         }
                     });
