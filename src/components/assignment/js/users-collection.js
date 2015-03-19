@@ -45,6 +45,7 @@ module.exports = classFrom(Base, {
     fetch: function () {
         var dtd = $.Deferred();
         var _this = this;
+        var groupId = env.get().groupId;
 
         var getGroupUsers = function () {
             var memberApi = serviceLocator.memberApi();
@@ -55,8 +56,8 @@ module.exports = classFrom(Base, {
             };
 
             var loadUsersInfo = function (group) {
-                var nonFac = function (u) { return u.role !== 'facilitator'; };
-                var users = _.pluck(_.filter(group.members, nonFac), 'userId');
+                var nonFacAndActive = function (u) { return u.active && u.role !== 'facilitator'; };
+                var users = _.pluck(_.filter(group.members, nonFacAndActive), 'userId');
                 return userApi.get({ id: users });
             };
 
@@ -67,6 +68,7 @@ module.exports = classFrom(Base, {
 
         getGroupUsers()
             .then(function (users) {
+                users = _.map(users, function (u) { return _.extend(u, { groupId: groupId }); });
                 _this.set(users);
                 dtd.resolve(users, _this);
             });
