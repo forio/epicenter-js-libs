@@ -5,6 +5,7 @@ var WorldsCollection = require('./worlds-collection');
 var ProjectModel = require('./project-model');
 var AssignemntRow = require('./assignment-row');
 var env = require('./defaults');
+var AjaxQueue = require('../../../util/ajax-queue');
 
 function setEnvironment(options) {
     env.set(_.omit(options, 'el'));
@@ -91,17 +92,21 @@ Assignment.prototype = {
 
     unassignUsers: function (ids) {
         var dtd = $.Deferred();
-        var done = _.after(ids.length, function () {
+        var done = function () {
             dtd.resolve();
-        });
+        };
+
+        // for now we need to sequence the calls to unassign users from worlds
+        var queue = new AjaxQueue();
 
         _.each(ids, function (userId) {
             var user = this.users.getById(userId);
             user.set('world', '');
             user.set('role', '');
-            this.worlds.updateUser(user)
-                .done(done);
+            queue.add(_.partial(_.bind(this.worlds.updateUser, this.worlds), user));
         }, this);
+
+        queue.execute(this).then(done);
 
         return dtd.promise();
     },
@@ -128,25 +133,33 @@ Assignment.prototype = {
     makeUserInactive: function (e) {
         e.preventDefault();
         var ids = this.getSelectedIds();
-        var done = _.after(ids.length, function () {
-        }.bind(this));
+        var done = function () {
+            this.toggleControlls();
+        }.bind(this);
 
         var makeUsersInactive = function () {
             var rows = this.findRowViews(ids);
+            // for now we need to sequence the calls to patch the users
+            // since the API can only operate on one call per group at a time
+            var queue = new AjaxQueue();
             _.each(rows, function (view) {
                 var user = view.model;
-                view.makeInactive()
-                    .then(function () {
-                        user.remove();
-                        view.remove();
-                    })
-                    .then(done);
+                queue.add(function () {
+                    return view.makeInactive()
+                        .then(function () {
+                            user.remove();
+                            view.remove();
+                        });
+                    });
+
             }, this);
+
+            queue.execute(this).then(done);
         }.bind(this);
 
         return this.unassignUsers(ids)
-            .then(makeUsersInactive)
-            .then(done);
+            .then(makeUsersInactive);
+
 
     },
 

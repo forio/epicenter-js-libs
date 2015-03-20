@@ -34,7 +34,9 @@ _.extend(AssignmentRow.prototype, {
         this.$el.off('click', null, null);
         // this only gives a delay to remove the tr
         // animation of height of the tr does not work
-        this.$el.css({ opacity: 0.3 })
+        this.$(':checkbox').attr('checked', false);
+        this.$el
+            .css({ opacity: 0.3 })
             .animate({ height: 0 }, {
                 duration: 300,
                 complete: function () {

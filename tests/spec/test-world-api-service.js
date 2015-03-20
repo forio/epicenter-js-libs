@@ -39,7 +39,7 @@
             });
 
             it('should pass the optional parameters to the API', function () {
-                var params = { roles: ['role1', 'role2'], optionalRoles: ['observer'], minUsers: 2 };
+                var params = { name: 'world-1', roles: ['role1', 'role2'], optionalRoles: ['observer'], minUsers: 2 };
                 createWorldAdapter().create(params);
 
                 var req = server.requests.pop();
@@ -294,6 +294,7 @@
 
                 operation.should.throw(Error);
             });
+        });
 
         describe('deleteRun', function () {
             it('should call DELETE on game/run', function () {
@@ -302,6 +303,7 @@
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
                 req.url.should.match(/\/world\/gameid1\/run/);
+            });
         });
 
         describe('newRunForWorld', function () {
