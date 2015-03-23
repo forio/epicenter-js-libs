@@ -44,12 +44,11 @@ module.exports = function (grunt) {
                         map: 'epicenter.min.js.map',
                         output: 'dist/epicenter.min.js.map',
                         uglify: {
-                            mangle: true,
+                            mangle: false,
                             warnings: true,
                             compress:{
                                 screw_ie8: true,
-                                drop_console: true,
-                                pure_funcs: [ 'console.log' ],
+                                join_vars: false
                             }
                         }
                     });
