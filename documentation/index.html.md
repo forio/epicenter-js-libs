@@ -22,16 +22,19 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 <a name="concepts"></a>
 ###Concepts in Epicenter.js
 
-The epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs. Typically, you'll develop using the managers:
+The epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs. 
+
+Services encapsulate the [Epicenter REST APIs](../rest_apis/). Managers are responsible for configuring, sequencing, and synchronizing services to perform common application tasks. For example, the [Run Manager](./generated/run-manager/) lets you use different [run creation strategies](./strategy/) and returns a pre-configured [Run Service](./generated/run-api-service/) you can then use.
+
+In most cases you'll work with the managers directly:
 
 * [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
-* [Epicenter Channel Manager](./generated/epicenter-channel-manager/) and the underlying [Channel Manager](./generated/channel-manager/): Once you've created "[worlds](../glossary/#world)" with the World Manager, you often want to end users in each world to be able to communicate: to talk with each other (e.g. a user-to-user chat feature), or to receive updates when something changes in their world (e.g. variables associated with their shared run are updated). The Epicenter Channel Manager provides a publish/subscribe channel using cometd.
 * [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
 * [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users.
+* [Epicenter Channel Manager](./generated/epicenter-channel-manager/) and the underlying [Channel Manager](./generated/channel-manager/): Once you've created "[worlds](../glossary/#world)" with the World Manager, you often want to end users in each world to be able to communicate: to talk with each other (e.g. a user-to-user chat feature), or to receive updates when something changes in their world (e.g. variables associated with their shared run are updated). The Epicenter Channel Manager provides a publish/subscribe channel using cometd.
 
 
-
-The managers add functionality on top of their respective services. The services are direct adaptations of the underlying [RESTful APIs](../rest_apis/): 
+Although in most cases you'll work with the managers directly, the services are also available if you just want to communicate with the underlying [RESTful APIs](../rest_apis/):
 
 * [Auth Service](./generated/auth-api-service)
 * [Channel Service](./generated/channel-service/)
@@ -64,9 +67,7 @@ The epicenter.js library depends on jQuery, so you'll also need to download jQue
 
 **Extensions**
 
-The Epicenter platform provides a push channel, which allows you to publish and subscribe to messages within a [project](../glossary/#projects), [group](../glossary/#groups), or [multiplayer world](../glossary/#world). There are two main use cases for the channel: event notifications and chat messages.
-
-If you are planning to use channels and epicenter.js in project, you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
+If you are building a [multiplayer game](../glossary/#world), you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
 
 	<script src="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js"></script>
 
