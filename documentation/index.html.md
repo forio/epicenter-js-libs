@@ -18,23 +18,32 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 	* [Examples of usage: Callbacks and promises](#example)
 	* [Configuration options](#configuration)
 
+**The current version of Epicenter.js is 1.4**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
 
 <a name="concepts"></a>
 ###Concepts in Epicenter.js
 
-The epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs.
+The epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs. 
 
-* The following services are direct adaptations of the underlying [RESTful APIs](../rest_apis/): 
-	* [Run Service](./generated/run-api-service/)
-	* [Data Service](./generated/data-api-service/)
-	* [Auth Service](./generated/auth-api-service)
-	* [Variables Service](./generated/variables-api-service/)
-	* [World Adapter](./generated/world-api-adapter/)
+Services encapsulate the [Epicenter REST APIs](../rest_apis/). Managers are responsible for configuring, sequencing, and synchronizing services to perform common application tasks. For example, the [Run Manager](./generated/run-manager/) lets you use different [run creation strategies](./strategy/) and returns a pre-configured [Run Service](./generated/run-api-service/) you can then use.
 
-* The following managers add functionality on top of their respective services:
-	* [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
-	* [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
-	* [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users. 
+In most cases you'll work with the managers directly:
+
+* [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
+* [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
+* [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users.
+* [Epicenter Channel Manager](./generated/epicenter-channel-manager/) and the underlying [Channel Manager](./generated/channel-manager/): Once you've created "[worlds](../glossary/#world)" with the World Manager, you often want to end users in each world to be able to communicate: to talk with each other (e.g. a user-to-user chat feature), or to receive updates when something changes in their world (e.g. variables associated with their shared run are updated). The Epicenter Channel Manager provides a publish/subscribe channel using cometd.
+
+
+Although in most cases you'll work with the managers directly, the services are also available if you just want to communicate with the underlying [RESTful APIs](../rest_apis/):
+
+* [Auth Service](./generated/auth-api-service)
+* [Channel Service](./generated/channel-service/)
+* [Run Service](./generated/run-api-service/)
+* [Variables Service](./generated/variables-api-service/)
+* [World Adapter](./generated/world-api-adapter/)
+* [Data Service](./generated/data-api-service/)
+
 
 
 <a name="using-epicenter-js"></a>
@@ -43,15 +52,27 @@ The epicenter.js library is a set of services (adapters) and managers to help st
 <a name="include"></a>
 ####Including
 
-The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.3.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.3.0/epicenter.min.js</a>. To use it in your project, simply add
+**Epicenter.js**
 
-    <script src="https://forio.com/tools/js-libs/1.3.0/epicenter.min.js"></script>
+The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.4.0/epicenter.min.js</a>. To use it in your project, simply add
+
+    <script src="https://forio.com/tools/js-libs/1.4.0/epicenter.min.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
+**Dependencies**
+
 The epicenter.js library depends on jQuery, so you'll also need to download jQuery for yourself, or use a hosted version. To use a hosted version, add
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2/jquery.min.js"></script>
+
+**Extensions**
+
+If you are building a [multiplayer game](../glossary/#world), you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
+
+	<script src="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js"></script>
+
+into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
 <a name="components"></a>
 ####Provided Components

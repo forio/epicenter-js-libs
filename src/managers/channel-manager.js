@@ -3,18 +3,33 @@
 var Channel = require('../service/channel-service');
 
 /**
- * Generic wrapper around $.cometd. This provides a few nice features the default cometd wrapper doesn't
+ * ## Channel Manager
  *
- * - Automatic re-subscription to channels if you lose your connection in-between
- * - Online/ Offline notifications
- * - 'Events' for cometd notifications, instead of having to listen on specific meta channels
+ * There are two main use cases for the channel: event notifications and chat messages.
  *
- * @param {Object} options
- * @param {String} url Cometd endpoint url
- * @param {Boolean} websocketEnabled Determine if websocket support is to be activated
- * @param {Object} Channel Defaults to pass on to channel instances. See @ChannelService for more info
+ * The Channel Manager is a wrapper around the default [cometd JavaScript library](http://docs.cometd.org/2/reference/javascript.html), `$.cometd`. It provides a few nice features that `$.cometd` doesn't, including:
  *
- * See http://docs.cometd.org/reference/javascript.html for other supported options
+ * * Automatic re-subscription to channels if you lose your connection
+ * * Online / Offline notifications
+ * * 'Events' for cometd notifications (instead of having to listen on specific meta channels)
+ *
+ * While you can work directly with the Channel Manager -- or even work directly with `$.cometd` and Epicenter's underlying [Push Channel API](../../../rest_apis/multiplayer/channel/) -- most often it will be easiest to work with the [Epicenter Channel Manager](../epicenter-channel-manager/). The Epicenter Channel Manager is a wrapper that instantiates a Channel Manager with Epicenter-specific defaults.
+ *
+ * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Channel Manager. (See [Including Epicenter.js](../../#include).)
+ *
+ * To use the Channel Manager, instantiate it, get the channel, then use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
+ *
+ *        var cm = new F.manager.Channel();
+ *        var channel = cm.getChannel();
+ *        channel.subscribe(topic);
+ *
+ * The parameters for instantiating a Channel Manager include:
+ *
+ * * `options` The options object to configure the Channel Manager. Besides the common options listed here, see http://docs.cometd.org/reference/javascript.html for other supported options.
+ * * `options.url` The Cometd endpoint URL.
+ * * `options.websocketEnabled` Whether websocket support is active (boolean).
+ * * `options.channel` Other defaults to pass on to instances of the underlying Channel Service. See [Channel Service](../channel-service/) for details.
+ *
  */
 var ChannelManager = function (options) {
     if (!$.cometd) {
@@ -27,11 +42,24 @@ var ChannelManager = function (options) {
     var cometd = new $.Cometd();
 
     var defaults = {
+        /**
+         * The Cometd endpoint URL.
+         */
         url: '',
-        logLevel: 'info',
-        websocketEnabled: false, //needs to be turned on on the server
 
-        //Everything provided here will be provided as defaults for channel created through getChannel
+        /**
+         * The log level for the channel (logs to console).
+         */
+        logLevel: 'info',
+
+        /**
+         * Whether websocket support is active. Defaults to `false`; Epicenter doesn't currently communication through websockets.
+         */
+        websocketEnabled: false,
+
+        /**
+         * Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
+         */
         channel: {
 
         }
@@ -97,60 +125,91 @@ var ChannelManager = function (options) {
     this.cometd = cometd;
 };
 
-ChannelManager.prototype.getChannel = function (options) {
-    //If you just want to pass in a string
-    if (options && !$.isPlainObject(options)) {
-        options = {
-            base: options
-        };
-    }
-    var defaults = {
-        transport: this.cometd
-    };
-    var channel = new Channel($.extend(true, {}, this.options.channel, defaults, options));
 
+ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 
-    //Wrap subs and unsubs so we can use it to re-attach handlers after being disconnected
-    var subs = channel.subscribe;
-    channel.subscribe = function () {
-        var subid = subs.apply(channel, arguments);
-        this.currentSubscriptions  = this.currentSubscriptions.concat(subid);
-        return subid;
-    }.bind(this);
-
-
-    var unsubs = channel.unsubscribe;
-    channel.unsubscribe = function () {
-        var removed = unsubs.apply(channel, arguments);
-        for (var i = 0; i < this.currentSubscriptions.length; i++) {
-            if (this.currentSubscriptions[i].id === removed.id) {
-                this.currentSubscriptions.splice(i, 1);
-            }
+    /**
+     * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
+     *
+     * **Example**
+     *
+     *      var cm = new F.manager.ChannelManager();
+     *      var channel = cm.getChannel();
+     *      channel.subscribe(topic);
+     *
+     * **Parameters**
+     * @param {None} None
+     */
+    getChannel: function (options) {
+        //If you just want to pass in a string
+        if (options && !$.isPlainObject(options)) {
+            options = {
+                base: options
+            };
         }
-        return removed;
-    }.bind(this);
+        var defaults = {
+            transport: this.cometd
+        };
+        var channel = new Channel($.extend(true, {}, this.options.channel, defaults, options));
 
-    return channel;
-};
 
-/**
- * Listen for events on this instance. Signature is same as for jQuery Events. Supported events are:
- *  connect, disconnect, subscribe, unsubscribe, publish, error
- */
-ChannelManager.prototype.on = function () {
-    $(this).on.apply($(this), arguments);
-};
-/**
- * Stop listening for events. Signature is same as for jQuery Events
- */
-ChannelManager.prototype.off = function () {
-    $(this).off.apply($(this), arguments);
-};
-/**
- * Trigger events. Signature is same as for jQuery Events
- */
-ChannelManager.prototype.trigger = function () {
-    $(this).trigger.apply($(this), arguments);
-};
+        //Wrap subs and unsubs so we can use it to re-attach handlers after being disconnected
+        var subs = channel.subscribe;
+        channel.subscribe = function () {
+            var subid = subs.apply(channel, arguments);
+            this.currentSubscriptions  = this.currentSubscriptions.concat(subid);
+            return subid;
+        }.bind(this);
+
+
+        var unsubs = channel.unsubscribe;
+        channel.unsubscribe = function () {
+            var removed = unsubs.apply(channel, arguments);
+            for (var i = 0; i < this.currentSubscriptions.length; i++) {
+                if (this.currentSubscriptions[i].id === removed.id) {
+                    this.currentSubscriptions.splice(i, 1);
+                }
+            }
+            return removed;
+        }.bind(this);
+
+        return channel;
+    },
+
+    /**
+     * Start listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/on/.
+     *
+     * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
+     *
+     * **Parameters**
+     *
+     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
+     */
+    on: function () {
+        $(this).on.apply($(this), arguments);
+    },
+
+    /**
+     * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
+     *
+     * **Parameters**
+     *
+     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
+     */
+    off: function () {
+        $(this).off.apply($(this), arguments);
+    },
+
+    /**
+     * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
+     *
+     * **Parameters**
+     *
+     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
+     */
+    trigger: function () {
+        $(this).trigger.apply($(this), arguments);
+    }
+});
 
 module.exports = ChannelManager;

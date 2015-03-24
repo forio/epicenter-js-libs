@@ -1,7 +1,7 @@
 /**
  * ##World API Adapter
  *
- * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
+ * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
  *
  * The World API Adapter allows you to create, access, and manipulate multiplayer worlds within your Epicenter project. You can use this to add and remove end users from the world, and to create, access, and remove their runs. (The related [World Manager](../world-manager/) provides an easy way to access runs and worlds for particular users.) Only [team projects](../../../glossary/#team) can be multiplayer.
  *
@@ -134,7 +134,7 @@ module.exports = function (config) {
         * @param {object} `params` Parameters to create the world.
         * @param {string} `params.group` (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (new F.service.World()).
         * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some games have specific roles that **may** be filled by end users. Listing the optional roles as part of the game object allows you to autoassign users to games and ensure that all roles are filled in each game.
+        * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
         * @param {integer} `params.minUsers` (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
         * @param {object} `options` (Optional) Options object to override global options.
         *
@@ -175,7 +175,7 @@ module.exports = function (config) {
         * @param {object} `params` Parameters to update the world.
         * @param {string} `params.name` A string identifier for the linked end users, for example, "name": "Our Team".
         * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some games have specific roles that **may** be filled by end users. Listing the optional roles as part of the game object allows you to autoassign users to games and ensure that all roles are filled in each game.
+        * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
         * @param {integer} `params.minUsers` (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
         * @param {object} `options` (Optional) Options object to override global options.
         *
@@ -455,7 +455,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Gets the current (most recent) world for the given end user in the given group.
+        * Gets the current (most recent) world for the given end user in the given group. Brings this most recent world into memory if needed.
         *
         *  **Example**
         *
