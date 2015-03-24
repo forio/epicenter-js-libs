@@ -1,4 +1,4 @@
-<a name="1.3.0"></a>
+<a name="1.4.0"></a>
 ## 1.4.0 (2015-03-19)
 Features:
 - Added Member (F.service.Member) and State (F.service.State) services. This is mostly for internal use by other services, but use 'em if you need 'em.

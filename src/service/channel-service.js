@@ -77,7 +77,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      //      subscribe('run/variables/price', cb, this, {priority: 30, value: '>50'});
      //
      //      // Only execute the callback, `cb`, if the value of the `price` variable is even
-     //      subscribe('run/variables/price', cb, this, {priority: 30, value: function (val) {return val % 2 === 0}});    
+     //      subscribe('run/variables/price', cb, this, {priority: 30, value: function (val) {return val % 2 === 0}});
 
 
     /**
