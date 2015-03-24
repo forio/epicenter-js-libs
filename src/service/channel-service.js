@@ -71,7 +71,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *      // Subscribe to changes on a top-level 'run' topic
      *      cs.subscribe('run', cb);
      *
-     *      // Subscribe to changes on children of the 'run' topic. Note this not also be triggered for changes to run.x.y.z.
+     *      // Subscribe to changes on children of the 'run' topic. Note this will also be triggered for changes to run.x.y.z.
      *      cs.subscribe('run/*');
      *
      *      // Subscribe to changes on both the top-level 'run' topic and its children
