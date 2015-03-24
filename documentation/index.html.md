@@ -18,6 +18,7 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 	* [Examples of usage: Callbacks and promises](#example)
 	* [Configuration options](#configuration)
 
+**The current version of Epicenter.js is 1.4**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
 
 <a name="concepts"></a>
 ###Concepts in Epicenter.js
