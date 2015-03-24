@@ -63,6 +63,23 @@ var makeName = function (channelName, topic) {
 
 Channel.prototype = $.extend(Channel.prototype, {
 
+    // future functionality:
+    //      // Set the context for the callback
+    //      cs.subscribe('run', function () { this.innerHTML = 'Triggered'}, document.body);
+     //
+     //      // Control the order of operations by setting the `priority`
+     //      cs.subscribe('run', cb, this, {priority: 9});
+     //
+     //      // Only execute the callback, `cb`, if the value of the `price` variable is 50
+     //      cs.subscribe('run/variables/price', cb, this, {priority: 30, value: 50});
+     //
+     //      // Only execute the callback, `cb`, if the value of the `price` variable is greater than 50
+     //      subscribe('run/variables/price', cb, this, {priority: 30, value: '>50'});
+     //
+     //      // Only execute the callback, `cb`, if the value of the `price` variable is even
+     //      subscribe('run/variables/price', cb, this, {priority: 30, value: function (val) {return val % 2 === 0}});    
+
+
     /**
      * Subscribe to changes on a topic.
      *
@@ -80,20 +97,6 @@ Channel.prototype = $.extend(Channel.prototype, {
      *      // Subscribe to changes on a particular variable
      *      subscribe('run/variables/price', cb);
      *
-     *      // Set the context for the callback
-     *      cs.subscribe('run', function () { this.innerHTML = 'Triggered'}, document.body);
-     *
-     *      // Control the order of operations by setting the `priority`
-     *      cs.subscribe('run', cb, this, {priority: 9});
-     *
-     *      // Only execute the callback, `cb`, if the value of the `price` variable is 50
-     *      cs.subscribe('run/variables/price', cb, this, {priority: 30, value: 50});
-     *
-     *      // Only execute the callback, `cb`, if the value of the `price` variable is greater than 50
-     *      subscribe('run/variables/price', cb, this, {priority: 30, value: '>50'});
-     *
-     *      // Only execute the callback, `cb`, if the value of the `price` variable is even
-     *      subscribe('run/variables/price', cb, this, {priority: 30, value: function (val) {return val % 2 === 0}});
      *
      * **Return Value**
      *
