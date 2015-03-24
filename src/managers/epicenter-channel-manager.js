@@ -94,7 +94,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
     /**
      * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [world](../../../glossary/#world).
      *
-     * This is typically used together with the [World Manager](../world-manager). Note that this channel only gets notifications for worlds currently in memory. (See more background on [persistence](../../../run_persistence).)
+     * This is typically used together with the [World Manager](../world-manager).
      *
      * **Example**
      *

@@ -455,7 +455,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Gets the current (most recent) world for the given end user in the given group.
+        * Gets the current (most recent) world for the given end user in the given group. Brings this most recent world into memory if needed.
         *
         *  **Example**
         *
