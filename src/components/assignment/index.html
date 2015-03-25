@@ -7,11 +7,9 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="assignment.css">
-        <!-- make sure to include jquery, epicenter.js and login.js -->
+        <link rel="stylesheet" href="https://forio.com/tools/js-libs/<%= version %>/components/assignment/assignment.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
-        <script src="../../epicenter-edge.js"></script>
     </head>
     <body>
 
@@ -74,7 +72,9 @@
             </div>
         </div>
     </div>
-    <script src="assignment.js"></script>
+        <!-- make sure to include jquery, epicenter.js and assignment.js -->
+    <script src="https://forio.com/tools/js-libs/<%= version %>/epicenter.min.js"></script>
+    <script src="https://forio.com/tools/js-libs/<%= version %>/components/assignment/assignment.js"></script>
     <script>
         new window.forio.MultiplayerAssignmentComponent({
             el: '#assignment-component',
