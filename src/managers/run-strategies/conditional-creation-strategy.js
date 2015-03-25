@@ -5,6 +5,7 @@ var Base = require('./identity-strategy');
 var SessionStore = require('../../store/store-factory');
 var classFrom = require('../../util/inherit');
 var UrlService = require('../../service/url-config-service');
+var AuthManager = require('../auth-manager');
 
 var sessionStore = new SessionStore({});
 var urlService = new UrlService();
@@ -38,6 +39,7 @@ var Strategy = classFrom(Base, {
             throw new Error('Conditional strategy needs a condition to createte a run');
         }
 
+        this._auth = new AuthManager();
         this.run = makeSeq(runService);
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
@@ -46,9 +48,13 @@ var Strategy = classFrom(Base, {
 
     reset: function (runServiceOptions) {
         var _this = this;
+        var session = this._auth.getCurrentUserSessionInfo();
+        var opt = $.extend({
+            scope: { group: session.groupId }
+        }, this.runOptions);
 
         return this.run
-                .create(this.runOptions, runServiceOptions)
+                .create(opt, runServiceOptions)
             .then(function (run) {
                 setRunInSession(_this.options.sessionKey, run);
                 run.freshlyCreated = true;
@@ -58,7 +64,7 @@ var Strategy = classFrom(Base, {
     },
 
     getRun: function () {
-        var session = JSON.parse(sessionStore.get(this.options.sessionKey));
+        var session = this._auth.getCurrentUserSessionInfo();
 
         if (session && session.runId) {
             return this._loadAndCheck(session);

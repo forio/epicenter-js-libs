@@ -28,8 +28,13 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     reset: function (runServiceOptions) {
+        var session = this._auth.getCurrentUserSessionInfo();
+        var opt = $.extend({
+            scope: { group: session.groupId }
+        }, this.runOptions);
+
         return this.run
-            .create(this.runOptions, runServiceOptions)
+            .create(opt, runServiceOptions)
             .then(function (run) {
                 run.freshlyCreated = true;
                 return run;
