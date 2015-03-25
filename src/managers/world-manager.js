@@ -143,6 +143,10 @@ module.exports = function (options) {
             var curGroupName = session.groupName;
 
             function getAndRestoreLatestRun(world) {
+                if (!world) {
+                    return dtd.reject({ error: 'The user is not part of any world!' });
+                }
+
                 var currentWorldId = world.id;
                 var runOpts = $.extend(true, _this.options, { model: model });
                 var strategy = buildStrategy(currentWorldId, dtd);
