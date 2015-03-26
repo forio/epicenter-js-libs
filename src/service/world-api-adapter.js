@@ -248,7 +248,7 @@ module.exports = function (config) {
         */
         load: function (worldId) {
             if (!worldId || typeof worldId !== 'string') {
-                throw new Error('load needs a worldId string to load (' + worldId + ')');
+                throw new Error('load needs a worldId string to load and we received: ' + worldId + '');
             }
 
             serviceOptions.filter = worldId;

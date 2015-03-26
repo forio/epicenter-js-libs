@@ -34,12 +34,6 @@ module.exports = function (config) {
         };
     }
 
-    if (serviceOptions.apiKey) {
-        transportOptions.headers = {
-            'Authorization': 'Basic ' + serviceOptions.apiKey
-        };
-    }
-
     var http = new TransportFactory(transportOptions);
 
     var publicAPI = {
