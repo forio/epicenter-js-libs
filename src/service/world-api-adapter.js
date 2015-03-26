@@ -91,6 +91,14 @@ module.exports = function (config) {
     var serviceOptions = $.extend({}, defaults, config);
     var urlConfig = new ConfigService(serviceOptions).get('server');
 
+    if (!serviceOptions.account) {
+        serviceOptions.account = urlConfig.accountPath;
+    }
+
+    if (!serviceOptions.project) {
+        serviceOptions.project = urlConfig.projectPath;
+    }
+
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath(apiEndpoint)
     });
