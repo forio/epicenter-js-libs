@@ -39,7 +39,6 @@
 var WorldApi = require('../service/world-api-adapter');
 var RunManager =  require('./run-manager');
 var AuthManager = require('./auth-manager');
-// var _pick = require('../util/object-util')._pick;
 var worldApi;
 
 // var defaults = {
@@ -86,7 +85,6 @@ module.exports = function (options) {
 
     $.extend(true, this.options, this.options.run);
     $.extend(true, this.options, this.options.world);
-
 
     worldApi = new WorldApi(this.options);
     this._auth = new AuthManager();
