@@ -417,7 +417,7 @@ module.exports = function (config) {
             options = options || {};
 
             if (!user || !user.userId) {
-                throw new Error('You need to pass a userId to remove from the world');
+                throw new Error('You need to pass a userId to update from the world');
             }
 
             setIdFilterOrThrowError(options);
