@@ -11,7 +11,7 @@
  *
  * To use the Epicenter Channel Manager: instantiate it, get the channel of the scope you want ([user](../../../glossary/#users), [world](../../../glossary/#world), or [group](../../../glossary/#groups)), then use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
  *
- *     var cm = new F.manager.EpicenterChannelManager();
+ *     var cm = new F.manager.ChannelManager();
  *     var gc = cm.getGroupChannel();
  *     gc.subscribe('broadcasts', callback);
  *
@@ -73,7 +73,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *     var cm = new F.manager.EpicenterChannelManager();
+     *     var cm = new F.manager.ChannelManager();
      *     var gc = cm.getGroupChannel();
      *     gc.subscribe('broadcasts', callback);
      *
@@ -98,7 +98,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *     var cm = new F.manager.EpicenterChannelManager();
+     *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
      *         project: 'supply-chain-game',
@@ -137,7 +137,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *     var cm = new F.manager.EpicenterChannelManager();
+     *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
      *         project: 'supply-chain-game',
