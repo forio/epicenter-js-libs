@@ -13,13 +13,13 @@ var Channel = require('../service/channel-service');
  * * Online / Offline notifications
  * * 'Events' for cometd notifications (instead of having to listen on specific meta channels)
  *
- * While you can work directly with the Channel Manager -- or even work directly with `$.cometd` and Epicenter's underlying [Push Channel API](../../../rest_apis/multiplayer/channel/) -- most often it will be easiest to work with the [Epicenter Channel Manager](../epicenter-channel-manager/). The Epicenter Channel Manager is a wrapper that instantiates a Channel Manager with Epicenter-specific defaults.
+ * While you can work directly with the Channel Manager through Node.js (for example, `require('manager/channel-manager')`) -- or even work directly with `$.cometd` and Epicenter's underlying [Push Channel API](../../../rest_apis/multiplayer/channel/) -- most often it will be easiest to work with the [Epicenter Channel Manager](../epicenter-channel-manager/). The Epicenter Channel Manager is a wrapper that instantiates a Channel Manager with Epicenter-specific defaults.
  *
  * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Channel Manager. (See [Including Epicenter.js](../../#include).)
  *
- * To use the Channel Manager, instantiate it, get the channel, then use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
+ * To use the Channel Manager in client-side JavaScript, instantiate the [Epicenter Channel Manager](../epicenter-channel-manager/), get the channel, then use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
  *
- *        var cm = new F.manager.Channel();
+ *        var cm = new F.manager.ChannelManager();
  *        var channel = cm.getChannel();
  *        channel.subscribe(topic);
  *
