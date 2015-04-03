@@ -72,7 +72,15 @@ module.exports = function (config) {
                 qutil.toQueryFormat(toQFilter(filter))
             ].join('&');
 
-            return http.get(getFilters, getOptions);
+            // special case for queries with large number of ids
+            // make it as a post with GET semantics
+            var threshold = 30;
+            if (filter.id && $.isArray(filter.id) && filter.id.length >= threshold) {
+                getOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
+                return http.post({ id: filter.id }, getOptions);
+            } else {
+                return http.get(getFilters, getOptions);
+            }
         },
 
         getById: function (userId, options) {
