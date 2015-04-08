@@ -20,7 +20,7 @@ module.exports = classFrom(Base, {
 
         var id = this.get('id');
         if (id) {
-            this._worldApi.load(id);
+            this._worldApi.updateConfig({ filter: id });
         }
     },
 
@@ -36,7 +36,7 @@ module.exports = classFrom(Base, {
         var checkWorld = function () {
             if (!this.get('users').length) {
                 this.remove();
-                return this._worldApi.load(id).delete();
+                return this._worldApi.updateConfig({ filter: id }).delete();
             }
         }.bind(this);
 
@@ -45,7 +45,7 @@ module.exports = classFrom(Base, {
         });
 
         return this._worldApi
-            .load(id)
+            .updateConfig({ filter: id })
             .removeUser({ userId: user.get('id') })
             .then(checkWorld);
     },
@@ -73,7 +73,7 @@ module.exports = classFrom(Base, {
             return createWorld()
                 .then(function (world) {
                     _this.set(world);
-                    _this._worldApi.load(world.id);
+                    _this._worldApi.updateConfig({ filter: world.id });
                 })
                 .then(addUsers)
                 .then(function (users) {
