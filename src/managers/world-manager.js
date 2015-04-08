@@ -39,7 +39,6 @@
 var WorldApi = require('../service/world-api-adapter');
 var RunManager =  require('./run-manager');
 var AuthManager = require('./auth-manager');
-// var _pick = require('../util/object-util')._pick;
 var worldApi;
 
 // var defaults = {
@@ -86,7 +85,6 @@ module.exports = function (options) {
 
     $.extend(true, this.options, this.options.run);
     $.extend(true, this.options, this.options.world);
-
 
     worldApi = new WorldApi(this.options);
     this._auth = new AuthManager();
@@ -143,6 +141,10 @@ module.exports = function (options) {
             var curGroupName = session.groupName;
 
             function getAndRestoreLatestRun(world) {
+                if (!world) {
+                    return dtd.reject({ error: 'The user is not part of any world!' });
+                }
+
                 var currentWorldId = world.id;
                 var runOpts = $.extend(true, _this.options, { model: model });
                 var strategy = buildStrategy(currentWorldId, dtd);

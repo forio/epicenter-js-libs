@@ -10,6 +10,14 @@ module.exports = function (grunt) {
         tests: {
             files: ['tests/spec/**/*.js'],
             tasks: ['mocha', 'coverage-report']
+        },
+        components: {
+            files: ['src/components/**/*', '!src/components/**/*.js'],
+            tasks: ['copy:components']
+        },
+        templates: {
+            files: ['src/components/**/templates/**/*.html'],
+            tasks: ['templates']
         }
     });
 };

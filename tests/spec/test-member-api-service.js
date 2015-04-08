@@ -6,7 +6,7 @@
         before(function () {
             server = sinon.fakeServer.create();
             server.respondWith('POST', /(.*)\/game/, function (xhr, id) {
-                xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ newGame: true }));
+                xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ }));
             });
 
             server.autoRespond = true;
@@ -80,6 +80,42 @@
                     createMemberAdapter({ token: '123' }).getGroupDetails();
                 };
                 expect(getGroupDetails).to.throw(Error);
+            });
+        });
+
+        var testPatchUserAcriveField = function (active) {
+            var method = active ? 'makeUserActive' : 'makeUserInactive';
+            createMemberAdapter()[method]({ userId: '123', groupId: 'abc' });
+
+            var req = server.requests.pop();
+            expect(req.method).to.equal('PATCH');
+            expect(req.url).to.match(/\/member\/local\/abc\/123/);
+            expect(req.requestBody).to.eq(JSON.stringify({ active: active }));
+        };
+
+        describe('makeUserActive', function () {
+            it('should PATCH the member/local/<groupId>/<userId> to set active equal to true', function () {
+                testPatchUserAcriveField(true);
+            });
+
+            it('should inclide the authorization header', function () {
+                createMemberAdapter({ token: '123' }).makeUserActive({ userId: '123', groupId: 'abc' });
+
+                var req = server.requests.pop();
+                expect(req.requestHeaders.Authorization).to.match(/Bearer 123/);
+            });
+        });
+
+        describe('makeUserInactive', function () {
+            it('should PATCH the member/local/<groupId>/<userId> to set active equal to false', function () {
+                testPatchUserAcriveField(false);
+            });
+
+            it('should inclide the authorization header', function () {
+                createMemberAdapter({ token: '123' }).makeUserInactive({ userId: '123', groupId: 'abc' });
+
+                var req = server.requests.pop();
+                expect(req.requestHeaders.Authorization).to.match(/Bearer 123/);
             });
         });
     });

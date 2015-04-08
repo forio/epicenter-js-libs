@@ -34,6 +34,9 @@ node_modules
 documentation/generated
 **/vendor/**
 
+# compiled files for components
+src/components/**/templates.js
+
 # ides
 *.sublime-*
 local/
