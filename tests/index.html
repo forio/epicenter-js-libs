@@ -49,7 +49,17 @@
 
     <!-- include source files here... -->
     <script src="../vendor/jquery/dist/jquery.min.js"></script>
-    <script src="../dist/epicenter-edge.js"></script>
+    <script src="../dist/epicenter-multiplayer-dependencies.js"></script>
+
+    <script>
+        //Instrumented doesn't do sourcemaps, so put it in the console. Open up the nicer version in the browser
+         if (navigator.userAgent.indexOf('PhantomJS') ===  -1) {
+            document.write('\x3Cscript type="text/javascript" src="../dist/epicenter-edge.js">\x3C/script>');
+         }
+         else {
+            document.write('\x3Cscript type="text/javascript" src="../dist/epicenter-edge-instrumented.js">\x3C/script>');
+         }
+     </script>
 
     <!-- include spec files here... -->
     <script src="spec/test-query-util.js"></script>
@@ -57,15 +67,21 @@
     <script src="spec/test-ajax-http-transport.js"></script>
     <script src="spec/test-data-api-service.js"></script>
 
+    <script src="spec/test-world-manager.js"></script>
+    <script src="spec/test-multiplayer-strategy.js"></script>
+    <script src="spec/test-conditional-creation-strategy.js"></script>
+    <script src="spec/test-persistent-single-player-strategy.js"></script>
     <script src="spec/test-auth-api-service.js"></script>
     <script src="spec/test-auth-manager.js"></script>
     <script src="spec/test-world-api-service.js"></script>
     <script src="spec/test-run-api-service.js"></script>
     <script src="spec/test-run-api-service-callbacks.js"></script>
     <script src="spec/test-variables-api-service.js"></script>
+    <script src="spec/test-member-api-service.js"></script>
     <script src="spec/test-cookie-store.js"></script>
-    <script src="spec/test-multiplayer-strategy.js"></script>
 
+    <script src="spec/test-channel-service.js"></script>
+    <script src="spec/test-channel-manager.js"></script>
 
     <script>
     // If tests run in a real browser

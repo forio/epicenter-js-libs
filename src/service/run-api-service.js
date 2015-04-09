@@ -48,7 +48,7 @@ module.exports = function (config) {
         token: store.get('epicenter.project.token') || '',
 
         /**
-         * The account id. In the Epicenter UI, this is the "Team ID" (for team projects) or "User ID" (for personal projects). Defaults to empty string.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
          * @type {String}
          */
         account: '',
@@ -180,7 +180,7 @@ module.exports = function (config) {
          *       });
          *
          * **Parameters**
-         * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
          * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
@@ -196,7 +196,7 @@ module.exports = function (config) {
          * Similar to `.query()`.
          *
          * **Parameters**
-         * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
          * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
@@ -254,7 +254,7 @@ module.exports = function (config) {
         /**
          * Call a method from the model.
          *
-         * The method must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
+         * Depending on the language in which you have written your model, the method may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * The `params` argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
          *
@@ -307,7 +307,7 @@ module.exports = function (config) {
         /**
          * Call several methods from the model, sequentially.
          *
-         * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
+         * Depending on the language in which you have written your model, the methods may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * **Examples**
          *
@@ -362,7 +362,7 @@ module.exports = function (config) {
         /**
          * Call several methods from the model, executing them in parallel.
          *
-         * The methods must be exposed (e.g. `export` for a Julia model, see [Writing your Model](../../../writing_your_model/)) in the model file in order to be called through the API.
+         * Depending on the language in which you have written your model, the methods may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * **Example**
          *

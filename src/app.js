@@ -1,3 +1,9 @@
+/**
+ * Epicenter Javascript libraries
+ * v<%= version %>
+ * https://github.com/forio/epicenter-js-libs
+ */
+
 var F = {
     util: {},
     factory: {},
@@ -13,7 +19,7 @@ var F = {
 F.util.query = require('./util/query-util');
 F.util.makeSequence = require('./util/make-sequence');
 F.util.run = require('./util/run-util');
-F.util.classForm = require('./util/inherit');
+F.util.classFrom = require('./util/inherit');
 
 F.factory.Transport = require('./transport/http-transport-factory');
 F.transport.Ajax = require('./transport/ajax-http-transport');
@@ -25,6 +31,8 @@ F.service.Variables = require('./service/variables-api-service');
 F.service.Data = require('./service/data-api-service');
 F.service.Auth = require('./service/auth-api-service');
 F.service.World = require('./service/world-api-adapter');
+F.service.State = require('./service/state-api-adapter');
+F.service.Member = require('./service/member-api-adapter');
 F.service.Log = require('./service/log-api-service');
 
 F.store.Cookie = require('./store/cookie-store');
@@ -33,6 +41,7 @@ F.factory.Store = require('./store/store-factory');
 F.manager.ScenarioManager = require('./managers/scenario-manager');
 F.manager.RunManager = require('./managers/run-manager');
 F.manager.AuthManager = require('./managers/auth-manager');
+F.manager.WorldManager = require('./managers/world-manager');
 
 F.manager.strategy['always-new'] = require('./managers/run-strategies/always-new-strategy');
 F.manager.strategy['conditional-creation'] = require('./managers/run-strategies/conditional-creation-strategy');
@@ -42,6 +51,8 @@ F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if
 F.manager.strategy['new-if-persisted'] = require('./managers/run-strategies/new-if-persisted-strategy');
 F.manager.strategy['new-if-initialized'] = require('./managers/run-strategies/new-if-initialized-strategy');
 
+F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
+F.service.Channel = require('./service/channel-service');
 
 F.version = '<%= version %>';
 window.F = F;
