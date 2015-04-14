@@ -5,16 +5,16 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json')
     });
 
-    grunt.file.expand('grunt/*.js').forEach(function (task) {
-        require('./' + task)(grunt);
-    });
+    // grunt.file.expand('grunt/*.js').forEach(function (task) {
+    //     require('./' + task)(grunt);
+    // });
 
-    grunt.registerTask('test', ['templates', 'browserify:edge', 'browserify:instrumented', 'browserify:components', 'mocha', 'coverage-report']);
-    grunt.registerTask('documentation', ['markdox']);
-    grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
-    grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
-    grunt.registerTask('components', ['templates', 'browserify:components', 'copy:components']);
-    grunt.registerTask('production', ['concatCometd', 'validate', 'browserify:mapped', 'browserify:min', 'components', 'documentation']);
+    // grunt.registerTask('test', ['templates', 'browserify:edge', 'browserify:instrumented', 'browserify:components', 'mocha', 'coverage-report']);
+    // grunt.registerTask('documentation', ['markdox']);
+    // grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
+    // grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
+    // grunt.registerTask('components', ['templates', 'browserify:components', 'copy:components']);
+    // grunt.registerTask('production', ['concatCometd', 'validate', 'browserify:mapped', 'browserify:min', 'components', 'documentation']);
 
     // grunt.registerTask('release', function (type) {
     //     //TODO: Integrate 'changelog' in here when it's stable
