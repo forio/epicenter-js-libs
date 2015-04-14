@@ -16,13 +16,13 @@ module.exports = function (grunt) {
     grunt.registerTask('components', ['templates', 'browserify:components', 'copy:components']);
     grunt.registerTask('production', ['concatCometd', 'validate', 'browserify:mapped', 'browserify:min', 'components', 'documentation']);
 
-    grunt.registerTask('release', function (type) {
-        //TODO: Integrate 'changelog' in here when it's stable
-        type = type ? type : 'patch';
-        ['bump-only:' + type, 'changelog', 'production', 'bump-commit'].forEach(function (task) {
-            grunt.task.run(task);
-        });
-    });
+    // grunt.registerTask('release', function (type) {
+    //     //TODO: Integrate 'changelog' in here when it's stable
+    //     type = type ? type : 'patch';
+    //     ['bump-only:' + type, 'changelog', 'production', 'bump-commit'].forEach(function (task) {
+    //         grunt.task.run(task);
+    //     });
+    // });
 
-    grunt.registerTask('default', ['concatCometd', 'browserify:edge', 'browserify:instrumented', 'components', 'watch']);
+    // grunt.registerTask('default', ['concatCometd', 'browserify:edge', 'browserify:instrumented', 'components', 'watch']);
 };
