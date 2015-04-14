@@ -6,7 +6,6 @@
     "Naren Ranjit <nranjit@forio.com>"
   ],
   "private": true,
-  "main": "dist/epicenter.js",
   "ignore": [
     "**/.*",
     "node_modules",
