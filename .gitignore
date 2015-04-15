@@ -44,3 +44,4 @@ dist/epicenter-edge-instrumented.js
 #instanbul related
 coverage/
 .DS_Store
+**/.DS_Store
