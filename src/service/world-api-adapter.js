@@ -27,7 +27,10 @@ var StorageFactory = require('../store/store-factory');
 var TransportFactory = require('../transport/http-transport-factory');
 var _pick = require('../util/object-util')._pick;
 
-var apiEndpoint = 'multiplayer/world';
+var apiBase = 'multiplayer/';
+var assignmentEndpoint = apiBase + 'assign';
+var apiEndpoint = apiBase + 'world';
+var projectEndpoint = apiBase + 'project';
 
 module.exports = function (config) {
     var store = new StorageFactory({ synchronous: true });
@@ -87,6 +90,14 @@ module.exports = function (config) {
 
     var serviceOptions = $.extend({}, defaults, config);
     var urlConfig = new ConfigService(serviceOptions).get('server');
+
+    if (!serviceOptions.account) {
+        serviceOptions.account = urlConfig.accountPath;
+    }
+
+    if (!serviceOptions.project) {
+        serviceOptions.project = urlConfig.projectPath;
+    }
 
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath(apiEndpoint)
@@ -225,6 +236,20 @@ module.exports = function (config) {
             );
 
             return http.delete(null, deleteOptions);
+        },
+
+        /**
+        * Updates the configuration for the current instance of the world adapter
+        *
+        * **Example**
+        * var ws = new F.service.World({...}).updateConfig({ filter: '123' }).addUser({ userId: '123' });
+        *
+        *
+        */
+        updateConfig: function (config) {
+            $.extend(serviceOptions, config);
+
+            return this;
         },
 
         /**
@@ -375,6 +400,34 @@ module.exports = function (config) {
         },
 
         /**
+        * Updates a user from a given world (only one user at a time)
+        *
+        * Supported formats:
+        * ws.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        *
+        * @param user {object} user object with userId and the new role
+        * @param options {object} (Optional) Options object to override global options
+        *
+        */
+        updateUser: function (user, options) {
+            options = options || {};
+
+            if (!user || !user.userId) {
+                throw new Error('You need to pass a userId to update from the world');
+            }
+
+            setIdFilterOrThrowError(options);
+
+            var patchOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId }
+            );
+
+            return http.patch(_pick(user, 'role'), patchOptions);
+        },
+
+        /**
         * Remove an end user from a given world.
         *
         *  **Example**
@@ -480,6 +533,11 @@ module.exports = function (config) {
                     // assume the most recent world as the 'active' world
                     worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
                     var currentWorld = worlds[0];
+
+                    if (currentWorld) {
+                        serviceOptions.filter =  currentWorld.id;
+                    }
+
                     dtd.resolve(currentWorld, me);
                 })
                 .fail(dtd.reject);
@@ -533,7 +591,54 @@ module.exports = function (config) {
                 .then(function () {
                     return this.getCurrentRunId(currentRunOptions);
                 });
+        },
+
+        /**
+        * autoAssign users to worlds
+        *
+        *
+        */
+        autoAssign: function (options) {
+            options = options || {};
+
+            var opt = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(assignmentEndpoint) }
+            );
+
+            var params = {
+                account: opt.account,
+                project: opt.project,
+                group: opt.group
+            };
+
+            if (opt.maxUsers) {
+                params.maxUsers = opt.maxUsers;
         }
+
+            return http.post(params, opt);
+        },
+
+        /**
+        * Get the project's multiuser configuration
+        *
+        *
+        */
+        getProjectSettings: function (options) {
+            options = options || {};
+
+            var opt = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(projectEndpoint) }
+            );
+
+            opt.url += [opt.account, opt.project].join('/');
+
+            return http.get(null, opt);
+        }
+
     };
 
     $.extend(this, publicAPI);

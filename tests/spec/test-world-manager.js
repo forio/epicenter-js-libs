@@ -35,7 +35,7 @@
 
     describe('World Manager', function () {
         var server;
-        before(function () {
+        beforeEach(function () {
             server = sinon.fakeServer.create();
             var getworldsPattern = /multiplayer\/world\/\?((?:project=js-libs|account=forio|group=group\-321|&userId=user\-123)&?){4}/;
 
@@ -48,6 +48,11 @@
             // get worlds
             server.respondWith('GET', getworldsPattern, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(worldSet));
+            });
+
+            // get worlds wrong parameters
+            server.respondWith('GET', /multiplayer\/world\/.*((?:project=(?!js-libs)))/, function (xhr) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify([]));
             });
 
             // get run header
@@ -63,12 +68,12 @@
             server.autoRespond = true;
         });
 
-        after(function () {
+        afterEach(function () {
             server.restore();
         });
 
         function createWorldManager(options) {
-            var wm = new F.manager.WorldManager(_.extend({
+            var wm = new F.manager.WorldManager(_.extend({}, {
                 account: 'forio',
                 project: 'js-libs',
                 group: 'group-123',
@@ -145,6 +150,14 @@
                     })
                     .fail(function () {
                         done(new Error('error'));
+                    });
+            });
+
+            it('should throw if user is not part of any world', function (done) {
+                createWorldManager({ project: 'other' }).getCurrentRun('model.py')
+                    .fail(function (msg) {
+                        expect(msg.error).to.not.be.null;
+                        done();
                     });
             });
         });

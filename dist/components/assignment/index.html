@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Multiplayer World Assignment Component</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://forio.com/tools/js-libs/1.4.0/components/assignment/assignment.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+    </head>
+    <body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-8">
+
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="assignment-component">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <span class="table-controls form-inline">
+                                Automatically assign users
+
+                                <span class="single" style="display: none;">
+                                    to teams. Users/Team:
+                                </span>
+                                <span class="dynamic" style="display: none;">
+                                    to worlds.
+                                </span>
+                                <span class="dynamic-no-roles-text" style="display: none;"> Max User/World: </span>
+                                <span class="no-roles" style="display: none;">
+                                    <input type="number" class="form-control" id="max-users" min="1">
+                                </span>
+
+                                <button class="auto-assign-all btn btn-success">Assign</button>
+                            </span>
+                            <span class="status-widget pull-right">
+                                <span id="users-status"><em class="icon f-icon"></em><span class="text"></span></span>
+                                <span id="worlds-status"><em class="icon f-icon"></em><span class="text"></span></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="component controls" style="opacity: 0;">
+                        <button class="unassign-user btn">Unassign</button>
+                        <button class="make-user-inactive btn">Make Inactive</button>
+                    </div>
+                    <table class="table users-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th></th>
+                                <th>World</th>
+                                <th>Role</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Unassigned</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+        <!-- make sure to include jquery, epicenter.js and assignment.js -->
+    <script src="https://forio.com/tools/js-libs/1.4.0/epicenter.min.js"></script>
+    <script src="https://forio.com/tools/js-libs/1.4.0/components/assignment/assignment.js"></script>
+    <script>
+        new window.forio.MultiplayerAssignmentComponent({
+            el: '#assignment-component',
+            account: 'your-account-goes-here',
+            project: 'your-project-name-goes-here',
+            group: 'the-group-name-goes-here',
+            groupId: 'the-group-id-goes-here',
+            token: 'the-authentication-token-goes-here',
+            server: {
+                host: 'the-server-goes-here usually api.forio.com',
+                protocol: 'https'
+            }
+        }).load();
+
+    </script>
+    </body>
+</html>

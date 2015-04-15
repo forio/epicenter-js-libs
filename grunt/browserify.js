@@ -54,6 +54,12 @@ module.exports = function (grunt) {
                     });
                 }
             }
+        },
+        components: {
+            files: {
+                './dist/components/assignment/assignment.js': './src/components/assignment/js/index.js'
+            }
         }
+
     });
 };
