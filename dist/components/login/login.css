@@ -1,0 +1,62 @@
+.group-selection-dialog {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background-color: rgba(0,0,0,.4);
+
+}
+
+.group-selection-dialog .panel {
+    opacity: 1;
+    min-width: 23em;
+    position: absolute;
+    left: 50%;
+    top: 25%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz--transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    border: solid 1px #DDD;
+    border-radius: 4px;
+    background-color: #FAFAFA;
+    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.group-selection-dialog .panel > div {
+    padding: 7px 15px;
+}
+
+.group-selection-dialog .panel > .panel-heading {
+    background-color: #dadada;
+    border-bottom: solid 1px #ddd;
+    margin-bottom: 10px;
+
+}
+
+.group-selection-dialog .panel > .panel-title {
+    font-size: 16px;
+    line-height: 22px;
+}
+
+.group-selection-dialog select {
+    height: 34px;
+    font-size: 14px;
+}
+
+.group-selection-dialog .panel > .panel-footer {
+    border-top: solid 1px #DDD;
+    margin-top: 10px;
+    text-align: right;
+}
+
+.group-selection-dialog .close {
+    float: right;
+    color: #999;
+    font-size: 110%;
+    text-transform: uppercase;
+    cursor: pointer;
+}
