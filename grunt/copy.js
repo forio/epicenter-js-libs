@@ -6,7 +6,7 @@ module.exports = function (grunt) {
             files: [{
                 cwd: './src/components',
                 expand: true,
-                src: ['**/*', '!**/*.js', '!*/templates/**/*.*', '!*/js/**/*.*'],
+                src: ['**/*', '!*/templates/**/*.*', '!*/js/**/*.*'],
                 dest: './dist/components'
             }],
             options: {
@@ -14,6 +14,8 @@ module.exports = function (grunt) {
                     if (/\.html$/.test(srcPath)) {
                         return grunt.template.process(contents, { data: grunt.file.readJSON('package.json') });
                     }
+
+                    return contents;
                 }
             }
         }
