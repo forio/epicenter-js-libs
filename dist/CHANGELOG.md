@@ -1,3 +1,14 @@
+<a name="1.4.1"></a>
+### 1.4.1 (2015-04-15)
+Features:
+- Added `load` to F.Service.World. This works like the `load` on other services; use when you have a world id and want to construct a World Object with that
+- This release adds a `components` folder to the distribution. The only production-ready component is the `login` component, but more components will be added later - components are meant to be "plug and play" applications using the libraries to solve common use-cases.
+
+Bug Fixes:
+- Fixed issue where `group` wasn't being sent as a scope to the Run Service by some strategies
+- World Service now takes in `account` and `project` from the url if not provided explicitly on instatiation
+- The `ChannelManager` has now been updated with better jsdocs
+
 <a name="1.4.0"></a>
 ## 1.4.0 (2015-03-19)
 Features:
