@@ -548,10 +548,19 @@ module.exports = function (config) {
         /**
         * Deletes the current run from the world.
         *
-        *  **Example**: This method is not yet implemented.
+        * (Note that the world id remains part of the run record, indicating that the run was formerly an active run for the world.)
+        *
+        *  **Example**
+        *
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
+        *           group: 'team1' });
+        *
+        *      wa.deleteRun('sample-world-id');
         *
         *  **Parameters**
-        * @param {string} `worldId`
+        * @param {string} `worldId` The `worldId` of the world being deleted. 
         * @param {object} `options` (Optional) Options object to override global options.
         */
         deleteRun: function (worldId, options) {
