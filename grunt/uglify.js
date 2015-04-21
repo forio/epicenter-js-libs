@@ -34,7 +34,8 @@ module.exports = function (grunt) {
         },
         cometdDebug: {
             options: {
-                sourceMap: true,
+                sourceMap: false,
+                mangle: false,
                 compress: false,
                 warnings: false
             },
