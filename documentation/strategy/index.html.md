@@ -11,6 +11,7 @@ The [Run Manager](../generated/run-manager/) gives you control over run creation
 There are several strategies included in epicenter.js:
 
 * [always-new](#always-new)
+* [multiplayer](#multiplayer)
 * [new-if-persisted](#new-if-persisted)
 * [new-if-missing](#new-if-missing)
 * [new-if-initialized](#new-if-initialized)
@@ -28,6 +29,14 @@ The `always-new` strategy always creates a new run for this end user irrespectiv
 This strategy means that every time your end users refresh their browsers, they get a new run. 
 
 This strategy can be useful for basic, single-page projects. This strategy is also useful for prototyping or project development: it creates a new run each time you refresh the page, and you can easily check the outputs of the model. However, typically you will use one of the other strategies for a production project.
+
+
+<a name="multiplayer"></a>
+#### multiplayer
+
+The `multiplayer` strategy is for use with [multiplayer worlds](../../glossary/#world). It checks the current world for this end user, and always returns the current run for that world. This is equivalent to calling `getCurrentWorldForUser()` and then `getCurrentRunId()` from the [World API Adapater](../generated/world-api-adapter/).
+
+Using this strategy means that end users in projects with multiplayer worlds always see the most current run and world. This ensures that they are in sync with the other end users sharing their world and run. In turn, this allows for competitive or collaborative multiplayer projects.
 
 
 <a name="new-if-persisted"></a>
