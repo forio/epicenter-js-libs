@@ -22,6 +22,6 @@ grunt test  or grunt documentation
 ```
 This will create a ```epicenter-edge.js``` file in ```dist/```. When you're happy with your changes do ```grunt production``` and make a pull-request to `master`.
 
-&copy; Forio Corporation, 2014.  All rights reserved.
+&copy; Forio Corporation, 2014-2015.  All rights reserved.
 
 
