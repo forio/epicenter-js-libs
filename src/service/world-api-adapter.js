@@ -1,13 +1,13 @@
 /**
  * ##World API Adapter
  *
- * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
+ * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. Only [team projects](../../../glossary/#team) can be multiplayer.
  *
- * The World API Adapter allows you to create, access, and manipulate multiplayer worlds within your Epicenter project. You can use this to add and remove end users from the world, and to create, access, and remove their runs. (The related [World Manager](../world-manager/) provides an easy way to access runs and worlds for particular users.) Only [team projects](../../../glossary/#team) can be multiplayer.
+ * The World API Adapter allows you to create, access, and manipulate multiplayer worlds within your Epicenter project. You can use this to add and remove end users from the world, and to create, access, and remove their runs. Because of this, typically the World Adapter is used in code for facilitator pages in your project. (The related [World Manager](../world-manager/) provides an easy way to access runs and worlds for particular end users, so is typically used in code for end user -facing pages in your project.)
  *
  * As with all the other [API Adapters](../../), all methods take in an "options" object as the last parameter. The options can be used to extend/override the World API Service defaults.
  *
- * Typically, you instantiate a World Adapter and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface), project id (**Project ID**), and group (**Group Name**).
+ * To use the World Adapter, instantiate it and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface), project id (**Project ID**), and group (**Group Name**).
  *
  *       var wa = new F.service.World({
  *          account: 'acme-simulations',
@@ -44,13 +44,13 @@ module.exports = function (config) {
        token: store.get('epicenter.project.token') || '',
 
         /**
-         * The project id. Defaults to undefined.
+         * The project id. If left undefined, taken from the URL.
          * @type {String}
          */
        project: undefined,
 
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). Defaults to undefined.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
          * @type {String}
          */
        account: undefined,
@@ -116,7 +116,7 @@ module.exports = function (config) {
             serviceOptions.filter = options.filter;
         }
         if (!serviceOptions.filter) {
-            throw new Error('No filter specified to apply operations against');
+            throw new Error('No world id specified to apply operations against. This could happen if the user is not assigned to a world and is trying to work with runs from that world.');
         }
     };
 
@@ -129,7 +129,9 @@ module.exports = function (config) {
     var publicAPI = {
 
         /**
-        * Create a new World.
+        * Creates a new World.
+        *
+        * Using this method is rare. It is more common to create worlds automatically while you `autoAssign()` end users to worlds. (In this case, configuration data for the world, such as the roles, are read from the project-level world configuration information, for example by `getProjectSettings()`.)
         *
         *  **Example**
         *
@@ -143,7 +145,7 @@ module.exports = function (config) {
         *
         *  **Parameters**
         * @param {object} `params` Parameters to create the world.
-        * @param {string} `params.group` (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (new F.service.World()).
+        * @param {string} `params.group` (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
         * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
         * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
         * @param {integer} `params.minUsers` (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
@@ -169,7 +171,9 @@ module.exports = function (config) {
         },
 
         /**
-        * Update a World, for example to add the roles to the world.
+        * Updates a World, for example to add the roles to the world.
+        *
+        * Using this method is rare. It is more common to have world configuration done at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both.
         *
         *  **Example**
         *
@@ -208,7 +212,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Delete an existing world.
+        * Deletes an existing world.
         *
         *  **Example**
         *
@@ -239,12 +243,14 @@ module.exports = function (config) {
         },
 
         /**
-        * Updates the configuration for the current instance of the world adapter
+        * Updates the configuration for the current instance of the World API Adapter.
         *
         * **Example**
-        * var ws = new F.service.World({...}).updateConfig({ filter: '123' }).addUser({ userId: '123' });
         *
+        *      var wa = new F.service.World({...}).updateConfig({ filter: '123' }).addUser({ userId: '123' });
         *
+        * **Parameters**
+        * @param {object} `config` The configuration object to use in updating existing configuration.
         */
         updateConfig: function (config) {
             $.extend(serviceOptions, config);
@@ -253,7 +259,7 @@ module.exports = function (config) {
         },
 
         /**
-        * List all worlds for a given account, project, and group. All three are required, and if not specified as parameters, are read from the service.
+        * Lists all worlds for a given account, project, and group. All three are required, and if not specified as parameters, are read from the service.
         *
         *  **Example**
         *
@@ -289,7 +295,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Get all worlds that an end user belongs to for a given account, project, and group.
+        * Gets all worlds that an end user belongs to for a given account (team), project, and group.
         *
         *  **Example**
         *
@@ -324,7 +330,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Add an end user or list of end users to a given world. The end user must be a member of the `group` that is associated with this world.
+        * Adds an end user or list of end users to a given world. The end user must be a member of the `group` that is associated with this world.
         *
         *  **Example**
         *
@@ -400,13 +406,20 @@ module.exports = function (config) {
         },
 
         /**
-        * Updates a user from a given world (only one user at a time)
+        * Updates the role of an end user in a given world. (You can only update one end user at a time.)
         *
-        * Supported formats:
-        * ws.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        * **Example**
         *
-        * @param user {object} user object with userId and the new role
-        * @param options {object} (Optional) Options object to override global options
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
+        *           group: 'team1' });
+        *
+        *      wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        *
+        * **Parameters**
+        * @param {object} `user` User object with `userId` and the new `role`.
+        * @param {object} `options` (Optional) Options object to override global options.
         *
         */
         updateUser: function (user, options) {
@@ -428,7 +441,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Remove an end user from a given world.
+        * Removes an end user from a given world.
         *
         *  **Example**
         *
@@ -560,7 +573,7 @@ module.exports = function (config) {
         *      wa.deleteRun('sample-world-id');
         *
         *  **Parameters**
-        * @param {string} `worldId` The `worldId` of the world being deleted. 
+        * @param {string} `worldId` The `worldId` of the world from which the current run is being deleted.
         * @param {object} `options` (Optional) Options object to override global options.
         */
         deleteRun: function (worldId, options) {
@@ -584,10 +597,15 @@ module.exports = function (config) {
         /**
         * Creates a new run for the world.
         *
-        *  **Example**: This method is not yet implemented.
+        *  **Example**
+        *
+        *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee', 'team1')
+        *           .then(function (world) {
+        *                   wa.newRunForWorld(world.id);
+        *           });
         *
         *  **Parameters**
-        * @param {string} `worldId` worldId in which we create the new Run.
+        * @param {string} `worldId` worldId in which we create the new run.
         * @param {object} `options` (Optional) Options object to override global options.
         */
         newRunForWorld: function (worldId, options) {
@@ -603,8 +621,19 @@ module.exports = function (config) {
         },
 
         /**
-        * autoAssign users to worlds
+        * Assigns end users to worlds, creating new worlds as appropriate, automatically. Assigns all end users in the group, and creates new worlds as needed based on the project-level world configuration (roles, optional roles, and minimum end users per world).
         *
+        * **Example**
+        *
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
+        *           group: 'team1' });
+        *
+        *      wa.autoAssign();
+        *
+        * **Parameters**
+        * @param {object} `options` (Optional) Options object to override global options.
         *
         */
         autoAssign: function (options) {
@@ -630,9 +659,27 @@ module.exports = function (config) {
         },
 
         /**
-        * Get the project's multiuser configuration
+        * Gets the project's world configuration.
         *
+        * Typically, every interaction with your project uses the same configuration of each world. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both.
         *
+        * (The [Multiplayer Project REST API](../../../rests_apis/multiplayper/multiplayer_project/) allows you to set these project-level world configurations. The World Adapter simply retrieves them, for example so they can be used in auto-assignment of end users to worlds.)
+        *
+        * **Example**
+        *
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
+        *           group: 'team1' });
+        *
+        *      wa.getProjectSettings()
+        *           .then(function(settings) {
+        *               console.log(settings.roles);
+        *               console.log(settings.optionalRoles);
+        *           });
+        *
+        * **Parameters**
+        * @param {object} `options` (Optional) Options object to override global options.
         */
         getProjectSettings: function (options) {
             options = options || {};
