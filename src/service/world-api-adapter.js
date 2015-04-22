@@ -584,12 +584,15 @@ module.exports = function (config) {
         newRunForWorld: function (worldId, options) {
             var currentRunOptions = $.extend(true, {},
                 options,
-                { filter: worldId }
+                { filter: worldId || serviceOptions.filter }
             );
+            var _this = this;
+
             validateModelOrThrowError(currentRunOptions);
+
             return this.deleteRun(worldId, options)
                 .then(function () {
-                    return this.getCurrentRunId(currentRunOptions);
+                    return _this.getCurrentRunId(currentRunOptions);
                 });
         },
 
