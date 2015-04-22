@@ -116,7 +116,7 @@ module.exports = function (config) {
             serviceOptions.filter = options.filter;
         }
         if (!serviceOptions.filter) {
-            throw new Error('No filter specified to apply operations against');
+            throw new Error('No world id specified to apply operations against. This could happen if the user is not assigned to a world and is trying to work with runs from that world.');
         }
     };
 
