@@ -10,7 +10,9 @@ module.exports = classFrom(Base, {
         world: '',
         role: '',
         active: true,
-        isWorldComplete: true
+        isWorldComplete: true,
+        firstName: '',
+        lastName: ''
     },
 
     makeActive: function () {
