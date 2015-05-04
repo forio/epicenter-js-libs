@@ -173,7 +173,7 @@ module.exports = function (config) {
         /**
         * Updates a World, for example to add the roles to the world.
         *
-        * Using this method is rare. It is more common to have world configuration done at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both.
+        * Typically, you complete world configuration at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both. However, this method is available if you need to update the configuration of a particular world.
         *
         *  **Example**
         *
@@ -243,7 +243,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Updates the configuration for the current instance of the World API Adapter.
+        * Updates the configuration for the current instance of the World API Adapter (including all subsequent function calls, until the configuration is updated again).
         *
         * **Example**
         *
