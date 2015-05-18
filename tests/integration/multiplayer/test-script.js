@@ -52,6 +52,8 @@ $(function() {
         });
     });
 
+
+
     var worldManager = new F.manager.WorldManager({
         run: $.extend({}, {
             account: 'team-naren',
@@ -73,6 +75,28 @@ $(function() {
        window.rs = runservice;
     });
 
+    window.datachannel = null;
+    window.ds = null;
+    $('#btnCreateCollection').click(function () {
+        var collName = $('#txtCollName').val().trim();
+        window.ds = new F.service.Data({
+            root: collName,
+            account: 'team-naren',
+            project: 'multiplayer-test'
+        });
+        // window.ds.save({});
+        window.datachannel = cm.getDataChannel(collName);
+        window.datachannel.subscribe('', function (data) {
+            console.log('data changed', data);
+        });
+    });
+
+    $('#btnAddToCollection').click(function () {
+        var key = 'some-key-' + Math.round(Math.random() * 100);
+        var params = {};
+        params[key] = { test: true };
+        window.ds.save(params);
+    });
     window.cm = cm;
 
 

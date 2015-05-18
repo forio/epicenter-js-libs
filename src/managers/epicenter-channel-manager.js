@@ -172,6 +172,14 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
 
         var baseTopic = ['/users', this.options.server.account, this.options.server.project, groupName, worldid, userid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
+    },
+
+    getDataChannel: function (collection) {
+        if (!collection) {
+            throw new Error('Please specify a collection to listen on.');
+        }
+        var baseTopic = ['/data', this.options.server.account, this.options.server.project, collection].join('/');
+        return __super.getChannel.call(this, { base: baseTopic });
     }
 });
 
