@@ -31,10 +31,12 @@ var urlService = require('../service/url-config-service');
 var AuthManager = require('./auth-manager');
 
 var session = new AuthManager();
-var getFromSessionOrError = function (value, sessionKeyName) {
+var getFromSettingsOrSessionOrError = function (value, sessionKeyName, settings) {
     if (!value) {
         var userInfo = session.getCurrentUserSessionInfo();
-        if (userInfo[sessionKeyName]) {
+        if (settings && settings[sessionKeyName]) {
+            value = settings[sessionKeyName];
+        } else if (userInfo[sessionKeyName]) {
             value = userInfo[sessionKeyName];
         } else {
             throw new Error(sessionKeyName + ' not found. Please log-in again, or specify ' + sessionKeyName + ' explicitly');
@@ -86,8 +88,11 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @param  {String} `groupName` (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
      */
     getGroupChannel: function (groupName) {
-        groupName = getFromSessionOrError(groupName, 'groupName');
-        var baseTopic = ['/group', this.options.server.account, this.options.server.project, groupName].join('/');
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        var account = getFromSettingsOrSessionOrError('', 'account', this.options.server);
+        var project = getFromSettingsOrSessionOrError('', 'project', this.options.server);
+
+        var baseTopic = ['/group', account, project, groupName].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
@@ -125,8 +130,11 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        groupName = getFromSessionOrError(groupName, 'groupName');
-        var baseTopic = ['/world', this.options.server.account, this.options.server.project, groupName, worldid].join('/');
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        var account = getFromSettingsOrSessionOrError('', 'account', this.options.server);
+        var project = getFromSettingsOrSessionOrError('', 'project', this.options.server);
+
+        var baseTopic = ['/world', account, project, groupName, worldid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
@@ -167,10 +175,13 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        userid = getFromSessionOrError(userid, 'userId');
-        groupName = getFromSessionOrError(groupName, 'groupName');
+        userid = getFromSettingsOrSessionOrError(userid, 'userId');
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
 
-        var baseTopic = ['/users', this.options.server.account, this.options.server.project, groupName, worldid, userid].join('/');
+        var account = getFromSettingsOrSessionOrError('', 'account', this.options.server);
+        var project = getFromSettingsOrSessionOrError('', 'project', this.options.server);
+
+        var baseTopic = ['/users', account, project, groupName, worldid, userid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
@@ -178,7 +189,9 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!collection) {
             throw new Error('Please specify a collection to listen on.');
         }
-        var baseTopic = ['/data', this.options.server.account, this.options.server.project, collection].join('/');
+        var account = getFromSettingsOrSessionOrError('', 'account', this.options.server);
+        var project = getFromSettingsOrSessionOrError('', 'project', this.options.server);
+        var baseTopic = ['/data', account, project, collection].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     }
 });
