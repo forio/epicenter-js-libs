@@ -1,3 +1,11 @@
+<a name="1.4.2"></a>
+### 1.4.2 (2015-05-15)
+Bug Fixes:
+- Strategy creation was broken in the last release due to an invalid cookie name. If you use 1.4.1 you'd have always gotten a new run.
+- Login component now properly re-enables the login button on invalid logins
+- Fixed issue in assignment component where UI broke if the user didn't have a last name
+- Fix bug in `newRunForWorld` in the World Service
+
 <a name="1.4.1"></a>
 ### 1.4.1 (2015-04-15)
 Features:
