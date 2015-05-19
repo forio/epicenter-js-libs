@@ -91,7 +91,7 @@ The login component is available from <a href="https://github.com/forio/epicente
 
 **Assignment Component**
 
-Provides a form for automatically assigning end users to [worlds](../glossary/#world), for multiplayer projects. Includes the ability to set the number of end users per world, assign and unassign end users, and mark certain end users as inactive (e.g. if they are not present on the day the simulation game play is occurring). These features are all available within the Epicenter interface (see [Multiplayer Settings](../updating_your_settings/#multiplayer) and [Multiplayer Assignment](../groups_and_end_users/#multiplayer-assignment)); this component allows you to easily add them to your project. For example, this way a facilitator could make the end user assignments to worlds in your project's user interface, without needing to log in to Epicenter directly.
+Provides an interface to automatically assign end users to [worlds](../glossary/#world), for multiplayer projects. Includes the ability to set the number of end users per world, assign and unassign end users, and mark certain end users as inactive (e.g. if they are not present on the day the simulation game play is occurring). These features are all available within the Epicenter interface (see [Multiplayer Settings](../updating_your_settings/#multiplayer) and [Multiplayer Assignment](../groups_and_end_users/#multiplayer-assignment)); this component allows you to easily add them to your project. For example, this way a facilitator could make the end user assignments to worlds in your project's user interface, without needing to log in to Epicenter directly.
 
 * `index.html`: The form for automatic end user assignment to worlds.
 * `assignment.css`: Styles and icons used in the form.

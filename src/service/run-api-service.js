@@ -12,13 +12,17 @@
  *
  * For example, 
  *
- *      var rs = new F.service.Run({ account: 'acme-simulations', project: 'supply-chain-game', model: 'supply_chain_game.py' });
+ *      var rs = new F.service.Run({ 
+ *            account: 'acme-simulations', 
+ *            project: 'supply-chain-game', 
+ *            model: 'supply_chain_game.py' 
+ *      });
  *      rs.create();
- *      rs.do('runModel');
+ *      rs.do('someOperation');
  *
  * Additionally, all API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below.
  *
- * Typically, you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly.
+ * The Run API Service is most useful for building an interface for a facilitator, because it makes it easy to list data across multiple runs. When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly.
  *
  *       var rm = new F.manager.RunManager({
  *           run: {
@@ -32,7 +36,7 @@
  *               // the RunManager.run contains the instantiated Run Service,
  *               // so any Run Service method is valid here
  *               var rs = rm.run;
- *               rs.do('runModel');
+ *               rs.do('someOperation');
  *       })
  *
  */
