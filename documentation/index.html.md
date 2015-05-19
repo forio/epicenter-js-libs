@@ -87,7 +87,7 @@ Provides a login form for team members and end users of your project. Includes a
 * `login.css`: Provides styling for the group selector pop over dialog.
 * `login.js`: Uses the [Authorization Manager](./generated/auth-manager/) to log in users.
 	
-The login component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/src/components/" target="_blank">GitHub</a>.
+The login component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/dist/components/" target="_blank">GitHub</a>.
 
 **Assignment Component**
 
@@ -98,7 +98,7 @@ Provides a form for automatically assigning end users to [worlds](../glossary/#w
 * `js/`: Uses the [World API Adapter](./generated/world-api-adapter/) while assigning end users to worlds. 
 * `templates/`: HTML for creating rows (read-only and editable) for the assigned users.
 
-The assignment component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/src/components/" target="_blank">GitHub</a>.
+The assignment component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/dist/components/" target="_blank">GitHub</a>.
 
 <a name="access"></a>
 ####Accessing
