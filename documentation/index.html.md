@@ -95,8 +95,7 @@ Provides a form for automatically assigning end users to [worlds](../glossary/#w
 
 * `index.html`: The form for automatic end user assignment to worlds.
 * `assignment.css`: Styles and icons used in the form.
-* `js/`: Uses the [World API Adapter](./generated/world-api-adapter/) while assigning end users to worlds. 
-* `templates/`: HTML for creating rows (read-only and editable) for the assigned users.
+* `assignment.js`: Uses the [World API Adapter](./generated/world-api-adapter/) to assign end users to worlds. 
 
 The assignment component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/dist/components/" target="_blank">GitHub</a>.
 
