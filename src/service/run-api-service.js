@@ -18,7 +18,7 @@
  *
  * Additionally, all API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below.
  *
- * Typically, you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager.
+ * Typically, you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly.
  *
  *       var rm = new F.manager.RunManager({
  *           run: {
