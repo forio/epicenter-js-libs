@@ -6,16 +6,16 @@
  *
  * To use the Run API Service, instantiate it by passing in:
  *
- * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects). 
+ * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
  * * `project`: Epicenter project id.
  * * `model`: The name of your primary model file to use in creating the run. (See more on [Writing your Model](../../../writing_your_model/).) Note that you can wait and pass this in when you use your Run Service to `create()` a run if desired.
  *
- * For example, 
+ * For example,
  *
- *      var rs = new F.service.Run({ 
- *            account: 'acme-simulations', 
- *            project: 'supply-chain-game', 
- *            model: 'supply_chain_game.py' 
+ *      var rs = new F.service.Run({
+ *            account: 'acme-simulations',
+ *            project: 'supply-chain-game',
+ *            model: 'supply_chain_game.py'
  *      });
  *      rs.create();
  *      rs.do('someOperation');
