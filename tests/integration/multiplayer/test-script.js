@@ -1,6 +1,6 @@
 'use strict';
 
-$(function() {
+$(function () {
     var server = {
         server: {
             host: 'api.forio.com'
