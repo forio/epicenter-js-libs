@@ -189,7 +189,25 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
         var baseTopic = ['/data', account, project, collection].join('/');
-        return __super.getChannel.call(this, { base: baseTopic });
+        var channel = __super.getChannel.call(this, { base: baseTopic });
+
+        //TODO: Fix after Epicenter bug is resolved
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            var callbackWithCleanData = function (payload) {
+                var meta = {
+                    path: payload.channel,
+                    subType: payload.data.subType,
+                    date: payload.data.date
+                };
+                var actualData = payload.data.data.data;
+
+                callback.call(context, actualData, meta);
+            };
+            return oldsubs.call(channel, topic, callbackWithCleanData, context, options);
+        };
+
+        return channel;
     }
 });
 

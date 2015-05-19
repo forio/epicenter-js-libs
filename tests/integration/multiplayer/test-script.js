@@ -84,10 +84,10 @@ $(function () {
             account: 'team-naren',
             project: 'multiplayer-test'
         });
-        // window.ds.save({});
+        window.ds.save({ thisExists: true });
         window.datachannel = cm.getDataChannel(collName);
-        window.datachannel.subscribe('', function (data) {
-            console.log('data changed', data);
+        window.datachannel.subscribe('', function (data, meta) {
+            console.log('data changed', data, meta);
         });
     });
 
@@ -98,6 +98,4 @@ $(function () {
         window.ds.save(params);
     });
     window.cm = cm;
-
-
 });
