@@ -68,6 +68,8 @@ var ChannelManager = function (options) {
         }
     };
     var defaultCometOptions = $.extend(true, {}, defaults, options);
+    this.currentSubscriptions = [];
+    this.options = defaultCometOptions;
 
     if (defaultCometOptions.shareConnection && ChannelManager.prototype._cometd) {
         this.cometd = ChannelManager.prototype._cometd;
@@ -79,9 +81,6 @@ var ChannelManager = function (options) {
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
 
     this.isConnected = false;
-    this.currentSubscriptions = [];
-    this.options = defaultCometOptions;
-
     var connectionBroken = function (message) {
         $(this).trigger('disconnect', message);
     };
