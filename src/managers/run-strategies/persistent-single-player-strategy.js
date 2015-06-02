@@ -4,6 +4,7 @@ var classFrom = require('../../util/inherit');
 var IdentityStrategy = require('./identity-strategy');
 var StorageFactory = require('../../store/store-factory');
 var StateApi = require('../../service/state-api-adapter');
+var AuthManager = require('../auth-manager');
 
 var keyNames = require('../key-names');
 
@@ -20,6 +21,7 @@ var Strategy = classFrom(IdentityStrategy, {
         this.runOptions = this.options.run;
         this._store = new StorageFactory(this.options.store);
         this.stateApi = new StateApi();
+        this._auth = new AuthManager();
 
         this._loadAndCheck = this._loadAndCheck.bind(this);
         this._restoreRun = this._restoreRun.bind(this);

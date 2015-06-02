@@ -32,7 +32,7 @@ In most cases you'll work with the managers directly:
 * [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
 * [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
 * [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users.
-* [Epicenter Channel Manager](./generated/epicenter-channel-manager/) (and the underlying [Channel Manager](./generated/channel-manager/)): Once you've created "[worlds](../glossary/#world)" with the World Manager, you often want to end users in each world to be able to communicate: to talk with each other (e.g. a user-to-user chat feature), or to receive updates when something changes in their world (e.g. variables associated with their shared run are updated). The Epicenter Channel Manager provides a publish/subscribe channel using cometd.
+* [Epicenter Channel Manager](./generated/epicenter-channel-manager/) (and the underlying [Channel Manager](./generated/channel-manager/)): Once you've created "[worlds](../glossary/#world)" with the World Manager, you often want end users in each world to be able to communicate: to talk with each other (e.g. a user-to-user chat feature), or to receive updates when something changes in their world (e.g. variables associated with their shared run are updated). The Epicenter Channel Manager provides a publish/subscribe channel using cometd.
 
 
 Although in most cases you'll work with the managers directly, the services are also available if you just want to communicate with the underlying [RESTful APIs](../rest_apis/):
@@ -79,13 +79,25 @@ into any of your [interface](../creating_your_interface/) files (e.g. .html and 
 
 In addition to the epicenter.js library itself, the Epicenter JS Libs project also includes reusable components. These HTML, CSS, and JS files are templates you can use to perform common actions. They can be copied directly to your project, often without modification.
 
-* **Login Component**: Provides a login form for team members and end users of your project. Includes a group selector for end users that are members of multiple groups.
-	* `index.html`: The login form.
-	* `login.css`: Provides styling for the group selector pop over dialog.
-	* `login.js`: Uses the [Authorization Manager](./generated/auth-manager/) to log in users.
-	
-The login component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/src/components/" target="_blank">GitHub</a>.
+**Login Component**
 
+Provides a login form for team members and end users of your project. Includes a group selector for end users that are members of multiple groups.
+
+* `index.html`: The login form.
+* `login.css`: Provides styling for the group selector pop over dialog.
+* `login.js`: Uses the [Authorization Manager](./generated/auth-manager/) to log in users.
+	
+The login component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/dist/components/" target="_blank">GitHub</a>.
+
+**Assignment Component**
+
+Provides an interface to automatically assign end users to [worlds](../glossary/#world), for multiplayer projects. Includes the ability to set the number of end users per world, assign and unassign end users, and mark certain end users as inactive (e.g. if they are not present on the day the simulation game play is occurring). These features are all available within the Epicenter interface (see [Multiplayer Settings](../updating_your_settings/#multiplayer) and [Multiplayer Assignment](../groups_and_end_users/#multiplayer-assignment)); this component allows you to easily add them to your project. For example, this way a facilitator could make the end user assignments to worlds in your project's user interface, without needing to log in to Epicenter directly.
+
+* `index.html`: The form for automatic end user assignment to worlds.
+* `assignment.css`: Styles and icons used in the form.
+* `assignment.js`: Uses the [World API Adapter](./generated/world-api-adapter/) to assign end users to worlds. 
+
+The assignment component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/dist/components/" target="_blank">GitHub</a>.
 
 <a name="access"></a>
 ####Accessing

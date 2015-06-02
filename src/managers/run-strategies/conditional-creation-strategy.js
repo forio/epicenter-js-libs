@@ -48,9 +48,9 @@ var Strategy = classFrom(Base, {
 
     reset: function (runServiceOptions) {
         var _this = this;
-        var session = this._auth.getCurrentUserSessionInfo();
+        var userSession = this._auth.getCurrentUserSessionInfo();
         var opt = $.extend({
-            scope: { group: session.groupId }
+            scope: { group: userSession.groupId }
         }, this.runOptions);
 
         return this.run
@@ -64,21 +64,21 @@ var Strategy = classFrom(Base, {
     },
 
     getRun: function () {
-        var session = this._auth.getCurrentUserSessionInfo();
+        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
 
-        if (session && session.runId) {
-            return this._loadAndCheck(session);
+        if (runSession && runSession.runId) {
+            return this._loadAndCheck(runSession);
         } else {
             return this.reset();
         }
     },
 
-    _loadAndCheck: function (session) {
+    _loadAndCheck: function (runSession) {
         var shouldCreate = false;
         var _this = this;
 
         return this.run
-            .load(session.runId, null, {
+            .load(runSession.runId, null, {
                 success: function (run, msg, headers) {
                     shouldCreate = _this.condition.call(_this, run, headers);
                 }

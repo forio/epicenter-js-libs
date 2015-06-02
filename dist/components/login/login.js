@@ -60,7 +60,7 @@ $(function () {
         var project = $('#project').val() || fromUrl.project;
         var groupId = ($('#groupId').length ? $('#groupId') : $('<input type="hidden" id="groupId">').appendTo(form)).val();
 
-        $('button', form).prop('disabled', 'disabled').addClass('disabled');
+        $('button', form).attr('disabled', 'disabled').addClass('disabled');
         $('#login-message').text('').hide();
 
         if (!account) {
@@ -88,7 +88,7 @@ $(function () {
                 showError('Unknown error occured. Please try again. (' + error.status + ')', error.status);
             }
 
-            $('button', form).removeProp('disabled').removeClass('disabled');
+            $('button', form).removeAttr('disabled').removeClass('disabled');
         })
         .then(function () {
             window.location = action;
