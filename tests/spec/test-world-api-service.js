@@ -116,6 +116,35 @@
             });
         });
 
+        describe('#load()', function () {
+            it('should do an GET', function () {
+                var ws = createWorldAdapter({ filter: 'abc1' });
+                ws.load();
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+            });
+
+            it('should take in a world id and query the server', function () {
+                var ws = createWorldAdapter();
+                ws.load('abc1');
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/multiplayer/world/abc1/');
+            });
+            it('should load a world without any filters if originally provided', function () {
+                var ws = createWorldAdapter({ filter: 'abc1' });
+                ws.load();
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/multiplayer/world/abc1/');
+            });
+            it('should throw an error if no worldid provide', function () {
+                var ws = createWorldAdapter();
+                var ret = function () { ws.load(); };
+                ret.should.throw(Error);
+            });
+        });
         describe('getWorldsForUser', function () {
             it('should call GET on the World API with the user paramter', function () {
                 createWorldAdapter({ group: '123' })

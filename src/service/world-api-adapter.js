@@ -341,8 +341,8 @@ module.exports = function (config) {
             if (!serviceOptions.filter) {
                 throw new Error('Please provide a worldid to load');
             }
-            var httpOptions = $.extend(true, {}, serviceOptions, options,  { url: urlConfig.getAPIPath(apiEndpoint) + '/' + worldId });
-            return http.get(worldId, httpOptions);
+            var httpOptions = $.extend(true, {}, serviceOptions, options,  { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/' });
+            return http.get('', httpOptions);
         },
 
         /**
