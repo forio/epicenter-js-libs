@@ -43,9 +43,36 @@
             it('should take group name from session if not provided in options', function () {
 
             });
-            //TODO: Find a better mocking solution so I don't have to recreate Channel
         });
-
-
+        describe('#getUserChannel', function () {
+            it('should throw an error if world id not provided', function () {
+                var manager = new Manager();
+                var ret =  function () { manager.getUserChannel(); };
+                ret.should.throw(Error);
+            });
+            it('should take account and project from options', function () {
+                // var manager = new Manager({
+                //     account: 'accnt',
+                //     project: 'prj'
+                // });
+                // var wc = manager.getDataChannel('colln');
+                // wc.channelOptions.base.getUserChannel.equal('/users/accnt/prj/colln');
+            });
+        });
+        describe('#getDataChannel', function () {
+            it('should throw an error if collection not provided', function () {
+                var manager = new Manager();
+                var ret =  function () { manager.getDataChannel(); };
+                ret.should.throw(Error);
+            });
+            it('should take account and project from options', function () {
+                var manager = new Manager({
+                    account: 'accnt',
+                    project: 'prj'
+                });
+                var wc = manager.getDataChannel('colln');
+                wc.channelOptions.base.should.equal('/data/accnt/prj/colln');
+            });
+        });
     });
 }());
