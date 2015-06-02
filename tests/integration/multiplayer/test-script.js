@@ -85,8 +85,8 @@ $(function () {
             project: 'multiplayer-test'
         });
         window.ds.save({ thisExists: true });
-        window.datachannel = cm.getDataChannel(collName);
-        window.datachannel.subscribe('', function (data, meta) {
+        window.datachannel = cm.getDataChannel();
+        window.datachannel.subscribe('collName', function (data, meta) {
             console.log('data changed', data, meta);
         });
     });

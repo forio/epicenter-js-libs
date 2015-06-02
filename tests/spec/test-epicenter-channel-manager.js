@@ -3,7 +3,6 @@
 
     var Manager = F.manager.ChannelManager;
     describe('Epicenter ChannelManager', function () {
-        var cm;
         var oldCometd;
         var mockCometd = function () {
             return {
@@ -18,12 +17,12 @@
         before(function () {
             oldCometd = $.Cometd;
             $.Cometd = mockCometd;
-            cm = new Manager({
-                url: 'http://test.com'
-            });
         });
         after(function () {
            $.Cometd = oldCometd;
+        });
+        afterEach(function () {
+            Manager.prototype._cometd = null;
         });
 
         describe('#getWorldChannel', function () {

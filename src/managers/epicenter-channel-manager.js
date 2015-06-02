@@ -167,11 +167,11 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @param  {String} `groupName` (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      */
     getUserChannel: function (world, user, groupName) {
-        var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
         var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
+        var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
         userid = getFromSettingsOrSessionOrError(userid, 'userId');
         groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
 
