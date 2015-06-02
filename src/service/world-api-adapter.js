@@ -330,6 +330,22 @@ module.exports = function (config) {
         },
 
         /**
+         * Load information for a specific world. All further calls to the world service will use the id provided.
+         * @param  {String} The `id` of the world to load
+         * @param {object} `options` (Optional) Options object to override global options.
+         */
+        load: function (worldId, options) {
+            if (worldId) {
+                serviceOptions.filter = worldId;
+            }
+            if (!serviceOptions.filter) {
+                throw new Error('Please provide a worldid to load');
+            }
+            var httpOptions = $.extend(true, {}, serviceOptions, options,  { url: urlConfig.getAPIPath(apiEndpoint) + '/' + worldId });
+            return http.get(worldId, httpOptions);
+        },
+
+        /**
         * Adds an end user or list of end users to a given world. The end user must be a member of the `group` that is associated with this world.
         *
         *  **Example**
