@@ -69,12 +69,11 @@ var ChannelManager = function (options) {
     };
     var defaultCometOptions = $.extend(true, {}, defaults, options);
 
-    var cometd;
     if (defaultCometOptions.shareConnection && ChannelManager.prototype._cometd) {
-        cometd = ChannelManager.prototype._cometd;
-    } else {
-        cometd = new $.Cometd();
+        this.cometd = ChannelManager.prototype._cometd;
+        return this;
     }
+    var cometd = new $.Cometd();
     ChannelManager.prototype._cometd = cometd;
 
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
