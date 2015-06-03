@@ -68,6 +68,12 @@ $(function () {
         worldChannel.subscribe('', function () {
            console.log('stuff', arguments);
         });
+
+        var presenceChannel = cm.getPresenceChannel(worldObject);
+        presenceChannel.on('presence', function (evt, notification) {
+            console.log('online', notification);
+        });
+
         window.wc = worldChannel;
     });
     worldManager.getCurrentRun().then(function (runObject, runservice) {

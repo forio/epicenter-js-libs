@@ -177,6 +177,41 @@ Channel.prototype = $.extend(Channel.prototype, {
     unsubscribe: function (token) {
         this.channelOptions.transport.unsubscribe(token);
         return token;
+    },
+
+    /**
+     * Start listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/on/.
+     *
+     * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
+     *
+     * **Parameters**
+     *
+     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
+     */
+    on: function () {
+        $(this).on.apply($(this), arguments);
+    },
+
+    /**
+     * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
+     *
+     * **Parameters**
+     *
+     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
+     */
+    off: function () {
+        $(this).off.apply($(this), arguments);
+    },
+
+    /**
+     * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
+     *
+     * **Parameters**
+     *
+     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
+     */
+    trigger: function () {
+        $(this).trigger.apply($(this), arguments);
     }
 
 });
