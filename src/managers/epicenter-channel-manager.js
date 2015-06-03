@@ -202,25 +202,19 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         channel.subscribe('internal-ping-channel', function (notification) {
             var incomingUserId = notification.data.user;
             if (!lastPingTime[incomingUserId] && incomingUserId !== userid) {
-                // console.log('notification from ', userid);
-                channel.publish('presence', { user: incomingUserId, online: true, state: lastPingTime });
+                channel.trigger.call(channel, 'online', { user: incomingUserId });
             }
             lastPingTime[incomingUserId] = (new Date()).valueOf();
         });
 
         setInterval(function () {
-            // console.log('publishing', userid);
             channel.publish('internal-ping-channel', { user: userid });
-        }, PING_INTERVAL);
 
-        setInterval(function () {
-            // console.log(lastPingTime, 'last ping time');
             $.each(lastPingTime, function (key, value) {
                 var now = (new Date()).valueOf();
                 if (value && value + (PING_INTERVAL * 2) < now) {
-                    // console.log(' is marking ', key, ' offline', (value - now), value);
                     lastPingTime[key] = null;
-                    channel.publish('presence', { user: key, online: false });
+                    channel.trigger.call(channel, 'offline', { user: key });
                 }
             });
         }, PING_INTERVAL);

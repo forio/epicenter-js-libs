@@ -70,8 +70,11 @@ $(function () {
         });
 
         var presenceChannel = cm.getPresenceChannel(worldObject);
-        presenceChannel.subscribe('presence', function (notification) {
-            console.log('presc', notification.data);
+        presenceChannel.on('online', function (evt, notification) {
+            console.log('online', notification);
+        });
+        presenceChannel.on('offline', function (evt, notification) {
+            console.log('offline', notification);
         });
 
         window.wc = worldChannel;
