@@ -39,8 +39,6 @@ var ChannelManager = function (options) {
         throw new Error('Please provide an url for the cometd server');
     }
 
-    var cometd = new $.Cometd();
-
     var defaults = {
         /**
          * The Cometd endpoint URL.
@@ -58,6 +56,11 @@ var ChannelManager = function (options) {
         websocketEnabled: false,
 
         /**
+         * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true to re-use the same connection across instances.
+         */
+        shareConnection: true,
+
+        /**
          * Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
          */
         channel: {
@@ -65,13 +68,19 @@ var ChannelManager = function (options) {
         }
     };
     var defaultCometOptions = $.extend(true, {}, defaults, options);
+    this.currentSubscriptions = [];
+    this.options = defaultCometOptions;
+
+    if (defaultCometOptions.shareConnection && ChannelManager.prototype._cometd) {
+        this.cometd = ChannelManager.prototype._cometd;
+        return this;
+    }
+    var cometd = new $.Cometd();
+    ChannelManager.prototype._cometd = cometd;
 
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
 
     this.isConnected = false;
-    this.currentSubscriptions = [];
-    this.options = defaultCometOptions;
-
     var connectionBroken = function (message) {
         $(this).trigger('disconnect', message);
     };

@@ -3,10 +3,12 @@
 
     var Manager = F.manager.ChannelManager;
     describe('ChannelManager', function () {
-        var cm;
         var oldCometd;
         var mockCometd = function () {
+            var i = Math.random();
+
             return {
+                i: i,
                 addListener: sinon.spy(),
                 batch: sinon.spy(),
                 configure: sinon.spy(),
@@ -18,14 +20,28 @@
         before(function () {
             oldCometd = $.Cometd;
             $.Cometd = mockCometd;
-            cm = new Manager({
-                url: 'http://test.com'
-            });
         });
         after(function () {
            $.Cometd = oldCometd;
         });
+        afterEach(function () {
+            Manager.prototype._cometd = null;
+        });
 
+        describe('#shareConnection', function () {
+            it('should re-use cometd instances by default', function () {
+                var manager1 = new Manager();
+                var manager2 = new Manager();
+
+                (manager1.cometd.i).should.equal(manager2.cometd.i);
+            });
+            it('should not re-use cometd instances if shareConnection is not set', function () {
+                var manager1 = new Manager({ shareConnection: false });
+                var manager2 = new Manager({ shareConnection: false });
+
+                (manager1.cometd.i).should.not.equal(manager2.cometd.i);
+            });
+        });
         describe('#getChannel', function () {
             it('should take in a string channel', function () {
                 //TODO: Find a better mocking solution so I don't have to recreate Channel

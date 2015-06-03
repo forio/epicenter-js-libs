@@ -3,7 +3,6 @@
 
     var Manager = F.manager.ChannelManager;
     describe('Epicenter ChannelManager', function () {
-        var cm;
         var oldCometd;
         var mockCometd = function () {
             return {
@@ -18,16 +17,61 @@
         before(function () {
             oldCometd = $.Cometd;
             $.Cometd = mockCometd;
-            cm = new Manager({
-                url: 'http://test.com'
-            });
         });
         after(function () {
            $.Cometd = oldCometd;
         });
+        afterEach(function () {
+            Manager.prototype._cometd = null;
+        });
 
         describe('#getWorldChannel', function () {
-            //TODO: Find a better mocking solution so I don't have to recreate Channel
+            it('should throw an error if world id not provided', function () {
+                var manager = new Manager();
+                var ret =  function () { manager.getWorldChannel(); };
+                ret.should.throw(Error);
+            });
+            it('should take group name from options if provided', function () {
+                var manager = new Manager({
+                    account: 'accnt',
+                    project: 'prj'
+                });
+                var wc = manager.getWorldChannel('worldid', 'grpName');
+                wc.channelOptions.base.should.equal('/world/accnt/prj/grpName/worldid');
+            });
+            it('should take group name from session if not provided in options', function () {
+
+            });
+        });
+        describe('#getUserChannel', function () {
+            it('should throw an error if world id not provided', function () {
+                var manager = new Manager();
+                var ret =  function () { manager.getUserChannel(); };
+                ret.should.throw(Error);
+            });
+            it('should take account and project from options', function () {
+                // var manager = new Manager({
+                //     account: 'accnt',
+                //     project: 'prj'
+                // });
+                // var wc = manager.getDataChannel('colln');
+                // wc.channelOptions.base.getUserChannel.equal('/users/accnt/prj/colln');
+            });
+        });
+        describe('#getDataChannel', function () {
+            it('should throw an error if collection not provided', function () {
+                var manager = new Manager();
+                var ret =  function () { manager.getDataChannel(); };
+                ret.should.throw(Error);
+            });
+            it('should take account and project from options', function () {
+                var manager = new Manager({
+                    account: 'accnt',
+                    project: 'prj'
+                });
+                var wc = manager.getDataChannel('colln');
+                wc.channelOptions.base.should.equal('/data/accnt/prj/colln');
+            });
         });
     });
 }());

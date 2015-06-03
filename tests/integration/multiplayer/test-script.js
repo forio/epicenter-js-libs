@@ -1,6 +1,6 @@
 'use strict';
 
-$(function() {
+$(function () {
     var server = {
         server: {
             host: 'api.forio.com'
@@ -52,6 +52,8 @@ $(function() {
         });
     });
 
+
+
     var worldManager = new F.manager.WorldManager({
         run: $.extend({}, {
             account: 'team-naren',
@@ -73,7 +75,27 @@ $(function() {
        window.rs = runservice;
     });
 
+    window.datachannel = null;
+    window.ds = null;
+    $('#btnCreateCollection').click(function () {
+        var collName = $('#txtCollName').val().trim();
+        window.ds = new F.service.Data({
+            root: collName,
+            account: 'team-naren',
+            project: 'multiplayer-test'
+        });
+        window.ds.save({ thisExists: true });
+        window.datachannel = cm.getDataChannel();
+        window.datachannel.subscribe('collName', function (data, meta) {
+            console.log('data changed', data, meta);
+        });
+    });
+
+    $('#btnAddToCollection').click(function () {
+        var key = 'some-key-' + Math.round(Math.random() * 100);
+        var params = {};
+        params[key] = { test: true };
+        window.ds.save(params);
+    });
     window.cm = cm;
-
-
 });
