@@ -182,6 +182,52 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
+    getPresenceChannel: function (world, userid, groupName) {
+        var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
+        if (!worldid) {
+            throw new Error('Please specify a world id');
+        }
+        userid = getFromSettingsOrSessionOrError(userid, 'userId');
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+
+        var account = getFromSettingsOrSessionOrError('', 'account', this.options);
+        var project = getFromSettingsOrSessionOrError('', 'project', this.options);
+
+        var baseTopic = ['/users', account, project, groupName, worldid].join('/');
+        var channel = __super.getChannel.call(this, { base: baseTopic });
+
+        var lastPingTime = { };
+
+        var PING_INTERVAL = 6000;
+        channel.subscribe('internal-ping-channel', function (notification) {
+            var incomingUserId = notification.data.user;
+            if (!lastPingTime[incomingUserId] && incomingUserId !== userid) {
+                // console.log('notification from ', userid);
+                channel.publish('presence', { user: incomingUserId, online: true, state: lastPingTime });
+            }
+            lastPingTime[incomingUserId] = (new Date()).valueOf();
+        });
+
+        setInterval(function () {
+            // console.log('publishing', userid);
+            channel.publish('internal-ping-channel', { user: userid });
+        }, PING_INTERVAL);
+
+        setInterval(function () {
+            // console.log(lastPingTime, 'last ping time');
+            $.each(lastPingTime, function (key, value) {
+                var now = (new Date()).valueOf();
+                if (value && value + (PING_INTERVAL * 2) < now) {
+                    // console.log(' is marking ', key, ' offline', (value - now), value);
+                    lastPingTime[key] = null;
+                    channel.publish('presence', { user: key, online: false });
+                }
+            });
+        }, PING_INTERVAL);
+
+        return channel;
+    },
+
     getDataChannel: function (collection) {
         if (!collection) {
             throw new Error('Please specify a collection to listen on.');
