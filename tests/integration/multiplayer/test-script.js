@@ -90,9 +90,9 @@ $(function () {
             account: 'team-naren',
             project: 'multiplayer-test'
         });
-        window.ds.save({ thisExists: true });
-        window.datachannel = cm.getDataChannel();
-        window.datachannel.subscribe('collName', function (data, meta) {
+        window.ds.save({ thisExists: true , val: 'Chinese (汉语 / 漢語; Hànyǔ or 中文; Zhōngwén'});
+        window.datachannel = cm.getDataChannel(collName);
+        window.datachannel.subscribe('', function (data, meta) {
             console.log('data changed', data, meta);
         });
     });
@@ -100,7 +100,7 @@ $(function () {
     $('#btnAddToCollection').click(function () {
         var key = 'some-key-' + Math.round(Math.random() * 100);
         var params = {};
-        params[key] = { test: true };
+        params[key] = { test: true, val: $('#txtTextForData').val() || 'test' };
         window.ds.save(params);
     });
     window.cm = cm;
