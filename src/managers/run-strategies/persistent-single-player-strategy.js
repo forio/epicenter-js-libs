@@ -32,7 +32,7 @@ var Strategy = classFrom(IdentityStrategy, {
     reset: function (runServiceOptions) {
         var session = this._auth.getCurrentUserSessionInfo();
         var opt = $.extend({
-            scope: { group: session.groupId }
+            scope: { group: session.groupName }
         }, this.runOptions);
 
         return this.run
