@@ -30,8 +30,8 @@
 
         describe('#shareConnection', function () {
             it('should re-use cometd instances by default', function () {
-                var manager1 = new Manager();
-                var manager2 = new Manager();
+                var manager1 = new Manager({ shareConnection: true });
+                var manager2 = new Manager({ shareConnection: true });
 
                 (manager1.cometd.i).should.equal(manager2.cometd.i);
             });
