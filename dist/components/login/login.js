@@ -88,7 +88,7 @@ $(function () {
                 showError('Unknown error occured. Please try again. (' + error.status + ')', error.status);
             }
 
-            $('button', form).removeAttr('disabled').removeClass('disabled');
+            $('button', form).attr('disabled', null).removeClass('disabled');
         })
         .then(function () {
             window.location = action;

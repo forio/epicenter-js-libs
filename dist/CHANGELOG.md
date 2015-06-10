@@ -1,3 +1,33 @@
+<a name="1.5.0"></a>
+## 1.5.0 (2015-06-10)
+
+Features:
+- The World Service now has a `load` method, similar to the `Run` and `Data` services.
+
+- We now have a 'presence channel' to get online/offline notifications for multiplayer worlds. Usage:
+``` javascript
+var presenceChannel = cm.getPresenceChannel(worldObject);
+presenceChannel.on('presence', function (evt, notification) {
+    console.log(notification); //Notification will be an object with { userId: StringID, online: Boolean }
+});
+```
+
+This is currently implemented all client-side, and data will be correct to within 24 seconds. An upcoming epicenter update will make this happen much faster.
+
+- You can now subscribe to Data API updates through the cometd channel. Usage:
+
+```
+var datachannel = cm.getDataChannel(collectionName);
+datachannel.subscribe('', function (data, meta) {
+    //data is the actual content added, meta  is of the form {path: nestedPathOfContentAdded, subType: 'new/update/delete', date: date}
+date
+}
+```
+You can only subscribe to top-level items (i.e. collections) currently, so the first parameter to `subscribe` should always be blank.
+
+Bugs:
+- RunManager: Fixed a bug with invalid session-cookie-names with the Persistent Single Player strategy
+
 <a name="1.4.2"></a>
 ### 1.4.2 (2015-05-15)
 Bug Fixes:
