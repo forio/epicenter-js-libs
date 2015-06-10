@@ -91,7 +91,7 @@
 
                 var req = server.requests.pop();
                 expect(req.method).to.equal('POST');
-                expect(JSON.parse(req.requestBody).scope).to.eql({ group: 'group123' });
+                expect(JSON.parse(req.requestBody).scope).to.eql({ group: cookieContents.groupName });
 
             });
         });
