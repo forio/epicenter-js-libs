@@ -23,7 +23,7 @@
 *   * `userName`: Email or username to use for logging in.
 *   * `password`: Password for specified `userName`.
 *   * `project`: The **Project ID** for the project to log this user into. Optional.
-*   * `group`: Name of the group to which `userName` belongs. Required for end users if the `project` is specified.
+*   * `groupId`: Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
 *
 * If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
 */
@@ -112,7 +112,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *       authMgr.login()
     *           .then(function(authAdapter) {
     *               // if enduser1 belongs to exactly one group
-    *               // (or if the login() call is modified to include the group)
+    *               // (or if the login() call is modified to include the group id)
     *               // continue here
     *           })
     *           .fail(function(authAdapter) {
@@ -128,7 +128,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     * @param {string} `options.userName` Email or username to use for logging in.
     * @param {string} `options.password` Password for specified `userName`.
     * @param {string} `options.project` (Optional) The **Project ID** for the project to log this user into.
-    * @param {string} `options.group` Name of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified, and for end users that are members of multiple [groups](../../../glossary/#groups), otherwise optional.
+    * @param {string} `options.groupId` The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified, and for end users that are members of multiple [groups](../../../glossary/#groups), otherwise optional. To find the group id: From your project home page within Epicenter ((Dashboard > [Team Name] > [Project Name])), select Groups, then select a group name to see a list of end users in the group. The URL for this page has the pattern: `https://forio.com/epicenter/{team id}/{project id}/groups/{group id}`. 
     */
     login: function (options) {
         var _this = this;
