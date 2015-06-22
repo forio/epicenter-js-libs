@@ -125,7 +125,7 @@ module.exports = function (options) {
         * **Example**
         *
         *       var wMgr = new F.manager.WorldManager()
-        *       wMgr.getCurrentRun()
+        *       wMgr.getCurrentRun({model: 'myModel.py'})
         *           .then(function(run, runService) {
         *               console.log(run.id);
         *               runService.do('runModel');
