@@ -18,7 +18,7 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 	* [Examples of usage: Callbacks and promises](#example)
 	* [Configuration options](#configuration)
 
-**The current version of Epicenter.js is 1.4**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
+**The current version of Epicenter.js is 1.5**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
 
 <a name="concepts"></a>
 ###Concepts in Epicenter.js
@@ -54,7 +54,7 @@ Although in most cases you'll work with the managers directly, the services are 
 
 **Epicenter.js**
 
-The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.4.0/epicenter.min.js</a>. To use it in your project, simply add
+The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.5.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.5.0/epicenter.min.js</a>. To use it in your project, simply add
 
     <script src="https://forio.com/tools/js-libs/1.4.0/epicenter.min.js"></script>
 
@@ -64,13 +64,13 @@ into any of your [interface](../creating_your_interface/) files (e.g. .html and 
 
 The epicenter.js library depends on jQuery, so you'll also need to download jQuery for yourself, or use a hosted version. To use a hosted version, add
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
 **Extensions**
 
-If you are building a [multiplayer game](../glossary/#world), you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
+If you are building a [multiplayer game](../glossary/#world), you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/1.5.0/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
 
-	<script src="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js"></script>
+	<script src="https://forio.com/tools/js-libs/1.5.0/epicenter-multiplayer-dependencies.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
