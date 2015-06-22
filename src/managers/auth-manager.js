@@ -209,7 +209,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
-                    handleGroupError('This account is associated with more that one group. Please specify a group id to log into and try again', 403, data);
+                    handleGroupError('This user is associated with more that one group. Please specify a group id to log into and try again', 403, data);
                 }
             }).fail($d.reject);
         };
