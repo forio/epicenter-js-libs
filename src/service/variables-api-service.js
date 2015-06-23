@@ -55,7 +55,10 @@ module.exports = function (config) {
          *
          * **Example**
          *
-         *      vs.load('sample_int');
+         *      vs.load('sample_int')
+         *          .then(function(val){
+         *              // val contains the value of sample_int
+         *          });
          *
          * **Parameters**
          * @param {String} `variable` Name of variable to load.
@@ -74,7 +77,11 @@ module.exports = function (config) {
          *
          * **Example**
          *
-         *      vs.query(['price', 'sales']);
+         *      vs.query(['price', 'sales'])
+         *          .then(function(val) {
+         *              // val is an object with the values of the requested variables: val.price, val.sales
+         *          });
+         *
          *      vs.query({ include:['price', 'sales'] });
          *
          * **Parameters**
