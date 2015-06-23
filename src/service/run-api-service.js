@@ -8,17 +8,17 @@
  *
  * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
  * * `project`: Epicenter project id.
- * * `model`: The name of your primary model file to use in creating the run. (See more on [Writing your Model](../../../writing_your_model/).) Note that you can wait and pass this in when you use your Run Service to `create()` a run if desired.
  *
  * For example,
  *
  *      var rs = new F.service.Run({
  *            account: 'acme-simulations',
  *            project: 'supply-chain-game',
- *            model: 'supply_chain_game.py'
  *      });
- *      rs.create();
- *      rs.do('someOperation');
+ *      rs.create('supply_chain_game.py').then(function(run) {
+ *             rs.do('someOperation');
+ *      });
+ *      
  *
  * Additionally, all API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below.
  *
@@ -32,7 +32,7 @@
  *           }
  *       });
  *       rm.getRun()
- *           .then(function() {
+ *           .then(function(run) {
  *               // the RunManager.run contains the instantiated Run Service,
  *               // so any Run Service method is valid here
  *               var rs = rm.run;
@@ -253,11 +253,15 @@ module.exports = function (config) {
          *
          * **Examples**
          *
+         *     // add 'completed' field to run record
          *     rs.save({ completed: true });
+         *
+         *     // update 'saved' field of run record, and update values of model variables for this run 
          *     rs.save({ saved: true, variables: { a: 23, b: 23 } });
          *
          * **Parameters**
-         * @param {Object} `attributes` The run data and variables to save. Model variables must be included in a `variables` field within the `attributes` object (otherwise they are treated as run data and added to the run record directly).
+         * @param {Object} `attributes` The run data and variables to save. 
+         * @param {Object{ `attributes.variables` Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         save: function (attributes, options) {
