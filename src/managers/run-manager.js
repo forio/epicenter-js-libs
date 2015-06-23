@@ -37,7 +37,7 @@
 *       });
 *       rm.getRun()
 *           .then(function(run) {
-*               // the return value of getRun() is an instance of Run Service
+*               // the return value of getRun() is a run object
 *               var thisRunId = run.id;
 *               // the RunManager.run also contains the instantiated Run Service,
 *               // so any Run Service method is valid here
@@ -119,7 +119,7 @@ RunManager.prototype = {
      *          var thisRunId = run.id;
      *
      *          // use the Run Service object
-     *          run.do('runModel');
+     *          rm.run.do('runModel');
      *      });
      *
      * **Parameters**
@@ -138,8 +138,9 @@ RunManager.prototype = {
      *      rm.reset().then(function (run) {
      *          // use the (new) run object
      *          var thisRunId = run.id;
+     *
      *          // use the Run Service object
-     *          run.do('runModel');
+     *          rm.run.do('runModel');
      *      });
      *
      * **Parameters**
