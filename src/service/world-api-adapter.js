@@ -171,7 +171,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Updates a World, for example to add the roles to the world.
+        * Updates a World, for example to replace the roles in the world.
         *
         * Typically, you complete world configuration at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both. However, this method is available if you need to update the configuration of a particular world.
         *
@@ -181,7 +181,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create();
+        *      wa.create()
         *           .then(function(world) {
         *               wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
         *           });
@@ -220,7 +220,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create();
+        *      wa.create()
         *           .then(function(world) {
         *               wa.delete();
         *           });
@@ -267,7 +267,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create();
+        *      wa.create()
         *           .then(function(world) {
         *               // lists all worlds in group "team1"
         *               wa.list();
@@ -303,7 +303,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create();
+        *      wa.create()
         *           .then(function(world) {
         *               wa.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
         *           });
@@ -354,7 +354,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create();
+        *      wa.create()
         *           .then(function(world) {
         *               // add one user
         *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
@@ -431,7 +431,10 @@ module.exports = function (config) {
         *           project: 'supply-chain-game',
         *           group: 'team1' });
         *
-        *      wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        *      wa.create().then(function(world) {
+        *           wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *           wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        *      });
         *
         * **Parameters**
         * @param {object} `user` User object with `userId` and the new `role`.
@@ -465,12 +468,9 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create();
+        *      wa.create()
         *           .then(function(world) {
-        *               wa.addUsers(
-        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44' },
-        *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee' }
-        *               );
+        *               wa.addUsers(['a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', '8f2604cf-96cd-449f-82fa-e331530734ee']);
         *               wa.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
         *               wa.removeUser({ userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
         *           });
@@ -512,7 +512,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create();
+        *      wa.create()
         *           .then(function(world) {
         *               wa.getCurrentRunId({ model: 'model.py' });
         *           });
@@ -545,9 +545,9 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *      wa.create();
+        *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
         *           .then(function(world) {
-        *               wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee');
+        *               // use data from world
         *           });
         *
         * ** Parameters **
@@ -615,7 +615,12 @@ module.exports = function (config) {
         *
         *  **Example**
         *
-        *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee', 'team1')
+        *      var wa = new F.service.World({
+        *           account: 'acme-simulations',
+        *           project: 'supply-chain-game',
+        *           group: 'team1' });
+        *        
+        *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
         *           .then(function (world) {
         *                   wa.newRunForWorld(world.id);
         *           });
@@ -623,6 +628,7 @@ module.exports = function (config) {
         *  **Parameters**
         * @param {string} `worldId` worldId in which we create the new run.
         * @param {object} `options` (Optional) Options object to override global options.
+        * @param {object} `options.model` The model file to use to create a run if needed.
         */
         newRunForWorld: function (worldId, options) {
             var currentRunOptions = $.extend(true, {},
