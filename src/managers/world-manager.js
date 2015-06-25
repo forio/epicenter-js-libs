@@ -3,35 +3,34 @@
 *
 * As discussed under the [World API Adapter](../world-api-adapter/), a [run](../../../glossary/#run) is a collection of end user interactions with a project and its model. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
 *
-* The [World API Adapter](../world-api-adapter/) handles creating multiplayer worlds, and adding and removing end users and runs from a world.
-*
-* The World Manager provides an easy way to track and access the current world and run for particular end users.
+* The World Manager provides an easy way to track and access the current world and run for particular end users. It is typically used in code for end user -facing pages in your project. (The related [World API Adapter](../world-api-adapter/) handles creating multiplayer worlds, and adding and removing end users and runs from a world. Because of this, typically the World Adapter is used in code for facilitator pages in your project.)
 *
 * ### Using the World Manager
 *
-* To use the World Manager, instantiate it. Then, make calls to any of the methods you need:
+* To use the World Manager, instantiate it. Then, make calls to any of the methods you need.
 *
-*       var wMgr = new F.manager.WorldManager()
-*       wMgr.getCurrentWorld();
-*       wMgr.getCurrentRun();
+* When you instantiate a World Manager, the world's account id, project id, and group are automatically taken from the session (thanks to the [Authentication Service](../auth-api-service)).
 *
 * Note that the World Manager does *not* create worlds automatically. (This is different than the [Run Manager](../run-manager).) However, you can pass in specific options to any runs created by the manager, using a `run` object.
 *
-* When you instantiate a World Manager, the world's account id, project id, and group are automatically taken from the session (thanks to the [Authentication Service](../auth-api-service)). However, you can override these by optionally passing in:
+* The arguments for creating a World Manager are:
 *
 *   * `account`: The **Team ID** in the Epicenter user interface for this project.
 *   * `project`: The **Project ID** for this project.
 *   * `group`: The **Group Name** for this world.
-*   * `run`: Options to use when creating new runs with the manager, e.g. `run: {files: ['data.xls']}`.
+*   * `run`: Options to use when creating new runs with the manager, e.g. `run: { files: ['data.xls'] }`.
+*   * `run.model`: The name of the primary model file for this project. Required if you have not already passed it in as part of the `options` parameter for an enclosing call.
 *
 * For example:
 *
 *       var wMgr = new F.manager.WorldManager({
 *          account: 'acme-simulations',
 *          project: 'supply-chain-game',
+*          run: { model: 'supply-chain.py' },
 *          group: 'team1'
 *       });
 *
+*       wMgr.getCurrentRun();
 */
 
 'use strict';
@@ -97,7 +96,6 @@ module.exports = function (options) {
         *
         * **Example**
         *
-        *       var wMgr = new F.manager.WorldManager()
         *       wMgr.getCurrentWorld()
         *           .then(function(world, worldAdapter) {
         *               console.log(world.id);
@@ -124,15 +122,14 @@ module.exports = function (options) {
         *
         * **Example**
         *
-        *       var wMgr = new F.manager.WorldManager()
         *       wMgr.getCurrentRun({model: 'myModel.py'})
         *           .then(function(run, runService) {
         *               console.log(run.id);
-        *               runService.do('runModel');
+        *               runService.do('startGame');
         *           });
         *
         * **Parameters**
-        * @param {string} `model` The name of the model file.
+        * @param {string} `model` (Optional) The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
         */
         getCurrentRun: function (model) {
             var dtd = $.Deferred();
