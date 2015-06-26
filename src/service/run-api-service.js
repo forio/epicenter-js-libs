@@ -18,7 +18,7 @@
  *      rs.create('supply_chain_game.py').then(function(run) {
  *             rs.do('someOperation');
  *      });
- *      
+ *
  *
  * Additionally, all API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below.
  *
@@ -256,11 +256,11 @@ module.exports = function (config) {
          *     // add 'completed' field to run record
          *     rs.save({ completed: true });
          *
-         *     // update 'saved' field of run record, and update values of model variables for this run 
+         *     // update 'saved' field of run record, and update values of model variables for this run
          *     rs.save({ saved: true, variables: { a: 23, b: 23 } });
          *
          * **Parameters**
-         * @param {Object} `attributes` The run data and variables to save. 
+         * @param {Object} `attributes` The run data and variables to save.
          * @param {Object{ `attributes.variables` Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */

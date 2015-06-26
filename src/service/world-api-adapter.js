@@ -619,7 +619,7 @@ module.exports = function (config) {
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
         *           group: 'team1' });
-        *        
+        *
         *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
         *           .then(function (world) {
         *                   wa.newRunForWorld(world.id);

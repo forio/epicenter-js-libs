@@ -17,7 +17,7 @@
 *       authMgr.login().then(function () {
 *           authMgr.getCurrentUserSessionInfo();
 *       });
-*       
+*
 *
 * The `options` object passed to the `F.manager.AuthManager()` call can include:
 *
