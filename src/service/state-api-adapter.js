@@ -2,7 +2,16 @@
 /**
  * ##State API Adapter
  *
- * The State API Adapter allows you to replay or clone runs
+ * The State API Adapter allows you to replay or clone runs. It brings existing, persisted run data from the database back into memory, using the same run id (`replay`) or a new run id (`clone`). Runs must be in memory in order for you to update variables or call operations on them.
+ *
+ * Specifically, the State API Adapter works by "re-running" the run (user interactions) from the creation of the run up to the time it was last persisted in the database. This process uses the current version of the run's model. Therefore, if the model has changed since the original run was created, the retrieved run will use the new model — and may end up having different values or behavior as a result. Use with care!
+ *
+ * To use the State API Adapter, instantiate it and then call its methods:
+ *
+ *      var sa = new F.service.State();
+ *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f'});
+ *
+ * The constructor takes an optional `options` parameter in which you can specify the `account` and `project` if they are not already available in the current context.
  *
  */
 
@@ -34,14 +43,18 @@ module.exports = function (config) {
 
     var publicAPI = {
         /**
-        * Replays a run to get it back into memory
+        * Replay a run. After this call, the run, with its original run id, is now available [in memory](../../../run_persistence/#runs-in-memory). (It continues to be persisted into the Epicenter database at regular intervals.)
         *
+        *  **Example**
         *
-        * **PARAMETERS**
-        * @param {object} `params` Parameters object
-        * @param {string} `params.runId` id of the run to bring back to memory
-        * @param {string} (Optional) `param.stopBefore` - the run is advanced only up to the first occurrence of that method
-        * @param {object} (Optional) `options` - Options override
+        *      var sa = new F.service.State();
+        *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
+        *
+        *  **Parameters**
+        * @param {object} `params` Parameters object.
+        * @param {string} `params.runId` The id of the run to bring back to memory.
+        * @param {string} `params.stopBefore` (Optional) The run is advanced only up to the first occurrence of this method.
+        * @param {object} `options` (Optional) Overrides for configuration options.
         */
         replay: function (params, options) {
             var replayOptions = $.extend(true, {},
@@ -56,14 +69,25 @@ module.exports = function (config) {
         },
 
         /**
-        * Clones a given run and returns a new run in the same state as the given run
+        * Clone a given run and return a new run in the same state as the given run.
         *
+        * The new run id is now available [in memory](../../../run_persistence/#runs-in-memory). The new run includes a copy of all of the data from the original run, EXCEPT:
         *
-        * **PARAMETERS**
-        * @param {object} `params` Parameters object
-        * @param {string} `params.runId` id of the run to bring back to memory
-        * @param {string} (Optional) `param.stopBefore` - the run is advanced only up to the first occurrence of that method
-        * @param {object} (Optional) `options` - Options override
+        * * The `saved` field in the new run record is not copied from the original run record. It defaults to `false`.
+        * * The `initialized` field in the new run record is not copied from the original run record. It defaults to `false` but may change to `true` as the new run is advanced. For example, if there has been a call to the `step` function (for Vensim models), the `initialized` field is set to `true`.
+        *
+        * The original run remains only [in the database](../../../run_persistence/#runs-in-db).
+        *
+        *  **Example**
+        *
+        *      var sa = new F.service.State();
+        *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
+        *
+        *  **Parameters**
+        * @param {object} `params` Parameters object.
+        * @param {string} `params.runId` The id of the run to clone from memory.
+        * @param {string} `params.stopBefore` (Optional) The run is advanced only up to the first occurrence of this method.
+        * @param {object} `options` (Optional) Overrides for configuration options.
         */
         clone: function (params, options) {
             var replayOptions = $.extend(true, {},
