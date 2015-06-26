@@ -7,7 +7,7 @@
  *
  * The Epicenter Channel Manager is a wrapper around the (more generic) [Channel Manager](../channel-manager/), to instantiate it with Epicenter-specific defaults. If you are interested in including a notification or chat feature in your project, using an Epicenter Channel Manager is probably the easiest way to get started.
  *
- * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Epicenter Channel Manager. (See [Including Epicenter.js](../../#include).)
+ * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Epicenter Channel Manager. See [Including Epicenter.js](../../#include).
  *
  * To use the Epicenter Channel Manager: instantiate it, get the channel of the scope you want ([user](../../../glossary/#users), [world](../../../glossary/#world), or [group](../../../glossary/#groups)), then use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
  *
@@ -66,9 +66,9 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
     },
 
     /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [group](../../../glossary/#groups). The group must be one of the groups in this account (team) and project.
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [group](../../../glossary/#groups). The group must be one of the groups in this team and project.
      *
-     * There are no notifications from Epicenter on this channel; all messages are user-orginated.
+     * There are no notifications from Epicenter on this channel; all messages are user-originated.
      *
      * **Example**
      *
@@ -104,9 +104,10 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
      *         project: 'supply-chain-game',
-     *         model: 'model.eqn'
+     *         group: 'team1',
+     *         run: { model: 'model.eqn' }
      *     });
-     *     worldManager.getCurrentWorld().then(function (worldObject, worldService) {
+     *     worldManager.getCurrentWorld().then(function (worldObject, worldAdapter) {
      *         var worldChannel = cm.getWorldChannel(worldObject);
      *         worldChannel.subscribe('', function (data) {
      *             console.log(data);
@@ -146,9 +147,10 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
      *         project: 'supply-chain-game',
-     *         model: 'model.eqn'
+     *         group: 'team1',
+     *         run: { model: 'model.eqn' }
      *     });
-     *     worldManager.getCurrentWorld().then(function (worldObject, worldService) {
+     *     worldManager.getCurrentWorld().then(function (worldObject, worldAdapter) {
      *         var userChannel = cm.getUserChannel(worldObject);
      *         userChannel.subscribe('', function (data) {
      *             console.log(data);
@@ -163,7 +165,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * **Parameters**
      *
      * @param  {String|Object} `world` World object or id.
-     * @param  {String|Object} `user` (Optional) User object or id. If not provided, picks up ser id from current session if end user is logged in.
+     * @param  {String|Object} `user` (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
      * @param  {String} `groupName` (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      */
     getUserChannel: function (world, user, groupName) {

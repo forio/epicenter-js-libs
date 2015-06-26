@@ -51,7 +51,7 @@ var ChannelManager = function (options) {
         logLevel: 'info',
 
         /**
-         * Whether websocket support is active. Defaults to `false`; Epicenter doesn't currently communication through websockets.
+         * Whether websocket support is active. Defaults to `false`; Epicenter doesn't currently support communication through websockets.
          */
         websocketEnabled: false,
 
