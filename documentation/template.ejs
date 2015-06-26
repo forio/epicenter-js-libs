@@ -14,28 +14,41 @@
     <? var firstTag = moduleDoc.raw.tags[0] ?>
 
 
-    ##Configuration Options
+    <? var configStart = 0 ?>
     <? doc.javadoc.forEach(function (block) { ?>
         <? if (!block.paramStr) { ?>
-            <? var methodName =  block.raw.code.split(':')[0] ?>
+            <? if (configStart === 0) { ?>
+                ##Configuration Options
 
-            ###<?= methodName ?>
-            <?= block.description ?>
+                <? configStart = 1 ?>
+            <? } ?>
+            <? var configOption =  block.raw.code.split(':')[0] ?>
+
+            ###<?= configOption ?>
 
             <? block.raw.tags.forEach(function (tag) { ?>
                 <? if (tag.type === 'type') { ?>
-                    - *<?= tag.types[0] ?>*
+                    - *<?= tag.types[0] ?>* 
                 <? } ?>
                 <? if (tag.type === 'see') { ?>
                     - See: <?= tag.local ?>
                 <? } ?>
             <? }) ?>
+
+            <?= block.description ?>
+            
         <? } ?>
     <? }) ?>
 
-    ##Methods
+    <? var methodStart = 0 ?>
     <? doc.javadoc.forEach(function (block) { ?>
         <? if (block.paramStr) { ?>
+            <? if (methodStart === 0) { ?>
+                ##Methods
+
+                <? methodStart = 1 ?>
+            <? } ?>
+
             <? var methodName =  block.raw.code.split(':')[0] ?>
 
             ###<?= methodName ?>
