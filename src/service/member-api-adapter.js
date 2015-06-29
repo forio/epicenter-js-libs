@@ -4,7 +4,7 @@
  *
  * The Member API Adapter provides methods to look up information about end users for your project and how they are divided into groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
  *
- * Typically this is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information. 
+ * Typically this is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
  *
  *      var ma = new F.service.Member({ token: 'user-or-project-access-token' });
  *      ma.getGroupsByUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
@@ -70,7 +70,7 @@ module.exports = function (config) {
     var publicAPI = {
 
         /**
-        * Retrieve details about all of the group memberships for one end user. The membership details are returned in an array, with one element (group record) for each group to which the end user belongs. 
+        * Retrieve details about all of the group memberships for one end user. The membership details are returned in an array, with one element (group record) for each group to which the end user belongs.
         *
         * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
         *
@@ -146,7 +146,7 @@ module.exports = function (config) {
         * **Example**
         *
         *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c', 
+        *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
         * **Parameters**
@@ -165,7 +165,7 @@ module.exports = function (config) {
         * **Example**
         *
         *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c', 
+        *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
         * **Parameters**
