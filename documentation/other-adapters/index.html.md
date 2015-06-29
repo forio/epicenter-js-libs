@@ -24,3 +24,5 @@ The most commonly used adapters include:
 The other, less commonly used adapters include:
 
 * [State Adapter](../generated/state-api-adapter/)
+* [User Adapter](../generated/user-api-adapter/)
+* [Member Adapter](../generated/member-api-adapter/)
