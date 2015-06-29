@@ -2,9 +2,20 @@
 /**
 * ##User API Adapter
 *
-* The user API adapter allows you to quert the /user API
+* The User API Adapter allows you to retrieve details about end users in your team (account). It is based on query capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
 *
+* To use the User API Adapter, instantiate it and then call its methods.
 *
+*       var ua = new F.service.User({
+*           account: 'acme-simulations',
+*           token: 'user-or-project-access-token'
+*       });
+*       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+*       ua.get({ userName: 'jsmith' });
+*       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+*                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+*
+* The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
 var ConfigService = require('./configuration-service');
@@ -14,11 +25,22 @@ var qutil = require('../util/query-util');
 module.exports = function (config) {
     var defaults = {
 
+        /**
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
+         * @type {String}
+         */
        account: '',
 
+        /**
+         * The access token to use when searching for end users. (See [more background on access tokens](../../../project_access/)).
+         * @type {String}
+         */
        token: '',
 
-        //Options to pass on to the underlying transport layer
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {Object}
+         */
         transport: {}
     };
 
@@ -37,6 +59,25 @@ module.exports = function (config) {
     var http = new TransportFactory(transportOptions);
 
     var publicAPI = {
+
+        /**
+        * Retrieve details about particular end users in your team, based on user name or user id.
+        *
+        * **Example**
+        *
+        *       var ua = new F.service.User({
+        *           account: 'acme-simulations',
+        *           token: 'user-or-project-access-token'
+        *       });
+        *       ua.get({ userName: 'jsmith' });
+        *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+        *
+        * **Parameters**
+        * @param {object} `filter` Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
+        * @param {object} `options` (Optional) Overrides for configuration options.
+        */
+
         get: function (filter, options) {
             options = options || {};
             filter = filter || {};
@@ -82,6 +123,22 @@ module.exports = function (config) {
                 return http.get(getFilters, getOptions);
             }
         },
+
+        /**
+        * Retrieve details about a single end user in your team, based on user id.
+        *
+        * **Example**
+        *
+        *       var ua = new F.service.User({
+        *           account: 'acme-simulations',
+        *           token: 'user-or-project-access-token'
+        *       });
+        *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+        *
+        * **Parameters**
+        * @param {string} `userId` The user id for the end user in your team.
+        * @param {object} `options` (Optional) Overrides for configuration options.
+        */
 
         getById: function (userId, options) {
             return publicAPI.get({ id: userId }, options);
