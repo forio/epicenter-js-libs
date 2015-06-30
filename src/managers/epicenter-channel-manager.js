@@ -195,9 +195,9 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *     });
      *     worldManager.getCurrentWorld().then(function (worldObject, worldService) {
      *         var presenceChannel = cm.getPresenceChannel(worldObject);
-     *         presenceChannel.subscribe('', function (data) {
-     *             console.log(data);
-     *         });
+     *         presenceChannel.on('presence', function (evt, notification) {
+     *              console.log('online', notification);
+     *          });
      *      });
      *
      *
@@ -260,6 +260,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      *     var cm = new F.manager.ChannelManager();
      *     var gc = cm.getDataChannel('survey-responses');
+     *     gc.subscribe('', function(data) { console.log(data); });
      *
      * **Return Value**
      *
