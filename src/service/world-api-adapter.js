@@ -331,8 +331,10 @@ module.exports = function (config) {
 
         /**
          * Load information for a specific world. All further calls to the world service will use the id provided.
-         * @param  {String} The `id` of the world to load
-         * @param {object} `options` (Optional) Options object to override global options.
+         *
+         * **Parameters**
+         * @param {String} `worldId` The id of the world to load.
+         * @param {Object} `options` (Optional) Options object to override global options.
          */
         load: function (worldId, options) {
             if (worldId) {
