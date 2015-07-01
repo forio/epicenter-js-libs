@@ -43,7 +43,7 @@ Although in most cases you'll work with the managers directly, the services are 
 * [Variables Service](./generated/variables-api-service/)
 * [World Adapter](./generated/world-api-adapter/)
 * [Data Service](./generated/data-api-service/)
-* [Other Adapters](./other-adapters/) are used less frequently, and include [State Adapater](./generated/state-api-adapter/), [User Adapter](./generated/user-api-adapter/)
+* [Other Adapters](./other-adapters/) are used less frequently, and include [State Adapater](./generated/state-api-adapter/), [User Adapter](./generated/user-api-adapter/), and [Member Adapter](./generated/member-api-adapter/).
 
 
 
