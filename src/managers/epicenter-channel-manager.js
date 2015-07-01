@@ -183,7 +183,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
     },
 
     /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) that automatically tracks the presence of an [end user](../../../glossary/#user), that is, whether the end user is currently online in this group and world. Notifications are automatically sent when the end user comes online, and when the end user goes offline (not present for more than 2 minutes). Useful in multiplayer games for letting each end user know whether other users in their shared world are also online. 
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) that automatically tracks the presence of an [end user](../../../glossary/#user), that is, whether the end user is currently online in this group and world. Notifications are automatically sent when the end user comes online, and when the end user goes offline (not present for more than 2 minutes). Useful in multiplayer games for letting each end user know whether other users in their shared world are also online.
      *
      * **Example**
      *
@@ -196,7 +196,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *     worldManager.getCurrentWorld().then(function (worldObject, worldService) {
      *         var presenceChannel = cm.getPresenceChannel(worldObject);
      *         presenceChannel.on('presence', function (evt, notification) {
-     *              console.log('online', notification);
+     *              console.log(notification.online, notification.userId);
      *          });
      *      });
      *
@@ -260,7 +260,14 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      *     var cm = new F.manager.ChannelManager();
      *     var gc = cm.getDataChannel('survey-responses');
-     *     gc.subscribe('', function(data) { console.log(data); });
+     *     gc.subscribe('', function(data, meta) {
+     *          console.log(data);
+     *
+     *          // meta.date is time of change,
+     *          // meta.subType is the kind of change: new, update, or delete
+     *          // meta.path is the full path to the changed data
+     *          console.log(meta);
+     *     });
      *
      * **Return Value**
      *

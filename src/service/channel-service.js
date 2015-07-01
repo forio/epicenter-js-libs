@@ -81,7 +81,7 @@ Channel.prototype = $.extend(Channel.prototype, {
 
 
     /**
-     * Subscribe to changes on a topic. 
+     * Subscribe to changes on a topic.
      *
      * The topic should include the full path of the account id (**Team ID** for team projects), project id, and group name. (In most cases, it is simpler to use the [Epicenter Channel Manager](../epicenter-channel-manager/) instead, in which case this is configured for you.)
      *
@@ -96,7 +96,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *      cs.subscribe('/acme-simulations/supply-chain-game/fall-seminar/run/*', cb);
      *
      *      // Subscribe to changes on both the top-level 'run' topic and its children
-     *      cs.subscribe(['/acme-simulations/supply-chain-game/fall-seminar/run', 
+     *      cs.subscribe(['/acme-simulations/supply-chain-game/fall-seminar/run',
      *          '/acme-simulations/supply-chain-game/fall-seminar/run/*'], cb);
      *
      *      // Subscribe to changes on a particular variable
