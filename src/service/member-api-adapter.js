@@ -2,12 +2,12 @@
  *
  * ##Member API Adapter
  *
- * The Member API Adapter provides methods to look up information about end users for your project and how they are divided into groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
+ * The Member API Adapter provides methods to look up information about end users for your project and how they are divided across groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
  *
- * Typically this is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
+ * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
  *
  *      var ma = new F.service.Member({ token: 'user-or-project-access-token' });
- *      ma.getGroupsByUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
+ *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
  *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
  */
 
@@ -77,14 +77,14 @@ module.exports = function (config) {
         * **Example**
         *
         *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.getGroupsByUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
+        *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
         *           .then(function(memberships){
         *               for (var i=0; i<memberships.length; i++) {
         *                   console.log(memberships[i].groupId);
         *               }
         *           });
         *
-        *       ma.getGroupsByUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
+        *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
         *
         * **Parameters**
         * @param {string|object} `params` The user id for the end user. Alternatively, an object with field `userId` and value the user id.
@@ -141,7 +141,7 @@ module.exports = function (config) {
         },
 
         /**
-        * Set a particular end user as `active`. Active end users are assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
+        * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
         *
         * **Example**
         *
