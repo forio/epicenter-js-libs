@@ -66,7 +66,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
     },
 
     /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [group](../../../glossary/#groups). The group must be one of the groups in this team and project.
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [group](../../../glossary/#groups). The group must exist in the account (team) and project provided.
      *
      * There are no notifications from Epicenter on this channel; all messages are user-originated.
      *
