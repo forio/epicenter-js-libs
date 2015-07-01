@@ -18,12 +18,12 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 	* [Examples of usage: Callbacks and promises](#example)
 	* [Configuration options](#configuration)
 
-**The current version of Epicenter.js is 1.4**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
+**The current version of Epicenter.js is 1.5**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
 
 <a name="concepts"></a>
 ###Concepts in Epicenter.js
 
-The epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs. 
+The Epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs. 
 
 Services encapsulate the [Epicenter REST APIs](../rest_apis/). Managers are responsible for configuring, sequencing, and synchronizing services to perform common application tasks. For example, the [Run Manager](./generated/run-manager/) lets you use different [run creation strategies](./strategy/) and returns a pre-configured [Run Service](./generated/run-api-service/) you can then use.
 
@@ -43,6 +43,7 @@ Although in most cases you'll work with the managers directly, the services are 
 * [Variables Service](./generated/variables-api-service/)
 * [World Adapter](./generated/world-api-adapter/)
 * [Data Service](./generated/data-api-service/)
+* [Other Adapters](./other-adapters/) are used less frequently, and include [State Adapater](./generated/state-api-adapter/)
 
 
 
@@ -54,15 +55,15 @@ Although in most cases you'll work with the managers directly, the services are 
 
 **Epicenter.js**
 
-The epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.4.0/epicenter.min.js</a>. To use it in your project, simply add
+The Epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.5.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.5.0/epicenter.min.js</a>. To use it in your project, simply add
 
-    <script src="https://forio.com/tools/js-libs/1.4.0/epicenter.min.js"></script>
+    <script src="https://forio.com/tools/js-libs/1.5.0/epicenter.min.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
 **Dependencies**
 
-The epicenter.js library depends on jQuery, so you'll also need to download jQuery for yourself, or use a hosted version. To use a hosted version, add
+The Epicenter.js library depends on jQuery, so you'll also need to download jQuery for yourself, or use a hosted version. To use a hosted version, add
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2/jquery.min.js"></script>
 
@@ -77,7 +78,7 @@ into any of your [interface](../creating_your_interface/) files (e.g. .html and 
 <a name="components"></a>
 ####Provided Components
 
-In addition to the epicenter.js library itself, the Epicenter JS Libs project also includes reusable components. These HTML, CSS, and JS files are templates you can use to perform common actions. They can be copied directly to your project, often without modification.
+In addition to the Epicenter.js library itself, the Epicenter JS Libs project also includes reusable components. These HTML, CSS, and JS files are templates you can use to perform common actions. They can be copied directly to your project, often without modification.
 
 **Login Component**
 
