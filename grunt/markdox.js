@@ -34,6 +34,12 @@ module.exports = function (grunt) {
                     src: 'src/service/state-api-adapter.js',
                     dest: 'documentation/generated/state-api-adapter/index.html.md'
                 },{
+                    src: 'src/service/user-api-adapter.js',
+                    dest: 'documentation/generated/user-api-adapter/index.html.md'
+                },{
+                    src: 'src/service/member-api-adapter.js',
+                    dest: 'documentation/generated/member-api-adapter/index.html.md'
+                },{
                     src: 'src/managers/run-manager.js',
                     dest: 'documentation/generated/run-manager/index.html.md'
                 }, {
