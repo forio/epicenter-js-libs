@@ -91,7 +91,7 @@ module.exports = function (config) {
         * @param {object} `options` (Optional) Overrides for configuration options.
         */
 
-        getGroupsByUser: function (params, options) {
+        getGroupsForUser: function (params, options) {
             options = options || {};
             var httpOptions = $.extend(true, serviceOptions, options);
             var isString = typeof params === 'string';
