@@ -23,10 +23,10 @@
             }, options));
         }
 
-        describe('getGroupsByUser', function () {
+        describe('getGroupsForUser', function () {
             it('should call GET on the Member API with the userId parameter and the token', function () {
                 createMemberAdapter({ token: '123' })
-                    .getGroupsByUser('abc999');
+                    .getGroupsForUser('abc999');
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
@@ -37,7 +37,7 @@
 
             it('should call GET on the Member API with the userId parameter, as an object, and the token', function () {
                 createMemberAdapter({ token: '123' })
-                    .getGroupsByUser({ userId: 'abc999' });
+                    .getGroupsForUser({ userId: 'abc999' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
@@ -47,10 +47,10 @@
             });
 
             it('should throw error when no userId is specified', function () {
-                var getGroupsByUser = function () {
-                    createMemberAdapter({ token: '123' }).getGroupsByUser();
+                var getGroupsForUser = function () {
+                    createMemberAdapter({ token: '123' }).getGroupsForUser();
                 };
-                expect(getGroupsByUser).to.throw(Error);
+                expect(getGroupsForUser).to.throw(Error);
             });
         });
 
