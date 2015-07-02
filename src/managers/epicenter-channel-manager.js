@@ -182,6 +182,35 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
+    /**
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) that automatically tracks the presence of an [end user](../../../glossary/#user), that is, whether the end user is currently online in this group and world. Notifications are automatically sent when the end user comes online, and when the end user goes offline (not present for more than 2 minutes). Useful in multiplayer games for letting each end user know whether other users in their shared world are also online.
+     *
+     * **Example**
+     *
+     *     var cm = new F.manager.ChannelManager();
+     *     var worldManager = new F.manager.WorldManager({
+     *         account: 'acme-simulations',
+     *         project: 'supply-chain-game',
+     *         model: 'model.eqn'
+     *     });
+     *     worldManager.getCurrentWorld().then(function (worldObject, worldService) {
+     *         var presenceChannel = cm.getPresenceChannel(worldObject);
+     *         presenceChannel.on('presence', function (evt, notification) {
+     *              console.log(notification.online, notification.userId);
+     *          });
+     *      });
+     *
+     *
+     * **Return Value**
+     *
+     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
+     *
+     * **Parameters**
+     *
+     * @param  {String|Object} `world` World object or id.
+     * @param  {String|Object} `user` (Optional) User object or id. If not provided, picks up ser id from current session if end user is logged in.
+     * @param  {String} `groupName` (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     */
     getPresenceChannel: function (world, userid, groupName) {
         var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
         if (!worldid) {
@@ -222,6 +251,32 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         return channel;
     },
 
+    /**
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given collection. (The collection name is specified in the `root` argument when the [Data Service](../data-api-service/) is instantiated.) Must be one of the collections in this account (team) and project.
+     *
+     * There are automatic notifications from Epicenter on this channel when data is created, updated, or deleted in this collection. See more on [automatic messages to the data channel](../../../rest_apis/multiplayer/channel/#data-messages).
+     *
+     * **Example**
+     *
+     *     var cm = new F.manager.ChannelManager();
+     *     var gc = cm.getDataChannel('survey-responses');
+     *     gc.subscribe('', function(data, meta) {
+     *          console.log(data);
+     *
+     *          // meta.date is time of change,
+     *          // meta.subType is the kind of change: new, update, or delete
+     *          // meta.path is the full path to the changed data
+     *          console.log(meta);
+     *     });
+     *
+     * **Return Value**
+     *
+     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
+     *
+     * **Parameters**
+     *
+     * @param  {String} `collection` Name of collection whose automatic notifications you want to receive.
+     */
     getDataChannel: function (collection) {
         if (!collection) {
             throw new Error('Please specify a collection to listen on.');

@@ -21,7 +21,9 @@ var Channel = require('../service/channel-service');
  *
  *        var cm = new F.manager.ChannelManager();
  *        var channel = cm.getChannel();
- *        channel.subscribe(topic);
+ *
+ *        channel.subscribe('topic', callback);
+ *        channel.publish('topic', { myData: 100 });
  *
  * The parameters for instantiating a Channel Manager include:
  *
@@ -144,7 +146,9 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      *      var cm = new F.manager.ChannelManager();
      *      var channel = cm.getChannel();
-     *      channel.subscribe(topic);
+     *
+     *      channel.subscribe('topic', callback);
+     *      channel.publish('topic', { myData: 100 });
      *
      * **Parameters**
      * @param {None} None

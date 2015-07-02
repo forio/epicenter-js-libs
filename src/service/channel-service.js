@@ -14,7 +14,7 @@
  * To use the Channel Service, instantiate it, then make calls to any of the methods you need.
  *
  *        var cs = new F.service.Channel();
- *        cs.publish('run/variables', {price: 50});
+ *        cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
  *
  * The parameters for instantiating a Channel Service include:
  *
@@ -83,19 +83,24 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Subscribe to changes on a topic.
      *
+     * The topic should include the full path of the account id (**Team ID** for team projects), project id, and group name. (In most cases, it is simpler to use the [Epicenter Channel Manager](../epicenter-channel-manager/) instead, in which case this is configured for you.)
+     *
      *  **Examples**
      *
+     *      var cb = function(val) { console.log(val.data); };
+     *
      *      // Subscribe to changes on a top-level 'run' topic
-     *      cs.subscribe('run', cb);
+     *      cs.subscribe('/acme-simulations/supply-chain-game/fall-seminar/run', cb);
      *
      *      // Subscribe to changes on children of the 'run' topic. Note this will also be triggered for changes to run.x.y.z.
-     *      cs.subscribe('run/*');
+     *      cs.subscribe('/acme-simulations/supply-chain-game/fall-seminar/run/*', cb);
      *
      *      // Subscribe to changes on both the top-level 'run' topic and its children
-     *      cs.subscribe(['run', 'run/*']);
+     *      cs.subscribe(['/acme-simulations/supply-chain-game/fall-seminar/run',
+     *          '/acme-simulations/supply-chain-game/fall-seminar/run/*'], cb);
      *
      *      // Subscribe to changes on a particular variable
-     *      subscribe('run/variables/price', cb);
+     *      subscribe('/acme-simulations/supply-chain-game/fall-seminar/run/variables/price', cb);
      *
      *
      * **Return Value**
@@ -133,10 +138,10 @@ Channel.prototype = $.extend(Channel.prototype, {
      * **Examples**
      *
      *      // Send data to all subscribers of the 'run' topic
-     *      cs.publish('run', {completed: false});
+     *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run', { completed: false });
      *
      *      // Send data to all subscribers of the 'run/variables' topic
-     *      cs.publish('run/variables', {price: 50});
+     *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
      *
      * **Parameters**
      *
