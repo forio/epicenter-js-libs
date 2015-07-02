@@ -105,8 +105,8 @@ module.exports = function (config) {
          *
          *      // regular expresssions: use any Perl-compatible regular expressions
          *      // request all documents in collection
-         *      // where 'question5' contains the string '*day'
-         *      ds.query('', { 'question5': { '$regex': '*day' } });
+         *      // where 'question5' contains the string '.*day'
+         *      ds.query('', { 'question5': { '$regex': '.*day' } });
          *
          * **Parameters**
          * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
