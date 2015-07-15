@@ -1,18 +1,177 @@
+/*
+    General Styles
+*/
+
+body {
+    background-color: rgb(252, 254, 255);
+    color: rgb(87, 87, 94);
+
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.618;
+}
+
+/*
+    Login Form Styles
+*/
+
+#login {
+    margin: 0 auto;
+    padding: 10% 40px;
+}
+
+#login h4 {
+    font-size: 19px;
+}
+
+@media all and (max-width: 899px) {
+    #login {
+        width: 560px;
+    }
+}
+
+@media all and (min-width: 900px) {
+    #login {
+        width: 50%;
+    }
+}
+
+.control label {
+    display: inline-block;
+    margin-bottom: 5px;
+
+    font-weight: 600;
+}
+
+.form-control {
+    display: block;
+    height: 33px;
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 3px;
+
+    color: rgb(87, 87, 94);
+    background-color: rgb(252, 254, 255);
+    background-image: none;
+
+    font-size: 12px;
+    line-height: 1.618;
+
+    -webkit-box-shadow: none;
+       -moz-box-shadow: none;
+            box-shadow: none;
+
+    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+       -moz-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+         -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.alert {
+    margin-top: 20px;
+    border-radius: 2px;
+
+    text-align: center;
+}
+
+/*
+    Buttons
+*/
+
+.btn {
+    position: relative;
+    vertical-align: middle;
+
+    border: 1px solid rgb(76, 148, 255);
+    border-radius: 20px;
+    display: inline-block;
+    overflow: hidden;
+    margin-bottom: 0;
+    padding: 6px 24px;
+
+    background-color: transparent;
+    color: rgb(76, 148, 255);
+
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    -webkit-transition: all 0.3s;
+       -moz-transition: all 0.3s;
+            transition: all 0.3s;
+
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+         -o-user-select: none;
+            user-select: none;
+}
+
+.btn.disabled,
+.btn[disabled],
+.btn.disabled:hover,
+.btn[disabled]:hover {
+    background-color: rgb(187, 187, 194);
+    border-color: rgb(187, 187, 194);
+    color: rgb(245, 248, 249);
+}
+
+.btn-primary {
+    border: 1px solid rgb(76, 148, 255);
+    color: rgb(76, 148, 255);
+}
+
+.btn-primary:hover,
+.btn-primary:active {
+    background-color: rgb(76, 148, 255);
+    border-color: rgb(76, 148, 255);
+    color: rgb(245, 248, 249);
+
+    outline: none;
+}
+
+.btn-signin {
+    border: 1px solid rgb(83, 193, 101);
+    color: rgb(83, 193, 101);
+}
+
+.btn-signin:hover,
+.btn-signin:active {
+    background-color: rgb(83, 193, 101);
+    border-color: rgb(83, 193, 101);
+    color: rgb(245, 248, 249);
+
+    outline: none;
+}
+
+.btn:active,
+.btn:focus {
+    outline: none;
+}
+
+/*
+    Group Selection Popup Styles
+*/
+
 .group-selection-dialog {
-    display: none;
+    /*display: none;*/
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 9999;
-    background-color: rgba(0,0,0,.4);
+    background-color: rgba(252, 254, 255, 0.6);
 
 }
 
 .group-selection-dialog .panel {
     opacity: 1;
-    min-width: 23em;
     position: absolute;
     left: 50%;
     top: 25%;
@@ -20,43 +179,106 @@
     -webkit-transform: translate(-50%, -50%);
     -moz--transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
-    border: solid 1px #DDD;
+    border: solid 1px rgb(187, 187, 194);
     border-radius: 4px;
-    background-color: #FAFAFA;
-    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.3);
+    background-color: rgb(252, 254, 255);
+    box-shadow: 0px 0px 10px rgba(86, 86, 93, 0.4);
+}
+
+@media all and (max-width: 899px) {
+    .group-selection-dialog .panel  {
+        width: 400px;
+    }
+}
+
+@media all and (min-width: 900px) {
+    .group-selection-dialog .panel  {
+        width: 50%;
+    }
 }
 
 .group-selection-dialog .panel > div {
-    padding: 7px 15px;
+    padding: 8px 15px;
 }
 
 .group-selection-dialog .panel > .panel-heading {
-    background-color: #dadada;
-    border-bottom: solid 1px #ddd;
     margin-bottom: 10px;
-
+    background-color: rgb(76, 148, 255);
+    font-size: 14px;
 }
 
-.group-selection-dialog .panel > .panel-title {
-    font-size: 16px;
-    line-height: 22px;
+.group-selection-dialog .panel-title {
+    color: rgb(252, 254, 255);
+}
+
+.group-selection-dialog .close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    opacity: 1;
+
+    cursor: pointer;
+    -webkit-transform: rotate(45deg);
+       -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+         -o-transform: rotate(45deg);
+            transform: rotate(45deg);
+}
+
+.group-selection-dialog .close::before {
+    content: "";
+    position: absolute;
+    left: 9px;
+
+    height: 20px;
+    width: 2px;
+
+    background: rgb(252, 254, 255);
+}
+
+.group-selection-dialog .close::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+
+    height: 2px;
+    width: 20px;
+
+    background: rgb(252, 254, 255);
 }
 
 .group-selection-dialog select {
     height: 34px;
     font-size: 14px;
+    width: 100% !important;
 }
 
 .group-selection-dialog .panel > .panel-footer {
-    border-top: solid 1px #DDD;
-    margin-top: 10px;
+    background-color: transparent;
+    border-color: transparent;
+    margin-top: 20px;
+    padding-bottom: 16px;
     text-align: right;
 }
 
-.group-selection-dialog .close {
-    float: right;
-    color: #999;
-    font-size: 110%;
-    text-transform: uppercase;
-    cursor: pointer;
+/*
+    Misc Styles
+*/
+
+.powered-by {
+    height: 20px;
+    width: 100%;
+    position: absolute;
+    bottom: 20px;
+    right: 0px;
+    background-image: url('https://s3.amazonaws.com/cdn-common.forio.com/marketing/Epicenter/common/made-with-epicenter.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50%;
+
 }
