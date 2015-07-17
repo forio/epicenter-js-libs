@@ -102,7 +102,7 @@ $(function () {
     groupSelectionTemplate = window.groupSelectionTemplate = '<form>\
         <div class="group-selection-dialog" style="display: none"> \
             <div class="panel panel-default form-inline"> \
-                <div class="panel-heading"><span class="panel-title">Please select a group</span><span class="close pull-right">x</span></div> \
+                <div class="panel-heading"><span class="panel-title">Please select a group</span><span class="close pull-right"></span></div> \
                 <div class="panel-body"> \
                     <label for="login-group">Group:</label> \
                     <select name="login-group" id="login-group" class="form-control"> \
