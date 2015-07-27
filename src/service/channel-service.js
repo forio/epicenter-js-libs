@@ -28,6 +28,7 @@ var Channel = function (options) {
 
         /**
          * The base topic. This is added as a prefix to all further topics you publish or subscribe to while working with this Channel Service.
+         * @type {string}
          */
         base: '',
 
@@ -41,6 +42,8 @@ var Channel = function (options) {
          * **Return Value**
          *
          * * *String*: This function should return a string topic.
+         *
+         * @type {function}
          */
         topicResolver: function (topic) {
             return topic;
@@ -48,6 +51,7 @@ var Channel = function (options) {
 
         /**
          * The instance of `$.cometd` to hook onto.
+         * @type {object}
          */
         transport: null
     };

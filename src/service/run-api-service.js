@@ -83,11 +83,13 @@ module.exports = function (config) {
 
         /**
          * Called when the call completes successfully. Defaults to `$.noop`.
+         * @type {function}
          */
         success: $.noop,
 
         /**
          * Called when the call fails. Defaults to `$.noop`.
+         * @type {function}
          */
         error: $.noop,
 
