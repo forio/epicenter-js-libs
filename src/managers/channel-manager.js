@@ -44,26 +44,31 @@ var ChannelManager = function (options) {
     var defaults = {
         /**
          * The Cometd endpoint URL.
+         * @type {string}
          */
         url: '',
 
         /**
          * The log level for the channel (logs to console).
+         * @type {string}
          */
         logLevel: 'info',
 
         /**
          * Whether websocket support is active. Defaults to `false`; Epicenter doesn't currently support communication through websockets.
+         * @type {boolean}
          */
         websocketEnabled: false,
 
         /**
          * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true to re-use the same connection across instances.
+         * @type {boolean}
          */
         shareConnection: false,
 
         /**
          * Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
+         * @type {object}
          */
         channel: {
 
