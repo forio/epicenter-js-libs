@@ -97,11 +97,14 @@ $(function() {
                 var scope = $('#uploadScope').val();
                 var data = new FormData();
                 var inputControl = $('#fileUpload')[0];
-                data.append('file', inputControl.files[0]);
+                // You need to set the filename through the FormData object
+                // As the API is not able to set the filename in the URL
+                data.append('file', inputControl.files[0], filename);
 
                 try {
+                    // filename will be ignored if it's a multipart/form-data request
                     this.assetAdapter.create(filename, data, { scope: scope }).done(function () {
-                        $('.status').append('<div class="alert alert-success">File uploaded! Reloading assets... </div>');
+                        $('.status').html('<div class="alert alert-success">File uploaded! Reloading assets... </div>');
                         $('.list [name=scope]').val(scope);
                         _this.listAssets();
                     }).fail(function (xhr, textStatys, errorThrown) {
@@ -119,14 +122,14 @@ $(function() {
 
     // var extra = {
     //     group: 'test-ricardo',
-    //     project: 'dummy'
+    //     project: 'dummy',
     //     transport: {
     //         contentType: 'application/json'
     //     }
     // };
     // var aa = new F.service.Asset($.extend(server, extra));
     // aa.create('test.txt', { encoding: 'BASE_64', data: 'VGhpcyBpcyBhIHRlc3QgZmlsZS4=' }, { scope: 'user' });
-    // //aa.delete('test.txt', { scope: 'user' });
+    //aa.delete('test1.txt', { scope: 'user' });
     // aa.list({ scope: 'user', fullUrl: true }).done(function (response) {
     //     console.log(response);
     // });

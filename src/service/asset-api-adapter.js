@@ -133,7 +133,12 @@ module.exports = function (config) {
         var parts = $.map(partKeys, function (key) {
             return options[key];
         });
-        return urlConfig.getAPIPath(apiEndpoint + '/' + parts.join('/')) + filename;
+        if (filename) {
+            // This prevents adding a trailing / in the URL as the Asset API
+            // does not work correctly with it
+            filename = '/' + filename;
+        }
+        return urlConfig.getAPIPath(apiEndpoint) + parts.join('/') + filename;
     };
 
     var publicAPI = {
@@ -149,13 +154,19 @@ module.exports = function (config) {
         */
         _upload: function (method, filename, params, options) {
             validateFilename(filename);
+            // make sure the parameter is clean
+            method = method.toLowerCase();
             var urlOptions = $.extend({}, serviceOptions, options);
+            // whitelist the fields that we actually can send to the api
+            if (urlOptions.contentType === 'application/json') {
+                params = _pick(params, assetApiParams);
+            } else { // else we're sending form data which goes directly in request body
+                // For multipart/form-data uploads the filename is not set in the URL,
+                // it's getting picked by the FormData field filename.
+                filename = method === 'post' || method === 'put' ? '' : filename;
+            }
             var url = buildUrl(filename, urlOptions);
             var createOptions = $.extend(true, {}, urlOptions, { url: url });
-            // whitelist the fields that we actually can send to the api
-            if (createOptions.contentType === 'application/json') {
-                params = _pick(params, assetApiParams);
-            } // else we're sending form data which goes directly in request body
 
             return http[method](params, createOptions);
         },
@@ -201,9 +212,6 @@ module.exports = function (config) {
             var me = this;
             var urlOptions = $.extend({}, serviceOptions, options);
             var url = buildUrl('', urlOptions);
-            // Remove the trailing / (slash) because that means it would try to
-            // find for the next level of scope: https://forio.com/epicenter/docs/public/rest_apis/asset/#get-list-assets
-            url = url.substring(0, url.length - 1);
             var getOptions = $.extend(true, {}, urlOptions, { url: url });
             var fullUrl = options.fullUrl;
 
