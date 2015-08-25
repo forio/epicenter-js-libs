@@ -31,7 +31,6 @@ var apiEndpoint = 'asset';
 
 module.exports = function (config) {
     var store = new StorageFactory({ synchronous: true });
-    var urlConfig = new ConfigService(serviceOptions).get('server');
     var session = JSON.parse(store.get(keyNames.EPI_SESSION_KEY) || '{}');
     var defaults = {
         /**
@@ -44,12 +43,12 @@ module.exports = function (config) {
          * The project id. If left undefined, taken from the URL.
          * @type {String}
          */
-        account: urlConfig.accountPath,
+        account: undefined,
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
          * @type {String}
          */
-        project: urlConfig.projectPath,
+        project: undefined,
         /**
          * The group name. Defaults to session's groupName.
          * @type {String}
@@ -80,6 +79,16 @@ module.exports = function (config) {
         }
     };
     var serviceOptions = $.extend(true, {}, defaults, config);
+    var urlConfig = new ConfigService(serviceOptions).get('server');
+
+    if (!serviceOptions.account) {
+        serviceOptions.account = urlConfig.accountPath;
+    }
+
+    if (!serviceOptions.project) {
+        serviceOptions.project = urlConfig.projectPath;
+    }
+
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath(apiEndpoint)
     });
@@ -129,7 +138,7 @@ module.exports = function (config) {
 
     var publicAPI = {
         /**
-        * Private function, all requests follow a more or less same approach to 
+        * Private function, all requests follow a more or less same approach to
         * use the Asset API and the difference is the HTTP verb
         *
         * @param {string} `method` (Required) HTTP verb
@@ -147,7 +156,7 @@ module.exports = function (config) {
             if (createOptions.contentType === 'application/json') {
                 params = _pick(params, assetApiParams);
             } // else we're sending form data which goes directly in request body
-            
+
             return http[method](params, createOptions);
         },
 
@@ -192,7 +201,7 @@ module.exports = function (config) {
             var me = this;
             var urlOptions = $.extend({}, serviceOptions, options);
             var url = buildUrl('', urlOptions);
-            // Remove the trailing / (slash) because that means it would try to 
+            // Remove the trailing / (slash) because that means it would try to
             // find for the next level of scope: https://forio.com/epicenter/docs/public/rest_apis/asset/#get-list-assets
             url = url.substring(0, url.length - 1);
             var getOptions = $.extend(true, {}, urlOptions, { url: url });
