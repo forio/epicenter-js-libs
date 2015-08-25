@@ -12,15 +12,20 @@ var urlService = new UrlService();
 var keyNames = require('../key-names');
 
 var defaults = {
-    sessionKey: keyNames.STRATEGY_SESSION_KEY
+    sessionKey: keyNames.STRATEGY_SESSION_KEY,
+    path: ''
 };
 
-function setRunInSession(sessionKey, run) {
-    var path = '/' + [urlService.appPath, urlService.accountPath, urlService.projectPath].join('/');
-
-    // make sure we don't get consecuteive '/' so we have a valid path for the session
-    path = path.replace(/\/{2,}/g,'/');
-
+function setRunInSession(sessionKey, run, path) {
+    if (!path) {
+        if (!urlService.isLocalhost()) {
+            path = '/' + [urlService.appPath, urlService.accountPath, urlService.projectPath].join('/');
+            // make sure we don't get consecuteive '/' so we have a valid path for the session
+            path = path.replace(/\/{2,}/g,'/');
+        } else {
+            path = '';
+        }
+    }
     // set the seesionKey for the run
     sessionStore.set(sessionKey, JSON.stringify({ runId: run.id }), { root: path });
 }
@@ -56,7 +61,7 @@ var Strategy = classFrom(Base, {
         return this.run
                 .create(opt, runServiceOptions)
             .then(function (run) {
-                setRunInSession(_this.options.sessionKey, run);
+                setRunInSession(_this.options.sessionKey, run, _this.options.path);
                 run.freshlyCreated = true;
                 return run;
             })
