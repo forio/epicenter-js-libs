@@ -75,7 +75,8 @@ module.exports = function (config) {
          * @type {object}
          */
         transport: {
-            contentType: 'multipart/form-data'
+            contentType: false,
+            processData: false,
         }
     };
     var serviceOptions = $.extend(true, {}, defaults, config);
@@ -98,7 +99,27 @@ module.exports = function (config) {
         project: ['scope', 'account', 'project'],
     };
 
+    var validateFilename = function (filename) {
+        if (!filename) {
+            throw new Error('filename is needed.');
+        }
+    };
+
+    var validateUrlParams = function (options) {
+        var partKeys = scopeConfig[options.scope];
+        if (!partKeys) {
+            throw new Error('scope parameter is needed.');
+        }
+
+        $.each(partKeys, function () {
+            if (!options[this]) {
+                throw new Error(this + ' parameter is needed.');
+            }
+        });
+    };
+
     var buildUrl = function (filename, options) {
+        validateUrlParams(options);
         var partKeys = scopeConfig[options.scope];
         var parts = $.map(partKeys, function (key) {
             return options[key];
@@ -118,6 +139,7 @@ module.exports = function (config) {
         *
         */
         _upload: function (method, filename, params, options) {
+            validateFilename(filename);
             var urlOptions = $.extend({}, serviceOptions, options);
             var url = buildUrl(filename, urlOptions);
             var createOptions = $.extend(true, {}, urlOptions, { url: url });
