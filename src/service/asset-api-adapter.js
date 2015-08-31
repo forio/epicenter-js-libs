@@ -237,6 +237,11 @@ module.exports = function (config) {
 
         delete: function (filename, options) {
             return this._upload('delete', filename, {}, options);
+        },
+
+        assetUrl: function (filename, options) {
+            var urlOptions = $.extend({}, serviceOptions, options);
+            return buildUrl(filename, urlOptions);
         }
     };
     $.extend(this, publicAPI);
