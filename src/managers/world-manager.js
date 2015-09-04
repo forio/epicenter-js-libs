@@ -64,7 +64,8 @@ function buildStrategy(worldId, dtd) {
                 var _this = this;
                 //get or create!
                 // Model is required in the options
-                return worldApi.getCurrentRunId({ model: this.options.run.model, filter: worldId })
+                var model = this.options.run.model || this.options.model;
+                return worldApi.getCurrentRunId({ model: model, filter: worldId })
                     .then(function (runId) {
                         return _this.runService.load(runId);
                     })
