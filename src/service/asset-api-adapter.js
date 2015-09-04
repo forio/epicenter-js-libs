@@ -1,9 +1,18 @@
 /**
  * ##Asset API Adapter
  *
+ * The Asset API Adapter allows you to store assets -- resources or files of any kind -- used by a project with a scope that is specific to project, group, or end user.
  *
- * To use the Asset Adapter, instantiate it and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface) and project id (**Project ID**).
- * group name and userId are optional and will use the logged user's group and userId if needed
+ * Assets are used with [team projects](../../../project_admin/#team). One common use case is having end users in a [group](../../../glossary/#groups) or in a [multiplayer world](../../../glossary/#world) upload data -- videos created during game play, profile pictures for customizing their experience, etc. -- as part of playing through the project.
+ *
+ * Resources created using the Asset Adapter are scoped:
+ *
+ *  * Project assets are writable only by [team members](../../../glossary/#team), that is, Epicenter authors.
+ *  * Group assets are writable by anyone with access to the project that is part of that particular [group](../../../glossary/#groups). This includes all [team members](../../../glossary/#team) (Epicenter authors) and any [end users](../../../glossary/#users) who are members of the group -- both facilitators and standard end users.
+ *  * User assets are writable by the specific end user, and by the facilitator of the group.
+ *  * All assets are readable by anyone with the exact URI.
+ *
+ * To use the Asset Adapter, instantiate it and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface) and project id (**Project ID**). The group name is required for assets with a group scope, and the group name and userId are required for assets with a user scope. If not included, they are taken from the logged in user's session information if needed.
  *
  *       var aa = new F.service.Asset({
  *          account: 'acme-simulations',
@@ -15,7 +24,7 @@
             encoding: 'BASE_64',
             data: 'VGhpcyBpcyBhIHRlc3QgZmlsZS4=',
             contentType: 'text/plain'
- *       }, { scope: 'user' })
+ *       }, { scope: 'user' });
  */
 
 'use strict';
@@ -40,37 +49,37 @@ module.exports = function (config) {
          */
         token: store.get(keyNames.EPI_COOKIE_KEY) || '',
         /**
-         * The project id. If left undefined, taken from the URL.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
          * @type {String}
          */
         account: undefined,
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
+         * The project id. If left undefined, taken from the URL.
          * @type {String}
          */
         project: undefined,
         /**
-         * The group name. Defaults to session's groupName.
+         * The group name. Defaults to session's `groupName`.
          * @type {String}
          */
         group: session.groupName,
         /**
-         * The group name. Defaults to session's userId.
+         * The group name. Defaults to session's `userId`.
          * @type {String}
          */
         userId: session.userId,
         /**
-         * The API's scope. Valid values are: user, group and project.
-         * @see [Asset API documentation](https://forio.com/epicenter/docs/public/rest_apis/asset/) for the required permissions to write to each scope.
+         * The scope for the asset. Valid values are: `user`, `group`, and `project`. See above for the required permissions to write to each scope. Defaults to `user`, meaning the current end user or a facilitator in the end user's group can edit the asset.
          * @type {String}
          */
         scope: 'user',
-
-        fullUrl: true,
-
         /**
-         * The transport are the options passed to the XHR request.
-         * Defaults the contentType to 'multipart/form-data' as is the most common way to upload a file, through a input[type=file].
+         * Determines if a request to list the assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`). Defaults to `true`.
+         * @type {boolean}
+         */
+        fullUrl: true,
+        /**
+         * The `transport` object contains the options passed to the XHR request. For the `transport.contentType`, use `multipart/form-data` when calling the Asset Adapter from a form (HTML input element, type = file). Use `application/json` otherwise.
          * @type {object}
          */
         transport: {
@@ -142,16 +151,15 @@ module.exports = function (config) {
     };
 
     var publicAPI = {
-        /**
-        * Private function, all requests follow a more or less same approach to
-        * use the Asset API and the difference is the HTTP verb
-        *
-        * @param {string} `method` (Required) HTTP verb
-        * @param {string} `filename` (Required) Name of the file to delete/replace/create
-        * @param {object} `params` (Optional) Body parameters to send to the Asset API
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
-        */
+        //
+        // Private function, all requests follow a more or less same approach to
+        // use the Asset API and the difference is the HTTP verb
+        //
+        // @param {string} `method` (Required) HTTP verb
+        // @param {string} `filename` (Required) Name of the file to delete/replace/create
+        // @param {object} `params` (Optional) Body parameters to send to the Asset API
+        // @param {object} `options` (Optional) Options object to override global options.
+        //
         _upload: function (method, filename, params, options) {
             validateFilename(filename);
             // make sure the parameter is clean
@@ -172,11 +180,14 @@ module.exports = function (config) {
         },
 
         /**
-        * Creates a file in the Asset API. The server will return an error if the file already exist,
-        * check first with a list() or a get().
+        * Creates a file in the Asset API. The server returns an error if the file already exists, so
+        * check first with a `list()` or a `get()`.
         *
-        * @param {string} `filename` (Required) Name of the file to create
-        * @param {object} `params` (Optional) Body parameters to send to the Asset API
+        * @param {string} `filename` (Required) Name of the file to create.
+        * @param {object} `params` (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
+        * @param {string} `params.encoding` Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} `params.data` The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} `params.contentType` The mime type of the file. Optional.
         * @param {object} `options` (Optional) Options object to override global options.
         *
         */
@@ -185,10 +196,10 @@ module.exports = function (config) {
         },
 
         /**
-        * Gets a filename in the Asset API. This will actually fetch the asset content, to get a list
-        * of the assets in a scope, use list()
+        * Gets a file from the Asset API, fetching the asset content. (To get a list
+        * of the assets in a scope, use `list()`.)
         *
-        * @param {string} `filename` (Required) Name of the file to retrieve
+        * @param {string} `filename` (Required) Name of the file to retrieve.
         * @param {object} `options` (Optional) Options object to override global options.
         *
         */
@@ -203,8 +214,9 @@ module.exports = function (config) {
         /**
         * Gets the list of the assets in a scope.
         *
-        * @param {object} `options` (Optional) Options object to override global options. fullUrl determines if the
-        * callback the list of asset URL's instead of the filename only.
+        * @param {object} `options` (Optional) Options object to override global options.
+        * @param {string} `options.scope` (Optional) The scope (`user`, `group`, `project`).
+        * @param {boolean) `options.fullUrl` (Optional) Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
         *
         */
         list: function (options) {
@@ -231,10 +243,28 @@ module.exports = function (config) {
             return dtd.promise();
         },
 
+        /**
+        * Replaces an existing file in the Asset API.
+        *
+        * @param {string} `filename` (Required) Name of the file being replaced.
+        * @param {object} `params` (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
+        * @param {string} `params.encoding` Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} `params.data` The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} `params.contentType` The mime type of the file. Optional.
+        * @param {object} `options` (Optional) Options object to override global options.
+        *
+        */
         replace: function (filename, params, options) {
             return this._upload('put', filename, params, options);
         },
 
+        /**
+        * Deletes a file from the Asset API.
+        *
+        * @param {string} `filename` (Required) Name of the file to delete.
+        * @param {object} `options` (Optional) Options object to override global options.
+        *
+        */
         delete: function (filename, options) {
             return this._upload('delete', filename, {}, options);
         },
