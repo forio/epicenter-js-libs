@@ -156,8 +156,8 @@ module.exports = function (config) {
         // make sure the parameter is clean
         method = method.toLowerCase();
         var urlOptions = $.extend({}, serviceOptions, options);
-        // whitelist the fields that we actually can send to the api
-        if (urlOptions.contentType === 'application/json') {
+        if (urlOptions.transport.contentType === 'application/json') {
+            // whitelist the fields that we actually can send to the api
             params = _pick(params, assetApiParams);
         } else { // else we're sending form data which goes directly in request body
             // For multipart/form-data uploads the filename is not set in the URL,
