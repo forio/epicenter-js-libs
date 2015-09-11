@@ -79,11 +79,12 @@ module.exports = function (config) {
          */
         fullUrl: true,
         /**
-         * The `transport` object contains the options passed to the XHR request. For the `transport.contentType`, use `multipart/form-data` when calling the Asset Adapter from a form (HTML input element, type = file). Use `application/json` otherwise.
+         * The transport are the options passed to the XHR request.
+         * Defaults the contentType to 'multipart/form-data' as is the most common way to upload a file, through a input[type=file].
          * @type {object}
          */
         transport: {
-            contentType: false,
+            contentType: 'multipart/form-data',
             processData: false,
         }
     };
@@ -150,35 +151,36 @@ module.exports = function (config) {
         return urlConfig.getAPIPath(apiEndpoint) + parts.join('/') + filename;
     };
 
-    var publicAPI = {
-        //
-        // Private function, all requests follow a more or less same approach to
-        // use the Asset API and the difference is the HTTP verb
-        //
-        // @param {string} `method` (Required) HTTP verb
-        // @param {string} `filename` (Required) Name of the file to delete/replace/create
-        // @param {object} `params` (Optional) Body parameters to send to the Asset API
-        // @param {object} `options` (Optional) Options object to override global options.
-        //
-        _upload: function (method, filename, params, options) {
-            validateFilename(filename);
-            // make sure the parameter is clean
-            method = method.toLowerCase();
-            var urlOptions = $.extend({}, serviceOptions, options);
+    /**
+    * Private function, all requests follow a more or less same approach to
+    * use the Asset API and the difference is the HTTP verb
+    *
+    * @param {string} `method` (Required) HTTP verb
+    * @param {string} `filename` (Required) Name of the file to delete/replace/create
+    * @param {object} `params` (Optional) Body parameters to send to the Asset API
+    * @param {object} `options` (Optional) Options object to override global options.
+    *
+    */
+    var upload = function (method, filename, params, options) {
+        validateFilename(filename);
+        // make sure the parameter is clean
+        method = method.toLowerCase();
+        var urlOptions = $.extend({}, serviceOptions, options);
+        if (urlOptions.transport.contentType === 'application/json') {
             // whitelist the fields that we actually can send to the api
-            if (urlOptions.contentType === 'application/json') {
-                params = _pick(params, assetApiParams);
-            } else { // else we're sending form data which goes directly in request body
-                // For multipart/form-data uploads the filename is not set in the URL,
-                // it's getting picked by the FormData field filename.
-                filename = method === 'post' || method === 'put' ? '' : filename;
-            }
-            var url = buildUrl(filename, urlOptions);
-            var createOptions = $.extend(true, {}, urlOptions, { url: url });
+            params = _pick(params, assetApiParams);
+        } else { // else we're sending form data which goes directly in request body
+            // For multipart/form-data uploads the filename is not set in the URL,
+            // it's getting picked by the FormData field filename.
+            filename = method === 'post' || method === 'put' ? '' : filename;
+        }
+        var url = buildUrl(filename, urlOptions);
+        var createOptions = $.extend(true, {}, urlOptions, { url: url });
 
-            return http[method](params, createOptions);
-        },
+        return http[method](params, createOptions);
+    };
 
+    var publicAPI = {
         /**
         * Creates a file in the Asset API. The server returns an error if the file already exists, so
         * check first with a `list()` or a `get()`.
@@ -192,7 +194,7 @@ module.exports = function (config) {
         *
         */
         create: function (filename, params, options) {
-            return this._upload('post', filename, params, options);
+            return upload('post', filename, params, options);
         },
 
         /**
@@ -255,7 +257,7 @@ module.exports = function (config) {
         *
         */
         replace: function (filename, params, options) {
-            return this._upload('put', filename, params, options);
+            return upload('put', filename, params, options);
         },
 
         /**
@@ -266,7 +268,7 @@ module.exports = function (config) {
         *
         */
         delete: function (filename, options) {
-            return this._upload('delete', filename, {}, options);
+            return upload('delete', filename, {}, options);
         },
 
         assetUrl: function (filename, options) {
