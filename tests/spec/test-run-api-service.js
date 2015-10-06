@@ -49,7 +49,7 @@
             should.not.exist(req.requestHeaders.Authorization);
         });
 
-        it('should allow specify-ing `id` instead of filter', function () {
+        it('should allow specifying `id` instead of filter', function () {
             var rs = new RunService({ account: 'forio', project: 'js-libs', id: 'abc' });
             rs.do('stuff');
 

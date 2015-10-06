@@ -26,6 +26,14 @@
             }, options));
         }
 
+        it('should allow specifying `id` instead of filter', function () {
+            var ws = createWorldAdapter({ id: 'abc' });
+            ws.load();
+
+            var req = server.requests.pop();
+            req.url.should.equal('https://api.forio.com/multiplayer/world/abc/');
+        });
+
         describe('create', function () {
             it('POST to world API with the correct parameters (account, project and model)', function () {
                 createWorldAdapter().create({ group: 'group-name' });
