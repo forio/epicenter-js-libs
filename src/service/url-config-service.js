@@ -46,6 +46,11 @@ module.exports = function (config) {
             return prj;
         }()),
 
+        isLocalhost: function () {
+            var host = window.location.host;
+            return (!host || host.indexOf('local') !== -1);
+        },
+
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data'];
             var apiPath = this.protocol + '://' + this.host + '/' + api + '/';
