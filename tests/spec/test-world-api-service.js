@@ -109,6 +109,12 @@
                 req.method.toUpperCase().should.equal('DELETE');
                 /\/world\/worldid1/.test(req.url).should.be.true;
             });
+            it('should interpret strings as an id', function () {
+                createWorldAdapter().delete('worldid1');
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+                /\/world\/worldid1/.test(req.url).should.be.true;
+            });
         });
 
         describe('list', function () {

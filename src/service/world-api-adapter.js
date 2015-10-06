@@ -126,6 +126,9 @@ module.exports = function (config) {
     var http = new TransportFactory(transportOptions);
 
     var setIdFilterOrThrowError = function (options) {
+        if (options.id) {
+            serviceOptions.filter = options.id;
+        }
         if (options.filter) {
             serviceOptions.filter = options.filter;
         }
@@ -244,7 +247,7 @@ module.exports = function (config) {
         *
         */
         delete: function (options) {
-            options = options || {};
+            options = (options && (typeof options === 'string')) ? { filter: options } : {};
             setIdFilterOrThrowError(options);
 
             var deleteOptions = $.extend(true, {},

@@ -142,6 +142,9 @@ module.exports = function (config) {
     var http = new TransportFactory(httpOptions);
 
     var setFilterOrThrowError = function (options) {
+        if (options.id) {
+            serviceOptions.filter = options.id;
+        }
         if (options.filter) {
             serviceOptions.filter = options.filter;
         }
