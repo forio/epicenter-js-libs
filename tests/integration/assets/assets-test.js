@@ -66,7 +66,7 @@ $(function() {
                 var imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp'];
                 $('.images').empty();
 
-                this.assetAdapter.list({ scope: scope, fullUrl: true }).done(function (response) {
+                this.assetAdapter.list({ scope: scope }).done(function (response) {
                     $.each(response, function () {
                         var url = this;
                         var filename = url.substring(url.lastIndexOf('/') + 1);

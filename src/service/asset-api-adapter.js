@@ -227,7 +227,7 @@ module.exports = function (config) {
             var urlOptions = $.extend({}, serviceOptions, options);
             var url = buildUrl('', urlOptions);
             var getOptions = $.extend(true, {}, urlOptions, { url: url });
-            var fullUrl = options.fullUrl;
+            var fullUrl = getOptions.fullUrl;
 
             if (!fullUrl) {
                 return http.get({}, getOptions);
