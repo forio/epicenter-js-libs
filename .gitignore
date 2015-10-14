@@ -41,6 +41,10 @@ src/components/**/templates.js
 # ides
 *.sublime-*
 local/
+.idea
+*.iws
+*.iml
+*.ipr
 
 dist/epicenter-edge.js
 dist/epicenter-edge-instrumented.js
