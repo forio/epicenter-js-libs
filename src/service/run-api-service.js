@@ -82,6 +82,12 @@ module.exports = function (config) {
         filter: '',
 
         /**
+         * Convenience alias for filter
+         * @type {String}
+         */
+        id: '',
+
+        /**
          * Called when the call completes successfully. Defaults to `$.noop`.
          * @type {function}
          */
@@ -101,6 +107,9 @@ module.exports = function (config) {
     };
 
     var serviceOptions = $.extend({}, defaults, config);
+    if (serviceOptions.id) {
+        serviceOptions.filter = serviceOptions.id;
+    }
 
     var urlConfig = new ConfigService(serviceOptions).get('server');
     if (serviceOptions.account) {
@@ -133,6 +142,9 @@ module.exports = function (config) {
     var http = new TransportFactory(httpOptions);
 
     var setFilterOrThrowError = function (options) {
+        if (options.id) {
+            serviceOptions.filter = options.id;
+        }
         if (options.filter) {
             serviceOptions.filter = options.filter;
         }
@@ -243,7 +255,9 @@ module.exports = function (config) {
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         load: function (runID, filters, options) {
-            serviceOptions.filter = runID; //shouldn't be able to over-ride
+            if (runID) {
+                serviceOptions.filter = runID; //shouldn't be able to over-ride
+            }
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             return http.get(filters, httpOptions);
         },

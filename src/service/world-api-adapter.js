@@ -67,9 +67,17 @@ module.exports = function (config) {
          */
         model: undefined,
 
-//        apiKey: '',
+        /**
+         * Criteria by which to filter world. Currently only supports world-ids as filters.
+         * @type {String}
+         */
+        filter: '',
 
-//        domain: 'forio.com',
+        /**
+         * Convenience alias for filter
+         * @type {String}
+         */
+        id: '',
 
         /**
          * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
@@ -91,6 +99,10 @@ module.exports = function (config) {
     };
 
     var serviceOptions = $.extend({}, defaults, config);
+    if (serviceOptions.id) {
+        serviceOptions.filter = serviceOptions.id;
+    }
+
     var urlConfig = new ConfigService(serviceOptions).get('server');
 
     if (!serviceOptions.account) {
@@ -114,6 +126,9 @@ module.exports = function (config) {
     var http = new TransportFactory(transportOptions);
 
     var setIdFilterOrThrowError = function (options) {
+        if (options.id) {
+            serviceOptions.filter = options.id;
+        }
         if (options.filter) {
             serviceOptions.filter = options.filter;
         }
@@ -232,7 +247,7 @@ module.exports = function (config) {
         *
         */
         delete: function (options) {
-            options = options || {};
+            options = (options && (typeof options === 'string')) ? { filter: options } : {};
             setIdFilterOrThrowError(options);
 
             var deleteOptions = $.extend(true, {},

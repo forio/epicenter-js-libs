@@ -34,13 +34,24 @@ module.exports = function (config) {
         root: '/',
 
         /**
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
+         * @type {String}
+         */
+        account: '',
+
+        /**
+         * The project id. Defaults to empty string.
+         * @type {String}
+         */
+        project: '',
+
+        /**
          * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
          * @type {String}
          */
         token: store.get('epicenter.project.token') || '',
 
-        apiKey: '',
         domain: 'forio.com',
 
         //Options to pass on to the underlying transport layer

@@ -49,6 +49,14 @@
             should.not.exist(req.requestHeaders.Authorization);
         });
 
+        it('should allow specifying `id` instead of filter', function () {
+            var rs = new RunService({ account: 'forio', project: 'js-libs', id: 'abc' });
+            rs.do('stuff');
+
+            var req = server.requests.pop();
+            req.url.should.equal('https://api.forio.com/run/forio/js-libs/abc/operations/stuff/');
+        });
+
         it('should return promiseables', function () {
             var callback = sinon.spy();
             var rs = new RunService({ account: 'forio', project: 'js-libs' });
@@ -270,6 +278,13 @@
             it('should load a run without any filters', function () {
                 var rs = new RunService({ account: 'forio', project: 'js-libs' });
                 rs.load('myfancyrunid', null);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/');
+            });
+            it('should use the service options filter if none provided', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs', filter: 'myfancyrunid' });
+                rs.load();
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/');

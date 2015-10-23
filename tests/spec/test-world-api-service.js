@@ -26,6 +26,14 @@
             }, options));
         }
 
+        it('should allow specifying `id` instead of filter', function () {
+            var ws = createWorldAdapter({ id: 'abc' });
+            ws.load();
+
+            var req = server.requests.pop();
+            req.url.should.equal('https://api.forio.com/multiplayer/world/abc/');
+        });
+
         describe('create', function () {
             it('POST to world API with the correct parameters (account, project and model)', function () {
                 createWorldAdapter().create({ group: 'group-name' });
@@ -97,6 +105,12 @@
         describe('delete', function () {
             it('should call DELETE on the API with the correct World ID', function () {
                 createWorldAdapter({ filter: 'worldid1' }).delete();
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+                /\/world\/worldid1/.test(req.url).should.be.true;
+            });
+            it('should interpret strings as an id', function () {
+                createWorldAdapter().delete('worldid1');
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
                 /\/world\/worldid1/.test(req.url).should.be.true;
