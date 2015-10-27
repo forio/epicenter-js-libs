@@ -84,7 +84,8 @@ module.exports = function (config) {
          * @type {object}
          */
         transport: {
-            contentType: 'multipart/form-data',
+            // This is set to 'multipart/form-data' with the correct boundary by the browser if we use false
+            contentType: false,
             processData: false,
         }
     };
@@ -206,11 +207,12 @@ module.exports = function (config) {
         *
         */
         get: function (filename, options) {
-            var urlOptions = $.extend({}, serviceOptions, options);
+            var getServiceOptions = _pick(serviceOptions, ['scope', 'account', 'project', 'group', 'userId']);
+            var urlOptions = $.extend({}, getServiceOptions, options);
             var url = buildUrl(filename, urlOptions);
             var getOptions = $.extend(true, {}, urlOptions, { url: url });
 
-            return http.get(getOptions);
+            return http.get({}, getOptions);
         },
 
         /**
