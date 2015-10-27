@@ -231,6 +231,8 @@ module.exports = function (config) {
         /**
         * Deletes an existing world.
         *
+        * This function optionally takes one argument. If the argument is a string, it is the id of the world to delete. If the argument is an object, it is the override for global options.
+        *
         *  **Example**
         *
         *      var wa = new F.service.World({
@@ -243,6 +245,7 @@ module.exports = function (config) {
         *           });
         *
         *  **Parameters**
+        * @param {string} `worldId` (Optional) The id of the world to delete.
         * @param {object} `options` (Optional) Options object to override global options.
         *
         */
