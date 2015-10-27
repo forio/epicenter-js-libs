@@ -297,7 +297,10 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                     subType: payload.data.subType,
                     date: payload.data.date
                 };
-                var actualData = payload.data.data.data;
+                var actualData = payload.data.data;
+                if (actualData.data) { //Delete notifications are one data-level behind of course
+                    actualData = actualData.data;
+                }
 
                 callback.call(context, actualData, meta);
             };
