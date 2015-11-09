@@ -258,6 +258,20 @@
                 server.requests = [];
 
             });
+            it('should not include the AutoRestore header', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                rs.filter({ saved: true, '.price': '1' });
+
+                var req = server.requests.pop();
+                req.requestHeaders.should.not.have.property('X-AutoRestore');
+            });
+            it('should include the AutoRestore header', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                rs.filter('myfancyrunid');
+
+                var req = server.requests.pop();
+                req.requestHeaders['X-AutoRestore'].should.equal(true);
+            });
         });
         describe('#load()', function () {
             it('should do an GET', function () {
@@ -288,6 +302,14 @@
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/');
+            });
+            it('should add the autorestore run flag', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                rs.load('myfancyrunid', null);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/');
+                req.requestHeaders['X-AutoRestore'].should.equal(true);
             });
         });
 

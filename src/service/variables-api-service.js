@@ -38,6 +38,10 @@ module.exports = function (config) {
         return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
     };
 
+    var addAutoRestoreHeader = function (options) {
+        return serviceOptions.runService.urlConfig.addAutoRestoreHeader(options);
+    };
+
     var httpOptions = {
         url: getURL
     };
@@ -67,6 +71,7 @@ module.exports = function (config) {
          */
         load: function (variable, outputModifier, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
+            httpOptions = addAutoRestoreHeader(httpOptions);
             return http.get(outputModifier, $.extend({}, httpOptions, {
                 url: getURL() + variable + '/'
             }));
