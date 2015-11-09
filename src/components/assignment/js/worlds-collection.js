@@ -5,7 +5,6 @@ var Model = require('./world-model');
 var UserModel = require('./user-model');
 var serviceLocator = require('./service-locator');
 
-
 var Base = require('./base-collection');
 var __super = Base.prototype;
 
