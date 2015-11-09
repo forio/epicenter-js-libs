@@ -56,5 +56,7 @@ F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
 F.service.Channel = require('./service/channel-service');
 
 F.version = '<%= version %>';
-window.F = F;
 
+
+global.F = F;
+module.exports = F;

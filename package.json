@@ -1,10 +1,11 @@
 {
-  "name": "Epicenter-JS-Libs",
+  "name": "epicenter-js",
   "version": "1.5.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/forio/epicenter-js-libs"
   },
+  "main": "src/app.js",
   "devDependencies": {
     "browserify-istanbul": "^0.1.5",
     "growl": "^1.8.1",
