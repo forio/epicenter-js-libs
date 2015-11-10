@@ -217,6 +217,22 @@
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/?page=1&limit=2');
             });
+            it('should split the get in multiple GETs', function () {
+                server.requests = [];
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                var variables = ['sample_int', 'sample_string', 'sample_obj', 'sample_long', 'sample_float', 'sample_array'];
+                var include = [];
+                for (var i = 0; i < 100; i++) {
+                    include = include.concat(variables);
+                }
+
+                rs.query({}, { include: include });
+                server.respond();
+                server.requests.forEach(function (req) {
+                    console.log(req.url, req.url.length);
+                });
+                server.requests = [];
+            });
         });
 
         describe('#filter', function () {
