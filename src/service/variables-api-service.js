@@ -38,10 +38,6 @@ module.exports = function (config) {
         return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
     };
 
-    var multipleGet = function () {
-
-    };
-
     var addAutoRestoreHeader = function (options) {
         return serviceOptions.runService.urlConfig.addAutoRestoreHeader(options);
     };
