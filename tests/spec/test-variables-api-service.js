@@ -83,6 +83,22 @@
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/?set=a,b&include=price');
             });
+            it('should split the get in multiple GETs', function () {
+                server.requests = [];
+                var variables = ['sample_int', 'sample_string', 'sample_obj', 'sample_long', 'sample_float', 'sample_array'];
+                var include = [];
+                for (var i = 0; i < 100; i++) {
+                    include = include.concat(variables);
+                }
+
+                vs.query(include);
+                server.respond();
+                server.requests.length.should.be.above(1);
+                server.requests.forEach(function (xhr) {
+                    xhr.url.length.should.be.below(2048);
+                });
+                server.requests = [];
+            });
         });
 
 

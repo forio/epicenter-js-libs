@@ -38,6 +38,10 @@ module.exports = function (config) {
         return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
     };
 
+    var multipleGet = function () {
+
+    };
+
     var addAutoRestoreHeader = function (options) {
         return serviceOptions.runService.urlConfig.addAutoRestoreHeader(options);
     };
@@ -51,6 +55,7 @@ module.exports = function (config) {
         };
     }
     var http = new TransportFactory(httpOptions);
+    http.add('splitGet', 'runAPI');
 
     var publicAPI = {
 
@@ -103,7 +108,7 @@ module.exports = function (config) {
                 query = { include: query };
             }
             $.extend(query, outputModifier);
-            return http.get(query, httpOptions);
+            return http.splitGet(query, httpOptions);
         },
 
         /**

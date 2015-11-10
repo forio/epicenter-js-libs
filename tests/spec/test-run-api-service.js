@@ -228,8 +228,9 @@
 
                 rs.query({}, { include: include });
                 server.respond();
-                server.requests.forEach(function (req) {
-                    console.log(req.url, req.url.length);
+                server.requests.length.should.be.above(1);
+                server.requests.forEach(function (xhr) {
+                    xhr.url.length.should.be.below(2049);
                 });
                 server.requests = [];
             });
