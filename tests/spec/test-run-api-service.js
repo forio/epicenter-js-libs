@@ -289,6 +289,13 @@
                 var req = server.requests.pop();
                 req.requestHeaders['X-AutoRestore'].should.equal(true);
             });
+            it('should not include the AutoRestore header with autoRestore: false', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs', autoRestore: false });
+                rs.filter('myfancyrunid');
+
+                var req = server.requests.pop();
+                req.requestHeaders.should.not.have.property('X-AutoRestore');
+            });
         });
         describe('#load()', function () {
             it('should do an GET', function () {

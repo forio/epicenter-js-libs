@@ -23,6 +23,7 @@
  'use strict';
 
  var TransportFactory = require('../transport/http-transport-factory');
+ var rutil = require('../util/run-util');
 
 module.exports = function (config) {
     var defaults = {
@@ -51,7 +52,7 @@ module.exports = function (config) {
         };
     }
     var http = new TransportFactory(httpOptions);
-    http.add('splitGet', 'runAPI');
+    http.splitGet = rutil.splitGetFactory(httpOptions);
 
     var publicAPI = {
 

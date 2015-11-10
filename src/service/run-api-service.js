@@ -91,7 +91,7 @@ module.exports = function (config) {
          * Flag determines if X-AutoRestore: true header is sent to Epicenter. Defaults to true.
          * @type {boolean}
          */
-        autoRestoreRun: true,
+        autoRestore: true,
 
         /**
          * Called when the call completes successfully. Defaults to `$.noop`.
@@ -139,8 +139,8 @@ module.exports = function (config) {
     urlConfig.addAutoRestoreHeader = function (options) {
         var filter = serviceOptions.filter;
         // The semicolon separated filter is used when filter is an object
-        var isFilterRunId = filter && (typeof filter === 'string' || filter instanceof String);
-        if (serviceOptions.autoRestoreRun && isFilterRunId) {
+        var isFilterRunId = filter && $.type(filter) === 'string';
+        if (serviceOptions.autoRestore && isFilterRunId) {
             // By default autoreplay the run by sending this header to epicenter
             // https://forio.com/epicenter/docs/public/rest_apis/aggregate_run_api/#retrieving
             var autorestoreOpts = {
@@ -164,7 +164,7 @@ module.exports = function (config) {
         };
     }
     var http = new TransportFactory(httpOptions);
-    http.add('splitGet', 'runAPI');
+    http.splitGet = rutil.splitGetFactory(httpOptions);
 
     var setFilterOrThrowError = function (options) {
         if (options.id) {

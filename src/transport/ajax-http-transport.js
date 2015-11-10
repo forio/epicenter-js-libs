@@ -1,7 +1,6 @@
 'use strict';
 
 var qutils = require('../util/query-util');
-var SplitGet = require('./components/split-get');
 
 module.exports = function (config) {
 
@@ -31,10 +30,6 @@ module.exports = function (config) {
 
     var result = function (d) {
         return ($.isFunction(d)) ? d() : d;
-    };
-
-    var components = {
-        splitGet: new SplitGet(transportOptions)
     };
 
     var connect = function (method, params, connectOptions) {
@@ -105,17 +100,6 @@ module.exports = function (config) {
         },
         options: function () {
             return connect.apply(this, ['options'].concat([].slice.call(arguments)));
-        },
-
-        add: function (name, implementation) {
-            var component = components[name];
-            if (component) {
-                this[name] = component.get(implementation);
-                return this;
-            } else {
-                console.error('Component ' + name + ' was not found');
-                return this;
-            }
         }
     };
 

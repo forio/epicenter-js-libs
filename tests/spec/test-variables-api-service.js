@@ -43,7 +43,7 @@
                 var req = server.requests.pop();
                 req.requestHeaders.should.not.have.property('X-AutoRestore');
             });
-            it('should add the autorestore run flag when filter is a runid', function () {
+            it('should add the autorestore header when filter is a runid', function () {
                 var rs = new RunService({ account: 'forio', project: 'js-libs', filter: 'myfancyrunid' });
                 var vs = rs.variables();
                 vs.load('price');
@@ -51,6 +51,15 @@
 
                 var req = server.requests.pop();
                 req.requestHeaders.should.have.property('X-AutoRestore', true);
+            });
+            it('should not add the autorestore header when autoRestore: false', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs', filter: 'myfancyrunid', autoRestore: false });
+                var vs = rs.variables();
+                vs.load('price');
+                server.respond();
+
+                var req = server.requests.pop();
+                req.requestHeaders.should.not.have.property('X-AutoRestore');
             });
         });
 
