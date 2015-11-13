@@ -359,7 +359,7 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Array[String]|Array[Object]} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
-         * @param {*} `params` Options to pass to parameters
+         * @param {*} `params` Parameters to pass to operations
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         serial: function (operations, params, options) {
