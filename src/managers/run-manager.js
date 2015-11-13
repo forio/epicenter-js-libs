@@ -123,7 +123,7 @@ RunManager.prototype = {
      *      });
      *
      * **Parameters**
-     * @param {None} None
+     *  None
      */
     getRun: function () {
         return this.strategy

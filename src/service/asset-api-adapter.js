@@ -220,7 +220,7 @@ module.exports = function (config) {
         *
         * @param {object} `options` (Optional) Options object to override global options.
         * @param {string} `options.scope` (Optional) The scope (`user`, `group`, `project`).
-        * @param {boolean) `options.fullUrl` (Optional) Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
+        * @param {boolean} `options.fullUrl` (Optional) Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
         *
         */
         list: function (options) {

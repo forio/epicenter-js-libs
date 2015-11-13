@@ -81,10 +81,10 @@
     "disallowKeywordsOnNewLine": ["else"],
     "requireCapitalizedConstructors": true,
     "requireDotNotation": true,
-    "validateJSDoc": {
-        "checkParamNames": false,
-        "checkRedundantParams": false,
-        "requireParamTypes": false
+    "jsDoc": {
+        "checkParamNames": true,
+        "checkRedundantParams": true,
+        "requireParamTypes": true
     },
     "excludeFiles": ["node_modules/**"]
 }

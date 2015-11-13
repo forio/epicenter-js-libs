@@ -245,8 +245,7 @@ module.exports = function (config) {
         *           });
         *
         *  **Parameters**
-        * @param {string} `worldId` (Optional) The id of the world to delete.
-        * @param {object} `options` (Optional) Options object to override global options.
+        * @param {String | Object} `options` (Optional) The id of the world to delete, or options object to override global options.
         *
         */
         delete: function (options) {
