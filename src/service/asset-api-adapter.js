@@ -84,9 +84,7 @@ module.exports = function (config) {
          * @type {object}
          */
         transport: {
-            // This is set to 'multipart/form-data' with the correct boundary by the browser if we use false
-            contentType: false,
-            processData: false,
+            processData: false
         }
     };
     var serviceOptions = $.extend(true, {}, defaults, config);
@@ -166,8 +164,8 @@ module.exports = function (config) {
         validateFilename(filename);
         // make sure the parameter is clean
         method = method.toLowerCase();
-        var urlOptions = $.extend({}, serviceOptions, options);
-        if (urlOptions.transport.contentType === 'application/json') {
+        var contentType = params instanceof FormData === true ? false : 'application/json';
+        if (contentType === 'application/json') {
             // whitelist the fields that we actually can send to the api
             params = _pick(params, assetApiParams);
         } else { // else we're sending form data which goes directly in request body
@@ -175,8 +173,9 @@ module.exports = function (config) {
             // it's getting picked by the FormData field filename.
             filename = method === 'post' || method === 'put' ? '' : filename;
         }
+        var urlOptions = $.extend({}, serviceOptions, options);
         var url = buildUrl(filename, urlOptions);
-        var createOptions = $.extend(true, {}, urlOptions, { url: url });
+        var createOptions = $.extend(true, {}, urlOptions, { url: url, contentType: contentType });
 
         return http[method](params, createOptions);
     };
