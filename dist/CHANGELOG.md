@@ -1,3 +1,17 @@
+<a name="1.6.0"></a>
+## 1.6.0 (2015-11-17)
+Features:
+- The libraries now include an Asset Service (mapping to the underlying REST Asset API) to allow end-users manage files within projects.
+- Run Service now auto-restores runs which go out of memory (#132). You can turn this off by setting `autoRestore` to `false. See https://forio.com/epicenter/docs/public/run_persistence for more information on Run Persistence.
+- Run Service now automatically breaks apart long URLs into multiple GETs behind the scenes. Browsers typically have a URL length limit of 2048 characters, and it's easy to bump into that for GETs with lots of variables. There should be no change in behavior as a result of this change (#123).
+- Run Service now supports `id` as an alias to `filter` as part of the options, to be more semantic you're only working with a single run.
+- World Service: delete() now takes in an optional world id as first param #56
+- World Service now supports `id` as an alias to `filter` as part of the options, to be more semantic you're only working with a single world.
+- World Manager now takes in the model from the `run` if you don't specify it as part of the `world`.
+
+Bug Fixes:
+- Run manager sets cookie path to `/` if you're running it locally - this fixes an issue where cookies were never set locally and you always got a new run if you refreshed.
+
 <a name="1.5.0"></a>
 ## 1.5.0 (2015-06-10)
 
