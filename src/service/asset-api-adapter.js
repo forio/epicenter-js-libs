@@ -149,16 +149,16 @@ module.exports = function (config) {
         return urlConfig.getAPIPath(apiEndpoint) + parts.join('/') + filename;
     };
 
-    /**
-    * Private function, all requests follow a more or less same approach to
-    * use the Asset API and the difference is the HTTP verb
-    *
-    * @param {string} `method` (Required) HTTP verb
-    * @param {string} `filename` (Required) Name of the file to delete/replace/create
-    * @param {object} `params` (Optional) Body parameters to send to the Asset API
-    * @param {object} `options` (Optional) Options object to override global options.
-    *
-    */
+    //
+    // Private function, all requests follow a more or less same approach to
+    // use the Asset API and the difference is the HTTP verb
+    //
+    // @param {string} `method` (Required) HTTP verb
+    // @param {string} `filename` (Required) Name of the file to delete/replace/create
+    // @param {object} `params` (Optional) Body parameters to send to the Asset API
+    // @param {object} `options` (Optional) Options object to override global options.
+    //
+    
     var upload = function (method, filename, params, options) {
         validateFilename(filename);
         // make sure the parameter is clean
