@@ -122,6 +122,11 @@ module.exports = (function () {
                     delete paramsCopy.include;
                     var urlNoIncludes = getFinalUrl(paramsCopy);
                     var diff = MAX_URL_LENGTH - urlNoIncludes.length;
+                    var oldSuccess = options.success || httpOptions.success || $.noop;
+                    var oldError = options.error || httpOptions.error || $.noop;
+                    // remove the original success and error callbacks
+                    options.success = $.noop;
+                    options.error = $.noop;
 
                     var include = params.include;
                     var currIncludes = [];
@@ -151,7 +156,9 @@ module.exports = (function () {
                         // So the first argument of the first array of arguments is the data
                         var isValid = arguments[0] && arguments[0][0];
                         if (!isValid) {
-                            return dtd.resolve.apply(dtd, arguments[0]);
+                            // Should never happen...
+                            oldError();
+                            return dtd.reject();
                         }
                         var isObject = $.isPlainObject(arguments[0][0]);
                         if (isObject) {
@@ -161,24 +168,33 @@ module.exports = (function () {
                                 var run = args[0];
                                 $.extend(true, aggregateRun.variables, run.variables);
                             });
+                            oldSuccess(aggregateRun, arguments[0][1], arguments[0][2]);
                             dtd.resolve(aggregateRun, arguments[0][1], arguments[0][2]);
                         } else {
                             // Agregate variables in each run
-                            var runs = {};
+                            var aggregatedRuns = {};
                             $.each(arguments, function (idx, args) {
                                 var runs = args[0];
+                                if (!$.isArray(runs)) {
+                                    return;
+                                }
                                 $.each(runs, function (idxRun, run) {
-                                    if (!runs[run.id]) {
-                                        runs[run.id] = run;
-                                    } else {
-                                        $.extend(true, runs[run.id].variables, run.variables);
+                                    if (run.id && !aggregatedRuns[run.id]) {
+                                        run.variables = run.variables || {};
+                                        aggregatedRuns[run.id] = run;
+                                    } else if (run.id) {
+                                        $.extend(true, aggregatedRuns[run.id].variables, run.variables);
                                     }
                                 });
                             });
-                            dtd.resolve(runs, arguments[0][1], arguments[0][2]);
+                            // turn it into an array
+                            aggregatedRuns = $.map(aggregatedRuns, function (run) { return run; });
+                            oldSuccess(aggregatedRuns, arguments[0][1], arguments[0][2]);
+                            dtd.resolve(aggregatedRuns, arguments[0][1], arguments[0][2]);
                         }
                     }, function () {
-                        dtd.fail.apply(dtd, arguments[0]);
+                        oldError.apply(http, arguments);
+                        dtd.reject.apply(dtd, arguments);
                     });
                     return dtd.promise();
                 } else {
