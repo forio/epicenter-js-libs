@@ -234,9 +234,9 @@ module.exports = function (config) {
         *
         * **Example**
         *
-        *   aa.list({ fullUrl: true }).then(function(fileList){
-        *       console.log('array of files = ', fileList);
-        *   });
+        *       aa.list({ fullUrl: true }).then(function(fileList){
+        *           console.log('array of files = ', fileList);
+        *       });
         *
         *  **Parameters**
         * @param {object} `options` (Optional) Options object to override global options.
@@ -297,7 +297,7 @@ module.exports = function (config) {
         *
         * **Example**
         *
-        *   aa.delete(sampleFileName);
+        *       aa.delete(sampleFileName);
         *
         *  **Parameters**
         * @param {string} `filename` (Required) Name of the file to delete.
