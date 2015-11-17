@@ -88,6 +88,12 @@ module.exports = function (config) {
         id: '',
 
         /**
+         * Flag determines if X-AutoRestore: true header is sent to Epicenter. Defaults to true.
+         * @type {boolean}
+         */
+        autoRestore: true,
+
+        /**
          * Called when the call completes successfully. Defaults to `$.noop`.
          * @type {function}
          */
@@ -130,6 +136,24 @@ module.exports = function (config) {
         return url;
     };
 
+    urlConfig.addAutoRestoreHeader = function (options) {
+        var filter = serviceOptions.filter;
+        // The semicolon separated filter is used when filter is an object
+        var isFilterRunId = filter && $.type(filter) === 'string';
+        if (serviceOptions.autoRestore && isFilterRunId) {
+            // By default autoreplay the run by sending this header to epicenter
+            // https://forio.com/epicenter/docs/public/rest_apis/aggregate_run_api/#retrieving
+            var autorestoreOpts = {
+                headers: {
+                    'X-AutoRestore': true
+                }
+            };
+            return $.extend(true, autorestoreOpts, options);
+        }
+
+        return options;
+    };
+
     var httpOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getFilterURL
     });
@@ -140,6 +164,7 @@ module.exports = function (config) {
         };
     }
     var http = new TransportFactory(httpOptions);
+    http.splitGet = rutil.splitGetFactory(httpOptions);
 
     var setFilterOrThrowError = function (options) {
         if (options.id) {
@@ -217,7 +242,9 @@ module.exports = function (config) {
         query: function (qs, outputModifier, options) {
             serviceOptions.filter = qs; //shouldn't be able to over-ride
             var httpOptions = $.extend(true, {}, serviceOptions, options);
-            return http.get(outputModifier, httpOptions);
+            httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
+
+            return http.splitGet(outputModifier, httpOptions);
         },
 
         /**
@@ -237,7 +264,8 @@ module.exports = function (config) {
                 serviceOptions.filter = filter;
             }
             var httpOptions = $.extend(true, {}, serviceOptions, options);
-            return http.get(outputModifier, httpOptions);
+            httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
+            return http.splitGet(outputModifier, httpOptions);
         },
 
         /**
@@ -259,6 +287,7 @@ module.exports = function (config) {
                 serviceOptions.filter = runID; //shouldn't be able to over-ride
             }
             var httpOptions = $.extend(true, {}, serviceOptions, options);
+            httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
             return http.get(filters, httpOptions);
         },
 

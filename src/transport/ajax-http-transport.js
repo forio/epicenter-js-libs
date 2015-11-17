@@ -73,6 +73,9 @@ module.exports = function (config) {
             params = options.parameterParser(result(params));
             return connect.call(this, 'GET', params, options);
         },
+        splitGet: function () {
+
+        },
         post: function () {
             return connect.apply(this, ['post'].concat([].slice.call(arguments)));
         },

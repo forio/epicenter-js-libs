@@ -4,14 +4,20 @@
     var RunService = F.service.Run;
     var VariablesService = F.service.Variables;
 
+    var createLargeInclude = function () {
+        var variables = ['sample_int', 'sample_string', 'sample_obj', 'sample_long', 'sample_float', 'sample_array'];
+        var include = [];
+        for (var i = 0; i < 100; i++) {
+            include = include.concat(variables);
+        }
+        return include;
+    };
+
     describe('Run API Service', function () {
         var server;
         before(function () {
             server = sinon.fakeServer.create();
             server.respondWith('PATCH',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
-                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
-            });
-            server.respondWith('GET',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
             server.respondWith('POST',  /(.*)\/run\/(.*)\/(.*)/,  function (xhr, id) {
@@ -27,7 +33,101 @@
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
             });
 
+            // General GET
+            server.respondWith('GET',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                return true;
+            });
 
+            // General Multiple Runs GET
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables.*/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify([]));
+                return true;
+            });
+
+            var run = {
+                'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                'model': 'model.vmf',
+                'account': 'forio',
+                'project': 'js-libs',
+                'saved': false,
+                'lastModified': '2014-06-20T04:09:45.738Z',
+                'created': '2014-06-20T04:09:45.738Z'
+            };
+            // return a run, with variables A and B
+            var singleVarAB = _.extend({}, run, {
+                'variables': {
+                    'varA': 9999.99,
+                    'varB': 'A string',
+                }
+            });
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*single_variables_a_b.*/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(singleVarAB));
+                return true;
+            });
+
+            // return a run, with variables C and D
+            var singleVarCD = _.extend({}, run, {
+                'variables': {
+                    'varC': 'Another string',
+                    'varD': 10.22,
+                }
+            });
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*single_variables_c_d.*/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(singleVarCD));
+                return true;
+            });
+
+            // return multiple runs with variables A and B
+            var multipleVarAB = [
+                {
+                    'id': 'run1',
+                    'variables': {
+                        'varA': 1111.11,
+                        'varB': 'A string for run1',
+                    }
+                },
+                {
+                    'id': 'run2',
+                    'variables': {
+                        'varA': 2222.22,
+                        'varB': 'A string for run2',
+                    }
+                },
+            ];
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables_a_b.*/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(multipleVarAB));
+                return true;
+            });
+
+            // return multiple runs with variables C and D
+            var multipleVarBD = [
+                {
+                    'id': 'run1',
+                    'variables': {
+                        'varC': 'Another string for run1',
+                        'varD': '2015-11-16 10:10:10'
+                    }
+                },
+                {
+                    'id': 'run2',
+                    'variables': {
+                        'varC': 'Another string for run2',
+                        'varD': '2015-11-16 20:20:20'
+                    }
+                },
+            ];
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables_c_d.*/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(multipleVarBD));
+                return true;
+            });
+
+            // Make this request fail
+            // return multiple runs with variables C and D
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*internal_server_error.*/, function (xhr, id) {
+                xhr.respond(500, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Internal server error' }));
+                return true;
+            });
             server.autoRespond = true;
         });
 
@@ -217,6 +317,96 @@
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/?page=1&limit=2');
             });
+            it('should split the get in multiple GETs', function () {
+                server.requests = [];
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                var include = createLargeInclude();
+
+                rs.query({}, { include: include });
+                //server.respond();
+                server.requests.length.should.be.above(1);
+                server.requests.forEach(function (xhr) {
+                    xhr.url.length.should.be.below(2049);
+                });
+                server.requests = [];
+            });
+            it('should fail if one or more of the multiple GETs fail', function () {
+                server.requests = [];
+                var done = sinon.spy();
+                var fail = sinon.spy();
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                var include = createLargeInclude();
+                include.push('internal_server_error');
+
+                rs.query({}, { include: include }).then(done, fail);
+                server.respond();
+                fail.should.have.been.called;
+                done.should.not.have.been.called;
+                server.requests = [];
+            });
+            it('should aggregate the response from the multiple GETs for a single run', function () {
+                server.requests = [];
+                var done = sinon.spy();
+                var fail = sinon.spy();
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                var include = createLargeInclude();
+                include.push('single_variables_c_d');
+                include = ['single_variables_a_b'].concat(include);
+
+                rs.query({}, { include: include }).done(done).fail(fail);
+                server.respond();
+                done.should.have.been.calledWith({
+                    'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                    'model': 'model.vmf',
+                    'account': 'forio',
+                    'project': 'js-libs',
+                    'saved': false,
+                    'lastModified': '2014-06-20T04:09:45.738Z',
+                    'created': '2014-06-20T04:09:45.738Z',
+                    'variables': {
+                        'varA': 9999.99,
+                        'varB': 'A string',
+                        'varC': 'Another string',
+                        'varD': 10.22,
+                    }
+                });
+                fail.should.not.have.been.called;
+                server.requests = [];
+            });
+            it('should aggregate the reponse from the multiple GETs for a multiple runs', function () {
+                server.requests = [];
+                var done = sinon.spy();
+                var fail = sinon.spy();
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                var include = createLargeInclude();
+                include.push('multiple_variables_c_d');
+                include = ['multiple_variables_a_b'].concat(include);
+
+                rs.query({}, { include: include }).done(done).fail(fail);
+                server.respond();
+                done.should.have.been.calledWith([
+                    {
+                        'id': 'run1',
+                        'variables': {
+                            'varA': 1111.11,
+                            'varB': 'A string for run1',
+                            'varC': 'Another string for run1',
+                            'varD': '2015-11-16 10:10:10'
+                        }
+                    },
+                    {
+                        'id': 'run2',
+                        'variables': {
+                            'varA': 2222.22,
+                            'varB': 'A string for run2',
+                            'varC': 'Another string for run2',
+                            'varD': '2015-11-16 20:20:20'
+                        }
+                    },
+                ]);
+                fail.should.not.have.been.called;
+                server.requests = [];
+            });
         });
 
         describe('#filter', function () {
@@ -258,6 +448,27 @@
                 server.requests = [];
 
             });
+            it('should not include the AutoRestore header', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                rs.filter({ saved: true, '.price': '1' });
+
+                var req = server.requests.pop();
+                req.requestHeaders.should.not.have.property('X-AutoRestore');
+            });
+            it('should include the AutoRestore header', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                rs.filter('myfancyrunid');
+
+                var req = server.requests.pop();
+                req.requestHeaders['X-AutoRestore'].should.equal(true);
+            });
+            it('should not include the AutoRestore header with autoRestore: false', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs', autoRestore: false });
+                rs.filter('myfancyrunid');
+
+                var req = server.requests.pop();
+                req.requestHeaders.should.not.have.property('X-AutoRestore');
+            });
         });
         describe('#load()', function () {
             it('should do an GET', function () {
@@ -288,6 +499,14 @@
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/');
+            });
+            it('should add the autorestore run flag', function () {
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                rs.load('myfancyrunid', null);
+
+                var req = server.requests.pop();
+                req.url.should.equal('https://api.forio.com/run/forio/js-libs/myfancyrunid/');
+                req.requestHeaders['X-AutoRestore'].should.equal(true);
             });
         });
 
