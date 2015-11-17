@@ -223,7 +223,7 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param {String} `keys` The id of the document to remove from this collection.
+         * @param {String|Array} `keys` The id of the document to remove from this collection, or an array of such ids.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         remove: function (keys, options) {

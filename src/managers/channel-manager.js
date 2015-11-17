@@ -156,7 +156,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *      channel.publish('topic', { myData: 100 });
      *
      * **Parameters**
-     * @param {Object| String} `options` (Optional) If string, assumed to be base channel url, else options of the type the constructor takes in
+     * @param {Object|String} `options` (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      */
     getChannel: function (options) {
         //If you just want to pass in a string
