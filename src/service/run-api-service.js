@@ -82,13 +82,13 @@ module.exports = function (config) {
         filter: '',
 
         /**
-         * Convenience alias for filter
+         * Convenience alias for filter.
          * @type {String}
          */
         id: '',
 
         /**
-         * Flag determines if X-AutoRestore: true header is sent to Epicenter. Defaults to true.
+         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter. Defaults to `true`.
          * @type {boolean}
          */
         autoRestore: true,
@@ -292,7 +292,6 @@ module.exports = function (config) {
         },
 
 
-        //Saving data
         /**
          * Save attributes (data, model variables) of the run.
          *
@@ -315,7 +314,6 @@ module.exports = function (config) {
             return http.patch(attributes, httpOptions);
         },
 
-        //##Operations
         /**
          * Call a method from the model.
          *
@@ -387,7 +385,7 @@ module.exports = function (config) {
          *                  { name: 'runmodel', params: [] }]);
          *
          * **Parameters**
-         * @param {Array[String]|Array[Object]} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
+         * @param {Array} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
          * @param {*} `params` Parameters to pass to operations.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
