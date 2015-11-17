@@ -64,7 +64,7 @@ module.exports = function (config) {
          */
         group: session.groupName,
         /**
-         * The group name. Defaults to session's `userId`.
+         * The user id. Defaults to session's `userId`.
          * @type {String}
          */
         userId: session.userId,
@@ -79,14 +79,11 @@ module.exports = function (config) {
          */
         fullUrl: true,
         /**
-         * The transport are the options passed to the XHR request.
-         * Defaults the contentType to 'multipart/form-data' as is the most common way to upload a file, through a input[type=file].
+         * The transport object contains the options passed to the XHR request.
          * @type {object}
          */
         transport: {
-            // This is set to 'multipart/form-data' with the correct boundary by the browser if we use false
-            contentType: false,
-            processData: false,
+            processData: false
         }
     };
     var serviceOptions = $.extend(true, {}, defaults, config);
@@ -166,8 +163,8 @@ module.exports = function (config) {
         validateFilename(filename);
         // make sure the parameter is clean
         method = method.toLowerCase();
-        var urlOptions = $.extend({}, serviceOptions, options);
-        if (urlOptions.transport.contentType === 'application/json') {
+        var contentType = params instanceof FormData === true ? false : 'application/json';
+        if (contentType === 'application/json') {
             // whitelist the fields that we actually can send to the api
             params = _pick(params, assetApiParams);
         } else { // else we're sending form data which goes directly in request body
@@ -175,17 +172,33 @@ module.exports = function (config) {
             // it's getting picked by the FormData field filename.
             filename = method === 'post' || method === 'put' ? '' : filename;
         }
+        var urlOptions = $.extend({}, serviceOptions, options);
         var url = buildUrl(filename, urlOptions);
-        var createOptions = $.extend(true, {}, urlOptions, { url: url });
+        var createOptions = $.extend(true, {}, urlOptions, { url: url, contentType: contentType });
 
         return http[method](params, createOptions);
     };
 
     var publicAPI = {
         /**
-        * Creates a file in the Asset API. The server returns an error if the file already exists, so
+        * Creates a file in the Asset API. The server returns an error (status code `409`, conflict) if the file already exists, so
         * check first with a `list()` or a `get()`.
         *
+        *  **Example**
+        *
+        *       var aa = new F.service.Asset({
+        *          account: 'acme-simulations',
+        *          project: 'supply-chain-game',
+        *          group: 'team1',
+        *          userId: ''
+        *       });
+        *       aa.create('test.txt', {
+        *           encoding: 'BASE_64',
+        *           data: 'VGhpcyBpcyBhIHRlc3QgZmlsZS4=',
+        *           contentType: 'text/plain'
+        *       }, { scope: 'user' });
+        *
+        *  **Parameters**
         * @param {string} `filename` (Required) Name of the file to create.
         * @param {object} `params` (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
         * @param {string} `params.encoding` Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
@@ -202,6 +215,7 @@ module.exports = function (config) {
         * Gets a file from the Asset API, fetching the asset content. (To get a list
         * of the assets in a scope, use `list()`.)
         *
+        *  **Parameters**
         * @param {string} `filename` (Required) Name of the file to retrieve.
         * @param {object} `options` (Optional) Options object to override global options.
         *
@@ -218,6 +232,13 @@ module.exports = function (config) {
         /**
         * Gets the list of the assets in a scope.
         *
+        * **Example**
+        *
+        *   aa.list({ fullUrl: true }).then(function(fileList){
+        *       console.log('array of files = ', fileList);
+        *   });
+        *
+        *  **Parameters**
         * @param {object} `options` (Optional) Options object to override global options.
         * @param {string} `options.scope` (Optional) The scope (`user`, `group`, `project`).
         * @param {boolean} `options.fullUrl` (Optional) Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
@@ -250,6 +271,15 @@ module.exports = function (config) {
         /**
         * Replaces an existing file in the Asset API.
         *
+        * **Example**
+        *
+        *       aa.replace('test.txt', {
+        *           encoding: 'BASE_64',
+        *           data: 'VGhpcyBpcyBhIHNlY29uZCB0ZXN0IGZpbGUu',
+        *           contentType: 'text/plain'
+        *       }, { scope: 'user' });
+        *
+        *  **Parameters**
         * @param {string} `filename` (Required) Name of the file being replaced.
         * @param {object} `params` (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
         * @param {string} `params.encoding` Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
@@ -265,6 +295,11 @@ module.exports = function (config) {
         /**
         * Deletes a file from the Asset API.
         *
+        * **Example**
+        *
+        *   aa.delete(sampleFileName);
+        *
+        *  **Parameters**
         * @param {string} `filename` (Required) Name of the file to delete.
         * @param {object} `options` (Optional) Options object to override global options.
         *
