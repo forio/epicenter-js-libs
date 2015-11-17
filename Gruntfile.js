@@ -10,7 +10,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('test', ['templates', 'browserify:edge', 'browserify:instrumented', 'browserify:components', 'mocha', 'coverage-report']);
-    grunt.registerTask('documentation', ['markdox']);
+    grunt.registerTask('documentation', ['jshint:all', 'jscs', 'markdox']);
     grunt.registerTask('validate', ['jshint:all', 'jscs', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
     grunt.registerTask('components', ['templates', 'browserify:components', 'copy:components']);
