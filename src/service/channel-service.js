@@ -150,7 +150,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      * **Parameters**
      *
      * @param  {String} `topic` Topic to publish to.
-     * @param  {*} `payload`  Data to publish to topic.
+     * @param  {*} `data`  Data to publish to topic.
      *
      */
     publish: function (topic, data) {
@@ -197,7 +197,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
-    on: function () {
+    on: function (event) {
         $(this).on.apply($(this), arguments);
     },
 
@@ -208,7 +208,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
-    off: function () {
+    off: function (event) {
         $(this).off.apply($(this), arguments);
     },
 
@@ -219,7 +219,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
-    trigger: function () {
+    trigger: function (event) {
         $(this).trigger.apply($(this), arguments);
     }
 

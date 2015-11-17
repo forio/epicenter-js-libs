@@ -166,7 +166,7 @@ module.exports = function (config) {
          *      rs.create('hello_world.jl');
          *
          *  **Parameters**
-         * @param {String} `model` The name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project.
+         * @param {String|Object} `params` If a string, the name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project. If an object, may include `model`, `scope`, and `files`. (See the [Run Manager](../run_manager/) for more information on `scope` and `files`.)
          * @param {Object} `options` (Optional) Overrides for configuration options.
          *
          */
@@ -277,7 +277,7 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Object} `attributes` The run data and variables to save.
-         * @param {Object{ `attributes.variables` Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
+         * @param {Object} `attributes.variables` Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         save: function (attributes, options) {
@@ -359,6 +359,7 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Array[String]|Array[Object]} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
+         * @param {*} `params` Parameters to pass to operations.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         serial: function (operations, params, options) {
@@ -412,6 +413,7 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Array|Object} `operations` If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
+         * @param {*} `params` Parameters to pass to operations.
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         parallel: function (operations, params, options) {
@@ -466,4 +468,3 @@ module.exports = function (config) {
     $.extend(this, publicAsyncAPI);
     $.extend(this, publicSyncAPI);
 };
-

@@ -156,7 +156,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *      channel.publish('topic', { myData: 100 });
      *
      * **Parameters**
-     * @param {None} None
+     * @param {Object|String} `options` (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      */
     getChannel: function (options) {
         //If you just want to pass in a string
@@ -203,7 +203,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
-    on: function () {
+    on: function (event) {
         $(this).on.apply($(this), arguments);
     },
 
@@ -214,7 +214,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
-    off: function () {
+    off: function (event) {
         $(this).off.apply($(this), arguments);
     },
 
@@ -225,7 +225,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
-    trigger: function () {
+    trigger: function (event) {
         $(this).trigger.apply($(this), arguments);
     }
 });

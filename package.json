@@ -17,7 +17,6 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-conventional-changelog": "^1.1.0",
     "grunt-jscs": "^0.8.1",
-    "grunt-jscs-checker": "^0.6.1",
     "grunt-markdox": "^1.2.1",
     "grunt-mocha-phantom-istanbul": "^0.1.1",
     "husky": "^0.5.1",
@@ -32,6 +31,7 @@
     "prepush": "grunt validate"
   },
   "dependencies": {
+    "grunt-jscs": "^2.3.0",
     "jquery": "^2.1.1"
   }
 }
