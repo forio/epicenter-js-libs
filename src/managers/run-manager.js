@@ -122,8 +122,7 @@ RunManager.prototype = {
      *          rm.run.do('runModel');
      *      });
      *
-     * **Parameters**
-     *  None
+     * @return {$promise} Promise to complete the call.
      */
     getRun: function () {
         return this.strategy
