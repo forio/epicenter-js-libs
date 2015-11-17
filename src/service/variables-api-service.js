@@ -23,6 +23,7 @@
  'use strict';
 
  var TransportFactory = require('../transport/http-transport-factory');
+ var rutil = require('../util/run-util');
 
 module.exports = function (config) {
     var defaults = {
@@ -38,6 +39,10 @@ module.exports = function (config) {
         return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
     };
 
+    var addAutoRestoreHeader = function (options) {
+        return serviceOptions.runService.urlConfig.addAutoRestoreHeader(options);
+    };
+
     var httpOptions = {
         url: getURL
     };
@@ -47,6 +52,7 @@ module.exports = function (config) {
         };
     }
     var http = new TransportFactory(httpOptions);
+    http.splitGet = rutil.splitGetFactory(httpOptions);
 
     var publicAPI = {
 
@@ -67,6 +73,7 @@ module.exports = function (config) {
          */
         load: function (variable, outputModifier, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
+            httpOptions = addAutoRestoreHeader(httpOptions);
             return http.get(outputModifier, $.extend({}, httpOptions, {
                 url: getURL() + variable + '/'
             }));
@@ -98,7 +105,7 @@ module.exports = function (config) {
                 query = { include: query };
             }
             $.extend(query, outputModifier);
-            return http.get(query, httpOptions);
+            return http.splitGet(query, httpOptions);
         },
 
         /**
