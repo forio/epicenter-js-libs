@@ -63,7 +63,7 @@ module.exports = function (config) {
                 { url: urlConfig.getAPIPath(apiEndpoint) + params.runId }
             );
 
-            params = $.extend(true, { action: 'replay' }, _pick(params, 'stopBefore'));
+            params = $.extend(true, { action: 'replay' }, _pick(params, ['stopBefore', 'exclude']));
 
             return http.post(params, replayOptions);
         },
@@ -96,7 +96,7 @@ module.exports = function (config) {
                 { url: urlConfig.getAPIPath(apiEndpoint) + params.runId }
             );
 
-            params = $.extend(true, { action: 'clone' }, _pick(params, 'stopBefore'));
+            params = $.extend(true, { action: 'clone' }, _pick(params, ['stopBefore', 'exclude']));
 
             return http.post(params, replayOptions);
         }
