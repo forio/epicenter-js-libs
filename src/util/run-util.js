@@ -160,37 +160,52 @@ module.exports = (function () {
                             oldError();
                             return dtd.reject();
                         }
-                        var isObject = $.isPlainObject(arguments[0][0]);
-                        if (isObject) {
-                            // aggregate the variables property only
-                            var aggregateRun = arguments[0][0];
-                            $.each(arguments, function (idx, args) {
-                                var run = args[0];
-                                $.extend(true, aggregateRun.variables, run.variables);
-                            });
-                            oldSuccess(aggregateRun, arguments[0][1], arguments[0][2]);
-                            dtd.resolve(aggregateRun, arguments[0][1], arguments[0][2]);
-                        } else {
-                            // Agregate variables in each run
-                            var aggregatedRuns = {};
-                            $.each(arguments, function (idx, args) {
-                                var runs = args[0];
-                                if (!$.isArray(runs)) {
-                                    return;
-                                }
-                                $.each(runs, function (idxRun, run) {
-                                    if (run.id && !aggregatedRuns[run.id]) {
-                                        run.variables = run.variables || {};
-                                        aggregatedRuns[run.id] = run;
-                                    } else if (run.id) {
-                                        $.extend(true, aggregatedRuns[run.id].variables, run.variables);
-                                    }
+                        var firstResponse = arguments[0][0];
+                        var isObject = $.isPlainObject(firstResponse);
+                        var isRunAPI = (isObject && $.isPlainObject(firstResponse.variables)) || !isObject;
+                        if (isRunAPI) {
+                            if (isObject) {
+                                // aggregate the variables property only
+                                var aggregateRun = arguments[0][0];
+                                $.each(arguments, function (idx, args) {
+                                    var run = args[0];
+                                    $.extend(true, aggregateRun.variables, run.variables);
                                 });
+                                oldSuccess(aggregateRun, arguments[0][1], arguments[0][2]);
+                                dtd.resolve(aggregateRun, arguments[0][1], arguments[0][2]);
+                            } else {
+                                // array of runs
+                                // Agregate variables in each run
+                                var aggregatedRuns = {};
+                                $.each(arguments, function (idx, args) {
+                                    var runs = args[0];
+                                    if (!$.isArray(runs)) {
+                                        return;
+                                    }
+                                    $.each(runs, function (idxRun, run) {
+                                        if (run.id && !aggregatedRuns[run.id]) {
+                                            run.variables = run.variables || {};
+                                            aggregatedRuns[run.id] = run;
+                                        } else if (run.id) {
+                                            $.extend(true, aggregatedRuns[run.id].variables, run.variables);
+                                        }
+                                    });
+                                });
+                                // turn it into an array
+                                aggregatedRuns = $.map(aggregatedRuns, function (run) { return run; });
+                                oldSuccess(aggregatedRuns, arguments[0][1], arguments[0][2]);
+                                dtd.resolve(aggregatedRuns, arguments[0][1], arguments[0][2]);
+                            }
+                        } else {
+                            // is variables API
+                            // aggregate the response
+                            var aggregatedVariables = {};
+                            $.each(arguments, function (idx, args) {
+                                var vars = args[0];
+                                $.extend(true, aggregatedVariables, vars);
                             });
-                            // turn it into an array
-                            aggregatedRuns = $.map(aggregatedRuns, function (run) { return run; });
-                            oldSuccess(aggregatedRuns, arguments[0][1], arguments[0][2]);
-                            dtd.resolve(aggregatedRuns, arguments[0][1], arguments[0][2]);
+                            oldSuccess(aggregatedVariables, arguments[0][1], arguments[0][2]);
+                            dtd.resolve(aggregatedVariables, arguments[0][1], arguments[0][2]);
                         }
                     }, function () {
                         oldError.apply(http, arguments);
