@@ -40,6 +40,15 @@ module.exports = function (config) {
     }
 
     var http = new TransportFactory(transportOptions);
+    var parseRunIdOrError = function (params) {
+        if ($.type(params) === 'string') {
+            return params;
+        } else if ($.isPlainObject(params) && params.runId) {
+            return params.runId;
+        } else {
+            throw new Error('Please pass in a run id');
+        }
+    };
 
     var publicAPI = {
         /**
@@ -57,10 +66,12 @@ module.exports = function (config) {
         * @param {object} `options` (Optional) Overrides for configuration options.
         */
         replay: function (params, options) {
+            var runId = parseRunIdOrError(params);
+
             var replayOptions = $.extend(true, {},
                 serviceOptions,
                 options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + params.runId }
+                { url: urlConfig.getAPIPath(apiEndpoint) + runId }
             );
 
             params = $.extend(true, { action: 'replay' }, _pick(params, ['stopBefore', 'exclude']));
