@@ -1,3 +1,9 @@
+<a name="1.6.1"></a>
+### 1.6.1 (2015-12-02)
+Bug Fixes:
+- State API Service did not allow you to pass in an `exclude` filter before, now it does
+- Fixed issue with the `splitGet` feature in the previous release which broke up large Ajax requests.
+
 <a name="1.6.0"></a>
 ## 1.6.0 (2015-11-17)
 Features:
