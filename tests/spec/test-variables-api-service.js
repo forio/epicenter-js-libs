@@ -3,12 +3,44 @@
 
     var RunService = F.service.Run;
 
+    var createLargeInclude = function () {
+        var variables = ['sample_int', 'sample_string', 'sample_obj', 'sample_long', 'sample_float', 'sample_array'];
+        var include = [];
+        for (var i = 0; i < 100; i++) {
+            include = include.concat(variables);
+        }
+        return include;
+    };
+
     describe('Variables Service', function () {
         var server, rs, vs;
         before(function () {
             server = sinon.fakeServer.create();
             server.respondWith(/(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+            });
+            // General Multiple Runs GET
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*sample_.*/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({}));
+                return true;
+            });
+            // return variables A and B
+            var variablesAB = {
+                'varA': 'Value A',
+                'varB': 0.0001
+            };
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*variables_a_b.*/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(variablesAB));
+                return true;
+            });
+            // return variables C and D
+            var variablesCD = {
+                'varC': 'Another string for run1',
+                'varD': '2015-11-16 10:10:10'
+            };
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*variables_c_d.*/, function (xhr, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(variablesCD));
+                return true;
             });
             server.autoRespond = true;
 
@@ -94,11 +126,7 @@
             });
             it('should split the get in multiple GETs', function () {
                 server.requests = [];
-                var variables = ['sample_int', 'sample_string', 'sample_obj', 'sample_long', 'sample_float', 'sample_array'];
-                var include = [];
-                for (var i = 0; i < 100; i++) {
-                    include = include.concat(variables);
-                }
+                var include = createLargeInclude();
 
                 vs.query(include);
                 server.respond();
@@ -106,6 +134,26 @@
                 server.requests.forEach(function (xhr) {
                     xhr.url.length.should.be.below(2048);
                 });
+                server.requests = [];
+            });
+            it('should aggregate the response from the multiple GETs from the variables API', function () {
+                server.requests = [];
+                var done = sinon.spy();
+                var fail = sinon.spy();
+                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                var include = createLargeInclude();
+                include.push('variables_c_d');
+                include = ['variables_a_b'].concat(include);
+
+                rs.query({}, { include: include }).done(done).fail(fail);
+                server.respond();
+                done.should.have.been.calledWith({
+                    'varA': 'Value A',
+                    'varB': 0.0001,
+                    'varC': 'Another string for run1',
+                    'varD': '2015-11-16 10:10:10'
+                });
+                fail.should.not.have.been.called;
                 server.requests = [];
             });
         });
