@@ -61,6 +61,7 @@ module.exports = function (config) {
         * @param {object} `params` Parameters object.
         * @param {string} `params.runId` The id of the run to bring back to memory.
         * @param {string} `params.stopBefore` (Optional) The run is advanced only up to the first occurrence of this method.
+        * @param {array} `params.exclude` (Optional) Array of methods to exclude when advancing the run.
         * @param {object} `options` (Optional) Overrides for configuration options.
         */
         replay: function (params, options) {
@@ -84,18 +85,20 @@ module.exports = function (config) {
         *
         * * The `saved` field in the new run record is not copied from the original run record. It defaults to `false`.
         * * The `initialized` field in the new run record is not copied from the original run record. It defaults to `false` but may change to `true` as the new run is advanced. For example, if there has been a call to the `step` function (for Vensim models), the `initialized` field is set to `true`.
+        * * The `created` field in the new run record is the date and time at which the clone was created (not the time that the original run was created.)
         *
         * The original run remains only [in the database](../../../run_persistence/#runs-in-db).
         *
         *  **Example**
         *
         *      var sa = new F.service.State();
-        *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
+        *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
         *
         *  **Parameters**
         * @param {object} `params` Parameters object.
         * @param {string} `params.runId` The id of the run to clone from memory.
-        * @param {string} `params.stopBefore` (Optional) The run is advanced only up to the first occurrence of this method.
+        * @param {string} `params.stopBefore` (Optional) The newly cloned run is advanced only up to the first occurrence of this method.
+        * @param {array} `params.exclude` (Optional) Array of methods to exclude when advancing the newly cloned run.
         * @param {object} `options` (Optional) Overrides for configuration options.
         */
         clone: function (params, options) {
