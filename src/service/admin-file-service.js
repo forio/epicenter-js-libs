@@ -1,3 +1,11 @@
+/**
+ * ##File API Service
+ *
+ * This is used to upload/download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. The Asset API is typically used for all project use-cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
+ *
+ * Partially implemented.
+ */
+
 'use strict';
 
 var ConfigService = require('./configuration-service');
@@ -56,10 +64,15 @@ module.exports = function (config) {
     }
     var http = new TransportFactory(httpOptions);
 
-
     var publicAsyncAPI = {
-        getFileContents: function (fileName, folder, options) {
-            var path = folder + '/' + fileName;
+        /**
+         * Get a directory listing, or contents of a file
+         * @param  {String} `filePath`   Path to the file
+         * @param  {String} `folderType` One of Model|Static|Node
+         * @param  {Object} `options` (Optional) Overrides for configuration options.
+         */
+        getContents: function (filePath, folderType, options) {
+            var path = folderType + '/' + filePath;
             var httpOptions = $.extend(true, {}, serviceOptions, options, {
                 url: urlConfig.getAPIPath('file') + path
             });
