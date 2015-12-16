@@ -1,5 +1,7 @@
 'use strict';
 
+var epiVersion = require('../api-version.json');
+
 module.exports = function (config) {
     //TODO: urlutils to get host, since no window on node
 
@@ -53,7 +55,11 @@ module.exports = function (config) {
 
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file'];
-            var apiPath = this.protocol + '://' + this.host + '/' + api + '/';
+            var version = epiVersion[api] ? epiVersion[api] : epiVersion.version;
+            if (version) {
+                version += '/';
+            }
+            var apiPath = this.protocol + '://' + this.host + '/' + version + api + '/';
 
             if ($.inArray(api, PROJECT_APIS) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath  + '/';

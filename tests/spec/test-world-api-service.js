@@ -1,5 +1,6 @@
 (function () {
     'use strict';
+    var baseURL = (new F.service.URL()).getAPIPath('multiplayer/world');
 
     describe('World API Service', function () {
         var server;
@@ -31,7 +32,7 @@
             ws.load();
 
             var req = server.requests.pop();
-            req.url.should.equal('https://api.forio.com/multiplayer/world/abc/');
+            req.url.should.equal(baseURL + 'abc/');
         });
 
         describe('create', function () {
@@ -144,14 +145,14 @@
                 ws.load('abc1');
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/multiplayer/world/abc1/');
+                req.url.should.equal(baseURL + 'abc1/');
             });
             it('should load a world without any filters if originally provided', function () {
                 var ws = createWorldAdapter({ filter: 'abc1' });
                 ws.load();
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/multiplayer/world/abc1/');
+                req.url.should.equal(baseURL + 'abc1/');
             });
             it('should throw an error if no worldid provide', function () {
                 var ws = createWorldAdapter();

@@ -2,6 +2,7 @@
     'use strict';
 
     var AssetService = F.service.Asset;
+    var baseURL = (new F.service.URL()).getAPIPath('asset');
 
     describe('Asset API Adapter', function () {
         var server;
@@ -44,17 +45,17 @@
             as.list();
 
             var req = server.requests.pop();
-            req.url.should.equal('https://api.forio.com/asset/user/forio/js-libs/asset-group/myUserId');
+            req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId');
 
             as = new AssetService(_.extend({}, defaults, { scope: 'group' }));
             as.list();
             req = server.requests.pop();
-            req.url.should.equal('https://api.forio.com/asset/group/forio/js-libs/asset-group');
+            req.url.should.equal(baseURL + 'group/forio/js-libs/asset-group');
 
             as = new AssetService(_.extend({}, defaults, { scope: 'project' }));
             as.list();
             req = server.requests.pop();
-            req.url.should.equal('https://api.forio.com/asset/project/forio/js-libs');
+            req.url.should.equal(baseURL + 'project/forio/js-libs');
         });
 
         it('should allow to override scope on each function', function () {
@@ -70,11 +71,11 @@
             });
             console.log(urls);
             urls.should.eql([
-                'https://api.forio.com/asset/project/forio/js-libs/file.txt', //create
-                'https://api.forio.com/asset/project/forio/js-libs/file.txt', // get
-                'https://api.forio.com/asset/project/forio/js-libs', // list
-                'https://api.forio.com/asset/project/forio/js-libs/file.txt', // replace
-                'https://api.forio.com/asset/project/forio/js-libs/file.txt' //delete
+                baseURL + 'project/forio/js-libs/file.txt', //create
+                baseURL + 'project/forio/js-libs/file.txt', // get
+                baseURL + 'project/forio/js-libs', // list
+                baseURL + 'project/forio/js-libs/file.txt', // replace
+                baseURL + 'project/forio/js-libs/file.txt' //delete
             ]);
             server.requests = [];
         });
@@ -144,7 +145,7 @@
                 aa.get('file.txt', { scope: 'user' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/asset/user/forio/js-libs/asset-group/myUserId/file.txt');
+                req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId/file.txt');
                 req.method.should.equal('GET');
             });
 
@@ -153,7 +154,7 @@
                 aa.get('file.txt', { scope: 'group' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/asset/group/forio/js-libs/asset-group/file.txt');
+                req.url.should.equal(baseURL + 'group/forio/js-libs/asset-group/file.txt');
                 req.method.should.equal('GET');
             });
 
@@ -162,7 +163,7 @@
                 aa.get('file.txt', { scope: 'project' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/asset/project/forio/js-libs/file.txt');
+                req.url.should.equal(baseURL + 'project/forio/js-libs/file.txt');
                 req.method.should.equal('GET');
             });
         });
@@ -175,7 +176,7 @@
 
                 server.respond();
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/asset/user/forio/js-libs/asset-group/myUserId');
+                req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId');
                 req.method.should.equal('GET');
                 callback.should.have.been.called;
                 callback.should.have.been.calledWith(['file.txt', 'file2.txt']);
@@ -188,12 +189,12 @@
 
                 server.respond();
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/asset/user/forio/js-libs/asset-group/myUserId');
+                req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId');
                 req.method.should.equal('GET');
                 callback.should.have.been.called;
                 callback.should.have.been.calledWith([
-                    'https://api.forio.com/asset/user/forio/js-libs/asset-group/myUserId/file.txt',
-                    'https://api.forio.com/asset/user/forio/js-libs/asset-group/myUserId/file2.txt']);
+                    baseURL + 'user/forio/js-libs/asset-group/myUserId/file.txt',
+                    baseURL + 'user/forio/js-libs/asset-group/myUserId/file2.txt']);
             });
         });
 
@@ -228,7 +229,7 @@
                 aa.delete('file.txt', { scope: 'user' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/asset/user/forio/js-libs/asset-group/myUserId/file.txt');
+                req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId/file.txt');
                 req.method.should.equal('DELETE');
             });
 
@@ -237,7 +238,7 @@
                 aa.delete('file.txt', { scope: 'group' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/asset/group/forio/js-libs/asset-group/file.txt');
+                req.url.should.equal(baseURL + 'group/forio/js-libs/asset-group/file.txt');
                 req.method.should.equal('DELETE');
             });
 
@@ -246,7 +247,7 @@
                 aa.delete('file.txt', { scope: 'project' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/asset/project/forio/js-libs/file.txt');
+                req.url.should.equal(baseURL + 'project/forio/js-libs/file.txt');
                 req.method.should.equal('DELETE');
             });
         });
@@ -256,21 +257,21 @@
                 var aa = new F.service.Asset(defaults);
                 var url = aa.assetUrl('file.txt', { scope: 'user' });
 
-                url.should.equal('https://api.forio.com/asset/user/forio/js-libs/asset-group/myUserId/file.txt');
+                url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId/file.txt');
             });
 
             it('should build URL for the group scope', function () {
                 var aa = new F.service.Asset(defaults);
                 var url = aa.assetUrl('file.txt', { scope: 'group' });
 
-                url.should.equal('https://api.forio.com/asset/group/forio/js-libs/asset-group/file.txt');
+                url.should.equal(baseURL + 'group/forio/js-libs/asset-group/file.txt');
             });
 
             it('should build URL for the project scope', function () {
                 var aa = new F.service.Asset(defaults);
                 var url = aa.assetUrl('file.txt', { scope: 'project' });
 
-                url.should.equal('https://api.forio.com/asset/project/forio/js-libs/file.txt');
+                url.should.equal(baseURL + 'project/forio/js-libs/file.txt');
             });
         });
     });

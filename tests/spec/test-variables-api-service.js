@@ -3,6 +3,11 @@
 
     var RunService = F.service.Run;
 
+    var account = 'forio';
+    var project = 'js-libs';
+
+    var baseURL = (new F.service.URL({ accountPath: account, projectPath: project })).getAPIPath('run');
+
     var createLargeInclude = function () {
         var variables = ['sample_int', 'sample_string', 'sample_obj', 'sample_long', 'sample_float', 'sample_array'];
         var include = [];
@@ -44,7 +49,7 @@
             });
             server.autoRespond = true;
 
-            rs = new RunService({ account: 'forio', project: 'js-libs' });
+            rs = new RunService({ account: account, project: project });
             vs = rs.variables();
         });
 
@@ -66,7 +71,7 @@
                 server.respond();
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/price/');
+                req.url.should.equal(baseURL + ';/variables/price/');
             });
             it('should not add the autorestore run flag', function () {
                 vs.load('price');
@@ -76,7 +81,7 @@
                 req.requestHeaders.should.not.have.property('X-AutoRestore');
             });
             it('should add the autorestore header when filter is a runid', function () {
-                var rs = new RunService({ account: 'forio', project: 'js-libs', filter: 'myfancyrunid' });
+                var rs = new RunService({ account: account, project: 'js-libs', filter: 'myfancyrunid' });
                 var vs = rs.variables();
                 vs.load('price');
                 server.respond();
@@ -85,7 +90,7 @@
                 req.requestHeaders.should.have.property('X-AutoRestore', true);
             });
             it('should not add the autorestore header when autoRestore: false', function () {
-                var rs = new RunService({ account: 'forio', project: 'js-libs', filter: 'myfancyrunid', autoRestore: false });
+                var rs = new RunService({ account: account, project: 'js-libs', filter: 'myfancyrunid', autoRestore: false });
                 var vs = rs.variables();
                 vs.load('price');
                 server.respond();
@@ -108,21 +113,21 @@
                 server.respond();
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/?include=price,sales');
+                req.url.should.equal(baseURL + ';/variables/?include=price,sales');
             });
             it('should convert sets', function () {
                 vs.query({ set: 'a' });
                 server.respond();
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/?set=a');
+                req.url.should.equal(baseURL + ';/variables/?set=a');
             });
             it('should convert sets & includes', function () {
                 vs.query({ set: ['a', 'b'], include: 'price' });
                 server.respond();
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/?set=a,b&include=price');
+                req.url.should.equal(baseURL + ';/variables/?set=a,b&include=price');
             });
             it('should split the get in multiple GETs', function () {
                 server.requests = [];
@@ -140,7 +145,7 @@
                 server.requests = [];
                 var done = sinon.spy();
                 var fail = sinon.spy();
-                var rs = new RunService({ account: 'forio', project: 'js-libs' });
+                var rs = new RunService({ account: account, project: project });
                 var include = createLargeInclude();
                 include.push('variables_c_d');
                 include = ['variables_a_b'].concat(include);
@@ -186,7 +191,7 @@
 
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
+                req.url.should.equal(baseURL + ';/variables/');
                 req.requestBody.should.equal(JSON.stringify(params));
             });
             it('should support setting key, value syntax', function () {
@@ -194,7 +199,7 @@
                 server.respond();
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
+                req.url.should.equal(baseURL + ';/variables/');
                 req.requestBody.should.equal(JSON.stringify({ a: 1 }));
             });
         });
@@ -214,7 +219,7 @@
         //         server.respond();
 
         //         var req = server.requests.pop();
-        //         req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
+        //         req.url.should.equal(baseURL + ';/variables/');
         //         req.requestBody.should.equal(JSON.stringify(params));
         //     });
 
@@ -223,7 +228,7 @@
         //         server.respond();
 
         //         var req = server.requests.pop();
-        //         req.url.should.equal('https://api.forio.com/run/forio/js-libs/;/variables/');
+        //         req.url.should.equal(baseURL + ';/variables/');
         //         req.requestBody.should.equal(JSON.stringify({ a: 1 }));
         //     });
         // });
