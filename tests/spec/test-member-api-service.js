@@ -17,10 +17,7 @@
         });
 
         function createMemberAdapter(options) {
-            return new F.service.Member(_.extend({
-                account: 'forio',
-                project: 'js-libs'
-            }, options));
+            return new F.service.Member(options);
         }
 
         describe('getGroupsForUser', function () {

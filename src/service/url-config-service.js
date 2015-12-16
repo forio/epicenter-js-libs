@@ -52,7 +52,7 @@ module.exports = function (config) {
         },
 
         getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data'];
+            var PROJECT_APIS = ['run', 'data', 'file'];
             var apiPath = this.protocol + '://' + this.host + '/' + api + '/';
 
             if ($.inArray(api, PROJECT_APIS) !== -1) {

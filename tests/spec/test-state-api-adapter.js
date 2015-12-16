@@ -17,7 +17,7 @@
         });
 
         it('should pass through string tokens', function () {
-            var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs', token: 'abc' });
+            var ds = new StateService({ token: 'abc' });
             ds.replay({ runId: 'X' });
 
             var req = server.requests.pop();
@@ -26,7 +26,7 @@
 
         it('should pass in transport options to the underlying ajax handler', function () {
             var callback = sinon.spy();
-            var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs', transport: { beforeSend: callback } });
+            var ds = new StateService({ transport: { beforeSend: callback } });
             ds.replay({ runId: 'X' });
 
             server.respond();
@@ -35,7 +35,7 @@
 
         describe('#replay', function () {
             it('Should do a POST', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.replay({ runId: 'X' });
 
                 var req = server.requests.pop();
@@ -43,7 +43,7 @@
             });
 
             it('should hit the right url', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.replay({ runId: 'X' });
 
                 var req = server.requests.pop();
@@ -51,20 +51,20 @@
             });
             //Hold off till 2.0
             it.skip('should allow string runids', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.replay('X');
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/model/state/X');
             });
             it('should throw an error if runid is not provided', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 var ret =  function () { ds.replay(); };
                 ret.should.throw(Error);
             });
 
             it('should only allow white-listed parameters', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.replay({ runId: 'X', stopBefore: 'Y' });
 
                 var req = server.requests.pop();
@@ -76,7 +76,7 @@
                 req.requestBody.should.equal(JSON.stringify({ action: 'replay', stopBefore: 'Y', exclude: 'Z' }));
             });
             it('should now allow non-white-listed parameters', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.replay({ runId: 'X', stopBefore: 'Y' });
 
                 ds.replay({ runId: 'X', stopBefore: 'Y', include: 'Z' });
@@ -86,7 +86,7 @@
         });
         describe('#clone', function () {
             it('Should do a POST', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.clone({ runId: 'X' });
 
                 var req = server.requests.pop();
@@ -94,7 +94,7 @@
             });
 
             it('should hit the right url', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.clone({ runId: 'X' });
 
                 var req = server.requests.pop();
@@ -102,20 +102,20 @@
             });
             //Hold off till 2.0
             it.skip('should allow string runids', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.clone('X');
 
                 var req = server.requests.pop();
                 req.url.should.equal('https://api.forio.com/model/state/X');
             });
             it('should throw an error if runid is not provided', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 var ret =  function () { ds.clone(); };
                 ret.should.throw(Error);
             });
 
             it('should only allow white-listed parameters', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.clone({ runId: 'X', stopBefore: 'Y' });
 
                 var req = server.requests.pop();
@@ -127,7 +127,7 @@
                 req.requestBody.should.equal(JSON.stringify({ action: 'clone', stopBefore: 'Y', exclude: 'Z' }));
             });
             it('should now allow non-white-listed parameters', function () {
-                var ds = new StateService({ root: 'person', account: 'forio', project: 'js-libs' });
+                var ds = new StateService();
                 ds.clone({ runId: 'X', stopBefore: 'Y' });
 
                 ds.clone({ runId: 'X', stopBefore: 'Y', include: 'Z' });
