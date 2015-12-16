@@ -48,6 +48,11 @@ module.exports = function (config) {
             return prj;
         }()),
 
+        versionPath: (function () {
+            var version = epiVersion.version ? epiVersion.version + '/' : '';
+            return version;
+        }()),
+
         isLocalhost: function () {
             var host = window.location.host;
             return (!host || host.indexOf('local') !== -1);
@@ -55,11 +60,8 @@ module.exports = function (config) {
 
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file'];
-            var version = epiVersion[api] ? epiVersion[api] : epiVersion.version;
-            if (version) {
-                version += '/';
-            }
-            var apiPath = this.protocol + '://' + this.host + '/' + version + api + '/';
+
+            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
 
             if ($.inArray(api, PROJECT_APIS) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath  + '/';
