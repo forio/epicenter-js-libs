@@ -5,7 +5,11 @@
  *
  * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, the `root` option contains the name of the collection. If you have multiple collections within each of your projects, you can pass the collection name as an option for each call.
  *
- *      var ds = new F.service.Data({ root: 'survey-responses' });
+ *      var ds = new F.service.Data({
+ *          account: 'acme-simulations',
+ *          project: 'supply-chain-game',
+ *          root: 'survey-responses'
+ *      });
  *      ds.saveAs('user1',
  *          { 'question1': 2, 'question2': 10,
  *           'question3': false, 'question4': 'sometimes' } );
@@ -34,13 +38,13 @@ module.exports = function (config) {
         root: '/',
 
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
          * @type {String}
          */
         account: '',
 
         /**
-         * The project id. Defaults to empty string.
+         * The project id. Defaults to empty string. If left undefined, taken from the URL.
          * @type {String}
          */
         project: '',
