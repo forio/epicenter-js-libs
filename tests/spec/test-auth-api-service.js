@@ -2,6 +2,7 @@
     'use strict';
 
     var AuthService = F.service.Auth ;
+    var baseURL = (new F.service.URL()).getAPIPath('authentication');
 
     describe('Auth Service', function () {
         var server, token;
@@ -49,7 +50,7 @@
                 as.login({ userName: 'john', password: 'y' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/authentication/');
+                req.url.should.equal(baseURL);
             });
             it('should send requests to body', function () {
                 var as = new AuthService();

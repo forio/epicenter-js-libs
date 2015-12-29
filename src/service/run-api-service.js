@@ -61,7 +61,7 @@ module.exports = function (config) {
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
          * @type {String}
          */
-        token: store.get('epicenter.project.token') || '',
+        token: store.get('epicenter.project.token') || store.get('epicenter.token') || '',
 
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
@@ -472,18 +472,9 @@ module.exports = function (config) {
     };
 
     var publicSyncAPI = {
-        /**
-         * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.
-         *
-         * **Example**
-         *
-         *      var vs = rs.variables();
-         *      vs.save({ sample_int: 4});
-         *
-         * **Parameters**
-         * @param {Object} `config` (Optional) Overrides for configuration options.
-         */
-
+        getCurrentConfig: function () {
+            return serviceOptions;
+        },
         variables: function (config) {
             var vs = new VariablesService($.extend(true, {}, serviceOptions, config, {
                 runService: this
