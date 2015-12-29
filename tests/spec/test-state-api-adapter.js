@@ -2,6 +2,7 @@
     'use strict';
 
     var StateService = F.service.State;
+    var baseURL = (new F.service.URL()).getAPIPath('model/state');
 
     describe('State API Adapter', function () {
         var server;
@@ -47,7 +48,7 @@
                 ds.replay({ runId: 'X' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/model/state/X');
+                req.url.should.equal(baseURL + 'X');
             });
             //Hold off till 2.0
             it.skip('should allow string runids', function () {
@@ -55,7 +56,7 @@
                 ds.replay('X');
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/model/state/X');
+                req.url.should.equal(baseURL + 'X');
             });
             it('should throw an error if runid is not provided', function () {
                 var ds = new StateService();
@@ -98,7 +99,7 @@
                 ds.clone({ runId: 'X' });
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/model/state/X');
+                req.url.should.equal(baseURL + 'X');
             });
             //Hold off till 2.0
             it.skip('should allow string runids', function () {
@@ -106,7 +107,7 @@
                 ds.clone('X');
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/model/state/X');
+                req.url.should.equal(baseURL + 'X');
             });
             it('should throw an error if runid is not provided', function () {
                 var ds = new StateService();

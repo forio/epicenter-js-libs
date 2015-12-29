@@ -2,6 +2,11 @@
 (function () {
 
     var FileService = F.service.File;
+    var account = 'forio';
+    var project = 'js-libs';
+
+    var baseURL = (new F.service.URL({ accountPath: account, projectPath: project })).getAPIPath('file');
+
 
     describe('File API Adapter', function () {
         var server;
@@ -26,7 +31,7 @@
 
         it('should pass in transport options to the underlying ajax handler', function () {
             var callback = sinon.spy();
-            var fs = new FileService({ account: 'forio', project: 'js-libs', transport: { beforeSend: callback } });
+            var fs = new FileService({ account: account, project: project, transport: { beforeSend: callback } });
             fs.getContents('file', 'model');
 
             server.respond();
@@ -35,7 +40,7 @@
 
         describe('#getContents', function () {
             it('Should do a GET', function () {
-                var fs = new FileService({ account: 'forio', project: 'js-libs' });
+                var fs = new FileService({ account: account, project: project });
                 fs.getContents('file', 'model');
 
                 var req = server.requests.pop();
@@ -43,11 +48,11 @@
             });
 
             it('should hit the right url', function () {
-                var fs = new FileService({ account: 'forio', project: 'js-libs' });
+                var fs = new FileService({ account: account, project: project });
                 fs.getContents('file', 'model');
 
                 var req = server.requests.pop();
-                req.url.should.equal('https://api.forio.com/file/forio/js-libs/model/file');
+                req.url.should.equal(baseURL + 'model/file');
             });
         });
     });
