@@ -11,7 +11,7 @@
  *
  * For example,
  *
- *      var rs = new F.service.Run({
+ *       var rs = new F.service.Run({
  *            account: 'acme-simulations',
  *            project: 'supply-chain-game',
  *      });
@@ -484,7 +484,7 @@ module.exports = function (config) {
           * **Example**
           *
           *      var vs = rs.variables();
-          *      vs.save({ sample_int: 4});
+          *      vs.save({ sample_int: 4 });
           *
           * **Parameters**
           * @param {Object} `config` (Optional) Overrides for configuration options.
