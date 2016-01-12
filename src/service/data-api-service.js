@@ -3,21 +3,27 @@
  *
  * The Data API Service allows you to create, access, and manipulate data related to any of your projects. Data are organized in collections. Each collection contains a document; each element of this top-level document is a JSON object. (See additional information on the underlying [Data API](../../../rest_apis/data_api/).)
  *
- * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, the `root` option contains the name of the collection. If you have multiple collections within each of your projects, you can pass the collection name as an option for each call.
+ * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, there are three required parameters when you instantiate the Data Service:
  *
- *      var ds = new F.service.Data({
+ * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
+ * * `project`: Epicenter project id.
+ * * `root`: The the name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
+ *
+ *       var ds = new F.service.Data({
  *          account: 'acme-simulations',
  *          project: 'supply-chain-game',
- *          root: 'survey-responses'
- *      });
- *      ds.saveAs('user1',
+ *          root: 'survey-responses',
+ *          server: { host: 'api.forio.com' }
+ *       });
+ *       ds.saveAs('user1',
  *          { 'question1': 2, 'question2': 10,
- *           'question3': false, 'question4': 'sometimes' } );
- *      ds.saveAs('user2',
+ *          'question3': false, 'question4': 'sometimes' } );
+ *       ds.saveAs('user2',
  *          { 'question1': 3, 'question2': 8,
- *           'question3': true, 'question4': 'always' } );
- *      ds.query('',{ 'question2': { '$gt': 9} });
+ *          'question3': true, 'question4': 'always' } );
+ *       ds.query('',{ 'question2': { '$gt': 9} });
  *
+ * Note that in addition to the `account`, `project`, and `root`, the Data Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
  */
 
 'use strict';
