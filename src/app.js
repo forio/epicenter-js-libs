@@ -27,6 +27,7 @@ F.transport.Ajax = require('./transport/ajax-http-transport');
 F.service.URL = require('./service/url-config-service');
 F.service.Config = require('./service/configuration-service');
 F.service.Run = require('./service/run-api-service');
+F.service.File = require('./service/admin-file-service');
 F.service.Variables = require('./service/variables-api-service');
 F.service.Data = require('./service/data-api-service');
 F.service.Auth = require('./service/auth-api-service');
@@ -56,7 +57,7 @@ F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
 F.service.Channel = require('./service/channel-service');
 
 F.version = '<%= version %>';
-
+F.api = require('./api-version.json');
 
 global.F = F;
 module.exports = F;

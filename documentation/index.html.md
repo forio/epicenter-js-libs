@@ -55,9 +55,9 @@ Although in most cases you'll work with the managers directly, the services are 
 
 **Epicenter.js**
 
-The Epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.6.1/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.6.1/epicenter.min.js</a>. To use it in your project, simply add
+The Epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/1.6.2/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/1.6.2/epicenter.min.js</a>. To use it in your project, simply add
 
-    <script src="https://forio.com/tools/js-libs/1.6.1/epicenter.min.js"></script>
+    <script src="https://forio.com/tools/js-libs/1.6.2/epicenter.min.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
@@ -69,9 +69,9 @@ The Epicenter.js library depends on jQuery, so you'll also need to download jQue
 
 **Extensions**
 
-If you are building a [multiplayer game](../glossary/#world), you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/1.6.1/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
+If you are building a [multiplayer game](../glossary/#world), you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/1.4.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/1.6.2/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
 
-	<script src="https://forio.com/tools/js-libs/1.6.1/epicenter-multiplayer-dependencies.js"></script>
+	<script src="https://forio.com/tools/js-libs/1.6.2/epicenter-multiplayer-dependencies.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 

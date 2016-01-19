@@ -1,3 +1,8 @@
+<a name="1.6.2"></a>
+### 1.6.2 (2015-12-29)
+- Internal refactoring to add support for version numbers in upcoming Epicenter APIs.
+- Bare-bones implementation of `F.service.File` to get contents of any file in your project. Used by Flow Inspector.
+
 <a name="1.6.1"></a>
 ### 1.6.1 (2015-12-02)
 Bug Fixes:
