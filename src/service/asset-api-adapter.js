@@ -14,17 +14,42 @@
  *
  * To use the Asset Adapter, instantiate it and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface) and project id (**Project ID**). The group name is required for assets with a group scope, and the group name and userId are required for assets with a user scope. If not included, they are taken from the logged in user's session information if needed.
  *
+ * When creating an asset, you can pass in text (encoded data) to the `create()` call. Alternatively, you can make the `create()` call as part of an HTML form and pass in a file uploaded via the form.
+ *
+ *       // instantiate the Asset Adapter
  *       var aa = new F.service.Asset({
  *          account: 'acme-simulations',
  *          project: 'supply-chain-game',
  *          group: 'team1',
- *          userId: ''
+ *          userId: '12345'
  *       });
+ *
+ *       // create a new asset using encoded text
  *       aa.create('test.txt', {
-            encoding: 'BASE_64',
-            data: 'VGhpcyBpcyBhIHRlc3QgZmlsZS4=',
-            contentType: 'text/plain'
+ *           encoding: 'BASE_64',
+ *           data: 'VGhpcyBpcyBhIHRlc3QgZmlsZS4=',
+ *           contentType: 'text/plain'
  *       }, { scope: 'user' });
+ *
+ *       // alternatively, create a new asset using a file uploaded through a form
+ *       // this sample code goes with an html form that looks like this:
+ *       //
+ *       // <form id="upload-file">
+ *       //   <input id="file" type="file">
+ *       //   <input id="filename" type="text" value="myFile.txt">
+ *       //   <button type="submit">Upload myFile</button>
+ *       // </form>
+ *       //
+ *       $('#upload-file').on('submit', function (e) {
+ *          e.preventDefault();
+ *          var filename = $('#filename').val();
+ *          var data = new FormData();
+ *          var inputControl = $('#file')[0];
+ *          data.append('file', inputControl.files[0], filename);
+ *
+ *          aa.create(filename, data, { scope: 'user' });
+ *       });
+ *
  */
 
 'use strict';
@@ -189,11 +214,33 @@ module.exports = function (config) {
         *          group: 'team1',
         *          userId: ''
         *       });
+        *
+        *       // create a new asset using encoded text
         *       aa.create('test.txt', {
         *           encoding: 'BASE_64',
         *           data: 'VGhpcyBpcyBhIHRlc3QgZmlsZS4=',
         *           contentType: 'text/plain'
         *       }, { scope: 'user' });
+        *
+        *       // alternatively, create a new asset using a file uploaded through a form
+        *       // this sample code goes with an html form that looks like this:
+        *       //
+        *       // <form id="upload-file">
+        *       //   <input id="file" type="file">
+        *       //   <input id="filename" type="text" value="myFile.txt">
+        *       //   <button type="submit">Upload myFile</button>
+        *       // </form>
+        *       //
+        *       $('#upload-file').on('submit', function (e) {
+        *          e.preventDefault();
+        *          var filename = $('#filename').val();
+        *          var data = new FormData();
+        *          var inputControl = $('#file')[0];
+        *          data.append('file', inputControl.files[0], filename);
+        *
+        *          aa.create(filename, data, { scope: 'user' });
+        *       });
+        *
         *
         *  **Parameters**
         * @param {string} `filename` (Required) Name of the file to create.
@@ -270,11 +317,31 @@ module.exports = function (config) {
         *
         * **Example**
         *
+        *       // replace an asset using encoded text
         *       aa.replace('test.txt', {
         *           encoding: 'BASE_64',
         *           data: 'VGhpcyBpcyBhIHNlY29uZCB0ZXN0IGZpbGUu',
         *           contentType: 'text/plain'
         *       }, { scope: 'user' });
+        *
+        *       // alternatively, replace an asset using a file uploaded through a form
+        *       // this sample code goes with an html form that looks like this:
+        *       //
+        *       // <form id="replace-file">
+        *       //   <input id="file" type="file">
+        *       //   <input id="replace-filename" type="text" value="myFile.txt">
+        *       //   <button type="submit">Replace myFile</button>
+        *       // </form>
+        *       //
+        *       $('#replace-file').on('submit', function (e) {
+        *          e.preventDefault();
+        *          var filename = $('#replace-filename').val();
+        *          var data = new FormData();
+        *          var inputControl = $('#file')[0];
+        *          data.append('file', inputControl.files[0], filename);
+        *
+        *          aa.replace(filename, data, { scope: 'user' });
+        *       });
         *
         *  **Parameters**
         * @param {string} `filename` (Required) Name of the file being replaced.
