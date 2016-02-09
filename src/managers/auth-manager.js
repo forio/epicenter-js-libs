@@ -252,8 +252,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     * @param {Object} `options` (Optional) Overrides for configuration options.
     */
     logout: function (options) {
-        var $d = $.Deferred();
-        var adapterOptions = $.extend(true, {success: $.noop, token: token }, this.options, options);
+        var adapterOptions = $.extend(true, { token: token }, this.options, options);
 
         var removeCookieFn = function (response) {
             store.remove(EPI_COOKIE_KEY, adapterOptions);
@@ -261,22 +260,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             token = '';
         };
 
-        var outSuccess = adapterOptions.success;
-        adapterOptions.success = function (response) {
-            removeCookieFn(response);
-            outSuccess.apply(this, arguments);
-        };
-
-        // Epicenter returns a bad request when trying to delete a token. It seems like the API call is not implemented yet
-        // Once it's implemented this error handler should not be necessary.
-        adapterOptions.error = function (response) {
-            removeCookieFn(response);
-            outSuccess.apply(this, arguments);
-            $d.resolve();
-        };
-
-        this.authAdapter.logout(adapterOptions).done($d.resolve);
-        return $d.promise();
+        return this.authAdapter.logout(adapterOptions).done(removeCookieFn);
     },
 
     /**
