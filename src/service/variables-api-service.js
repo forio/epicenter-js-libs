@@ -100,6 +100,7 @@ module.exports = function (config) {
         query: function (query, outputModifier, options) {
             //Query and outputModifier are both querystrings in the url; only calling them out separately here to be consistent with the other calls
             var httpOptions = $.extend(true, {}, serviceOptions, options);
+            httpOptions = addAutoRestoreHeader(httpOptions);
 
             if ($.isArray(query)) {
                 query = { include: query };
