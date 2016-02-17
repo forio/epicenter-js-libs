@@ -98,6 +98,7 @@ module.exports = function (config) {
 
         /**
          * Logs user out from specified accounts.
+         * Epicenter logout is not implemented yet, added a dummy promise that gets automatically resolved.
          *
          * **Example**
          *
@@ -107,15 +108,9 @@ module.exports = function (config) {
          * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         logout: function (options) {
-            var httpOptions = $.extend(true, serviceOptions, transportOptions, options);
-            if (!httpOptions.token) {
-                throw new Error('No token was specified.');
-            }
-            var slash = httpOptions.url.slice(-1) === '/' ? '' : '/';
-            httpOptions.url = httpOptions.url + slash + httpOptions.token;
-            var deleteParams = {};
-
-            return http.delete(deleteParams, httpOptions);
+            var dtd = $.Deferred();
+            dtd.resolve();
+            return dtd.promise();
         }
     };
 

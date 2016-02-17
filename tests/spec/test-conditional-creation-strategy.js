@@ -91,7 +91,7 @@
                     createRunManager().getRun();
 
                     var req = server.requests.pop();
-                    expect(JSON.parse(req.requestBody).scope).to.eql({ group: 'group123' });
+                    expect(JSON.parse(req.requestBody).scope).to.eql({ group: 'group-123' });
 
                 });
             });

@@ -55,7 +55,7 @@ var Strategy = classFrom(Base, {
         var _this = this;
         var userSession = this._auth.getCurrentUserSessionInfo();
         var opt = $.extend({
-            scope: { group: userSession.groupId }
+            scope: { group: userSession.groupName }
         }, this.runOptions);
 
         return this.run
