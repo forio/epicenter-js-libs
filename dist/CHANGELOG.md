@@ -1,3 +1,10 @@
+<a name="1.6.3"></a>
+### 1.6.3 (2016-02-24)
+ - Updates for the [run strategies](https://forio.com/epicenter/docs/public/api_adapters/strategy/) to use group name rather than group id to create runs with specific scope. 
+ - Addition of the `Auto-Restore` header to the Variables API Service `query()` call; previously it had only been set for the `load()` call. This header means that runs are automatically pulled from the Epicenter backend database into memory (and replayed) when they are queried. A run must be in memory in order to update model variables or call model operations.
+ - Clean up of the Authentication API Service `logout()` call; it no longer calls the (unsupported) Epicenter delete. 
+ - Documentation improvements, including more information on running Epicenter projects locally and additional examples when using Asset API Adapter.
+
 <a name="1.6.2"></a>
 ### 1.6.2 (2015-12-29)
 - Internal refactoring to add support for version numbers in upcoming Epicenter APIs.

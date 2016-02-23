@@ -19,7 +19,7 @@ module.exports = function (grunt) {
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
         type = type ? type : 'patch';
-        ['bump-only:' + type, 'changelog', 'production', 'bump-commit'].forEach(function (task) {
+        ['bump-only:' + type, 'production', 'bump-commit'].forEach(function (task) {
             grunt.task.run(task);
         });
     });
