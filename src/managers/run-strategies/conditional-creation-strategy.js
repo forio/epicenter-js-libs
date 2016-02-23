@@ -51,12 +51,16 @@ var Strategy = classFrom(Base, {
         this.runOptions = this.options.run;
     },
 
-    reset: function (runServiceOptions) {
-        var _this = this;
+    runOptionsWithScope: function () {
         var userSession = this._auth.getCurrentUserSessionInfo();
-        var opt = $.extend({
+        return $.extend({
             scope: { group: userSession.groupName }
         }, this.runOptions);
+    },
+
+    reset: function (runServiceOptions) {
+        var _this = this;
+        var opt = this.runOptionsWithScope();
 
         return this.run
                 .create(opt, runServiceOptions)
@@ -90,9 +94,10 @@ var Strategy = classFrom(Base, {
             })
             .then(function (run) {
                 if (shouldCreate) {
+                    var opt = _this.runOptionsWithScope();
                     // we need to do this, on the original runService (ie not sequencialized)
                     // so we don't get in the middle of the queue
-                    return _this.run.original.create(_this.runOptions)
+                    return _this.run.original.create(opt)
                     .then(function (run) {
                         setRunInSession(_this.options.sessionKey, run);
                         run.freshlyCreated = true;
