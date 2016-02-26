@@ -78,9 +78,11 @@ function AuthManager(options) {
     if (this.options.project === undefined) {
         this.options.project = urlConfig.projectPath;
     }
-    if (this.options.store.root === undefined) {
+
+    if (this.options.store.root === undefined && this.options.account && this.options.project) {
         this.options.store.root = '/app/' + this.options.account + '/' + this.options.project;
     }
+
     this.store = new StorageFactory(this.options.store);
     session = getSession(this.store);
     token = this.store.get(EPI_COOKIE_KEY) || '';
