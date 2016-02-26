@@ -79,10 +79,6 @@ function AuthManager(options) {
         this.options.project = urlConfig.projectPath;
     }
 
-    if (this.options.store.root === undefined && this.options.account && this.options.project) {
-        this.options.store.root = '/app/' + this.options.account + '/' + this.options.project;
-    }
-
     this.store = new StorageFactory(this.options.store);
     session = getSession(this.store);
     token = this.store.get(EPI_COOKIE_KEY) || '';
@@ -145,6 +141,10 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var outSuccess = adapterOptions.success;
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
+
+        if (this.options.store.root === undefined && this.options.account && this.options.project) {
+            this.options.store.root = '/app/' + this.options.account + '/' + this.options.project;
+        }
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
