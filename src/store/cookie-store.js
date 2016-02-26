@@ -21,7 +21,7 @@ module.exports = function (config) {
 
         domain: '.forio.com'
     };
-    var serviceOptions = $.extend({}, defaults, config);
+    this.serviceOptions = $.extend({}, defaults, config);
 
     var publicAPI = {
         // * TBD
@@ -54,7 +54,7 @@ module.exports = function (config) {
          *     cs.set({ name:'smith', age:'32' });
          */
         set: function (key, value, options) {
-            var setOptions = $.extend(true, {}, serviceOptions, options);
+            var setOptions = $.extend(true, {}, this.serviceOptions, options);
 
             var domain = setOptions.domain;
             var path = setOptions.root;
@@ -91,7 +91,7 @@ module.exports = function (config) {
          *     cs.remove('person');
          */
         remove: function (key, options) {
-            var remOptions = $.extend(true, {}, serviceOptions, options);
+            var remOptions = $.extend(true, {}, this.serviceOptions, options);
 
             var domain = remOptions.domain;
             var path = remOptions.root;
