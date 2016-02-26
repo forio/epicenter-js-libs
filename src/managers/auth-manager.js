@@ -143,6 +143,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var outSuccess = adapterOptions.success;
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
+        var authManager = this;
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
@@ -167,7 +168,6 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             //jshint camelcase: false
             //jscs:disable
             token = response.access_token;
-            var authManager = this;
             var userInfo = decodeToken(token);
             var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop, token: token });
             _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).done( function (memberInfo) {
