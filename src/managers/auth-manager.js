@@ -143,7 +143,6 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var outSuccess = adapterOptions.success;
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
-        var authManager = this;
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
@@ -181,7 +180,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 };
                 // The group is not required if the user is not logging into a project
                 if (!adapterOptions.project) {
-                    saveSession(sessionInfo, authManager.store);
+                    saveSession(sessionInfo, _this.store);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                     return;
@@ -211,7 +210,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                         'groupName': group.name,
                         'isFac': _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator'
                     });
-                    saveSession(sessionInfoWithGroup, authManager.store);
+                    saveSession(sessionInfoWithGroup, _this.store);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
