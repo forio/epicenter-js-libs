@@ -70,6 +70,8 @@ function AuthManager(options) {
     this.options = $.extend(true, {}, defaults, options);
 
     var urlConfig = new ConfigService(this.options).get('server');
+    this.isLocal = urlConfig.isLocalhost();
+
     if (!this.options.account) {
         this.options.account = urlConfig.accountPath;
     }
@@ -146,7 +148,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var projectName = (options && options.project) ? options.project : this.options.project;
 
         if (this.options.store.root === undefined && accountName && projectName) {
-            this.store.serviceOptions.root = '/app/' + accountName + '/' + projectName;
+            this.store.serviceOptions.root = this.isLocal ? '/' : '/app/' + accountName + '/' + projectName;
         }
 
         var decodeToken = function (token) {
