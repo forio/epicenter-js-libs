@@ -1,3 +1,9 @@
+
+<a name="1.6.4"></a>
+### 1.6.4 (2016-02-26)
+ - In the Authorization Manager, set the path in the cookie based on the account and project name. This allows end users to log in to multiple Epicenter simulations at once without conflict.
+
+
 <a name="1.6.3"></a>
 ### 1.6.3 (2016-02-24)
  - Updates for the [run strategies](https://forio.com/epicenter/docs/public/api_adapters/strategy/) to use group name rather than group id to create runs with specific scope. 
