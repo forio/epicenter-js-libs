@@ -1,6 +1,5 @@
 (function () {
     'use strict';
-
     describe('Auth Manager', function () {
         var server, token;
         before(function () {
@@ -47,5 +46,28 @@
         });
 
         // TODO: Create some test, find a way for the fake server to auto respond synchronously inside a respond callback
+        describe('#setting cookies', function () {
+            it ('creates cookie with the correct path name when passing in account info in consructor', function () {
+                var am = new F.manager.AuthManager({
+                    account: 'accountName',
+                    project: 'projectName'
+                });
+                am.isLocal = false ;
+                am.login();
+                am.store.serviceOptions.root.should.equal('/app/accountName/projectName');
+            });
+        });
+        describe('#setting cookies', function () {
+            it ('creates cookie with the correct path name when passing in account info in login', function () {
+                var am = new F.manager.AuthManager();
+                am.isLocal = false;
+                am.login({
+                    account: 'accountName',
+                    project: 'projectName'
+                });
+                am.store.serviceOptions.root.should.equal('/app/accountName/projectName');
+            });
+        });
+
     });
 }());
