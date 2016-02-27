@@ -142,8 +142,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
 
-        if (this.options.store.root === undefined && this.options.account && this.options.project) {
-            this.options.store.root = '/app/' + this.options.account + '/' + this.options.project;
+        var accountName = (options && options.account) ? options.account : this.options.account;
+        var projectName = (options && options.project) ? options.project : this.options.project;
+
+        if (this.options.store.root === undefined && accountName && projectName) {
+            this.store.serviceOptions.root = '/app/' + accountName + '/' + projectName;
         }
 
         var decodeToken = function (token) {
