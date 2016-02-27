@@ -260,11 +260,12 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     * @param {Object} `options` (Optional) Overrides for configuration options.
     */
     logout: function (options) {
+        var _this = this;
         var adapterOptions = $.extend(true, { token: token }, this.options, options);
 
         var removeCookieFn = function (response) {
-            store.remove(EPI_COOKIE_KEY, adapterOptions);
-            store.remove(EPI_SESSION_KEY, adapterOptions);
+            _this.store.remove(EPI_COOKIE_KEY, adapterOptions);
+            _this.store.remove(EPI_SESSION_KEY, adapterOptions);
             token = '';
         };
 
