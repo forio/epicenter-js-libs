@@ -48,7 +48,6 @@ var defaults = {
 
 var EPI_COOKIE_KEY = keyNames.EPI_COOKIE_KEY;
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
-var store;
 var token;
 var session;
 
