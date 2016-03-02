@@ -1,6 +1,6 @@
 'use strict';
 /**
-* ##User API Adapter
+* ## User API Adapter
 *
 * The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
 *

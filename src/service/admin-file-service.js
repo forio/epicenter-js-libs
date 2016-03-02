@@ -1,5 +1,5 @@
 /**
- * ##File API Service
+ * ## File API Service
  *
  * This is used to upload/download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. The Asset API is typically used for all project use-cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
  *

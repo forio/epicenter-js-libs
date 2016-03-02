@@ -1,5 +1,5 @@
 /**
- * ##Data API Service
+ * ## Data API Service
  *
  * The Data API Service allows you to create, access, and manipulate data related to any of your projects. Data are organized in collections. Each collection contains a document; each element of this top-level document is a JSON object. (See additional information on the underlying [Data API](../../../rest_apis/data_api/).)
  *

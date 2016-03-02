@@ -1,5 +1,5 @@
 /**
- * ##Asset API Adapter
+ * ## Asset API Adapter
  *
  * The Asset API Adapter allows you to store assets -- resources or files of any kind -- used by a project with a scope that is specific to project, group, or end user.
  *
