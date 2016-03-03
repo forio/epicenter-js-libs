@@ -1,6 +1,6 @@
 /**
  *
- * ##Authentication API Service
+ * ## Authentication API Service
  *
  * The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token.
  *

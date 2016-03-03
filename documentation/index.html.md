@@ -4,7 +4,7 @@ layout: "default"
 isPage: true
 ---
 
-##Epicenter.js: API Adapters
+## Epicenter.js: API Adapters
 
 The Epicenter API Adapters are part of the epicenter.js library. This library abstracts the underlying Epicenter RESTful APIs into a set of services and utilities.
 
@@ -21,7 +21,7 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 **The current version of Epicenter.js is 1.6**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
 
 <a name="concepts"></a>
-###Concepts in Epicenter.js
+### Concepts in Epicenter.js
 
 The Epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs. 
 
@@ -48,10 +48,10 @@ Although in most cases you'll work with the managers directly, the services are 
 
 
 <a name="using-epicenter-js"></a>
-###Using Epicenter.js
+### Using Epicenter.js
 
 <a name="include"></a>
-####Including
+#### Including
 
 **Epicenter.js**
 
@@ -76,7 +76,7 @@ If you are building a [multiplayer game](../glossary/#world), you'll also need t
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
 <a name="components"></a>
-####Provided Components
+#### Provided Components
 
 In addition to the Epicenter.js library itself, the Epicenter JS Libs project also includes reusable components. These HTML, CSS, and JS files are templates you can use to perform common actions. They can be copied directly to your project, often without modification.
 
@@ -101,7 +101,7 @@ Provides an interface to automatically assign end users to [worlds](../glossary/
 The assignment component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/dist/components/" target="_blank">GitHub</a>.
 
 <a name="access"></a>
-####Accessing
+#### Accessing
 
 Within your interface file, each service can be accessed using the `F` namespace.
 
@@ -110,7 +110,7 @@ For example:
     var rm = new F.service.RunManager();
 
 <a name="example"></a>
-####Examples of Usage: Callbacks and Promises
+#### Examples of Usage: Callbacks and Promises
 
 There are two different patterns for using the service adapters: using callbacks or using promises.
 
@@ -189,7 +189,7 @@ For example, you might write the same sequence of operations as above using prom
 See for example <a href="http://blog.parse.com/2013/01/29/whats-so-great-about-javascript-promises/" target="_blank">this blog</a> for more background on how promises work in JavaScript.
 
 <a name="configuration"></a>
-####Configuration Options
+#### Configuration Options
 
 Every service takes in a configuration options object as the last parameter. This optional parameter allows you to override any of the default configuration options.
 

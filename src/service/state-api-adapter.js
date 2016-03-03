@@ -1,6 +1,6 @@
 'use strict';
 /**
- * ##State API Adapter
+ * ## State API Adapter
  *
  * The State API Adapter allows you to replay or clone runs. It brings existing, persisted run data from the database back into memory, using the same run id (`replay`) or a new run id (`clone`). Runs must be in memory in order for you to update variables or call operations on them.
  *
