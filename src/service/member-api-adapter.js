@@ -1,6 +1,6 @@
 /**
  *
- * ##Member API Adapter
+ * ## Member API Adapter
  *
  * The Member API Adapter provides methods to look up information about end users for your project and how they are divided across groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
  *

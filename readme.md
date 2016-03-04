@@ -6,7 +6,7 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 
 See the full [documentation](https://forio.com/epicenter/docs/public/api_adapters/) for more details.
 
-Questions?  Contact us at support@forio.com or file an issue on github!
+Questions?  Contact us at support@forio.com.
 
 ## Getting started with development
 
@@ -20,8 +20,8 @@ bower install
 
 grunt test  or grunt documentation
 ```
-This will create a ```epicenter-edge.js``` file in ```dist/```. When you're happy with your changes do ```grunt production``` and make a pull-request to `master`.
+This will create an ```epicenter-edge.js``` file in ```dist/```. When you're happy with your changes do ```grunt production``` and make a pull-request to `master`.
 
-&copy; Forio Corporation, 2014-2015.  All rights reserved.
+&copy; Forio Corporation, 2014-2016.  All rights reserved.
 
 

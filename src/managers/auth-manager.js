@@ -48,11 +48,10 @@ var defaults = {
 
 var EPI_COOKIE_KEY = keyNames.EPI_COOKIE_KEY;
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
-var store;
 var token;
 var session;
 
-function saveSession(userInfo) {
+function saveSession(userInfo, store) {
     var serialized = JSON.stringify(userInfo);
     store.set(EPI_SESSION_KEY, serialized);
 
@@ -61,7 +60,7 @@ function saveSession(userInfo) {
     store.set(EPI_COOKIE_KEY, userInfo.auth_token);
 }
 
-function getSession() {
+function getSession(store) {
     var session = store.get(EPI_SESSION_KEY) || '{}';
     return JSON.parse(session);
 }
@@ -70,6 +69,8 @@ function AuthManager(options) {
     this.options = $.extend(true, {}, defaults, options);
 
     var urlConfig = new ConfigService(this.options).get('server');
+    this.isLocal = urlConfig.isLocalhost();
+
     if (!this.options.account) {
         this.options.account = urlConfig.accountPath;
     }
@@ -79,9 +80,9 @@ function AuthManager(options) {
         this.options.project = urlConfig.projectPath;
     }
 
-    store = new StorageFactory(this.options.store);
-    session = getSession();
-    token = store.get(EPI_COOKIE_KEY) || '';
+    this.store = new StorageFactory(this.options.store);
+    session = getSession(this.store);
+    token = this.store.get(EPI_COOKIE_KEY) || '';
     //jshint camelcase: false
     //jscs:disable
     this.authAdapter = new AuthAdapter(this.options, { token: session.auth_token });
@@ -107,9 +108,9 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *
     *       authMgr.login({
     *           account: 'acme-simulations',
-    *           project: 'supply-chain-game', 
+    *           project: 'supply-chain-game',
     *           userName: 'enduser1',
-    *           password: 'passw0rd' 
+    *           password: 'passw0rd'
     *       })
     *           .then(function(statusObj) {
     *               // if enduser1 belongs to exactly one group
@@ -117,8 +118,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *               // continue here
     *           })
     *           .fail(function(statusObj) {
-    *               // if enduser1 belongs to multiple groups, 
-    *               // the login() call fails 
+    *               // if enduser1 belongs to multiple groups,
+    *               // the login() call fails
     *               // and returns all groups of which the user is a member
     *               for (var i=0; i < statusObj.userGroups.length; i++) {
     *                   console.log(statusObj.userGroups[i].name, statusObj.userGroups[i].groupId);
@@ -127,12 +128,12 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *
     * **Parameters**
     *
-    * @param {Object} `options` (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include: 
+    * @param {Object} `options` (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
     * @param {string} `options.account` The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
     * @param {string} `options.userName` Email or username to use for logging in.
     * @param {string} `options.password` Password for specified `userName`.
     * @param {string} `options.project` (Optional) The **Project ID** for the project to log this user into.
-    * @param {string} `options.groupId` The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional. 
+    * @param {string} `options.groupId` The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
     */
     login: function (options) {
         var _this = this;
@@ -141,6 +142,13 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var outSuccess = adapterOptions.success;
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
+
+        var accountName = (options && options.account) ? options.account : this.options.account;
+        var projectName = (options && options.project) ? options.project : this.options.project;
+
+        if (this.options.store.root === undefined && accountName && projectName) {
+            this.store.serviceOptions.root = this.isLocal ? '/' : '/app/' + accountName + '/' + projectName;
+        }
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
@@ -165,7 +173,6 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             //jshint camelcase: false
             //jscs:disable
             token = response.access_token;
-
             var userInfo = decodeToken(token);
             var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop, token: token });
             _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).done( function (memberInfo) {
@@ -179,7 +186,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 };
                 // The group is not required if the user is not logging into a project
                 if (!adapterOptions.project) {
-                    saveSession(sessionInfo);
+                    saveSession(sessionInfo, _this.store);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                     return;
@@ -209,7 +216,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                         'groupName': group.name,
                         'isFac': _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator'
                     });
-                    saveSession(sessionInfoWithGroup);
+                    saveSession(sessionInfoWithGroup, _this.store);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
@@ -252,31 +259,16 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     * @param {Object} `options` (Optional) Overrides for configuration options.
     */
     logout: function (options) {
-        var $d = $.Deferred();
-        var adapterOptions = $.extend(true, {success: $.noop, token: token }, this.options, options);
+        var _this = this;
+        var adapterOptions = $.extend(true, { token: token }, this.options, options);
 
         var removeCookieFn = function (response) {
-            store.remove(EPI_COOKIE_KEY, adapterOptions);
-            store.remove(EPI_SESSION_KEY, adapterOptions);
+            _this.store.remove(EPI_COOKIE_KEY, adapterOptions);
+            _this.store.remove(EPI_SESSION_KEY, adapterOptions);
             token = '';
         };
 
-        var outSuccess = adapterOptions.success;
-        adapterOptions.success = function (response) {
-            removeCookieFn(response);
-            outSuccess.apply(this, arguments);
-        };
-
-        // Epicenter returns a bad request when trying to delete a token. It seems like the API call is not implemented yet
-        // Once it's implemented this error handler should not be necessary.
-        adapterOptions.error = function (response) {
-            removeCookieFn(response);
-            outSuccess.apply(this, arguments);
-            $d.resolve();
-        };
-
-        this.authAdapter.logout(adapterOptions).done($d.resolve);
-        return $d.promise();
+        return this.authAdapter.logout(adapterOptions).done(removeCookieFn);
     },
 
     /**
@@ -285,8 +277,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * **Example**
      *
      *      authMgr.getToken()
-     *          .then(function (token) { 
-     *              console.log('My token is ', token); 
+     *          .then(function (token) {
+     *              console.log('My token is ', token);
      *          });
      *
      * **Parameters**
@@ -314,8 +306,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      // get groups for current user
      *      var sessionObj = authMgr.getCurrentUserSessionInfo();
      *      authMgr.getUserGroups({ userId: sessionObj.userId, token: sessionObj.auth_token })
-     *          .then(function (groups) { 
-     *              for (var i=0; i < groups.length; i++) 
+     *          .then(function (groups) {
+     *              for (var i=0; i < groups.length; i++)
      *                  { console.log(groups[i].name); }
      *          });
      *
@@ -355,7 +347,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *
      * *Important*: This method is synchronous. The session information is returned immediately in an object; no callbacks or promises are needed.
      *
-     * By default, session information is stored in a cookie in the browser. You can change this with the `store` configuration option. 
+     * By default, session information is stored in a cookie in the browser. You can change this with the `store` configuration option.
      *
      * **Example**
      *
@@ -365,7 +357,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {Object} `options` (Optional) Overrides for configuration options.
      */
     getCurrentUserSessionInfo: function (options) {
-        return getSession(options);
+        return getSession(this.store, options);
     }
 });
 

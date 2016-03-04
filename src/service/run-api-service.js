@@ -1,8 +1,12 @@
 /**
  *
- * ##Run API Service
+ * ## Run API Service
  *
  * The Run API Service allows you to perform common tasks around creating and updating runs, variables, and data.
+ *
+ * When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly. This is because the Run Manager gives you control over run creation depending on run states.
+ *
+ * However, many of the Epicenter sample projects use a Run Service, because generally the sample projects are played in one end user session and don't care about run states or [run strategies](../../strategy/). The Run API Service is also useful for building an interface for a facilitator, because it makes it easy to list data across multiple runs (using the `filter()` and `query()` methods).
  *
  * To use the Run API Service, instantiate it by passing in:
  *
@@ -11,7 +15,7 @@
  *
  * For example,
  *
- *      var rs = new F.service.Run({
+ *       var rs = new F.service.Run({
  *            account: 'acme-simulations',
  *            project: 'supply-chain-game',
  *      });
@@ -22,13 +26,14 @@
  *
  * Additionally, all API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below.
  *
- * The Run API Service is most useful for building an interface for a facilitator, because it makes it easy to list data across multiple runs. When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly.
+ * Note that in addition to the `account`, `project`, and `model`, the Run Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
  *
  *       var rm = new F.manager.RunManager({
  *           run: {
  *               account: 'acme-simulations',
  *               project: 'supply-chain-game',
- *               model: 'supply_chain_game.py'
+ *               model: 'supply_chain_game.py',
+ *               server: { host: 'api.forio.com' }
  *           }
  *       });
  *       rm.getRun()
@@ -475,6 +480,17 @@ module.exports = function (config) {
         getCurrentConfig: function () {
             return serviceOptions;
         },
+        /**
+          * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.
+          *
+          * **Example**
+          *
+          *      var vs = rs.variables();
+          *      vs.save({ sample_int: 4 });
+          *
+          * **Parameters**
+          * @param {Object} `config` (Optional) Overrides for configuration options.
+          */
         variables: function (config) {
             var vs = new VariablesService($.extend(true, {}, serviceOptions, config, {
                 runService: this

@@ -28,6 +28,7 @@
             as.login({ userName: 'john', password: 'y' });
 
             server.respond();
+            server.requests.pop();
             callback.should.have.been.called;
         });
 
@@ -78,6 +79,13 @@
         });
         describe('#logout', function () {
             // TODO: Test we are calling the API
+            it('should not do a DELETE', function () {
+                server.requests = [];
+                var as = new AuthService();
+                as.logout();
+
+                server.requests.should.be.empty;
+            });
         });
     });
 }());

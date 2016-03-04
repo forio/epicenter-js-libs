@@ -1,9 +1,10 @@
 /**
 * ## Run Manager
 *
-* The Run Manager gives you control over run creation depending on run states. Specifically, you can select run creation strategies (rules) for which runs end users of your project work with when they log in to your project.
+* The Run Manager gives you access to runs for your project. This allows you to read and update variables, call operations, etc. Additionally, the Run Manager gives you control over run creation depending on run states. Specifically, you can select [run creation strategies (rules)](../../strategy/) for which runs end users of your project work with when they log in to your project.
 *
-* Underlying Epicenter APIs -- including the [Model Run API](../../../rest_apis/other_apis/model_apis/run/), the [Run API](../../../rest_apis/aggregate_run_api), and Epicenter.js's own [F.service.Run.create()](../run-api-service/) -- all allow you to create new runs. However, for some projects it makes more sense to pick up where the user left off, using an existing run. And in some projects, whether to create a new one or use an existing one is conditional, for example based on characteristics of the existing run or your own knowledge about the model. The Run Manager provides this level of control.
+* There are many ways to create new runs, including the Epicenter.js [Run Service](../run-api-service/), the RESFTful [Run API](../../../rest_apis/aggregate_run_api) and the [Model Run API](../../../rest_apis/other_apis/model_apis/run/). However, for some projects it makes more sense to pick up where the user left off, using an existing run. And in some projects, whether to create a new run or use an existing one is conditional, for example based on characteristics of the existing run or your own knowledge about the model. The Run Manager provides this level of control: your call to `getRun()`, rather than always returning a new run, returns a run based on the strategy you've specified. (Note that many of the Epicenter sample projects use a Run Service directly, because generally the sample projects are played in one end user session and don't care about run states or run strategies.)
+*
 *
 * ### Using the Run Manager to create and access runs
 *
@@ -14,6 +15,7 @@
 *       * `project`: Epicenter project id.
 *       * `model`: The name of your primary model file. (See more on [Writing your Model](../../../writing_your_model/).)
 *       * `scope`: (optional) Scope object for the run, for example `scope.group` with value of the name of the group.
+*       * `server`: (optional) An object with one field, `host`. The value of `host` is the string `api.forio.com`, the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
 *       * `files`: (optional) If and only if you are using a Vensim model and you have additional data to pass in to your model, you can pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (Note that you'll also need to add this same files object to your Vensim [configuration file](../../../model_code/vensim/).) See the [underlying Model Run API](../../../rest_apis/other_apis/model_apis/run/#post-creating-a-new-run-for-this-project) for additional information.
 *
 *   * `strategy`: (optional) Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../../strategy/) for details. Defaults to `new-if-initialized`.
@@ -21,7 +23,7 @@
 *   * `sessionKey`: (optional) Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter.
 *
 *
-* After instantiating a Run Manager, make a call to `getRun()` whenever you need to access a run for this end user. The `RunManager.run` contains the instantiated [Run Service](../run-api-service/).
+* After instantiating a Run Manager, make a call to `getRun()` whenever you need to access a run for this end user. The `RunManager.run` contains the instantiated [Run Service](../run-api-service/). The Run Service allows you to access variables, call operations, etc.
 *
 * **Example**
 *
