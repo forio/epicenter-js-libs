@@ -143,11 +143,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
 
-        var accountName = (options && options.account) ? options.account : this.options.account;
-        var projectName = (options && options.project) ? options.project : this.options.project;
+        var accountName = adapterOptions.account;
+        var projectName = adapterOptions.project;
 
-        if (this.options.store.root === undefined && accountName && projectName) {
-            this.store.serviceOptions.root = this.isLocal ? '/' : '/app/' + accountName + '/' + projectName;
+        if (this.options.store.root === undefined && accountName && projectName && !this.isLocal) {
+            this.store.serviceOptions.root = '/app/' + accountName + '/' + projectName;
         }
 
         var decodeToken = function (token) {
