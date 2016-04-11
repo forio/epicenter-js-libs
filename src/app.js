@@ -16,6 +16,9 @@ var F = {
 
 };
 
+F.load = require('./env-load');
+F.load();
+
 F.util.query = require('./util/query-util');
 F.util.makeSequence = require('./util/make-sequence');
 F.util.run = require('./util/run-util');
@@ -55,8 +58,6 @@ F.manager.strategy['new-if-initialized'] = require('./managers/run-strategies/ne
 
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
 F.service.Channel = require('./service/channel-service');
-
-F.load = require('./env-load');
 
 F.version = '<%= version %>';
 F.api = require('./api-version.json');

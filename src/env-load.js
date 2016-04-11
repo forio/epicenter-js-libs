@@ -15,7 +15,7 @@ var envLoad = function (callback) {
         host = '';
     }
     var infoUrl = host + envPath;
-    envPromise = $.ajax(infoUrl);
+    envPromise = $.ajax({ url: infoUrl, async: false });
     envPromise.done(function (res) {
         var api = res.api;
         $.extend(urlConfigService, api);
