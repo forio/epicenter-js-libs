@@ -1,4 +1,11 @@
 
+<a name="1.7.0"></a>
+### 1.7.0 (2016-04-11)
+
+ - The API configuration (that is, where the REST API calls should be sent) is now loaded from the server, rather than hard-coded in the library. This allows Epicenter.js to more easily be used on multiple Epicenter installations (not just forio.com).
+ - In the Authorization Manager, improve how the path in the cookie is set to make local development easier. This is an extension of the improvement in v1.6.4. 
+
+
 <a name="1.6.4"></a>
 ### 1.6.4 (2016-02-26)
  - In the Authorization Manager, set the path in the cookie based on the account and project name. This allows end users to log in to multiple Epicenter simulations at once without conflict.
