@@ -2,7 +2,7 @@
 
 var epiVersion = require('../api-version.json');
 
-module.exports = function (config) {
+var UrlConfigService = function (config) {
     //TODO: urlutils to get host, since no window on node
 
     var API_PROTOCOL = 'https';
@@ -70,6 +70,14 @@ module.exports = function (config) {
         }
     };
 
-    $.extend(publicExports, config);
+    // This data is set by an external script (start-load.js)
+    var envConf = {
+        protocol: UrlConfigService.protocol,
+        host: UrlConfigService.host
+    };
+
+    $.extend(publicExports, envConf, config);
     return publicExports;
 };
+
+module.exports = UrlConfigService;
