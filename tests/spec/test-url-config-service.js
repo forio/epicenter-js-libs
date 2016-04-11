@@ -26,6 +26,17 @@
                 var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
                 url.getAPIPath('data').should.equal('https://api.forio.com/data/forioAccount/forioProj/');
             });
+
+            it('should allow over-riding host and protocol globally', function () {
+                URLService.protocol = 'htttps';
+                URLService.host = 'funky.forio.com';
+                var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
+                url.getAPIPath('data').should.equal('htttps://funky.forio.com/data/forioAccount/forioProj/');
+
+                // Delete global settings to avoid affecting other tests
+                delete F.service.URL.protocol;
+                delete F.service.URL.host;
+            });
         });
     });
 })();
