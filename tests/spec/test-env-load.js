@@ -7,12 +7,12 @@
 
             var env = {
                 api: {
-                    host: 'api.forio.com',
+                    host: 'customapi.forio.com',
                     protocol: 'https'
                 }
             };
-            // API Config
-            server.respondWith('GET', /\/epicenter\/v1\/config/, function (xhr, id) {
+            //API Config
+            server.respondWith('GET', 'https://forio.com/epicenter/v1/config', function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(env));
             });
 
@@ -37,10 +37,28 @@
                 delete F.service.URL.host;
                 F.load(function () {
                     F.service.URL.protocol.should.equal('https');
-                    F.service.URL.host.should.equal('api.forio.com');
+                    F.service.URL.host.should.equal('customapi2.forio.com');
                     delete F.service.URL.protocol;
                     delete F.service.URL.host;
+                    //done();
                 });
+                //server.respond();
+            });
+
+            it('it should set protocol and host to api.forio.com when the config request fails', function () {
+                server.respondWith('GET', 'https://forio.com/epicenter/v1/config', function (xhr, id) {
+                    xhr.respond(404, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Not Found on Server' }));
+                });
+                delete F.service.URL.protocol;
+                delete F.service.URL.host;
+                F.load(function () {
+                    F.service.URL.protocol.should.equal('https');
+                    F.service.URL.host.should.equal('api222222.forio.com');
+                    delete F.service.URL.protocol;
+                    delete F.service.URL.host;
+                    //done();
+                });
+                //server.respond();
             });
         });
     });

@@ -7,13 +7,13 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            server.respondWith(/api\.success/, function (xhr, id) {
+            server.respondWith('GET', /api\.success/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith(/api\.fail/, function (xhr, id) {
+            server.respondWith('GET', /api\.fail/, function (xhr, id) {
                 xhr.respond(500, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.autoRespond = true;
+            //server.autoRespond = true;
 
         });
 
