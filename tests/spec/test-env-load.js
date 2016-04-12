@@ -37,7 +37,7 @@
                 delete F.service.URL.host;
                 F.load(function () {
                     F.service.URL.protocol.should.equal('https');
-                    F.service.URL.host.should.equal('customapi2.forio.com');
+                    F.service.URL.host.should.equal('customapi.forio.com');
                     delete F.service.URL.protocol;
                     delete F.service.URL.host;
                     //done();
@@ -51,14 +51,14 @@
                 });
                 delete F.service.URL.protocol;
                 delete F.service.URL.host;
+                var callback = sinon.spy();
                 F.load(function () {
                     F.service.URL.protocol.should.equal('https');
-                    F.service.URL.host.should.equal('api222222.forio.com');
+                    F.service.URL.host.should.equal('api.forio.com');
                     delete F.service.URL.protocol;
                     delete F.service.URL.host;
-                    //done();
-                });
-                //server.respond();
+                }).fail(callback);
+                callback.should.have.been.called;
             });
         });
     });

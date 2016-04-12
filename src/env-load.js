@@ -22,7 +22,7 @@ var envLoad = function (callback) {
         // fallback to api.forio.com
         $.extend(urlConfigService, { protocol: 'https', host: 'api.forio.com' });
     });
-    envPromise.done(callback).fail(callback);
+    return envPromise.done(callback).fail(callback);
 };
 
 module.exports = envLoad;
