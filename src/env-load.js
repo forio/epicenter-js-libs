@@ -8,8 +8,6 @@ var envLoad = function (callback) {
     var urlService = urlConfigService();
     var envPath = '/epicenter/v1/config';
     if (urlService.isLocalhost()) {
-        envPromise = $.Deferred();
-        envPromise.resolve();
         host = 'https://forio.com';
     } else {
         host = '';
@@ -19,8 +17,12 @@ var envLoad = function (callback) {
     envPromise.done(function (res) {
         var api = res.api;
         $.extend(urlConfigService, api);
+    }).fail(function (res) {
+        // Epicenter/webserver not properly configured
+        // fallback to api.forio.com
+        $.extend(urlConfigService, { protocol: 'https', host: 'api.forio.com' });
     });
-    envPromise.done(callback).fail(callback);
+    return envPromise.done(callback).fail(callback);
 };
 
 module.exports = envLoad;
