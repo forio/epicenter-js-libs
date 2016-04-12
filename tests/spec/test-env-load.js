@@ -12,7 +12,7 @@
                 }
             };
             // API Config
-            server.respondWith('GET', /forio\.com\/epicenter\/v1\/config/, function (xhr, id) {
+            server.respondWith('GET', /\/epicenter\/v1\/config/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(env));
             });
 

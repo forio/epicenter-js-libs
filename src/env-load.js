@@ -8,8 +8,6 @@ var envLoad = function (callback) {
     var urlService = urlConfigService();
     var envPath = '/epicenter/v1/config';
     if (urlService.isLocalhost()) {
-        envPromise = $.Deferred();
-        envPromise.resolve();
         host = 'https://forio.com';
     } else {
         host = '';

@@ -55,7 +55,9 @@ var UrlConfigService = function (config) {
 
         isLocalhost: function () {
             var host = window.location.host;
-            return (!host || host.indexOf('local') !== -1);
+            var path = window.location.pathname;
+            // Sort of hardcode the fact that epicenter application space is prefixed by /app/
+            return (!host || path.indexOf('/app/') !== 0);
         },
 
         getAPIPath: function (api) {
