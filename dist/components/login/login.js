@@ -9,7 +9,7 @@ $(function () {
 
     var getAccountProjectFromUrl = function () {
         var url = window.location.href;
-        var parts = url.match(/https?:\/\/(.*)\/app\/(.*)\/(.*)/gi) || [];
+        var parts = url.match(/https?:\/\/([^/]*)\/app\/([^/]*)\/([^/]*)/) || [];
         return {
             account: parts[2],
             project: parts[3]
