@@ -9,7 +9,7 @@
     var baseURL = (new F.service.URL({ accountPath: account, projectPath: project })).getAPIPath('run');
 
     var createLargeInclude = function () {
-        var variables = ['sample_int', 'sample_string', 'sample_obj', 'sample_long', 'sample_float', 'sample_array'];
+        var variables = ['sample int', 'sample string', 'sample obj', 'sample long', 'sample float', 'sample array'];
         var include = [];
         for (var i = 0; i < 100; i++) {
             include = include.concat(variables);
@@ -25,7 +25,7 @@
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
             // General Multiple Runs GET
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*sample_.*/, function (xhr, id) {
+            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*sample .*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({}));
                 return true;
             });
@@ -159,6 +159,17 @@
                     'varD': '2015-11-16 10:10:10'
                 });
                 fail.should.not.have.been.called;
+                server.requests = [];
+            });
+            it('the multiple GETs encoded urls length should not be larger than 2048', function () {
+                server.requests = [];
+                var rs = new RunService({ account: account, project: project });
+                var include = createLargeInclude();
+
+                rs.query({}, { include: include });
+                server.requests.forEach(function (req) {
+                    encodeURI(req.url).length.should.be.below(2048);
+                });
                 server.requests = [];
             });
             it('should not add the autorestore run flag', function () {
