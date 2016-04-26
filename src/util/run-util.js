@@ -116,7 +116,7 @@ module.exports = (function () {
                 var url = getFinalUrl(params);
                 // We must split the GET in multiple short URL's
                 // The only property allowed to be split is "include"
-                if (params && params.include && url.length > MAX_URL_LENGTH) {
+                if (params && params.include && encodeURI(url).length > MAX_URL_LENGTH) {
                     var dtd = $.Deferred();
                     var paramsCopy = $.extend(true, {}, params);
                     delete paramsCopy.include;
@@ -131,19 +131,20 @@ module.exports = (function () {
                     var include = params.include;
                     var currIncludes = [];
                     var includeOpts = [currIncludes];
-                    var currLength = '?include='.length;
+                    var currLength = encodeURIComponent('?include=').length;
                     var variable = include.pop();
                     while (variable) {
+                        var varLenght = encodeURIComponent(variable).length;
                         // Use a greedy approach for now, can be optimized to be solved in a more
                         // efficient way
                         // + 1 is the comma
-                        if (currLength + variable.length + 1 < diff) {
+                        if (currLength + varLenght + 1 < diff) {
                             currIncludes.push(variable);
-                            currLength += variable.length + 1;
+                            currLength += varLenght + 1;
                         } else {
                             currIncludes = [variable];
                             includeOpts.push(currIncludes);
-                            currLength = '?include='.length + variable.length;
+                            currLength = '?include='.length + varLenght;
                         }
                         variable = include.pop();
                     }

@@ -2,8 +2,14 @@
 
 var epiVersion = require('../api-version.json');
 
-module.exports = function (config) {
+var UrlConfigService = function (config) {
     //TODO: urlutils to get host, since no window on node
+    function isLocalhost() {
+        var host = window.location.host;
+        var path = window.location.pathname;
+        // Sort of hardcode the fact that epicenter application space is prefixed by /app/
+        return (!host || path.indexOf('/app/') !== 0);
+    }
 
     var API_PROTOCOL = 'https';
     var HOST_API_MAPPING = {
@@ -18,7 +24,7 @@ module.exports = function (config) {
 
         host: (function () {
             var host = window.location.host;
-            if (!host || host.indexOf('local') !== -1) {
+            if (isLocalhost()) {
                 host = 'forio.com';
             }
             return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : 'api.' + host;
@@ -53,10 +59,7 @@ module.exports = function (config) {
             return version;
         }()),
 
-        isLocalhost: function () {
-            var host = window.location.host;
-            return (!host || host.indexOf('local') !== -1);
-        },
+        isLocalhost: isLocalhost,
 
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file'];
@@ -70,6 +73,14 @@ module.exports = function (config) {
         }
     };
 
-    $.extend(publicExports, config);
+    // This data is set by an external script (start-load.js)
+    var envConf = {
+        protocol: UrlConfigService.protocol,
+        host: UrlConfigService.host
+    };
+
+    $.extend(publicExports, envConf, config);
     return publicExports;
 };
+
+module.exports = UrlConfigService;
