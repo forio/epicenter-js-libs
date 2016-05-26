@@ -31,61 +31,23 @@
 */
 
 'use strict';
-var ConfigService = require('../service/configuration-service');
 var AuthAdapter = require('../service/auth-api-service');
 var MemberAdapter = require('../service/member-api-adapter');
-var StorageFactory = require('../store/store-factory');
+var SessionManager = require('../store/session-manager');
 var Buffer = require('buffer').Buffer;
-var keyNames = require('./key-names');
+var _pick = require('../util/object-util')._pick;
 
-var defaults = {
-    /**
-     * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
-     * @type {string}
-     */
-    store: { synchronous: true }
-};
-
-var EPI_COOKIE_KEY = keyNames.EPI_COOKIE_KEY;
-var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
-var token;
-var session;
-
-function saveSession(userInfo, store) {
-    var serialized = JSON.stringify(userInfo);
-    store.set(EPI_SESSION_KEY, serialized);
-
-    //jshint camelcase: false
-    //jscs:disable
-    store.set(EPI_COOKIE_KEY, userInfo.auth_token);
-}
-
-function getSession(store) {
-    var session = store.get(EPI_SESSION_KEY) || '{}';
-    return JSON.parse(session);
-}
+var defaults = {};
 
 function AuthManager(options) {
-    this.options = $.extend(true, {}, defaults, options);
+    options = $.extend(true, {}, defaults, options);
+    this.sessionManager = new SessionManager(options);
+    this.options = this.sessionManager.getOptions();
 
-    var urlConfig = new ConfigService(this.options).get('server');
-    this.isLocal = urlConfig.isLocalhost();
-
-    if (!this.options.account) {
-        this.options.account = urlConfig.accountPath;
-    }
-
-    // null might specified to disable project filtering
-    if (this.options.project === undefined) {
-        this.options.project = urlConfig.projectPath;
-    }
-
-    this.store = new StorageFactory(this.options.store);
-    session = getSession(this.store);
-    token = this.store.get(EPI_COOKIE_KEY) || '';
+    this.isLocal = this.options.isLocal;
     //jshint camelcase: false
     //jscs:disable
-    this.authAdapter = new AuthAdapter(this.options, { token: session.auth_token });
+    this.authAdapter = new AuthAdapter(this.options);
 }
 
 var _findUserInGroup = function (members, id) {
@@ -143,13 +105,6 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
 
-        var accountName = adapterOptions.account;
-        var projectName = adapterOptions.project;
-
-        if (this.options.store.root === undefined && accountName && projectName && !this.isLocal) {
-            this.store.serviceOptions.root = '/app/' + accountName + '/' + projectName;
-        }
-
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
             while (encoded.length % 4 !== 0) {
@@ -172,10 +127,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var handleSuccess = function (response) {
             //jshint camelcase: false
             //jscs:disable
-            token = response.access_token;
+            var token = response.access_token;
             var userInfo = decodeToken(token);
-            var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop, token: token });
-            _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).done( function (memberInfo) {
+            var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
+
+            _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).done(function (memberInfo) {
                 var data = {auth: response, user: userInfo, userGroups: memberInfo, groupSelection: {} };
 
                 var sessionInfo = {
@@ -186,7 +142,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 };
                 // The group is not required if the user is not logging into a project
                 if (!adapterOptions.project) {
-                    saveSession(sessionInfo, _this.store);
+                    _this.sessionManager.saveSession(sessionInfo, adapterOptions);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                     return;
@@ -216,7 +172,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                         'groupName': group.name,
                         'isFac': _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator'
                     });
-                    saveSession(sessionInfoWithGroup, _this.store);
+                    _this.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
@@ -260,12 +216,10 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     */
     logout: function (options) {
         var _this = this;
-        var adapterOptions = $.extend(true, { token: token }, this.options, options);
+        var adapterOptions = $.extend(true, this.options, options);
 
         var removeCookieFn = function (response) {
-            _this.store.remove(EPI_COOKIE_KEY, adapterOptions);
-            _this.store.remove(EPI_SESSION_KEY, adapterOptions);
-            token = '';
+            _this.sessionManager.removeSession();
         };
 
         return this.authAdapter.logout(adapterOptions).done(removeCookieFn);
@@ -287,9 +241,10 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     getToken: function (options) {
         var httpOptions = $.extend(true, this.options, options);
 
+        var session = this.sessionManager.getSession();
         var $d = $.Deferred();
-        if (token) {
-            $d.resolve(token);
+        if (session.auth_token) {
+            $d.resolve(session.auth_token);
         } else {
             this.login(httpOptions).then($d.resolve);
         }
@@ -357,7 +312,39 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {Object} `options` (Optional) Overrides for configuration options.
      */
     getCurrentUserSessionInfo: function (options) {
-        return getSession(this.store, options);
+        return this.sessionManager.getSession(options);
+    },
+
+
+    /**
+     * Will add a group to the session, it is assumed that the group and project exist and the user is part of it.
+     *
+     * Returns the new session object.
+     *
+     * **Example**
+     *
+     *      authMgr.addGroup('acme', { groupName: });
+     *
+     * **Parameters**
+     * @param {Object} `group` (Required) must have the project, groupName and groupId properties, isFac is optional and defaults to false
+     */
+    addGroup: function (group) {
+        return this.addGroups([group]);
+    },
+
+    addGroups: function (groups) {
+        var session = this.getCurrentUserSessionInfo();
+
+        $.each(groups, function (index, group) {
+            var extendedGroup = $.extend({}, { isFac: false }, group);
+            var project = extendedGroup.project;
+            var validProps = ['groupName', 'groupId', 'isFac'];
+            // filter object
+            extendedGroup = _pick(extendedGroup, validProps);
+            session.groups[project] = extendedGroup;
+        });
+        this.sessionManager.saveSession(session);
+        return session;
     }
 });
 

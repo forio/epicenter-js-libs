@@ -11,8 +11,11 @@ module.exports = function (grunt) {
                 debug: true
             },
             postBundleCB: function (err, buffer, next) {
-                var code = grunt.template.process(buffer.toString(), { data: grunt.file.readJSON('package.json') });
-                next(err, code);
+                var code;
+                if (!err) {
+                    code = grunt.template.process(buffer.toString(), { data: grunt.file.readJSON('package.json') });
+                }
+                next(err, code, next);
             }
         },
         mapped: {
