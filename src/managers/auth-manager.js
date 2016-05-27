@@ -37,7 +37,9 @@ var SessionManager = require('../store/session-manager');
 var Buffer = require('buffer').Buffer;
 var _pick = require('../util/object-util')._pick;
 
-var defaults = {};
+var defaults = {
+    requiresGroup: true
+};
 
 function AuthManager(options) {
     options = $.extend(true, {}, defaults, options);
@@ -104,6 +106,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var outSuccess = adapterOptions.success;
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
+        var sessionManager = this.sessionManager;
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
@@ -129,24 +132,31 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             //jscs:disable
             var token = response.access_token;
             var userInfo = decodeToken(token);
+            var oldGroups = sessionManager.getSession().groups || {};
             var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
+            var data = {auth: response, user: userInfo };
+            var project = adapterOptions.project;
+            var isTeamMember = userInfo.parent_account_id === null;
+            var requiresGroup = !project || isTeamMember || adapterOptions.requiresGroup;
+
+            var sessionInfo = {
+                'auth_token': token,
+                'account': adapterOptions.account,
+                'project': project,
+                'userId': userInfo.user_id,
+                'groups': oldGroups,
+                'isTeamMember': isTeamMember
+            };
+            // The group is not required if the user is not logging into a project
+            if (!requiresGroup) {
+                sessionManager.saveSession(sessionInfo);
+                outSuccess.apply(this, [data]);
+                $d.resolve(data);
+                return;
+            }
 
             _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).done(function (memberInfo) {
-                var data = {auth: response, user: userInfo, userGroups: memberInfo, groupSelection: {} };
-
-                var sessionInfo = {
-                    'auth_token': token,
-                    'account': adapterOptions.account,
-                    'project': adapterOptions.project,
-                    'userId': userInfo.user_id
-                };
-                // The group is not required if the user is not logging into a project
-                if (!adapterOptions.project) {
-                    _this.sessionManager.saveSession(sessionInfo, adapterOptions);
-                    outSuccess.apply(this, [data]);
-                    $d.resolve(data);
-                    return;
-                }
+                data.userGroups = memberInfo;
 
                 var group = null;
                 if (memberInfo.length === 0) {
