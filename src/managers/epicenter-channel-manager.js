@@ -27,6 +27,7 @@
 var ChannelManager = require('./channel-manager');
 var classFrom = require('../util/inherit');
 var urlService = require('../service/url-config-service');
+var SessionManager = require('../store/session-manager');
 
 var AuthManager = require('./auth-manager');
 
@@ -47,13 +48,8 @@ var getFromSettingsOrSessionOrError = function (value, sessionKeyName, settings)
 var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
     constructor: function (options) {
-        var userInfo = session.getCurrentUserSessionInfo();
-
-        var defaults = {
-            account: userInfo.account,
-            project: userInfo.project,
-        };
-        var defaultCometOptions = $.extend(true, {}, defaults, userInfo, options);
+        this.sessionManager = new SessionManager();
+        var defaultCometOptions = this.sessionManager.getOptions(options);
 
         var urlOpts = urlService(defaultCometOptions.server);
         if (!defaultCometOptions.url) {
@@ -128,7 +124,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
@@ -174,8 +170,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             throw new Error('Please specify a world id');
         }
         var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
-        userid = getFromSettingsOrSessionOrError(userid, 'userId');
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        userid = getFromSettingsOrSessionOrError(userid, 'userId', this.options);
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
 
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
@@ -218,8 +214,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        userid = getFromSettingsOrSessionOrError(userid, 'userId');
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        userid = getFromSettingsOrSessionOrError(userid, 'userId', this.options);
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
 
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);

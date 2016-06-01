@@ -55,24 +55,20 @@
 'use strict';
 
 var ConfigService = require('./configuration-service');
-var StorageFactory = require('../store/store-factory');
-// var qutil = require('../util/query-util');
 var TransportFactory = require('../transport/http-transport-factory');
 var _pick = require('../util/object-util')._pick;
-var keyNames = require('../managers/key-names');
+var SessionManager = require('../store/session-manager');
 
 var apiEndpoint = 'asset';
 
 module.exports = function (config) {
-    var store = new StorageFactory({ synchronous: true });
-    var session = JSON.parse(store.get(keyNames.EPI_SESSION_KEY) || '{}');
     var defaults = {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
          * @type {String}
          */
-        token: store.get(keyNames.EPI_COOKIE_KEY) || '',
+        token: undefined,
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
          * @type {String}
@@ -87,12 +83,12 @@ module.exports = function (config) {
          * The group name. Defaults to session's `groupName`.
          * @type {String}
          */
-        group: session.groupName,
+        group: undefined,
         /**
          * The user id. Defaults to session's `userId`.
          * @type {String}
          */
-        userId: session.userId,
+        userId: undefined,
         /**
          * The scope for the asset. Valid values are: `user`, `group`, and `project`. See above for the required permissions to write to each scope. Defaults to `user`, meaning the current end user or a facilitator in the end user's group can edit the asset.
          * @type {String}
@@ -111,7 +107,8 @@ module.exports = function (config) {
             processData: false
         }
     };
-    var serviceOptions = $.extend(true, {}, defaults, config);
+    this.sessionManager = new SessionManager();
+    var serviceOptions = this.sessionManager.getOptions(defaults, config);
     var urlConfig = new ConfigService(serviceOptions).get('server');
 
     if (!serviceOptions.account) {

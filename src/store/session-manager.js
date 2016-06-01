@@ -91,7 +91,8 @@ var SessionManager = function (managerOptions) {
                  * The group id. If left undefined, taken from the cookie session.
                  * @type {String}
                  */
-                groupId: session.groupId
+                groupId: session.groupId,
+                userId: session.userId
             };
             return $.extend(true, sessionDefaults, baseOptions);
         }

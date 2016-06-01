@@ -22,9 +22,9 @@
 'use strict';
 
 var ConfigService = require('./configuration-service');
-var StorageFactory = require('../store/store-factory');
 // var qutil = require('../util/query-util');
 var TransportFactory = require('../transport/http-transport-factory');
+var SessionManager = require('../store/session-manager');
 var _pick = require('../util/object-util')._pick;
 
 var apiBase = 'multiplayer/';
@@ -33,33 +33,31 @@ var apiEndpoint = apiBase + 'world';
 var projectEndpoint = apiBase + 'project';
 
 module.exports = function (config) {
-    var store = new StorageFactory({ synchronous: true });
-
     var defaults = {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
          * @type {String}
          */
-       token: store.get('epicenter.project.token') || '',
+       token: undefined,
 
         /**
          * The project id. If left undefined, taken from the URL.
          * @type {String}
          */
-       project: undefined,
+        project: undefined,
 
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
          * @type {String}
          */
-       account: undefined,
+        account: undefined,
 
         /**
          * The group name. Defaults to undefined.
          * @type {String}
          */
-       group: undefined,
+        group: undefined,
 
        /**
          * The model file to use to create runs in this world. Defaults to undefined.
@@ -98,7 +96,8 @@ module.exports = function (config) {
         error: $.noop
     };
 
-    var serviceOptions = $.extend({}, defaults, config);
+    this.sessionManager = new SessionManager();
+    var serviceOptions = this.sessionManager.getOptions(defaults, config);
     if (serviceOptions.id) {
         serviceOptions.filter = serviceOptions.id;
     }

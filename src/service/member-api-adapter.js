@@ -24,13 +24,13 @@ module.exports = function (config) {
          * Epicenter user id. Defaults to a blank string.
          * @type {string}
          */
-        userId: '',
+        userId: undefined,
 
         /**
          * Epicenter group id. Defaults to a blank string. Note that this is the group *id*, not the group *name*.
          * @type {string}
          */
-        groupId: '',
+        groupId: undefined,
 
         /**
          * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
