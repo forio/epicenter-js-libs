@@ -47,8 +47,6 @@ function AuthManager(options) {
     this.options = this.sessionManager.getOptions();
 
     this.isLocal = this.options.isLocal;
-    //jshint camelcase: false
-    //jscs:disable
     this.authAdapter = new AuthAdapter(this.options);
 }
 
@@ -251,6 +249,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
         var session = this.sessionManager.getSession();
         var $d = $.Deferred();
+        //jshint camelcase: false
+        //jscs:disable
         if (session.auth_token) {
             $d.resolve(session.auth_token);
         } else {

@@ -93,9 +93,11 @@
                     project: 'projectName',
                 });
                 am.login({ userName: 'test', password: 'test' }).done(function (response) {
-                  response.auth.access_token.should.equal(token);
-                  response.user.should.eql(userInfo);
-                  done();
+                    //jshint camelcase: false
+                    //jscs:disable
+                    response.auth.access_token.should.equal(token);
+                    response.user.should.eql(userInfo);
+                    done();
                 }).fail(function () {
                     done(new Error('Login should not fail'));
                 });
