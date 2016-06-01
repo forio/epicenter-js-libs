@@ -85,7 +85,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @param  {String} `groupName` (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
      */
     getGroupChannel: function (groupName) {
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
