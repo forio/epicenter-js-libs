@@ -15,16 +15,19 @@ var defaults = {
 
 var SessionManager = function (managerOptions) {
     managerOptions = managerOptions || {};
-    function getStore(overrides) {
+    function getBaseOptions(overrides) {
         overrides = overrides || {};
         var libOptions = optionUtils.getOptions();
         var finalOptions = $.extend(true, {}, defaults, libOptions, managerOptions, overrides);
-        var storeOptions = finalOptions.store || {};
-        if (storeOptions.root === undefined && finalOptions.account && finalOptions.project && !finalOptions.isLocal) {
-            storeOptions.root = '/app/' + finalOptions.account + '/' + finalOptions.project;
+        finalOptions.store = finalOptions.store || {};
+        if (finalOptions.store.root === undefined && finalOptions.account && finalOptions.project && !finalOptions.isLocal) {
+            finalOptions.store.root = '/app/' + finalOptions.account + '/' + finalOptions.project;
         }
+        return finalOptions;
+    }
 
-        return new StorageFactory(storeOptions);
+    function getStore(overrides) {
+        return new StorageFactory(getBaseOptions(overrides).store);
     }
 
     var publicAPI = {
@@ -64,8 +67,12 @@ var SessionManager = function (managerOptions) {
             return getStore(options);
         },
 
-        getOptions: function (options) {
-            var session = this.getSession(options);
+        getOptions: function () {
+            var args = Array.prototype.slice.call(arguments);
+            var overrides = $.extend.apply($, [true, {}].concat(args));
+            var baseOptions = getBaseOptions(overrides);
+            var session = this.getSession(overrides);
+
             var sessionDefaults = {
                 /**
                  * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
@@ -86,7 +93,7 @@ var SessionManager = function (managerOptions) {
                  */
                 groupId: session.groupId
             };
-            return $.extend(true, {}, managerOptions, sessionDefaults, options);
+            return $.extend(true, sessionDefaults, baseOptions);
         }
     };
     $.extend(this, publicAPI);

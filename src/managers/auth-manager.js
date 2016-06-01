@@ -102,11 +102,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     login: function (options) {
         var _this = this;
         var $d = $.Deferred();
-        var adapterOptions = $.extend(true, { success: $.noop, error: $.noop }, this.options, options);
+        var sessionManager = this.sessionManager;
+        var adapterOptions = sessionManager.getOptions({ success: $.noop, error: $.noop }, options);
         var outSuccess = adapterOptions.success;
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
-        var sessionManager = this.sessionManager;
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
@@ -175,8 +175,6 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 }
 
                 if (group) {
-                    var groupSelection = group.groupId;
-                    data.groupSelection[adapterOptions.project] = groupSelection;
                     var sessionInfoWithGroup = $.extend({}, sessionInfo, {
                         'groupId': group.groupId,
                         'groupName': group.name,
@@ -226,7 +224,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     */
     logout: function (options) {
         var _this = this;
-        var adapterOptions = $.extend(true, this.options, options);
+        var adapterOptions = this.sessionManager.getOptions(options);
 
         var removeCookieFn = function (response) {
             _this.sessionManager.removeSession();
@@ -249,7 +247,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {Object} `options` (Optional) Overrides for configuration options.
      */
     getToken: function (options) {
-        var httpOptions = $.extend(true, this.options, options);
+        var httpOptions = this.sessionManager.getOptions(options);
 
         var session = this.sessionManager.getSession();
         var $d = $.Deferred();
@@ -286,7 +284,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {Object} `options` (Optional) Overrides for configuration options.
      */
     getUserGroups: function (params, options) {
-        var adapterOptions = $.extend(true, { success: $.noop }, this.options, options);
+        var adapterOptions = this.sessionManager.getOptions({ success: $.noop }, options);
         var $d = $.Deferred();
         var outSuccess = adapterOptions.success;
 

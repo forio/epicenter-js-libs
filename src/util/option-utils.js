@@ -15,7 +15,7 @@ var libDefaults = {
      * @type {String}
      */
     project: urlConfig.projectPath,
-    isLocal: urlConfig.isLocal,
+    isLocal: urlConfig.isLocalhost,
     store: {}
 };
 
