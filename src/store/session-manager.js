@@ -19,15 +19,16 @@ var SessionManager = function (managerOptions) {
         overrides = overrides || {};
         var libOptions = optionUtils.getOptions();
         var finalOptions = $.extend(true, {}, defaults, libOptions, managerOptions, overrides);
-        finalOptions.store = finalOptions.store || {};
-        if (finalOptions.store.root === undefined && finalOptions.account && finalOptions.project && !finalOptions.isLocal) {
-            finalOptions.store.root = '/app/' + finalOptions.account + '/' + finalOptions.project;
-        }
         return finalOptions;
     }
 
     function getStore(overrides) {
-        return new StorageFactory(getBaseOptions(overrides).store);
+        var baseOptions = getBaseOptions(overrides);
+        var storeOpts = baseOptions.store || {};
+        if (storeOpts.root === undefined && baseOptions.account && baseOptions.project && !baseOptions.isLocal) {
+            storeOpts.root = '/app/' + baseOptions.account + '/' + baseOptions.project;
+        }
+        return new StorageFactory(storeOpts);
     }
 
     var publicAPI = {

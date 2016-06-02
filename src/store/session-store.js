@@ -7,6 +7,7 @@
 'use strict';
 
 module.exports = function (config) {
+    var host = window.location.hostname;
     var defaults = {
         /**
          * Name of collection
@@ -14,7 +15,7 @@ module.exports = function (config) {
          */
         root: '/',
 
-        domain: '.forio.com'
+        domain: '.' + host
     };
     var serviceOptions = $.extend({}, defaults, config);
 

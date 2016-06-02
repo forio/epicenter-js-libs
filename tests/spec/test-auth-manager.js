@@ -112,7 +112,8 @@
                     project: 'projectName',
                     isLocal: false,
                     store: {
-                        cookie: cookie
+                        cookie: cookie,
+                        domain: '.forio.com'
                     }
                 });
                 am.logout().done(function (response) {

@@ -1,21 +1,15 @@
 (function () {
     'use strict';
     describe('Env Load', function () {
+        var env = {
+            api: {
+                host: 'customapi.forio.com',
+                protocol: 'https'
+            }
+        };
         var server;
         beforeEach(function () {
             server = sinon.fakeServer.create();
-
-            var env = {
-                api: {
-                    host: 'customapi.forio.com',
-                    protocol: 'https'
-                }
-            };
-            //API Config
-            server.respondWith('GET', 'https://forio.com/epicenter/v1/config', function (xhr, id) {
-                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(env));
-            });
-
             server.autoRespond = true;
         });
 
@@ -33,6 +27,9 @@
             });
 
             it('it should set protocol and host to the UrlConfingService', function () {
+                server.respondWith('GET', 'https://forio.com/epicenter/v1/config', function (xhr, id) {
+                    xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(env));
+                });
                 delete F.service.URL.protocol;
                 delete F.service.URL.host;
                 F.load(function () {

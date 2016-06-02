@@ -171,11 +171,12 @@ module.exports = function (config) {
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
             var worldApiParams = ['scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
+            var validParams = _pick(serviceOptions, ['account', 'project', 'group']);
             // whitelist the fields that we actually can send to the api
             params = _pick(params, worldApiParams);
 
             // account and project go in the body, not in the url
-            $.extend(params, _pick(serviceOptions, ['account', 'project', 'group']));
+            params = $.extend({}, validParams, params);
 
             var oldSuccess = createOptions.success;
             createOptions.success = function (response) {
