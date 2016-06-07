@@ -135,7 +135,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             var data = {auth: response, user: userInfo };
             var project = adapterOptions.project;
             var isTeamMember = userInfo.parent_account_id === null;
-            var requiresGroup = !project || isTeamMember || adapterOptions.requiresGroup;
+            var requiresGroup = adapterOptions.requiresGroup && project;
 
             var sessionInfo = {
                 'auth_token': token,
@@ -323,30 +323,33 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         return this.sessionManager.getSession(options);
     },
 
-
     /**
-     * Will add a group to the session, it is assumed that the group and project exist and the user is part of it.
+     * Add a group to the session, it is assumed that the group and project exist and the user is part of it.
      *
      * Returns the new session object.
      *
      * **Example**
      *
-     *      authMgr.addGroup('acme', { groupName: });
+     *      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
+     *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: ... }]);
      *
      * **Parameters**
-     * @param {Object} `group` (Required) must have the project, groupName and groupId properties, isFac is optional and defaults to false
+     * @param {object|array} `groups` (Required) The group object must contain the project and groupName properties.
+     * @param {string} `group.isFac` (optional) defaults to false
+     * @param {string} `group.groupId` (optional) defaults to undefined. Needed mostly for the Members API.
      */
-    addGroup: function (group) {
-        return this.addGroups([group]);
-    },
-
     addGroups: function (groups) {
         var session = this.getCurrentUserSessionInfo();
+        var isArray = Array.isArray(groups);
+        groups = isArray ? groups : [groups];
 
         $.each(groups, function (index, group) {
-            var extendedGroup = $.extend({}, { isFac: false }, group);
+            var extendedGroup = $.extend({}, { isFac: false }, group, session);
             var project = extendedGroup.project;
             var validProps = ['groupName', 'groupId', 'isFac'];
+            if (!project || !extendedGroup.groupName) {
+                throw new Error('No project or groupName specified.');
+            }
             // filter object
             extendedGroup = _pick(extendedGroup, validProps);
             session.groups[project] = extendedGroup;
