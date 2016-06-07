@@ -37,6 +37,16 @@
                 delete F.service.URL.protocol;
                 delete F.service.URL.host;
             });
+
+            it('should return true on local environments', function () {
+                var url = new URLService({ pathname: '/index.html', host: 'local.forio.com:8080' });
+                url.isLocalhost().should.be.true;
+            });
+
+            it('should return false on production environments', function () {
+                var url = new URLService({ pathname: '/app/acme/hello_world', host: 'forio.com' });
+                url.isLocalhost().should.be.false;
+            });
         });
     });
 })();
