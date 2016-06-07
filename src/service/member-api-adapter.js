@@ -15,6 +15,7 @@
 
 var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
+var SessionManager = require('../store/session-manager');
 var _pick = require('../util/object-util')._pick;
 var apiEndpoint = 'member/local';
 
@@ -38,7 +39,8 @@ module.exports = function (config) {
          */
         transport: {}
     };
-    var serviceOptions = $.extend({}, defaults, config);
+    this.sessionManager = new SessionManager();
+    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
     var urlConfig = new ConfigService(serviceOptions).get('server');
 
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {

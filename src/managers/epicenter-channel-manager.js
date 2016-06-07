@@ -49,7 +49,7 @@ var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
     constructor: function (options) {
         this.sessionManager = new SessionManager();
-        var defaultCometOptions = this.sessionManager.getOptions(options);
+        var defaultCometOptions = this.sessionManager.getMergedOptions(options);
 
         var urlOpts = urlService(defaultCometOptions.server);
         if (!defaultCometOptions.url) {

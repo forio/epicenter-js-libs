@@ -64,7 +64,7 @@ module.exports = function (config) {
         transport: {}
     };
     this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getOptions(defaults, config);
+    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
 
     var urlConfig = new ConfigService(serviceOptions).get('server');
     if (serviceOptions.account) {

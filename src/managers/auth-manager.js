@@ -44,7 +44,7 @@ var defaults = {
 function AuthManager(options) {
     options = $.extend(true, {}, defaults, options);
     this.sessionManager = new SessionManager(options);
-    this.options = this.sessionManager.getOptions();
+    this.options = this.sessionManager.getMergedOptions();
 
     this.isLocal = this.options.isLocal;
     this.authAdapter = new AuthAdapter(this.options);
@@ -101,7 +101,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var _this = this;
         var $d = $.Deferred();
         var sessionManager = this.sessionManager;
-        var adapterOptions = sessionManager.getOptions({ success: $.noop, error: $.noop }, options);
+        var adapterOptions = sessionManager.getMergedOptions({ success: $.noop, error: $.noop }, options);
         var outSuccess = adapterOptions.success;
         var outError = adapterOptions.error;
         var groupId = adapterOptions.groupId;
@@ -222,7 +222,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     */
     logout: function (options) {
         var _this = this;
-        var adapterOptions = this.sessionManager.getOptions(options);
+        var adapterOptions = this.sessionManager.getMergedOptions(options);
 
         var removeCookieFn = function (response) {
             _this.sessionManager.removeSession();
@@ -245,7 +245,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {Object} `options` (Optional) Overrides for configuration options.
      */
     getToken: function (options) {
-        var httpOptions = this.sessionManager.getOptions(options);
+        var httpOptions = this.sessionManager.getMergedOptions(options);
 
         var session = this.sessionManager.getSession();
         var $d = $.Deferred();
@@ -284,7 +284,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {Object} `options` (Optional) Overrides for configuration options.
      */
     getUserGroups: function (params, options) {
-        var adapterOptions = this.sessionManager.getOptions({ success: $.noop }, options);
+        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
         var $d = $.Deferred();
         var outSuccess = adapterOptions.success;
 

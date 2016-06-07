@@ -97,7 +97,7 @@ module.exports = function (config) {
     };
 
     this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getOptions(defaults, config);
+    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
     if (serviceOptions.id) {
         serviceOptions.filter = serviceOptions.id;
     }

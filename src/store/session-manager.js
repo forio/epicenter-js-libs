@@ -68,7 +68,7 @@ var SessionManager = function (managerOptions) {
             return getStore(options);
         },
 
-        getOptions: function () {
+        getMergedOptions: function () {
             var args = Array.prototype.slice.call(arguments);
             var overrides = $.extend.apply($, [true, {}].concat(args));
             var baseOptions = getBaseOptions(overrides);
