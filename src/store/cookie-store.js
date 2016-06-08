@@ -92,9 +92,9 @@ module.exports = function (config) {
          */
         get: function (key) {
             var cookie = this.serviceOptions.cookie;
-            var cookieReg = new RegExp('(?:(?:^|.*;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$)|^.*$');
-            var val = cookie.get().replace(cookieReg, '$1');
-            val = decodeURIComponent(val) || null;
+            var cookieReg = new RegExp('(?:^|;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$');
+            var res = cookieReg.exec(cookie.get());
+            var val = res ? decodeURIComponent(res[1]) : null;
             return val;
         },
 
