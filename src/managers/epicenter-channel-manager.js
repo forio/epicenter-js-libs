@@ -19,9 +19,11 @@
  *
  * The parameters for instantiating an Epicenter Channel Manager include:
  *
- * * `server` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
- * * `server.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `server.project` Epicenter project id.
+ * * `options` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
+ * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
+ * * `options.project` Epicenter project id.
+ * * `options.userId` Epicenter user id used for authentication.
+ * * `options.token` Epicenter auth token used for authentication.
  */
 
 var ChannelManager = require('./channel-manager');
