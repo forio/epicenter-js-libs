@@ -28,7 +28,7 @@
 
         describe('#handshake', function () {
             it('should send authentication parametes', function () {
-                var manager = new Manager({ userId: 'userId', token: 'token' });
+                new Manager({ userId: 'userId', token: 'token' });
                 handshakeSpy.calledOnce.should.be.true;
                 handshakeSpy.getCall(0).args[0].should.be.eql({
                     ext: {
