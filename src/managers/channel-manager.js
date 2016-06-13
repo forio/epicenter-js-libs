@@ -1,6 +1,7 @@
 'use strict';
 
 var Channel = require('../service/channel-service');
+var SessionManager = require('../store/session-manager');
 
 /**
  * ## Channel Manager
@@ -72,9 +73,16 @@ var ChannelManager = function (options) {
          */
         channel: {
 
-        }
+        },
+
+        /**
+         * Options to pass to the channel handshake.
+         * @type {object}
+         */
+        handshake: undefined
     };
-    var defaultCometOptions = $.extend(true, {}, defaults, options);
+    this.sessionManager = new SessionManager();
+    var defaultCometOptions = this.sessionManager.getMergedOptions(defaults, options);
     this.currentSubscriptions = [];
     this.options = defaultCometOptions;
 
@@ -136,7 +144,7 @@ var ChannelManager = function (options) {
         $(me).trigger('error', message);
     });
 
-    cometd.handshake();
+    cometd.handshake(defaultCometOptions.handshake);
 
     this.cometd = cometd;
 };

@@ -57,6 +57,19 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             defaultCometOptions.url = urlOpts.protocol + '://' + urlOpts.host + '/channel/subscribe';
         }
 
+        if (defaultCometOptions.handshake === undefined) {
+            var userId = defaultCometOptions.userId;
+            var token = defaultCometOptions.token;
+            if (userId && token) {
+                defaultCometOptions.handshake = {
+                    ext: {
+                        userId: userId,
+                        authorization: 'Bearer ' + token
+                    }
+                };
+            }
+        }
+
         this.options = defaultCometOptions;
         return __super.constructor.call(this, defaultCometOptions);
     },

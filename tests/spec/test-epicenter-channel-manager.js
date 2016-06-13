@@ -4,13 +4,14 @@
     var Manager = F.manager.ChannelManager;
     describe('Epicenter ChannelManager', function () {
         var oldCometd;
+        var handshakeSpy = sinon.spy();
         var mockCometd = function () {
             return {
                 addListener: sinon.spy(),
                 batch: sinon.spy(),
                 configure: sinon.spy(),
                 resubscribe: sinon.spy(),
-                handshake: sinon.spy(),
+                handshake: handshakeSpy,
             };
         };
 
@@ -23,6 +24,19 @@
         });
         afterEach(function () {
             Manager.prototype._cometd = null;
+        });
+
+        describe('#handshake', function () {
+            it('should send authentication parametes', function () {
+                var manager = new Manager({ userId: 'userId', token: 'token' });
+                handshakeSpy.calledOnce.should.be.true;
+                handshakeSpy.getCall(0).args[0].should.be.eql({
+                    ext: {
+                        userId: 'userId',
+                        authorization: 'Bearer token'
+                    }
+                });
+            });
         });
 
         describe('#getWorldChannel', function () {
