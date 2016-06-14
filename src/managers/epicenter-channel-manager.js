@@ -245,7 +245,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
-        var baseTopic = ['/users', account, project, groupName, worldid, userid].join('/');
+        var baseTopic = ['/user', account, project, groupName, worldid, userid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
@@ -289,7 +289,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
-        var baseTopic = ['/users', account, project, groupName, worldid].join('/');
+        var baseTopic = ['/user', account, project, groupName, worldid].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
 
         var lastPingTime = { };
