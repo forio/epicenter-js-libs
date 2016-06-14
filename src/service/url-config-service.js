@@ -2,11 +2,17 @@
 
 var epiVersion = require('../api-version.json');
 
+//TODO: urlutils to get host, since no window on node
+var defaults = {
+    host: window.location.host,
+    pathname: window.location.pathname
+};
+
 var UrlConfigService = function (config) {
-    //TODO: urlutils to get host, since no window on node
+    var options = $.extend({}, defaults, config);
     function isLocalhost() {
-        var host = window.location.host;
-        var path = window.location.pathname;
+        var host = options.host;
+        var path = options.pathname;
         // Sort of hardcode the fact that epicenter application space is prefixed by /app/
         return (!host || path.indexOf('/app/') !== 0);
     }
@@ -23,7 +29,7 @@ var UrlConfigService = function (config) {
         api: '',
 
         host: (function () {
-            var host = window.location.host;
+            var host = options.host;
             if (isLocalhost()) {
                 host = 'forio.com';
             }
@@ -31,14 +37,14 @@ var UrlConfigService = function (config) {
         }()),
 
         appPath: (function () {
-            var path = window.location.pathname.split('\/');
+            var path = options.pathname.split('\/');
 
             return path && path[1] || '';
         }()),
 
         accountPath: (function () {
             var accnt = '';
-            var path = window.location.pathname.split('\/');
+            var path = options.pathname.split('\/');
             if (path && path[1] === 'app') {
                 accnt = path[2];
             }
@@ -47,7 +53,7 @@ var UrlConfigService = function (config) {
 
         projectPath: (function () {
             var prj = '';
-            var path = window.location.pathname.split('\/');
+            var path = options.pathname.split('\/');
             if (path && path[1] === 'app') {
                 prj = path[3];
             }

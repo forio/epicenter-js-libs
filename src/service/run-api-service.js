@@ -49,36 +49,33 @@
 'use strict';
 
 var ConfigService = require('./configuration-service');
-var StorageFactory = require('../store/store-factory');
 var qutil = require('../util/query-util');
 var rutil = require('../util/run-util');
 var _pick = require('../util/object-util')._pick;
 var TransportFactory = require('../transport/http-transport-factory');
 var VariablesService = require('./variables-api-service');
+var SessionManager = require('../store/session-manager');
 
 module.exports = function (config) {
-    // config || (config = configService.get());
-    var store = new StorageFactory({ synchronous: true });
-
     var defaults = {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
          * @type {String}
          */
-        token: store.get('epicenter.project.token') || store.get('epicenter.token') || '',
+        token: undefined,
 
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
          * @type {String}
          */
-        account: '',
+        account: undefined,
 
         /**
          * The project id. Defaults to empty string. If left undefined, taken from the URL.
          * @type {String}
          */
-        project: '',
+        project: undefined,
 
         /**
          * Criteria by which to filter runs. Defaults to empty string.
@@ -117,7 +114,8 @@ module.exports = function (config) {
         transport: {}
     };
 
-    var serviceOptions = $.extend({}, defaults, config);
+    this.sessionManager = new SessionManager();
+    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
     if (serviceOptions.id) {
         serviceOptions.filter = serviceOptions.id;
     }

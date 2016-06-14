@@ -147,7 +147,7 @@
             var req = server.requests.pop();
             req.requestHeaders.Authorization.should.equal('Bearer abc');
 
-            var rs2 = new RunService({ account: account, project: project });
+            var rs2 = new RunService({ account: account, project: project, token: '' });
             rs2.create('model.jl');
 
             req = server.requests.pop();

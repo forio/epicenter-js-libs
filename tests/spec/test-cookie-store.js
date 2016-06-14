@@ -21,6 +21,31 @@
                cs.set('test', 'key');
                cs.get('test').should.equal('key');
             });
+
+            it('gets the first ocurrence of a key', function () {
+                var cookieDummy = {
+                    get: function () {
+                        return 'other=other;test=first;randomcookie=site;test=second';
+                    },
+                    set: function (newCookie) {}
+                };
+                var cs = new CookieStore({
+                    cookie: cookieDummy
+                });
+                cs.get('test').should.equal('first');
+            });
+            it('gets the first ocurrence of a key at the start of the cookie', function () {
+                var cookieDummy = {
+                    get: function () {
+                        return 'test=first;randomcookie=site;test=second';
+                    },
+                    set: function (newCookie) {}
+                };
+                var cs = new CookieStore({
+                    cookie: cookieDummy
+                });
+                cs.get('test').should.equal('first');
+            });
         });
 
         describe('#delete', function () {
