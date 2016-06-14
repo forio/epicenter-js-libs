@@ -22,7 +22,8 @@
  * * `options` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
  * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
  * * `options.project` Epicenter project id.
- * * `options.userId` Epicenter user id used for authentication.
+ * * `options.userName` Epicenter userName used for authentication.
+ * * `options.userId` Epicenter user id used for authentication, `options.userName` is preferred.
  * * `options.token` Epicenter auth token used for authentication.
  */
 
@@ -60,14 +61,18 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         }
 
         if (defaultCometOptions.handshake === undefined) {
+            var userName = defaultCometOptions.userName;
             var userId = defaultCometOptions.userId;
             var token = defaultCometOptions.token;
-            if (userId && token) {
+            if ((userName || userId) && token) {
+                var userProp = userName ? 'userName' : 'userId';
+                var ext = {
+                    authorization: 'Bearer ' + token
+                };
+                ext[userProp] = userName ? userName : userId;
+
                 defaultCometOptions.handshake = {
-                    ext: {
-                        userId: userId,
-                        authorization: 'Bearer ' + token
-                    }
+                    ext: ext
                 };
             }
         }
