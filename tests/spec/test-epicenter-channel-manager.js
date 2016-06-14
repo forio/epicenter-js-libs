@@ -39,6 +39,48 @@
             });
         });
 
+        describe('#getChannel', function () {
+            it('should enforce channel types', function () {
+                var cm = new Manager({ userId: 'userId', token: 'token' });
+                var ret =  function () { cm.getChannel('/test/account/project'); };
+                ret.should.throw(Error);
+            });
+            it('should allow right channel types', function () {
+                var cm = new Manager({ userId: 'userId', token: 'token' });
+                var ret =  function () {
+                    cm.getChannel('/user/account/project');
+                    cm.getChannel('/data/account/project');
+                    cm.getChannel('/project/account/project');
+                    cm.getChannel('/group/account/project');
+                    cm.getChannel('/world/account/project');
+                    cm.getChannel('/general/account/project');
+                    cm.getChannel('/chat/account/project');
+                };
+                ret.should.not.throw(Error);
+            });
+            it('should enforce account and project present', function () {
+                var cm = new Manager();
+                var ret =  function () {
+                    cm.getChannel('/user/account');
+                };
+                ret.should.throw(Error);
+            });
+            it('should not validate when the allowAllChannels is passed in the constructor', function () {
+                var cm = new Manager({ allowAllChannels: true });
+                var ret =  function () {
+                    cm.getChannel('/anyChannel');
+                };
+                ret.should.not.throw(Error);
+            });
+            it('should not validate when the allowAllChannels is passed in the method options', function () {
+                var cm = new Manager();
+                var ret =  function () {
+                    cm.getChannel({ base: '/anyChannel', allowAllChannels: true });
+                };
+                ret.should.not.throw(Error);
+            });
+        });
+
         describe('#getWorldChannel', function () {
             it('should throw an error if world id not provided', function () {
                 var manager = new Manager();

@@ -34,6 +34,15 @@ var SessionManager = require('../store/session-manager');
 
 var AuthManager = require('./auth-manager');
 
+var validTypes = {
+    project: true,
+    group: true,
+    world: true,
+    user: true,
+    data: true,
+    general: true,
+    chat: true
+};
 var session = new AuthManager();
 var getFromSettingsOrSessionOrError = function (value, sessionKeyName, settings) {
     if (!value) {
@@ -79,6 +88,46 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
 
         this.options = defaultCometOptions;
         return __super.constructor.call(this, defaultCometOptions);
+    },
+
+    /**
+     * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
+     * It enforces Epicenter-specific channel naming.
+     *
+     * **Example**
+     *
+     *      var cm = new F.manager.EpicenterChannelManager();
+     *      var channel = cm.getChannel();
+     *
+     *      channel.subscribe('topic', callback);
+     *      channel.publish('topic', { myData: 100 });
+     *
+     * **Parameters**
+     * @param {Object|String} `options` (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     */
+    getChannel: function (options) {
+        if (options && typeof options !== 'object') {
+            options = {
+                base: options
+            };
+        }
+        var channelOpts = $.extend({}, this.options, options);
+        var base = channelOpts.base;
+        if (!base) {
+            throw new Error('No base topic was provided');
+        }
+
+        if (!channelOpts.allowAllChannels) {
+            var baseParts = base.split('/');
+            var channelType = baseParts[1];
+            if (baseParts.length < 4) {
+                throw new Error('Invalid channel base name, it must be in the form /{type}/{account id}/{project id}/{...}');
+            }
+            if (!validTypes[channelType]) {
+                throw new Error('Invalid channel type');
+            }
+        }
+        return __super.getChannel.apply(this, arguments);
     },
 
     /**
