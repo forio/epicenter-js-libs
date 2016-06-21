@@ -79,13 +79,7 @@ var ChannelManager = function (options) {
          * Options to pass to the channel handshake.
          * @type {object}
          */
-        handshake: undefined,
-
-         /**
-         * Whether to validate the channel path. Used in Epicenter Channel Manager, which extends this; ignored otherwise.
-         * @type {boolean}
-         */
-        allowAllChannels: false
+        handshake: undefined
     };
     this.sessionManager = new SessionManager();
     var defaultCometOptions = this.sessionManager.getMergedOptions(defaults, options);

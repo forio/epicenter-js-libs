@@ -25,6 +25,7 @@
  * * `options.userName` Epicenter userName used for authentication.
  * * `options.userId` Epicenter user id used for authentication, `options.userName` is preferred.
  * * `options.token` Epicenter auth token used for authentication.
+ * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated. If your project requires [Push Channel Authorization](../../../updating_your_settings/), you should validate channel paths.
  */
 
 var ChannelManager = require('./channel-manager');
