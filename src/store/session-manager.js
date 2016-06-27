@@ -49,17 +49,15 @@ var SessionManager = function (managerOptions) {
             // Otherwise (i.e. localhost) use the saved session values
             var account = finalOpts.account;
             var project = finalOpts.project;
-            if (account && project) {
-                if (session.groups && session.groups[project]) {
-                    var group = session.groups[project];
-                    $.extend(session, { project: project }, group);
-                } else {
-                    // This means that the token was not used to login to the same project
-                    return {};
-                }
-            } else {
-                return session;
+            if (account && session.account !== account) {
+                // This means that the token was not used to login to the same account
+                return {};
             }
+            if (session.groups) {
+                var group = session.groups[project] || { groupId: '', groupName: '', isFac: false };
+                $.extend(session, { project: project }, group);
+            }
+            return session;
         },
         removeSession: function (options) {
             return getStore(options).remove(EPI_SESSION_KEY);

@@ -30,13 +30,13 @@ module.exports = function (config) {
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
          * @type {String}
          */
-       account: '',
+        account: undefined,
 
         /**
          * The access token to use when searching for end users. (See [more background on access tokens](../../../project_access/)).
          * @type {String}
          */
-       token: '',
+        token: undefined,
 
         /**
          * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
