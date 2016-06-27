@@ -19,9 +19,13 @@
  *
  * The parameters for instantiating an Epicenter Channel Manager include:
  *
- * * `server` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
- * * `server.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `server.project` Epicenter project id.
+ * * `options` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
+ * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
+ * * `options.project` Epicenter project id.
+ * * `options.userName` Epicenter userName used for authentication.
+ * * `options.userId` Epicenter user id used for authentication, `options.userName` is preferred.
+ * * `options.token` Epicenter auth token used for authentication.
+ * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated. If your project requires [Push Channel Authorization](../../../updating_your_settings/), you should validate channel paths.
  */
 
 var ChannelManager = require('./channel-manager');
@@ -31,6 +35,15 @@ var SessionManager = require('../store/session-manager');
 
 var AuthManager = require('./auth-manager');
 
+var validTypes = {
+    project: true,
+    group: true,
+    world: true,
+    user: true,
+    data: true,
+    general: true,
+    chat: true
+};
 var session = new AuthManager();
 var getFromSettingsOrSessionOrError = function (value, sessionKeyName, settings) {
     if (!value) {
@@ -57,8 +70,65 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             defaultCometOptions.url = urlOpts.protocol + '://' + urlOpts.host + '/channel/subscribe';
         }
 
+        if (defaultCometOptions.handshake === undefined) {
+            var userName = defaultCometOptions.userName;
+            var userId = defaultCometOptions.userId;
+            var token = defaultCometOptions.token;
+            if ((userName || userId) && token) {
+                var userProp = userName ? 'userName' : 'userId';
+                var ext = {
+                    authorization: 'Bearer ' + token
+                };
+                ext[userProp] = userName ? userName : userId;
+
+                defaultCometOptions.handshake = {
+                    ext: ext
+                };
+            }
+        }
+
         this.options = defaultCometOptions;
         return __super.constructor.call(this, defaultCometOptions);
+    },
+
+    /**
+     * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
+     * It enforces Epicenter-specific channel naming.
+     *
+     * **Example**
+     *
+     *      var cm = new F.manager.EpicenterChannelManager();
+     *      var channel = cm.getChannel();
+     *
+     *      channel.subscribe('topic', callback);
+     *      channel.publish('topic', { myData: 100 });
+     *
+     * **Parameters**
+     * @param {Object|String} `options` (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     */
+    getChannel: function (options) {
+        if (options && typeof options !== 'object') {
+            options = {
+                base: options
+            };
+        }
+        var channelOpts = $.extend({}, this.options, options);
+        var base = channelOpts.base;
+        if (!base) {
+            throw new Error('No base topic was provided');
+        }
+
+        if (!channelOpts.allowAllChannels) {
+            var baseParts = base.split('/');
+            var channelType = baseParts[1];
+            if (baseParts.length < 4) {
+                throw new Error('Invalid channel base name, it must be in the form /{type}/{account id}/{project id}/{...}');
+            }
+            if (!validTypes[channelType]) {
+                throw new Error('Invalid channel type');
+            }
+        }
+        return __super.getChannel.apply(this, arguments);
     },
 
     /**
@@ -176,7 +246,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
-        var baseTopic = ['/users', account, project, groupName, worldid, userid].join('/');
+        var baseTopic = ['/user', account, project, groupName, worldid, userid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
@@ -220,7 +290,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
-        var baseTopic = ['/users', account, project, groupName, worldid].join('/');
+        var baseTopic = ['/user', account, project, groupName, worldid].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
 
         var lastPingTime = { };
