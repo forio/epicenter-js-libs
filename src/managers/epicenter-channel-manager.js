@@ -23,9 +23,9 @@
  * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
  * * `options.project` Epicenter project id.
  * * `options.userName` Epicenter userName used for authentication.
- * * `options.userId` Epicenter user id used for authentication, `options.userName` is preferred.
- * * `options.token` Epicenter auth token used for authentication.
- * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated. If your project requires [Push Channel Authorization](../../../updating_your_settings/), you should validate channel paths.
+ * * `options.userId` Epicenter user id used for authentication. Optional; `options.userName` is preferred.
+ * * `options.token` Epicenter token used for authentication. (You can retrieve this using `authManager.getToken()` from the [Authorization Manager](../auth-manager/).)
+ * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
  */
 
 var ChannelManager = require('./channel-manager');
@@ -93,12 +93,13 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
 
     /**
      * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
-     * It enforces Epicenter-specific channel naming.
+     *
+     * This method enforces Epicenter-specific channel naming: all channels requested must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`.
      *
      * **Example**
      *
      *      var cm = new F.manager.EpicenterChannelManager();
-     *      var channel = cm.getChannel();
+     *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
      *
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
@@ -327,8 +328,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * **Example**
      *
      *     var cm = new F.manager.ChannelManager();
-     *     var gc = cm.getDataChannel('survey-responses');
-     *     gc.subscribe('', function(data, meta) {
+     *     var dc = cm.getDataChannel('survey-responses');
+     *     dc.subscribe('', function(data, meta) {
      *          console.log(data);
      *
      *          // meta.date is time of change,

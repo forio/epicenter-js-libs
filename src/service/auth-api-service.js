@@ -2,7 +2,7 @@
  *
  * ## Authentication API Service
  *
- * The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token.
+ * The Authentication API Service provides a method for logging in, which creates and returns a user access token.
  *
  * User access tokens are required for each call to Epicenter. (See [Project Access](../../../project_access/) for more information.)
  *
@@ -11,7 +11,6 @@
  *      var auth = new F.service.Auth();
  *      auth.login({ userName: 'jsmith@acmesimulations.com',
  *                  password: 'passw0rd' });
- *      auth.logout();
  */
 
 'use strict';
@@ -96,17 +95,19 @@ module.exports = function (config) {
             return http.post(postParams, httpOptions);
         },
 
-        /**
-         * Logs user out from specified accounts.
-         * Epicenter logout is not implemented yet, added a dummy promise that gets automatically resolved.
-         *
-         * **Example**
-         *
-         *      auth.logout();
-         *
-         * **Parameters**
-         * @param {Object} `options` (Optional) Overrides for configuration options.
-         */
+        // (replace with /* */ comment block, to make visible in docs, once this is more than a noop)
+        //
+        // Logs user out from specified accounts.
+        //
+        // Epicenter logout is not implemented yet, so for now this is a dummy promise that gets automatically resolved.
+        //
+        // **Example**
+        //
+        //      auth.logout();
+        //
+        // **Parameters**
+        // @param {Object} `options` (Optional) Overrides for configuration options.
+        //
         logout: function (options) {
             var dtd = $.Deferred();
             dtd.resolve();
