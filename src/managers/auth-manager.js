@@ -5,7 +5,7 @@
 *
 * The Authorization Manager is most useful for [team projects](../../../glossary/#team) with an access level of [Authenticated](../../../glossary/#access). These projects are accessed by [end users](../../../glossary/#users) who are members of one or more [groups](../../../glossary/#groups).
 *
-* ####Using the Authorization Manager
+* #### Using the Authorization Manager
 *
 * To use the Authorization Manager, instantiate it. Then, make calls to any of the methods you need:
 *
@@ -210,7 +210,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     },
 
     /**
-    * Logs user out.
+    * Logs user out by clearing all session information.
     *
     * **Example**
     *
@@ -310,7 +310,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *
      * *Important*: This method is synchronous. The session information is returned immediately in an object; no callbacks or promises are needed.
      *
-     * By default, session information is stored in a cookie in the browser. You can change this with the `store` configuration option.
+     * Session information is stored in a cookie in the browser.
      *
      * **Example**
      *
@@ -323,21 +323,24 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         return this.sessionManager.getSession(options);
     },
 
-    /**
-     * Add a group to the session, it is assumed that the group and project exist and the user is part of it.
-     *
-     * Returns the new session object.
-     *
-     * **Example**
-     *
-     *      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
-     *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: ... }]);
-     *
-     * **Parameters**
-     * @param {object|array} `groups` (Required) The group object must contain the project and groupName properties.
-     * @param {string} `group.isFac` (optional) defaults to false
-     * @param {string} `group.groupId` (optional) defaults to undefined. Needed mostly for the Members API.
-     */
+    // (replace with /* */ comment block, to make visible in docs, once EPICENTER-1939 is complete)
+    //
+    // Add one or more groups to the current session. 
+    //
+    // This method assumes that the project and group exist and the user specified in the session is part of this project and group.
+    //
+    // Returns the new session object.
+    //
+    // **Example**
+    //
+    //      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
+    //      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: ... }]);
+    //
+    // **Parameters**
+    // @param {object|array} `groups` (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties.
+    // @param {string} `group.isFac` (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
+    // @param {string} `group.groupId` (optional) Defaults to undefined. Needed mostly for the Members API.
+    //
     addGroups: function (groups) {
         var session = this.getCurrentUserSessionInfo();
         var isArray = Array.isArray(groups);
