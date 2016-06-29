@@ -19,17 +19,31 @@
  *
  * The parameters for instantiating an Epicenter Channel Manager include:
  *
- * * `server` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
- * * `server.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `server.project` Epicenter project id.
+ * * `options` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
+ * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
+ * * `options.project` Epicenter project id.
+ * * `options.userName` Epicenter userName used for authentication.
+ * * `options.userId` Epicenter user id used for authentication. Optional; `options.userName` is preferred.
+ * * `options.token` Epicenter token used for authentication. (You can retrieve this using `authManager.getToken()` from the [Authorization Manager](../auth-manager/).)
+ * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
  */
 
 var ChannelManager = require('./channel-manager');
 var classFrom = require('../util/inherit');
 var urlService = require('../service/url-config-service');
+var SessionManager = require('../store/session-manager');
 
 var AuthManager = require('./auth-manager');
 
+var validTypes = {
+    project: true,
+    group: true,
+    world: true,
+    user: true,
+    data: true,
+    general: true,
+    chat: true
+};
 var session = new AuthManager();
 var getFromSettingsOrSessionOrError = function (value, sessionKeyName, settings) {
     if (!value) {
@@ -47,13 +61,8 @@ var getFromSettingsOrSessionOrError = function (value, sessionKeyName, settings)
 var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
     constructor: function (options) {
-        var userInfo = session.getCurrentUserSessionInfo();
-
-        var defaults = {
-            account: userInfo.account,
-            project: userInfo.project,
-        };
-        var defaultCometOptions = $.extend(true, {}, defaults, userInfo, options);
+        this.sessionManager = new SessionManager();
+        var defaultCometOptions = this.sessionManager.getMergedOptions(options);
 
         var urlOpts = urlService(defaultCometOptions.server);
         if (!defaultCometOptions.url) {
@@ -61,8 +70,66 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             defaultCometOptions.url = urlOpts.protocol + '://' + urlOpts.host + '/channel/subscribe';
         }
 
+        if (defaultCometOptions.handshake === undefined) {
+            var userName = defaultCometOptions.userName;
+            var userId = defaultCometOptions.userId;
+            var token = defaultCometOptions.token;
+            if ((userName || userId) && token) {
+                var userProp = userName ? 'userName' : 'userId';
+                var ext = {
+                    authorization: 'Bearer ' + token
+                };
+                ext[userProp] = userName ? userName : userId;
+
+                defaultCometOptions.handshake = {
+                    ext: ext
+                };
+            }
+        }
+
         this.options = defaultCometOptions;
         return __super.constructor.call(this, defaultCometOptions);
+    },
+
+    /**
+     * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
+     *
+     * This method enforces Epicenter-specific channel naming: all channels requested must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`.
+     *
+     * **Example**
+     *
+     *      var cm = new F.manager.EpicenterChannelManager();
+     *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
+     *
+     *      channel.subscribe('topic', callback);
+     *      channel.publish('topic', { myData: 100 });
+     *
+     * **Parameters**
+     * @param {Object|String} `options` (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     */
+    getChannel: function (options) {
+        if (options && typeof options !== 'object') {
+            options = {
+                base: options
+            };
+        }
+        var channelOpts = $.extend({}, this.options, options);
+        var base = channelOpts.base;
+        if (!base) {
+            throw new Error('No base topic was provided');
+        }
+
+        if (!channelOpts.allowAllChannels) {
+            var baseParts = base.split('/');
+            var channelType = baseParts[1];
+            if (baseParts.length < 4) {
+                throw new Error('Invalid channel base name, it must be in the form /{type}/{account id}/{project id}/{...}');
+            }
+            if (!validTypes[channelType]) {
+                throw new Error('Invalid channel type');
+            }
+        }
+        return __super.getChannel.apply(this, arguments);
     },
 
     /**
@@ -85,7 +152,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @param  {String} `groupName` (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
      */
     getGroupChannel: function (groupName) {
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
@@ -128,7 +195,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
@@ -174,13 +241,13 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             throw new Error('Please specify a world id');
         }
         var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
-        userid = getFromSettingsOrSessionOrError(userid, 'userId');
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        userid = getFromSettingsOrSessionOrError(userid, 'userId', this.options);
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
 
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
-        var baseTopic = ['/users', account, project, groupName, worldid, userid].join('/');
+        var baseTopic = ['/user', account, project, groupName, worldid, userid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
     },
 
@@ -218,13 +285,13 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        userid = getFromSettingsOrSessionOrError(userid, 'userId');
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName');
+        userid = getFromSettingsOrSessionOrError(userid, 'userId', this.options);
+        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
 
         var account = getFromSettingsOrSessionOrError('', 'account', this.options);
         var project = getFromSettingsOrSessionOrError('', 'project', this.options);
 
-        var baseTopic = ['/users', account, project, groupName, worldid].join('/');
+        var baseTopic = ['/user', account, project, groupName, worldid].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
 
         var lastPingTime = { };
@@ -261,8 +328,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * **Example**
      *
      *     var cm = new F.manager.ChannelManager();
-     *     var gc = cm.getDataChannel('survey-responses');
-     *     gc.subscribe('', function(data, meta) {
+     *     var dc = cm.getDataChannel('survey-responses');
+     *     dc.subscribe('', function(data, meta) {
      *          console.log(data);
      *
      *          // meta.date is time of change,

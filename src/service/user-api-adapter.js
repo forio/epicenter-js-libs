@@ -20,6 +20,7 @@
 
 var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
+var SessionManager = require('../store/session-manager');
 var qutil = require('../util/query-util');
 
 module.exports = function (config) {
@@ -29,13 +30,13 @@ module.exports = function (config) {
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
          * @type {String}
          */
-       account: '',
+        account: undefined,
 
         /**
          * The access token to use when searching for end users. (See [more background on access tokens](../../../project_access/)).
          * @type {String}
          */
-       token: '',
+        token: undefined,
 
         /**
          * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
@@ -44,7 +45,8 @@ module.exports = function (config) {
         transport: {}
     };
 
-    var serviceOptions = $.extend({}, defaults, config);
+    this.sessionManager = new SessionManager();
+    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
     var urlConfig = new ConfigService(serviceOptions).get('server');
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath('user')

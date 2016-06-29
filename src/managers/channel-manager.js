@@ -1,6 +1,7 @@
 'use strict';
 
 var Channel = require('../service/channel-service');
+var SessionManager = require('../store/session-manager');
 
 /**
  * ## Channel Manager
@@ -72,9 +73,19 @@ var ChannelManager = function (options) {
          */
         channel: {
 
-        }
+        },
+
+        /**
+         * Options to pass to the channel handshake.
+         *
+         * For example, the [Epicenter Channel Manager](../epicenter-channel-manager/) passes `ext` and authorization information. More information on possible options is in the details of the underlying [Push Channel API](../../../rest_apis/multiplayer/channel/).
+         *
+         * @type {object}
+         */
+        handshake: undefined
     };
-    var defaultCometOptions = $.extend(true, {}, defaults, options);
+    this.sessionManager = new SessionManager();
+    var defaultCometOptions = this.sessionManager.getMergedOptions(defaults, options);
     this.currentSubscriptions = [];
     this.options = defaultCometOptions;
 
@@ -136,7 +147,7 @@ var ChannelManager = function (options) {
         $(me).trigger('error', message);
     });
 
-    cometd.handshake();
+    cometd.handshake(defaultCometOptions.handshake);
 
     this.cometd = cometd;
 };

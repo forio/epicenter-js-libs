@@ -87,7 +87,13 @@
         });
 
         it('should validate the account, project, group and userId are not empty', function () {
-            var as = new AssetService({});
+            var cookieDummy = {
+                get: function () {
+                    return '';
+                },
+                set: function (newCookie) {}
+            };
+            var as = new AssetService({ store: { cookie: cookieDummy } });
             var noAccount = function () { as.create('file.txt', {}); };
             var noProject = function () { as.create('file.txt', {}, { account: 'forio' }); };
             var noGroup = function () { as.create('file.txt', {}, { account: 'forio', project: 'js-libs' }); };
@@ -99,14 +105,14 @@
             noUserId.should.throw(Error);
             allRequired.should.not.throw(Error);
 
-            as = new AssetService({ scope: 'group' });
+            as = new AssetService({ scope: 'group', store: { cookie: cookieDummy } });
             noAccount.should.throw(Error);
             noProject.should.throw(Error);
             noGroup.should.throw(Error);
             noUserId.should.not.throw(Error);
             allRequired.should.not.throw(Error);
 
-            as = new AssetService({ scope: 'project' });
+            as = new AssetService({ scope: 'project', store: { cookie: cookieDummy } });
             noAccount.should.throw(Error);
             noProject.should.throw(Error);
             noGroup.should.not.throw(Error);

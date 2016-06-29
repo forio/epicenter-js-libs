@@ -3,6 +3,12 @@
 
     describe('Member API Service', function () {
         var server;
+        var cookieDummy = {
+            get: function () {
+                return '';
+            },
+            set: function (newCookie) {}
+        };
         before(function () {
             server = sinon.fakeServer.create();
             server.respondWith('POST', /(.*)\/game/, function (xhr, id) {
@@ -45,7 +51,7 @@
 
             it('should throw error when no userId is specified', function () {
                 var getGroupsForUser = function () {
-                    createMemberAdapter({ token: '123' }).getGroupsForUser();
+                    createMemberAdapter({ token: '123', store: { cookie: cookieDummy } }).getGroupsForUser();
                 };
                 expect(getGroupsForUser).to.throw(Error);
             });
@@ -74,7 +80,7 @@
 
             it('should throw error when no groupId is specified', function () {
                 var getGroupDetails = function () {
-                    createMemberAdapter({ token: '123' }).getGroupDetails();
+                    createMemberAdapter({ token: '123', store: { cookie: cookieDummy } }).getGroupDetails();
                 };
                 expect(getGroupDetails).to.throw(Error);
             });
