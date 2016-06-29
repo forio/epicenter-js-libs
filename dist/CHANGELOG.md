@@ -1,5 +1,25 @@
 
 
+<a name="1.8.0"></a>
+### 1.8.0 (2016-06-29)
+
+This release cleans up session handling significantly, including making cookies appropriately specific to account and project.
+
+Improvements:
+
+ - All session information is now stored in a single cookie. The **epicenterjs.session** cookie now defaults to a path of `/app/{account id}/{project id}/`. 
+ 	* Making it specific to the account and project allows end users to log in to several different projects from the same team without session information being overridden. 
+ 	* As a developer, if you need to set the cookie path to something else, you can change it explicitly by passing `{ store: { root: 'other/path' } }` to the Authorization Manager.
+ - When a user logs in, the access token is now automatically passed to the User, Member, and State API adapters, and to the Channel and Epicenter Channel managers. As a developer, you no longer need to worry about passing tokens once the user is logged in.
+ - The Epicenter Channel manager now automatically validates channel names. They must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`. (See the [underlying Push Channel API](https://forio.com/epicenter/docs/public/rest_apis/multiplayer/channel/) for additional details.) You can disable this validation if needed.
+
+
+Bug Fixes:
+
+ - When automatically splitting long queries into multiple pieces, the pieces were still a little too long for Microsoft Edge when all the URL-encoding was included. This was fixed by shortening the size of the pieces to account for any encoding. 
+ - In some situations, the login component generated extraneous errors in the console. This has been fixed.
+
+
 <a name="1.7.1"></a>
 ### 1.7.1 (2016-04-12)
 
