@@ -132,7 +132,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             var userInfo = decodeToken(token);
             var oldGroups = sessionManager.getSession().groups || {};
             var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
-            var data = {auth: response, user: userInfo };
+            var data = { auth: response, user: userInfo };
             var project = adapterOptions.project;
             var isTeamMember = userInfo.parent_account_id === null;
             var requiresGroup = adapterOptions.requiresGroup && project;
@@ -173,11 +173,13 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 }
 
                 if (group) {
-                    var sessionInfoWithGroup = $.extend({}, sessionInfo, {
+                    var groupData = {
                         'groupId': group.groupId,
                         'groupName': group.name,
                         'isFac': _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator'
-                    });
+                    };
+                    var sessionInfoWithGroup = $.extend({}, sessionInfo, groupData);
+                    sessionInfo.groups[project] = groupData;
                     _this.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
