@@ -349,7 +349,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         groups = isArray ? groups : [groups];
 
         $.each(groups, function (index, group) {
-            var extendedGroup = $.extend({}, { isFac: false }, group, session);
+            var extendedGroup = $.extend({}, { isFac: false }, group);
             var project = extendedGroup.project;
             var validProps = ['groupName', 'groupId', 'isFac'];
             if (!project || !extendedGroup.groupName) {
