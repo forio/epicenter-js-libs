@@ -53,7 +53,7 @@ var SessionManager = function (managerOptions) {
                 // This means that the token was not used to login to the same account
                 return {};
             }
-            if (session.groups) {
+            if (session.groups && account && project) {
                 var group = session.groups[project] || { groupId: '', groupName: '', isFac: false };
                 $.extend(session, { project: project }, group);
             }

@@ -1,5 +1,11 @@
 
 
+<a name="1.8.1"></a>
+### 1.8.1 (2016-07-07)
+
+This release fixes a bug introduced 1.8.0. In some cases, when an end user logged in (using the `AuthManager`), the end user's group was not being correctly passed down to the scope of the runs being created by that user. This has been resolved. 
+
+
 <a name="1.8.0"></a>
 ### 1.8.0 (2016-06-29)
 
