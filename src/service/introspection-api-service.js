@@ -23,7 +23,6 @@
 var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
 var rutil = require('../util/run-util');
-var qutil = require('../util/query-util');
 
 module.exports = function (config) {
     var defaults = {
