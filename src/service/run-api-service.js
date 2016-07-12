@@ -498,8 +498,8 @@ module.exports = function (config) {
         },
 
         introspection: function (config) {
-            var is = new IntrospectionService($.extend(true, {}, serviceOptions, config));
-            return is;
+            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, config));
+            return introspection;
         }
     };
 

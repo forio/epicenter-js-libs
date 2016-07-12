@@ -22,7 +22,6 @@
 
 var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
-var rutil = require('../util/run-util');
 
 module.exports = function (config) {
     var defaults = {
@@ -42,13 +41,8 @@ module.exports = function (config) {
 
     urlConfig.filter = ';';
 
-    var getURL = function () {
-        var url = urlConfig.getAPIPath('model') + 'publish';
-        return url;
-    };
-
     var httpOptions = {
-        url: getURL
+        url: urlConfig.getAPIPath('model') + 'publish'
     };
     if (serviceOptions.token) {
         httpOptions.headers = {
@@ -56,7 +50,6 @@ module.exports = function (config) {
         };
     }
     var http = new TransportFactory(httpOptions);
-    http.splitGet = rutil.splitGetFactory(httpOptions);
 
     var publicAPI = {
         /**
@@ -72,12 +65,13 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
+         * @param  {String} `runId`   (Optional) Overrides the run id used when the service was created
          * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
-        get: function (options) {
+        get: function (runId, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             var params = {
-                runId: httpOptions.filter,
+                runId: runId || httpOptions.filter,
                 commandWrapper: { command: { introspect: {} } },
                 reanimate: false
             };
