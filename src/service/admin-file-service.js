@@ -68,6 +68,34 @@ module.exports = function (config) {
     }
     var http = new TransportFactory(httpOptions);
 
+    function uploadBody(fileName, contents) {
+        var boundary = '---------------------------7da24f2e50046';
+
+        return {
+            body: '--' + boundary + '\r\n' +
+                    'Content-Disposition: form-data; name="file";' +
+                    'filename="' + fileName + '"\r\n' +
+                    'Content-type: text/html\r\n\r\n' +
+                    contents + '\r\n' +
+                    '--' + boundary + '--',
+            boundary: boundary
+        };
+    }
+
+    function uploadFileOptions(filePath, contents, options) {
+        filePath = filePath.split('/');
+        var fileName = filePath.pop();
+        filePath = filePath.join('/');
+        var path = serviceOptions.folderType + '/' + filePath;
+        var upload = uploadBody(fileName, contents);
+
+        return $.extend(true, {}, serviceOptions, options, {
+            url: urlConfig.getAPIPath('file') + path,
+            data: upload.body,
+            contentType: 'multipart/form-data; boundary=' + upload.boundary
+        });
+    }
+
     var publicAsyncAPI = {
         /**
          * Get a directory listing, or contents of a file
@@ -83,32 +111,27 @@ module.exports = function (config) {
         },
 
         /**
-         * Writes to the given file path; replaces the existing file if it exists
+         * Replaces to the given file path
          * @param  {String} `filePath` Path to the file
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
-        writeToFile: function (filePath, contents, options) {
-            filePath = filePath.split('/');
-            var fileName = filePath.pop();
-            filePath = filePath.join('/');
-            var path = serviceOptions.folderType + '/' + filePath;
-            var boundary = '---------------------------7da24f2e50046';
+        replaceFile: function (filePath, contents, options) {
+            var httpOptions = uploadFileOptions(filePath, contents, options);
 
-            var body = '--' + boundary + '\r\n' +
-                'Content-Disposition: form-data; name="file";' +
-                'filename="' + fileName + '"\r\n' +
-                'Content-type: text/html\r\n\r\n' +
-                contents + '\r\n' +
-                '--' + boundary + '--';
+            return http.put(httpOptions.data, httpOptions);
+        },
 
-            var httpOptions = $.extend(true, {}, serviceOptions, options, {
-                url: urlConfig.getAPIPath('file') + path,
-                data: body,
-                contentType: 'multipart/form-data; boundary=' + boundary
-            });
+        /**
+         * Creates a file in the given filePath
+         * @param  {String} `filePath` Path to the file
+         * @param  {String} `contents` Contents to write to file
+         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         */
+        createFile: function (filePath, contents, options) {
+            var httpOptions = uploadFileOptions(filePath, contents, options);
 
-            return http.put(body, httpOptions);
+            return http.post(httpOptions.data, httpOptions);
         },
 
         /**
