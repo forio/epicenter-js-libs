@@ -94,18 +94,19 @@ module.exports = function (config) {
             filePath = filePath.join('/');
             var path = serviceOptions.folderType + '/' + filePath;
             var boundary = '---------------------------7da24f2e50046';
+
+            var body = '--' + boundary + '\r\n' +
+                'Content-Disposition: form-data; name="file";' +
+                'filename="' + fileName + '"\r\n' +
+                'Content-type: text/html\r\n\r\n' +
+                contents + '\r\n' +
+                '--' + boundary + '--';
+
             var httpOptions = $.extend(true, {}, serviceOptions, options, {
                 url: urlConfig.getAPIPath('file') + path,
                 data: body,
                 contentType: 'multipart/form-data; boundary=' + boundary
             });
-
-            var body = '--' + boundary + '\r\n'
-                + 'Content-Disposition: form-data; name="file";'
-                + 'filename="' + fileName + '"\r\n'
-                + 'Content-type: text/html\r\n\r\n'
-                + contents + '\r\n'
-                + '--' + boundary + '--';
 
             return http.put(body, httpOptions);
         },
