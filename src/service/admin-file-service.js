@@ -33,6 +33,12 @@ module.exports = function (config) {
          */
         project: undefined,
 
+        /**
+         * The folder type.  One of Model|Static|Node
+         * @type {String}
+         */
+        folderType: 'static',
+
 
         /**
          * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
@@ -66,15 +72,69 @@ module.exports = function (config) {
         /**
          * Get a directory listing, or contents of a file
          * @param  {String} `filePath`   Path to the file
-         * @param  {String} `folderType` One of Model|Static|Node
          * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
-        getContents: function (filePath, folderType, options) {
-            var path = folderType + '/' + filePath;
+        getContents: function (filePath, options) {
+            var path = serviceOptions.folderType + '/' + filePath;
             var httpOptions = $.extend(true, {}, serviceOptions, options, {
                 url: urlConfig.getAPIPath('file') + path
             });
             return http.get('', httpOptions);
+        },
+
+        /**
+         * Writes to the given file path; replaces the existing file if it exists
+         * @param  {String} `filePath` Path to the file
+         * @param  {String} `contents` Contents to write to file
+         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         */
+        writeToFile: function (filePath, contents, options) {
+            filePath = filePath.split('/');
+            var fileName = filePath.pop();
+            filePath = filePath.join('/');
+            var path = serviceOptions.folderType + '/' + filePath;
+            var boundary = '---------------------------7da24f2e50046';
+            var httpOptions = $.extend(true, {}, serviceOptions, options, {
+                url: urlConfig.getAPIPath('file') + path,
+                data: body,
+                contentType: 'multipart/form-data; boundary=' + boundary
+            });
+
+            var body = '--' + boundary + '\r\n'
+                + 'Content-Disposition: form-data; name="file";'
+                + 'filename="' + fileName + '"\r\n'
+                + 'Content-type: text/html\r\n\r\n'
+                + contents + '\r\n'
+                + '--' + boundary + '--';
+
+            return http.put(body, httpOptions);
+        },
+
+        /**
+         * Removes the file
+         * @param  {String} `filePath` Path to the file
+         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         */
+        remove: function (filePath, options) {
+            var path = serviceOptions.folderType + '/' + filePath;
+            var httpOptions = $.extend(true, {}, serviceOptions, options, {
+                url: urlConfig.getAPIPath('file') + path
+            });
+            return http.delete(null, httpOptions);
+        },
+
+        /**
+         * Rename the file
+         * @param  {String} filePath Path to the file
+         * @param  {Stirng} newName  New name of file
+         * @param  {Object} options  (Optional) Overrides for configuration options
+         */
+        rename: function (filePath, newName, options) {
+            var path = serviceOptions.folderType + '/' + filePath;
+            var httpOptions = $.extend(true, {}, serviceOptions, options, {
+                url: urlConfig.getAPIPath('file') + path
+            });
+            return http.patch({ 'name': newName }, httpOptions);
         }
     };
 
