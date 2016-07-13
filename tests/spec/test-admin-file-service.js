@@ -47,8 +47,16 @@
                 req.method.toUpperCase().should.equal('GET');
             });
 
-            it('should hit the right url', function () {
-                var fs = new FileService({ account: account, project: project });
+            it('should hit the right url for static files', function () {
+                var fs = new FileService({ account: account, project: project, folderType: 'static' });
+                fs.getContents('file', 'static');
+
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + 'static/file');
+            });
+
+            it('should hit the right url for model files', function () {
+                var fs = new FileService({ account: account, project: project, folderType: 'model' });
                 fs.getContents('file', 'model');
 
                 var req = server.requests.pop();
