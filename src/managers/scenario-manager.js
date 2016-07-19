@@ -1,49 +1,72 @@
 'use strict';
+
+var SessionManager = require('../store/session-manager');
 var RunService = require('../service/run-api-service');
 
-var defaults = {
-    validFilter: { saved: true }
-};
+module.exports = function(config) {
+    var defaults = {
+        /**
+         * Criteria by which to filter runs. Defaults to empty string.
+         * @type {Object}
+         */
+        filter: '',
 
-function ScenarioManager(options) {
-    this.options = $.extend(true, {}, defaults, options);
-    this.runService = this.options.run || new RunService(this.options);
-}
+        /**
+         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter. Defaults to `true`.
+         * @type {boolean}
+         */
+        autoRestore: false,
+    };
 
-ScenarioManager.prototype = {
-    getRuns: function (filter) {
-        this.filter = $.extend(true, {}, this.options.validFilter, filter);
-        return this.runService.query(this.filter);
-    },
+    this.sessionManager = new SessionManager();
+    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
 
-    loadVariables: function (vars) {
-        return this.runService.query(this.filter, { include: vars });
-    },
+    var publicAsyncAPI = {
+        loadSavedRuns: function(filter, outputModifier) {
+            var defaultFilter = {
+                saved: true
+            };
+            var newFilter = $.extend({}, defaultFilter, filter);
+            var rs = new RunService(serviceOptions);
+            return rs.query(newFilter, outputModifier);
+        },
+        
+        saveRun: function(run, name) {
+            if (!run instanceof RunService) {
+                run = new RunService($.extend(true, {}, serviceOptions, { filter: run }));
+            }
+            return run.save({ saved: true, name: name });
+        },
+        archiveRun: function(run) {
+            if (!run instanceof RunService) {
+                run = new RunService($.extend(true, {}, serviceOptions, { filter: run }));
+            }
+            return run.save({ saved: false });
+        },        
 
-    save: function (run, meta) {
-        return this._getService(run).save($.extend(true, {}, { saved: true }, meta));
-    },
+        /**
+         * [description]
+         * @param  {Array} runObjects Array of objects with signature { id: X, name: Y }
+         * @param  {Array} variables  [description]
+         * @return {[type]}            [description]
+         */
+        fetchVariablesForRuns: function(runObjects, variables) {
+            var promises = [];
+            var response = [];
 
-    archive: function (run) {
-        return this._getService(run).save({ saved: false });
-    },
+            _.each(runObjects, function(run) {
+                var r = new RunService($.extend({}, serviceOptions, { filter: run.id }));
+                var prom = r.variables().query(variables).then(function(variables) {
+                    response.push({ id: run.id, name: run.name, variables: variables });
+                    return variables;
+                });
+                promises.push(prom);
+            });
 
-    _getService: function (run) {
-        if (typeof run === 'string') {
-            return new RunService($.extend(true, {},  this.options, { filter: run }));
+            return $.when.apply(null, promises).then(function() {
+                return response;
+            });
         }
-
-        if (typeof run === 'object' && run instanceof RunService) {
-            return run;
-        }
-
-        throw new Error('Save method requires a run service or a runId');
-    },
-
-    getRun: function (runId) {
-        return new RunService($.extend(true, {},  this.options, { filter: runId }));
-    }
+    };
+    $.extend(this, publicAsyncAPI);
 };
-
-module.exports = ScenarioManager;
-
