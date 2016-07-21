@@ -479,6 +479,9 @@ module.exports = function (config) {
         getCurrentConfig: function () {
             return serviceOptions;
         },
+        updateConfig: function (config) {
+            serviceOptions = $.extend(true, {}, serviceOptions, config);
+        },
         /**
           * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.
           *
