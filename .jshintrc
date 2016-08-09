@@ -22,6 +22,7 @@
     "strict": true,
     "trailing": true,
     "eqnull": true,
+    "esversion": 6,
     "globals": {
         "$": false,
         "jQuery": false,

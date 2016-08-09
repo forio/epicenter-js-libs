@@ -3,10 +3,13 @@
 var minifyify = require('minifyify');
 var istanbul = require('browserify-istanbul');
 
+var babelify = ['babelify', { presets: ['es2015'] }];
+
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-browserify');
     grunt.config.set('browserify', {
         options: {
+            transform: [babelify],
             browserifyOptions: {
                 debug: true
             },
@@ -33,7 +36,7 @@ module.exports = function (grunt) {
                 './dist/epicenter-edge-instrumented.js': './src/app.js'
             },
             options: {
-                transform: [istanbul],
+                transform: [babelify, istanbul],
                 debug: false
             }
         },
@@ -61,6 +64,9 @@ module.exports = function (grunt) {
         components: {
             files: {
                 './dist/components/assignment/assignment.js': './src/components/assignment/js/index.js'
+            },
+            options: {
+                transform: []
             }
         }
 
