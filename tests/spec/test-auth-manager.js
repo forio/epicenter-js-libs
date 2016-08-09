@@ -1,8 +1,10 @@
 (function () {
     'use strict';
     describe('Auth Manager', function () {
-        var server, token, userInfo, cookie, multipleGroupsResponse;
+        var server, token, userInfo, cookie, multipleGroupsResponse, teamMemberResponse;
         before(function () {
+            teamMemberResponse = false;
+            multipleGroupsResponse = false;
             var cookieStr = '';
             cookie = {
                 get: function () {
@@ -38,10 +40,13 @@
             };
 
             token = 'eyJhbGciOiJSUzI1NiJ9.' + btoa(JSON.stringify(userInfo)) + '.yYIKw_eWYXAoqPR9aKXs4_';
+            var tmUserInfo = $.extend({ parent_account_id: null }, userInfo);
+            var teamMemberToken = 'eyJhbGciOiJSUzI1NiJ9.' + btoa(JSON.stringify(tmUserInfo)) + '.yYIKw_eWYXAoqPR9aKXs4_';
             server = sinon.fakeServer.create();
             server.respondWith(/(.*)\/authentication/, function (xhr, id) {
+                var response = teamMemberResponse ? teamMemberToken : token;
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(
-                    { 'refresh_token':'snip-refresh','access_token': token,'expires':43199 }
+                    { 'refresh_token':'snip-refresh','access_token': response,'expires':43199 }
                     ));
             });
             var groupMembers = [
@@ -74,6 +79,10 @@
                 name: 'rv-test2'
             });
             server.respondWith(/(.*)\/member\/local/, function (xhr, id) {
+                var response = multipleGroupsResponse ? multipleGroups : singleGroup;
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(response));
+            });
+            server.respondWith(/(.*)\/group\/local/, function (xhr, id) {
                 var response = multipleGroupsResponse ? multipleGroups : singleGroup;
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(response));
             });
@@ -177,6 +186,50 @@
                     done(new Error('Login should not work'));
                 }).fail(function (data) {
                     multipleGroupsResponse = false;
+                    data.userGroups.should.have.lengthOf(2);
+                    done();
+                });
+            });
+
+            it ('should log a team member and get all the groups in the project', function (done) {
+                teamMemberResponse = true;
+                var am = new F.manager.AuthManager({
+                    account: 'accountName',
+                    project: 'projectName',
+                });
+                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('GET');
+                    req.url.should.match(/https:\/\/api\.forio\.com\/group\/local\/?/);
+
+                    var session = am.getCurrentUserSessionInfo();
+                    session.groupName.should.equal('rv-test');
+                    am.sessionManager.removeSession();
+                    done();
+                }).fail(function (data) {
+                    done(new Error('Login should work'));
+                });
+                
+            });
+
+            it ('it should fail with the list of groups on a team member login with no group', function (done) {
+                multipleGroupsResponse = true;
+                teamMemberResponse = true;
+                var am = new F.manager.AuthManager({
+                    account: 'accountName',
+                    project: 'projectName',
+                });
+                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                    multipleGroupsResponse = false;
+                    teamMemberResponse = false;
+                    done(new Error('Login should not work'));
+                }).fail(function (data) {
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('GET');
+                    req.url.should.match(/https:\/\/api\.forio\.com\/group\/local\/?/);
+
+                    multipleGroupsResponse = false;
+                    teamMemberResponse = false;
                     data.userGroups.should.have.lengthOf(2);
                     done();
                 });

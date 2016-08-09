@@ -33,6 +33,7 @@
 'use strict';
 var AuthAdapter = require('../service/auth-api-service');
 var MemberAdapter = require('../service/member-api-adapter');
+var GroupService = require('../service/group-api-service');
 var SessionManager = require('../store/session-manager');
 var Buffer = require('buffer').Buffer;
 var _pick = require('../util/object-util')._pick;
@@ -153,19 +154,19 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 return;
             }
 
-            _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).done(function (memberInfo) {
-                data.userGroups = memberInfo;
+            var handleGroupList = function (groupList) {
+                data.userGroups = groupList;
 
                 var group = null;
-                if (memberInfo.length === 0) {
+                if (groupList.length === 0) {
                     handleGroupError('The user has no groups associated in this account', 401, data);
                     return;
-                } else if (memberInfo.length === 1) {
+                } else if (groupList.length === 1) {
                     // Select the only group
-                    group = memberInfo[0];
-                } else if (memberInfo.length > 1) {
+                    group = groupList[0];
+                } else if (groupList.length > 1) {
                     if (groupId) {
-                        var filteredGroups = $.grep(memberInfo, function (resGroup) {
+                        var filteredGroups = $.grep(groupList, function (resGroup) {
                             return resGroup.groupId === groupId;
                         });
                         group = filteredGroups.length === 1 ? filteredGroups[0] : null;
@@ -173,12 +174,15 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 }
 
                 if (group) {
+                    // A team member does not get the group members because is calling the Group API
+                    // but it's automatically a fac user
+                    var isFac = isTeamMember ? true : _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator';
                     var groupData = {
-                        'groupId': group.groupId,
-                        'groupName': group.name,
-                        'isFac': _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator'
+                        groupId: group.groupId,
+                        groupName: group.name,
+                        isFac: isFac
                     };
-                    var sessionInfoWithGroup = $.extend({}, sessionInfo, groupData);
+                    var sessionInfoWithGroup = Object.assign({}, sessionInfo, groupData);
                     sessionInfo.groups[project] = groupData;
                     _this.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
                     outSuccess.apply(this, [data]);
@@ -186,7 +190,23 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 } else {
                     handleGroupError('This user is associated with more than one group. Please specify a group id to log into and try again', 403, data);
                 }
-            }).fail($d.reject);
+            };
+
+            if (!isTeamMember) {
+                _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
+                    .then(handleGroupList, $d.reject);
+            } else {
+                var opts = Object.assign({}, userGroupOpts, { token: token });
+                var groupService = new GroupService(opts);
+                groupService.getGroups({ account: adapterOptions.account, project: project })
+                    .then(function (groups) {
+                        // Group API returns id instead of groupId
+                        groups.forEach(function (group) {
+                            group.groupId = group.id;
+                        });
+                        handleGroupList(groups);
+                    }, $d.reject);
+            }
         };
 
         adapterOptions.success = handleSuccess;
