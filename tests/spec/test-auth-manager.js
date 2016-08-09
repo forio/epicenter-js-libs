@@ -40,7 +40,7 @@
             };
 
             token = 'eyJhbGciOiJSUzI1NiJ9.' + btoa(JSON.stringify(userInfo)) + '.yYIKw_eWYXAoqPR9aKXs4_';
-            var tmUserInfo = $.extend({ parent_account_id: null }, userInfo);
+            var tmUserInfo = $.extend({ 'parent_account_id': null }, userInfo);
             var teamMemberToken = 'eyJhbGciOiJSUzI1NiJ9.' + btoa(JSON.stringify(tmUserInfo)) + '.yYIKw_eWYXAoqPR9aKXs4_';
             server = sinon.fakeServer.create();
             server.respondWith(/(.*)\/authentication/, function (xhr, id) {
