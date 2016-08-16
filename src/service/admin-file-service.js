@@ -135,6 +135,27 @@ module.exports = function (config) {
         },
 
         /**
+         * Uploads a file in the given path. It will try to create the file and if there's a conflict error (409) it will try to replace the file instead.
+         * @param  {String} `filePath` Path to the file
+         * @param  {String} `contents` Contents to write to file
+         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         */
+        upload: function (filePath, contents, options) {
+            var dfd = $.Deferred();
+            var self = this;
+
+            this.createFile(filePath, contents, options)
+                .then(dfd.resolve, function (xhr) {
+                    if (xhr.status === 409) {
+                        self.replaceFile(dfd.resolve, dfd.reject);
+                    } else {
+                        dfd.reject.apply(this, arguments);
+                    }
+                });
+            return dfd.promise();
+        },
+
+        /**
          * Removes the file
          * @param  {String} `filePath` Path to the file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
