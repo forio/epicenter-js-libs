@@ -2,13 +2,10 @@
 
 var makeSeq = require('../../util/make-sequence');
 var Base = require('./identity-strategy');
-var SessionStore = require('../../store/store-factory');
+var SessionManager = require('../../store/session-manager');
 var classFrom = require('../../util/inherit');
-var UrlService = require('../../service/url-config-service');
 var AuthManager = require('../auth-manager');
 
-var sessionStore = new SessionStore({});
-var urlService = new UrlService();
 var keyNames = require('../key-names');
 
 var defaults = {
@@ -16,18 +13,8 @@ var defaults = {
     path: ''
 };
 
-function setRunInSession(sessionKey, run, path) {
-    if (!path) {
-        if (!urlService.isLocalhost()) {
-            path = '/' + [urlService.appPath, urlService.accountPath, urlService.projectPath].join('/');
-            // make sure we don't get consecuteive '/' so we have a valid path for the session
-            path = path.replace(/\/{2,}/g,'/');
-        } else {
-            path = '';
-        }
-    }
-    // set the seesionKey for the run
-    sessionStore.set(sessionKey, JSON.stringify({ runId: run.id }), { root: path });
+function setRunInSession(sessionKey, run, sessionManager) {
+    sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: run.id }));
 }
 
 /**
@@ -48,6 +35,7 @@ var Strategy = classFrom(Base, {
         this.run = makeSeq(runService);
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
+        this.sessionManager = new SessionManager(options);
         this.runOptions = this.options.run;
     },
 
@@ -65,7 +53,7 @@ var Strategy = classFrom(Base, {
         return this.run
                 .create(opt, runServiceOptions)
             .then(function (run) {
-                setRunInSession(_this.options.sessionKey, run, _this.options.path);
+                setRunInSession(_this.options.sessionKey, run, _this.sessionManager);
                 run.freshlyCreated = true;
                 return run;
             })
@@ -73,6 +61,7 @@ var Strategy = classFrom(Base, {
     },
 
     getRun: function () {
+        var sessionStore = this.sessionManager.getStore();
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
 
         if (runSession && runSession.runId) {
@@ -99,7 +88,7 @@ var Strategy = classFrom(Base, {
                     // so we don't get in the middle of the queue
                     return _this.run.original.create(opt)
                     .then(function (run) {
-                        setRunInSession(_this.options.sessionKey, run);
+                        setRunInSession(_this.options.sessionKey, run, _this.sessionManager);
                         run.freshlyCreated = true;
                         return run;
                     });
