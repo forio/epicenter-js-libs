@@ -116,7 +116,7 @@ module.exports = function (config) {
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
-        replaceFile: function (filePath, contents, options) {
+        replace: function (filePath, contents, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
 
             return http.put(httpOptions.data, httpOptions);
@@ -128,7 +128,7 @@ module.exports = function (config) {
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
-        createFile: function (filePath, contents, options) {
+        create: function (filePath, contents, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
 
             return http.post(httpOptions.data, httpOptions);
@@ -141,18 +141,14 @@ module.exports = function (config) {
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
         upload: function (filePath, contents, options) {
-            var dfd = $.Deferred();
             var self = this;
 
-            this.createFile(filePath, contents, options)
-                .then(dfd.resolve, function (xhr) {
+            return this.create(filePath, contents, options)
+                .then(null, function (xhr) {
                     if (xhr.status === 409) {
-                        self.replaceFile(dfd.resolve, dfd.reject);
-                    } else {
-                        dfd.reject.apply(this, arguments);
+                        return self.replace(filePath, contents, options);
                     }
                 });
-            return dfd.promise();
         },
 
         /**
