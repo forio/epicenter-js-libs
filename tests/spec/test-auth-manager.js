@@ -198,6 +198,8 @@
                 am.logout().done(function (response) {
                     var spyCall = cookie.set.getCall(0);
                     spyCall.args[0].should.match(/epicenterjs\.session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=\.forio\.com; path=\/app\/accountName\/projectName/);
+                    spyCall = cookie.set.getCall(1);
+                    spyCall.args[0].should.match(/epicenter-scenario=; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=\.forio\.com; path=\/app\/accountName\/projectName/);
                     done();
                 }).fail(function () {
                     done(new Error('Login should not fail'));
