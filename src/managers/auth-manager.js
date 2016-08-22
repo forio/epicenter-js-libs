@@ -325,24 +325,23 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         return this.sessionManager.getSession(options);
     },
 
-    // (replace with /* */ comment block, to make visible in docs, once EPICENTER-1939 is complete)
-    //
-    // Add one or more groups to the current session. 
-    //
-    // This method assumes that the project and group exist and the user specified in the session is part of this project and group.
-    //
-    // Returns the new session object.
-    //
-    // **Example**
-    //
-    //      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
-    //      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: ... }]);
-    //
-    // **Parameters**
-    // @param {object|array} `groups` (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties.
-    // @param {string} `group.isFac` (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
-    // @param {string} `group.groupId` (optional) Defaults to undefined. Needed mostly for the Members API.
-    //
+    /*
+     * Adds one or more groups to the current session. 
+     *
+     * This method assumes that the project and group exist and the user specified in the session is part of this project and group.
+     *
+     * Returns the new session object.
+     *
+     * **Example**
+     *
+     *      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
+     *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
+     *
+     * **Parameters**
+     * @param {object|array} `groups` (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
+     * @param {string} `group.isFac` (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
+     * @param {string} `group.groupId` (optional) Defaults to undefined. Needed mostly for the Members API.
+    */
     addGroups: function (groups) {
         var session = this.getCurrentUserSessionInfo();
         var isArray = Array.isArray(groups);
