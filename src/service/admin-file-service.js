@@ -116,7 +116,7 @@ module.exports = function (config) {
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
-        replaceFile: function (filePath, contents, options) {
+        replace: function (filePath, contents, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
 
             return http.put(httpOptions.data, httpOptions);
@@ -128,10 +128,27 @@ module.exports = function (config) {
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
-        createFile: function (filePath, contents, options) {
+        create: function (filePath, contents, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
 
             return http.post(httpOptions.data, httpOptions);
+        },
+
+        /**
+         * Uploads a file in the given path. It will try to create the file and if there's a conflict error (409) it will try to replace the file instead.
+         * @param  {String} `filePath` Path to the file
+         * @param  {String} `contents` Contents to write to file
+         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         */
+        upload: function (filePath, contents, options) {
+            var self = this;
+
+            return this.create(filePath, contents, options)
+                .then(null, function (xhr) {
+                    if (xhr.status === 409) {
+                        return self.replace(filePath, contents, options);
+                    }
+                });
         },
 
         /**
