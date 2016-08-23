@@ -205,7 +205,5 @@
                 JSON.parse(req.requestBody).should.eql({ name: 'newName.html' });
             });
         });
-        describe('#rename', function () {
-        });
     });
 }());
