@@ -69,7 +69,6 @@
             var urls = $.map(server.requests, function (req) {
                 return req.url;
             });
-            console.log(urls);
             urls.should.eql([
                 baseURL + 'project/forio/js-libs/file.txt', //create
                 baseURL + 'project/forio/js-libs/file.txt', // get

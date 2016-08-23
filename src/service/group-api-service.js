@@ -14,6 +14,8 @@
 
 var serviceUtils = require('./service-utils');
 var TransportFactory = require('../transport/http-transport-factory');
+var objectAssign = require('object-assign');
+
 var apiEndpoint = 'group/local';
 
 var GroupService = function (config) {
@@ -54,17 +56,17 @@ var GroupService = function (config) {
         getGroups: function (params, options) {
             //groupID is part of the URL
             //q, account and project are part of the query string
-            var finalOpts = Object.assign({}, serviceOptions, options);
+            var finalOpts = objectAssign({}, serviceOptions, options);
             var finalParams;
             if (typeof params === 'string') {
-                finalOpts.url = serviceUtils.getApiUrl(`${apiEndpoint}/${params}`, finalOpts);
+                finalOpts.url = serviceUtils.getApiUrl(apiEndpoint + '/' + params, finalOpts);
             } else {
                 finalParams = params;
             }
             return http.get(finalParams, finalOpts);
         }
     };
-    Object.assign(this, publicAPI);
+    objectAssign(this, publicAPI);
 };
 
 module.exports = GroupService;

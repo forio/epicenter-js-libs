@@ -2,6 +2,7 @@
 
 var ConfigService = require('./configuration-service');
 var SessionManager = require('../store/session-manager');
+var objectAssign = require('object-assign');
 
 var serviceUtils = {
     /*
@@ -13,11 +14,12 @@ var serviceUtils = {
     * With the supplied overrides and defaults
     *
     */
-    getDefaultOptions: function (defaults, ...rest) {
+    getDefaultOptions: function (defaults) {
+        var rest = Array.prototype.slice.call(arguments, 1);
         var sessionManager = new SessionManager();
         var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
 
-        serviceOptions.transport = Object.assign({}, serviceOptions.transport, {
+        serviceOptions.transport = objectAssign({}, serviceOptions.transport, {
             url: this.getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
         });
 

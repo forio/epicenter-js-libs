@@ -37,6 +37,7 @@ var GroupService = require('../service/group-api-service');
 var SessionManager = require('../store/session-manager');
 var Buffer = require('buffer').Buffer;
 var _pick = require('../util/object-util')._pick;
+var objectAssign = require('object-assign');
 
 var defaults = {
     requiresGroup: true
@@ -182,7 +183,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                         groupName: group.name,
                         isFac: isFac
                     };
-                    var sessionInfoWithGroup = Object.assign({}, sessionInfo, groupData);
+                    var sessionInfoWithGroup = objectAssign({}, sessionInfo, groupData);
                     sessionInfo.groups[project] = groupData;
                     _this.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
                     outSuccess.apply(this, [data]);
@@ -196,7 +197,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
                     .then(handleGroupList, $d.reject);
             } else {
-                var opts = Object.assign({}, userGroupOpts, { token: token });
+                var opts = objectAssign({}, userGroupOpts, { token: token });
                 var groupService = new GroupService(opts);
                 groupService.getGroups({ account: adapterOptions.account, project: project })
                     .then(function (groups) {

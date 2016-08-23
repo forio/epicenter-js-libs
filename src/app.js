@@ -1,4 +1,3 @@
-require('babel-polyfill');
 /**
  * Epicenter Javascript libraries
  * v<%= version %>
