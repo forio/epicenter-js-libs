@@ -65,7 +65,9 @@ var Strategy = classFrom(Base, {
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
 
         if (runSession && runSession.runId) {
-            return this._loadAndCheck(runSession);
+            return this._loadAndCheck(runSession).fail(function () {
+                return this.reset(); //if it got the wrong cookie for e.g.
+            });
         } else {
             return this.reset();
         }
