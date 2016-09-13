@@ -2,19 +2,19 @@
  *
  * ## Introspection API Service
  *
- * Used in conjunction with the [Run API Service](../run-api-service/) to access Native DMS 3 Introspection calls
+ * The Introspection API Service allows you to view a list of the variables and operations in a model. Used in conjunction with the [Run API Service](../run-api-service/).
  *
- *     var rm = new F.manager.RunManager({
+ *       var rm = new F.manager.RunManager({
  *           run: {
  *               account: 'acme-simulations',
  *               project: 'supply-chain-game',
- *               model: 'supply-chain-model.jl'
+ *               model: 'supply-chain-model.py'
  *           }
- *      });
- *     rm.getRun()
- *       .then(function() {
- *          var is = rm.run.introspection();
- *        });
+ *       });
+ *       rm.getRun()
+ *           .then(function() {
+ *           var intro = rm.run.introspection();
+ *       });
  *
  */
 
@@ -53,11 +53,11 @@ module.exports = function (config) {
 
     var publicAPI = {
         /**
-         * Get the available Functions and Variables
+         * Get the available functions and variables.
          *
          * **Example**
          *
-         *      vs.get()
+         *      intro.get()
          *          .then(function(data) {
          *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)
          *              console.log(data.functions);
