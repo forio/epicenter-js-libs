@@ -1,7 +1,9 @@
 /**
  * ## File API Service
  *
- * This is used to upload/download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. The Asset API is typically used for all project use-cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
+ * The File API Service allows you to upload and download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. It is based on the Epicenter File API.
+ *
+ * The Asset API Service (https://forio.com/epicenter/docs/public/api_adapters/generated/asset-api-adapter/) is typically used for all project use cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
  *
  * Partially implemented.
  */
@@ -22,19 +24,19 @@ module.exports = function (config) {
         token: undefined,
 
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined.
          * @type {String}
          */
         account: undefined,
 
         /**
-         * The project id. Defaults to empty string.
+         * The project id. Defaults to undefined.
          * @type {String}
          */
         project: undefined,
 
         /**
-         * The folder type.  One of Model|Static|Node
+         * The folder type.  One of `model` | `static` | `node`.
          * @type {String}
          */
         folderType: 'static',
@@ -98,7 +100,7 @@ module.exports = function (config) {
 
     var publicAsyncAPI = {
         /**
-         * Get a directory listing, or contents of a file
+         * Get a directory listing, or contents of a file.
          * @param  {String} `filePath`   Path to the file
          * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
@@ -111,7 +113,7 @@ module.exports = function (config) {
         },
 
         /**
-         * Replaces to the given file path
+         * Replaces the file at the given file path.
          * @param  {String} `filePath` Path to the file
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
@@ -123,7 +125,7 @@ module.exports = function (config) {
         },
 
         /**
-         * Creates a file in the given filePath
+         * Creates a file in the given file path.
          * @param  {String} `filePath` Path to the file
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
@@ -135,7 +137,7 @@ module.exports = function (config) {
         },
 
         /**
-         * Uploads a file in the given path. It will try to create the file and if there's a conflict error (409) it will try to replace the file instead.
+         * Uploads a file to the given path. It will try to create the file and if there's a conflict error (409) it will try to replace the file instead.
          * @param  {String} `filePath` Path to the file
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
@@ -152,7 +154,7 @@ module.exports = function (config) {
         },
 
         /**
-         * Removes the file
+         * Removes the file.
          * @param  {String} `filePath` Path to the file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
@@ -165,7 +167,7 @@ module.exports = function (config) {
         },
 
         /**
-         * Rename the file
+         * Renames the file.
          * @param  {String} filePath Path to the file
          * @param  {Stirng} newName  New name of file
          * @param  {Object} options  (Optional) Overrides for configuration options
