@@ -1,6 +1,5 @@
 'use strict';
 
-var makeSeq = require('../../util/make-sequence');
 var Base = require('./identity-strategy');
 var SessionManager = require('../../store/session-manager');
 var classFrom = require('../../util/inherit');
@@ -32,7 +31,7 @@ var Strategy = classFrom(Base, {
         }
 
         this._auth = new AuthManager();
-        this.run = makeSeq(runService);
+        this.run = runService;
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new SessionManager(options);
@@ -57,16 +56,15 @@ var Strategy = classFrom(Base, {
                 run.freshlyCreated = true;
                 return run;
             })
-            .start();
     },
 
     getRun: function () {
         var sessionStore = this.sessionManager.getStore();
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
-
+        var me = this;
         if (runSession && runSession.runId) {
             return this._loadAndCheck(runSession).fail(function () {
-                return this.reset(); //if it got the wrong cookie for e.g.
+                return me.reset(); //if it got the wrong cookie for e.g.
             });
         } else {
             return this.reset();
@@ -86,9 +84,7 @@ var Strategy = classFrom(Base, {
             .then(function (run) {
                 if (shouldCreate) {
                     var opt = _this.runOptionsWithScope();
-                    // we need to do this, on the original runService (ie not sequencialized)
-                    // so we don't get in the middle of the queue
-                    return _this.run.original.create(opt)
+                    return _this.run.create(opt)
                     .then(function (run) {
                         setRunInSession(_this.options.sessionKey, run, _this.sessionManager);
                         run.freshlyCreated = true;
@@ -98,7 +94,6 @@ var Strategy = classFrom(Base, {
 
                 return run;
             })
-            .start();
     }
 });
 
