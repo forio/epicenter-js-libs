@@ -43,7 +43,7 @@
                 var cb2 = sinon.spy();
 
                 var rs = new RunService({ account: 'forio', project: 'js-libs', filter: { saved: true } });
-                return rs.do('add', [1,2], { success: cb1 }).then(cb2).then( function () {
+                return rs.do('add', [1,2], { success: cb1 }).then(cb2).then(function () {
                     cb1.should.have.been.called;
                     cb2.should.have.been.called;
                 });
@@ -219,7 +219,7 @@
                 var rs = new RunService({ account: 'forio', project: 'js-libs', filter: { saved: true } });
                 return rs.save({ completed: true }, { success: cb1 }).then(cb2).then(function () {
                    cb1.should.have.been.called;
-                   cb2.should.have.been.called; 
+                   cb2.should.have.been.called;
                 });
             });
             it('passes error callbacks', function () {

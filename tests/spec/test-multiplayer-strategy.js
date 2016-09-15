@@ -91,9 +91,6 @@
                     var req = server.requests[0];
                     req.method.toUpperCase().should.equal('GET');
                     req.url.should.match(queryMatchers.getWorlds);
-                }).fail(function () {
-                    var s = server;
-                    console.log(arguments);
                 });
             });
 
