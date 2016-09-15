@@ -62,10 +62,7 @@
                     lastModified: '123'
                 }));
             });
-
-
-
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         afterEach(function () {
