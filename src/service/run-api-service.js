@@ -476,9 +476,9 @@ module.exports = function (config) {
         },
 
         /**
-         * shortcut to using the introspection service
-         * @param  {Object} options Options can either be of the of { runID: <runid> } or { model: <modelFileName> }
-         * @param  {[type]} introspectionConfig Service options for Introspection Service
+         * Shortcut to using the introspection service
+         * @param  {Object} `options` Options can either be of the form { runID: <runid> } or { model: <modelFileName> }
+         * @param  {[type]} `introspectionConfig` (Optional) Service options for Introspection Service
          */
         introspect: function (options, introspectionConfig) {
             var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, introspectionConfig));
