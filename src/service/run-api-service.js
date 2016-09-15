@@ -461,7 +461,7 @@ module.exports = function (config) {
                 );
             }
             $.when.apply(this, queue)
-                .done(function () {
+                .then(function () {
                     $d.resolve.apply(this, arguments);
                     postOptions.success.apply(this.arguments);
                 })

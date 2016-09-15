@@ -18,7 +18,7 @@
         return include;
     };
 
-    describe.only('Run API Service', function () {
+    describe('Run API Service', function () {
         var server;
         before(function () {
             server = sinon.fakeServer.create();
@@ -588,7 +588,7 @@
                     ret.should.throw(Error);
                 });
 
-                it.only('should send multiple operations calls one by one', function () {
+                it('should send multiple operations calls one by one', function () {
                     var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
                     return rs.serial([{ first: [1, 2] }, { second: [2, 3] }]).then(function () {
                         server.requests.length.should.equal(2);
