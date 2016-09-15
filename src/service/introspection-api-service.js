@@ -55,7 +55,7 @@ module.exports = function (config) {
     if (serviceOptions.project) {
         urlConfig.projectPath = serviceOptions.project;
     }
-    
+
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath(apiEndpoint)
     });
@@ -101,7 +101,7 @@ module.exports = function (config) {
          *
          * **Example**
          *
-         *      intro.byRunID(runId)
+         *      intro.byRunID(runID)
          *          .then(function(data) {
          *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)
          *              console.log(data.functions);
@@ -109,11 +109,14 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} `runId` id of the run to introspect
+         * @param  {String} `runID` id of the run to introspect
          * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
-        byRunID: function (runId, options) {
-            var url = { url: urlConfig.getAPIPath(apiEndpoint) + runId };
+        byRunID: function (runID, options) {
+            if (!runID) {
+                throw new Error('runID is required when using introspect#byModel');
+            }
+            var url = { url: urlConfig.getAPIPath(apiEndpoint) + runID };
             var httpOptions = $.extend(true, {}, serviceOptions, options, url);
             return http.get('', httpOptions);
         }

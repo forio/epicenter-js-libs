@@ -61,5 +61,24 @@
                 req.url.should.equal(baseURL + 'X/Y/abc.vmf');
             });
         });
+        describe('#byRunID', function () {
+            it('should throw an error if runID is not specified', function () {
+                var ds = new IntroService({ account: 'Y' });
+                expect(function () { ds.byRunID(); }).to.throw(Error);
+            });
+            it('should do a GET', function () {
+                var ds = new IntroService({ account: 'X', project: 'Y' });
+                ds.byRunID('abc');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+            });
+            it('should hit the right url', function () {
+                var ds = new IntroService({ account: 'X', project: 'Y' });
+                ds.byRunID('abc');
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + 'abc');
+            });
+        });
     });
 }());
