@@ -25,7 +25,8 @@
 
     var setupResponse = function (verb, endpoint, statusCode, resp, respHeaders) {
         server.respondWith(verb, endpoint, function (xhr, id) {
-            var headers = _.extend({}, { 'Content-Type': 'application/json' }, respHeaders);
+            var ct = typeof resp === 'string' ? {} : { 'Content-Type': 'application/json' };
+            var headers = _.extend({}, ct, respHeaders);
             var body = typeof resp === 'object' ? JSON.stringify(resp) : resp;
             xhr.respond(statusCode, headers, body);
         });
@@ -49,7 +50,10 @@
 
     var setupServer = function (worlds) {
         server = sinon.fakeServer.create();
-
+        server.respondWith('GET',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+            xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+            return true;
+        });
         setupResponse('GET', queryMatchers.worldEndpoint, 200, worlds || []);
         setupResponse('POST', /multiplayer\/world\/worldid1\/run/, 201, 'run1');
         setupResponse('POST', /multiplayer\/world\/worldid2\/run/, 201, 'run2');
@@ -61,7 +65,7 @@
         server.restore();
     };
 
-    describe.only('Multiplayer strategy', function () {
+    describe('Multiplayer strategy', function () {
         beforeEach(_.partial(setupServer, worldSet));
         afterEach(teardownServer);
 
@@ -84,15 +88,18 @@
         describe('with world/users setup correctly', function () {
             it('should get the list of worlds for the current user first', function () {
                 return createRunManager().getRun().then(function () {
-                    var req = server.requests.pop();
+                    var req = server.requests[0];
                     req.method.toUpperCase().should.equal('GET');
                     req.url.should.match(queryMatchers.getWorlds);
+                }).fail(function () {
+                    var s = server;
+                    console.log(arguments);
                 });
             });
 
             it('should post to the run endpoint after getting the world', function () {
                 return createRunManager().getRun().then(function () {
-                    var req = server.requests.pop();
+                    var req = server.requests[1];
                     req.method.toUpperCase().should.equal('POST');
                     req.url.should.match(/multiplayer\/world\/worldid2\/run/);
                 });
@@ -102,7 +109,7 @@
         describe('with two worlds for the user', function () {
             it('should use the latest world to retore the run', function () {
                 return createRunManager().getRun().then(function () {
-                    var req = server.requests.pop();
+                    var req = server.requests[1];
                     req.method.toUpperCase().should.equal('POST');
                     req.url.should.match(/multiplayer\/world\/worldid2/);
                 });
