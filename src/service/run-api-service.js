@@ -213,6 +213,7 @@ module.exports = function (config) {
             var oldSuccess = createOptions.success;
             createOptions.success = function (response) {
                 serviceOptions.filter = response.id; //all future chained calls to operate on this id
+                serviceOptions.id = response.id;
                 return oldSuccess.apply(this, arguments);
             };
 
@@ -472,6 +473,26 @@ module.exports = function (config) {
                 });
 
             return $d.promise();
+        },
+
+        /**
+         * shortcut to using the introspection service
+         * @param  {Object} options Options can either be of the of { runID: <runid> } or { model: <modelFileName> }
+         * @param  {[type]} introspectionConfig Service options for Introspection Service
+         */
+        introspect: function (options, introspectionConfig) {
+            var introspection = new IntrospectionService($.extend(true, {} , serviceOptions, introspectionConfig));
+            if (options) {
+                if (options.runID) {
+                    return introspection.byRunID(options.runID);
+                } else if (options.model) {
+                    return introspection.byModel(options.model);
+                }
+            } else if (serviceOptions.id) {
+                return introspection.byRunID(serviceOptions.id);
+            } else {
+                throw new Error('Please specify either the model or runid to introspect');
+            }
         }
     };
 
@@ -495,11 +516,6 @@ module.exports = function (config) {
                 runService: this
             }));
             return vs;
-        },
-
-        introspection: function (config) {
-            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, config));
-            return introspection;
         }
     };
 
