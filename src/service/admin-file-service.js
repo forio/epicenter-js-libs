@@ -1,7 +1,9 @@
 /**
  * ## File API Service
  *
- * This is used to upload/download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. The Asset API is typically used for all project use-cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
+ * The File API Service allows you to upload and download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. It is based on the Epicenter File API.
+ *
+ * The Asset API Service (https://forio.com/epicenter/docs/public/api_adapters/generated/asset-api-adapter/) is typically used for all project use cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
  *
  * Partially implemented.
  */
@@ -22,19 +24,19 @@ module.exports = function (config) {
         token: undefined,
 
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined.
          * @type {String}
          */
         account: undefined,
 
         /**
-         * The project id. Defaults to empty string.
+         * The project id. Defaults to undefined.
          * @type {String}
          */
         project: undefined,
 
         /**
-         * The folder type.  One of Model|Static|Node
+         * The folder type.  One of `model` | `static` | `node`.
          * @type {String}
          */
         folderType: 'static',
@@ -68,9 +70,37 @@ module.exports = function (config) {
     }
     var http = new TransportFactory(httpOptions);
 
+    function uploadBody(fileName, contents) {
+        var boundary = '---------------------------7da24f2e50046';
+
+        return {
+            body: '--' + boundary + '\r\n' +
+                    'Content-Disposition: form-data; name="file";' +
+                    'filename="' + fileName + '"\r\n' +
+                    'Content-type: text/html\r\n\r\n' +
+                    contents + '\r\n' +
+                    '--' + boundary + '--',
+            boundary: boundary
+        };
+    }
+
+    function uploadFileOptions(filePath, contents, options) {
+        filePath = filePath.split('/');
+        var fileName = filePath.pop();
+        filePath = filePath.join('/');
+        var path = serviceOptions.folderType + '/' + filePath;
+        var upload = uploadBody(fileName, contents);
+
+        return $.extend(true, {}, serviceOptions, options, {
+            url: urlConfig.getAPIPath('file') + path,
+            data: upload.body,
+            contentType: 'multipart/form-data; boundary=' + upload.boundary
+        });
+    }
+
     var publicAsyncAPI = {
         /**
-         * Get a directory listing, or contents of a file
+         * Get a directory listing, or contents of a file.
          * @param  {String} `filePath`   Path to the file
          * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
@@ -83,36 +113,48 @@ module.exports = function (config) {
         },
 
         /**
-         * Writes to the given file path; replaces the existing file if it exists
+         * Replaces the file at the given file path.
          * @param  {String} `filePath` Path to the file
          * @param  {String} `contents` Contents to write to file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
-        writeToFile: function (filePath, contents, options) {
-            filePath = filePath.split('/');
-            var fileName = filePath.pop();
-            filePath = filePath.join('/');
-            var path = serviceOptions.folderType + '/' + filePath;
-            var boundary = '---------------------------7da24f2e50046';
+        replace: function (filePath, contents, options) {
+            var httpOptions = uploadFileOptions(filePath, contents, options);
 
-            var body = '--' + boundary + '\r\n' +
-                'Content-Disposition: form-data; name="file";' +
-                'filename="' + fileName + '"\r\n' +
-                'Content-type: text/html\r\n\r\n' +
-                contents + '\r\n' +
-                '--' + boundary + '--';
-
-            var httpOptions = $.extend(true, {}, serviceOptions, options, {
-                url: urlConfig.getAPIPath('file') + path,
-                data: body,
-                contentType: 'multipart/form-data; boundary=' + boundary
-            });
-
-            return http.put(body, httpOptions);
+            return http.put(httpOptions.data, httpOptions);
         },
 
         /**
-         * Removes the file
+         * Creates a file in the given file path.
+         * @param  {String} `filePath` Path to the file
+         * @param  {String} `contents` Contents to write to file
+         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         */
+        create: function (filePath, contents, options) {
+            var httpOptions = uploadFileOptions(filePath, contents, options);
+
+            return http.post(httpOptions.data, httpOptions);
+        },
+
+        /**
+         * Uploads a file to the given path. It will try to create the file and if there's a conflict error (409) it will try to replace the file instead.
+         * @param  {String} `filePath` Path to the file
+         * @param  {String} `contents` Contents to write to file
+         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         */
+        upload: function (filePath, contents, options) {
+            var self = this;
+
+            return this.create(filePath, contents, options)
+                .then(null, function (xhr) {
+                    if (xhr.status === 409) {
+                        return self.replace(filePath, contents, options);
+                    }
+                });
+        },
+
+        /**
+         * Removes the file.
          * @param  {String} `filePath` Path to the file
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
@@ -125,7 +167,7 @@ module.exports = function (config) {
         },
 
         /**
-         * Rename the file
+         * Renames the file.
          * @param  {String} filePath Path to the file
          * @param  {Stirng} newName  New name of file
          * @param  {Object} options  (Optional) Overrides for configuration options

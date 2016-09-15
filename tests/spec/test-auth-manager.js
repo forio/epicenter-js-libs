@@ -102,7 +102,7 @@
                 am.login({ userName: 'test', password: 'test' });
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/https:\/\/api\.forio\.com\/authentication\/?/);
+                req.url.should.match(/https:\/\/api\.forio\.com\/(.*)\/authentication\/?/);
             });
 
             it ('It should call members API on sucessful login', function (done) {

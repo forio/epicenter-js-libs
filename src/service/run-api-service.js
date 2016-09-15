@@ -54,6 +54,7 @@ var rutil = require('../util/run-util');
 var _pick = require('../util/object-util')._pick;
 var TransportFactory = require('../transport/http-transport-factory');
 var VariablesService = require('./variables-api-service');
+var IntrospectionService = require('./introspection-api-service');
 var SessionManager = require('../store/session-manager');
 
 module.exports = function (config) {
@@ -494,6 +495,11 @@ module.exports = function (config) {
                 runService: this
             }));
             return vs;
+        },
+
+        introspection: function (config) {
+            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, config));
+            return introspection;
         }
     };
 

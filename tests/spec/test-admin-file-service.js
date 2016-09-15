@@ -4,17 +4,30 @@
     var FileService = F.service.File;
     var account = 'forio';
     var project = 'js-libs';
+    var projectUpload = 'upload';
 
     var baseURL = (new F.service.URL({ accountPath: account, projectPath: project })).getAPIPath('file');
+    var uploadBase = (new F.service.URL({ accountPath: account, projectPath: projectUpload })).getAPIPath('file');
 
 
     describe('File API Adapter', function () {
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            server.respondWith(/(.*)\/file\/(.*)\/(.*)/, function (xhr, id) {
+            server.respondWith(/(.*)\/file\/forio\/js-libs\/(model|static)\/file/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
+            server.respondWith(/(.*)\/file\/forio\/upload\/static/, function (xhr, id) {
+                if (xhr.requestBody.indexOf('existing.html') > -1 && xhr.method === 'POST') {
+                    return xhr.respond(409, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                } else if (xhr.requestBody.indexOf('new.html') > -1 && xhr.method === 'PUT') {
+                    return xhr.respond(404, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                } else if (xhr.requestBody.indexOf('serverError.html') > -1) {
+                    return xhr.respond(500, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                }
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+            });
+            server.autoRespond = true;
         });
 
         after(function () {
@@ -61,6 +74,135 @@
 
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + 'model/file');
+            });
+        });
+
+        describe('#replaceFile', function () {
+            it('Should do a PUT', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.replace('test.html', '<html></html>');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('PUT');
+            });
+            it('Should use the right url', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.replace('test.html', '<html></html>');
+
+                var req = server.requests.pop();
+                req.url.should.equal(uploadBase + 'static/');
+            });
+            it('Should set the right content', function () {
+                var content = '<html></html>';
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.replace('test.html', content);
+
+                var req = server.requests.pop();
+                req.requestBody.should.include(content);
+                req.requestBody.should.include('test.html');
+            });
+        });
+
+        describe('#create', function () {
+            it('Should do a POST', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.create('test.html', '<html></html>');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+            });
+            it('Should use the right url', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.create('test.html', '<html></html>');
+
+                var req = server.requests.pop();
+                req.url.should.equal(uploadBase + 'static/');
+            });
+            it('Should set the right content', function () {
+                var content = '<html></html>';
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.create('test.html', content);
+
+                var req = server.requests.pop();
+                req.requestBody.should.include(content);
+                req.requestBody.should.include('test.html');
+            });
+        });
+        describe('#upload', function () {
+            it('Should do a POST only', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.upload('new.html', '<html></html>');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('POST');
+            });
+
+            it('Should do a POST and PUT after it fails', function (done) {
+                server.requests = [];
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.upload('existing.html', '<html></html>').then(function () {
+                    server.requests.should.have.lengthOf(2);
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('PUT');
+                    req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('POST');
+                    done();
+                }, function () {
+                    done(new Error('Should not fail'));
+                });
+            });
+
+            it('Should only do a POST', function (done) {
+                server.requests = [];
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+
+                fs.upload('new.html', '<html></html>').then(function () {
+                    server.requests.should.have.lengthOf(1);
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('POST');
+                    done();
+                }, function () {
+                    done(new Error('Should not fail'));
+                });
+            });
+        });
+        describe('#remove', function () {
+            it('Should do a DELETE', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.remove('test.html');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('DELETE');
+            });
+            it('Should use the right URL', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.remove('test.html');
+
+                var req = server.requests.pop();
+                req.url.should.equal(uploadBase + 'static/test.html');
+            });
+        });
+        describe('#rename', function () {
+            it('Should do a PATCH', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.rename('test.html', 'newName.html');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('PATCH');
+            });
+            it('Should use the right URL', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.rename('test.html', 'newName.html');
+
+                var req = server.requests.pop();
+                req.url.should.equal(uploadBase + 'static/test.html');
+            });
+            it('Should build the right body', function () {
+                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+                fs.rename('test.html', 'newName.html');
+
+                var req = server.requests.pop();
+                JSON.parse(req.requestBody).should.eql({ name: 'newName.html' });
             });
         });
     });

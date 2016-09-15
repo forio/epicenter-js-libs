@@ -49,3 +49,5 @@ dist/epicenter-edge-instrumented.js
 coverage/
 .DS_Store
 **/.DS_Store
+
+*.orig
