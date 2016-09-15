@@ -481,7 +481,7 @@ module.exports = function (config) {
          * @param  {[type]} introspectionConfig Service options for Introspection Service
          */
         introspect: function (options, introspectionConfig) {
-            var introspection = new IntrospectionService($.extend(true, {} , serviceOptions, introspectionConfig));
+            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, introspectionConfig));
             if (options) {
                 if (options.runID) {
                     return introspection.byRunID(options.runID);

@@ -279,11 +279,11 @@
         describe('#introspect', function () {
             it('should throw an error if no options are given, and no runid available', function () {
                 var rs = new RunService({ account: account, project: project });
-                expect(function(){ rs.introspect(); }).to.throw(Error);
+                expect(function () { rs.introspect(); }).to.throw(Error);
             });
             it('should use existing runid if available', function () {
                 var rs = new RunService({ account: account, project: project, id: 'abc' });
-                expect(function(){ rs.introspect(); }).to.not.throw(Error);
+                expect(function () { rs.introspect(); }).to.not.throw(Error);
             });
         });
 
