@@ -60,7 +60,7 @@ var Strategy = classFrom(IdentityStrategy, {
 
         var serverError = function (error) {
             // is this possible?
-            dtd.reject(error, session, this.options);
+            dtd.reject(error, session, _this.options);
         };
 
         this.worldApi
