@@ -200,7 +200,7 @@
                 am.login({ userName: 'test', password: 'test' }).done(function (response) {
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('GET');
-                    req.url.should.match(/https:\/\/api\.forio\.com\/group\/local\/?/);
+                    req.url.should.match(/https:\/\/api\.forio\.com\/(.*)\/group\/local\/?/);
 
                     var session = am.getCurrentUserSessionInfo();
                     session.groupName.should.equal('rv-test');
@@ -226,7 +226,7 @@
                 }).fail(function (data) {
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('GET');
-                    req.url.should.match(/https:\/\/api\.forio\.com\/group\/local\/?/);
+                    req.url.should.match(/https:\/\/api\.forio\.com\/(.*)\/group\/local\/?/);
 
                     multipleGroupsResponse = false;
                     teamMemberResponse = false;
