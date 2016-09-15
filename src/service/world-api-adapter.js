@@ -585,10 +585,10 @@ module.exports = function (config) {
                     var currentWorld = worlds[0];
 
                     if (currentWorld) {
-                        serviceOptions.filter =  currentWorld.id;
+                        serviceOptions.filter = currentWorld.id;
                     }
 
-                    dtd.resolve(currentWorld, me);
+                    dtd.resolveWith(me, [currentWorld]);
                 })
                 .fail(dtd.reject);
 

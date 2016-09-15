@@ -33,9 +33,7 @@
 
     var setupServer = function () {
         server = sinon.fakeServer.create();
-
         setupResponse('GET', /run\/forio-dev\/js-libs/, 200, runs || []);
-
         server.autorespond = true;
     };
 

@@ -70,7 +70,7 @@ module.exports = classFrom(Base, {
             .then(function (users) {
                 users = _.map(users, function (u) { return _.extend(u, { groupId: groupId }); });
                 _this.set(users);
-                dtd.resolve(users, _this);
+                dtd.resolve(users);
             });
 
         return dtd.promise();
