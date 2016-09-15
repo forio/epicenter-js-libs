@@ -129,9 +129,6 @@
                 req.requestBody.should.include('test.html');
             });
             it('should overwrite if file is present and `replaceExisting` is set', function (done) {
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.create('test.html', '<html></html>', true);
-                
                 server.requests = [];
                 var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
                 fs.create('existing.html', '<html></html>', true).then(function () {
