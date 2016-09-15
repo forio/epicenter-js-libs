@@ -110,7 +110,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     //jshint camelcase: false
                     //jscs:disable
                     response.auth.access_token.should.equal(token);
@@ -126,7 +126,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     var session = am.getCurrentUserSessionInfo();
                     session.groupName.should.equal('rv-test');
                     session.groupId.should.equal('111efcc9-726c-47b8-ba94-2895f110bd39');
@@ -147,7 +147,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     multipleGroupsResponse = false;
                     done(new Error('Login should not work'));
                 }).fail(function (data) {
@@ -163,7 +163,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test', groupId: '111efcc9-726c-47b8-ba94-2895f110bd32' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test', groupId: '111efcc9-726c-47b8-ba94-2895f110bd32' }).then(function (response) {
                     var session = am.getCurrentUserSessionInfo();
                     session.groupName.should.equal('rv-test2');
                     multipleGroupsResponse = false;
@@ -181,7 +181,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test', groupId: 'wrong-id' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test', groupId: 'wrong-id' }).then(function (response) {
                     multipleGroupsResponse = false;
                     done(new Error('Login should not work'));
                 }).fail(function (data) {
@@ -197,7 +197,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('GET');
                     req.url.should.match(/https:\/\/api\.forio\.com\/group\/local\/?/);
@@ -219,7 +219,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     multipleGroupsResponse = false;
                     teamMemberResponse = false;
                     done(new Error('Login should not work'));
@@ -248,7 +248,7 @@
                         domain: '.forio.com'
                     }
                 });
-                am.logout().done(function (response) {
+                am.logout().then(function (response) {
                     var spyCall = cookie.set.getCall(0);
                     spyCall.args[0].should.match(/epicenterjs\.session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=\.forio\.com; path=\/app\/accountName\/projectName/);
                     spyCall = cookie.set.getCall(1);
@@ -292,7 +292,7 @@
                     project: 'projectName',
                     userName: 'test',
                     password: 'test',
-                }).done(function (response) {
+                }).then(function (response) {
                     var pathIdx = cookie.get().indexOf('path=/app/accountName/projectName');
                     pathIdx.should.not.equal(-1);
                     done();
@@ -310,7 +310,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     var session = am.getCurrentUserSessionInfo();
                     Object.keys(session.groups).should.have.lengthOf(1);
                     am.sessionManager.removeSession();
@@ -325,7 +325,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     am.addGroups({
                         project: 'test-project',
                         groupName: 'rv-test2',
@@ -348,7 +348,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     am.addGroups([{
                         project: 'test-project',
                         groupName: 'rv-test2',
@@ -376,7 +376,7 @@
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).done(function (response) {
+                am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     am.addGroups([{
                         project: 'projectName',
                         groupName: 'rv-test2',
