@@ -55,7 +55,7 @@ var Strategy = classFrom(Base, {
                 setRunInSession(_this.options.sessionKey, run, _this.sessionManager);
                 run.freshlyCreated = true;
                 return run;
-            })
+            });
     },
 
     getRun: function () {
@@ -91,9 +91,8 @@ var Strategy = classFrom(Base, {
                         return run;
                     });
                 }
-
                 return run;
-            })
+            });
     }
 });
 
