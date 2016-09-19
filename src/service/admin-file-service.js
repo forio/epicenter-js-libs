@@ -161,7 +161,7 @@ module.exports = function (config) {
         /**
          * Renames the file.
          * @param  {String} filePath Path to the file
-         * @param  {Stirng} newName  New name of file
+         * @param  {String} newName  New name of file
          * @param  {Object} options  (Optional) Overrides for configuration options
          */
         rename: function (filePath, newName, options) {
