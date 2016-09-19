@@ -128,29 +128,21 @@ module.exports = function (config) {
          * Creates a file in the given file path.
          * @param  {String} `filePath` Path to the file
          * @param  {String} `contents` Contents to write to file
+         * @param  {Boolean} `replaceExisting` Replace file if it already exists; defaults to false
          * @param  {Object} `options`  (Optional) Overrides for configuration options
          */
-        create: function (filePath, contents, options) {
+        create: function (filePath, contents, replaceExisting, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
-
-            return http.post(httpOptions.data, httpOptions);
-        },
-
-        /**
-         * Uploads a file to the given path. It will try to create the file and if there's a conflict error (409) it will try to replace the file instead.
-         * @param  {String} `filePath` Path to the file
-         * @param  {String} `contents` Contents to write to file
-         * @param  {Object} `options`  (Optional) Overrides for configuration options
-         */
-        upload: function (filePath, contents, options) {
-            var self = this;
-
-            return this.create(filePath, contents, options)
-                .then(null, function (xhr) {
+            var prom = http.post(httpOptions.data, httpOptions);
+            var me = this;
+            if (replaceExisting === true) {
+                prom = prom.then(null, function (xhr) {
                     if (xhr.status === 409) {
-                        return self.replace(filePath, contents, options);
+                        return me.replace(filePath, contents, options);
                     }
                 });
+            }
+            return prom;
         },
 
         /**
@@ -169,7 +161,7 @@ module.exports = function (config) {
         /**
          * Renames the file.
          * @param  {String} filePath Path to the file
-         * @param  {Stirng} newName  New name of file
+         * @param  {String} newName  New name of file
          * @param  {Object} options  (Optional) Overrides for configuration options
          */
         rename: function (filePath, newName, options) {
