@@ -476,9 +476,18 @@ module.exports = function (config) {
         },
 
         /**
-         * Shortcut to using the introspection service
-         * @param  {Object} `options` Options can either be of the form { runID: <runid> } or { model: <modelFileName> }
-         * @param  {[type]} `introspectionConfig` (Optional) Service options for Introspection Service
+         * Shortcut to using the [Introspection API Service](../introspection-api-service/). Allows you to view a list of the variables and operations in a model.
+         *
+         * **Example**
+         *
+         *     rs.introspect({ runID: 'cbf85437-b539-4977-a1fc-23515cf071bb' }).then(function (data) {
+         *          console.log(data.functions);
+         *          console.log(data.variables);
+         *     });
+         *
+         * **Parameters**
+         * @param  {Object} `options` Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`.
+         * @param  {Object} `introspectionConfig` (Optional) Service options for Introspection Service
          */
         introspect: function (options, introspectionConfig) {
             var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, introspectionConfig));

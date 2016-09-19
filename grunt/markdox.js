@@ -31,6 +31,9 @@ module.exports = function (grunt) {
                     src: 'src/service/channel-service.js',
                     dest: 'documentation/generated/channel-service/index.html.md'
                 }, {
+                    src: 'src/service/introspection-api-service.js',
+                    dest: 'documentation/generated/introspection-api-service/index.html.md'
+                }, {
                     src: 'src/service/state-api-adapter.js',
                     dest: 'documentation/generated/state-api-adapter/index.html.md'
                 },{

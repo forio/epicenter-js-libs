@@ -4,17 +4,12 @@
  *
  * The Introspection API Service allows you to view a list of the variables and operations in a model. Used in conjunction with the [Run API Service](../run-api-service/).
  *
- *       var rm = new F.manager.RunManager({
- *           run: {
+ *       var intro = new F.service.Introspect({
  *               account: 'acme-simulations',
- *               project: 'supply-chain-game',
- *               model: 'supply-chain-model.py'
- *           }
+ *               project: 'supply-chain-game'
  *       });
- *       rm.getRun()
- *           .then(function() {
- *           var intro = rm.run.introspection();
- *       });
+ *       intro.byModel('supply-chain.py').then(function(data){ ... });
+ *       intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6').then(function(data){ ... });
  *
  */
 
@@ -68,7 +63,9 @@ module.exports = function (config) {
 
     var publicAPI = {
         /**
-         * Get the available functions and variables for a given model file. Note: this does not work for any model which requires additional parameters like files.
+         * Get the available variables and operations for a given model file.
+         *
+         * Note: This does not work for any model which requires additional parameters, such as `files`.
          *
          * **Example**
          *
@@ -80,7 +77,7 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} `modelFile` name of the model file to introspect
+         * @param  {String} `modelFile` Name of the model file to introspect.
          * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
         byModel: function (modelFile, options) {
@@ -97,11 +94,13 @@ module.exports = function (config) {
         },
 
         /**
-         * Get the available functions and variables for a given model file. Note: this does not work for any model which requires additional parameters like files.
+         * Get the available variables and operations for a given model file.
+         *
+         * Note: This does not work for any model which requires additional parameters such as `files`.
          *
          * **Example**
          *
-         *      intro.byRunID(runID)
+         *      intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6')
          *          .then(function(data) {
          *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)
          *              console.log(data.functions);
@@ -109,7 +108,7 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} `runID` id of the run to introspect
+         * @param  {String} `runID` Id of the run to introspect.
          * @param  {Object} `options` (Optional) Overrides for configuration options.
          */
         byRunID: function (runID, options) {
