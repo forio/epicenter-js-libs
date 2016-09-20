@@ -122,43 +122,20 @@
                 var content = '<html></html>';
                 var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
                 fs.create('test.html', content);
+                server.requests.should.have.lengthOf(2);
 
                 var req = server.requests.pop();
                 req.requestBody.should.include(content);
                 req.requestBody.should.include('test.html');
             });
-        });
-        describe('#upload', function () {
-            it('Should do a POST only', function () {
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.upload('new.html', '<html></html>');
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
-            });
-
-            it('Should do a POST and PUT after it fails', function (done) {
+            it('should overwrite if file is present and `replaceExisting` is set', function (done) {
                 server.requests = [];
                 var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.upload('existing.html', '<html></html>').then(function () {
+                fs.create('existing.html', '<html></html>', true).then(function () {
                     server.requests.should.have.lengthOf(2);
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('PUT');
                     req = server.requests.pop();
-                    req.method.toUpperCase().should.equal('POST');
-                    done();
-                }, function () {
-                    done(new Error('Should not fail'));
-                });
-            });
-
-            it('Should only do a POST', function (done) {
-                server.requests = [];
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-
-                fs.upload('new.html', '<html></html>').then(function () {
-                    server.requests.should.have.lengthOf(1);
-                    var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('POST');
                     done();
                 }, function () {
