@@ -22,6 +22,8 @@
 
 var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
+var SessionManager = require('../store/session-manager');
+
 var apiEndpoint = 'model/introspect';
 
 module.exports = function (config) {
@@ -46,7 +48,9 @@ module.exports = function (config) {
         project: undefined,
 
     };
-    var serviceOptions = $.extend({}, defaults, config);
+
+    var sessionManager = new SessionManager(); 
+    var serviceOptions = sessionManager.getMergedOptions(defaults, config);
 
     var urlConfig = new ConfigService(serviceOptions).get('server');
     if (serviceOptions.account) {
