@@ -13,7 +13,7 @@
             server.respondWith('GET', /api\.fail/, function (xhr, id) {
                 xhr.respond(500, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            //server.autoRespond = true;
+            server.respondImmediately = true;
 
         });
 
@@ -96,7 +96,6 @@
                 ajax.get({ a:2,b:3 }, {
                     success: callback
                 });
-                server.respond();
                 callback.called.should.equal(true);
             });
             it('should call fail callback on success', function () {
@@ -106,7 +105,6 @@
                 ajax.get({ a:2,b:3 }, {
                     error: callback
                 });
-                server.respond();
 
                 callback.called.should.equal(true);
             });

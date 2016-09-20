@@ -70,7 +70,7 @@ function buildStrategy(worldId, dtd) {
                         return _this.runService.load(runId);
                     })
                     .then(function (run) {
-                        dtd.resolve.call(this, run, _this.runService);
+                        dtd.resolveWith(_this, [run]);
                     })
                     .fail(dtd.reject);
                 }

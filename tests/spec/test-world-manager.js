@@ -62,10 +62,7 @@
                     lastModified: '123'
                 }));
             });
-
-
-
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         afterEach(function () {
@@ -140,12 +137,9 @@
         describe('getCurrentRun', function (done) {
             it('should return the current run object and runService of the run of the current world', function (done) {
                 createWorldManager().getCurrentRun('model.py')
-                    .then(function (run, runService) {
+                    .then(function (run) {
                         run.should.not.be.null;
                         run.id.should.be.equal('run2');
-
-                        runService.should.not.be.null;
-
                         done();
                     })
                     .fail(function () {

@@ -24,7 +24,7 @@ $(function () {
             password: $('#txtPassword').val(),
             account: $('#txtAccount').val(),
             project: $('#txtProject').val()
-        }).done(function () {
+        }).then(function () {
             window.alert('login successful');
         });
     });

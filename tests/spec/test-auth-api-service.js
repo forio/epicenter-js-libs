@@ -14,7 +14,7 @@
                     { 'refresh_token':'snip-refresh','access_token': token,'expires':43199 }
                     ));
             });
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         after(function () {
@@ -27,7 +27,6 @@
             var as = new AuthService({ transport: { beforeSend: callback } });
             as.login({ userName: 'john', password: 'y' });
 
-            server.respond();
             server.requests.pop();
             callback.should.have.been.called;
         });

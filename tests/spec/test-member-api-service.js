@@ -15,7 +15,7 @@
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ }));
             });
 
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         after(function () {

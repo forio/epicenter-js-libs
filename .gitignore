@@ -12,6 +12,7 @@ pids
 !.bowerrc
 !.gitignore
 !.jscsrc
+!.gitattributes
 
 # sass
 .sass-cache/
@@ -49,3 +50,5 @@ dist/epicenter-edge-instrumented.js
 coverage/
 .DS_Store
 **/.DS_Store
+
+*.orig

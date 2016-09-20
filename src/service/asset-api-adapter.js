@@ -302,7 +302,7 @@ module.exports = function (config) {
                     var fullPathFiles = $.map(files, function (file) {
                         return buildUrl(file, urlOptions);
                     });
-                    dtd.resolve(fullPathFiles, me);
+                    dtd.resolveWith(me, [fullPathFiles]);
                 })
                 .fail(dtd.reject);
 

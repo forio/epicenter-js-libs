@@ -133,9 +133,12 @@
                 xhr.respond(500, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Internal server error' }));
                 return true;
             });
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
+        afterEach(function () {
+            server.requests = [];
+        });
         after(function () {
             server.restore();
         });
@@ -165,24 +168,22 @@
         it('should return promiseables', function () {
             var callback = sinon.spy();
             var rs = new RunService({ account: account, project: project });
-            rs
+            return rs
                 .create('model.jl')
-                .then(callback);
-
-            server.respond();
-
-            callback.should.have.been.called;
-            callback.should.have.been.calledWith({
-                    'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
-                    'model': 'model.vmf',
-                    'account': 'mit',
-                    'project': 'afv',
-                    'saved': false,
-                    'lastModified': '2014-06-20T04:09:45.738Z',
-                    'created': '2014-06-20T04:09:45.738Z'
+                .then(callback)
+                .then(function () {
+                    callback.should.have.been.called;
+                    callback.should.have.been.calledWith({
+                            'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                            'model': 'model.vmf',
+                            'account': 'mit',
+                            'project': 'afv',
+                            'saved': false,
+                            'lastModified': '2014-06-20T04:09:45.738Z',
+                            'created': '2014-06-20T04:09:45.738Z'
+                        });
                 });
             // callback.should.have.been.calledOn(rs);
-
         });
 
         describe('transport.options', function () {
@@ -192,7 +193,6 @@
                 var rs = new RunService({ account: account, project: 'js-libs', transport: { beforeSend: beforeSend, complete: complete } });
                 rs.create('model.jl');
 
-                server.respond();
                 beforeSend.should.have.been.called;
                 complete.should.have.been.called;
             });
@@ -203,7 +203,6 @@
                 var rs = new RunService({ account: account, project: 'js-libs', transport: { complete: originalComplete } });
                 rs.create('model.jl', { complete: complete });
 
-                server.respond();
                 originalComplete.should.not.have.been.called;
                 complete.should.have.been.called;
             });
@@ -214,7 +213,6 @@
                 var rs = new RunService({ account: account, project: 'js-libs', transport: { complete: originalComplete } });
                 rs.create('model.jl', { complete: complete });
 
-                server.respond();
                 originalComplete.should.not.have.been.called;
                 complete.should.have.been.called;
             });
@@ -225,7 +223,6 @@
                 var rs = new RunService({ account: account, project: 'js-libs', success: originalSuccess, transport: { complete: transportSuccess } });
                 rs.create('model.jl');
 
-                server.respond();
                 originalSuccess.should.have.been.called;
                 transportSuccess.should.have.been.called;
             });
@@ -312,20 +309,13 @@
             });
 
             it('should be idempotent across multiple queries', function () {
-                server.requests = [];
                 var rs = new RunService({ account: account, project: project });
-                rs.query({ saved: true, '.price': '>1' });
-                server.respond();
-
-                server.requests[0].url.should.equal(baseURL + ';saved=true;.price>1/');
-
-
-                rs.query({ saved: false, '.sales': '<4' });
-                server.respond();
-
-                server.requests[1].url.should.equal(baseURL + ';saved=false;.sales<4/');
-                server.requests = [];
-
+                return rs.query({ saved: true, '.price': '>1' }).then(function () {
+                    return rs.query({ saved: false, '.sales': '<4' }).then(function () {
+                        server.requests[0].url.should.equal(baseURL + ';saved=true;.price>1/');
+                        server.requests[1].url.should.equal(baseURL + ';saved=false;.sales<4/');
+                    });
+                });
             });
             it('should convert op modifiers to query strings', function () {
                 var rs = new RunService({ account: account, project: project });
@@ -335,94 +325,86 @@
                 req.url.should.equal(baseURL + ';/?page=1&limit=2');
             });
             it('should split the get in multiple GETs', function () {
-                server.requests = [];
                 var rs = new RunService({ account: account, project: project });
                 var include = createLargeInclude();
 
                 rs.query({}, { include: include });
-                //server.respond();
+                server.respond();
                 server.requests.length.should.be.above(1);
                 server.requests.forEach(function (xhr) {
                     xhr.url.length.should.be.below(2049);
                 });
-                server.requests = [];
             });
             it('should fail if one or more of the multiple GETs fail', function () {
-                server.requests = [];
-                var done = sinon.spy();
+                var success = sinon.spy();
                 var fail = sinon.spy();
                 var rs = new RunService({ account: account, project: project });
                 var include = createLargeInclude();
                 include.push('internal_server_error');
 
-                rs.query({}, { include: include }).then(done, fail);
-                server.respond();
-                fail.should.have.been.called;
-                done.should.not.have.been.called;
-                server.requests = [];
+                return rs.query({}, { include: include }).then(success, fail).then(function () {
+                    fail.should.have.been.called;
+                    success.should.not.have.been.called;
+                });
             });
             it('should aggregate the response from the multiple GETs for a single run', function () {
-                server.requests = [];
-                var done = sinon.spy();
+                var success = sinon.spy();
                 var fail = sinon.spy();
                 var rs = new RunService({ account: account, project: project });
                 var include = createLargeInclude();
                 include.push('single_variables_c_d');
                 include = ['single_variables_a_b'].concat(include);
 
-                rs.query({}, { include: include }).done(done).fail(fail);
-                server.respond();
-                done.should.have.been.calledWith({
-                    'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
-                    'model': 'model.vmf',
-                    'account': account,
-                    'project': 'js-libs',
-                    'saved': false,
-                    'lastModified': '2014-06-20T04:09:45.738Z',
-                    'created': '2014-06-20T04:09:45.738Z',
-                    'variables': {
-                        'varA': 9999.99,
-                        'varB': 'A string',
-                        'varC': 'Another string',
-                        'varD': 10.22,
-                    }
+                return rs.query({}, { include: include }).then(success, fail).then(function () {
+                    success.should.have.been.calledWith({
+                        'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                        'model': 'model.vmf',
+                        'account': account,
+                        'project': 'js-libs',
+                        'saved': false,
+                        'lastModified': '2014-06-20T04:09:45.738Z',
+                        'created': '2014-06-20T04:09:45.738Z',
+                        'variables': {
+                            'varA': 9999.99,
+                            'varB': 'A string',
+                            'varC': 'Another string',
+                            'varD': 10.22,
+                        }
+                    });
+                    fail.should.not.have.been.called;
                 });
-                fail.should.not.have.been.called;
-                server.requests = [];
             });
             it('should aggregate the reponse from the multiple GETs for a multiple runs', function () {
-                server.requests = [];
-                var done = sinon.spy();
+                var success = sinon.spy();
                 var fail = sinon.spy();
                 var rs = new RunService({ account: account, project: project });
                 var include = createLargeInclude();
                 include.push('multiple_variables_c_d');
                 include = ['multiple_variables_a_b'].concat(include);
 
-                rs.query({}, { include: include }).done(done).fail(fail);
-                server.respond();
-                done.should.have.been.calledWith([
-                    {
-                        'id': 'run1',
-                        'variables': {
-                            'varA': 1111.11,
-                            'varB': 'A string for run1',
-                            'varC': 'Another string for run1',
-                            'varD': '2015-11-16 10:10:10'
-                        }
-                    },
-                    {
-                        'id': 'run2',
-                        'variables': {
-                            'varA': 2222.22,
-                            'varB': 'A string for run2',
-                            'varC': 'Another string for run2',
-                            'varD': '2015-11-16 20:20:20'
-                        }
-                    },
-                ]);
-                fail.should.not.have.been.called;
-                server.requests = [];
+                return rs.query({}, { include: include }).then(success, fail).then(function () {
+                    success.should.have.been.calledWith([
+                        {
+                            'id': 'run1',
+                            'variables': {
+                                'varA': 1111.11,
+                                'varB': 'A string for run1',
+                                'varC': 'Another string for run1',
+                                'varD': '2015-11-16 10:10:10'
+                            }
+                        },
+                        {
+                            'id': 'run2',
+                            'variables': {
+                                'varA': 2222.22,
+                                'varB': 'A string for run2',
+                                'varC': 'Another string for run2',
+                                'varD': '2015-11-16 20:20:20'
+                            }
+                        },
+                    ]);
+                    fail.should.not.have.been.called;
+                });
             });
         });
 
@@ -449,20 +431,16 @@
                 req.url.should.equal(baseURL + ';/?page=1&limit=2');
             });
             it('should pass through options across multiple queries', function () {
-                server.requests = [];
 
                 var rs = new RunService({ account: account, project: project });
                 rs.filter({ saved: true, '.price': '>1' });
-                server.respond();
 
                 server.requests[0].url.should.equal(baseURL + ';saved=true;.price>1/');
 
 
                 rs.filter({ saved: false, '.sales': '<4' });
-                server.respond();
 
                 server.requests[1].url.should.equal(baseURL + ';saved=false;.price>1;.sales<4/');
-                server.requests = [];
 
             });
             it('should not include the AutoRestore header', function () {
@@ -609,7 +587,6 @@
                     var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
                     rs.do('init');
 
-                    server.respond();
                     var req = server.requests.pop();
                     req.url.should.equal(baseURL + ';saved=true/operations/init/');
                     req.requestBody.should.equal(JSON.stringify({ arguments: [] }));
@@ -623,25 +600,21 @@
                     ret.should.throw(Error);
                 });
 
-                it('should send multiple operations calls once by one', function () {
-                    server.requests = [];
-
+                it('should send multiple operations calls one by one', function () {
                     var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
-                    rs.serial([{ first: [1,2] }, { second: [2,3] }]);
-                    server.respond();
+                    return rs.serial([{ first: [1, 2] }, { second: [2, 3] }]).then(function () {
+                        server.requests.length.should.equal(2);
+                        server.requests[0].url.should.equal(baseURL + ';saved=true/operations/first/');
+                        server.requests[0].requestBody.should.equal(JSON.stringify({ arguments: [1,2] }));
 
-                    server.requests.length.should.equal(2);
-                    server.requests[0].url.should.equal(baseURL + ';saved=true/operations/first/');
-                    server.requests[0].requestBody.should.equal(JSON.stringify({ arguments: [1,2] }));
-
-                    server.requests[1].url.should.equal(baseURL + ';saved=true/operations/second/');
-                    server.requests[1].requestBody.should.equal(JSON.stringify({ arguments: [2,3] }));
+                        server.requests[1].url.should.equal(baseURL + ';saved=true/operations/second/');
+                        server.requests[1].requestBody.should.equal(JSON.stringify({ arguments: [2,3] }));
+                    });
                 });
 
                 it('should send operations without any parameters', function () {
                     var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
                     rs.serial(['init']);
-                    server.respond();
 
                     var req = server.requests.pop();
                     req.url.should.equal(baseURL + ';saved=true/operations/init/');
@@ -657,11 +630,9 @@
                 });
 
                 it('should send multiple operations calls once by one', function () {
-                    server.requests = [];
 
                     var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
                     rs.parallel([{ first: [1,2] }, { second: [2,3] }]);
-                    server.respond();
 
                     server.requests.length.should.equal(2);
                 });
