@@ -213,6 +213,7 @@ module.exports = function (config) {
             var oldSuccess = createOptions.success;
             createOptions.success = function (response) {
                 serviceOptions.filter = response.id; //all future chained calls to operate on this id
+                serviceOptions.id = response.id;
                 return oldSuccess.apply(this, arguments);
             };
 
@@ -472,6 +473,35 @@ module.exports = function (config) {
                 });
 
             return $d.promise();
+        },
+
+        /**
+         * Shortcut to using the [Introspection API Service](../introspection-api-service/). Allows you to view a list of the variables and operations in a model.
+         *
+         * **Example**
+         *
+         *     rs.introspect({ runID: 'cbf85437-b539-4977-a1fc-23515cf071bb' }).then(function (data) {
+         *          console.log(data.functions);
+         *          console.log(data.variables);
+         *     });
+         *
+         * **Parameters**
+         * @param  {Object} `options` Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`.
+         * @param  {Object} `introspectionConfig` (Optional) Service options for Introspection Service
+         */
+        introspect: function (options, introspectionConfig) {
+            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, introspectionConfig));
+            if (options) {
+                if (options.runID) {
+                    return introspection.byRunID(options.runID);
+                } else if (options.model) {
+                    return introspection.byModel(options.model);
+                }
+            } else if (serviceOptions.id) {
+                return introspection.byRunID(serviceOptions.id);
+            } else {
+                throw new Error('Please specify either the model or runid to introspect');
+            }
         }
     };
 
@@ -495,11 +525,6 @@ module.exports = function (config) {
                 runService: this
             }));
             return vs;
-        },
-
-        introspection: function (config) {
-            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, config));
-            return introspection;
         }
     };
 
