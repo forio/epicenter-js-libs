@@ -44,7 +44,7 @@ module.exports = function (config) {
 
     };
 
-    var sessionManager = new SessionManager(); 
+    var sessionManager = new SessionManager();
     var serviceOptions = sessionManager.getMergedOptions(defaults, config);
 
     var urlConfig = new ConfigService(serviceOptions).get('server');
