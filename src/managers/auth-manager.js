@@ -251,7 +251,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             _this.sessionManager.removeSession();
         };
 
-        return this.authAdapter.logout(adapterOptions).done(removeCookieFn);
+        return this.authAdapter.logout(adapterOptions).then(removeCookieFn);
     },
 
     /**

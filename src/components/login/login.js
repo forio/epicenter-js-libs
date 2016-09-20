@@ -92,8 +92,6 @@ $(function () {
         })
         .then(function () {
             window.location = action;
-        })
-        .done(function () {
             $('.group-selection-dialog').hide();
         });
     });

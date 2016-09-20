@@ -70,7 +70,7 @@ Assignment.prototype = {
         this._showUpdating();
         var maxUsers = +this.$('#max-users').val();
         return this.worlds.autoAssignAll({ maxUsers: maxUsers })
-            .done(this._hideUpdating)
+            .then(this._hideUpdating)
             .fail(this._hideUpdating)
             .then(function () {
                 this.worlds.joinUsers();

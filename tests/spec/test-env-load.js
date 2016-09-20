@@ -10,7 +10,7 @@
         var server;
         beforeEach(function () {
             server = sinon.fakeServer.create();
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         afterEach(function () {
@@ -39,7 +39,6 @@
                     delete F.service.URL.host;
                     //done();
                 });
-                //server.respond();
             });
 
             it('it should set protocol and host to api.forio.com when the config request fails', function () {
@@ -54,8 +53,9 @@
                     F.service.URL.host.should.equal('api.forio.com');
                     delete F.service.URL.protocol;
                     delete F.service.URL.host;
-                }).fail(callback);
-                callback.should.have.been.called;
+                }).then(null, callback).then(function () {
+                    callback.should.have.been.called;
+                });
             });
         });
     });

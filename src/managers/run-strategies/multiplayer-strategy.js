@@ -49,7 +49,7 @@ var Strategy = classFrom(IdentityStrategy, {
 
         var loadRunFromWorld = function (world) {
             if (!world) {
-                return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: this.options, session: session });
+                return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: _this.options, session: session });
             }
 
             return worldApi.getCurrentRunId({ model: model, filter: world.id })
@@ -60,7 +60,7 @@ var Strategy = classFrom(IdentityStrategy, {
 
         var serverError = function (error) {
             // is this possible?
-            dtd.reject(error, session, this.options);
+            dtd.reject(error, session, _this.options);
         };
 
         this.worldApi

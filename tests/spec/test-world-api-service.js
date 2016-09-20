@@ -13,7 +13,7 @@
                 xhr.respond(204, { 'Content-Type': 'application/json' }, null);
             });
 
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         afterEach(function () {

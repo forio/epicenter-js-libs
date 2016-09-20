@@ -12,6 +12,7 @@ pids
 !.bowerrc
 !.gitignore
 !.jscsrc
+!.gitattributes
 
 # sass
 .sass-cache/

@@ -33,10 +33,8 @@
 
     var setupServer = function () {
         server = sinon.fakeServer.create();
-
         setupResponse('GET', /run\/forio-dev\/js-libs/, 200, runs || []);
-
-        server.autorespond = true;
+        server.respondImmediately = true;
     };
 
     var teardownServer = function () {
@@ -44,15 +42,6 @@
     };
 
     describe('Conditional Creation Strategy', function () {
-
-        before(function () {
-
-        });
-
-        after(function () {
-
-        });
-
         beforeEach(function () {
             setupServer();
         });

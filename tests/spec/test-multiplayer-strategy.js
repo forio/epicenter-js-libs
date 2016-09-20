@@ -25,7 +25,8 @@
 
     var setupResponse = function (verb, endpoint, statusCode, resp, respHeaders) {
         server.respondWith(verb, endpoint, function (xhr, id) {
-            var headers = _.extend({}, { 'Content-Type': 'application/json' }, respHeaders);
+            var ct = typeof resp === 'string' ? {} : { 'Content-Type': 'application/json' };
+            var headers = _.extend({}, ct, respHeaders);
             var body = typeof resp === 'object' ? JSON.stringify(resp) : resp;
             xhr.respond(statusCode, headers, body);
         });
@@ -49,25 +50,24 @@
 
     var setupServer = function (worlds) {
         server = sinon.fakeServer.create();
-
+        server.respondWith('GET',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+            xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+            return true;
+        });
         setupResponse('GET', queryMatchers.worldEndpoint, 200, worlds || []);
-
         setupResponse('POST', /multiplayer\/world\/worldid1\/run/, 201, 'run1');
         setupResponse('POST', /multiplayer\/world\/worldid2\/run/, 201, 'run2');
 
-        server.autorespond = true;
+        server.respondImmediately = true;
     };
 
     var teardownServer = function () {
         server.restore();
     };
 
-
-
     describe('Multiplayer strategy', function () {
         beforeEach(_.partial(setupServer, worldSet));
         afterEach(teardownServer);
-
 
         function createRunManager(options) {
             var rm = new F.manager.RunManager(_.extend({
@@ -82,42 +82,34 @@
             // this is briddle, it knows too much about the internals of the run manager
             // but replace the cookie store with a stub
             rm.strategy._auth = fakeAuth;
-
             return rm;
         }
 
         describe('with world/users setup correctly', function () {
             it('should get the list of worlds for the current user first', function () {
-                createRunManager().getRun();
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('GET');
-
-                req.url.should.match(queryMatchers.getWorlds);
+                return createRunManager().getRun().then(function () {
+                    var req = server.requests[0];
+                    req.method.toUpperCase().should.equal('GET');
+                    req.url.should.match(queryMatchers.getWorlds);
+                });
             });
 
             it('should post to the run endpoint after getting the world', function () {
-                createRunManager().getRun();
-
-                server.respond();
-                var req = server.requests.pop();
-
-                req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/multiplayer\/world\/worldid2\/run/);
-
+                return createRunManager().getRun().then(function () {
+                    var req = server.requests[1];
+                    req.method.toUpperCase().should.equal('POST');
+                    req.url.should.match(/multiplayer\/world\/worldid2\/run/);
+                });
             });
         });
 
         describe('with two worlds for the user', function () {
             it('should use the latest world to retore the run', function () {
-                createRunManager().getRun();
-
-                server.respond();
-                var req = server.requests.pop();
-
-                req.method.toUpperCase().should.equal('POST');
-
-                req.url.should.match(/multiplayer\/world\/worldid2/);
+                return createRunManager().getRun().then(function () {
+                    var req = server.requests[1];
+                    req.method.toUpperCase().should.equal('POST');
+                    req.url.should.match(/multiplayer\/world\/worldid2/);
+                });
             });
         });
 
@@ -125,14 +117,12 @@
             beforeEach(_.partial(setupServer, []));
             it('should fail the getRun request with proper error', function () {
                 var callback = sinon.spy();
-                createRunManager().getRun()
-                    .fail(callback);
-
-                server.respond();
-
-                callback.called.should.be.true;
+                return createRunManager().getRun()
+                    .then(null, callback)
+                    .then(function () {
+                        callback.called.should.be.true;
+                    });
             });
         });
-
     });
 })();

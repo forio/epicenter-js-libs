@@ -25,7 +25,7 @@
             server.respondWith('POST',  /(.*)\/asset\/(.*)\/(.*)/,  function (xhr, id) {
                 xhr.respond(204);
             });
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         after(function () {
@@ -177,29 +177,27 @@
             it('should get the list of the assets for the user', function () {
                 var callback = sinon.spy();
                 var aa = new F.service.Asset(defaults);
-                aa.list({ scope: 'user', fullUrl: false }).done(callback);
-
-                server.respond();
-                var req = server.requests.pop();
-                req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId');
-                req.method.should.equal('GET');
-                callback.should.have.been.called;
-                callback.should.have.been.calledWith(['file.txt', 'file2.txt']);
+                return aa.list({ scope: 'user', fullUrl: false }).then(callback).then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId');
+                    req.method.should.equal('GET');
+                    callback.should.have.been.called;
+                    callback.should.have.been.calledWith(['file.txt', 'file2.txt']);
+                });
             });
 
             it('should get the list of the assets for the user with the full URL', function () {
                 var callback = sinon.spy();
                 var aa = new F.service.Asset(defaults);
-                aa.list({ scope: 'user' }).done(callback);
-
-                server.respond();
-                var req = server.requests.pop();
-                req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId');
-                req.method.should.equal('GET');
-                callback.should.have.been.called;
-                callback.should.have.been.calledWith([
-                    baseURL + 'user/forio/js-libs/asset-group/myUserId/file.txt',
-                    baseURL + 'user/forio/js-libs/asset-group/myUserId/file2.txt']);
+                return aa.list({ scope: 'user' }).then(callback).then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId');
+                    req.method.should.equal('GET');
+                    callback.should.have.been.called;
+                    callback.should.have.been.calledWith([
+                        baseURL + 'user/forio/js-libs/asset-group/myUserId/file.txt',
+                        baseURL + 'user/forio/js-libs/asset-group/myUserId/file2.txt']);
+                });
             });
         });
 
