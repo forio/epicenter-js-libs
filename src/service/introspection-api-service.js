@@ -2,7 +2,9 @@
  *
  * ## Introspection API Service
  *
- * The Introspection API Service allows you to view a list of the variables and operations in a model. Used in conjunction with the [Run API Service](../run-api-service/).
+ * The Introspection API Service allows you to view a list of the variables and operations in a model. Typically used in conjunction with the [Run API Service](../run-api-service/).
+ *
+ * The Introspection API Service is not available for Forio SimLang.
  *
  *       var intro = new F.service.Introspect({
  *               account: 'acme-simulations',
