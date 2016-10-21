@@ -35,7 +35,7 @@
 
     describe('World Manager', function () {
         var server;
-        beforeEach(function () {
+        before(function () {
             server = sinon.fakeServer.create();
             var getworldsPattern = /multiplayer\/world\/\?((?:project=js-libs|account=forio|group=group\-321|&userId=user\-123)&?){4}/;
 
@@ -66,6 +66,9 @@
         });
 
         afterEach(function () {
+            server.requests = [];
+        });
+        after(function () {
             server.restore();
         });
 
@@ -87,7 +90,8 @@
                 var options = {
                     account: 'forio',
                     project: 'js-libs',
-                    group: 'group-321'
+                    group: 'group-321',
+                    model: 'sdfds.vmf',
                 };
 
                 var wm = new F.manager.WorldManager(options);
@@ -96,7 +100,7 @@
                 wm.getCurrentRun();
 
                 // we need to check that the correct options are passed to the run
-                var req = server.requests.pop();
+                var req = server.requests[0];
                 req.method.toUpperCase().should.equal('GET');
                 req.url.should.match(/\/world\//);
                 req.url.should.match(/group=group\-321/);
