@@ -83,8 +83,9 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} `modelFile` Name of the model file to introspect.
-         * @param  {Object} `options` (Optional) Overrides for configuration options.
+         * @param  {String} modelFile Name of the model file to introspect.
+         * @param  {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise} 
          */
         byModel: function (modelFile, options) {
             var opts = $.extend(true, {}, serviceOptions, options);
@@ -114,8 +115,9 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} `runID` Id of the run to introspect.
-         * @param  {Object} `options` (Optional) Overrides for configuration options.
+         * @param  {String} runID Id of the run to introspect.
+         * @param  {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise} 
          */
         byRunID: function (runID, options) {
             if (!runID) {

@@ -144,7 +144,8 @@ RunManager.prototype = {
      *      });
      *
      * **Parameters**
-     * @param {Object} `runServiceOptions` The options object to configure the Run Service. See [Run API Service](../run-api-service/) for more.
+     * @param {Object} runServiceOptions The options object to configure the Run Service. See [Run API Service](../run-api-service/) for more.
+     * @return {Promise}
      */
     reset: function (runServiceOptions) {
         return this.strategy.reset(runServiceOptions);

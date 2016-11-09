@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * ## Channel Service
  *
@@ -23,6 +21,8 @@
  * * `options.topicResolver` A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. Returns a String. By default, it just echoes the topic.
  * * `options.transport` The instance of `$.cometd` to hook onto. See http://docs.cometd.org/reference/javascript.html for additional background on cometd.
  */
+
+'use strict';
 var Channel = function (options) {
     var defaults = {
 
@@ -44,6 +44,8 @@ var Channel = function (options) {
          * * *String*: This function should return a string topic.
          *
          * @type {function}
+         * @param {String} topic topic to resolve
+         * @return {String}
          */
         topicResolver: function (topic) {
             return topic;
@@ -112,13 +114,13 @@ Channel.prototype = $.extend(Channel.prototype, {
      * * *String* Returns a token you can later use to unsubscribe.
      *
      * **Parameters**
-     * @param  {String|Array}   `topic`    List of topics to listen for changes on.
-     * @param  {Function} `callback` Callback function to execute. Callback is called with signature `(evt, payload, metadata)`.
-     * @param  {Object}   `context`  Context in which the `callback` is executed.
-     * @param  {Object}   `options`  (Optional) Overrides for configuration options.
-     * @param  {Number}   `options.priority`  Used to control order of operations. Defaults to 0. Can be any +ve or -ve number.
-     * @param  {String|Number|Function}   `options.value` The `callback` is only triggered if this condition matches. See examples for details.
-     *
+     * @param  {String|Array}   topic    List of topics to listen for changes on.
+     * @param  {Function} callback Callback function to execute. Callback is called with signature `(evt, payload, metadata)`.
+     * @param  {Object}   context  Context in which the `callback` is executed.
+     * @param  {Object}   options  (Optional) Overrides for configuration options.
+     * @param  {Number}   options.priority  Used to control order of operations. Defaults to 0. Can be any +ve or -ve number.
+     * @param  {String|Number|Function}   options.value The `callback` is only triggered if this condition matches. See examples for details.
+     * @return {string} Subscription ID
      */
     subscribe: function (topic, callback, context, options) {
 
@@ -149,8 +151,9 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * **Parameters**
      *
-     * @param  {String} `topic` Topic to publish to.
-     * @param  {*} `data`  Data to publish to topic.
+     * @param  {String} topic Topic to publish to.
+     * @param  {*} data  Data to publish to topic.
+     * @return {Array | Object} Responses to published data
      *
      */
     publish: function (topic, data) {
@@ -181,11 +184,12 @@ Channel.prototype = $.extend(Channel.prototype, {
      *      cs.unsubscribe('sampleToken');
      *
      * **Parameters**
-     * @param  {String} `token` The token for topic is returned when you initially subscribe. Pass it here to unsubscribe from that topic.
+     * @param  {String} token The token for topic is returned when you initially subscribe. Pass it here to unsubscribe from that topic.
+     * @return {Object} reference to current instance
      */
     unsubscribe: function (token) {
         this.channelOptions.transport.unsubscribe(token);
-        return token;
+        return this;
     },
 
     /**
@@ -195,7 +199,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * **Parameters**
      *
-     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
+     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
     on: function (event) {
         $(this).on.apply($(this), arguments);
@@ -206,7 +210,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * **Parameters**
      *
-     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
+     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
     off: function (event) {
         $(this).off.apply($(this), arguments);
@@ -217,7 +221,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * **Parameters**
      *
-     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
+     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
     trigger: function (event) {
         $(this).trigger.apply($(this), arguments);

@@ -15,7 +15,7 @@
 *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
 *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
 *
-* The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
+* The constructor takes an optional options parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
 var ConfigService = require('./configuration-service');
@@ -76,8 +76,9 @@ module.exports = function (config) {
         *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
         *
         * **Parameters**
-        * @param {object} `filter` Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
-        * @param {object} `options` (Optional) Overrides for configuration options.
+        * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
         */
 
         get: function (filter, options) {
@@ -138,8 +139,9 @@ module.exports = function (config) {
         *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
         *
         * **Parameters**
-        * @param {string} `userId` The user id for the end user in your team.
-        * @param {object} `options` (Optional) Overrides for configuration options.
+        * @param {string} userId The user id for the end user in your team.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
         */
 
         getById: function (userId, options) {

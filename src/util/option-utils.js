@@ -23,14 +23,15 @@ var optionUtils = {
     /**
      * Gets the final options by overriding the global options set with
      * optionUtils#setDefaults() and the lib defaults.
-     * @param {object} `options` The final options object.
+     * @param {object} options The final options object.
+     * @return {object} Extended object
      */
     getOptions: function (options) {
         return $.extend(true, {}, libDefaults, customDefaults, options);
     },
     /**
      * Sets the global defaults for the optionUtils#getOptions() method.
-     * @param {object} `defaults` The defaults object.
+     * @param {object} defaults The defaults object.
      */
     setDefaults: function (defaults) {
         customDefaults = defaults;

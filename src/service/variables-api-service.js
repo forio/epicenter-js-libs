@@ -67,9 +67,10 @@
          *          });
          *
          * **Parameters**
-         * @param {String} `variable` Name of variable to load.
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {String} variable Name of variable to load.
+         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
          load: function (variable, outputModifier, options) {
              var httpOptions = $.extend(true, {}, serviceOptions, options);
@@ -92,10 +93,10 @@
          *      vs.query({ include:['price', 'sales'] });
          *
          * **Parameters**
-         * @param {Object|Array} `query` The names of the variables requested.
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} `options` (Optional) Overrides for configuration options.
-         *
+         * @param {Object|Array} query The names of the variables requested.
+         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
          query: function (query, outputModifier, options) {
             //Query and outputModifier are both querystrings in the url; only calling them out separately here to be consistent with the other calls
@@ -118,9 +119,10 @@
          *      vs.save({ price: 4, quantity: 5, products: [2,3,4] });
          *
          * **Parameters**
-         * @param {Object|String} `variable` An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
-         * @param {Object} `val` (Optional) If passing a string for `variable`, use this argument for the value to save.
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {Object|String} variable An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
+         * @param {Object} val (Optional) If passing a string for `variable`, use this argument for the value to save.
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
          save: function (variable, val, options) {
              var attrs;

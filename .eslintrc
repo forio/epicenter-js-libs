@@ -38,7 +38,12 @@
         "no-unexpected-multiline": 1,
         "no-unreachable": 2,
         "use-isnan": 1,
-        "valid-jsdoc": 0,
+        "valid-jsdoc": [1, {
+            "requireReturn": false,
+            "requireReturnType": false,
+            "requireParamDescription": false,
+            "requireReturnDescription": false
+        }],
         "valid-typeof": 2,
 
         "accessor-pairs": 2,

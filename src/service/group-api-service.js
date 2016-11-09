@@ -43,15 +43,15 @@ var GroupService = function (config) {
     delete serviceOptions.transport;
     var http = new TransportFactory(transportOptions, serviceOptions);
     var publicAPI = {
-        /*
+        /**
         * Gets information for a group or multiple groups.
-        * @param {string} `params` the groupId of the target group
-        * @param {Object} `params` object with query parameters
-        * @patam {string} `params.q` partial match for name, organization or event.
-        * @patam {string} `params.account` Epicenter's Team ID
-        * @patam {string} `params.project` Epicenter's Project ID
-        * @patam {string} `params.name` Epicenter's Group Name
-        * @param {Object} `options` (Optional) Overrides for configuration options.
+        * @param {Object} params object with query parameters
+        * @patam {string} params.q partial match for name, organization or event.
+        * @patam {string} params.account Epicenter's Team ID
+        * @patam {string} params.project Epicenter's Project ID
+        * @patam {string} params.name Epicenter's Group Name
+        * @param {Object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
         */
         getGroups: function (params, options) {
             //groupID is part of the URL

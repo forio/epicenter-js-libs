@@ -9,8 +9,8 @@ module.exports = (function () {
     return {
         /**
          * returns operations of the form `[[op1,op2], [arg1, arg2]]`
-         * @param  {Object|Array|String} `operations` operations to perform
-         * @param  {Array} `args` arguments for operation
+         * @param  {Object|Array|String} operations operations to perform
+         * @param  {Array} args arguments for operation
          * @return {String}    Matrix-format query parameters
          */
         normalizeOperations: function (operations, args) {

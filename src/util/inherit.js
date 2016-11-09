@@ -13,6 +13,8 @@ function inherit (C, P) {
 
 /**
 * Shallow copy of an object
+* @param {Object} dest object to extend
+* @return {Object} extended object
 */
 var extend = function (dest /*, var_args*/) {
     var obj = Array.prototype.slice.call(arguments, 1);

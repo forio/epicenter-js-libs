@@ -1,8 +1,5 @@
 'use strict';
 
-var Channel = require('../service/channel-service');
-var SessionManager = require('../store/session-manager');
-
 /**
  * ## Channel Manager
  *
@@ -34,6 +31,10 @@ var SessionManager = require('../store/session-manager');
  * * `options.channel` Other defaults to pass on to instances of the underlying Channel Service. See [Channel Service](../channel-service/) for details.
  *
  */
+
+var Channel = require('../service/channel-service');
+var SessionManager = require('../store/session-manager');
+
 var ChannelManager = function (options) {
     if (!$.cometd) {
         throw new Error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
@@ -167,7 +168,8 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *      channel.publish('topic', { myData: 100 });
      *
      * **Parameters**
-     * @param {Object|String} `options` (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * @return {Channel} Channel instance
      */
     getChannel: function (options) {
         //If you just want to pass in a string
@@ -212,7 +214,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      * **Parameters**
      *
-     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
+     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
     on: function (event) {
         $(this).on.apply($(this), arguments);
@@ -223,7 +225,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      * **Parameters**
      *
-     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
+     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
     off: function (event) {
         $(this).off.apply($(this), arguments);
@@ -234,7 +236,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      * **Parameters**
      *
-     * @param {string} `event` The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
+     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
     trigger: function (event) {
         $(this).trigger.apply($(this), arguments);

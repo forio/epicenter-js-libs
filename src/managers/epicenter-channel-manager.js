@@ -105,7 +105,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *      channel.publish('topic', { myData: 100 });
      *
      * **Parameters**
-     * @param {Object|String} `options` (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * @return {Channel} Channel instance
      */
     getChannel: function (options) {
         if (options && typeof options !== 'object') {
@@ -149,7 +150,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Parameters**
      *
-     * @param  {String} `groupName` (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
+     * @param  {String} groupName (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
+     * @return {Channel} Channel instance
      */
     getGroupChannel: function (groupName) {
         groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
@@ -187,8 +189,9 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Parameters**
      *
-     * @param  {String|Object} `world` The world object or id.
-     * @param  {String} `groupName` (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {String|Object} world The world object or id.
+     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @return {Channel} Channel instance
      */
     getWorldChannel: function (world, groupName) {
         var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
@@ -231,9 +234,10 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Parameters**
      *
-     * @param  {String|Object} `world` World object or id.
-     * @param  {String|Object} `user` (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
-     * @param  {String} `groupName` (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {String|Object} world World object or id.
+     * @param  {String|Object} user (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
+     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @return {Channel} Channel instance
      */
     getUserChannel: function (world, user, groupName) {
         var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
@@ -276,9 +280,10 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Parameters**
      *
-     * @param  {String|Object} `world` World object or id.
-     * @param  {String|Object} `userid` (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
-     * @param  {String} `groupName` (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {String|Object} world World object or id.
+     * @param  {String|Object} userid (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
+     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @return {Channel} Channel instance
      */
     getPresenceChannel: function (world, userid, groupName) {
         var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
@@ -344,7 +349,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Parameters**
      *
-     * @param  {String} `collection` Name of collection whose automatic notifications you want to receive.
+     * @param  {String} collection Name of collection whose automatic notifications you want to receive.
+     * @return {Channel} Channel instance
      */
     getDataChannel: function (collection) {
         if (!collection) {
