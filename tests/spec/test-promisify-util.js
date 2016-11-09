@@ -41,7 +41,7 @@
                         return $d.promise();
                     },
                     doNow: function () {
-                       return 42;
+                        return 42;
                     }
                 };
                 $.extend(this, publicAPI);
@@ -49,7 +49,7 @@
             };
 
             window.mf = MockFunction;
-            window.m  = new MockFunction();
+            window.m = new MockFunction();
 
         });
         after(function () {
@@ -182,7 +182,6 @@
         //     fastSpy.should.have.been.called;
         //     fastSpy2.should.have.been.called;
         // });
-
 
 
         it.skip('should run multiple queries in parallel', function () {

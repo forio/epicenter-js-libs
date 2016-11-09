@@ -60,7 +60,7 @@
             });
             it('should throw an error if runid is not provided', function () {
                 var ds = new StateService();
-                var ret =  function () { ds.replay(); };
+                var ret = function () { ds.replay(); };
                 ret.should.throw(Error);
             });
 
@@ -111,7 +111,7 @@
             });
             it('should throw an error if runid is not provided', function () {
                 var ds = new StateService();
-                var ret =  function () { ds.clone(); };
+                var ret = function () { ds.clone(); };
                 ret.should.throw(Error);
             });
 

@@ -2,13 +2,13 @@
     'use strict';
 
     var cookieContents = {
-        'auth_token': '',
-        'account': 'forio-dev',
-        'project': 'js-libs',
-        'userId': '123',
-        'groupId': 'group123',
-        'groupName': 'group-123',
-        'isFac': false
+        auth_token: '',
+        account: 'forio-dev',
+        project: 'js-libs',
+        userId: '123',
+        groupId: 'group123',
+        groupName: 'group-123',
+        isFac: false
     };
 
     var queryMatchers = {
@@ -34,14 +34,14 @@
 
     var worldSet = [{
         id: 'worldid1',
-        lastModified: new Date(2014,1,1),
+        lastModified: new Date(2014, 1, 1),
         run: 'run1',
         users: [{
             userId: '123', userName: 'userName', index: 0
         }]
     }, {
         id: 'worldid2',
-        lastModified: new Date(2015,1,1),
+        lastModified: new Date(2015, 1, 1),
         run: 'run2',
         users: [{
             userId: '123', userName: 'userName', index: 0
@@ -50,7 +50,7 @@
 
     var setupServer = function (worlds) {
         server = sinon.fakeServer.create();
-        server.respondWith('GET',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+        server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
             xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             return true;
         });
@@ -69,7 +69,7 @@
         beforeEach(_.partial(setupServer, worldSet));
         afterEach(teardownServer);
 
-        function createRunManager(options) {
+        function createRunManager (options) {
             var rm = new F.manager.RunManager(_.extend({
                 strategy: 'multiplayer',
                 run: {
@@ -125,4 +125,4 @@
             });
         });
     });
-})();
+}());

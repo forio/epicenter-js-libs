@@ -2,13 +2,13 @@
     'use strict';
 
     var cookieContents = {
-        'auth_token': '',
-        'account': 'forio',
-        'project': 'js-libs',
-        'userId': 'user-123',
-        'groupId': 'group321',
-        'groupName': 'group-321',
-        'isFac': false
+        auth_token: '',
+        account: 'forio',
+        project: 'js-libs',
+        userId: 'user-123',
+        groupId: 'group321',
+        groupName: 'group-321',
+        isFac: false
     };
 
     var fakeAuth = {
@@ -19,14 +19,14 @@
 
     var worldSet = [{
         id: 'worldid1',
-        lastModified: new Date(2014,1,1),
+        lastModified: new Date(2014, 1, 1),
         run: 'run1',
         users: [{
             userId: '123', userName: 'userName', index: 0
         }]
     }, {
         id: 'worldid2',
-        lastModified: new Date(2015,1,1),
+        lastModified: new Date(2015, 1, 1),
         run: 'run2',
         users: [{
             userId: '123', userName: 'userName', index: 0
@@ -56,7 +56,7 @@
             });
 
             // get run header
-            server.respondWith('GET',  /run\/forio\/js\-libs\/run2/, function (xhr, id) {
+            server.respondWith('GET', /run\/forio\/js\-libs\/run2/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({
                     id: 'run2',
                     lastModified: '123'
@@ -72,7 +72,7 @@
             server.restore();
         });
 
-        function createWorldManager(options) {
+        function createWorldManager (options) {
             var wm = new F.manager.WorldManager(_.extend({}, {
                 account: 'forio',
                 project: 'js-libs',
@@ -187,4 +187,4 @@
 
         });
     });
-})();
+}());

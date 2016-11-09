@@ -53,7 +53,6 @@ $(function () {
     });
 
 
-
     var worldManager = new F.manager.WorldManager({
         run: $.extend({}, {
             account: 'team-naren',
@@ -66,7 +65,7 @@ $(function () {
         window.worldS = worldService;
         var worldChannel = cm.getWorldChannel(worldObject);
         worldChannel.subscribe('', function () {
-           console.log('stuff', arguments);
+            console.log('stuff', arguments);
         });
 
         var presenceChannel = cm.getPresenceChannel(worldObject);
@@ -77,8 +76,8 @@ $(function () {
         window.wc = worldChannel;
     });
     worldManager.getCurrentRun().then(function (runObject, runservice) {
-       console.log('current run', arguments);
-       window.rs = runservice;
+        console.log('current run', arguments);
+        window.rs = runservice;
     });
 
     window.datachannel = null;
@@ -90,7 +89,7 @@ $(function () {
             account: 'team-naren',
             project: 'multiplayer-test'
         });
-        window.ds.save({ thisExists: true , val: 'Chinese (汉语 / 漢語; Hànyǔ or 中文; Zhōngwén'});
+        window.ds.save({ thisExists: true, val: 'Chinese (汉语 / 漢語; Hànyǔ or 中文; Zhōngwén' });
         window.datachannel = cm.getDataChannel(collName);
         window.datachannel.subscribe('', function (data, meta) {
             console.log('data changed', data, meta);

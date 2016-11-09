@@ -2,13 +2,13 @@
     'use strict';
 
     var cookieContents = {
-        'auth_token': '',
-        'account': 'forio-dev',
-        'project': 'js-libs',
-        'userId': '123',
-        'groupId': 'group123',
-        'groupName': 'group-123',
-        'isFac': false
+        auth_token: '',
+        account: 'forio-dev',
+        project: 'js-libs',
+        userId: '123',
+        groupId: 'group123',
+        groupName: 'group-123',
+        isFac: false
     };
 
     var runs = [{
@@ -50,7 +50,7 @@
             teardownServer();
         });
 
-        function createRunManager(options) {
+        function createRunManager (options) {
             var rm = new F.manager.RunManager(_.extend({
                 strategy: 'always-new',
                 run: {
@@ -87,4 +87,4 @@
         });
     });
 
-})();
+}());
