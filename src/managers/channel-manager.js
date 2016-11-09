@@ -186,7 +186,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
         var subs = channel.subscribe;
         channel.subscribe = function () {
             var subid = subs.apply(channel, arguments);
-            this.currentSubscriptions  = this.currentSubscriptions.concat(subid);
+            this.currentSubscriptions = this.currentSubscriptions.concat(subid);
             return subid;
         }.bind(this);
 

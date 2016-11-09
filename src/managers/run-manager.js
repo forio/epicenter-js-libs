@@ -54,7 +54,7 @@ var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 
 
-function patchRunService(service, manager) {
+function patchRunService (service, manager) {
     if (service.patched) {
         return service;
     }
@@ -75,7 +75,6 @@ function patchRunService(service, manager) {
 }
 
 
-
 var defaults = {
     /**
      * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../../strategy/) for details. Defaults to `new-if-initialized`.
@@ -85,7 +84,7 @@ var defaults = {
     strategy: 'new-if-initialized'
 };
 
-function RunManager(options) {
+function RunManager (options) {
     this.options = $.extend(true, {}, defaults, options);
 
     if (this.options.run instanceof RunService) {

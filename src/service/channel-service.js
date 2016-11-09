@@ -60,7 +60,7 @@ var Channel = function (options) {
 
 var makeName = function (channelName, topic) {
     //Replace trailing/double slashes
-    var newName = (channelName ? (channelName + '/' + topic) : topic).replace(/\/\//g, '/').replace(/\/$/,'');
+    var newName = (channelName ? (channelName + '/' + topic) : topic).replace(/\/\//g, '/').replace(/\/$/, '');
     return newName;
 };
 

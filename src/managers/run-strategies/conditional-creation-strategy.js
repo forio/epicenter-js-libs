@@ -12,7 +12,7 @@ var defaults = {
     path: ''
 };
 
-function setRunInSession(sessionKey, run, sessionManager) {
+function setRunInSession (sessionKey, run, sessionManager) {
     sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: run.id }));
 }
 
@@ -24,7 +24,7 @@ function setRunInSession(sessionKey, run, sessionManager) {
 
 /* jshint eqnull: true */
 var Strategy = classFrom(Base, {
-    constructor: function Strategy(runService, condition, options) {
+    constructor: function Strategy (runService, condition, options) {
 
         if (condition == null) {
             throw new Error('Conditional strategy needs a condition to createte a run');

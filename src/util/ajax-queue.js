@@ -17,7 +17,7 @@ $.extend(AjaxQueue.prototype, {
         var _this = this;
         context = context || this;
 
-        function next() {
+        function next () {
             if (_this.queue.length) {
                 var fn = _this.queue.shift();
 

@@ -8,7 +8,6 @@ var env = require('./defaults');
 var serviceLocator = require('./service-locator');
 
 
-
 module.exports = classFrom(Base, {
     model: Model,
 

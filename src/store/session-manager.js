@@ -15,14 +15,14 @@ var defaults = {
 
 var SessionManager = function (managerOptions) {
     managerOptions = managerOptions || {};
-    function getBaseOptions(overrides) {
+    function getBaseOptions (overrides) {
         overrides = overrides || {};
         var libOptions = optionUtils.getOptions();
         var finalOptions = $.extend(true, {}, defaults, libOptions, managerOptions, overrides);
         return finalOptions;
     }
 
-    function getStore(overrides) {
+    function getStore (overrides) {
         var baseOptions = getBaseOptions(overrides);
         var storeOpts = baseOptions.store || {};
         if (storeOpts.root === undefined && baseOptions.account && baseOptions.project && !baseOptions.isLocal) {

@@ -164,7 +164,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         httpOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(httpOptions);
@@ -353,13 +353,11 @@ module.exports = function (config) {
             if (options) {
                 opsArgs = params;
                 postOptions = options;
+            } else if ($.isPlainObject(params)) {
+                opsArgs = null;
+                postOptions = params;
             } else {
-                if ($.isPlainObject(params)) {
-                    opsArgs = null;
-                    postOptions = params;
-                } else {
-                    opsArgs = params;
-                }
+                opsArgs = params;
             }
             var result = rutil.normalizeOperations(operation, opsArgs);
             var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
@@ -456,8 +454,8 @@ module.exports = function (config) {
             var args = opParams.args;
             var postOptions = $.extend(true, {}, serviceOptions, options);
 
-            var queue  = [];
-            for (var i = 0; i< ops.length; i++) {
+            var queue = [];
+            for (var i = 0; i < ops.length; i++) {
                 queue.push(
                     this.do(ops[i], args[i])
                 );

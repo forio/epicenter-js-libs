@@ -4,4 +4,4 @@
 
     window.forio = window.forio || {};
     window.forio.MultiplayerAssignmentComponent = App;
-})();
+}());

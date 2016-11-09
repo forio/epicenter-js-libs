@@ -65,12 +65,12 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         httpOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(httpOptions);
 
-    function uploadBody(fileName, contents) {
+    function uploadBody (fileName, contents) {
         var boundary = '---------------------------7da24f2e50046';
 
         return {
@@ -84,7 +84,7 @@ module.exports = function (config) {
         };
     }
 
-    function uploadFileOptions(filePath, contents, options) {
+    function uploadFileOptions (filePath, contents, options) {
         filePath = filePath.split('/');
         var fileName = filePath.pop();
         filePath = filePath.join('/');
@@ -169,7 +169,7 @@ module.exports = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options, {
                 url: urlConfig.getAPIPath('file') + path
             });
-            return http.patch({ 'name': newName }, httpOptions);
+            return http.patch({ name: newName }, httpOptions);
         }
     };
 

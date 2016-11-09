@@ -36,7 +36,7 @@
 'use strict';
 
 var WorldApi = require('../service/world-api-adapter');
-var RunManager =  require('./run-manager');
+var RunManager = require('./run-manager');
 var AuthManager = require('./auth-manager');
 var worldApi;
 
@@ -49,9 +49,9 @@ var worldApi;
 // };
 
 
-function buildStrategy(worldId, dtd) {
+function buildStrategy (worldId, dtd) {
 
-    return function Ctor(runService, options) {
+    return function Ctor (runService, options) {
         this.runService = runService;
         this.options = options;
 
@@ -73,8 +73,8 @@ function buildStrategy(worldId, dtd) {
                         dtd.resolveWith(_this, [run]);
                     })
                     .fail(dtd.reject);
-                }
             }
+        }
         );
     };
 }
@@ -138,7 +138,7 @@ module.exports = function (options) {
             var curUserId = session.userId;
             var curGroupName = session.groupName;
 
-            function getAndRestoreLatestRun(world) {
+            function getAndRestoreLatestRun (world) {
                 if (!world) {
                     return dtd.reject({ error: 'The user is not part of any world!' });
                 }

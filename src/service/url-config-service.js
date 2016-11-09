@@ -10,7 +10,7 @@ var defaults = {
 
 var UrlConfigService = function (config) {
     var options = $.extend({}, defaults, config);
-    function isLocalhost() {
+    function isLocalhost () {
         var host = options.host;
         var path = options.pathname;
         // Sort of hardcode the fact that epicenter application space is prefixed by /app/
@@ -73,7 +73,7 @@ var UrlConfigService = function (config) {
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
 
             if ($.inArray(api, PROJECT_APIS) !== -1) {
-                apiPath += this.accountPath + '/' + this.projectPath  + '/';
+                apiPath += this.accountPath + '/' + this.projectPath + '/';
             }
             return apiPath;
         }

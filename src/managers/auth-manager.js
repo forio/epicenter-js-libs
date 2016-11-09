@@ -43,7 +43,7 @@ var defaults = {
     requiresGroup: true
 };
 
-function AuthManager(options) {
+function AuthManager (options) {
     options = $.extend(true, {}, defaults, options);
     this.sessionManager = new SessionManager(options);
     this.options = this.sessionManager.getMergedOptions();
@@ -53,7 +53,7 @@ function AuthManager(options) {
 }
 
 var _findUserInGroup = function (members, id) {
-    for (var j = 0; j<members.length; j++) {
+    for (var j = 0; j < members.length; j++) {
         if (members[j].userId === id) {
             return members[j];
         }
@@ -140,12 +140,12 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             var requiresGroup = adapterOptions.requiresGroup && project;
 
             var sessionInfo = {
-                'auth_token': token,
-                'account': adapterOptions.account,
-                'project': project,
-                'userId': userInfo.user_id,
-                'groups': oldGroups,
-                'isTeamMember': isTeamMember
+                auth_token: token,
+                account: adapterOptions.account,
+                project: project,
+                userId: userInfo.user_id,
+                groups: oldGroups,
+                isTeamMember: isTeamMember
             };
             // The group is not required if the user is not logging into a project
             if (!requiresGroup) {

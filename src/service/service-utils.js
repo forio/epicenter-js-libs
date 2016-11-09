@@ -25,7 +25,7 @@ var serviceUtils = {
 
         if (serviceOptions.token) {
             serviceOptions.transport.headers = {
-                'Authorization': 'Bearer ' + serviceOptions.token
+                Authorization: 'Bearer ' + serviceOptions.token
             };
         }
         return serviceOptions;

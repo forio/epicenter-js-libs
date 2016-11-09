@@ -7,7 +7,7 @@ var AssignemntRow = require('./assignment-row');
 var env = require('./defaults');
 var AjaxQueue = require('../../../util/ajax-queue');
 
-function setEnvironment(options) {
+function setEnvironment (options) {
     env.set(_.omit(options, 'el'));
 }
 
@@ -150,7 +150,7 @@ Assignment.prototype = {
                             user.remove();
                             view.remove();
                         });
-                    });
+                });
 
             }, this);
 

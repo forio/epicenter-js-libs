@@ -49,7 +49,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         transportOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(transportOptions, serviceOptions);

@@ -39,7 +39,7 @@ module.exports = function (config) {
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
          * @type {String}
          */
-       token: undefined,
+        token: undefined,
 
         /**
          * The project id. If left undefined, taken from the URL.
@@ -118,7 +118,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         transportOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
 
@@ -362,7 +362,7 @@ module.exports = function (config) {
             if (!serviceOptions.filter) {
                 throw new Error('Please provide a worldid to load');
             }
-            var httpOptions = $.extend(true, {}, serviceOptions, options,  { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/' });
+            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/' });
             return http.get('', httpOptions);
         },
 
@@ -699,7 +699,7 @@ module.exports = function (config) {
 
             if (opt.maxUsers) {
                 params.maxUsers = opt.maxUsers;
-        }
+            }
 
             return http.post(params, opt);
         },

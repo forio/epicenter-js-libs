@@ -80,7 +80,7 @@ module.exports = function (config) {
         }
         var url = urlConfig.getAPIPath('data') + qutil.addTrailingSlash(root);
         if (key) {
-            url+= qutil.addTrailingSlash(key);
+            url += qutil.addTrailingSlash(key);
         }
         return url;
     };
@@ -90,7 +90,7 @@ module.exports = function (config) {
     });
     if (serviceOptions.token) {
         httpOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(httpOptions);
