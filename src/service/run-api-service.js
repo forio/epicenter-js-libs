@@ -313,7 +313,7 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Object} attributes The run data and variables to save.
-         * @param {Object} attributes.variables` Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
+         * @param {Object} attributes.variables Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
          * @param {Object} options (Optional) Overrides for configuration options.
          * @return {Promise}
          */

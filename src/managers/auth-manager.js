@@ -304,9 +304,9 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
      *
      * **Parameters**
-     * @param {Object} params` Object with a userId and token properties.
-     * @param {String} params.userId` The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
-     * @param {String} params.token` The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
+     * @param {Object} params Object with a userId and token properties.
+     * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
+     * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
      * @param {Object} options (Optional) Overrides for configuration options.
      * @return {Promise}
      */
@@ -364,7 +364,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
      *
      * **Parameters**
-     * @param {object|array} groups` (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
+     * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
      * @param {string} group.isFac (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
      * @param {string} group.groupId (optional) Defaults to undefined. Needed mostly for the Members API.
      * @return {Object} session information
