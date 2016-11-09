@@ -1,0 +1,13 @@
+{
+    "extends": ["../.eslintrc"],
+    "globals": {
+        "expect": false,
+        "sinon": false,
+        "F": false,
+        "$": false,
+        "_": false
+    },
+    "rules": {
+        "no-magic-numbers": 0
+    }
+}
