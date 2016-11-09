@@ -656,13 +656,13 @@ module.exports = function (config) {
                 options,
                 { filter: worldId || serviceOptions.filter }
             );
-            var _this = this;
+            var me = this;
 
             validateModelOrThrowError(currentRunOptions);
 
             return this.deleteRun(worldId, options)
                 .then(function () {
-                    return _this.getCurrentRunId(currentRunOptions);
+                    return me.getCurrentRunId(currentRunOptions);
                 });
         },
 

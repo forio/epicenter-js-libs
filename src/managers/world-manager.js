@@ -61,16 +61,16 @@ function buildStrategy (worldId, dtd) {
             },
 
             getRun: function () {
-                var _this = this;
+                var me = this;
                 //get or create!
                 // Model is required in the options
                 var model = this.options.run.model || this.options.model;
                 return worldApi.getCurrentRunId({ model: model, filter: worldId })
                     .then(function (runId) {
-                        return _this.runService.load(runId);
+                        return me.runService.load(runId);
                     })
                     .then(function (run) {
-                        dtd.resolveWith(_this, [run]);
+                        dtd.resolveWith(me, [run]);
                     })
                     .fail(dtd.reject);
             }
@@ -88,7 +88,7 @@ module.exports = function (options) {
 
     worldApi = new WorldApi(this.options);
     this._auth = new AuthManager();
-    var _this = this;
+    var me = this;
 
     var api = {
 
@@ -144,7 +144,7 @@ module.exports = function (options) {
                 }
 
                 var currentWorldId = world.id;
-                var runOpts = $.extend(true, _this.options, { model: model });
+                var runOpts = $.extend(true, me.options, { model: model });
                 var strategy = buildStrategy(currentWorldId, dtd);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,

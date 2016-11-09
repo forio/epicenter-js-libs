@@ -500,6 +500,7 @@ module.exports = function (config) {
             } else {
                 throw new Error('Please specify either the model or runid to introspect');
             }
+            return introspection;
         }
     };
 

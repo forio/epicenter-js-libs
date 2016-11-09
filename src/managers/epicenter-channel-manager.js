@@ -122,7 +122,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!channelOpts.allowAllChannels) {
             var baseParts = base.split('/');
             var channelType = baseParts[1];
-            if (baseParts.length < 4) {
+            if (baseParts.length < 4) { //eslint-disable-line
                 throw new Error('Invalid channel base name, it must be in the form /{type}/{account id}/{project id}/{...}');
             }
             if (!validTypes[channelType]) {
@@ -300,7 +300,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         channel.subscribe('internal-ping-channel', function (notification) {
             var incomingUserId = notification.data.user;
             if (!lastPingTime[incomingUserId] && incomingUserId !== userid) {
-                channel.trigger.call(channel, 'presence', { userId: incomingUserId, online: true });
+                channel.trigger('presence', { userId: incomingUserId, online: true });
             }
             lastPingTime[incomingUserId] = (new Date()).valueOf();
         });
@@ -312,7 +312,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                 var now = (new Date()).valueOf();
                 if (value && value + (PING_INTERVAL * 2) < now) {
                     lastPingTime[key] = null;
-                    channel.trigger.call(channel, 'presence', { userId: key, online: false });
+                    channel.trigger('presence', { userId: key, online: false });
                 }
             });
         }, PING_INTERVAL);

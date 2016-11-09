@@ -88,7 +88,7 @@ module.exports = (function () {
 
         splitGetFactory: function (httpOptions) {
             return function (params, options) {
-                var http = this;
+                var http = this; //eslint-disable-line
                 var getValue = function (name) {
                     var value = options[name] || httpOptions[name];
                     if (typeof value === 'function') {

@@ -5,7 +5,8 @@
         "sinon": false,
         "F": false,
         "$": false,
-        "_": false
+        "_": false,
+        "should": false
     },
     "rules": {
         "no-magic-numbers": 0,

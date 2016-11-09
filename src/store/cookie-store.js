@@ -104,6 +104,7 @@ module.exports = function (config) {
         /**
          * Removes key from collection
          * @param { string} key key to remove
+         * @param {object} options (optional) overrides for service options
          * @return { string} key The key removed
          *
          * @example

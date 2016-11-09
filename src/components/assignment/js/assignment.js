@@ -189,12 +189,20 @@ Assignment.prototype = {
     },
 
     updateStatus: function () {
-        var incolpleteWorlds = this.worlds.getIncompleteWorldsCount();
+        var incompleteWorlds = this.worlds.getIncompleteWorldsCount();
         var unassignedUsers = this.users.getUnassignedUsersCount();
         var totalWorlds = this.worlds.size();
 
-        var usersText = unassignedUsers ? unassignedUsers === 1 ? '1 user needs assignment.' : unassignedUsers + ' users need assignment.' : 'All users have been assigned.';
-        var worldsText = !totalWorlds ? 'No worlds have been created.' : !incolpleteWorlds ? 'All worlds are complete.' : incolpleteWorlds === 1 ? '1 incomplete world needs attention.' : incolpleteWorlds + ' incomplete worlds need attention.';
+        var usersText = 'All users have been assigned.';
+        if (unassignedUsers) {
+            usersText = unassignedUsers === 1 ? '1 user needs assignment.' : unassignedUsers + ' users need assignment.';
+        }
+        var worldsText = 'All worlds are complete.';
+        if (!totalWorlds) {
+            worldsText = 'No worlds have been created.';
+        } else if (incompleteWorlds) {
+            worldsText = incompleteWorlds === 1 ? '1 incomplete world needs attention.' : incompleteWorlds + ' incomplete worlds need attention.';
+        }
 
         this.$('#users-status .text').text(usersText);
         this.$('#worlds-status .text').text(worldsText);
@@ -205,7 +213,7 @@ Assignment.prototype = {
             this.$('#users-status').removeClass('incomplete');
         }
 
-        if (incolpleteWorlds || !totalWorlds) {
+        if (incompleteWorlds || !totalWorlds) {
             this.$('#worlds-status').addClass('incomplete');
         } else {
             this.$('#worlds-status').removeClass('incomplete');

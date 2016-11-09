@@ -100,7 +100,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     * @param {string} `options.groupId` The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
     */
     login: function (options) {
-        var _this = this;
+        var me = this;
         var $d = $.Deferred();
         var sessionManager = this.sessionManager;
         var adapterOptions = sessionManager.getMergedOptions({ success: $.noop, error: $.noop }, options);
@@ -110,7 +110,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
-            while (encoded.length % 4 !== 0) {
+            while (encoded.length % 4 !== 0) { //eslint-disable-line
                 encoded += '=';
             }
 
@@ -121,7 +121,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
         var handleGroupError = function (message, statusCode, data) {
             // logout the user since it's in an invalid state with no group selected
-            _this.logout().then(function () {
+            me.logout().then(function () {
                 var error = $.extend(true, {}, data, { statusText: message, status: statusCode });
                 $d.reject(error);
             });
@@ -185,7 +185,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                     };
                     var sessionInfoWithGroup = objectAssign({}, sessionInfo, groupData);
                     sessionInfo.groups[project] = groupData;
-                    _this.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
+                    me.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
@@ -194,7 +194,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             };
 
             if (!isTeamMember) {
-                _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
+                me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
                     .then(handleGroupList, $d.reject);
             } else {
                 var opts = objectAssign({}, userGroupOpts, { token: token });
@@ -220,7 +220,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                     $d.reject(response);
                 };
 
-                _this.authAdapter.login(adapterOptions);
+                me.authAdapter.login(adapterOptions);
                 return;
             }
 
@@ -244,11 +244,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     * @param {Object} `options` (Optional) Overrides for configuration options.
     */
     logout: function (options) {
-        var _this = this;
+        var me = this;
         var adapterOptions = this.sessionManager.getMergedOptions(options);
 
         var removeCookieFn = function (response) {
-            _this.sessionManager.removeSession();
+            me.sessionManager.removeSession();
         };
 
         return this.authAdapter.logout(adapterOptions).then(removeCookieFn);

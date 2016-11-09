@@ -14,12 +14,12 @@ $.extend(AjaxQueue.prototype, {
 
     execute: function (context) {
         var dtd = $.Deferred();
-        var _this = this;
+        var me = this;
         context = context || this;
 
         function next () {
-            if (_this.queue.length) {
-                var fn = _this.queue.shift();
+            if (me.queue.length) {
+                var fn = me.queue.shift();
 
                 fn.call(context)
                     .then(next)

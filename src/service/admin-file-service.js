@@ -101,8 +101,8 @@ module.exports = function (config) {
     var publicAsyncAPI = {
         /**
          * Get a directory listing, or contents of a file.
-         * @param  {String} `filePath`   Path to the file
-         * @param  {Object} `options` (Optional) Overrides for configuration options.
+         * @param {String} `filePath`   Path to the file
+         * @param {Object} `options` (Optional) Overrides for configuration options.
          */
         getContents: function (filePath, options) {
             var path = serviceOptions.folderType + '/' + filePath;
@@ -137,7 +137,8 @@ module.exports = function (config) {
             var me = this;
             if (replaceExisting === true) {
                 prom = prom.then(null, function (xhr) {
-                    if (xhr.status === 409) {
+                    var conflictStatus = 409;
+                    if (xhr.status === conflictStatus) {
                         return me.replace(filePath, contents, options);
                     }
                 });

@@ -38,13 +38,13 @@
         "no-unexpected-multiline": 1,
         "no-unreachable": 2,
         "use-isnan": 1,
-        "valid-jsdoc": 2,
+        "valid-jsdoc": 0,
         "valid-typeof": 2,
 
         "accessor-pairs": 2,
         "block-scoped-var": 1,
         "complexity": [1, 10],
-        "consistent-return": 1,
+        "consistent-return": 0,
         "curly": [2, "multi-line"],
         "default-case": 2,
         "dot-location": [2, "property"],
@@ -73,10 +73,10 @@
         "no-lone-blocks": 2,
         "no-loop-func": 2,
         "no-magic-numbers": [2, {
-            "ignore": [-1, 0, 1, 2, 10, 100, 60, 1000, 401, 404]
+            "ignore": [-1, 0, 1, 2, 10, 100, 60, 1000, 401, 403, 404, 500]
         }],
         "no-multi-spaces": 2,
-        "no-multi-str": 2,
+        "no-multi-str": 0,
         "no-native-reassign": 2,
         "no-new-func": 2,
         "no-new-wrappers": 2,
@@ -154,7 +154,10 @@
             "beforeBlockComment": true
         }],
         "max-depth": [1, 4],
-        "new-cap": 1,
+        "new-cap": [1, {
+            "capIsNewExceptions": ["$.Deferred"],
+            "newIsCapExceptionPattern": "^this"
+        }],
         "new-parens": 2,
         "no-array-constructor": 2,
         "no-bitwise": 2,

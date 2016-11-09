@@ -121,7 +121,8 @@ module.exports = classFrom(Base, {
         var properNames = _.filter(worlds, function (w) { return (/World\d\d\d/).test(w); }).sort();
         var lastWorld = properNames[properNames.length - 1];
         var numWorld = +lastWorld.match(/World(\d\d\d)/)[1];
-        return 'World' + pad(numWorld + 1, 3);
+        var placesToPad = 3;
+        return 'World' + pad(numWorld + 1, placesToPad);
     },
 
     setUsersCollection: function (usersCollection) {
