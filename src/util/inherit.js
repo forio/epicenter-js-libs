@@ -3,7 +3,7 @@
 */
 'use strict';
 
-function inherit (C, P) {
+function inherit(C, P) {
     var F = function () {};
     F.prototype = P.prototype;
     C.prototype = new F();

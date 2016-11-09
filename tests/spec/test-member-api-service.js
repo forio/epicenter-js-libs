@@ -22,7 +22,7 @@
             server.restore();
         });
 
-        function createMemberAdapter (options) {
+        function createMemberAdapter(options) {
             return new F.service.Member(options);
         }
 

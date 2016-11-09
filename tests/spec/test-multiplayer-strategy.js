@@ -69,7 +69,7 @@
         beforeEach(_.partial(setupServer, worldSet));
         afterEach(teardownServer);
 
-        function createRunManager (options) {
+        function createRunManager(options) {
             var rm = new F.manager.RunManager(_.extend({
                 strategy: 'multiplayer',
                 run: {

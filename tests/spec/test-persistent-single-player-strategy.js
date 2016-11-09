@@ -60,7 +60,7 @@
         afterEach(function () {
         });
 
-        function createRunManager (options) {
+        function createRunManager(options) {
             var rm = new F.manager.RunManager(_.extend({
                 strategy: 'persistent-single-player',
                 run: {

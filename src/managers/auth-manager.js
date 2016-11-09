@@ -43,7 +43,7 @@ var defaults = {
     requiresGroup: true
 };
 
-function AuthManager (options) {
+function AuthManager(options) {
     options = $.extend(true, {}, defaults, options);
     this.sessionManager = new SessionManager(options);
     this.options = this.sessionManager.getMergedOptions();

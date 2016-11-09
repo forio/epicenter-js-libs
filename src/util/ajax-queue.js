@@ -3,7 +3,7 @@
 /**
 * Utility class to make ajax calls sequencial
 */
-function AjaxQueue () {
+function AjaxQueue() {
     this.queue = [];
 }
 
@@ -17,7 +17,7 @@ $.extend(AjaxQueue.prototype, {
         var me = this;
         context = context || this;
 
-        function next () {
+        function next() {
             if (me.queue.length) {
                 var fn = me.queue.shift();
 

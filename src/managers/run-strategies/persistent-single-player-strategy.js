@@ -15,7 +15,7 @@ var defaults = {
 };
 
 var Strategy = classFrom(IdentityStrategy, {
-    constructor: function Strategy (runService, options) {
+    constructor: function Strategy(runService, options) {
         this.run = runService;
         this.options = $.extend(true, {}, defaults, options);
         this.runOptions = this.options.run;

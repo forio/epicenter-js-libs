@@ -19,7 +19,7 @@
             server.restore();
         });
 
-        function createUserAdapter (options) {
+        function createUserAdapter(options) {
             return new F.service.User(_.extend({
                 account: 'forio',
                 token: 'some-token'

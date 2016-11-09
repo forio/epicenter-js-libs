@@ -12,7 +12,7 @@
             server.restore();
         });
 
-        function createUserAdapter (options) {
+        function createUserAdapter(options) {
             return new F.service.Group(_.extend({
                 token: 'some-token'
             }, options));

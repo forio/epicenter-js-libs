@@ -54,7 +54,7 @@ var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 
 
-function patchRunService (service, manager) {
+function patchRunService(service, manager) {
     if (service.patched) {
         return service;
     }
@@ -84,7 +84,7 @@ var defaults = {
     strategy: 'new-if-initialized'
 };
 
-function RunManager (options) {
+function RunManager(options) {
     this.options = $.extend(true, {}, defaults, options);
 
     if (this.options.run instanceof RunService) {

@@ -70,7 +70,7 @@ module.exports = function (config) {
     }
     var http = new TransportFactory(httpOptions);
 
-    function uploadBody (fileName, contents) {
+    function uploadBody(fileName, contents) {
         var boundary = '---------------------------7da24f2e50046';
 
         return {
@@ -84,7 +84,7 @@ module.exports = function (config) {
         };
     }
 
-    function uploadFileOptions (filePath, contents, options) {
+    function uploadFileOptions(filePath, contents, options) {
         filePath = filePath.split('/');
         var fileName = filePath.pop();
         filePath = filePath.join('/');

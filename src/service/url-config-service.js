@@ -10,7 +10,7 @@ var defaults = {
 
 var UrlConfigService = function (config) {
     var options = $.extend({}, defaults, config);
-    function isLocalhost () {
+    function isLocalhost() {
         var host = options.host;
         var path = options.pathname;
         // Sort of hardcode the fact that epicenter application space is prefixed by /app/

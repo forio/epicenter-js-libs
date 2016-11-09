@@ -5,7 +5,7 @@ var defaults = {
     validFilter: { saved: true }
 };
 
-function ScenarioManager (options) {
+function ScenarioManager(options) {
     this.options = $.extend(true, {}, defaults, options);
     this.runService = this.options.run || new RunService(this.options);
 }

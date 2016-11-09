@@ -72,7 +72,7 @@
             server.restore();
         });
 
-        function createWorldManager (options) {
+        function createWorldManager(options) {
             var wm = new F.manager.WorldManager(_.extend({}, {
                 account: 'forio',
                 project: 'js-libs',

@@ -50,7 +50,7 @@
             teardownServer();
         });
 
-        function createRunManager (options) {
+        function createRunManager(options) {
             var rm = new F.manager.RunManager(_.extend({
                 strategy: 'always-new',
                 run: {

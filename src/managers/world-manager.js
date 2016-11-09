@@ -40,9 +40,9 @@ var RunManager = require('./run-manager');
 var AuthManager = require('./auth-manager');
 var worldApi;
 
-function buildStrategy (worldId, dtd) {
+function buildStrategy(worldId, dtd) {
 
-    return function Ctor (runService, options) {
+    return function Ctor(runService, options) {
         this.runService = runService;
         this.options = options;
 
@@ -131,7 +131,7 @@ module.exports = function (options) {
             var curUserId = session.userId;
             var curGroupName = session.groupName;
 
-            function getAndRestoreLatestRun (world) {
+            function getAndRestoreLatestRun(world) {
                 if (!world) {
                     return dtd.reject({ error: 'The user is not part of any world!' });
                 }

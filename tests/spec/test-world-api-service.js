@@ -20,7 +20,7 @@
             server.restore();
         });
 
-        function createWorldAdapter (options) {
+        function createWorldAdapter(options) {
             return new F.service.World(_.extend({
                 account: 'forio',
                 project: 'js-libs'
