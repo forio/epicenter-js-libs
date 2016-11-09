@@ -75,7 +75,6 @@ function patchRunService(service, manager) {
 }
 
 
-
 var defaults = {
     /**
      * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../../strategy/) for details. Defaults to `new-if-initialized`.
@@ -145,7 +144,8 @@ RunManager.prototype = {
      *      });
      *
      * **Parameters**
-     * @param {Object} `runServiceOptions` The options object to configure the Run Service. See [Run API Service](../run-api-service/) for more.
+     * @param {Object} runServiceOptions The options object to configure the Run Service. See [Run API Service](../run-api-service/) for more.
+     * @return {Promise}
      */
     reset: function (runServiceOptions) {
         return this.strategy.reset(runServiceOptions);

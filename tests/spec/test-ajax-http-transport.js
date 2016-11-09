@@ -78,13 +78,13 @@
             });
             it('should convert query parameters', function () {
                 var ajax = new Transport({ url: 'http://api.success.com' });
-                ajax.get({ a:2,b:3 });
+                ajax.get({ a: 2, b: 3 });
 
                 server.requests.pop().url.should.equal('http://api.success.com?a=2&b=3');
             });
             it('should combine query parameters', function () {
                 var ajax = new Transport({ url: 'http://api.success.com?a=2' });
-                ajax.get({ b:3 });
+                ajax.get({ b: 3 });
 
                 server.requests.pop().url.should.equal('http://api.success.com?a=2&b=3');
             });
@@ -93,7 +93,7 @@
                 var callback = sinon.spy();
 
                 var ajax = new Transport({ url: 'http://api.success.com' });
-                ajax.get({ a:2,b:3 }, {
+                ajax.get({ a: 2, b: 3 }, {
                     success: callback
                 });
                 callback.called.should.equal(true);
@@ -102,7 +102,7 @@
                 var callback = sinon.spy();
 
                 var ajax = new Transport({ url: 'http://api.fail.com' });
-                ajax.get({ a:2,b:3 }, {
+                ajax.get({ a: 2, b: 3 }, {
                     error: callback
                 });
 
@@ -110,7 +110,7 @@
             });
 
             it('should allow over-riding the parameter parese', function () {
-                var params = { a:2,b:3 };
+                var params = { a: 2, b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com' });
                 ajax.get(params, {
                     parameterParser: JSON.stringify
@@ -128,7 +128,7 @@
                 server.requests.pop().method.toUpperCase().should.equal('POST');
             });
             it('should convert query parameters', function () {
-                var params = { a:2,b:3 };
+                var params = { a: 2, b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com' });
                 ajax.post(params);
 
@@ -138,7 +138,7 @@
             });
 
             it('should override the url', function () {
-                var params = { a:2,b:3 };
+                var params = { a: 2, b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com' });
                 ajax.post(params, { url: 'http://api.success.org' });
 
@@ -148,7 +148,7 @@
             });
 
             it('should combine query parameters', function () {
-                var params = { b:3 };
+                var params = { b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com?a=2' });
                 ajax.post(params);
 
@@ -158,7 +158,7 @@
             });
 
             it('should allow posting arrays', function () {
-                var params = [1,2];
+                var params = [1, 2];
                 var ajax = new Transport({ url: 'http://api.success.com' });
                 ajax.post(params);
 
@@ -183,7 +183,7 @@
                 server.requests.pop().method.toUpperCase().should.equal('PUT');
             });
             it('should convert query parameters', function () {
-                var params = { a:2,b:3 };
+                var params = { a: 2, b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com' });
                 ajax.put(params);
 
@@ -192,7 +192,7 @@
                 req.requestBody.should.equal(JSON.stringify(params));
             });
             it('should combine query parameters', function () {
-                var params = { b:3 };
+                var params = { b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com?a=2' });
                 ajax.put(params);
 
@@ -210,7 +210,7 @@
                 server.requests.pop().method.toUpperCase().should.equal('PATCH');
             });
             it('should convert query parameters', function () {
-                var params = { a:2,b:3 };
+                var params = { a: 2, b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com' });
                 ajax.patch(params);
 
@@ -219,7 +219,7 @@
                 req.requestBody.should.equal(JSON.stringify(params));
             });
             it('should combine query parameters', function () {
-                var params = { b:3 };
+                var params = { b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com?a=2' });
                 ajax.patch(params);
 
@@ -237,7 +237,7 @@
                 server.requests.pop().method.toUpperCase().should.equal('DELETE');
             });
             it('should convert query parameters', function () {
-                var params = { a:1,b:2 };
+                var params = { a: 1, b: 2 };
                 var ajax = new Transport({ url: 'http://api.success.com' });
                 ajax.delete(params);
 
@@ -245,7 +245,7 @@
                 req.url.should.equal('http://api.success.com?a=1&b=2');
             });
             it('should combine query parameters', function () {
-                var params = { b:3 };
+                var params = { b: 3 };
                 var ajax = new Transport({ url: 'http://api.success.com?a=2' });
                 ajax.delete(params);
 
@@ -254,4 +254,4 @@
             });
         });
     });
-})();
+}());

@@ -49,7 +49,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         transportOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(transportOptions, serviceOptions);
@@ -89,8 +89,8 @@ module.exports = function (config) {
         *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
         *
         * **Parameters**
-        * @param {string|object} `params` The user id for the end user. Alternatively, an object with field `userId` and value the user id.
-        * @param {object} `options` (Optional) Overrides for configuration options.
+        * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
+        * @param {object} options (Optional) Overrides for configuration options.
         */
 
         getGroupsForUser: function (params, options) {
@@ -122,8 +122,9 @@ module.exports = function (config) {
         *       ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
         * **Parameters**
-        * @param {string|object} `params` The group id. Alternatively, an object with field `groupId` and value the group id.
-        * @param {object} `options` (Optional) Overrides for configuration options.
+        * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
         */
         getGroupDetails: function (params, options) {
             options = options || {};
@@ -152,10 +153,11 @@ module.exports = function (config) {
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
         * **Parameters**
-        * @param {object} `params` The end user and group information.
-        * @param {string} `params.userId` The id of the end user to make active.
-        * @param {string} `params.groupId` The id of the group to which this end user belongs, and in which the end user should become active.
-        * @param {object} `options` (Optional) Overrides for configuration options.
+        * @param {object} params The end user and group information.
+        * @param {string} params.userId The id of the end user to make active.
+        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
         */
         makeUserActive: function (params, options) {
             return patchUserActiveField(params, true, options);
@@ -171,10 +173,11 @@ module.exports = function (config) {
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
         * **Parameters**
-        * @param {object} `params` The end user and group information.
-        * @param {string} `params.userId` The id of the end user to make inactive.
-        * @param {string} `params.groupId` The id of the group to which this end user belongs, and in which the end user should become inactive.
-        * @param {object} `options` (Optional) Overrides for configuration options.
+        * @param {object} params The end user and group information.
+        * @param {string} params.userId The id of the end user to make inactive.
+        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
         */
         makeUserInactive: function (params, options) {
             return patchUserActiveField(params, false, options);

@@ -60,13 +60,13 @@ _.extend(AssignmentRow.prototype, {
     },
 
     saveEdit: function () {
-        var _this = this;
+        var me = this;
         this.updateData();
         this.worlds
             .updateUser(this.model)
             .then(function () {
-                _this.removeEditMode();
-                _this.$el.trigger('update', _this);
+                me.removeEditMode();
+                me.$el.trigger('update', me);
             });
     },
 
@@ -89,13 +89,13 @@ _.extend(AssignmentRow.prototype, {
     },
 
     updateData: function () {
-        var _this = this;
+        var me = this;
         this.$('[data-field]').each(function () {
             var el = $(this);
             var field = el.data('field');
             var val = el.val();
 
-            _this.model.set(field, val);
+            me.model.set(field, val);
         });
     }
 });

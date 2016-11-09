@@ -70,7 +70,8 @@ module.exports = function (config) {
          *      });
          *
          * **Parameters**
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         login: function (options) {
             var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);

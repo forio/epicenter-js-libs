@@ -65,7 +65,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         httpOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(httpOptions);
@@ -101,8 +101,9 @@ module.exports = function (config) {
     var publicAsyncAPI = {
         /**
          * Get a directory listing, or contents of a file.
-         * @param  {String} `filePath`   Path to the file
-         * @param  {Object} `options` (Optional) Overrides for configuration options.
+         * @param {String} filePath  Path to the file
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         getContents: function (filePath, options) {
             var path = serviceOptions.folderType + '/' + filePath;
@@ -114,9 +115,10 @@ module.exports = function (config) {
 
         /**
          * Replaces the file at the given file path.
-         * @param  {String} `filePath` Path to the file
-         * @param  {String} `contents` Contents to write to file
-         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         * @param  {String} filePath Path to the file
+         * @param  {String} contents Contents to write to file
+         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @return {Promise}
          */
         replace: function (filePath, contents, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
@@ -126,10 +128,11 @@ module.exports = function (config) {
 
         /**
          * Creates a file in the given file path.
-         * @param  {String} `filePath` Path to the file
-         * @param  {String} `contents` Contents to write to file
-         * @param  {Boolean} `replaceExisting` Replace file if it already exists; defaults to false
-         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         * @param  {String} filePath Path to the file
+         * @param  {String} contents Contents to write to file
+         * @param  {Boolean} replaceExisting Replace file if it already exists; defaults to false
+         * @param  {Object} options (Optional) Overrides for configuration options
+         * @return {Promise}
          */
         create: function (filePath, contents, replaceExisting, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
@@ -137,7 +140,8 @@ module.exports = function (config) {
             var me = this;
             if (replaceExisting === true) {
                 prom = prom.then(null, function (xhr) {
-                    if (xhr.status === 409) {
+                    var conflictStatus = 409;
+                    if (xhr.status === conflictStatus) {
                         return me.replace(filePath, contents, options);
                     }
                 });
@@ -147,8 +151,9 @@ module.exports = function (config) {
 
         /**
          * Removes the file.
-         * @param  {String} `filePath` Path to the file
-         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         * @param  {String} filePath Path to the file
+         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @return {Promise}
          */
         remove: function (filePath, options) {
             var path = serviceOptions.folderType + '/' + filePath;
@@ -163,13 +168,14 @@ module.exports = function (config) {
          * @param  {String} filePath Path to the file
          * @param  {String} newName  New name of file
          * @param  {Object} options  (Optional) Overrides for configuration options
+         * @return {Promise}
          */
         rename: function (filePath, newName, options) {
             var path = serviceOptions.folderType + '/' + filePath;
             var httpOptions = $.extend(true, {}, serviceOptions, options, {
                 url: urlConfig.getAPIPath('file') + path
             });
-            return http.patch({ 'name': newName }, httpOptions);
+            return http.patch({ name: newName }, httpOptions);
         }
     };
 

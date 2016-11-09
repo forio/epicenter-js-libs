@@ -61,4 +61,4 @@
             req.url.should.match(/q=u12/);
         });
     });
-})();
+}());

@@ -25,9 +25,8 @@ function setRunInSession(sessionKey, run, sessionManager) {
 /* jshint eqnull: true */
 var Strategy = classFrom(Base, {
     constructor: function Strategy(runService, condition, options) {
-
-        if (condition == null) {
-            throw new Error('Conditional strategy needs a condition to createte a run');
+        if (condition === null) {
+            throw new Error('Conditional strategy needs a condition to create a run');
         }
 
         this._auth = new AuthManager();
@@ -46,13 +45,13 @@ var Strategy = classFrom(Base, {
     },
 
     reset: function (runServiceOptions) {
-        var _this = this;
+        var me = this;
         var opt = this.runOptionsWithScope();
 
         return this.run
                 .create(opt, runServiceOptions)
             .then(function (run) {
-                setRunInSession(_this.options.sessionKey, run, _this.sessionManager);
+                setRunInSession(me.options.sessionKey, run, me.sessionManager);
                 run.freshlyCreated = true;
                 return run;
             });
@@ -73,20 +72,20 @@ var Strategy = classFrom(Base, {
 
     _loadAndCheck: function (runSession) {
         var shouldCreate = false;
-        var _this = this;
+        var me = this;
 
         return this.run
             .load(runSession.runId, null, {
                 success: function (run, msg, headers) {
-                    shouldCreate = _this.condition.call(_this, run, headers);
+                    shouldCreate = me.condition(run, headers);
                 }
             })
             .then(function (run) {
                 if (shouldCreate) {
-                    var opt = _this.runOptionsWithScope();
-                    return _this.run.create(opt)
+                    var opt = me.runOptionsWithScope();
+                    return me.run.create(opt)
                     .then(function (run) {
-                        setRunInSession(_this.options.sessionKey, run, _this.sessionManager);
+                        setRunInSession(me.options.sessionKey, run, me.sessionManager);
                         run.freshlyCreated = true;
                         return run;
                     });

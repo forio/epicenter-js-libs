@@ -80,7 +80,7 @@
 
             it('should support url parameters with objects', function () {
                 var ds = new DataService({ root: 'person', account: account, project: 'js-libs' });
-                ds.load('first/name', { page: 1, sort: { 'fieldName1': 1, 'fieldName2': -1 } });
+                ds.load('first/name', { page: 1, sort: { fieldName1: 1, fieldName2: -1 } });
 
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + 'person/first/name/?page=1&sort={"fieldName1":1,"fieldName2":-1}');
@@ -209,14 +209,14 @@
             });
             it('should support output modifiers', function () {
                 var ds = new DataService({ root: 'person', account: account, project: 'js-libs' });
-                ds.query('', { name: 'john', age:'10' }, { page: 1 });
+                ds.query('', { name: 'john', age: '10' }, { page: 1 });
 
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + 'person/?q={"name":"john","age":"10"}&page=1');
             });
             it('should support keys', function () {
                 var ds = new DataService({ root: 'person', account: account, project: 'js-libs' });
-                ds.query('a/b', { name: 'john', age:'10' }, { page: 1 });
+                ds.query('a/b', { name: 'john', age: '10' }, { page: 1 });
 
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + 'person/a/b/?q={"name":"john","age":"10"}&page=1');
@@ -224,10 +224,10 @@
 
             it('should allow overriding the root', function () {
                 var ds = new DataService({ root: 'person', account: account, project: 'js-libs' });
-                ds.query('user', { name: 'john', age:'10' }, null, { root: 'people/me' });
+                ds.query('user', { name: 'john', age: '10' }, null, { root: 'people/me' });
 
                 var req = server.requests.pop();
-                req.url.should.equal(baseURL + 'people/me/user/?q=' + JSON.stringify({ name: 'john', age:'10' }));
+                req.url.should.equal(baseURL + 'people/me/user/?q=' + JSON.stringify({ name: 'john', age: '10' }));
             });
         });
         describe('Callbacks', function () {

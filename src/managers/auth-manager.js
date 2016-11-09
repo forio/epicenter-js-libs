@@ -53,7 +53,7 @@ function AuthManager(options) {
 }
 
 var _findUserInGroup = function (members, id) {
-    for (var j = 0; j<members.length; j++) {
+    for (var j = 0; j < members.length; j++) {
         if (members[j].userId === id) {
             return members[j];
         }
@@ -92,15 +92,16 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *
     * **Parameters**
     *
-    * @param {Object} `options` (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
-    * @param {string} `options.account` The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
-    * @param {string} `options.userName` Email or username to use for logging in.
-    * @param {string} `options.password` Password for specified `userName`.
-    * @param {string} `options.project` (Optional) The **Project ID** for the project to log this user into.
-    * @param {string} `options.groupId` The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
+    * @param {Object} options (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
+    * @param {string} options.account The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
+    * @param {string} options.userName Email or username to use for logging in.
+    * @param {string} options.password Password for specified `userName`.
+    * @param {string} options.project (Optional) The **Project ID** for the project to log this user into.
+    * @param {string} options.groupId The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
+    * @return {Promise}
     */
     login: function (options) {
-        var _this = this;
+        var me = this;
         var $d = $.Deferred();
         var sessionManager = this.sessionManager;
         var adapterOptions = sessionManager.getMergedOptions({ success: $.noop, error: $.noop }, options);
@@ -110,7 +111,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
         var decodeToken = function (token) {
             var encoded = token.split('.')[1];
-            while (encoded.length % 4 !== 0) {
+            while (encoded.length % 4 !== 0) { //eslint-disable-line
                 encoded += '=';
             }
 
@@ -121,7 +122,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
         var handleGroupError = function (message, statusCode, data) {
             // logout the user since it's in an invalid state with no group selected
-            _this.logout().then(function () {
+            me.logout().then(function () {
                 var error = $.extend(true, {}, data, { statusText: message, status: statusCode });
                 $d.reject(error);
             });
@@ -140,12 +141,12 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             var requiresGroup = adapterOptions.requiresGroup && project;
 
             var sessionInfo = {
-                'auth_token': token,
-                'account': adapterOptions.account,
-                'project': project,
-                'userId': userInfo.user_id,
-                'groups': oldGroups,
-                'isTeamMember': isTeamMember
+                auth_token: token,
+                account: adapterOptions.account,
+                project: project,
+                userId: userInfo.user_id,
+                groups: oldGroups,
+                isTeamMember: isTeamMember
             };
             // The group is not required if the user is not logging into a project
             if (!requiresGroup) {
@@ -185,7 +186,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                     };
                     var sessionInfoWithGroup = objectAssign({}, sessionInfo, groupData);
                     sessionInfo.groups[project] = groupData;
-                    _this.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
+                    me.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
@@ -194,7 +195,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             };
 
             if (!isTeamMember) {
-                _this.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
+                me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
                     .then(handleGroupList, $d.reject);
             } else {
                 var opts = objectAssign({}, userGroupOpts, { token: token });
@@ -220,7 +221,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                     $d.reject(response);
                 };
 
-                _this.authAdapter.login(adapterOptions);
+                me.authAdapter.login(adapterOptions);
                 return;
             }
 
@@ -241,14 +242,15 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *
     * **Parameters**
     *
-    * @param {Object} `options` (Optional) Overrides for configuration options.
+    * @param {Object} options (Optional) Overrides for configuration options.
+    * @return {Promise}
     */
     logout: function (options) {
-        var _this = this;
+        var me = this;
         var adapterOptions = this.sessionManager.getMergedOptions(options);
 
         var removeCookieFn = function (response) {
-            _this.sessionManager.removeSession();
+            me.sessionManager.removeSession();
         };
 
         return this.authAdapter.logout(adapterOptions).then(removeCookieFn);
@@ -265,7 +267,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *          });
      *
      * **Parameters**
-     * @param {Object} `options` (Optional) Overrides for configuration options.
+     * @param {Object} options (Optional) Overrides for configuration options.
+     * @return {Promise}
      */
     getToken: function (options) {
         var httpOptions = this.sessionManager.getMergedOptions(options);
@@ -301,10 +304,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
      *
      * **Parameters**
-     * @param {Object} `params` Object with a userId and token properties.
-     * @param {String} `params.userId` The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
-     * @param {String} `params.token` The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
-     * @param {Object} `options` (Optional) Overrides for configuration options.
+     * @param {Object} params Object with a userId and token properties.
+     * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
+     * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
+     * @param {Object} options (Optional) Overrides for configuration options.
+     * @return {Promise}
      */
     getUserGroups: function (params, options) {
         var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
@@ -340,7 +344,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      var sessionObj = authMgr.getCurrentUserSessionInfo();
      *
      * **Parameters**
-     * @param {Object} `options` (Optional) Overrides for configuration options.
+     * @param {Object} options (Optional) Overrides for configuration options.
+     * @return {Object} session information
      */
     getCurrentUserSessionInfo: function (options) {
         return this.sessionManager.getSession(options);
@@ -359,9 +364,10 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
      *
      * **Parameters**
-     * @param {object|array} `groups` (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
-     * @param {string} `group.isFac` (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
-     * @param {string} `group.groupId` (optional) Defaults to undefined. Needed mostly for the Members API.
+     * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
+     * @param {string} group.isFac (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
+     * @param {string} group.groupId (optional) Defaults to undefined. Needed mostly for the Members API.
+     * @return {Object} session information
     */
     addGroups: function (groups) {
         var session = this.getCurrentUserSessionInfo();

@@ -22,63 +22,63 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            server.respondWith('PATCH',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+            server.respondWith('PATCH', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith('POST',  /(.*)\/run\/(.*)\/(.*)/,  function (xhr, id) {
+            server.respondWith('POST', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 var resp = {
-                    'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
-                    'model': 'model.vmf',
-                    'account': 'mit',
-                    'project': 'afv',
-                    'saved': false,
-                    'lastModified': '2014-06-20T04:09:45.738Z',
-                    'created': '2014-06-20T04:09:45.738Z'
+                    id: '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                    model: 'model.vmf',
+                    account: 'mit',
+                    project: 'afv',
+                    saved: false,
+                    lastModified: '2014-06-20T04:09:45.738Z',
+                    created: '2014-06-20T04:09:45.738Z'
                 };
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
             });
 
             // General GET
-            server.respondWith('GET',  /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
                 return true;
             });
 
             // General Multiple Runs GET
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables.*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables.*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify([]));
                 return true;
             });
 
             var run = {
-                'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
-                'model': 'model.vmf',
-                'account': account,
-                'project': 'js-libs',
-                'saved': false,
-                'lastModified': '2014-06-20T04:09:45.738Z',
-                'created': '2014-06-20T04:09:45.738Z'
+                id: '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                model: 'model.vmf',
+                account: account,
+                project: 'js-libs',
+                saved: false,
+                lastModified: '2014-06-20T04:09:45.738Z',
+                created: '2014-06-20T04:09:45.738Z'
             };
             // return a run, with variables A and B
             var singleVarAB = _.extend({}, run, {
-                'variables': {
-                    'varA': 9999.99,
-                    'varB': 'A string',
+                variables: {
+                    varA: 9999.99,
+                    varB: 'A string',
                 }
             });
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*single_variables_a_b.*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*single_variables_a_b.*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(singleVarAB));
                 return true;
             });
 
             // return a run, with variables C and D
             var singleVarCD = _.extend({}, run, {
-                'variables': {
-                    'varC': 'Another string',
-                    'varD': 10.22,
+                variables: {
+                    varC: 'Another string',
+                    varD: 10.22,
                 }
             });
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*single_variables_c_d.*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*single_variables_c_d.*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(singleVarCD));
                 return true;
             });
@@ -86,21 +86,21 @@
             // return multiple runs with variables A and B
             var multipleVarAB = [
                 {
-                    'id': 'run1',
-                    'variables': {
-                        'varA': 1111.11,
-                        'varB': 'A string for run1',
+                    id: 'run1',
+                    variables: {
+                        varA: 1111.11,
+                        varB: 'A string for run1',
                     }
                 },
                 {
-                    'id': 'run2',
-                    'variables': {
-                        'varA': 2222.22,
-                        'varB': 'A string for run2',
+                    id: 'run2',
+                    variables: {
+                        varA: 2222.22,
+                        varB: 'A string for run2',
                     }
                 },
             ];
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables_a_b.*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables_a_b.*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(multipleVarAB));
                 return true;
             });
@@ -108,28 +108,28 @@
             // return multiple runs with variables C and D
             var multipleVarBD = [
                 {
-                    'id': 'run1',
-                    'variables': {
-                        'varC': 'Another string for run1',
-                        'varD': '2015-11-16 10:10:10'
+                    id: 'run1',
+                    variables: {
+                        varC: 'Another string for run1',
+                        varD: '2015-11-16 10:10:10'
                     }
                 },
                 {
-                    'id': 'run2',
-                    'variables': {
-                        'varC': 'Another string for run2',
-                        'varD': '2015-11-16 20:20:20'
+                    id: 'run2',
+                    variables: {
+                        varC: 'Another string for run2',
+                        varD: '2015-11-16 20:20:20'
                     }
                 },
             ];
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables_c_d.*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*multiple_variables_c_d.*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(multipleVarBD));
                 return true;
             });
 
             // Make this request fail
             // return multiple runs with variables C and D
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*internal_server_error.*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*internal_server_error.*/, function (xhr, id) {
                 xhr.respond(500, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Internal server error' }));
                 return true;
             });
@@ -174,14 +174,14 @@
                 .then(function () {
                     callback.should.have.been.called;
                     callback.should.have.been.calledWith({
-                            'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
-                            'model': 'model.vmf',
-                            'account': 'mit',
-                            'project': 'afv',
-                            'saved': false,
-                            'lastModified': '2014-06-20T04:09:45.738Z',
-                            'created': '2014-06-20T04:09:45.738Z'
-                        });
+                        id: '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                        model: 'model.vmf',
+                        account: 'mit',
+                        project: 'afv',
+                        saved: false,
+                        lastModified: '2014-06-20T04:09:45.738Z',
+                        created: '2014-06-20T04:09:45.738Z'
+                    });
                 });
             // callback.should.have.been.calledOn(rs);
         });
@@ -319,7 +319,7 @@
             });
             it('should convert op modifiers to query strings', function () {
                 var rs = new RunService({ account: account, project: project });
-                rs.query({}, { page: 1, limit:2 });
+                rs.query({}, { page: 1, limit: 2 });
 
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + ';/?page=1&limit=2');
@@ -357,18 +357,18 @@
 
                 return rs.query({}, { include: include }).then(success, fail).then(function () {
                     success.should.have.been.calledWith({
-                        'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
-                        'model': 'model.vmf',
-                        'account': account,
-                        'project': 'js-libs',
-                        'saved': false,
-                        'lastModified': '2014-06-20T04:09:45.738Z',
-                        'created': '2014-06-20T04:09:45.738Z',
-                        'variables': {
-                            'varA': 9999.99,
-                            'varB': 'A string',
-                            'varC': 'Another string',
-                            'varD': 10.22,
+                        id: '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                        model: 'model.vmf',
+                        account: account,
+                        project: 'js-libs',
+                        saved: false,
+                        lastModified: '2014-06-20T04:09:45.738Z',
+                        created: '2014-06-20T04:09:45.738Z',
+                        variables: {
+                            varA: 9999.99,
+                            varB: 'A string',
+                            varC: 'Another string',
+                            varD: 10.22,
                         }
                     });
                     fail.should.not.have.been.called;
@@ -385,21 +385,21 @@
                 return rs.query({}, { include: include }).then(success, fail).then(function () {
                     success.should.have.been.calledWith([
                         {
-                            'id': 'run1',
-                            'variables': {
-                                'varA': 1111.11,
-                                'varB': 'A string for run1',
-                                'varC': 'Another string for run1',
-                                'varD': '2015-11-16 10:10:10'
+                            id: 'run1',
+                            variables: {
+                                varA: 1111.11,
+                                varB: 'A string for run1',
+                                varC: 'Another string for run1',
+                                varD: '2015-11-16 10:10:10'
                             }
                         },
                         {
-                            'id': 'run2',
-                            'variables': {
-                                'varA': 2222.22,
-                                'varB': 'A string for run2',
-                                'varC': 'Another string for run2',
-                                'varD': '2015-11-16 20:20:20'
+                            id: 'run2',
+                            variables: {
+                                varA: 2222.22,
+                                varB: 'A string for run2',
+                                varC: 'Another string for run2',
+                                varD: '2015-11-16 20:20:20'
                             }
                         },
                     ]);
@@ -425,7 +425,7 @@
             });
             it('should convert op modifiers to query strings', function () {
                 var rs = new RunService({ account: account, project: project });
-                rs.filter({}, { page: 1, limit:2 });
+                rs.filter({}, { page: 1, limit: 2 });
 
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + ';/?page=1&limit=2');
@@ -508,19 +508,19 @@
         describe('#save()', function () {
             it('should require a filter', function () {
                 var rs = new RunService({ account: account, project: project });
-                var ret = function () { rs.save({ completed: true });};
+                var ret = function () { rs.save({ completed: true }); };
                 ret.should.throw(Error);
             });
             it('should allow passing in filter through options', function () {
                 var rs = new RunService({ account: account, project: project });
-                rs.save({ completed: true }, { filter: { saved:true } });
+                rs.save({ completed: true }, { filter: { saved: true } });
 
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + ';saved=true/');
             });
 
             it('should do an PATCH', function () {
-                var rs = new RunService({ account: account, project: 'js-libs', filter: { saved:true } });
+                var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
                 rs.save({ completed: true });
 
                 var req = server.requests.pop();
@@ -529,7 +529,7 @@
 
             it('should take in options and send to server', function () {
                 var params = { completed: true };
-                var rs = new RunService({ account: account, project: 'js-libs', filter: { saved:true } });
+                var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
                 rs.save(params);
 
                 var req = server.requests.pop();
@@ -554,24 +554,24 @@
             describe('#do', function () {
                 it('should require a filter', function () {
                     var rs = new RunService({ account: account, project: project });
-                    var ret = function () { rs.do('solve');};
+                    var ret = function () { rs.do('solve'); };
                     ret.should.throw(Error);
                 });
 
                 it('should do a POST', function () {
                     var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
-                    rs.do('add', [1,2]);
+                    rs.do('add', [1, 2]);
 
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('POST');
                 });
                 it('should take in operation names and send to server', function () {
                     var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
-                    rs.do('add', [1,2]);
+                    rs.do('add', [1, 2]);
 
                     var req = server.requests.pop();
                     req.url.should.equal(baseURL + ';saved=true/operations/add/');
-                    req.requestBody.should.equal(JSON.stringify({ arguments: [1,2] }));
+                    req.requestBody.should.equal(JSON.stringify({ arguments: [1, 2] }));
                 });
 
                 it('should take in operation names  with single values and send to server', function () {
@@ -596,7 +596,7 @@
             describe('#serial', function () {
                 it('should require a filter', function () {
                     var rs = new RunService({ account: account, project: project });
-                    var ret = function () { rs.serial(['init', 'solve']);};
+                    var ret = function () { rs.serial(['init', 'solve']); };
                     ret.should.throw(Error);
                 });
 
@@ -605,10 +605,10 @@
                     return rs.serial([{ first: [1, 2] }, { second: [2, 3] }]).then(function () {
                         server.requests.length.should.equal(2);
                         server.requests[0].url.should.equal(baseURL + ';saved=true/operations/first/');
-                        server.requests[0].requestBody.should.equal(JSON.stringify({ arguments: [1,2] }));
+                        server.requests[0].requestBody.should.equal(JSON.stringify({ arguments: [1, 2] }));
 
                         server.requests[1].url.should.equal(baseURL + ';saved=true/operations/second/');
-                        server.requests[1].requestBody.should.equal(JSON.stringify({ arguments: [2,3] }));
+                        server.requests[1].requestBody.should.equal(JSON.stringify({ arguments: [2, 3] }));
                     });
                 });
 
@@ -625,14 +625,14 @@
             describe('#parallel', function () {
                 it('should require a filter', function () {
                     var rs = new RunService({ account: account, project: project });
-                    var ret = function () { rs.parallel(['init', 'solve']);};
+                    var ret = function () { rs.parallel(['init', 'solve']); };
                     ret.should.throw(Error);
                 });
 
                 it('should send multiple operations calls once by one', function () {
 
                     var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
-                    rs.parallel([{ first: [1,2] }, { second: [2,3] }]);
+                    rs.parallel([{ first: [1, 2] }, { second: [2, 3] }]);
 
                     server.requests.length.should.equal(2);
                 });
@@ -661,4 +661,4 @@
             });
         });
     });
-})();
+}());

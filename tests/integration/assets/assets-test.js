@@ -1,6 +1,6 @@
 'use strict';
 
-$(function() {
+$(function () {
     var server = {
         server: {
             host: 'api.forio.com'
@@ -14,7 +14,7 @@ $(function() {
     };
 
     var scopes = {
-        user:  'User',
+        user: 'User',
         group: 'Group',
         project: 'Project'
     };
@@ -70,7 +70,7 @@ $(function() {
                     $.each(response, function () {
                         var url = this;
                         var filename = url.substring(url.lastIndexOf('/') + 1);
-                        var extension = filename.substring(filename.lastIndexOf('.')+1);
+                        var extension = filename.substring(filename.lastIndexOf('.') + 1);
                         var item = $('<div class="file col-sm-2"></div>');
                         if ($.inArray(extension, imageExtensions) > -1) {
                             item.append('<img class="thumb" src="' + url + '" alt="Asset">');

@@ -30,7 +30,7 @@ ScenarioManager.prototype = {
 
     _getService: function (run) {
         if (typeof run === 'string') {
-            return new RunService($.extend(true, {},  this.options, { filter: run }));
+            return new RunService($.extend(true, {}, this.options, { filter: run }));
         }
 
         if (typeof run === 'object' && run instanceof RunService) {
@@ -41,7 +41,7 @@ ScenarioManager.prototype = {
     },
 
     getRun: function (runId) {
-        return new RunService($.extend(true, {},  this.options, { filter: runId }));
+        return new RunService($.extend(true, {}, this.options, { filter: runId }));
     }
 };
 

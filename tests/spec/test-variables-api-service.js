@@ -25,25 +25,25 @@
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
             // General Multiple Runs GET
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*sample .*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*sample .*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({}));
                 return true;
             });
             // return variables A and B
             var variablesAB = {
-                'varA': 'Value A',
-                'varB': 0.0001
+                varA: 'Value A',
+                varB: 0.0001
             };
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*variables_a_b.*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*variables_a_b.*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(variablesAB));
                 return true;
             });
             // return variables C and D
             var variablesCD = {
-                'varC': 'Another string for run1',
-                'varD': '2015-11-16 10:10:10'
+                varC: 'Another string for run1',
+                varD: '2015-11-16 10:10:10'
             };
-            server.respondWith('GET',  /(.*)\/run\/(.*)\?.*include=[^&]*variables_c_d.*/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/(.*)\?.*include=[^&]*variables_c_d.*/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(variablesCD));
                 return true;
             });

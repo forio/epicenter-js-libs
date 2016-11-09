@@ -15,14 +15,14 @@
 
         before(function () {
             server = sinon.fakeServer.create();
-            server.respondWith('PUT',  /(.*)\/asset\/(.*)\/(.*)/, function (xhr, id) {
+            server.respondWith('PUT', /(.*)\/asset\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(204);
             });
-            server.respondWith('GET',  /(.*)\/asset\/(.*)\/(.*)/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/asset\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' },
                     JSON.stringify(['file.txt', 'file2.txt']));
             });
-            server.respondWith('POST',  /(.*)\/asset\/(.*)\/(.*)/,  function (xhr, id) {
+            server.respondWith('POST', /(.*)\/asset\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(204);
             });
             server.respondImmediately = true;
@@ -278,4 +278,4 @@
             });
         });
     });
-})();
+}());

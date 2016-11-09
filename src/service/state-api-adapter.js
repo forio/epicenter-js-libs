@@ -37,7 +37,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         transportOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
 
@@ -60,11 +60,12 @@ module.exports = function (config) {
         *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
         *
         *  **Parameters**
-        * @param {object} `params` Parameters object.
-        * @param {string} `params.runId` The id of the run to bring back to memory.
-        * @param {string} `params.stopBefore` (Optional) The run is advanced only up to the first occurrence of this method.
-        * @param {array} `params.exclude` (Optional) Array of methods to exclude when advancing the run.
-        * @param {object} `options` (Optional) Overrides for configuration options.
+        * @param {object} params Parameters object.
+        * @param {string} params.runId The id of the run to bring back to memory.
+        * @param {string} params.stopBefore (Optional) The run is advanced only up to the first occurrence of this method.
+        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the run.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
         */
         replay: function (params, options) {
             var runId = parseRunIdOrError(params);
@@ -97,11 +98,12 @@ module.exports = function (config) {
         *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
         *
         *  **Parameters**
-        * @param {object} `params` Parameters object.
-        * @param {string} `params.runId` The id of the run to clone from memory.
-        * @param {string} `params.stopBefore` (Optional) The newly cloned run is advanced only up to the first occurrence of this method.
-        * @param {array} `params.exclude` (Optional) Array of methods to exclude when advancing the newly cloned run.
-        * @param {object} `options` (Optional) Overrides for configuration options.
+        * @param {object} params Parameters object.
+        * @param {string} params.runId The id of the run to clone from memory.
+        * @param {string} params.stopBefore (Optional) The newly cloned run is advanced only up to the first occurrence of this method.
+        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the newly cloned run.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
         */
         clone: function (params, options) {
             var runId = parseRunIdOrError(params);

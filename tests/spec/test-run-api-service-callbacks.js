@@ -7,21 +7,21 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            server.respondWith('PATCH',  /(.*)\/run\/forio\/(.*)/, function (xhr, id) {
+            server.respondWith('PATCH', /(.*)\/run\/forio\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith('GET',  /(.*)\/run\/forio\/(.*)/, function (xhr, id) {
+            server.respondWith('GET', /(.*)\/run\/forio\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith('POST',  /(.*)\/run\/forio\/(.*)/,  function (xhr, id) {
+            server.respondWith('POST', /(.*)\/run\/forio\/(.*)/, function (xhr, id) {
                 var resp = {
-                    'id': '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
-                    'model': 'model.vmf',
-                    'account': 'mit',
-                    'project': 'afv',
-                    'saved': false,
-                    'lastModified': '2014-06-20T04:09:45.738Z',
-                    'created': '2014-06-20T04:09:45.738Z'
+                    id: '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
+                    model: 'model.vmf',
+                    account: 'mit',
+                    project: 'afv',
+                    saved: false,
+                    lastModified: '2014-06-20T04:09:45.738Z',
+                    created: '2014-06-20T04:09:45.738Z'
                 };
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
             });
@@ -43,7 +43,7 @@
                 var cb2 = sinon.spy();
 
                 var rs = new RunService({ account: 'forio', project: 'js-libs', filter: { saved: true } });
-                return rs.do('add', [1,2], { success: cb1 }).then(cb2).then(function () {
+                return rs.do('add', [1, 2], { success: cb1 }).then(cb2).then(function () {
                     cb1.should.have.been.called;
                     cb2.should.have.been.called;
                 });
@@ -55,7 +55,7 @@
 
 
                 var rs = new RunService({ account: 'failure', project: 'js-libs', filter: { saved: true } });
-                return rs.do('add', [1,2], { error: cb1 }).then(null, cb3).then(null,  function () {
+                return rs.do('add', [1, 2], { error: cb1 }).then(null, cb3).then(null, function () {
                     cb1.should.have.been.called;
                     cb2.should.not.have.been.called;
                     cb3.should.have.been.called;
@@ -68,7 +68,7 @@
                 var cb2 = sinon.spy();
 
                 var rs = new RunService({ account: 'forio', project: 'js-libs', filter: { saved: true } });
-                return rs.serial([{ first: [1,2] }, { second: [2,3] }], null, { success: cb1 }).then(cb2).then(function () {
+                return rs.serial([{ first: [1, 2] }, { second: [2, 3] }], null, { success: cb1 }).then(cb2).then(function () {
                     cb1.should.have.been.called;
                     cb2.should.have.been.called;
                 });
@@ -79,7 +79,7 @@
                 var cb3 = sinon.spy();
 
                 var rs = new RunService({ account: 'failure', project: 'js-libs', filter: { saved: true } });
-                return rs.serial([{ first: [1,2] }, { second: [2,3] }], null, { error: cb1 }).then(null, cb3).then(function () {
+                return rs.serial([{ first: [1, 2] }, { second: [2, 3] }], null, { error: cb1 }).then(null, cb3).then(function () {
                     cb1.should.have.been.called;
                     cb2.should.not.have.been.called;
                     cb3.should.have.been.called;
@@ -93,7 +93,7 @@
 
 
                 var rs = new RunService({ account: 'forio', project: 'js-libs', filter: { saved: true } });
-                return rs.parallel([{ first: [1,2] }, { second: [2,3] }], null, { success: cb1 }).then(cb2).then(function () {
+                return rs.parallel([{ first: [1, 2] }, { second: [2, 3] }], null, { success: cb1 }).then(cb2).then(function () {
                     cb1.should.have.been.called;
                     cb2.should.have.been.called;
                 });
@@ -105,7 +105,7 @@
 
 
                 var rs = new RunService({ account: 'failure', project: 'js-libs', filter: { saved: true } });
-                return rs.parallel([{ first: [1,2] }, { second: [2,3] }], null, { error: cb1 }).then(null, cb3).then(function () {
+                return rs.parallel([{ first: [1, 2] }, { second: [2, 3] }], null, { error: cb1 }).then(null, cb3).then(function () {
                     cb1.should.have.been.called;
                     cb2.should.not.have.been.called;
                     cb3.should.have.been.called;
@@ -218,8 +218,8 @@
 
                 var rs = new RunService({ account: 'forio', project: 'js-libs', filter: { saved: true } });
                 return rs.save({ completed: true }, { success: cb1 }).then(cb2).then(function () {
-                   cb1.should.have.been.called;
-                   cb2.should.have.been.called;
+                    cb1.should.have.been.called;
+                    cb2.should.have.been.called;
                 });
             });
             it('passes error callbacks', function () {
@@ -237,4 +237,4 @@
             });
         });
     });
-})();
+}());

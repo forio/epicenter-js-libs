@@ -6,19 +6,19 @@
     describe('Channel', function () {
         var c, mockCometd;
         beforeEach(function () {
-           mockCometd = {
+            mockCometd = {
                 subscribe: sinon.spy(function () {
                     // console.log(arguments);
                 }),
                 publish: sinon.spy(),
                 batch: function (cb) {
-                  cb();
+                    cb();
                 },
                 unsubscribe: sinon.spy()
-           };
-           c = new Channel({
+            };
+            c = new Channel({
                 transport: mockCometd
-           });
+            });
         });
 
         describe('topicResolver', function () {
@@ -44,8 +44,8 @@
                         return topic.split('').reverse().join('');
                     }
                 });
-                c.publish('topic', { a:1 });
-                mockCometd.publish.should.have.been.calledWith('cipot', { a:1 });
+                c.publish('topic', { a: 1 });
+                mockCometd.publish.should.have.been.calledWith('cipot', { a: 1 });
             });
         });
 

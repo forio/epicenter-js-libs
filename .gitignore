@@ -10,6 +10,7 @@ pids
 .*
 !.jshintrc
 !.bowerrc
+!.eslintrc
 !.gitignore
 !.jscsrc
 !.gitattributes

@@ -125,7 +125,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         transportOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
 
@@ -174,10 +174,10 @@ module.exports = function (config) {
     // Private function, all requests follow a more or less same approach to
     // use the Asset API and the difference is the HTTP verb
     //
-    // @param {string} `method` (Required) HTTP verb
-    // @param {string} `filename` (Required) Name of the file to delete/replace/create
-    // @param {object} `params` (Optional) Body parameters to send to the Asset API
-    // @param {object} `options` (Optional) Options object to override global options.
+    // @param {string} method` (Required) HTTP verb
+    // @param {string} filename` (Required) Name of the file to delete/replace/create
+    // @param {object} params` (Optional) Body parameters to send to the Asset API
+    // @param {object} options` (Optional) Options object to override global options.
     var upload = function (method, filename, params, options) {
         validateFilename(filename);
         // make sure the parameter is clean
@@ -240,13 +240,13 @@ module.exports = function (config) {
         *
         *
         *  **Parameters**
-        * @param {string} `filename` (Required) Name of the file to create.
-        * @param {object} `params` (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
-        * @param {string} `params.encoding` Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} `params.data` The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} `params.contentType` The mime type of the file. Optional.
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
+        * @param {string} filename (Required) Name of the file to create.
+        * @param {object} params (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
+        * @param {string} params.encoding Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} params.data The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} params.contentType The mime type of the file. Optional.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         create: function (filename, params, options) {
             return upload('post', filename, params, options);
@@ -257,9 +257,9 @@ module.exports = function (config) {
         * of the assets in a scope, use `list()`.)
         *
         *  **Parameters**
-        * @param {string} `filename` (Required) Name of the file to retrieve.
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
+        * @param {string} filename (Required) Name of the file to retrieve.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         get: function (filename, options) {
             var getServiceOptions = _pick(serviceOptions, ['scope', 'account', 'project', 'group', 'userId']);
@@ -280,10 +280,10 @@ module.exports = function (config) {
         *       });
         *
         *  **Parameters**
-        * @param {object} `options` (Optional) Options object to override global options.
-        * @param {string} `options.scope` (Optional) The scope (`user`, `group`, `project`).
-        * @param {boolean} `options.fullUrl` (Optional) Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
-        *
+        * @param {object} options (Optional) Options object to override global options.
+        * @param {string} options.scope (Optional) The scope (`user`, `group`, `project`).
+        * @param {boolean} options.fullUrl (Optional) Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
+        * @return {Promise}
         */
         list: function (options) {
             var dtd = $.Deferred();
@@ -341,13 +341,13 @@ module.exports = function (config) {
         *       });
         *
         *  **Parameters**
-        * @param {string} `filename` (Required) Name of the file being replaced.
-        * @param {object} `params` (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
-        * @param {string} `params.encoding` Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} `params.data` The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} `params.contentType` The mime type of the file. Optional.
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
+        * @param {string} filename (Required) Name of the file being replaced.
+        * @param {object} params (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
+        * @param {string} params.encoding Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} params.data The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} params.contentType The mime type of the file. Optional.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         replace: function (filename, params, options) {
             return upload('put', filename, params, options);
@@ -361,9 +361,9 @@ module.exports = function (config) {
         *       aa.delete(sampleFileName);
         *
         *  **Parameters**
-        * @param {string} `filename` (Required) Name of the file to delete.
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
+        * @param {string} filename (Required) Name of the file to delete.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         delete: function (filename, options) {
             return upload('delete', filename, {}, options);

@@ -18,57 +18,57 @@
                 }
             };
             userInfo = {
-               'jti':'23b6c85b-abcc-443f-93aa-a2bd5e5d4e4b',
-               'sub':'550a2b8b-80f7-4a72-80be-033f87c79cf0',
-               'scope':[
-                  'oauth.approvals',
-                  'openid'
-               ],
-               'client_id':'login',
-               'cid':'login',
-               'grant_type':'password',
-               'user_id':'550a2b8b-80f7-4a72-80be-033f87c79cf0',
-               'user_name':'ricardo001/accountName/',
-               'email':'none@none.com',
-               'iat':1417567152,
-               'exp':1417610352,
-               'iss':'http://localhost:9763/uaa/oauth/token',
-               'aud':[
-                  'oauth',
-                  'openid'
-               ]
+                jti: '23b6c85b-abcc-443f-93aa-a2bd5e5d4e4b',
+                sub: '550a2b8b-80f7-4a72-80be-033f87c79cf0',
+                scope: [
+                    'oauth.approvals',
+                    'openid'
+                ],
+                client_id: 'login',
+                cid: 'login',
+                grant_type: 'password',
+                user_id: '550a2b8b-80f7-4a72-80be-033f87c79cf0',
+                user_name: 'ricardo001/accountName/',
+                email: 'none@none.com',
+                iat: 1417567152,
+                exp: 1417610352,
+                iss: 'http://localhost:9763/uaa/oauth/token',
+                aud: [
+                    'oauth',
+                    'openid'
+                ]
             };
 
             token = 'eyJhbGciOiJSUzI1NiJ9.' + btoa(JSON.stringify(userInfo)) + '.yYIKw_eWYXAoqPR9aKXs4_';
-            var tmUserInfo = $.extend({ 'parent_account_id': null }, userInfo);
+            var tmUserInfo = $.extend({ parent_account_id: null }, userInfo);
             var teamMemberToken = 'eyJhbGciOiJSUzI1NiJ9.' + btoa(JSON.stringify(tmUserInfo)) + '.yYIKw_eWYXAoqPR9aKXs4_';
             server = sinon.fakeServer.create();
             server.respondWith(/(.*)\/authentication/, function (xhr, id) {
                 var response = teamMemberResponse ? teamMemberToken : token;
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(
-                    { 'refresh_token':'snip-refresh','access_token': response,'expires':43199 }
+                    { refresh_token: 'snip-refresh', access_token: response, expires: 43199 }
                     ));
             });
             var groupMembers = [
                 {
-                    'expirationDate': '2016-09-17T00:00:00.000Z',
-                    'userId': '550a2b8b-80f7-4a72-80be-033f87c79cf0',
-                    'role': 'standard',
-                    'userName': 'ricardo001',
-                    'account': 'accountName',
-                    'lastName': 'Test 1',
-                    'active': true
+                    expirationDate: '2016-09-17T00:00:00.000Z',
+                    userId: '550a2b8b-80f7-4a72-80be-033f87c79cf0',
+                    role: 'standard',
+                    userName: 'ricardo001',
+                    account: 'accountName',
+                    lastName: 'Test 1',
+                    active: true
                 }
             ];
             var singleGroup = [
-              {
-                  members: groupMembers,
-                  'account': 'accountName',
-                  'project': 'projectName',
-                  'type': 'local',
-                  'groupId': '111efcc9-726c-47b8-ba94-2895f110bd39',
-                  'name': 'rv-test'
-              }
+                {
+                    members: groupMembers,
+                    account: 'accountName',
+                    project: 'projectName',
+                    type: 'local',
+                    groupId: '111efcc9-726c-47b8-ba94-2895f110bd39',
+                    name: 'rv-test'
+                }
             ];
             var multipleGroups = singleGroup.concat({
                 members: groupMembers,

@@ -40,4 +40,4 @@
             req.url.should.match(/group\/local\/my-group-id/);
         });
     });
-})();
+}());

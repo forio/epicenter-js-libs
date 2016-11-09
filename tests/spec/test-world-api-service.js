@@ -76,7 +76,7 @@
                 gs.update({ roles: ['role1'] });
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('PATCH');
-                /\/world\/abc1/.test(req.url).should.be.true;
+                (/\/world\/abc1/).test(req.url).should.be.true;
             });
 
             it('should trow if no filter is specified', function () {
@@ -108,13 +108,13 @@
                 createWorldAdapter({ filter: 'worldid1' }).delete();
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                /\/world\/worldid1/.test(req.url).should.be.true;
+                (/\/world\/worldid1/).test(req.url).should.be.true;
             });
             it('should interpret strings as an id', function () {
                 createWorldAdapter().delete('worldid1');
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('DELETE');
-                /\/world\/worldid1/.test(req.url).should.be.true;
+                (/\/world\/worldid1/).test(req.url).should.be.true;
             });
         });
 
@@ -124,10 +124,10 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                /\/world\//.test(req.url).should.be.true;
-                /group=123/.test(req.url).should.be.true;
-                /account=forio/.test(req.url).should.be.true;
-                /project=js-libs/.test(req.url).should.be.true;
+                (/\/world\//).test(req.url).should.be.true;
+                (/group=123/).test(req.url).should.be.true;
+                (/account=forio/).test(req.url).should.be.true;
+                (/project=js-libs/).test(req.url).should.be.true;
             });
         });
 
@@ -167,11 +167,11 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                /\/world\//.test(req.url).should.be.true;
-                /group=123/.test(req.url).should.be.true;
-                /account=forio/.test(req.url).should.be.true;
-                /project=js-libs/.test(req.url).should.be.true;
-                /userId=abc999/.test(req.url).should.be.true;
+                (/\/world\//).test(req.url).should.be.true;
+                (/group=123/).test(req.url).should.be.true;
+                (/account=forio/).test(req.url).should.be.true;
+                (/project=js-libs/).test(req.url).should.be.true;
+                (/userId=abc999/).test(req.url).should.be.true;
             });
         });
 
@@ -183,7 +183,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/world\/worldid1/.test(req.url).should.be.true;
+                (/\/world\/worldid1/).test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
 
                 body.should.be.instanceof(Array);
@@ -197,7 +197,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/world\/gameid1/.test(req.url).should.be.true;
+                (/\/world\/gameid1/).test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
                 body.should.be.instanceof(Array);
                 body.should.be.length(1);
@@ -210,7 +210,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/world\/gameid1/.test(req.url).should.be.true;
+                (/\/world\/gameid1/).test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
                 body.should.be.instanceof(Array);
                 body.should.be.length(1);
@@ -223,7 +223,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('POST');
-                /\/world\/gameid1/.test(req.url).should.be.true;
+                (/\/world\/gameid1/).test(req.url).should.be.true;
                 var body = JSON.parse(req.requestBody);
                 body.should.be.instanceof(Array);
                 body.should.be.length(2);
@@ -252,7 +252,7 @@
                 var ws = createWorldAdapter();
 
                 expect(ws.addUsers).to.throw(Error);
-        });
+            });
 
             it('should throw error if not all users in the list are valid', function () {
                 var ws = createWorldAdapter();
@@ -282,7 +282,7 @@
 
         describe('updateUser', function () {
             it('should patch the correct user for the correct world', function () {
-                createWorldAdapter({ filter: 'gameid1' }).updateUser({ userId:'123', role: 'abc' });
+                createWorldAdapter({ filter: 'gameid1' }).updateUser({ userId: '123', role: 'abc' });
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('PATCH');
@@ -290,7 +290,7 @@
             });
 
             it('should patch the correct role', function () {
-                createWorldAdapter({ filter: 'gameid1' }).updateUser({ userId:'123', role: 'abc' });
+                createWorldAdapter({ filter: 'gameid1' }).updateUser({ userId: '123', role: 'abc' });
 
                 var req = server.requests.pop();
                 var body = JSON.parse(req.requestBody);
@@ -410,4 +410,4 @@
 
     });
 
-})();
+}());

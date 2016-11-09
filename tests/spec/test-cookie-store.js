@@ -18,8 +18,8 @@
 
         describe('#set & #get()', function () {
             it('sets strings with keys', function () {
-               cs.set('test', 'key');
-               cs.get('test').should.equal('key');
+                cs.set('test', 'key');
+                cs.get('test').should.equal('key');
             });
 
             it('gets the first ocurrence of a key', function () {
@@ -59,12 +59,12 @@
 
         describe('#destroy', function () {
             it('destroys all items', function () {
-               cs.set('test', 'key');
-               cs.set('test2', 'key2');
-               cs.destroy();
+                cs.set('test', 'key');
+                cs.set('test2', 'key2');
+                cs.destroy();
 
-               should.not.exist(cs.get('test'));
-               should.not.exist(cs.get('test2'));
+                should.not.exist(cs.get('test'));
+                should.not.exist(cs.get('test2'));
             });
         });
 
