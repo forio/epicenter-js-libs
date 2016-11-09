@@ -17,6 +17,7 @@
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-conventional-changelog": "^6.1.0",
+    "grunt-eslint": "^19.0.0",
     "grunt-jscs": "^3.0.1",
     "grunt-markdox": "^1.2.1",
     "grunt-mocha-phantom-istanbul": "^0.1.1",
