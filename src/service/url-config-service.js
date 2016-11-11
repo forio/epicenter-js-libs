@@ -32,9 +32,9 @@ var UrlConfigService = function (config) {
         host: (function () {
             var host = options.host;
             if (isLocalhost()) {
-                host = 'forio.com';
+                host = 'api.forio.com';
             }
-            return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : 'api.' + host;
+            return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : host;
         }()),
 
         appPath: (function () {
@@ -80,14 +80,12 @@ var UrlConfigService = function (config) {
         }
     };
 
-    // This data is set by an external script (start-load.js)
-    var envConf = {
-        protocol: UrlConfigService.protocol,
-        host: UrlConfigService.host
-    };
+    var envConf = UrlConfigService.defaults;
 
     $.extend(publicExports, envConf, config);
     return publicExports;
 };
+// This data can be set by external scripts, for loading from an env server for eg;
+UrlConfigService.defaults = {};
 
 module.exports = UrlConfigService;

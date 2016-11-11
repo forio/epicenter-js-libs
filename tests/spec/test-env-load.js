@@ -30,13 +30,11 @@
                 server.respondWith('GET', /(.*)\/epicenter\/v1\/config/, function (xhr, id) {
                     xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(env));
                 });
-                delete F.service.URL.protocol;
-                delete F.service.URL.host;
+                delete F.service.URL.defaults;
                 F.load(function () {
-                    F.service.URL.protocol.should.equal('https');
-                    F.service.URL.host.should.equal('customapi.forio.com');
-                    delete F.service.URL.protocol;
-                    delete F.service.URL.host;
+                    F.service.URL.defaults.protocol.should.equal('https');
+                    F.service.URL.defaults.host.should.equal('customapi.forio.com');
+                    delete F.service.URL.defaults;
                     //done();
                 });
             });
@@ -45,14 +43,12 @@
                 server.respondWith('GET', /(.*)\/epicenter\/v1\/config/, function (xhr, id) {
                     xhr.respond(404, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Not Found on Server' }));
                 });
-                delete F.service.URL.protocol;
-                delete F.service.URL.host;
+                delete F.service.URL.defaults;
                 var callback = sinon.spy();
                 F.load(function () {
-                    F.service.URL.protocol.should.equal('https');
-                    F.service.URL.host.should.equal('api.forio.com');
-                    delete F.service.URL.protocol;
-                    delete F.service.URL.host;
+                    F.service.URL.defaults.protocol.should.equal('https');
+                    F.service.URL.defaults.host.should.equal('api.forio.com');
+                    delete F.service.URL.defaults;
                 }).then(null, callback).then(function () {
                     callback.should.have.been.called;
                 });

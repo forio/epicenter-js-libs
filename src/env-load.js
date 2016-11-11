@@ -15,12 +15,12 @@ var envLoad = function (callback) {
     var infoUrl = host + envPath;
     envPromise = $.ajax({ url: infoUrl, async: false });
     envPromise.then(function (res) {
-        var api = res.api;
-        $.extend(urlConfigService, api);
+        var overrides = res.api;
+        urlConfigService.defaults = $.extend(urlConfigService.defaults, overrides);
     }).fail(function (res) {
         // Epicenter/webserver not properly configured
         // fallback to api.forio.com
-        $.extend(urlConfigService, { protocol: 'https', host: 'api.forio.com' });
+        urlConfigService.defaults = $.extend(urlConfigService.defaults, { protocol: 'https', host: 'api.forio.com' });
     });
     return envPromise.then(callback).fail(callback);
 };
