@@ -27,7 +27,7 @@
             });
 
             it('it should set protocol and host to the UrlConfingService', function () {
-                server.respondWith('GET', 'https://forio.com/epicenter/v1/config', function (xhr, id) {
+                server.respondWith('GET', /(.*)\/epicenter\/v1\/config/, function (xhr, id) {
                     xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(env));
                 });
                 delete F.service.URL.protocol;
@@ -42,7 +42,7 @@
             });
 
             it('it should set protocol and host to api.forio.com when the config request fails', function () {
-                server.respondWith('GET', 'https://forio.com/epicenter/v1/config', function (xhr, id) {
+                server.respondWith('GET', /(.*)\/epicenter\/v1\/config/, function (xhr, id) {
                     xhr.respond(404, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Not Found on Server' }));
                 });
                 delete F.service.URL.protocol;
