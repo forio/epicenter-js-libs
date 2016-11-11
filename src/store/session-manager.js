@@ -26,7 +26,7 @@ var SessionManager = function (managerOptions) {
         var baseOptions = getBaseOptions(overrides);
         var storeOpts = baseOptions.store || {};
         if (storeOpts.root === undefined && baseOptions.account && baseOptions.project && !baseOptions.isLocal) {
-            storeOpts.root = '/app/' + baseOptions.account + '/' + baseOptions.project;
+            storeOpts.root = '/app/' + baseOptions.account + '/' + baseOptions.project; //TODO: Not sure why this is prefixing 'app'
         }
         return new StorageFactory(storeOpts);
     }

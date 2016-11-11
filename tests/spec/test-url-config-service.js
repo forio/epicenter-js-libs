@@ -47,6 +47,11 @@
                 var url = new URLService({ pathname: '/app/acme/hello_world', host: 'forio.com' });
                 url.isLocalhost().should.be.false;
             });
+            it('should return false on custom domain environments', function () {
+                var url = new URLService({ pathname: 'oranges', host: 'apples.com' });
+                url.isLocalhost().should.be.false;
+            });
+
         });
     });
 }());

@@ -11,10 +11,11 @@ var defaults = {
 var UrlConfigService = function (config) {
     var options = $.extend({}, defaults, config);
     function isLocalhost() {
-        var host = options.host;
-        var path = options.pathname;
-        // Sort of hardcode the fact that epicenter application space is prefixed by /app/
-        return (!host || path.indexOf('/app/') !== 0);
+        var isLocal = !options.host || //phantomjs
+            options.host === '127.0.0.1' || 
+            options.host.indexOf('local.') === 0 || 
+            options.host.indexOf('localhost') === 0;
+        return isLocal;
     }
 
     var API_PROTOCOL = 'https';
