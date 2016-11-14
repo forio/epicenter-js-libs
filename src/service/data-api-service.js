@@ -143,7 +143,7 @@ module.exports = function (config) {
         /**
          * Save data in an anonymous document within the collection.
          *
-         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options. (If you do not specify the `root` during the Data Service initialization, it defaults to `/`.) You can also pass the `root` to the `save` call explicitly by overriding the options (third parameter).
+         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options; you can also pass the `root` to the `save` call explicitly by overriding the options (third parameter).
          *
          * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `save` method is making a `POST` request.)
          *
@@ -153,7 +153,7 @@ module.exports = function (config) {
          *      ds.save('question1', 'yes');
          *
          *      // Create a new document, with two elements, at the default root level
-         *      ds.save({question1:'yes', question2: 32 });
+         *      ds.save({ question1:'yes', question2: 32 });
          *
          *      // Create a new document, with two elements, at `/students/`
          *      ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
@@ -182,7 +182,7 @@ module.exports = function (config) {
         /**
          * Save (create or replace) data in a named document or element within the collection. 
          * 
-         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options. (If you do not specify the `root` during the Data Service initialization, it defaults to `/`.) You can also pass the `root` to the `saveAs` call explicitly by overriding the options (third parameter).
+         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options; you can also pass the `root` to the `saveAs` call explicitly by overriding the options (third parameter).
          *
          * Optionally, the named document or element can include path information, so that you are saving just part of the document.
          *
@@ -199,6 +199,8 @@ module.exports = function (config) {
          *      // Create (or replace) the `student1` document at the `students` root, 
          *      // that is, the data at `/students/student1/`.
          *      // Note that this replaces any existing content in the `/students/student1/` document.
+         *      // However, this will keep existing content in other paths of this collection.
+         *      // For example, the data at `/students/student2/` is unchanged by this call.
          *      ds.saveAs('student1',
          *          { firstName: 'john', lastName: 'smith' },
          *          { root: 'students' });
