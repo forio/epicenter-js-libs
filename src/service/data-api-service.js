@@ -36,7 +36,7 @@ var SessionManager = require('../store/session-manager');
 module.exports = function (config) {
     var defaults = {
         /**
-         * Name of collection. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`. Required.
+         * Name of collection. Required. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`, but must be set to a collection name.
          * @type {String}
          */
         root: '/',
@@ -141,21 +141,28 @@ module.exports = function (config) {
         },
 
         /**
-         * Save data to an anonymous document within the collection.
+         * Save data in an anonymous document within the collection.
          *
-         * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for additional background.)
+         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options; you can also pass the `root` to the `save` call explicitly by overriding the options (third parameter).
+         *
+         * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `save` method is making a `POST` request.)
          *
          * **Example**
          *
+         *      // Create a new document, with one element, at the default root level
          *      ds.save('question1', 'yes');
-         *      ds.save({question1:'yes', question2: 32 });
+         *
+         *      // Create a new document, with two elements, at the default root level
+         *      ds.save({ question1:'yes', question2: 32 });
+         *
+         *      // Create a new document, with two elements, at `/students/`
          *      ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
          *
          * **Parameters**
          *
          * @param {String|Object} key If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
          * @param {Object} value (Optional) The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} options (Optional) Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
          * @return {Promise} 
          */
         save: function (key, value, options) {
@@ -173,18 +180,36 @@ module.exports = function (config) {
         },
 
         /**
-         * Save data to a named document or element within the collection. The `root` of the collection must be specified separately in configuration options, either as part of the call or as part of the initialization of ds.
+         * Save (create or replace) data in a named document or element within the collection. 
+         * 
+         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options; you can also pass the `root` to the `saveAs` call explicitly by overriding the options (third parameter).
          *
-         * (Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for additional background.)
+         * Optionally, the named document or element can include path information, so that you are saving just part of the document.
+         *
+         * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `saveAs` method is making a `PUT` request.)
          *
          * **Example**
          *
+         *      // Create (or replace) the `user1` document at the default root level.
+         *      // Note that this replaces any existing content in the `user1` document.
          *      ds.saveAs('user1',
          *          { 'question1': 2, 'question2': 10,
          *           'question3': false, 'question4': 'sometimes' } );
+         *
+         *      // Create (or replace) the `student1` document at the `students` root, 
+         *      // that is, the data at `/students/student1/`.
+         *      // Note that this replaces any existing content in the `/students/student1/` document.
+         *      // However, this will keep existing content in other paths of this collection.
+         *      // For example, the data at `/students/student2/` is unchanged by this call.
          *      ds.saveAs('student1',
          *          { firstName: 'john', lastName: 'smith' },
          *          { root: 'students' });
+         *
+         *      // Create (or replace) the `mgmt100/groupB` document at the `myclasses` root,
+         *      // that is, the data at `/myclasses/mgmt100/groupB/`.
+         *      // Note that this replaces any existing content in the `/myclasses/mgmt100/groupB/` document.
+         *      // However, this will keep existing content in other paths of this collection.
+         *      // For example, the data at `/myclasses/mgmt100/groupA/` is unchanged by this call.
          *      ds.saveAs('mgmt100/groupB',
          *          { scenarioYear: '2015' },
          *          { root: 'myclasses' });
@@ -193,7 +218,7 @@ module.exports = function (config) {
          *
          * @param {String} key Id of the document.
          * @param {Object} value (Optional) The data to save, in key:value pairs.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} options (Optional) Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
          * @return {Promise} 
          */
         saveAs: function (key, value, options) {
