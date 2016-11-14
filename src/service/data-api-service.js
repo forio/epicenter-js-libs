@@ -36,7 +36,7 @@ var SessionManager = require('../store/session-manager');
 module.exports = function (config) {
     var defaults = {
         /**
-         * Name of collection. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`. Required.
+         * Name of collection. Required. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`, but must be set to a collection name.
          * @type {String}
          */
         root: '/',
