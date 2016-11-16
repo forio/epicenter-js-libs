@@ -32,8 +32,7 @@
                 var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
                 url.getAPIPath('data').should.equal('htttps://funky.forio.com/data/forioAccount/forioProj/');
 
-                // Delete global settings to avoid affecting other tests
-                delete F.service.URL.defaults;
+                F.service.URL.defaults = {};
             });
 
             it('should return true on local environments', function () {
