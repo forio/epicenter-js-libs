@@ -97,7 +97,7 @@
         });
 
         describe('Login', function () {
-            it('should construct the right authenticaton request', function () {
+            it('It should construct the right authenticaton request', function () {
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
                     project: 'projectName',
@@ -108,7 +108,7 @@
                 req.url.should.match(/https:\/\/api\.forio\.com\/(.*)\/authentication\/?/);
             });
 
-            it('should call members API on sucessful login', function (done) {
+            it('It should call members API on sucessful login', function (done) {
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
                     project: 'projectName',
@@ -124,10 +124,9 @@
                 });
             });
 
-            it('should set the session', function (done) {
+            it('it should set the session', function (done) {
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
-                    // requiresGroup: false,
                     project: 'projectName',
                 });
                 am.login({ userName: 'test', password: 'test' }).then(function (response) {
@@ -145,7 +144,7 @@
                 });
             });
 
-            it('should fail when the user has multiple groups', function (done) {
+            it('it should fail when the user has multiple groups', function (done) {
                 multipleGroupsResponse = true;
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
@@ -161,7 +160,7 @@
                 });
             });
 
-            it('should work when a group is specified', function (done) {
+            it('it should work when a group is specified', function (done) {
                 multipleGroupsResponse = true;
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
@@ -179,7 +178,7 @@
                 });
             });
 
-            it('should not work when a wrong group is used', function (done) {
+            it('it should not work when a wrong group is used', function (done) {
                 multipleGroupsResponse = true;
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
@@ -216,7 +215,7 @@
                 
             });
 
-            it('should fail with the list of groups on a team member login with no group', function (done) {
+            it('it should fail with the list of groups on a team member login with no group', function (done) {
                 multipleGroupsResponse = true;
                 teamMemberResponse = true;
                 var am = new F.manager.AuthManager({
@@ -241,7 +240,7 @@
         });
 
         describe('Logout', function () {
-            it('should remove the epicenter cookie', function (done) {
+            it('It should remove the epicenter cookie', function (done) {
                 sinon.spy(cookie, 'set');
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
@@ -309,7 +308,7 @@
         });
 
         describe('#addGroups', function () {
-            it('should have one group on login', function (done) {
+            it('it should have one group on login', function (done) {
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
                     project: 'projectName',
@@ -324,7 +323,7 @@
                 });
             });
 
-            it('should accept an object', function (done) {
+            it('it should accept an object', function (done) {
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
                     project: 'projectName',
@@ -347,7 +346,7 @@
                 });
             });
 
-            it('should accept an array', function (done) {
+            it('it should accept an array', function (done) {
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
                     project: 'projectName',
@@ -375,7 +374,7 @@
                 });
             });
 
-            it('should override a project\'s group', function (done) {
+            it('it should override a project\'s group', function (done) {
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
                     project: 'projectName',

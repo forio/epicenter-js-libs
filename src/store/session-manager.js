@@ -3,19 +3,14 @@
 var keyNames = require('../managers/key-names');
 var StorageFactory = require('./store-factory');
 var optionUtils = require('../util/option-utils');
-var URLService = require('../service/url-config-service');
 
-var urlservice = new URLService();
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var defaults = {
     /**
      * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
      * @type {string}
      */
-    store: { 
-        host: urlservice.host,
-        synchronous: true 
-    }
+    store: { synchronous: true }
 };
 
 var SessionManager = function (managerOptions) {
