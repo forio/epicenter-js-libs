@@ -28,11 +28,13 @@
             });
 
             it('should allow over-riding host and protocol globally', function () {
+                var oldDefaults = $.extend({}, URLService.defaults);
+
                 URLService.defaults = { protocol: 'htttps', host: 'funky.forio.com' };
                 var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
                 url.getAPIPath('data').should.equal('htttps://funky.forio.com/data/forioAccount/forioProj/');
 
-                F.service.URL.defaults = {};
+                F.service.URL.defaults = oldDefaults;
             });
 
             it('should return true on local environments', function () {
