@@ -58,8 +58,6 @@ var _findUserInGroup = function (members, id) {
             return members[j];
         }
     }
-
-
     return null;
 };
 

@@ -10,12 +10,19 @@ var defaults = {
 
 var UrlConfigService = function (config) {
     var options = $.extend({}, defaults, config);
+    var actingHost = options.host;
+
     function isLocalhost() {
         var isLocal = !options.host || //phantomjs
             options.host === '127.0.0.1' || 
             options.host.indexOf('local.') === 0 || 
             options.host.indexOf('localhost') === 0;
         return isLocal;
+    }
+    
+    // console.log(isLocalhost(), '___________');
+    if (!actingHost && isLocalhost()) {
+        actingHost = 'forio.com';
     }
 
     var API_PROTOCOL = 'https';
@@ -29,12 +36,10 @@ var UrlConfigService = function (config) {
 
         api: '',
 
+        //TODO: this should really be called 'apihost', but can't because that would break too many things
         host: (function () {
-            var host = options.host;
-            if (isLocalhost()) {
-                host = 'api.forio.com';
-            }
-            return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : host;
+            var apiHost = (HOST_API_MAPPING[actingHost]) ? HOST_API_MAPPING[actingHost] : actingHost;
+            return apiHost;
         }()),
 
         appPath: (function () {

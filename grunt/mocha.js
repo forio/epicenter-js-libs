@@ -6,6 +6,7 @@ module.exports = function (grunt) {
             run: true,
             growlOnSuccess: false,
             reporter: 'Min',
+            log: true,
             options: {
                 coverage: {
                     jsonReport: 'coverage'
