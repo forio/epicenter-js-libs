@@ -10,7 +10,6 @@
 
 
 'use strict';
-
 // Thin document.cookie wrapper to allow unit testing
 var Cookie = function () {
     this.get = function () {
@@ -23,21 +22,25 @@ var Cookie = function () {
 };
 
 module.exports = function (config) {
-    var host = window.location.hostname;
-    var validHost = host.split('.').length > 1;
-    var domain = validHost ? '.' + host : null;
-
     var defaults = {
         /**
          * Name of collection
          * @type { string}
          */
         root: '/',
-
-        domain: domain,
+        host: window.location.hostname,
+        domain: '',
         cookie: new Cookie()
     };
     this.serviceOptions = $.extend({}, defaults, config);
+
+    if (!this.serviceOptions.domain) {
+        var host = this.serviceOptions.host;
+        var validHost = host.split('.').length > 1;
+        var domain = validHost ? '.' + host : null;
+        
+        this.serviceOptions.domain = domain;
+    }
 
     var publicAPI = {
         // * TBD
