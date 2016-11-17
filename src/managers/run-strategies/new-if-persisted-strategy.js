@@ -11,9 +11,9 @@
  * * Check the `sessionKey` cookie.
  *   * This cookie is set by the [Run Manager](../generated/run-manager/) and configurable through its options.
  *   * If the cookie exists, check whether the run is in memory or only persisted in the database. 
- *   *    If the run is in memory, use the run.
- *   *    If the run is only persisted (and not still in memory), create a new run for this end user.
- *   *    If the cookie does not exist, create a new run for this end user.
+ *      * If the run is in memory, use the run.
+ *      * If the run is only persisted (and not still in memory), create a new run for this end user.
+ *      * If the cookie does not exist, create a new run for this end user.
  */
 
 'use strict';

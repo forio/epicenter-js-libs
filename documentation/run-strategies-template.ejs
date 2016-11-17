@@ -6,19 +6,17 @@ isPage: true
 
 ## Run Manager Strategies
 
-The [Run Manager](../generated/run-manager/) gives you control over run creation, depending on run state. You can select run creation stratgies (rules) for which runs end users of your project work with when they log in to your project.There are several strategies included in epicenter.js:
+The [Run Manager](../generated/run-manager/) gives you control over run creation, depending on run state. You can select run creation stratgies (rules) for which runs end users of your project work with when they log in to your project.
 
-<? docfiles.forEach(function (doc) { ?>
-    <? var moduleName = doc.filename.split('/').pop().split('.')[0].replace('-strategy', '') ?>* [<?= moduleName ?>](#<?= moduleName ?>)<? }); ?>
+There are several strategies included in epicenter.js:
+
+<? docfiles.forEach(function (doc) { ?><? var moduleName = doc.filename.split('/').pop().split('.')[0].replace('-strategy', '') ?>
+* [<?= moduleName ?>](#<?= moduleName ?>)<? }); ?>
 
 You can also [create your own](#create-your-own).
 
-
 <? docfiles.forEach(function (doc) { ?>
-
-
     <? var moduleName = doc.filename.split('/').pop().split('.')[0].replace('-strategy', '') ?>
-
     <a name="<?= moduleName ?>"></a>
     #### <?= moduleName ?>
 
