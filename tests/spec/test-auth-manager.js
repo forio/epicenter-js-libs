@@ -246,6 +246,7 @@
                     account: 'accountName',
                     project: 'projectName',
                     isLocal: false,
+                    isCustomDomain: false,
                     store: {
                         cookie: cookie,
                         domain: '.forio.com'
@@ -268,7 +269,8 @@
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
                     project: 'projectName',
-                    isLocal: false
+                    isLocal: false,
+                    isCustomDomain: false,
                 });
                 //am.login();
                 var store = am.sessionManager.getStore();

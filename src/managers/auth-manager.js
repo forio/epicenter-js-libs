@@ -48,7 +48,6 @@ function AuthManager(options) {
     this.sessionManager = new SessionManager(options);
     this.options = this.sessionManager.getMergedOptions();
 
-    this.isLocal = this.options.isLocal;
     this.authAdapter = new AuthAdapter(this.options);
 }
 
@@ -112,7 +111,6 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             while (encoded.length % 4 !== 0) { //eslint-disable-line
                 encoded += '=';
             }
-
             var decode = window.atob ? window.atob : function (encoded) { return new Buffer(encoded, 'base64').toString('ascii'); };
 
             return JSON.parse(decode(encoded));
