@@ -42,6 +42,12 @@ var UrlConfigService = function (config) {
             return apiHost;
         }()),
 
+        isCustomDomain: (function () {
+            var path = options.pathname.split('\/');
+            var pathHasApp = path && path[1] === 'app';
+            return (!isLocalhost() && !pathHasApp);
+        }()),
+
         appPath: (function () {
             var path = options.pathname.split('\/');
 
