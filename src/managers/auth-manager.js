@@ -129,8 +129,6 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         };
 
         var handleSuccess = function (response) {
-            //jshint camelcase: false
-            //jscs:disable
             var token = response.access_token;
             var userInfo = decodeToken(token);
             var oldGroups = sessionManager.getSession().groups || {};
@@ -275,8 +273,6 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
         var session = this.sessionManager.getSession();
         var $d = $.Deferred();
-        //jshint camelcase: false
-        //jscs:disable
         if (session.auth_token) {
             $d.resolve(session.auth_token);
         } else {
