@@ -14,7 +14,7 @@
 'use strict';
 
 var classFrom = require('../../util/inherit');
-var IdentityStrategy = require('./identity-strategy');
+var IdentityStrategy = require('./none-strategy');
 var StorageFactory = require('../../store/store-factory');
 var StateApi = require('../../service/state-api-adapter');
 var AuthManager = require('../auth-manager');

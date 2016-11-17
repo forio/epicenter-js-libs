@@ -7,7 +7,7 @@
 
 var classFrom = require('../../util/inherit');
 
-var IdentityStrategy = require('./identity-strategy');
+var IdentityStrategy = require('./none-strategy');
 var WorldApiAdapter = require('../../service/world-api-adapter');
 var AuthManager = require('../auth-manager');
 
