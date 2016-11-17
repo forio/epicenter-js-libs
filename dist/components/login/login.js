@@ -12,12 +12,12 @@ $(function () {
         var parts = url.match(/https?:\/\/([^/]*)\/app\/([^/]*)\/([^/]*)/) || [];
         return {
             account: parts[2],
-            project: parts[3]
+            project: parts[3], //eslint-disable-line
         };
     };
 
     var selectGroup = function (userName, password, account, project, groups, action) {
-        var dlg = (dlg = $('.group-selection-dialog')).length ? dlg : $(groupSelectionTemplate).appendTo($('body'));
+        var dlg = (dlg = $('.group-selection-dialog')).length ? dlg : $(groupSelectionTemplate).appendTo($('body')); //eslint-disable-line
         dlg.attr('action', action);
         var select = $('#login-group', dlg);
         select.find('[value!=""]').remove();

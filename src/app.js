@@ -51,7 +51,7 @@ F.manager.WorldManager = require('./managers/world-manager');
 
 F.manager.strategy['always-new'] = require('./managers/run-strategies/always-new-strategy');
 F.manager.strategy['conditional-creation'] = require('./managers/run-strategies/conditional-creation-strategy');
-F.manager.strategy.identity = require('./managers/run-strategies/identity-strategy');
+F.manager.strategy.identity = require('./managers/run-strategies/none-strategy');
 F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if-missing-strategy');
 F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if-missing-strategy');
 F.manager.strategy['new-if-persisted'] = require('./managers/run-strategies/new-if-persisted-strategy');
