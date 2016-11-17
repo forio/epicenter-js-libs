@@ -1,3 +1,16 @@
+/**
+ * The `new-if-missing` strategy creates a new run when the current one is not in the browser cookie.
+ * 
+ * Using this strategy means that when end users navigate between pages in your project, or refresh their browsers, they will still be working with the same run.
+ * This strategy is useful if your project is structured such that immediately after a run is created, the model is executed completely (for example, a Vensim model that is stepped to the end as soon as it is created). In other words, you care whether you have a run, but as long as you have one, you are certain that this run is the one you are interested in. 
+ * 
+ * Specifically, the strategy is:
+ * * Check the `sessionKey` cookie.
+ *     * This cookie is set by the [Run Manager](../generated/run-manager/) and configurable through its options. 
+ *     * If the cookie exists, use the run id stored there. 
+ *     * If the cookie does not exist, create a new run for this end user. 
+ */
+
 'use strict';
 
 var classFrom = require('../../util/inherit');

@@ -7,6 +7,22 @@ module.exports = function (grunt) {
             // Task-specific options go here.
             template: 'documentation/template.ejs'
         },
+        strategies: {
+            options: {
+                template: 'documentation/run-strategies-template.ejs'
+            },
+            files: {
+                'documentation/generated/strategies/index.html.md': [
+                    'src/managers/run-strategies/always-new-strategy.js', 
+                    'src/managers/run-strategies/new-if-persisted.js',
+                    'src/managers/run-strategies/new-if-missing.js',
+                    'src/managers/run-strategies/new-if-initialized.js',
+                    'src/managers/run-strategies/persistent-single-player.js',
+                    'src/managers/run-strategies/multiplayer.js',
+                    'src/managers/run-strategies/none.js',
+                ],
+            }
+        },
         target: {
             files: [
                 // {
