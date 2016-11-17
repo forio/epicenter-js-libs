@@ -15,7 +15,7 @@
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ }));
             });
 
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         after(function () {
@@ -33,9 +33,9 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                /\/member\//.test(req.url).should.be.true;
-                /userId=abc999/.test(req.url).should.be.true;
-                /Bearer 123/.test(req.requestHeaders.Authorization).should.be.true;
+                (/\/member\//).test(req.url).should.be.true;
+                (/userId=abc999/).test(req.url).should.be.true;
+                (/Bearer 123/).test(req.requestHeaders.Authorization).should.be.true;
             });
 
             it('should call GET on the Member API with the userId parameter, as an object, and the token', function () {
@@ -44,9 +44,9 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                /\/member\//.test(req.url).should.be.true;
-                /userId=abc999/.test(req.url).should.be.true;
-                /Bearer 123/.test(req.requestHeaders.Authorization).should.be.true;
+                (/\/member\//).test(req.url).should.be.true;
+                (/userId=abc999/).test(req.url).should.be.true;
+                (/Bearer 123/).test(req.requestHeaders.Authorization).should.be.true;
             });
 
             it('should throw error when no userId is specified', function () {
@@ -64,8 +64,8 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                /\/member\/local\/abc999/.test(req.url).should.be.true;
-                /Bearer 123/.test(req.requestHeaders.Authorization).should.be.true;
+                (/\/member\/local\/abc999/).test(req.url).should.be.true;
+                (/Bearer 123/).test(req.requestHeaders.Authorization).should.be.true;
             });
 
             it('should call GET on the Member API with the group parameter, as an object, in the URL and the token', function () {
@@ -74,8 +74,8 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                /\/member\/local\/abc999/.test(req.url).should.be.true;
-                /Bearer 123/.test(req.requestHeaders.Authorization).should.be.true;
+                (/\/member\/local\/abc999/).test(req.url).should.be.true;
+                (/Bearer 123/).test(req.requestHeaders.Authorization).should.be.true;
             });
 
             it('should throw error when no groupId is specified', function () {
@@ -123,4 +123,4 @@
         });
     });
 
-})();
+}());

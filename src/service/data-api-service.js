@@ -80,7 +80,7 @@ module.exports = function (config) {
         }
         var url = urlConfig.getAPIPath('data') + qutil.addTrailingSlash(root);
         if (key) {
-            url+= qutil.addTrailingSlash(key);
+            url += qutil.addTrailingSlash(key);
         }
         return url;
     };
@@ -90,7 +90,7 @@ module.exports = function (config) {
     });
     if (serviceOptions.token) {
         httpOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(httpOptions);
@@ -127,11 +127,11 @@ module.exports = function (config) {
          *      ds.query('', { 'question5': { '$regex': '.*day' } });
          *
          * **Parameters**
-         * @param {String} `key` The name of the document to search. Pass the empty string ('') to search the entire collection.
-         * @param {Object} `query` The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} `options` (Optional) Overrides for configuration options.
-         *
+         * @param {String} key The name of the document to search. Pass the empty string ('') to search the entire collection.
+         * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
+         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise} 
          */
         query: function (key, query, outputModifier, options) {
             var params = $.extend(true, { q: query }, outputModifier);
@@ -153,9 +153,10 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param {String|Object} `key` If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
-         * @param {Object} `value` (Optional) The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {String|Object} key If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
+         * @param {Object} value (Optional) The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise} 
          */
         save: function (key, value, options) {
             var attrs;
@@ -190,9 +191,10 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param {String} `key` Id of the document.
-         * @param {Object} `value` (Optional) The data to save, in key:value pairs.
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {String} key Id of the document.
+         * @param {Object} value (Optional) The data to save, in key:value pairs.
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise} 
          */
         saveAs: function (key, value, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
@@ -210,9 +212,10 @@ module.exports = function (config) {
          *      ds.load('user1/question3');
          *
          * **Parameters**
-         * @param  {String|Object} `key` The id of the data to return. Can be the id of a document, or a path to data within that document.
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} `options` Overrides for configuration options.
+         * @param  {String|Object} key The id of the data to return. Can be the id of a document, or a path to data within that document.
+         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} options Overrides for configuration options.
+         * @return {Promise} 
          */
         load: function (key, outputModifier, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
@@ -230,8 +233,9 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param {String|Array} `keys` The id of the document to remove from this collection, or an array of such ids.
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {String|Array} keys The id of the document to remove from this collection, or an array of such ids.
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise} 
          */
         remove: function (keys, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);

@@ -63,7 +63,7 @@ var Strategy = classFrom(IdentityStrategy, {
 
         var dateComp = function (a, b) { return new Date(b.date) - new Date(a.date); };
         var latestRun = runs.sort(dateComp)[0];
-        var _this = this;
+        var me = this;
         var shouldReplay = false;
 
         return this.run.load(latestRun.id, null, {
@@ -71,15 +71,15 @@ var Strategy = classFrom(IdentityStrategy, {
                 shouldReplay = headers.getResponseHeader('pragma') === 'persistent';
             }
         }).then(function (run) {
-            return shouldReplay ? _this._restoreRun(run.id) : run;
+            return shouldReplay ? me._restoreRun(run.id) : run;
         });
     },
 
     _restoreRun: function (runId) {
-        var _this = this;
+        var me = this;
         return this.stateApi.replay({ runId: runId })
             .then(function (resp) {
-                return _this._loadRun(resp.run);
+                return me._loadRun(resp.run);
             });
     },
 

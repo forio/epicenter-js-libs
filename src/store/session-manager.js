@@ -60,7 +60,12 @@ var SessionManager = function (managerOptions) {
             return session;
         },
         removeSession: function (options) {
-            return getStore(options).remove(EPI_SESSION_KEY);
+            var store = getStore(options);
+            Object.keys(keyNames).forEach(function (cookieKey) {
+                var cookieName = keyNames[cookieKey];
+                store.remove(cookieName);
+            });
+            return true;
         },
         getStore: function (options) {
             return getStore(options);

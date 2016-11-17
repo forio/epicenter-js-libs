@@ -2,13 +2,13 @@
     'use strict';
 
     var cookieContents = {
-        'auth_token': '',
-        'account': 'forio-dev',
-        'project': 'js-libs',
-        'userId': '123',
-        'groupId': 'group123',
-        'groupName': 'group-123',
-        'isFac': false
+        auth_token: '',
+        account: 'forio-dev',
+        project: 'js-libs',
+        userId: '123',
+        groupId: 'group123',
+        groupName: 'group-123',
+        isFac: false
     };
 
     var runs = [{
@@ -33,10 +33,8 @@
 
     var setupServer = function () {
         server = sinon.fakeServer.create();
-
         setupResponse('GET', /run\/forio-dev\/js-libs/, 200, runs || []);
-
-        server.autorespond = true;
+        server.respondImmediately = true;
     };
 
     var teardownServer = function () {
@@ -44,15 +42,6 @@
     };
 
     describe('Conditional Creation Strategy', function () {
-
-        before(function () {
-
-        });
-
-        after(function () {
-
-        });
-
         beforeEach(function () {
             setupServer();
         });
@@ -98,4 +87,4 @@
         });
     });
 
-})();
+}());

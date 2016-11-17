@@ -8,7 +8,6 @@ var env = require('./defaults');
 var serviceLocator = require('./service-locator');
 
 
-
 module.exports = classFrom(Base, {
     model: Model,
 
@@ -44,7 +43,7 @@ module.exports = classFrom(Base, {
 
     fetch: function () {
         var dtd = $.Deferred();
-        var _this = this;
+        var me = this;
         var groupId = env.get().groupId;
 
         var getGroupUsers = function () {
@@ -69,8 +68,8 @@ module.exports = classFrom(Base, {
         getGroupUsers()
             .then(function (users) {
                 users = _.map(users, function (u) { return _.extend(u, { groupId: groupId }); });
-                _this.set(users);
-                dtd.resolve(users, _this);
+                me.set(users);
+                dtd.resolve(users);
             });
 
         return dtd.promise();

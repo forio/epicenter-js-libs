@@ -24,6 +24,9 @@ var Cookie = function () {
 
 module.exports = function (config) {
     var host = window.location.hostname;
+    var validHost = host.split('.').length > 1;
+    var domain = validHost ? '.' + host : null;
+
     var defaults = {
         /**
          * Name of collection
@@ -31,7 +34,7 @@ module.exports = function (config) {
          */
         root: '/',
 
-        domain: '.' + host,
+        domain: domain,
         cookie: new Cookie()
     };
     this.serviceOptions = $.extend({}, defaults, config);
@@ -101,6 +104,7 @@ module.exports = function (config) {
         /**
          * Removes key from collection
          * @param { string} key key to remove
+         * @param {object} options (optional) overrides for service options
          * @return { string} key The key removed
          *
          * @example

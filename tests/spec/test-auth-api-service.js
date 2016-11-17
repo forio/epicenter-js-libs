@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var AuthService = F.service.Auth ;
+    var AuthService = F.service.Auth;
     var baseURL = (new F.service.URL()).getAPIPath('authentication');
 
     describe('Auth Service', function () {
@@ -11,10 +11,10 @@
             server = sinon.fakeServer.create();
             server.respondWith(/(.*)\/authentication/, function (xhr, id) {
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(
-                    { 'refresh_token':'snip-refresh','access_token': token,'expires':43199 }
+                    { refresh_token: 'snip-refresh', access_token: token, expires: 43199 }
                     ));
             });
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         after(function () {
@@ -27,7 +27,6 @@
             var as = new AuthService({ transport: { beforeSend: callback } });
             as.login({ userName: 'john', password: 'y' });
 
-            server.respond();
             server.requests.pop();
             callback.should.have.been.called;
         });

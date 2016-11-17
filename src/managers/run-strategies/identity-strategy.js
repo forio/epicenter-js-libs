@@ -6,7 +6,7 @@ var Base = {};
 // Interface that all strategies need to implement
 module.exports = classFrom(Base, {
     constructor: function (runService, options) {
-        this.runService  = runService;
+        this.runService = runService;
     },
 
     reset: function () {

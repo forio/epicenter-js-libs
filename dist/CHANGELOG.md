@@ -1,4 +1,20 @@
 
+<a name="2.0"></a>
+### 2.0 (2016-09-20)
+
+This is a major release, including several major features and a few bug fixes.
+
+* **New Feature: Introspection**: You can now view a listing of all of the variables and operations (functions) exposed in your model. You can access this through the Introspection Service, or through `introspect` in the Run Service. 
+
+* **New Feature: Epicenter APIs, v2**: New in this release, all calls are now routed to `v2` of the underlying Epicenter APIs. This is largely a transparent change -- probably the biggest difference you'll notice is that Run Ids have a slightly different format; they no longer contain hyphens. Under the hood, runs are now created on a new and improved distributed model service infrastructure, which provides increased stability and improved logging and error reporting.
+
+* **New Feature: jQuery 3.1**: New in this release, you can include jQuery 3.1.0. Changes are backwards compatible, so you can use either jQuery 2.1.4 (as for previous releases of Epicenter.js) or jQuery 3.1.0, but you already be using the newer version of jQuery in your project for other reasons. In particular, jQuery 3 is A+ promises compatible so will play well with ES6 code.
+
+* **Bug Fixes**: 
+	* In some cases when multiple end users were logging into a project in the same browser (but not explicitly logging out), the `always-new` strategy was failing to create a new run. This has been corrected.
+	* The `AuthManager`'s `logout()` call now correctly removes all managed cookies.
+
+
 <a name="1.9.0"></a>
 ### 1.9.0 (2016-07-13)
 

@@ -55,7 +55,7 @@ var UrlConfigService = function (config) {
             var prj = '';
             var path = options.pathname.split('\/');
             if (path && path[1] === 'app') {
-                prj = path[3];
+                prj = path[3]; //eslint-disable-line no-magic-numbers
             }
             return prj;
         }()),
@@ -73,7 +73,7 @@ var UrlConfigService = function (config) {
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
 
             if ($.inArray(api, PROJECT_APIS) !== -1) {
-                apiPath += this.accountPath + '/' + this.projectPath  + '/';
+                apiPath += this.accountPath + '/' + this.projectPath + '/';
             }
             return apiPath;
         }

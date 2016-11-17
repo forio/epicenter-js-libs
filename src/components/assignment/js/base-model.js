@@ -14,8 +14,7 @@ _.extend(BaseModel.prototype, {
     },
 
     set: function (key, val, options) {
-
-        if (key == null) {
+        if (key === null) {
             return this;
         }
 

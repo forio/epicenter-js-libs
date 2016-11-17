@@ -13,18 +13,19 @@ function inherit(C, P) {
 
 /**
 * Shallow copy of an object
+* @param {Object} dest object to extend
+* @return {Object} extended object
 */
 var extend = function (dest /*, var_args*/) {
     var obj = Array.prototype.slice.call(arguments, 1);
     var current;
-    for (var j = 0; j<obj.length; j++) {
-        if (!(current = obj[j])) {
+    for (var j = 0; j < obj.length; j++) {
+        if (!(current = obj[j])) { //eslint-disable-line
             continue;
         }
 
         // do not wrap inner in dest.hasOwnProperty or bad things will happen
-        /*jshint -W089 */
-        for (var key in current) {
+        for (var key in current) { //eslint-disable-line
             dest[key] = current[key];
         }
     }

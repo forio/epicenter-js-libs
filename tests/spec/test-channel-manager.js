@@ -1,5 +1,5 @@
 (function () {
-   'use strict';
+    'use strict';
 
     var Manager = F.manager.ChannelManager;
     describe('ChannelManager', function () {
@@ -22,7 +22,7 @@
             $.Cometd = mockCometd;
         });
         after(function () {
-           $.Cometd = oldCometd;
+            $.Cometd = oldCometd;
         });
         afterEach(function () {
             Manager.prototype._cometd = null;

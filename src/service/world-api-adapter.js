@@ -39,7 +39,7 @@ module.exports = function (config) {
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
          * @type {String}
          */
-       token: undefined,
+        token: undefined,
 
         /**
          * The project id. If left undefined, taken from the URL.
@@ -118,7 +118,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         transportOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
 
@@ -160,13 +160,13 @@ module.exports = function (config) {
         *       });
         *
         *  **Parameters**
-        * @param {object} `params` Parameters to create the world.
-        * @param {string} `params.group` (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
-        * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {integer} `params.minUsers` (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
+        * @param {object} params Parameters to create the world.
+        * @param {string} params.group (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
+        * @param {object} params.roles (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {object} params.optionalRoles (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {integer} params.minUsers (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
@@ -204,13 +204,13 @@ module.exports = function (config) {
         *           });
         *
         *  **Parameters**
-        * @param {object} `params` Parameters to update the world.
-        * @param {string} `params.name` A string identifier for the linked end users, for example, "name": "Our Team".
-        * @param {object} `params.roles` (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} `params.optionalRoles` (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {integer} `params.minUsers` (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
+        * @param {object} params Parameters to update the world.
+        * @param {string} params.name A string identifier for the linked end users, for example, "name": "Our Team".
+        * @param {object} params.roles (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {object} params.optionalRoles (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {integer} params.minUsers (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         update: function (params, options) {
             var whitelist = ['roles', 'optionalRoles', 'minUsers'];
@@ -245,8 +245,8 @@ module.exports = function (config) {
         *           });
         *
         *  **Parameters**
-        * @param {String|Object} `options` (Optional) The id of the world to delete, or options object to override global options.
-        *
+        * @param {String|Object} options (Optional) The id of the world to delete, or options object to override global options.
+        * @return {Promise}
         */
         delete: function (options) {
             options = (options && (typeof options === 'string')) ? { filter: options } : {};
@@ -269,7 +269,8 @@ module.exports = function (config) {
         *      var wa = new F.service.World({...}).updateConfig({ filter: '123' }).addUser({ userId: '123' });
         *
         * **Parameters**
-        * @param {object} `config` The configuration object to use in updating existing configuration.
+        * @param {object} config The configuration object to use in updating existing configuration.
+        * @return {Object} reference to current instance
         */
         updateConfig: function (config) {
             $.extend(serviceOptions, config);
@@ -296,8 +297,8 @@ module.exports = function (config) {
         *           });
         *
         *  **Parameters**
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         list: function (options) {
             options = options || {};
@@ -328,8 +329,9 @@ module.exports = function (config) {
         *           });
         *
         * ** Parameters **
-        * @param {string} `userId` The `userId` of the user whose worlds are being retrieved.
-        * @param {object} `options` (Optional) Options object to override global options.
+        * @param {string} userId The `userId` of the user whose worlds are being retrieved.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         getWorldsForUser: function (userId, options) {
             options = options || {};
@@ -352,8 +354,9 @@ module.exports = function (config) {
          * Load information for a specific world. All further calls to the world service will use the id provided.
          *
          * **Parameters**
-         * @param {String} `worldId` The id of the world to load.
-         * @param {Object} `options` (Optional) Options object to override global options.
+         * @param {String} worldId The id of the world to load.
+         * @param {Object} options (Optional) Options object to override global options.
+         * @return {Promise}
          */
         load: function (worldId, options) {
             if (worldId) {
@@ -362,7 +365,7 @@ module.exports = function (config) {
             if (!serviceOptions.filter) {
                 throw new Error('Please provide a worldid to load');
             }
-            var httpOptions = $.extend(true, {}, serviceOptions, options,  { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/' });
+            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/' });
             return http.get('', httpOptions);
         },
 
@@ -396,10 +399,11 @@ module.exports = function (config) {
         *           });
         *
         * ** Parameters **
-        * @param {string|object|array} `users` User id, array of user ids, object, or array of objects of the users to add to this world.
-        * @param {string} `users.role` The `role` the user should have in the world. It is up to the caller to ensure, if needed, that the `role` passed in is one of the `roles` or `optionalRoles` of this world.
-        * @param {string} `worldId` The world to which the users should be added. If not specified, the filter parameter of the `options` object is used.
-        * @param {object} `options` (Optional) Options object to override global options.
+        * @param {string|object|array} users User id, array of user ids, object, or array of objects of the users to add to this world.
+        * @param {string} users.role The `role` the user should have in the world. It is up to the caller to ensure, if needed, that the `role` passed in is one of the `roles` or `optionalRoles` of this world.
+        * @param {string} worldId The world to which the users should be added. If not specified, the filter parameter of the `options` object is used.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         addUsers: function (users, worldId, options) {
 
@@ -458,9 +462,9 @@ module.exports = function (config) {
         *      });
         *
         * **Parameters**
-        * @param {object} `user` User object with `userId` and the new `role`.
-        * @param {object} `options` (Optional) Options object to override global options.
-        *
+        * @param {object} user User object with `userId` and the new `role`.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         updateUser: function (user, options) {
             options = options || {};
@@ -497,8 +501,9 @@ module.exports = function (config) {
         *           });
         *
         * ** Parameters **
-        * @param {object|string} `user` The `userId` of the user to remove from the world, or an object containing the `userId` field.
-        * @param {object} `options` (Optional) Options object to override global options.
+        * @param {object|string} user The `userId` of the user to remove from the world, or an object containing the `userId` field.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         removeUser: function (user, options) {
             options = options || {};
@@ -539,8 +544,9 @@ module.exports = function (config) {
         *           });
         *
         * ** Parameters **
-        * @param {object} `options` (Optional) Options object to override global options.
-        * @param {object} `options.model` The model file to use to create a run if needed.
+        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} options.model The model file to use to create a run if needed.
+        * @return {Promise}
         */
         getCurrentRunId: function (options) {
             options = options || {};
@@ -572,8 +578,9 @@ module.exports = function (config) {
         *           });
         *
         * ** Parameters **
-        * @param {string} `userId` The `userId` of the user whose current (most recent) world is being retrieved.
-        * @param {string} `groupName` (Optional) The name of the group. If not provided, defaults to the group used to create the service.
+        * @param {string} userId The `userId` of the user whose current (most recent) world is being retrieved.
+        * @param {string} groupName (Optional) The name of the group. If not provided, defaults to the group used to create the service.
+        * @return {Promise}
         */
         getCurrentWorldForUser: function (userId, groupName) {
             var dtd = $.Deferred();
@@ -585,10 +592,10 @@ module.exports = function (config) {
                     var currentWorld = worlds[0];
 
                     if (currentWorld) {
-                        serviceOptions.filter =  currentWorld.id;
+                        serviceOptions.filter = currentWorld.id;
                     }
 
-                    dtd.resolve(currentWorld, me);
+                    dtd.resolveWith(me, [currentWorld]);
                 })
                 .fail(dtd.reject);
 
@@ -610,8 +617,9 @@ module.exports = function (config) {
         *      wa.deleteRun('sample-world-id');
         *
         *  **Parameters**
-        * @param {string} `worldId` The `worldId` of the world from which the current run is being deleted.
-        * @param {object} `options` (Optional) Options object to override global options.
+        * @param {string} worldId The `worldId` of the world from which the current run is being deleted.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         deleteRun: function (worldId, options) {
             options = options || {};
@@ -647,22 +655,23 @@ module.exports = function (config) {
         *           });
         *
         *  **Parameters**
-        * @param {string} `worldId` worldId in which we create the new run.
-        * @param {object} `options` (Optional) Options object to override global options.
-        * @param {object} `options.model` The model file to use to create a run if needed.
+        * @param {string} worldId worldId in which we create the new run.
+        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} options.model The model file to use to create a run if needed.
+        * @return {Promise}
         */
         newRunForWorld: function (worldId, options) {
             var currentRunOptions = $.extend(true, {},
                 options,
                 { filter: worldId || serviceOptions.filter }
             );
-            var _this = this;
+            var me = this;
 
             validateModelOrThrowError(currentRunOptions);
 
             return this.deleteRun(worldId, options)
                 .then(function () {
-                    return _this.getCurrentRunId(currentRunOptions);
+                    return me.getCurrentRunId(currentRunOptions);
                 });
         },
 
@@ -679,7 +688,8 @@ module.exports = function (config) {
         *      wa.autoAssign();
         *
         * **Parameters**
-        * @param {object} `options` (Optional) Options object to override global options.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         *
         */
         autoAssign: function (options) {
@@ -699,7 +709,7 @@ module.exports = function (config) {
 
             if (opt.maxUsers) {
                 params.maxUsers = opt.maxUsers;
-        }
+            }
 
             return http.post(params, opt);
         },
@@ -725,7 +735,8 @@ module.exports = function (config) {
         *           });
         *
         * **Parameters**
-        * @param {object} `options` (Optional) Options object to override global options.
+        * @param {object} options (Optional) Options object to override global options.
+        * @return {Promise}
         */
         getProjectSettings: function (options) {
             options = options || {};
@@ -737,7 +748,6 @@ module.exports = function (config) {
             );
 
             opt.url += [opt.account, opt.project].join('/');
-
             return http.get(null, opt);
         }
 

@@ -1,5 +1,5 @@
 (function () {
-   'use strict';
+    'use strict';
 
     var Manager = F.manager.ChannelManager;
     describe('Epicenter ChannelManager', function () {
@@ -20,7 +20,7 @@
             $.Cometd = mockCometd;
         });
         after(function () {
-           $.Cometd = oldCometd;
+            $.Cometd = oldCometd;
         });
         afterEach(function () {
             Manager.prototype._cometd = null;
@@ -42,12 +42,12 @@
         describe('#getChannel', function () {
             it('should enforce channel types', function () {
                 var cm = new Manager({ userId: 'userId', token: 'token' });
-                var ret =  function () { cm.getChannel('/test/account/project'); };
+                var ret = function () { cm.getChannel('/test/account/project'); };
                 ret.should.throw(Error);
             });
             it('should allow right channel types', function () {
                 var cm = new Manager({ userId: 'userId', token: 'token' });
-                var ret =  function () {
+                var ret = function () {
                     cm.getChannel('/user/account/project');
                     cm.getChannel('/data/account/project');
                     cm.getChannel('/project/account/project');
@@ -60,21 +60,21 @@
             });
             it('should enforce account and project present', function () {
                 var cm = new Manager();
-                var ret =  function () {
+                var ret = function () {
                     cm.getChannel('/user/account');
                 };
                 ret.should.throw(Error);
             });
             it('should not validate when the allowAllChannels is passed in the constructor', function () {
                 var cm = new Manager({ allowAllChannels: true });
-                var ret =  function () {
+                var ret = function () {
                     cm.getChannel('/anyChannel');
                 };
                 ret.should.not.throw(Error);
             });
             it('should not validate when the allowAllChannels is passed in the method options', function () {
                 var cm = new Manager();
-                var ret =  function () {
+                var ret = function () {
                     cm.getChannel({ base: '/anyChannel', allowAllChannels: true });
                 };
                 ret.should.not.throw(Error);
@@ -84,7 +84,7 @@
         describe('#getWorldChannel', function () {
             it('should throw an error if world id not provided', function () {
                 var manager = new Manager();
-                var ret =  function () { manager.getWorldChannel(); };
+                var ret = function () { manager.getWorldChannel(); };
                 ret.should.throw(Error);
             });
             it('should take group name from options if provided', function () {
@@ -102,7 +102,7 @@
         describe('#getUserChannel', function () {
             it('should throw an error if world id not provided', function () {
                 var manager = new Manager();
-                var ret =  function () { manager.getUserChannel(); };
+                var ret = function () { manager.getUserChannel(); };
                 ret.should.throw(Error);
             });
             it('should take account and project from options', function () {
@@ -117,7 +117,7 @@
         describe('#getDataChannel', function () {
             it('should throw an error if collection not provided', function () {
                 var manager = new Manager();
-                var ret =  function () { manager.getDataChannel(); };
+                var ret = function () { manager.getDataChannel(); };
                 ret.should.throw(Error);
             });
             it('should take account and project from options', function () {

@@ -14,7 +14,7 @@ var envLoad = function (callback) {
     }
     var infoUrl = host + envPath;
     envPromise = $.ajax({ url: infoUrl, async: false });
-    envPromise.done(function (res) {
+    envPromise.then(function (res) {
         var api = res.api;
         $.extend(urlConfigService, api);
     }).fail(function (res) {
@@ -22,7 +22,7 @@ var envLoad = function (callback) {
         // fallback to api.forio.com
         $.extend(urlConfigService, { protocol: 'https', host: 'api.forio.com' });
     });
-    return envPromise.done(callback).fail(callback);
+    return envPromise.then(callback).fail(callback);
 };
 
 module.exports = envLoad;

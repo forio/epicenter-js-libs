@@ -1,6 +1,6 @@
 'use strict';
 
-$(function() {
+$(function () {
     var server = {
         server: {
             host: 'api.forio.com'
@@ -14,7 +14,7 @@ $(function() {
     };
 
     var scopes = {
-        user:  'User',
+        user: 'User',
         group: 'Group',
         project: 'Project'
     };
@@ -51,7 +51,7 @@ $(function() {
                 am.login({
                     userName: $('#txtUsername').val(),
                     password: $('#txtPassword').val(),
-                }).done(function (response) {
+                }).then(function (response) {
                     $loginEl.modal('hide');
                     $('.status').append('<div class="alert alert-success">Logged in as: ' + credentials.userName + '</div>');
                     _this.assetAdapter = new F.service.Asset(server);
@@ -66,11 +66,11 @@ $(function() {
                 var imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'bmp'];
                 $('.images').empty();
 
-                this.assetAdapter.list({ scope: scope }).done(function (response) {
+                this.assetAdapter.list({ scope: scope }).then(function (response) {
                     $.each(response, function () {
                         var url = this;
                         var filename = url.substring(url.lastIndexOf('/') + 1);
-                        var extension = filename.substring(filename.lastIndexOf('.')+1);
+                        var extension = filename.substring(filename.lastIndexOf('.') + 1);
                         var item = $('<div class="file col-sm-2"></div>');
                         if ($.inArray(extension, imageExtensions) > -1) {
                             item.append('<img class="thumb" src="' + url + '" alt="Asset">');
@@ -103,7 +103,7 @@ $(function() {
 
                 try {
                     // filename will be ignored if it's a multipart/form-data request
-                    this.assetAdapter.create(filename, data, { scope: scope }).done(function () {
+                    this.assetAdapter.create(filename, data, { scope: scope }).then(function () {
                         $('.status').html('<div class="alert alert-success">File uploaded! Reloading assets... </div>');
                         $('.list [name=scope]').val(scope);
                         _this.listAssets();
@@ -130,7 +130,7 @@ $(function() {
     // var aa = new F.service.Asset($.extend(server, extra));
     // aa.create('test.txt', { encoding: 'BASE_64', data: 'VGhpcyBpcyBhIHRlc3QgZmlsZS4=' }, { scope: 'user' });
     //aa.delete('test1.txt', { scope: 'user' });
-    // aa.list({ scope: 'user', fullUrl: true }).done(function (response) {
+    // aa.list({ scope: 'user', fullUrl: true }).then(function (response) {
     //     console.log(response);
     // });
 });

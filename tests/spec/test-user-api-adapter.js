@@ -12,7 +12,7 @@
     describe('User API Service', function () {
         before(function () {
             server = sinon.fakeServer.create();
-            server.autoRespond = true;
+            server.respondImmediately = true;
         });
 
         after(function () {
@@ -61,4 +61,4 @@
             req.url.should.match(/q=u12/);
         });
     });
-})();
+}());

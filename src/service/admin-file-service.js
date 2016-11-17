@@ -1,7 +1,9 @@
 /**
  * ## File API Service
  *
- * This is used to upload/download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. The Asset API is typically used for all project use-cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
+ * The File API Service allows you to upload and download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. It is based on the Epicenter File API.
+ *
+ * The Asset API Service (https://forio.com/epicenter/docs/public/api_adapters/generated/asset-api-adapter/) is typically used for all project use cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
  *
  * Partially implemented.
  */
@@ -22,19 +24,19 @@ module.exports = function (config) {
         token: undefined,
 
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined.
          * @type {String}
          */
         account: undefined,
 
         /**
-         * The project id. Defaults to empty string.
+         * The project id. Defaults to undefined.
          * @type {String}
          */
         project: undefined,
 
         /**
-         * The folder type.  One of Model|Static|Node
+         * The folder type.  One of `model` | `static` | `node`.
          * @type {String}
          */
         folderType: 'static',
@@ -63,7 +65,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         httpOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(httpOptions);
@@ -98,9 +100,10 @@ module.exports = function (config) {
 
     var publicAsyncAPI = {
         /**
-         * Get a directory listing, or contents of a file
-         * @param  {String} `filePath`   Path to the file
-         * @param  {Object} `options` (Optional) Overrides for configuration options.
+         * Get a directory listing, or contents of a file.
+         * @param {String} filePath  Path to the file
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         getContents: function (filePath, options) {
             var path = serviceOptions.folderType + '/' + filePath;
@@ -111,33 +114,46 @@ module.exports = function (config) {
         },
 
         /**
-         * Replaces to the given file path
-         * @param  {String} `filePath` Path to the file
-         * @param  {String} `contents` Contents to write to file
-         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         * Replaces the file at the given file path.
+         * @param  {String} filePath Path to the file
+         * @param  {String} contents Contents to write to file
+         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @return {Promise}
          */
-        replaceFile: function (filePath, contents, options) {
+        replace: function (filePath, contents, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
 
             return http.put(httpOptions.data, httpOptions);
         },
 
         /**
-         * Creates a file in the given filePath
-         * @param  {String} `filePath` Path to the file
-         * @param  {String} `contents` Contents to write to file
-         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         * Creates a file in the given file path.
+         * @param  {String} filePath Path to the file
+         * @param  {String} contents Contents to write to file
+         * @param  {Boolean} replaceExisting Replace file if it already exists; defaults to false
+         * @param  {Object} options (Optional) Overrides for configuration options
+         * @return {Promise}
          */
-        createFile: function (filePath, contents, options) {
+        create: function (filePath, contents, replaceExisting, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
-
-            return http.post(httpOptions.data, httpOptions);
+            var prom = http.post(httpOptions.data, httpOptions);
+            var me = this;
+            if (replaceExisting === true) {
+                prom = prom.then(null, function (xhr) {
+                    var conflictStatus = 409;
+                    if (xhr.status === conflictStatus) {
+                        return me.replace(filePath, contents, options);
+                    }
+                });
+            }
+            return prom;
         },
 
         /**
-         * Removes the file
-         * @param  {String} `filePath` Path to the file
-         * @param  {Object} `options`  (Optional) Overrides for configuration options
+         * Removes the file.
+         * @param  {String} filePath Path to the file
+         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @return {Promise}
          */
         remove: function (filePath, options) {
             var path = serviceOptions.folderType + '/' + filePath;
@@ -148,17 +164,18 @@ module.exports = function (config) {
         },
 
         /**
-         * Rename the file
+         * Renames the file.
          * @param  {String} filePath Path to the file
-         * @param  {Stirng} newName  New name of file
+         * @param  {String} newName  New name of file
          * @param  {Object} options  (Optional) Overrides for configuration options
+         * @return {Promise}
          */
         rename: function (filePath, newName, options) {
             var path = serviceOptions.folderType + '/' + filePath;
             var httpOptions = $.extend(true, {}, serviceOptions, options, {
                 url: urlConfig.getAPIPath('file') + path
             });
-            return http.patch({ 'name': newName }, httpOptions);
+            return http.patch({ name: newName }, httpOptions);
         }
     };
 

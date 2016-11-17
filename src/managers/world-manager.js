@@ -36,18 +36,9 @@
 'use strict';
 
 var WorldApi = require('../service/world-api-adapter');
-var RunManager =  require('./run-manager');
+var RunManager = require('./run-manager');
 var AuthManager = require('./auth-manager');
 var worldApi;
-
-// var defaults = {
-//  account: '',
-//  project: '',
-//  group: '',
-//  transport: {
-//  }
-// };
-
 
 function buildStrategy(worldId, dtd) {
 
@@ -61,20 +52,20 @@ function buildStrategy(worldId, dtd) {
             },
 
             getRun: function () {
-                var _this = this;
+                var me = this;
                 //get or create!
                 // Model is required in the options
                 var model = this.options.run.model || this.options.model;
                 return worldApi.getCurrentRunId({ model: model, filter: worldId })
                     .then(function (runId) {
-                        return _this.runService.load(runId);
+                        return me.runService.load(runId);
                     })
                     .then(function (run) {
-                        dtd.resolve.call(this, run, _this.runService);
+                        dtd.resolveWith(me, [run]);
                     })
                     .fail(dtd.reject);
-                }
             }
+        }
         );
     };
 }
@@ -88,7 +79,7 @@ module.exports = function (options) {
 
     worldApi = new WorldApi(this.options);
     this._auth = new AuthManager();
-    var _this = this;
+    var me = this;
 
     var api = {
 
@@ -104,8 +95,9 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} `userId` (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
-        * @param {string} `groupName` (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @param {string} userId (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
+        * @param {string} groupName (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @return {Promise}
         */
         getCurrentWorld: function (userId, groupName) {
             var session = this._auth.getCurrentUserSessionInfo();
@@ -130,7 +122,8 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} `model` (Optional) The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
+        * @param {string} model (Optional) The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
+        * @return {Promise}
         */
         getCurrentRun: function (model) {
             var dtd = $.Deferred();
@@ -144,7 +137,7 @@ module.exports = function (options) {
                 }
 
                 var currentWorldId = world.id;
-                var runOpts = $.extend(true, _this.options, { model: model });
+                var runOpts = $.extend(true, me.options, { model: model });
                 var strategy = buildStrategy(currentWorldId, dtd);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,

@@ -68,7 +68,7 @@ module.exports = function (config) {
     };
 
     var publicAPI = {
-        get:function (params, ajaxOptions) {
+        get: function (params, ajaxOptions) {
             var options = $.extend({}, transportOptions, ajaxOptions);
             params = options.parameterParser(result(params));
             return connect.call(this, 'GET', params, options);

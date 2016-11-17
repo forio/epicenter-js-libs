@@ -164,7 +164,7 @@ module.exports = function (config) {
 
     if (serviceOptions.token) {
         httpOptions.headers = {
-            'Authorization': 'Bearer ' + serviceOptions.token
+            Authorization: 'Bearer ' + serviceOptions.token
         };
     }
     var http = new TransportFactory(httpOptions);
@@ -195,9 +195,9 @@ module.exports = function (config) {
          *      rs.create('hello_world.jl');
          *
          *  **Parameters**
-         * @param {String|Object} `params` If a string, the name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project. If an object, may include `model`, `scope`, and `files`. (See the [Run Manager](../run_manager/) for more information on `scope` and `files`.)
-         * @param {Object} `options` (Optional) Overrides for configuration options.
-         *
+         * @param {String|Object} params If a string, the name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project. If an object, may include `model`, `scope`, and `files`. (See the [Run Manager](../run_manager/) for more information on `scope` and `files`.)
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath('run') });
@@ -213,6 +213,7 @@ module.exports = function (config) {
             var oldSuccess = createOptions.success;
             createOptions.success = function (response) {
                 serviceOptions.filter = response.id; //all future chained calls to operate on this id
+                serviceOptions.id = response.id;
                 return oldSuccess.apply(this, arguments);
             };
 
@@ -239,9 +240,10 @@ module.exports = function (config) {
          *       });
          *
          * **Parameters**
-         * @param {Object} `qs` Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         query: function (qs, outputModifier, options) {
             serviceOptions.filter = qs; //shouldn't be able to over-ride
@@ -257,9 +259,10 @@ module.exports = function (config) {
          * Similar to `.query()`.
          *
          * **Parameters**
-         * @param {Object} `filter` Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
-         * @param {Object} `outputModifier` (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} filter Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         filter: function (filter, outputModifier, options) {
             if ($.isPlainObject(serviceOptions.filter)) {
@@ -282,9 +285,10 @@ module.exports = function (config) {
          *     rs.load('bb589677-d476-4971-a68e-0c58d191e450', { include: ['.price', '.sales'] });
          *
          * **Parameters**
-         * @param {String} `runID` The run id.
-         * @param {Object} `filters` (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {String} runID The run id.
+         * @param {Object} filters (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         load: function (runID, filters, options) {
             if (runID) {
@@ -308,9 +312,10 @@ module.exports = function (config) {
          *     rs.save({ saved: true, variables: { a: 23, b: 23 } });
          *
          * **Parameters**
-         * @param {Object} `attributes` The run data and variables to save.
-         * @param {Object} `attributes.variables` Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {Object} attributes The run data and variables to save.
+         * @param {Object} attributes.variables Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         save: function (attributes, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
@@ -323,9 +328,9 @@ module.exports = function (config) {
          *
          * Depending on the language in which you have written your model, the method may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
-         * The `params` argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
+         * The params argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
          *
-         * Note that you can combine the `operation` and `params` arguments into a single object if you prefer, as in the last example.
+         * Note that you can combine the `operation` and params arguments into a single object if you prefer, as in the last example.
          *
          * **Examples**
          *
@@ -341,9 +346,10 @@ module.exports = function (config) {
          *     rs.do({ name:'add', params:[2,4] });
          *
          * **Parameters**
-         * @param {String} `operation` Name of method.
-         * @param {Array} `params` (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {String} operation Name of method.
+         * @param {Array} params (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         do: function (operation, params, options) {
             // console.log('do', operation, params);
@@ -352,13 +358,11 @@ module.exports = function (config) {
             if (options) {
                 opsArgs = params;
                 postOptions = options;
+            } else if ($.isPlainObject(params)) {
+                opsArgs = null;
+                postOptions = params;
             } else {
-                if ($.isPlainObject(params)) {
-                    opsArgs = null;
-                    postOptions = params;
-                } else {
-                    opsArgs = params;
-                }
+                opsArgs = params;
             }
             var result = rutil.normalizeOperations(operation, opsArgs);
             var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
@@ -389,9 +393,10 @@ module.exports = function (config) {
          *                  { name: 'runmodel', params: [] }]);
          *
          * **Parameters**
-         * @param {Array} `operations` If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
-         * @param {*} `params` Parameters to pass to operations.
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {Array} operations If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
+         * @param {*} params Parameters to pass to operations.
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         serial: function (operations, params, options) {
             var opParams = rutil.normalizeOperations(operations, params);
@@ -443,9 +448,10 @@ module.exports = function (config) {
          *     rs.parallel({ add: [1,2], subtract: [2,4] });
          *
          * **Parameters**
-         * @param {Array|Object} `operations` If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
-         * @param {*} `params` Parameters to pass to operations.
-         * @param {Object} `options` (Optional) Overrides for configuration options.
+         * @param {Array|Object} operations If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
+         * @param {*} params Parameters to pass to operations.
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
          */
         parallel: function (operations, params, options) {
             var $d = $.Deferred();
@@ -455,14 +461,14 @@ module.exports = function (config) {
             var args = opParams.args;
             var postOptions = $.extend(true, {}, serviceOptions, options);
 
-            var queue  = [];
-            for (var i = 0; i< ops.length; i++) {
+            var queue = [];
+            for (var i = 0; i < ops.length; i++) {
                 queue.push(
                     this.do(ops[i], args[i])
                 );
             }
             $.when.apply(this, queue)
-                .done(function () {
+                .then(function () {
                     $d.resolve.apply(this, arguments);
                     postOptions.success.apply(this.arguments);
                 })
@@ -472,6 +478,36 @@ module.exports = function (config) {
                 });
 
             return $d.promise();
+        },
+
+        /**
+         * Shortcut to using the [Introspection API Service](../introspection-api-service/). Allows you to view a list of the variables and operations in a model.
+         *
+         * **Example**
+         *
+         *     rs.introspect({ runID: 'cbf85437-b539-4977-a1fc-23515cf071bb' }).then(function (data) {
+         *          console.log(data.functions);
+         *          console.log(data.variables);
+         *     });
+         *
+         * **Parameters**
+         * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`.
+         * @param  {Object} introspectionConfig (Optional) Service options for Introspection Service
+         * @return {Promise}
+         */
+        introspect: function (options, introspectionConfig) {
+            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, introspectionConfig));
+            if (options) {
+                if (options.runID) {
+                    return introspection.byRunID(options.runID);
+                } else if (options.model) {
+                    return introspection.byModel(options.model);
+                }
+            } else if (serviceOptions.id) {
+                return introspection.byRunID(serviceOptions.id);
+            } else {
+                throw new Error('Please specify either the model or runid to introspect');
+            }
         }
     };
 
@@ -491,18 +527,14 @@ module.exports = function (config) {
           *      vs.save({ sample_int: 4 });
           *
           * **Parameters**
-          * @param {Object} `config` (Optional) Overrides for configuration options.
+          * @param {Object} config (Optional) Overrides for configuration options.
+          * @return {Object} variablesService Instance
           */
         variables: function (config) {
             var vs = new VariablesService($.extend(true, {}, serviceOptions, config, {
                 runService: this
             }));
             return vs;
-        },
-
-        introspection: function (config) {
-            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, config));
-            return introspection;
         }
     };
 

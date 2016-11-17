@@ -54,7 +54,7 @@ _.extend(BaseCollection.prototype, {
             this._models.push(m);
         }, this);
 
-        this.sort.call(this);
+        this.sort();
 
         return models;
     },
