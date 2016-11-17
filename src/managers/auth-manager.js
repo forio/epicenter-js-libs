@@ -38,6 +38,8 @@ var SessionManager = require('../store/session-manager');
 var _pick = require('../util/object-util')._pick;
 var objectAssign = require('object-assign');
 
+var atob = window.atob || require('Base64').atob;
+
 var defaults = {
     requiresGroup: true
 };
@@ -113,7 +115,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             while (encoded.length % 4 !== 0) { //eslint-disable-line
                 encoded += '=';
             }
-            return JSON.parse(window.atob(encoded));
+            return JSON.parse(atob(encoded));
         };
 
         var handleGroupError = function (message, statusCode, data) {
