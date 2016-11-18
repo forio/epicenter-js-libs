@@ -1,26 +1,14 @@
 'use strict';
 
-var urlConfigService = require('./service/url-config-service');
+var URLConfigService = require('./service/url-config-service');
 
 var envLoad = function (callback) {
-    var envPromise;
-    var host;
-    var urlService = urlConfigService();
-    var envPath = '/epicenter/v1/config';
-    if (urlService.isLocalhost()) {
-        host = 'https://forio.com';
-    } else {
-        host = '';
-    }
-    var infoUrl = host + envPath;
-    envPromise = $.ajax({ url: infoUrl, async: false });
-    envPromise.then(function (res) {
-        var api = res.api;
-        $.extend(urlConfigService, api);
-    }).fail(function (res) {
-        // Epicenter/webserver not properly configured
-        // fallback to api.forio.com
-        $.extend(urlConfigService, { protocol: 'https', host: 'api.forio.com' });
+    var urlService = new URLConfigService();
+    var infoUrl = urlService.getAPIPath('config');
+    var envPromise = $.ajax({ url: infoUrl, async: false });
+    envPromise = envPromise.then(function (res) {
+        var overrides = res.api;
+        URLConfigService.defaults = $.extend(URLConfigService.defaults, overrides);
     });
     return envPromise.then(callback).fail(callback);
 };
