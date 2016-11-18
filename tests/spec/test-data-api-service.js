@@ -25,6 +25,7 @@
             ds.load('name');
 
             var req = server.requests.pop();
+            console.log(req.url);
             req.requestHeaders.Authorization.should.equal('Bearer abc');
         });
 

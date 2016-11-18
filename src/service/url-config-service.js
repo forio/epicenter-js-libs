@@ -10,7 +10,6 @@ var defaults = {
 
 var UrlConfigService = function (config) {
     var options = $.extend({}, defaults, config);
-    var actingHost = options.host;
 
     function isLocalhost() {
         var isLocal = !options.host || //phantomjs
@@ -21,6 +20,7 @@ var UrlConfigService = function (config) {
     }
     
     // console.log(isLocalhost(), '___________');
+    var actingHost = config && config.host;
     if (!actingHost && isLocalhost()) {
         actingHost = 'forio.com';
     }
