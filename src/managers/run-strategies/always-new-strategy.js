@@ -1,5 +1,5 @@
 /**
- * The `always-new` strategy always creates a new run for this end user irrespective of current state. This is equivalent to calling `F.service.Run.create()` from the [Run Service](../generated/run-api-service/) every time. 
+ * The `always-new` strategy always creates a new run for this end user irrespective of current state. This is equivalent to calling `F.service.Run.create()` from the [Run Service](../run-api-service/) every time. 
  * 
  * This strategy means that every time your end users refresh their browsers, they get a new run. 
  * 
