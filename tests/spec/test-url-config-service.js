@@ -2,12 +2,11 @@
     'use strict';
     var URLService = F.service.URL;
     var version = F.api.version ? F.api.version + '/' : '';
+
+    function getHost() {
+        return window.location.host || ''; //for phantomjs
+    }
     describe('URL Service', function () {
-        before(function () {
-            if (!window.location.host) {
-                window.location.host = 'localhost'; //for phantomjs
-            }
-        });
         describe('#isLocalhost', function () {
             it('should be overridable with literal value', function () {
                 var url = new URLService({ isLocalhost: false });
@@ -27,7 +26,7 @@
         describe('#url', function () {
             it('should default to current hostname if not localhost', function () {
                 var url = new URLService({ isLocalhost: false });
-                url.host.should.equal(window.location.host);
+                url.host.should.equal(getHost());
             });
             it('should default to api.forio.com if localhost', function () {
                 var url = new URLService({ isLocalhost: true });

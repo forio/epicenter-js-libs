@@ -43,8 +43,6 @@
                 ds.load('name');
 
                 var req = server.requests.pop();
-                console.log(req.url);
-
                 req.method.toUpperCase().should.equal('GET');
             });
 

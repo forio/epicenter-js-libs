@@ -1,11 +1,10 @@
 (function () {
     'use strict';
+
+    function getHost() {
+        return window.location.host || ''; //for phantomjs
+    }
     describe('Env Load', function () {
-        before(function () {
-            if (!window.location.host) {
-                window.location.host = 'localhost'; //for phantomjs
-            }
-        });
         var env = {
             api: {
                 host: 'customapi.forio.com',
@@ -30,7 +29,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                req.url.should.equal('https://' + window.location.host + '/epicenter/v1/config');
+                req.url.should.equal('https://' + getHost() + '/epicenter/v1/config');
 
                 F.service.URL.defaults = oldDefaults;
             });
