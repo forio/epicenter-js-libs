@@ -29,12 +29,16 @@ function getLocalHost(existingFn, host) {
 }
 
 var UrlConfigService = function (config) {
+    var envConf = UrlConfigService.defaults;
+
     if (!config) {
         config = {};
     }
-    var options = $.extend({}, defaults, config);
+    // console.log(this.defaults);
+    var overrides = $.extend({}, envConf, config);
+    var options = $.extend({}, defaults, overrides);
 
-    config.isLocalhost = options.isLocalhost = getLocalHost(config.isLocalhost, options.host);
+    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
     
     // console.log(isLocalhost(), '___________');
     var actingHost = config && config.host;
@@ -58,7 +62,7 @@ var UrlConfigService = function (config) {
         //TODO: this should really be called 'apihost', but can't because that would break too many things
         host: (function () {
             var apiHost = (HOST_API_MAPPING[actingHost]) ? HOST_API_MAPPING[actingHost] : actingHost;
-            console.log(actingHost, config, apiHost);
+            // console.log(actingHost, config, apiHost);
             return apiHost;
         }()),
 
@@ -101,7 +105,8 @@ var UrlConfigService = function (config) {
             var PROJECT_APIS = ['run', 'data', 'file'];
 
             if (api === 'config') {
-                return this.protocol + '://' + this.host + '/epicenter/v1/config';
+                // var base = options.isLocalhost() ? '' : 
+                return this.protocol + '://' + actingHost + '/epicenter/v1/config';
             }
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
 
@@ -112,9 +117,8 @@ var UrlConfigService = function (config) {
         }
     };
 
-    var envConf = UrlConfigService.defaults;
 
-    $.extend(publicExports, envConf, config);
+    $.extend(publicExports, overrides);
     return publicExports;
 };
 // This data can be set by external scripts, for loading from an env server for eg;

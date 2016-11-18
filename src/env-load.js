@@ -1,14 +1,14 @@
 'use strict';
 
-var urlConfigService = require('./service/url-config-service');
+var URLConfigService = require('./service/url-config-service');
 
 var envLoad = function (callback) {
-    var urlService = urlConfigService();
+    var urlService = new URLConfigService();
     var infoUrl = urlService.getAPIPath('config');
     var envPromise = $.ajax({ url: infoUrl, async: false });
     envPromise = envPromise.then(function (res) {
         var overrides = res.api;
-        urlConfigService.defaults = $.extend(urlConfigService.defaults, overrides);
+        URLConfigService.defaults = $.extend(URLConfigService.defaults, overrides);
     });
     return envPromise.then(callback).fail(callback);
 };
