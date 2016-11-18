@@ -1,4 +1,14 @@
 
+
+<a name="2.0.1"></a>
+### 2.0.1 (2016-11-18)
+
+This is a minor release, and includes two significant improvements:
+
+* The library file size has been significantly reduced. In particular, `epicenter.min.js` is now less than 90KB.
+* Development both in local environments and on custom domains has been streamlined. Previously, there were a few bugs in the checks for localhost and for local sessions/cookies; these have been resolved. 
+
+
 <a name="2.0"></a>
 ### 2.0 (2016-09-20)
 
