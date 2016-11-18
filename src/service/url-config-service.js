@@ -12,6 +12,9 @@ var UrlConfigService = function (config) {
     var options = $.extend({}, defaults, config);
 
     function isLocalhost() {
+        if (options.isLocalhost === false) {
+            return false;
+        }
         var isLocal = !options.host || //phantomjs
             options.host === '127.0.0.1' || 
             options.host.indexOf('local.') === 0 || 
