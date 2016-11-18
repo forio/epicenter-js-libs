@@ -1,6 +1,11 @@
 (function () {
     'use strict';
     describe('Env Load', function () {
+        before(function () {
+            if (!window.location.host) {
+                window.location.host = 'localhost'; //for phantomjs
+            }
+        });
         var env = {
             api: {
                 host: 'customapi.forio.com',
@@ -25,7 +30,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                req.url.should.equal('/epicenter/v1/config');
+                req.url.should.equal('https://' + window.location.host + '/epicenter/v1/config');
 
                 F.service.URL.defaults = oldDefaults;
             });
@@ -52,22 +57,6 @@
                     F.service.URL.defaults.host.should.equal('customapi.forio.com');
                     F.service.URL.defaults = oldDefaults;
                     done();
-                });
-            });
-
-            it('should set protocol and host to api.forio.com when the config request fails', function () {
-                server.respondWith('GET', /(.*)\/epicenter\/(.*)\/config/, function (xhr, id) {
-                    xhr.respond(404, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Not Found on Server' }));
-                });
-                var oldDefaults = $.extend({}, F.service.URL.defaults);
-                F.service.URL.defaults = {};
-                var callback = sinon.spy();
-                F.load(function () {
-                    F.service.URL.defaults.protocol.should.equal('https');
-                    F.service.URL.defaults.host.should.equal('api.forio.com');
-                    F.service.URL.defaults = oldDefaults;
-                }).then(null, callback).then(function () {
-                    callback.should.have.been.called;
                 });
             });
         });
