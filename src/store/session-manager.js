@@ -25,7 +25,8 @@ var SessionManager = function (managerOptions) {
     function getStore(overrides) {
         var baseOptions = getBaseOptions(overrides);
         var storeOpts = baseOptions.store || {};
-        if (storeOpts.root === undefined && baseOptions.account && baseOptions.project && !baseOptions.isLocal) {
+        var isEpicenterDomain = !baseOptions.isLocal && !baseOptions.isCustomDomain;
+        if (storeOpts.root === undefined && baseOptions.account && baseOptions.project && isEpicenterDomain) {
             storeOpts.root = '/app/' + baseOptions.account + '/' + baseOptions.project;
         }
         return new StorageFactory(storeOpts);

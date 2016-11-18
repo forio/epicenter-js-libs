@@ -8,13 +8,44 @@ var defaults = {
     pathname: window.location.pathname
 };
 
+function getLocalHost(existingFn, host) {
+    var localHostFn;
+    if (existingFn !== undefined) {
+        if (!$.isFunction(existingFn)) {
+            localHostFn = function () { return existingFn; };
+        } else {
+            localHostFn = existingFn;
+        }
+    } else {
+        localHostFn = function () {
+            var isLocal = !host || //phantomjs
+                host === '127.0.0.1' || 
+                host.indexOf('local.') === 0 || 
+                host.indexOf('localhost') === 0;
+            return isLocal;
+        };
+    }
+    return localHostFn;
+}
+
 var UrlConfigService = function (config) {
-    var options = $.extend({}, defaults, config);
-    function isLocalhost() {
-        var host = options.host;
-        var path = options.pathname;
-        // Sort of hardcode the fact that epicenter application space is prefixed by /app/
-        return (!host || path.indexOf('/app/') !== 0);
+    var envConf = UrlConfigService.defaults;
+
+    if (!config) {
+        config = {};
+    }
+    // console.log(this.defaults);
+    var overrides = $.extend({}, envConf, config);
+    var options = $.extend({}, defaults, overrides);
+
+    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
+    
+    // console.log(isLocalhost(), '___________');
+    var actingHost = config && config.host;
+    if (!actingHost && options.isLocalhost()) {
+        actingHost = 'forio.com';
+    } else {
+        actingHost = options.host;
     }
 
     var API_PROTOCOL = 'https';
@@ -28,12 +59,17 @@ var UrlConfigService = function (config) {
 
         api: '',
 
+        //TODO: this should really be called 'apihost', but can't because that would break too many things
         host: (function () {
-            var host = options.host;
-            if (isLocalhost()) {
-                host = 'forio.com';
-            }
-            return (HOST_API_MAPPING[host]) ? HOST_API_MAPPING[host] : 'api.' + host;
+            var apiHost = (HOST_API_MAPPING[actingHost]) ? HOST_API_MAPPING[actingHost] : actingHost;
+            // console.log(actingHost, config, apiHost);
+            return apiHost;
+        }()),
+
+        isCustomDomain: (function () {
+            var path = options.pathname.split('\/');
+            var pathHasApp = path && path[1] === 'app';
+            return (!options.isLocalhost() && !pathHasApp);
         }()),
 
         appPath: (function () {
@@ -65,11 +101,13 @@ var UrlConfigService = function (config) {
             return version;
         }()),
 
-        isLocalhost: isLocalhost,
-
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file'];
 
+            if (api === 'config') {
+                // var base = options.isLocalhost() ? '' : 
+                return this.protocol + '://' + actingHost + '/epicenter/v1/config';
+            }
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
 
             if ($.inArray(api, PROJECT_APIS) !== -1) {
@@ -79,14 +117,11 @@ var UrlConfigService = function (config) {
         }
     };
 
-    // This data is set by an external script (start-load.js)
-    var envConf = {
-        protocol: UrlConfigService.protocol,
-        host: UrlConfigService.host
-    };
 
-    $.extend(publicExports, envConf, config);
+    $.extend(publicExports, overrides);
     return publicExports;
 };
+// This data can be set by external scripts, for loading from an env server for eg;
+UrlConfigService.defaults = {};
 
 module.exports = UrlConfigService;

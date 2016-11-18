@@ -49,7 +49,6 @@ function AuthManager(options) {
     this.sessionManager = new SessionManager(options);
     this.options = this.sessionManager.getMergedOptions();
 
-    this.isLocal = this.options.isLocal;
     this.authAdapter = new AuthAdapter(this.options);
 }
 
@@ -59,8 +58,6 @@ var _findUserInGroup = function (members, id) {
             return members[j];
         }
     }
-
-
     return null;
 };
 
@@ -129,7 +126,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         var handleSuccess = function (response) {
             var token = response.access_token;
             var userInfo = decodeToken(token);
-            var oldGroups = sessionManager.getSession().groups || {};
+            var oldGroups = sessionManager.getSession(adapterOptions).groups || {};
             var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
             var data = { auth: response, user: userInfo };
             var project = adapterOptions.project;
@@ -269,7 +266,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     getToken: function (options) {
         var httpOptions = this.sessionManager.getMergedOptions(options);
 
-        var session = this.sessionManager.getSession();
+        var session = this.sessionManager.getSession(httpOptions);
         var $d = $.Deferred();
         if (session.auth_token) {
             $d.resolve(session.auth_token);
@@ -342,7 +339,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @return {Object} session information
      */
     getCurrentUserSessionInfo: function (options) {
-        return this.sessionManager.getSession(options);
+        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
+        return this.sessionManager.getSession(adapterOptions);
     },
 
     /*

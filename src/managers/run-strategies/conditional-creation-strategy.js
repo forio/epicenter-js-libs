@@ -1,6 +1,6 @@
 'use strict';
 
-var Base = require('./identity-strategy');
+var Base = require('./none-strategy');
 var SessionManager = require('../../store/session-manager');
 var classFrom = require('../../util/inherit');
 var AuthManager = require('../auth-manager');
