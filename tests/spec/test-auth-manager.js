@@ -114,8 +114,6 @@
                     project: 'projectName',
                 });
                 am.login({ userName: 'test', password: 'test' }).then(function (response) {
-                    //jshint camelcase: false
-                    //jscs:disable
                     response.auth.access_token.should.equal(token);
                     response.user.should.eql(userInfo);
                     done();

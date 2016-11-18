@@ -83,8 +83,6 @@ var SessionManager = function (managerOptions) {
                  * @see [Authentication API Service](../auth-api-service/) for getting tokens.
                  * @type {String}
                  */
-                //jshint camelcase: false
-                //jscs:disable
                 token: session.auth_token,
                 /**
                  * The group name. If left undefined, taken from the cookie session.

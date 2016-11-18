@@ -96,7 +96,6 @@ $(function () {
         });
     });
 
-    /* jshint multistr:true */
     groupSelectionTemplate = window.groupSelectionTemplate = '<form>\
         <div class="group-selection-dialog" style="display: none"> \
             <div class="panel panel-default form-inline"> \
