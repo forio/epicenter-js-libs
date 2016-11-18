@@ -8,22 +8,33 @@ var defaults = {
     pathname: window.location.pathname
 };
 
-var UrlConfigService = function (config) {
-    var options = $.extend({}, defaults, config);
-
-    if (config && config.isLocalhost !== undefined) {
-        if (!$.isFunction(config.isLocalhost)) {
-            options.isLocalhost = function () { return config.isLocalhost; };
+function getLocalHost(existingFn, host) {
+    var localHostFn;
+    if (existingFn !== undefined) {
+        if (!$.isFunction(existingFn)) {
+            localHostFn = function () { return existingFn; };
+        } else {
+            localHostFn = existingFn;
         }
     } else {
-        options.isLocalhost = function () {
-            var isLocal = !options.host || //phantomjs
-                options.host === '127.0.0.1' || 
-                options.host.indexOf('local.') === 0 || 
-                options.host.indexOf('localhost') === 0;
+        localHostFn = function () {
+            var isLocal = !host || //phantomjs
+                host === '127.0.0.1' || 
+                host.indexOf('local.') === 0 || 
+                host.indexOf('localhost') === 0;
             return isLocal;
         };
     }
+    return localHostFn;
+}
+
+var UrlConfigService = function (config) {
+    if (!config) {
+        config = {};
+    }
+    var options = $.extend({}, defaults, config);
+
+    config.isLocalhost = options.isLocalhost = getLocalHost(config.isLocalhost, options.host);
     
     // console.log(isLocalhost(), '___________');
     var actingHost = config && config.host;
@@ -47,7 +58,7 @@ var UrlConfigService = function (config) {
         //TODO: this should really be called 'apihost', but can't because that would break too many things
         host: (function () {
             var apiHost = (HOST_API_MAPPING[actingHost]) ? HOST_API_MAPPING[actingHost] : actingHost;
-            // console.log(actingHost, config);
+            console.log(actingHost, config, apiHost);
             return apiHost;
         }()),
 
@@ -103,7 +114,7 @@ var UrlConfigService = function (config) {
 
     var envConf = UrlConfigService.defaults;
 
-    $.extend(publicExports, envConf, options);
+    $.extend(publicExports, envConf, config);
     return publicExports;
 };
 // This data can be set by external scripts, for loading from an env server for eg;
