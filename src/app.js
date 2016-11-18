@@ -17,7 +17,7 @@ var F = {
 };
 
 F.load = require('./env-load');
-F.load();
+// F.load();
 
 F.util.query = require('./util/query-util');
 F.util.run = require('./util/run-util');

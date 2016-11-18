@@ -11,20 +11,23 @@ var defaults = {
 var UrlConfigService = function (config) {
     var options = $.extend({}, defaults, config);
 
-    function isLocalhost() {
-        if (options.isLocalhost === false) {
-            return false;
+    if (config && config.isLocalhost !== undefined) {
+        if (!$.isFunction(config.isLocalhost)) {
+            options.isLocalhost = function () { return config.isLocalhost; };
         }
-        var isLocal = !options.host || //phantomjs
-            options.host === '127.0.0.1' || 
-            options.host.indexOf('local.') === 0 || 
-            options.host.indexOf('localhost') === 0;
-        return isLocal;
+    } else {
+        options.isLocalhost = function () {
+            var isLocal = !options.host || //phantomjs
+                options.host === '127.0.0.1' || 
+                options.host.indexOf('local.') === 0 || 
+                options.host.indexOf('localhost') === 0;
+            return isLocal;
+        };
     }
     
     // console.log(isLocalhost(), '___________');
     var actingHost = config && config.host;
-    if (!actingHost && isLocalhost()) {
+    if (!actingHost && options.isLocalhost()) {
         actingHost = 'forio.com';
     } else {
         actingHost = options.host;
@@ -44,13 +47,14 @@ var UrlConfigService = function (config) {
         //TODO: this should really be called 'apihost', but can't because that would break too many things
         host: (function () {
             var apiHost = (HOST_API_MAPPING[actingHost]) ? HOST_API_MAPPING[actingHost] : actingHost;
+            // console.log(actingHost, config);
             return apiHost;
         }()),
 
         isCustomDomain: (function () {
             var path = options.pathname.split('\/');
             var pathHasApp = path && path[1] === 'app';
-            return (!isLocalhost() && !pathHasApp);
+            return (!options.isLocalhost() && !pathHasApp);
         }()),
 
         appPath: (function () {
@@ -82,8 +86,6 @@ var UrlConfigService = function (config) {
             return version;
         }()),
 
-        isLocalhost: isLocalhost,
-
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file'];
 
@@ -101,7 +103,7 @@ var UrlConfigService = function (config) {
 
     var envConf = UrlConfigService.defaults;
 
-    $.extend(publicExports, envConf, config);
+    $.extend(publicExports, envConf, options);
     return publicExports;
 };
 // This data can be set by external scripts, for loading from an env server for eg;

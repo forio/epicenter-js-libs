@@ -3,6 +3,41 @@
     var URLService = F.service.URL;
     var version = F.api.version ? F.api.version + '/' : '';
     describe('URL Service', function () {
+        before(function () {
+            if (!window.location.host) {
+                window.location.host = 'localhost'; //for phantomjs
+            }
+        });
+        describe('#isLocalhost', function () {
+            it('should be overridable with literal value', function () {
+                var url = new URLService({ isLocalhost: false });
+                url.isLocalhost().should.equal(false);
+
+                var url2 = new URLService({ isLocalhost: true });
+                url2.isLocalhost().should.equal(true);
+            });
+            it('should be overridable with a function', function () {
+                var url = new URLService({ isLocalhost: function () { return false; } });
+                url.isLocalhost().should.equal(false);
+
+                var url2 = new URLService({ isLocalhost: function () { return true; } });
+                url2.isLocalhost().should.equal(true);
+            });
+        });
+        describe('#url', function () {
+            it('should default to current hostname if not localhost', function () {
+                var url = new URLService({ isLocalhost: false });
+                url.host.should.equal(window.location.host);
+            });
+            it('should default to api.forio.com if localhost', function () {
+                var url = new URLService({ isLocalhost: true });
+                url.host.should.equal('api.forio.com');
+            });
+            it('should allow over-riding host even if localhost', function () {
+                var url = new URLService({ isLocalhost: true, host: 'some.of.my.servers' });
+                url.host.should.equal('some.of.my.servers');
+            });
+        });
         describe('#getAPIPath', function () {
             it('should allow over-riding host & protocol', function () {
                 var url = new URLService({ host: 'myapi.forio.com', protocol: 'udp' });
@@ -11,20 +46,20 @@
 
             it('should allow setting account and project for file api', function () {
                 var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
-                url.getAPIPath('file').should.equal('https://api.forio.com/' + version + 'file/forioAccount/forioProj/');
+                url.getAPIPath('file').should.equal('https://' + url.host + '/' + version + 'file/forioAccount/forioProj/');
             });
             it('should allow setting account and project for run api', function () {
                 var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
-                url.getAPIPath('run').should.equal('https://api.forio.com/' + version + 'run/forioAccount/forioProj/');
+                url.getAPIPath('run').should.equal('https://' + url.host + '/' + version + 'run/forioAccount/forioProj/');
             });
             it('should allow setting account and project for data api', function () {
                 var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
-                url.getAPIPath('data').should.equal('https://api.forio.com/' + version + 'data/forioAccount/forioProj/');
+                url.getAPIPath('data').should.equal('https://' + url.host + '/' + version + 'data/forioAccount/forioProj/');
             });
 
             it('should allow over-riding the version', function () {
                 var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
-                url.getAPIPath('data').should.equal('https://api.forio.com/data/forioAccount/forioProj/');
+                url.getAPIPath('data').should.equal('https://' + url.host + '/data/forioAccount/forioProj/');
             });
 
             it('should allow over-riding host and protocol globally', function () {
