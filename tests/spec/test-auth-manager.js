@@ -105,7 +105,7 @@
                 am.login({ userName: 'test', password: 'test' });
                 var req = server.requests[0];
                 req.method.toUpperCase().should.equal('POST');
-                req.url.should.match(/https:\/\/api\.forio\.com\/(.*)\/authentication\/?/);
+                req.url.should.match(/https:\/\/(.*)\/(.*)\/authentication\/?/);
             });
 
             it('should call members API on sucessful login', function (done) {
@@ -203,7 +203,7 @@
                 am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('GET');
-                    req.url.should.match(/https:\/\/api\.forio\.com\/(.*)\/group\/local\/?/);
+                    req.url.should.match(/https:\/\/(.*)\/(.*)\/group\/local\/?/);
 
                     var session = am.getCurrentUserSessionInfo();
                     session.groupName.should.equal('rv-test');
@@ -229,7 +229,7 @@
                 }).fail(function (data) {
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('GET');
-                    req.url.should.match(/https:\/\/api\.forio\.com\/(.*)\/group\/local\/?/);
+                    req.url.should.match(/https:\/\/(.*)\/(.*)\/group\/local\/?/);
 
                     multipleGroupsResponse = false;
                     teamMemberResponse = false;
