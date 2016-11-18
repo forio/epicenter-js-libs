@@ -84,6 +84,9 @@ var UrlConfigService = function (config) {
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file'];
 
+            if (api === 'config') {
+                return this.protocol + '://' + this.host + '/epicenter/v1/config';
+            }
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
 
             if ($.inArray(api, PROJECT_APIS) !== -1) {
