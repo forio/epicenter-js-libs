@@ -35,9 +35,10 @@ var AuthAdapter = require('../service/auth-api-service');
 var MemberAdapter = require('../service/member-api-adapter');
 var GroupService = require('../service/group-api-service');
 var SessionManager = require('../store/session-manager');
-var Buffer = require('buffer').Buffer;
 var _pick = require('../util/object-util')._pick;
 var objectAssign = require('object-assign');
+
+var atob = window.atob || require('Base64').atob;
 
 var defaults = {
     requiresGroup: true
@@ -111,9 +112,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             while (encoded.length % 4 !== 0) { //eslint-disable-line
                 encoded += '=';
             }
-            var decode = window.atob ? window.atob : function (encoded) { return new Buffer(encoded, 'base64').toString('ascii'); };
-
-            return JSON.parse(decode(encoded));
+            return JSON.parse(atob(encoded));
         };
 
         var handleGroupError = function (message, statusCode, data) {

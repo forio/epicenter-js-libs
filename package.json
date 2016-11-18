@@ -30,6 +30,7 @@
     "prepush": "grunt validate"
   },
   "dependencies": {
+    "Base64": "^1.0.0",
     "jquery": "^2.1.1"
   }
 }
