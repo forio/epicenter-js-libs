@@ -31,8 +31,8 @@ module.exports = classFrom(Base, {
         var filter = { saved: true, name: BASELINE_NAME };
         var me = this;
         return runService.filter(filter, { 
-            startrecord: 1,
-            // endrecord: 1, //FIXME: using this makes it not work
+            startrecord: 0,
+            endrecord: 0,
             sort: 'created', 
             direction: 'desc'
         }).then(function (runs) {
