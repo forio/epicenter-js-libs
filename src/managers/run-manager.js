@@ -127,7 +127,7 @@ RunManager.prototype = {
      */
     getRun: function () {
         return this.strategy
-                .getRun();
+                .getRun(this.run);
     },
 
     /**
