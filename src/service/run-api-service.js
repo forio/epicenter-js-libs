@@ -250,7 +250,9 @@ module.exports = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
 
-            return http.splitGet(outputModifier, httpOptions);
+            return http.splitGet(outputModifier, httpOptions).then(function (r) {
+                return (r === {}) ? [] : r;
+            });
         },
 
         /**
@@ -272,7 +274,9 @@ module.exports = function (config) {
             }
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
-            return http.splitGet(outputModifier, httpOptions);
+            return http.splitGet(outputModifier, httpOptions).then(function (r) {
+                return (r === {}) ? [] : r;
+            });
         },
 
         /**
