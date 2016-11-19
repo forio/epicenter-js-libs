@@ -1,35 +1,45 @@
 'use strict';
 var classFrom = require('../../util/inherit');
-var ConditionalStrategy = require('../run-strategies/conditional-creation-strategy');
+var RunService = require('../../service/run-api-service');
 
-var __super = ConditionalStrategy.prototype;
-
-var Strategy = classFrom(ConditionalStrategy, {
+var Base = {};
+var BASELINE_NAME = 'baseline';
+module.exports = classFrom(Base, {
     constructor: function (runService, options) {
-        __super.constructor.call(this, runService, this.createIf, options);
+        this.runService = runService;
+        this.runoptions = options.run;
     },
 
-    loadAndCheck: function (run, headers) {
-
-    },
-
-    reset: function () {
-        var prom = __super.reset.apply(this, arguments);
-        prom.then(function (run) {
-            return run.save({
+    reset: function (runServiceOptions) {
+        var currentConfig = this.runService.getCurrentConfig();
+        var rs = new RunService(currentConfig);
+        return rs.create(this.runoptions).then(function (createResponse) {
+            return rs.save({
                 saved: true,
-                name: 'BASELINE'
+                name: BASELINE_NAME
+            }).then(function (patchResponse) {
+                return $.extend(true, {}, createResponse, patchResponse);
             });
-        }).then(function (run) {
-            return run.do({ stepTo: 'end' });
-        }).then(function () {
-            
+        }).then(function (mergedResponse) {
+            return rs.do({ stepTo: 'end' }).then(function () {
+                return mergedResponse;
+            });
         });
     },
 
-    createIf: function (run, headers) {
-        return headers.getResponseHeader('pragma') === 'persistent';
+    getRun: function (runService) {
+        var filter = { saved: true, name: BASELINE_NAME };
+        var me = this;
+        return runService.filter(filter, { 
+            startrecord: 1,
+            // endrecord: 1, //FIXME: using this makes it not work
+            sort: 'created', 
+            direction: 'desc'
+        }).then(function (runs) {
+            if (!runs.length) {
+                return me.reset();
+            }
+            return runs[0];
+        });
     }
 });
-
-module.exports = Strategy;
