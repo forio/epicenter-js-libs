@@ -155,7 +155,7 @@ module.exports={
 (function (global){
 /**
  * Epicenter Javascript libraries
- * v2.0.0
+ * v2.0.1
  * https://github.com/forio/epicenter-js-libs
  */
 
@@ -218,7 +218,7 @@ F.manager.strategy['new-if-initialized'] = require('./managers/run-strategies/ne
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
 F.service.Channel = require('./service/channel-service');
 
-F.version = '2.0.0';
+F.version = '2.0.1';
 F.api = require('./api-version.json');
 
 global.F = F;
