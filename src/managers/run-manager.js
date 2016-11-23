@@ -103,7 +103,7 @@ function RunManager(options) {
         throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
     }
 
-    this.strategy = new StrategyCtor(this.run, this.options);
+    this.strategy = new StrategyCtor(this.options);
     if (!this.strategy.getRun || !this.strategy.reset) {
         throw new Error('All strategies should implement a `getRun` and `reset` interface', this.options.strategy);
     }

@@ -23,7 +23,7 @@ function setRunInSession(sessionKey, run, sessionManager) {
 */
 
 var Strategy = classFrom(Base, {
-    constructor: function Strategy(runService, condition, options) {
+    constructor: function Strategy(condition, options) {
         if (condition == null) { //eslint-disable-line
             //TODO: not sure why this is explicitly ==
             throw new Error('Conditional strategy needs a condition to create a run');
