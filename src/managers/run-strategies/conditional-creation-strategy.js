@@ -22,10 +22,10 @@ function setRunInSession(sessionKey, run, sessionManager) {
 * evaluate if needs to create a new run by calling the 'condition' function
 */
 
-/* jshint eqnull: true */
 var Strategy = classFrom(Base, {
     constructor: function Strategy(runService, condition, options) {
-        if (condition === null) {
+        if (condition == null) { //eslint-disable-line
+            //TODO: not sure why this is explicitly ==
             throw new Error('Conditional strategy needs a condition to create a run');
         }
 

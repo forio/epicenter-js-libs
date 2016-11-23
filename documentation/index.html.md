@@ -25,12 +25,12 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 
 The Epicenter.js library is a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs. 
 
-Services encapsulate the [Epicenter REST APIs](../rest_apis/). Managers are responsible for configuring, sequencing, and synchronizing services to perform common application tasks. For example, the [Run Manager](./generated/run-manager/) lets you use different [run creation strategies](./strategy/) and returns a pre-configured [Run Service](./generated/run-api-service/) you can then use.
+Services encapsulate the [Epicenter REST APIs](../rest_apis/). Managers are responsible for configuring, sequencing, and synchronizing services to perform common application tasks. For example, the [Run Manager](./generated/run-manager/) lets you use different [run creation strategies](./generated/strategies/) and returns a pre-configured [Run Service](./generated/run-api-service/) you can then use.
 
 In most cases you'll work with the managers directly:
 
 * [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
-* [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./strategy/) (rules) for which runs end users of your project work with when they log in to your project. 
+* [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./generated/strategies/) (rules) for which runs end users of your project work with when they log in to your project. 
 * [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users.
 * [Epicenter Channel Manager](./generated/epicenter-channel-manager/) (and the underlying [Channel Manager](./generated/channel-manager/)): Once you've created "[worlds](../glossary/#world)" with the World Manager, you often want end users in each world to be able to communicate: to talk with each other (e.g. a user-to-user chat feature), or to receive updates when something changes in their world (e.g. variables associated with their shared run are updated). The Epicenter Channel Manager provides a publish/subscribe channel using cometd.
 

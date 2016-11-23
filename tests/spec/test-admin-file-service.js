@@ -18,12 +18,14 @@
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
             server.respondWith(/(.*)\/file\/forio\/upload\/static/, function (xhr, id) {
-                if (xhr.requestBody.indexOf('existing.html') > -1 && xhr.method === 'POST') {
-                    return xhr.respond(409, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
-                } else if (xhr.requestBody.indexOf('new.html') > -1 && xhr.method === 'PUT') {
-                    return xhr.respond(404, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
-                } else if (xhr.requestBody.indexOf('serverError.html') > -1) {
-                    return xhr.respond(500, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                if (xhr.requestBody) {
+                    if (xhr.requestBody.indexOf('existing.html') > -1 && xhr.method === 'POST') {
+                        return xhr.respond(409, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                    } else if (xhr.requestBody.indexOf('new.html') > -1 && xhr.method === 'PUT') {
+                        return xhr.respond(404, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                    } else if (xhr.requestBody.indexOf('serverError.html') > -1) {
+                        return xhr.respond(500, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                    }
                 }
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });

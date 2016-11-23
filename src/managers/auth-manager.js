@@ -35,9 +35,10 @@ var AuthAdapter = require('../service/auth-api-service');
 var MemberAdapter = require('../service/member-api-adapter');
 var GroupService = require('../service/group-api-service');
 var SessionManager = require('../store/session-manager');
-var Buffer = require('buffer').Buffer;
 var _pick = require('../util/object-util')._pick;
 var objectAssign = require('object-assign');
+
+var atob = window.atob || require('Base64').atob;
 
 var defaults = {
     requiresGroup: true
@@ -48,7 +49,6 @@ function AuthManager(options) {
     this.sessionManager = new SessionManager(options);
     this.options = this.sessionManager.getMergedOptions();
 
-    this.isLocal = this.options.isLocal;
     this.authAdapter = new AuthAdapter(this.options);
 }
 
@@ -58,8 +58,6 @@ var _findUserInGroup = function (members, id) {
             return members[j];
         }
     }
-
-
     return null;
 };
 
@@ -114,10 +112,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             while (encoded.length % 4 !== 0) { //eslint-disable-line
                 encoded += '=';
             }
-
-            var decode = window.atob ? window.atob : function (encoded) { return new Buffer(encoded, 'base64').toString('ascii'); };
-
-            return JSON.parse(decode(encoded));
+            return JSON.parse(atob(encoded));
         };
 
         var handleGroupError = function (message, statusCode, data) {
@@ -129,11 +124,9 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
         };
 
         var handleSuccess = function (response) {
-            //jshint camelcase: false
-            //jscs:disable
             var token = response.access_token;
             var userInfo = decodeToken(token);
-            var oldGroups = sessionManager.getSession().groups || {};
+            var oldGroups = sessionManager.getSession(adapterOptions).groups || {};
             var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
             var data = { auth: response, user: userInfo };
             var project = adapterOptions.project;
@@ -273,10 +266,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     getToken: function (options) {
         var httpOptions = this.sessionManager.getMergedOptions(options);
 
-        var session = this.sessionManager.getSession();
+        var session = this.sessionManager.getSession(httpOptions);
         var $d = $.Deferred();
-        //jshint camelcase: false
-        //jscs:disable
         if (session.auth_token) {
             $d.resolve(session.auth_token);
         } else {
@@ -348,7 +339,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @return {Object} session information
      */
     getCurrentUserSessionInfo: function (options) {
-        return this.sessionManager.getSession(options);
+        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
+        return this.sessionManager.getSession(adapterOptions);
     },
 
     /*
