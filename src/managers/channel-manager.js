@@ -94,7 +94,7 @@ var ChannelManager = function (options) {
         this.cometd = ChannelManager.prototype._cometd;
         return this;
     }
-    var cometd = new $.Cometd();
+    var cometd = new $.CometD();
     ChannelManager.prototype._cometd = cometd;
 
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
