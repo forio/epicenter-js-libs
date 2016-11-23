@@ -69,7 +69,7 @@
                     expect(function () { new F.manager.RunManager({ strategy: 'always-new' }); }).to.throw(Error);
                 });
             });
-            describe.only('strategy', function () {
+            describe('strategy', function () {
                 it('should allow passing in known strategy names', function () {
                     expect(function () { new F.manager.RunManager({ strategy: 'always-new', run: runOptions }); }).to.not.throw(Error);
                 });
@@ -100,6 +100,74 @@
                     var strategySpy = sinon.spy(myStrategy);
                     expect(function () { new F.manager.RunManager({ strategy: strategySpy, run: runOptions }); }).to.throw(Error);
                 });
+            });
+        });
+
+        describe('#getRun', function () {
+            it('should call the strategy\'s getRun', function () {
+                var getRunSpy = sinon.spy();
+                var myStrategy = function () {
+                    return {
+                        getRun: getRunSpy,
+                        reset: sinon.spy(),
+                    };
+                };
+                var strategySpy = sinon.spy(myStrategy);
+                var rm = new F.manager.RunManager({
+                    strategy: strategySpy,
+                    run: runOptions,
+                }).getRun();
+                expect(getRunSpy).to.have.been.calledOnce;
+            });
+            it('should be called with the right run service', function () {
+                var getRunSpy = sinon.spy();
+                var myStrategy = function () {
+                    return {
+                        getRun: getRunSpy,
+                        reset: sinon.spy(),
+                    };
+                };
+                var strategySpy = sinon.spy(myStrategy);
+                var rm = new F.manager.RunManager({
+                    strategy: strategySpy,
+                    run: runOptions,
+                }).getRun();
+                expect(getRunSpy.getCall(0).args[0]).to.be.instanceof(F.service.Run);
+                // expect(getRunSpy).to.have.been.calledOnce;
+            });
+        });
+        describe('#reset', function () {
+            it('should call the strategy\'s getRun', function () {
+                var resetSpy = sinon.spy();
+                var myStrategy = function () {
+                    return {
+                        getRun: sinon.spy(),
+                        reset: resetSpy,
+                    };
+                };
+                var strategySpy = sinon.spy(myStrategy);
+                var rm = new F.manager.RunManager({
+                    strategy: strategySpy,
+                    run: runOptions,
+                }).reset();
+                expect(resetSpy).to.have.been.calledOnce;
+            });
+            it('should be called with the right run service', function () {
+                var resetSpy = sinon.spy();
+                var myStrategy = function () {
+                    return {
+                        getRun: sinon.spy(),
+                        reset: resetSpy,
+                    };
+                };
+                var strategySpy = sinon.spy(myStrategy);
+                var rm = new F.manager.RunManager({
+                    strategy: strategySpy,
+                    run: runOptions,
+                }).reset();
+                // expect(resetSpy.getCall(0).args[0]).to.equal(runOptions);
+                expect(resetSpy.getCall(0).args[1]).to.be.instanceof(F.service.Run);
+                // expect(getRunSpy).to.have.been.calledOnce;
             });
         });
     });
