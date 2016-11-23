@@ -16,7 +16,7 @@ npm install
 bower install
 
 cd tests
-bower install
+npm install
 
 grunt test  or grunt documentation
 ```
