@@ -89,8 +89,10 @@ function RunManager(options) {
 
     if (this.options.run instanceof RunService) {
         this.run = this.options.run;
-    } else {
+    } else if (this.options.run) {
         this.run = new RunService(this.options.run);
+    } else {
+        throw new Error('No run options passed to RunManager');
     }
 
     patchRunService(this.run, this);
@@ -102,6 +104,9 @@ function RunManager(options) {
     }
 
     this.strategy = new StrategyCtor(this.run, this.options);
+    if (!this.strategy.getRun || !this.strategy.reset) {
+        throw new Error('All strategies should implement a `getRun` and `reset` interface', this.options.strategy);
+    }
 }
 
 RunManager.prototype = {
@@ -148,7 +153,7 @@ RunManager.prototype = {
      * @return {Promise}
      */
     reset: function (runServiceOptions) {
-        return this.strategy.reset(runServiceOptions);
+        return this.strategy.reset(runServiceOptions, this.run);
     }
 };
 
