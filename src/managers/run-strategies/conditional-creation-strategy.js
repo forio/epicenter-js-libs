@@ -30,7 +30,6 @@ var Strategy = classFrom(Base, {
         }
 
         this._auth = new AuthManager();
-        this.run = runService;
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new SessionManager(options);
@@ -44,12 +43,12 @@ var Strategy = classFrom(Base, {
         }, this.runOptions);
     },
 
-    reset: function (runServiceOptions) {
+    reset: function (runService) {
         var me = this;
         var opt = this.runOptionsWithScope();
 
-        return this.run
-                .create(opt, runServiceOptions)
+        return runService
+                .create(opt)
                 .then(function (run) {
                     setRunInSession(me.options.sessionKey, run, me.sessionManager);
                     run.freshlyCreated = true;
@@ -57,24 +56,24 @@ var Strategy = classFrom(Base, {
                 });
     },
 
-    getRun: function () {
+    getRun: function (runService) {
         var sessionStore = this.sessionManager.getStore();
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
         var me = this;
         if (runSession && runSession.runId) {
-            return this.loadAndCheck(runSession).fail(function () {
-                return me.reset(); //if it got the wrong cookie for e.g.
+            return this.loadAndCheck(runService, runSession).fail(function () {
+                return me.reset(runService); //if it got the wrong cookie for e.g.
             });
         } else {
-            return this.reset();
+            return this.reset(runService);
         }
     },
 
-    loadAndCheck: function (runSession, filters) {
+    loadAndCheck: function (runService, runSession, filters) {
         var shouldCreate = false;
         var me = this;
 
-        return this.run
+        return runService
             .load(runSession.runId, filters, {
                 success: function (run, msg, headers) {
                     shouldCreate = me.condition(run, headers);
@@ -83,12 +82,12 @@ var Strategy = classFrom(Base, {
             .then(function (run) {
                 if (shouldCreate) {
                     var opt = me.runOptionsWithScope();
-                    return me.run.create(opt)
-                    .then(function (run) {
-                        setRunInSession(me.options.sessionKey, run, me.sessionManager);
-                        run.freshlyCreated = true;
-                        return run;
-                    });
+                    return runService.create(opt)
+                        .then(function (run) {
+                            setRunInSession(me.options.sessionKey, run, me.sessionManager);
+                            run.freshlyCreated = true;
+                            return run;
+                        });
                 }
                 return run;
             });

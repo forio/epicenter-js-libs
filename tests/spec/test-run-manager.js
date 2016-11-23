@@ -74,7 +74,10 @@
                     expect(function () { new F.manager.RunManager({ strategy: 'always-new', run: runOptions }); }).to.not.throw(Error);
                 });
                 it('should throw an error with unknown strategy names', function () {
-                    expect(function () { new F.manager.RunManager({ strategy: 'booya' }); }).to.throw(Error);
+                    expect(function () { new F.manager.RunManager({ strategy: 'booya', run: runOptions }); }).to.throw(Error);
+                });
+                it('should pick default strategy name if none provided', function () {
+                    expect(function () { new F.manager.RunManager({ run: runOptions }); }).to.not.throw(Error);
                 });
                 it('should allow custom strategy functions', function () {
                     var myStrategy = function () {
@@ -165,9 +168,7 @@
                     strategy: strategySpy,
                     run: runOptions,
                 }).reset();
-                // expect(resetSpy.getCall(0).args[0]).to.equal(runOptions);
-                expect(resetSpy.getCall(0).args[1]).to.be.instanceof(F.service.Run);
-                // expect(getRunSpy).to.have.been.calledOnce;
+                expect(resetSpy.getCall(0).args[0]).to.be.instanceof(F.service.Run);
             });
         });
     });
