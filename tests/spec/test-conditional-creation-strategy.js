@@ -1,27 +1,22 @@
 (function () {
     'use strict';
-
-    var cookieContents = {
-        auth_token: '',
-        account: 'forio-dev',
-        project: 'js-libs',
-        userId: '123',
-        groupId: 'group123',
-        groupName: 'group-123',
-        isFac: false
-    };
-
-    var runs = [{
-        id: '1',
-    }];
-
     var fakeAuth = {
         // get should return what's stoed in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns(cookieContents)
+        getCurrentUserSessionInfo: sinon.stub().returns({
+            auth_token: '',
+            account: 'forio-dev',
+            project: 'js-libs',
+            userId: '123',
+            groupId: 'group123',
+            groupName: 'group-123',
+            isFac: false
+        })
     };
 
     var server;
-
+    var runs = [{
+        id: '1',
+    }];
     var setupResponse = function (verb, endpoint, statusCode, resp, respHeaders) {
         server.respondWith(verb, endpoint, function (xhr, id) {
             var headers = _.extend({}, { 'Content-Type': 'application/json' }, respHeaders);
@@ -64,24 +59,74 @@
         }
 
         describe('getRun', function () {
-            it('should call get runs with the correct filters', function () {
+            it('should call rs.create with the initial params', function () {
+                var runOptions = {
+                    model: 'model.eqn',
+                    account: 'forio-dev',
+                    project: 'js-libs'
+                };
+                var rs = new F.service.Run(runOptions);
+                rs.create = sinon.spy(function () {
+                    return $.Deferred().resolve({
+                        id: 'abc'
+                    }).promise();
+                });
+                var rm = new F.manager.RunManager({
+                    strategy: 'always-new',
+                    run: rs
+                });
+                return rm.getRun().then(function () {
+                    expect(rs.create).to.have.been.calledOnce;
 
+                    var args = rs.create.getCall(0).args;
+                    expect(args[0]).to.contain.all.keys(runOptions);
+                });
             });
 
             describe('when no run exists', function () {
-                it('should do a POST to the run api', function () {
-                    createRunManager().getRun();
+                it.only('should create a run with the correct scope', function () {
+                    var dummySessionStore = {
+                        getStore: function () {
+                            return {
+                                get: function () { 
+                                    return JSON.stringify({
+                                        runId: 'food'
+                                    });
+                                },
+                                set: function () { },
+                            };
+                        }
+                    };
+                    var runOptions = {
+                        model: 'model.eqn',
+                        account: 'forio-dev',
+                        project: 'js-libs'
+                    };
+                    var rs = new F.service.Run(runOptions);
 
-                    var req = server.requests.pop();
-                    expect(req.method).to.equal('POST');
-                });
+                    var createStub = sinon.stub(rs, 'create', function () {
+                        return $.Deferred().resolve({
+                            id: 'def'
+                        }).promise();
+                    });
+                    var loadStub = sinon.stub(rs, 'load', function (runid, filter, options) {
+                        options.success();
+                        return $.Deferred().resolve([{
+                            id: runid
+                        }]).promise();
+                    });
+                    var rm = new F.manager.RunManager({
+                        strategy: 'always-new',
+                        run: rs
+                    });
+                    rm.strategy._auth = fakeAuth;
+                    rm.strategy.sessionManager = dummySessionStore;
+                    return rm.getRun().then(function () {
+                        expect(loadStub).to.have.been.calledOnce;
 
-                it('should create a run with the correct scope', function () {
-                    createRunManager().getRun();
-
-                    var req = server.requests.pop();
-                    expect(JSON.parse(req.requestBody).scope).to.eql({ group: 'group-123' });
-
+                        var args = createStub.getCall(0).args;
+                        expect(args[0].scope).to.eql({ group: 'group-123' });
+                    });
                 });
             });
         });

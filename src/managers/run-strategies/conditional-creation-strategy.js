@@ -33,7 +33,7 @@ var Strategy = classFrom(Base, {
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new SessionManager(options);
-        this.runOptions = this.options.run;
+        this.runOptions = $.isPlainObject(this.options.run) ? this.options.run : this.options.run.getCurrentConfig();
     },
 
     runOptionsWithScope: function () {
@@ -53,6 +53,9 @@ var Strategy = classFrom(Base, {
                     setRunInSession(me.options.sessionKey, run, me.sessionManager);
                     run.freshlyCreated = true;
                     return run;
+                })
+                .fail(function (err) {
+                    console.error('run creation failed', err);
                 });
     },
 
