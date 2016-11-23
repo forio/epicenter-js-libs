@@ -25,8 +25,8 @@ var __super = ConditionalStrategy.prototype;
 *  this is useful for baseRuns.
 */
 var Strategy = classFrom(ConditionalStrategy, {
-    constructor: function (runService, options) {
-        __super.constructor.call(this, runService, this.createIf, options);
+    constructor: function (options) {
+        __super.constructor.call(this, this.createIf, options);
     },
 
     createIf: function (run, headers) {

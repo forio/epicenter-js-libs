@@ -19,7 +19,7 @@ var defaults = {
 
 var Strategy = classFrom(IdentityStrategy, {
 
-    constructor: function (runService, options) {
+    constructor: function (options) {
         this.options = $.extend(true, {}, defaults, options);
         this._auth = new AuthManager();
         this.worldApi = new WorldApiAdapter(this.options.run);

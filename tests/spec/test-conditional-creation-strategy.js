@@ -121,7 +121,7 @@
                         }).promise();
                     });
 
-                    var rm = new Strategy(rs, true, {
+                    var rm = new Strategy(true, {
                         run: rs
                     });
                     rm._auth = fakeAuth;
