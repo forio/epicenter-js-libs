@@ -92,7 +92,28 @@
                 });
             });
 
-            describe('when a run exists in session', function () {
+            describe.only('when a run exists in session', function () {
+                var rs, loadStub, createStub;
+
+                beforeEach(function () {
+                    rs = new F.service.Run(runOptions);
+                    loadStub = sinon.stub(rs, 'load', function (runid, filter, options) {
+                        options.success();
+                        return $.Deferred().resolve([{
+                            id: runid
+                        }]).promise();
+                    });
+                    createStub = sinon.stub(rs, 'create', function () {
+                        return $.Deferred().resolve({
+                            id: 'def'
+                        }).promise();
+                    });
+                });
+                afterEach(function () {
+                    rs.load.restore();
+                    rs.create.restore();
+                });
+
                 var dummyRunid = 'foo';
                 var dummySessionStore = {
                     getStore: function () {
@@ -107,20 +128,7 @@
                     }
                 };
 
-                it.only('should try to load it', function () {
-                    var rs = new F.service.Run(runOptions);
-                    var loadStub = sinon.stub(rs, 'load', function (runid, filter, options) {
-                        options.success();
-                        return $.Deferred().resolve([{
-                            id: runid
-                        }]).promise();
-                    });
-                    var createStub = sinon.stub(rs, 'create', function () {
-                        return $.Deferred().resolve({
-                            id: 'def'
-                        }).promise();
-                    });
-
+                it('should try to load it', function () {
                     var rm = new Strategy(true, {
                         run: rs
                     });
@@ -130,6 +138,31 @@
                         expect(loadStub).to.have.been.calledOnce;
                         var args = loadStub.getCall(0).args;
                         expect(args[0]).to.eql(dummyRunid);
+                    });
+                });
+
+                describe('create condition', function () {
+                    it('should create a new run if condition is true', function () {
+                        var rm = new Strategy(true, {
+                            run: rs
+                        });
+                        rm._auth = fakeAuth;
+                        rm.sessionManager = dummySessionStore;
+                        return rm.getRun(rs).then(function () {
+                            expect(createStub).to.have.been.calledOnce;
+                            var args = createStub.getCall(0).args;
+                            expect(args[0]).to.contain.all.keys(runOptions);
+                        });
+                    });
+                    it('should not create a new run if condition is false', function () {
+                        var rm = new Strategy(false, {
+                            run: rs
+                        });
+                        rm._auth = fakeAuth;
+                        rm.sessionManager = dummySessionStore;
+                        return rm.getRun(rs).then(function () {
+                            expect(createStub).to.not.have.been.called;
+                        });
                     });
                 });
             });
