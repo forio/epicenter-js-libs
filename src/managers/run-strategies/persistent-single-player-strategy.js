@@ -28,50 +28,42 @@ var defaults = {
 };
 
 var Strategy = classFrom(IdentityStrategy, {
-    constructor: function Strategy(runService, options) {
-        this.run = runService;
+    constructor: function Strategy(options) {
         this.options = $.extend(true, {}, defaults, options);
         this.runOptions = this.options.run;
         this._store = new StorageFactory(this.options.store);
         this.stateApi = new StateApi();
         this._auth = new AuthManager();
-
-        this._loadAndCheck = this._loadAndCheck.bind(this);
-        this._restoreRun = this._restoreRun.bind(this);
-        this._getAllRuns = this._getAllRuns.bind(this);
-        this._loadRun = this._loadRun.bind(this);
     },
 
-    reset: function (runServiceOptions) {
+    reset: function (runService) {
         var session = this._auth.getCurrentUserSessionInfo();
         var opt = $.extend({
             scope: { group: session.groupName }
         }, this.runOptions);
 
-        return this.run
-            .create(opt, runServiceOptions)
+        return runService
+            .create(opt)
             .then(function (run) {
                 run.freshlyCreated = true;
                 return run;
             });
     },
 
-    getRun: function () {
-        return this._getAllRuns()
-            .then(this._loadAndCheck);
-    },
-
-    _getAllRuns: function () {
+    getRun: function (runService) {
+        var me = this;
         var session = JSON.parse(this._store.get(keyNames.EPI_SESSION_KEY) || '{}');
-        return this.run.query({
+        return runService.query({
             'user.id': session.userId || '0000',
             'scope.group': session.groupName
+        }).then(function (runs) {
+            return me._loadAndCheck(runService, runs);
         });
     },
 
-    _loadAndCheck: function (runs) {
+    _loadAndCheck: function (runService, runs) {
         if (!runs || !runs.length) {
-            return this.reset();
+            return this.reset(runService);
         }
 
         var dateComp = function (a, b) { return new Date(b.date) - new Date(a.date); };
@@ -79,26 +71,20 @@ var Strategy = classFrom(IdentityStrategy, {
         var me = this;
         var shouldReplay = false;
 
-        return this.run.load(latestRun.id, null, {
+        return runService.load(latestRun.id, null, {
             success: function (run, msg, headers) {
                 shouldReplay = headers.getResponseHeader('pragma') === 'persistent';
             }
         }).then(function (run) {
-            return shouldReplay ? me._restoreRun(run.id) : run;
+            if (shouldReplay) {
+                return me.stateApi.replay({ runId: run.id })
+                    .then(function (resp) {
+                        return runService.load(resp);
+                    });
+            }
+            return run;
         });
     },
-
-    _restoreRun: function (runId) {
-        var me = this;
-        return this.stateApi.replay({ runId: runId })
-            .then(function (resp) {
-                return me._loadRun(resp.run);
-            });
-    },
-
-    _loadRun: function (id, options) {
-        return this.run.load(id, null, options);
-    }
 
 });
 
