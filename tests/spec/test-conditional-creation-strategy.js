@@ -16,57 +16,29 @@
         })
     };
 
-    var server;
-    var runs = [{
-        id: '1',
-    }];
-    var setupResponse = function (verb, endpoint, statusCode, resp, respHeaders) {
-        server.respondWith(verb, endpoint, function (xhr, id) {
-            var headers = _.extend({}, { 'Content-Type': 'application/json' }, respHeaders);
-            var body = typeof resp === 'object' ? JSON.stringify(resp) : resp;
-            xhr.respond(statusCode, headers, body);
-        });
-    };
-
-
-    var setupServer = function () {
-        server = sinon.fakeServer.create();
-        setupResponse('GET', /run\/forio-dev\/js-libs/, 200, runs || []);
-        server.respondImmediately = true;
-    };
-
-    var teardownServer = function () {
-        server.restore();
-    };
-
     var runOptions = {
         model: 'model.eqn',
         account: 'forio-dev',
         project: 'js-libs'
     };
 
+    function createFakeSessionStore(runid) {
+        var dummySessionStore = {
+            getStore: function () {
+                return {
+                    get: function () { 
+                        return runid ? JSON.stringify({
+                            runId: runid
+                        }) : null;
+                    },
+                    set: function () { },
+                };
+            }
+        };
+        return dummySessionStore;
+    }
+
     describe('Conditional Creation Strategy', function () {
-        beforeEach(function () {
-            setupServer();
-        });
-
-        afterEach(function () {
-            teardownServer();
-        });
-
-        function createRunManager(options) {
-            var rm = new F.manager.RunManager(_.extend({
-                strategy: 'always-new',
-                run: {
-                    model: 'model.eqn'
-                }
-            }, options));
-
-            rm.strategy._auth = fakeAuth;
-
-            return rm;
-        }
-
         describe('getRun', function () {
             it('should call rs.create with the initial params', function () {
                 var runOptions = {
@@ -94,6 +66,7 @@
 
             describe.only('when a run exists in session', function () {
                 var rs, loadStub, createStub;
+                var dummyRunid = 'foo';
 
                 beforeEach(function () {
                     rs = new F.service.Run(runOptions);
@@ -114,26 +87,12 @@
                     rs.create.restore();
                 });
 
-                var dummyRunid = 'foo';
-                var dummySessionStore = {
-                    getStore: function () {
-                        return {
-                            get: function () { 
-                                return JSON.stringify({
-                                    runId: dummyRunid
-                                });
-                            },
-                            set: function () { },
-                        };
-                    }
-                };
-
                 it('should try to load it', function () {
                     var rm = new Strategy(true, {
                         run: rs
                     });
                     rm._auth = fakeAuth;
-                    rm.sessionManager = dummySessionStore;
+                    rm.sessionManager = createFakeSessionStore(dummyRunid);
                     return rm.getRun(rs).then(function () {
                         expect(loadStub).to.have.been.calledOnce;
                         var args = loadStub.getCall(0).args;
@@ -147,7 +106,7 @@
                             run: rs
                         });
                         rm._auth = fakeAuth;
-                        rm.sessionManager = dummySessionStore;
+                        rm.sessionManager = createFakeSessionStore(dummyRunid);
                         return rm.getRun(rs).then(function () {
                             expect(createStub).to.have.been.calledOnce;
                             var args = createStub.getCall(0).args;
@@ -159,7 +118,7 @@
                             run: rs
                         });
                         rm._auth = fakeAuth;
-                        rm.sessionManager = dummySessionStore;
+                        rm.sessionManager = createFakeSessionStore(dummyRunid);
                         return rm.getRun(rs).then(function () {
                             expect(createStub).to.not.have.been.called;
                         });
