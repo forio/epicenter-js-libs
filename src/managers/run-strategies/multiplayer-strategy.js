@@ -20,10 +20,8 @@ var defaults = {
 var Strategy = classFrom(IdentityStrategy, {
 
     constructor: function (runService, options) {
-        this.runService = runService;
         this.options = $.extend(true, {}, defaults, options);
         this._auth = new AuthManager();
-        this._loadRun = this._loadRun.bind(this);
         this.worldApi = new WorldApiAdapter(this.options.run);
     },
 
@@ -39,7 +37,7 @@ var Strategy = classFrom(IdentityStrategy, {
             }.bind(this));
     },
 
-    getRun: function () {
+    getRun: function (runService) {
         var session = this._auth.getCurrentUserSessionInfo();
         var curUserId = session.userId;
         var curGroupName = session.groupName;
@@ -58,7 +56,9 @@ var Strategy = classFrom(IdentityStrategy, {
             }
 
             return worldApi.getCurrentRunId({ model: model, filter: world.id })
-                .then(me._loadRun)
+                .then(function (id) {
+                    return runService.load(id);
+                })
                 .then(dtd.resolve)
                 .fail(dtd.reject);
         };
@@ -76,9 +76,6 @@ var Strategy = classFrom(IdentityStrategy, {
         return dtd.promise();
     },
 
-    _loadRun: function (id, options) {
-        return this.runService.load(id, null, options);
-    }
 });
 
 module.exports = Strategy;
