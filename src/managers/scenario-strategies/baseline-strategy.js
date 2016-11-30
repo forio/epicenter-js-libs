@@ -1,6 +1,5 @@
 'use strict';
 var classFrom = require('../../util/inherit');
-var RunService = require('../../service/run-api-service');
 
 var Base = {};
 var BASELINE_NAME = 'baseline';
@@ -10,9 +9,9 @@ module.exports = classFrom(Base, {
         this.runoptions = options.run;
     },
 
+    //TODO: Make sure this is passing the scope etc
     reset: function (runServiceOptions) {
-        var currentConfig = this.runService.getCurrentConfig();
-        var rs = new RunService(currentConfig);
+        var rs = this.runService;
         return rs.create(this.runoptions).then(function (createResponse) {
             return rs.save({
                 saved: true,
@@ -27,6 +26,7 @@ module.exports = classFrom(Base, {
         });
     },
 
+    //FIXME: store this in a cookie?
     getRun: function (runService) {
         var filter = { saved: true, name: BASELINE_NAME };
         var me = this;

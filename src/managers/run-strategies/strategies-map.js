@@ -6,5 +6,6 @@ module.exports = {
     multiplayer: require('./multiplayer-strategy'),
     'persistent-single-player': require('./persistent-single-player-strategy'),
     none: require('./none-strategy'),
-    baseline: require('../scenario-strategies/baseline-strategy')
+    baseline: require('../scenario-strategies/baseline-strategy'),
+    'new-if-stepped': require('../scenario-strategies/last-unsaved'),
 };
