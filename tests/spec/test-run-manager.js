@@ -66,7 +66,7 @@
             });
         });
 
-        describe.only('#getRun', function () {
+        describe('#getRun', function () {
             var rm, runid = 'newrun', getRunSpy;
             beforeEach(function () {
                 getRunSpy = sinon.spy(function () {
@@ -102,8 +102,11 @@
             });
         });
         describe('#reset', function () {
-            it('should call the strategy\'s getRun', function () {
-                var resetSpy = sinon.spy();
+            var rm, runid = 'resetrun', resetSpy;
+            beforeEach(function () {
+                resetSpy = sinon.spy(function () {
+                    return $.Deferred().resolve({ id: runid }).promise();
+                });
                 var myStrategy = function () {
                     return {
                         getRun: sinon.spy(),
@@ -111,28 +114,27 @@
                     };
                 };
                 var strategySpy = sinon.spy(myStrategy);
-                var rm = new F.manager.RunManager({
+                rm = new F.manager.RunManager({
                     strategy: strategySpy,
                     run: runOptions,
-                }).reset();
-                expect(resetSpy).to.have.been.calledOnce;
+                });
+            });
+            it('should call the strategy\'s getRun', function () {
+                return rm.reset().then(function () {
+                    expect(resetSpy).to.have.been.calledOnce;
+                });
             });
             it('should be called with the right run service', function () {
-                var resetSpy = sinon.spy();
-                var myStrategy = function () {
-                    return {
-                        getRun: sinon.spy(),
-                        reset: resetSpy,
-                    };
-                };
-                var strategySpy = sinon.spy(myStrategy);
-                var rm = new F.manager.RunManager({
-                    strategy: strategySpy,
-                    run: runOptions,
-                }).reset();
-                expect(resetSpy.getCall(0).args[0]).to.be.instanceof(F.service.Run);
+                return rm.reset().then(function () {
+                    expect(resetSpy.getCall(0).args[0]).to.be.instanceof(F.service.Run);
+                });
+            });
+            it('should update current run instance after creation', function () {
+                return rm.reset().then(function () {
+                    var config = rm.run.getCurrentConfig();
+                    expect(config.id).to.equal(runid);
+                });
             });
         });
     });
-
 }());

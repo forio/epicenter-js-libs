@@ -158,7 +158,13 @@ RunManager.prototype = {
      * @return {Promise}
      */
     reset: function () {
-        return this.strategy.reset(this.run);
+        var me = this;
+        return this.strategy.reset(this.run).then(function (run) {
+            if (run && run.id) {
+                me.run.updateConfig({ filter: run.id });
+            }
+            return run;
+        });
     }
 };
 
