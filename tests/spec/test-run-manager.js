@@ -66,9 +66,11 @@
             });
         });
 
-        describe('#getRun', function () {
+        describe.only('#getRun', function () {
             it('should call the strategy\'s getRun', function () {
-                var getRunSpy = sinon.spy();
+                var getRunSpy = sinon.spy(function () {
+                    return $.Deferred().resolve({ id: 'newrun' }).promise();
+                });
                 var myStrategy = function () {
                     return {
                         getRun: getRunSpy,
@@ -83,7 +85,9 @@
                 expect(getRunSpy).to.have.been.calledOnce;
             });
             it('should be called with the right run service', function () {
-                var getRunSpy = sinon.spy();
+                var getRunSpy = sinon.spy(function () {
+                    return $.Deferred().resolve({ id: 'newrun' }).promise();
+                });
                 var myStrategy = function () {
                     return {
                         getRun: getRunSpy,
@@ -96,7 +100,29 @@
                     run: runOptions,
                 }).getRun();
                 expect(getRunSpy.getCall(0).args[0]).to.be.instanceof(F.service.Run);
-                // expect(getRunSpy).to.have.been.calledOnce;
+                expect(getRunSpy).to.have.been.calledOnce;
+            });
+            it('should update current run instance after creation', function () {
+                var runid = 'myNewRunId';
+                var getRunSpy = sinon.spy(function () {
+                    return $.Deferred().resolve({ id: runid }).promise();
+                });
+                var myStrategy = function () {
+                    return {
+                        getRun: getRunSpy,
+                        reset: sinon.spy(),
+                    };
+                };
+                var strategySpy = sinon.spy(myStrategy);
+                var rm = new F.manager.RunManager({
+                    strategy: strategySpy,
+                    run: runOptions,
+                });
+
+                return rm.getRun().then(function () {
+                    var config = rm.run.getCurrentConfig();
+                    expect(config.id).to.equal(runid);
+                });
             });
         });
         describe('#reset', function () {

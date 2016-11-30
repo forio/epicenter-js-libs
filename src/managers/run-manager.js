@@ -131,8 +131,14 @@ RunManager.prototype = {
      * @return {$promise} Promise to complete the call.
      */
     getRun: function () {
+        var me = this;
         return this.strategy
-                .getRun(this.run);
+                .getRun(this.run).then(function (run) {
+                    if (run && run.id) {
+                        me.run.updateConfig({ filter: run.id });
+                    }
+                    return run;
+                });
     },
 
     /**
