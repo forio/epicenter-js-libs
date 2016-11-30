@@ -1,7 +1,6 @@
 'use strict';
 
 var Base = require('./none-strategy');
-var SessionManager = require('../../store/session-manager');
 var classFrom = require('../../util/inherit');
 var AuthManager = require('../auth-manager');
 
@@ -11,10 +10,6 @@ var defaults = {
     sessionKey: keyNames.STRATEGY_SESSION_KEY,
     path: ''
 };
-
-function setRunInSession(sessionKey, run, sessionManager) {
-    sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: run.id }));
-}
 
 /**
 * Conditional Creation Strategy
@@ -32,12 +27,9 @@ var Strategy = classFrom(Base, {
         this._auth = new AuthManager();
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
-        this.sessionManager = new SessionManager(options);
     },
 
     reset: function (runService) {
-        var me = this;
-
         var userSession = this._auth.getCurrentUserSessionInfo();
         var opt = $.extend({
             scope: { group: userSession.groupName }
@@ -46,7 +38,6 @@ var Strategy = classFrom(Base, {
         return runService
                 .create(opt)
                 .then(function (run) {
-                    setRunInSession(me.options.sessionKey, run, me.sessionManager);
                     run.freshlyCreated = true;
                     return run;
                 });
