@@ -38,15 +38,23 @@
         return dummySessionStore;
     }
 
+
+    function createStrategy(condition, rs, auth, runidForStore) {
+        var rm = new Strategy(condition, { run: rs });
+        rm._auth = auth;
+        rm.sessionManager = createFakeSessionStore(runidForStore);
+
+        return rm;
+    }
     describe('Conditional Creation Strategy', function () {
         describe('getRun', function () {
             describe('if a run exists in session', function () {
-                var rs, loadStub, createStub;
+                var rs, loadStub;
                 var dummyRunid = 'foo';
 
                 beforeEach(function () {
                     rs = new F.service.Run(runOptions);
-                    createStub = sinon.stub(rs, 'create', function (options) {
+                    sinon.stub(rs, 'create', function (options) {
                         return $.Deferred().resolve({
                             id: 'def'
                         }).promise();
@@ -58,10 +66,7 @@
                 });
 
                 it('should try to load it', function () {
-                    var rm = new Strategy(true, { run: rs });
-                    rm._auth = fakeAuth;
-                    rm.sessionManager = createFakeSessionStore(dummyRunid);
-
+                    var rm = createStrategy(true, rs, fakeAuth, dummyRunid);
                     return rm.getRun(rs).then(function () {
                         expect(loadStub).to.have.been.calledOnce;
                         var args = loadStub.getCall(0).args;
@@ -70,39 +75,33 @@
                 });
                 
                 describe('if loading succeeds', function () {
-                    it('should create a new run if condition is true', function () {
-                        var rm = new Strategy(true, {
-                            run: rs
+                    it('should reset if condition is true', function () {
+                        var rm = createStrategy(true, rs, fakeAuth, dummyRunid);
+                        var resetStub = sinon.stub(rm, 'reset', function () { 
+                            return $.Deferred().resolve('works').promise();
                         });
-                        rm._auth = fakeAuth;
-                        rm.sessionManager = createFakeSessionStore(dummyRunid);
                         return rm.getRun(rs).then(function () {
-                            expect(createStub).to.have.been.calledOnce;
-                            var args = createStub.getCall(0).args;
-                            expect(args[0]).to.contain.all.keys(runOptions);
+                            expect(resetStub).to.have.been.calledOnce;
                         });
                     });
                     it('should not create a new run if condition is false', function () {
-                        var rm = new Strategy(false, {
-                            run: rs
+                        var rm = createStrategy(false, rs, fakeAuth, dummyRunid);
+                        var resetStub = sinon.stub(rm, 'reset', function () { 
+                            return $.Deferred().resolve('works').promise();
                         });
-                        rm._auth = fakeAuth;
-                        rm.sessionManager = createFakeSessionStore(dummyRunid);
                         return rm.getRun(rs).then(function () {
-                            expect(createStub).to.not.have.been.called;
+                            expect(resetStub).to.not.have.been.called;
                         });
                     });
                 });
                 describe('if loading fails', function () {
                     it('should default to reset', function () {
                         var rs = new F.service.Run(runOptions);
-                        var rm = new Strategy(true, { run: rs });
-                        rm._auth = fakeAuth;
-                        rm.sessionManager = createFakeSessionStore(dummyRunid);
-
                         sinon.stub(rs, 'load', function () {
                             return $.Deferred().reject('blah').promise();
                         });
+
+                        var rm = createStrategy(false, rs, fakeAuth, dummyRunid);
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
@@ -124,13 +123,11 @@
                     };
 
                     var rs = new F.service.Run(runOptions);
-                    var rm = new Strategy(true, { run: rs });
-                    rm._auth = fakeAuth;
-                    rm.sessionManager = createFakeSessionStore();
-
                     var loadStub = sinon.stub(rs, 'load', function () {
                         return $.Deferred().resolve().promise();
                     });
+
+                    var rm = createStrategy(true, rs, fakeAuth, null);
                     var resetStub = sinon.stub(rm, 'reset', function () { 
                         return $.Deferred().resolve('works').promise();
                     });
@@ -154,10 +151,7 @@
                         }).promise();
                     });
 
-                    var rm = new Strategy(true, { run: rs });
-                    rm._auth = fakeAuth;
-                    rm.sessionManager = createFakeSessionStore();
-
+                    var rm = createStrategy(true, rs, fakeAuth, null);
                     return rm.reset(rs).then(function () {
                         expect(createStub).to.have.been.calledOnce;
                         var args = rs.create.getCall(0).args;
@@ -172,10 +166,7 @@
                         }).promise();
                     });
 
-                    var rm = new Strategy(true, { run: rs });
-                    rm._auth = fakeAuth;
-                    rm.sessionManager = createFakeSessionStore();
-                    
+                    var rm = createStrategy(true, rs, fakeAuth, null);
                     return rm.reset(rs).then(function () {
                         expect(createStub).to.have.been.calledOnce;
                         var args = createStub.getCall(0).args;
