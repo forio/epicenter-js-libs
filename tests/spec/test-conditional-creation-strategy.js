@@ -28,7 +28,7 @@
 
         return rm;
     }
-    describe.only('Conditional Creation Strategy', function () {
+    describe('Conditional Creation Strategy', function () {
         describe('getRun', function () {
             describe('if a run exists in session', function () {
                 var rs, loadStub;

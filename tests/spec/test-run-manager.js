@@ -67,7 +67,7 @@
         });
 
         describe('#getRun', function () {
-            var rm, runid = 'newrun', getRunSpy;
+            var rm, runid = 'newrun', getRunSpy, strategySpy;
             beforeEach(function () {
                 getRunSpy = sinon.spy(function () {
                     return $.Deferred().resolve({ id: runid }).promise();
@@ -78,7 +78,7 @@
                         reset: sinon.spy(),
                     };
                 };
-                var strategySpy = sinon.spy(myStrategy);
+                strategySpy = sinon.spy(myStrategy);
                 rm = new F.manager.RunManager({
                     strategy: strategySpy,
                     run: runOptions,
@@ -99,6 +99,35 @@
                     var config = rm.run.getCurrentConfig();
                     expect(config.id).to.equal(runid);
                 });
+            });
+
+            describe('with session', function () {
+                function createFakeSessionStore(runid) {
+                    var dummySessionStore = {
+                        getStore: function () {
+                            return {
+                                get: function () { 
+                                    return runid ? JSON.stringify({
+                                        runId: runid
+                                    }) : null;
+                                },
+                                set: function () { },
+                            };
+                        }
+                    };
+                    return dummySessionStore;
+                }
+                it('should pass runid in session into strategy', function () {
+                    var rm = new F.manager.RunManager({
+                        strategy: strategySpy,
+                        run: runOptions,
+                    });
+                    rm.sessionManager = createFakeSessionStore('dummyrunid');
+                    return rm.getRun().then(function () {
+                        expect(getRunSpy.getCall(0).args[1]).to.equal('dummyrunid');
+                    });
+                });
+
             });
         });
         describe('#reset', function () {

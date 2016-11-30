@@ -52,6 +52,7 @@
 var strategiesMap = require('./run-strategies/strategies-map');
 var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
+var SessionManager = require('../store/session-manager');
 
 
 function patchRunService(service, manager) {
@@ -94,6 +95,7 @@ function RunManager(options) {
     } else {
         throw new Error('No run options passed to RunManager');
     }
+    this.sessionManager = new SessionManager(this.options);
 
     patchRunService(this.run, this);
 
@@ -132,8 +134,12 @@ RunManager.prototype = {
      */
     getRun: function () {
         var me = this;
+        var sessionStore = this.sessionManager.getStore();
+        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
+        var runid = runSession && runSession.runId;
+
         return this.strategy
-                .getRun(this.run).then(function (run) {
+                .getRun(this.run, runid).then(function (run) {
                     if (run && run.id) {
                         me.run.updateConfig({ filter: run.id });
                     }
