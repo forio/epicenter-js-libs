@@ -81,13 +81,7 @@ var Strategy = classFrom(Base, {
             })
             .then(function (run) {
                 if (shouldCreate) {
-                    var opt = me.runOptionsWithScope();
-                    return runService.create(opt)
-                        .then(function (run) {
-                            setRunInSession(me.options.sessionKey, run, me.sessionManager);
-                            run.freshlyCreated = true;
-                            return run;
-                        });
+                    return me.reset(runService);
                 }
                 return run;
             });
