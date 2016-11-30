@@ -4,7 +4,7 @@
     var Strategy = F.manager.strategy['conditional-creation'];
 
     var fakeAuth = {
-        // get should return what's stoed in the session cookie
+        // get should return what's stored in the session cookie
         getCurrentUserSessionInfo: sinon.stub().returns({
             auth_token: '',
             account: 'forio-dev',
@@ -40,67 +40,36 @@
 
     describe('Conditional Creation Strategy', function () {
         describe('getRun', function () {
-            it('should call rs.create with the initial params', function () {
-                var runOptions = {
-                    model: 'model.eqn',
-                    account: 'forio-dev',
-                    project: 'js-libs'
-                };
-                var rs = new F.service.Run(runOptions);
-                rs.create = sinon.spy(function () {
-                    return $.Deferred().resolve({
-                        id: 'abc'
-                    }).promise();
-                });
-                var rm = new F.manager.RunManager({
-                    strategy: 'always-new',
-                    run: rs
-                });
-                return rm.getRun().then(function () {
-                    expect(rs.create).to.have.been.calledOnce;
-
-                    var args = rs.create.getCall(0).args;
-                    expect(args[0]).to.contain.all.keys(runOptions);
-                });
-            });
-
-            describe.only('when a run exists in session', function () {
+            describe('if a run exists in session', function () {
                 var rs, loadStub, createStub;
                 var dummyRunid = 'foo';
 
                 beforeEach(function () {
                     rs = new F.service.Run(runOptions);
-                    loadStub = sinon.stub(rs, 'load', function (runid, filter, options) {
-                        options.success();
-                        return $.Deferred().resolve([{
-                            id: runid
-                        }]).promise();
-                    });
-                    createStub = sinon.stub(rs, 'create', function () {
+                    createStub = sinon.stub(rs, 'create', function (options) {
                         return $.Deferred().resolve({
                             id: 'def'
                         }).promise();
                     });
-                });
-                afterEach(function () {
-                    rs.load.restore();
-                    rs.create.restore();
+                    loadStub = sinon.stub(rs, 'load', function (runid, filters, options) {
+                        options.success({ id: runid });
+                        return $.Deferred().resolve({ id: runid }).promise();
+                    });
                 });
 
                 it('should try to load it', function () {
-                    var rm = new Strategy(true, {
-                        run: rs
-                    });
+                    var rm = new Strategy(true, { run: rs });
                     rm._auth = fakeAuth;
                     rm.sessionManager = createFakeSessionStore(dummyRunid);
+
                     return rm.getRun(rs).then(function () {
                         expect(loadStub).to.have.been.calledOnce;
                         var args = loadStub.getCall(0).args;
                         expect(args[0]).to.eql(dummyRunid);
                     });
                 });
-
-                describe('create condition', function () {
+                
+                describe('if loading succeeds', function () {
                     it('should create a new run if condition is true', function () {
                         var rm = new Strategy(true, {
                             run: rs
@@ -124,34 +93,96 @@
                         });
                     });
                 });
+                describe('if loading fails', function () {
+                    it('should default to reset', function () {
+                        var rs = new F.service.Run(runOptions);
+                        var rm = new Strategy(true, { run: rs });
+                        rm._auth = fakeAuth;
+                        rm.sessionManager = createFakeSessionStore(dummyRunid);
+
+                        sinon.stub(rs, 'load', function () {
+                            return $.Deferred().reject('blah').promise();
+                        });
+                        var resetStub = sinon.stub(rm, 'reset', function () { 
+                            return $.Deferred().resolve('works').promise();
+                        });
+
+                        var failSpy = sinon.spy();
+                        return rm.getRun(rs).then(function () {
+                            expect(resetStub).to.have.been.calledOnce;
+                        }, failSpy).then(function () {
+                            expect(failSpy).to.not.have.been.called;
+                        });
+                    });
+                });
             });
 
-            // describe('when no run exists', function () {
-            //     it.only('should create a run with the correct scope', function () {
-                
-            //         var rs = new F.service.Run(runOptions);
+            describe('if a run does not exist in session', function () {
+                it('should call reset', function () {
+                    var fakeAuth = {
+                        getCurrentUserSessionInfo: sinon.stub().returns({})
+                    };
 
-            //         var createStub = sinon.stub(rs, 'create', function () {
-            //             return $.Deferred().resolve({
-            //                 id: 'def'
-            //             }).promise();
-            //         });
+                    var rs = new F.service.Run(runOptions);
+                    var rm = new Strategy(true, { run: rs });
+                    rm._auth = fakeAuth;
+                    rm.sessionManager = createFakeSessionStore();
+
+                    var loadStub = sinon.stub(rs, 'load', function () {
+                        return $.Deferred().resolve().promise();
+                    });
+                    var resetStub = sinon.stub(rm, 'reset', function () { 
+                        return $.Deferred().resolve('works').promise();
+                    });
+
+                    var failSpy = sinon.spy();
+                    return rm.getRun(rs).then(function () {
+                        expect(loadStub).to.not.have.been.called;
+                        expect(resetStub).to.have.been.calledOnce;
+                    }, failSpy).then(function () {
+                        expect(failSpy).to.not.have.been.called;
+                    });
+                });
+            });
+
+            describe('#reset', function () {
+                it('should call rs.create with the initial params', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var createStub = sinon.stub(rs, 'create', function () {
+                        return $.Deferred().resolve({
+                            id: 'def'
+                        }).promise();
+                    });
+
+                    var rm = new Strategy(true, { run: rs });
+                    rm._auth = fakeAuth;
+                    rm.sessionManager = createFakeSessionStore();
+
+                    return rm.reset(rs).then(function () {
+                        expect(createStub).to.have.been.calledOnce;
+                        var args = rs.create.getCall(0).args;
+                        expect(args[0]).to.contain.all.keys(runOptions);
+                    });
+                });
+                it('should create a run with the correct scope', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var createStub = sinon.stub(rs, 'create', function () {
+                        return $.Deferred().resolve({
+                            id: 'def'
+                        }).promise();
+                    });
+
+                    var rm = new Strategy(true, { run: rs });
+                    rm._auth = fakeAuth;
+                    rm.sessionManager = createFakeSessionStore();
                     
-            //         var rm = new F.manager.RunManager({
-            //             strategy: 'always-new',
-            //             run: rs
-            //         });
-            //         rm.strategy._auth = fakeAuth;
-            //         rm.strategy.sessionManager = dummySessionStore;
-            //         return rm.getRun().then(function () {
-            //             expect(loadStub).to.have.been.calledOnce;
-
-            //             var args = createStub.getCall(0).args;
-            //             expect(args[0].scope).to.eql({ group: 'group-123' });
-            //         });
-            //     });
-            // });
+                    return rm.reset(rs).then(function () {
+                        expect(createStub).to.have.been.calledOnce;
+                        var args = createStub.getCall(0).args;
+                        expect(args[0].scope).to.eql({ group: 'group-123' });
+                    });
+                });
+            });
         });
     });
-
 }());
