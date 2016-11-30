@@ -22,25 +22,24 @@
         project: 'js-libs'
     };
 
-    function createFakeSessionStore(runid) {
-        var dummySessionStore = {
-            getStore: function () {
-                return {
-                    get: function () { 
-                        return runid ? JSON.stringify({
-                            runId: runid
-                        }) : null;
-                    },
-                    set: function () { },
-                };
-            }
-        };
-        return dummySessionStore;
-    }
+    function createStrategy(condition, auth, runidForStore) {
+        function createFakeSessionStore(runid) {
+            var dummySessionStore = {
+                getStore: function () {
+                    return {
+                        get: function () { 
+                            return runid ? JSON.stringify({
+                                runId: runid
+                            }) : null;
+                        },
+                        set: function () { },
+                    };
+                }
+            };
+            return dummySessionStore;
+        }
 
-
-    function createStrategy(condition, rs, auth, runidForStore) {
-        var rm = new Strategy(condition, { run: rs });
+        var rm = new Strategy(condition);
         rm._auth = auth;
         rm.sessionManager = createFakeSessionStore(runidForStore);
 
@@ -66,7 +65,7 @@
                 });
 
                 it('should try to load it', function () {
-                    var rm = createStrategy(true, rs, fakeAuth, dummyRunid);
+                    var rm = createStrategy(true, fakeAuth, dummyRunid);
                     return rm.getRun(rs).then(function () {
                         expect(loadStub).to.have.been.calledOnce;
                         var args = loadStub.getCall(0).args;
@@ -76,7 +75,7 @@
                 
                 describe('if loading succeeds', function () {
                     it('should reset if condition is true', function () {
-                        var rm = createStrategy(true, rs, fakeAuth, dummyRunid);
+                        var rm = createStrategy(true, fakeAuth, dummyRunid);
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
@@ -85,7 +84,7 @@
                         });
                     });
                     it('should not create a new run if condition is false', function () {
-                        var rm = createStrategy(false, rs, fakeAuth, dummyRunid);
+                        var rm = createStrategy(false, fakeAuth, dummyRunid);
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
@@ -101,7 +100,7 @@
                             return $.Deferred().reject('blah').promise();
                         });
 
-                        var rm = createStrategy(false, rs, fakeAuth, dummyRunid);
+                        var rm = createStrategy(false, fakeAuth, dummyRunid);
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
@@ -127,7 +126,7 @@
                         return $.Deferred().resolve().promise();
                     });
 
-                    var rm = createStrategy(true, rs, fakeAuth, null);
+                    var rm = createStrategy(true, fakeAuth, null);
                     var resetStub = sinon.stub(rm, 'reset', function () { 
                         return $.Deferred().resolve('works').promise();
                     });
@@ -151,7 +150,7 @@
                         }).promise();
                     });
 
-                    var rm = createStrategy(true, rs, fakeAuth, null);
+                    var rm = createStrategy(true, fakeAuth, null);
                     return rm.reset(rs).then(function () {
                         expect(createStub).to.have.been.calledOnce;
                         var args = rs.create.getCall(0).args;
@@ -166,7 +165,7 @@
                         }).promise();
                     });
 
-                    var rm = createStrategy(true, rs, fakeAuth, null);
+                    var rm = createStrategy(true, fakeAuth, null);
                     return rm.reset(rs).then(function () {
                         expect(createStub).to.have.been.calledOnce;
                         var args = createStub.getCall(0).args;

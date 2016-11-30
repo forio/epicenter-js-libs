@@ -33,19 +33,15 @@ var Strategy = classFrom(Base, {
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new SessionManager(options);
-        this.runOptions = $.isPlainObject(this.options.run) ? this.options.run : this.options.run.getCurrentConfig();
-    },
-
-    runOptionsWithScope: function () {
-        var userSession = this._auth.getCurrentUserSessionInfo();
-        return $.extend({
-            scope: { group: userSession.groupName }
-        }, this.runOptions);
     },
 
     reset: function (runService) {
         var me = this;
-        var opt = this.runOptionsWithScope();
+
+        var userSession = this._auth.getCurrentUserSessionInfo();
+        var opt = $.extend({
+            scope: { group: userSession.groupName }
+        }, runService.getCurrentConfig());
 
         return runService
                 .create(opt)
