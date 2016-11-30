@@ -53,9 +53,6 @@ var Strategy = classFrom(Base, {
                     setRunInSession(me.options.sessionKey, run, me.sessionManager);
                     run.freshlyCreated = true;
                     return run;
-                })
-                .fail(function (err) {
-                    console.error('run creation failed', err);
                 });
     },
 
@@ -64,7 +61,7 @@ var Strategy = classFrom(Base, {
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
         var me = this;
         if (runSession && runSession.runId) {
-            return this.loadAndCheck(runService, runSession).fail(function () {
+            return this.loadAndCheck(runService, runSession).catch(function () {
                 return me.reset(runService); //if it got the wrong cookie for e.g.
             });
         } else {
