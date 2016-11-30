@@ -52,12 +52,10 @@ var Strategy = classFrom(Base, {
                 });
     },
 
-    getRun: function (runService) {
-        var sessionStore = this.sessionManager.getStore();
-        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
+    getRun: function (runService, runIdInSession) {
         var me = this;
-        if (runSession && runSession.runId) {
-            return this.loadAndCheck(runService, runSession).catch(function () {
+        if (runIdInSession) {
+            return this.loadAndCheck(runService, runIdInSession).catch(function () {
                 return me.reset(runService); //if it got the wrong cookie for e.g.
             });
         } else {
@@ -65,12 +63,12 @@ var Strategy = classFrom(Base, {
         }
     },
 
-    loadAndCheck: function (runService, runSession, filters) {
+    loadAndCheck: function (runService, runIdInSession, filters) {
         var shouldCreate = false;
         var me = this;
 
         return runService
-            .load(runSession.runId, filters, {
+            .load(runIdInSession, filters, {
                 success: function (run, msg, headers) {
                     shouldCreate = me.condition(run, headers);
                 }
