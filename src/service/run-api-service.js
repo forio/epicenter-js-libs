@@ -520,6 +520,11 @@ module.exports = function (config) {
             return serviceOptions;
         },
         updateConfig: function (config) {
+            if (config && config.id) {
+                config.filter = config.id;
+            } else if (config && config.filter) {
+                config.id = config.filter;
+            }
             serviceOptions = $.extend(true, {}, serviceOptions, config);
         },
         /**
