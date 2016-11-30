@@ -4,13 +4,6 @@ var Base = require('./none-strategy');
 var classFrom = require('../../util/inherit');
 var AuthManager = require('../auth-manager');
 
-var keyNames = require('../key-names');
-
-var defaults = {
-    sessionKey: keyNames.STRATEGY_SESSION_KEY,
-    path: ''
-};
-
 /**
 * Conditional Creation Strategy
 * This strategy will try to get the run stored in the cookie and
@@ -26,7 +19,7 @@ var Strategy = classFrom(Base, {
 
         this._auth = new AuthManager();
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
-        this.options = $.extend(true, {}, defaults, options);
+        this.options = options;
     },
 
     reset: function (runService) {
