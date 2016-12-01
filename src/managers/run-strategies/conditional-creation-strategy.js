@@ -2,7 +2,6 @@
 
 var Base = require('./none-strategy');
 var classFrom = require('../../util/inherit');
-var AuthManager = require('../auth-manager');
 
 /**
 * Conditional Creation Strategy
@@ -16,15 +15,13 @@ var Strategy = classFrom(Base, {
             //TODO: not sure why this is explicitly ==
             throw new Error('Conditional strategy needs a condition to create a run');
         }
-
-        this._auth = new AuthManager();
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
     },
 
-    reset: function (runService) {
-        var userSession = this._auth.getCurrentUserSessionInfo();
+    reset: function (runService, userSession) {
+        var group = userSession && userSession.groupName;
         var opt = $.extend({
-            scope: { group: userSession.groupName }
+            scope: { group: group }
         }, runService.getCurrentConfig());
 
         return runService
@@ -35,30 +32,30 @@ var Strategy = classFrom(Base, {
                 });
     },
 
-    getRun: function (runService, runIdInSession) {
+    getRun: function (runService, runIdInSession, userSession) {
         var me = this;
         if (runIdInSession) {
-            return this.loadAndCheck(runService, runIdInSession).catch(function () {
-                return me.reset(runService); //if it got the wrong cookie for e.g.
+            return this.loadAndCheck(runService, runIdInSession, userSession).catch(function () {
+                return me.reset(runService, userSession); //if it got the wrong cookie for e.g.
             });
         } else {
-            return this.reset(runService);
+            return this.reset(runService, userSession);
         }
     },
 
-    loadAndCheck: function (runService, runIdInSession, filters) {
+    loadAndCheck: function (runService, runIdInSession, userSession) {
         var shouldCreate = false;
         var me = this;
 
         return runService
-            .load(runIdInSession, filters, {
+            .load(runIdInSession, null, {
                 success: function (run, msg, headers) {
                     shouldCreate = me.condition(run, headers);
                 }
             })
             .then(function (run) {
                 if (shouldCreate) {
-                    return me.reset(runService);
+                    return me.reset(runService, userSession);
                 }
                 return run;
             });
