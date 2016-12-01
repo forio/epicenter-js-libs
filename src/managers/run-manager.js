@@ -49,7 +49,7 @@
 */
 
 'use strict';
-var strategiesMap = require('./run-strategies/strategies-map');
+var strategiesMap = require('./run-strategies');
 var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
@@ -78,7 +78,9 @@ function patchRunService(service, manager) {
 }
 
 function setRunInSession(sessionKey, runid, sessionManager) {
-    sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
+    if (sessionKey) {
+        sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
+    }
 }
 
 var defaults = {
@@ -103,7 +105,7 @@ function RunManager(options) {
     }
     patchRunService(this.run, this);
 
-    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap[this.options.strategy];
+    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap.get(this.options.strategy);
     if (!StrategyCtor) {
         throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
     }
@@ -144,6 +146,10 @@ RunManager.prototype = {
         var runid = runSession && runSession.runId;
 
         var authSession = this.authManager.getCurrentUserSessionInfo();
+        if (this.strategy.requiresAuth && (!authSession || authSession === {})) {
+            console.error('No user-session available', this.options.strategy, 'requires authentication.');
+            return $.Deferred().reject('No user-session available').promise();
+        }
         return this.strategy
                 .getRun(this.run, authSession, runid).then(function (run) {
                     if (run && run.id) {
@@ -173,6 +179,10 @@ RunManager.prototype = {
     reset: function () {
         var me = this;
         var authSession = this.authManager.getCurrentUserSessionInfo();
+        if (this.strategy.requiresAuth && (!authSession || authSession === {})) {
+            console.error('No user-session available', this.options.strategy, 'requires authentication.');
+            return $.Deferred().reject('No user-session available').promise();
+        }
         return this.strategy.reset(this.run, authSession).then(function (run) {
             if (run && run.id) {
                 setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
