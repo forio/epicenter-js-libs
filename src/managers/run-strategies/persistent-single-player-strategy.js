@@ -66,6 +66,7 @@ var Strategy = classFrom(IdentityStrategy, {
 
         return runService.load(latestRun.id, null, {
             success: function (run, msg, headers) {
+                //TODO: Not sure this is needed anymore since we auto-bring back into memory
                 shouldReplay = headers.getResponseHeader('pragma') === 'persistent';
             }
         }).then(function (run) {
