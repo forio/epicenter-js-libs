@@ -66,6 +66,126 @@
             });
         });
 
+        describe('Session Key', function () {
+            var getSpy, setSpy, dummySessionStore;
+            beforeEach(function () {
+                getSpy = sinon.spy(function (runid) { 
+                    return runid ? JSON.stringify({
+                        runId: runid
+                    }) : null;
+                });
+                setSpy = sinon.spy();
+
+                dummySessionStore = {
+                    getStore: function () {
+                        return {
+                            get: getSpy,
+                            set: setSpy,
+                        };
+                    }
+                };
+            })
+
+            function createFakeSessionStore(runid) {
+                var dummySessionStore = {
+                    getStore: function () {
+                        return {
+                            get: function () { 
+                                return runid ? JSON.stringify({
+                                    runId: runid
+                                }) : null;
+                            },
+                            set: function () { },
+                        };
+                    }
+                };
+                return dummySessionStore;
+            }
+            it('should pass runid in session into strategy', function () {
+                var runid = 'dummyrunid';
+                var getRunSpy = sinon.spy(function () {
+                    return $.Deferred().resolve({ id: runid }).promise();
+                });
+                var myStrategy = function () {
+                    return {
+                        getRun: getRunSpy,
+                        reset: sinon.spy(),
+                    };
+                };
+                var strategySpy = sinon.spy(myStrategy);
+                var rm = new F.manager.RunManager({
+                    strategy: strategySpy,
+                    run: runOptions,
+                });
+                rm.sessionManager = createFakeSessionStore(runid);
+                return rm.getRun().then(function () {
+                    expect(getRunSpy.getCall(0).args[1]).to.equal(runid);
+                });
+            });
+
+            it('should update store with sessionkey name after run creation', function () {
+                var sampleRunid = 'samplerunid';
+                var rs = new F.service.Run(runOptions);
+                sinon.stub(rs, 'create', function (options) {
+                    return $.Deferred().resolve({
+                        id: sampleRunid
+                    }).promise();
+                });
+                var rm = new F.manager.RunManager({
+                    strategy: 'always-new',
+                    run: rs,
+                });
+                rm.sessionManager = dummySessionStore;
+                return rm.getRun().then(function () {
+                    expect(setSpy).to.have.been.calledOnce;
+                });
+            });
+            describe('custom session keys', function () {
+                it('should read from custom session keys', function () {
+                    var myStrategy = function () {
+                        return {
+                            getRun: sinon.spy(function () {
+                                return $.Deferred().resolve({ id: 'runid' }).promise();
+                            }),
+                            reset: sinon.spy(),
+                        };
+                    };
+                    var strategySpy = sinon.spy(myStrategy);
+                    var rm = new F.manager.RunManager({
+                        sessionKey: 'abc',
+                        strategy: strategySpy,
+                        run: runOptions,
+                    });
+                    rm.sessionManager = dummySessionStore;
+                    return rm.getRun().then(function () {
+                        expect(setSpy.getCall(0).args[0]).to.equal('abc');
+                    });
+                });
+                it('should set custom session keys', function () {
+                    var sampleRunid = 'samplerunid';
+                    var rs = new F.service.Run(runOptions);
+                    sinon.stub(rs, 'create', function (options) {
+                        return $.Deferred().resolve({
+                            id: sampleRunid
+                        }).promise();
+                    });
+                    var rm = new F.manager.RunManager({
+                        sessionKey: 'abc',
+                        strategy: 'always-new',
+                        run: rs,
+                    });
+                    rm.sessionManager = dummySessionStore;
+                    return rm.getRun().then(function () {
+                        expect(setSpy).to.have.been.calledOnce;
+
+                        var args = setSpy.getCall(0).args;
+                        expect(args[0]).to.equal('abc');
+                        expect(args[1]).to.equal(JSON.stringify({ runId: sampleRunid }));
+                    });
+                });
+            });
+            
+        });
         describe('#getRun', function () {
             var rm, runid = 'newrun', getRunSpy, strategySpy;
             beforeEach(function () {
@@ -99,35 +219,6 @@
                     var config = rm.run.getCurrentConfig();
                     expect(config.id).to.equal(runid);
                 });
-            });
-
-            describe('with session', function () {
-                function createFakeSessionStore(runid) {
-                    var dummySessionStore = {
-                        getStore: function () {
-                            return {
-                                get: function () { 
-                                    return runid ? JSON.stringify({
-                                        runId: runid
-                                    }) : null;
-                                },
-                                set: function () { },
-                            };
-                        }
-                    };
-                    return dummySessionStore;
-                }
-                it('should pass runid in session into strategy', function () {
-                    var rm = new F.manager.RunManager({
-                        strategy: strategySpy,
-                        run: runOptions,
-                    });
-                    rm.sessionManager = createFakeSessionStore('dummyrunid');
-                    return rm.getRun().then(function () {
-                        expect(getRunSpy.getCall(0).args[1]).to.equal('dummyrunid');
-                    });
-                });
-
             });
         });
         describe('#reset', function () {
