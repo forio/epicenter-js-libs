@@ -190,6 +190,10 @@
                         id: sampleRunid
                     }).promise();
                 });
+                sinon.stub(rs, 'load', function (runid, filters, options) {
+                    options.success({ id: runid });
+                    return $.Deferred().resolve({ id: runid }).promise();
+                });
                 var rm = new F.manager.RunManager({
                     strategy: 'always-new',
                     run: rs,
@@ -227,6 +231,10 @@
                         return $.Deferred().resolve({
                             id: sampleRunid
                         }).promise();
+                    });
+                    sinon.stub(rs, 'load', function (runid, filters, options) {
+                        options.success({ id: runid });
+                        return $.Deferred().resolve({ id: runid }).promise();
                     });
                     var rm = new F.manager.RunManager({
                         sessionKey: 'abc',
