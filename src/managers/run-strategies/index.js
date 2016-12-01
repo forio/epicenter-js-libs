@@ -6,6 +6,7 @@ var list = {
     multiplayer: require('./multiplayer-strategy'),
     'persistent-single-player': require('./persistent-single-player-strategy'),
     none: require('./none-strategy'),
+    'conditional-creation': require('./conditional-creation-strategy'),
     baseline: require('../scenario-strategies/baseline-strategy')
 };
 
