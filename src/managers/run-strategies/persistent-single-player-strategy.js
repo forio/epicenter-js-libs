@@ -26,7 +26,10 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     reset: function (runService, userSession) {
-        var group = userSession && userSession.groupName;
+        if (!userSession || userSession === {}) {
+            return $.Deferred().reject('No user-session provided. Persistent single-player strategy needs a logged-in user.').promise();
+        }
+        var group = userSession.groupName;
         var opt = $.extend({
             scope: { group: group }
         }, runService.getCurrentConfig());
@@ -47,13 +50,13 @@ var Strategy = classFrom(IdentityStrategy, {
             'user.id': userSession.userId || '0000',
             'scope.group': userSession.groupName
         }).then(function (runs) {
-            return me._loadAndCheck(runService, runs);
+            return me._loadAndCheck(runService, userSession, runs);
         });
     },
 
-    _loadAndCheck: function (runService, runs) {
+    _loadAndCheck: function (runService, userSession, runs) {
         if (!runs || !runs.length) {
-            return this.reset(runService);
+            return this.reset(runService, userSession);
         }
 
         var dateComp = function (a, b) { return new Date(b.date) - new Date(a.date); };
