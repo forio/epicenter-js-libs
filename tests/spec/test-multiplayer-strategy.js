@@ -79,9 +79,9 @@
                 }
             }, options));
 
-            // this is briddle, it knows too much about the internals of the run manager
+            // this is brittle, it knows too much about the internals of the run manager
             // but replace the cookie store with a stub
-            rm.strategy._auth = fakeAuth;
+            rm.authManager = fakeAuth;
             return rm;
         }
 
