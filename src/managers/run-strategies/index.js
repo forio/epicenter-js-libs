@@ -7,12 +7,15 @@ var list = {
     'persistent-single-player': require('./persistent-single-player-strategy'),
     none: require('./none-strategy'),
     'conditional-creation': require('./conditional-creation-strategy'),
-    baseline: require('../scenario-strategies/baseline-strategy')
 };
 
 module.exports = {
     list: list,
     get: function (strategyName) {
         return list[strategyName];
+    },
+    register: function (name, strategy, options) {
+        strategy.options = options;
+        list[name] = strategy;
     }
 };

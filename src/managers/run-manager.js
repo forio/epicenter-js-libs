@@ -49,12 +49,13 @@
 */
 
 'use strict';
-var strategiesMap = require('./run-strategies');
+var strategies = require('./run-strategies');
 var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
 var AuthManager = require('./auth-manager');
 
+var util = require('../util/object-util');
 var keyNames = require('./key-names');
 
 function patchRunService(service, manager) {
@@ -105,14 +106,16 @@ function RunManager(options) {
     }
     patchRunService(this.run, this);
 
-    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap.get(this.options.strategy);
+    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategies.get(this.options.strategy);
     if (!StrategyCtor) {
         throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
     }
-    this.strategy = new StrategyCtor(this.options);
-    if (!this.strategy.getRun || !this.strategy.reset) {
+    var strategy = new StrategyCtor(this.options);
+    if (!strategy.getRun || !strategy.reset) {
         throw new Error('All strategies should implement a `getRun` and `reset` interface', this.options.strategy);
     }
+    strategy.requiresAuth = StrategyCtor.requiresAuth;
+    this.strategy = strategy;
 
     this.sessionManager = new SessionManager(this.options);
     this.authManager = new AuthManager();
@@ -146,7 +149,7 @@ RunManager.prototype = {
         var runid = runSession && runSession.runId;
 
         var authSession = this.authManager.getCurrentUserSessionInfo();
-        if (this.strategy.requiresAuth && (!authSession || authSession === {})) {
+        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject('No user-session available').promise();
         }
@@ -179,7 +182,7 @@ RunManager.prototype = {
     reset: function () {
         var me = this;
         var authSession = this.authManager.getCurrentUserSessionInfo();
-        if (this.strategy.requiresAuth && (!authSession || authSession === {})) {
+        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject('No user-session available').promise();
         }
@@ -193,4 +196,5 @@ RunManager.prototype = {
     }
 };
 
+RunManager.strategies = strategies;
 module.exports = RunManager;
