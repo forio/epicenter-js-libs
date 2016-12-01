@@ -30,7 +30,7 @@
 
                 it('should try to load it', function () {
                     var rm = new Strategy(true);
-                    return rm.getRun(rs, dummyRunid).then(function () {
+                    return rm.getRun(rs, {}, dummyRunid).then(function () {
                         expect(loadStub).to.have.been.calledOnce;
                         var args = loadStub.getCall(0).args;
                         expect(args[0]).to.eql(dummyRunid);
@@ -43,7 +43,7 @@
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
-                        return rm.getRun(rs, dummyRunid).then(function () {
+                        return rm.getRun(rs, {}, dummyRunid).then(function () {
                             expect(resetStub).to.have.been.calledOnce;
                         });
                     });
@@ -52,7 +52,7 @@
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
-                        return rm.getRun(rs, dummyRunid).then(function () {
+                        return rm.getRun(rs, {}, dummyRunid).then(function () {
                             expect(resetStub).to.not.have.been.called;
                         });
                     });
@@ -70,7 +70,7 @@
                         });
 
                         var failSpy = sinon.spy();
-                        return rm.getRun(rs, dummyRunid).then(function () {
+                        return rm.getRun(rs, {}, dummyRunid).then(function () {
                             expect(loadStub).to.have.been.calledOnce;
                             expect(resetStub).to.have.been.calledOnce;
                         }, failSpy).then(function () {

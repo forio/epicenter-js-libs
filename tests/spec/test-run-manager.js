@@ -99,7 +99,7 @@
                 });
                 rm.authManager = fakeAuth;
                 return rm.getRun().then(function () {
-                    expect(getRunSpy.getCall(0).args[2]).to.eql(sampleSession);
+                    expect(getRunSpy.getCall(0).args[1]).to.eql(sampleSession);
                 });
             });
             it('should pass in session to #reset', function () {
@@ -178,7 +178,7 @@
                 });
                 rm.sessionManager = createFakeSessionStore(runid);
                 return rm.getRun().then(function () {
-                    expect(getRunSpy.getCall(0).args[1]).to.equal(runid);
+                    expect(getRunSpy.getCall(0).args[2]).to.equal(runid);
                 });
             });
 

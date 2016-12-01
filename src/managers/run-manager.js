@@ -145,7 +145,7 @@ RunManager.prototype = {
 
         var authSession = this.authManager.getCurrentUserSessionInfo();
         return this.strategy
-                .getRun(this.run, runid, authSession).then(function (run) {
+                .getRun(this.run, authSession, runid).then(function (run) {
                     if (run && run.id) {
                         setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
