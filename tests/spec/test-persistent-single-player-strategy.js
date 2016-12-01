@@ -1,6 +1,14 @@
 (function () {
     'use strict';
 
+    var Strategy = F.manager.strategy['persistent-single-player'];
+    var runOptions = {
+        model: 'model.eqn',
+        account: 'forio-dev',
+        project: 'js-libs'
+    };
+
+
     var cookieContents = {
         auth_token: '',
         account: 'forio-dev',
@@ -44,7 +52,7 @@
         server.restore();
     };
 
-    describe('Conditional Creation Strategy', function () {
+    describe('Persistent Single Player strategy', function () {
 
         before(function () {
             setupServer();
@@ -85,16 +93,28 @@
             });
         });
 
-        describe('reset', function () {
-            it('should POST to create a run with the correct scope', function () {
-                createRunManager().reset();
-
-                var req = server.requests.pop();
-                expect(req.method).to.equal('POST');
-                expect(JSON.parse(req.requestBody).scope).to.eql({ group: cookieContents.groupName });
-
+        describe.only('#reset', function () {
+            var rs, createStub, rm;
+            beforeEach(function () {
+                rs = new F.service.Run(runOptions);
+                createStub = sinon.stub(rs, 'create', function () {
+                    return $.Deferred().resolve({
+                        id: 'def'
+                    }).promise();
+                });
+                rm = new Strategy();
+            });
+            it('should call runservice.create', function () {
+                return rm.reset(rs, {}).then(function () {
+                    expect(createStub).to.have.been.calledOnce;
+                });
+            });
+            it('should pass in the right auth params', function () {
+                return rm.reset(rs, { groupName: 'group-123' }).then(function () {
+                    var args = createStub.getCall(0).args;
+                    expect(args[0].scope).to.eql({ group: 'group-123' });
+                });
             });
         });
     });
-
 }());
