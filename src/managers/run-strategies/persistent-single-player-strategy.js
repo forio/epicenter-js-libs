@@ -15,33 +15,24 @@
 
 var classFrom = require('../../util/inherit');
 var IdentityStrategy = require('./none-strategy');
-var StorageFactory = require('../../store/store-factory');
 var StateApi = require('../../service/state-api-adapter');
-var AuthManager = require('../auth-manager');
 
-var keyNames = require('../key-names');
-
-var defaults = {
-    store: {
-        synchronous: true
-    }
-};
+var defaults = {};
 
 var Strategy = classFrom(IdentityStrategy, {
     constructor: function Strategy(options) {
         this.options = $.extend(true, {}, defaults, options);
-        this.runOptions = this.options.run;
-        this._store = new StorageFactory(this.options.store);
         this.stateApi = new StateApi();
-        this._auth = new AuthManager();
     },
 
-    reset: function (runService) {
-        var session = this._auth.getCurrentUserSessionInfo();
+    reset: function (runService, userSession) {
+        if (!userSession || userSession === {}) {
+            return $.Deferred().reject('No user-session provided. Persistent single-player strategy needs a logged-in user.').promise();
+        }
+        var group = userSession.groupName;
         var opt = $.extend({
-            scope: { group: session.groupName }
-        }, this.runOptions);
-
+            scope: { group: group }
+        }, runService.getCurrentConfig());
         return runService
             .create(opt)
             .then(function (run) {
@@ -50,20 +41,22 @@ var Strategy = classFrom(IdentityStrategy, {
             });
     },
 
-    getRun: function (runService) {
+    getRun: function (runService, userSession) {
+        if (!userSession || userSession === {}) {
+            return $.Deferred().reject('No user-session provided. Persistent single-player strategy needs a logged-in user.').promise();
+        }
         var me = this;
-        var session = JSON.parse(this._store.get(keyNames.EPI_SESSION_KEY) || '{}');
         return runService.query({
-            'user.id': session.userId || '0000',
-            'scope.group': session.groupName
+            'user.id': userSession.userId || '0000',
+            'scope.group': userSession.groupName
         }).then(function (runs) {
-            return me._loadAndCheck(runService, runs);
+            return me._loadAndCheck(runService, userSession, runs);
         });
     },
 
-    _loadAndCheck: function (runService, runs) {
+    _loadAndCheck: function (runService, userSession, runs) {
         if (!runs || !runs.length) {
-            return this.reset(runService);
+            return this.reset(runService, userSession);
         }
 
         var dateComp = function (a, b) { return new Date(b.date) - new Date(a.date); };
@@ -73,6 +66,7 @@ var Strategy = classFrom(IdentityStrategy, {
 
         return runService.load(latestRun.id, null, {
             success: function (run, msg, headers) {
+                //TODO: Not sure this is needed anymore since we auto-bring back into memory
                 shouldReplay = headers.getResponseHeader('pragma') === 'persistent';
             }
         }).then(function (run) {

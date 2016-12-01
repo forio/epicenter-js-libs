@@ -7,6 +7,20 @@
         project: 'js-libs',
     };
 
+    var sampleSession = {
+        auth_token: '',
+        account: 'forio-dev',
+        project: 'js-libs',
+        userId: '123',
+        groupId: 'group123',
+        groupName: 'group-123',
+        isFac: false
+    };
+    var fakeAuth = {
+        // get should return what's stored in the session cookie
+        getCurrentUserSessionInfo: sinon.stub().returns(sampleSession)
+    };
+
     describe('Run Manager', function () {
         describe('constructor options', function () {
             describe('run', function () {
@@ -66,7 +80,52 @@
             });
         });
 
-        describe('Session Key', function () {
+        describe('User Session', function () {
+            it('should pass in session to #getRun', function () {
+                var runid = 'dummyrunid';
+                var getRunSpy = sinon.spy(function () {
+                    return $.Deferred().resolve({ id: runid }).promise();
+                });
+                var myStrategy = function () {
+                    return {
+                        getRun: getRunSpy,
+                        reset: sinon.spy(),
+                    };
+                };
+                var strategySpy = sinon.spy(myStrategy);
+                var rm = new F.manager.RunManager({
+                    strategy: strategySpy,
+                    run: runOptions,
+                });
+                rm.authManager = fakeAuth;
+                return rm.getRun().then(function () {
+                    expect(getRunSpy.getCall(0).args[1]).to.eql(sampleSession);
+                });
+            });
+            it('should pass in session to #reset', function () {
+                var runid = 'dummyrunid';
+
+                var resetSpy = sinon.spy(function () {
+                    return $.Deferred().resolve({ id: runid }).promise();
+                });
+                var myStrategy = function () {
+                    return {
+                        getRun: sinon.spy(),
+                        reset: resetSpy,
+                    };
+                };
+                var strategySpy = sinon.spy(myStrategy);
+                var rm = new F.manager.RunManager({
+                    strategy: strategySpy,
+                    run: runOptions,
+                });
+                rm.authManager = fakeAuth;
+                return rm.reset().then(function () {
+                    expect(resetSpy.getCall(0).args[1]).to.eql(sampleSession);
+                });
+            });
+        });
+        describe('Run Session', function () {
             var getSpy, setSpy, dummySessionStore;
             beforeEach(function () {
                 getSpy = sinon.spy(function (runid) { 
@@ -84,7 +143,7 @@
                         };
                     }
                 };
-            })
+            });
 
             function createFakeSessionStore(runid) {
                 var dummySessionStore = {
@@ -119,7 +178,7 @@
                 });
                 rm.sessionManager = createFakeSessionStore(runid);
                 return rm.getRun().then(function () {
-                    expect(getRunSpy.getCall(0).args[1]).to.equal(runid);
+                    expect(getRunSpy.getCall(0).args[2]).to.equal(runid);
                 });
             });
 
