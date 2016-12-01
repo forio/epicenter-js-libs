@@ -23,25 +23,8 @@
     };
 
     function createStrategy(condition, auth, runidForStore) {
-        function createFakeSessionStore(runid) {
-            var dummySessionStore = {
-                getStore: function () {
-                    return {
-                        get: function () { 
-                            return runid ? JSON.stringify({
-                                runId: runid
-                            }) : null;
-                        },
-                        set: function () { },
-                    };
-                }
-            };
-            return dummySessionStore;
-        }
-
         var rm = new Strategy(condition);
         rm._auth = auth;
-        rm.sessionManager = createFakeSessionStore(runidForStore);
 
         return rm;
     }
@@ -65,8 +48,8 @@
                 });
 
                 it('should try to load it', function () {
-                    var rm = createStrategy(true, fakeAuth, dummyRunid);
-                    return rm.getRun(rs).then(function () {
+                    var rm = createStrategy(true, fakeAuth);
+                    return rm.getRun(rs, dummyRunid).then(function () {
                         expect(loadStub).to.have.been.calledOnce;
                         var args = loadStub.getCall(0).args;
                         expect(args[0]).to.eql(dummyRunid);
@@ -75,20 +58,20 @@
                 
                 describe('if loading succeeds', function () {
                     it('should reset if condition is true', function () {
-                        var rm = createStrategy(true, fakeAuth, dummyRunid);
+                        var rm = createStrategy(true, fakeAuth);
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
-                        return rm.getRun(rs).then(function () {
+                        return rm.getRun(rs, dummyRunid).then(function () {
                             expect(resetStub).to.have.been.calledOnce;
                         });
                     });
                     it('should not create a new run if condition is false', function () {
-                        var rm = createStrategy(false, fakeAuth, dummyRunid);
+                        var rm = createStrategy(false, fakeAuth);
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
-                        return rm.getRun(rs).then(function () {
+                        return rm.getRun(rs, dummyRunid).then(function () {
                             expect(resetStub).to.not.have.been.called;
                         });
                     });
@@ -96,17 +79,18 @@
                 describe('if loading fails', function () {
                     it('should default to reset', function () {
                         var rs = new F.service.Run(runOptions);
-                        sinon.stub(rs, 'load', function () {
+                        var loadStub = sinon.stub(rs, 'load', function () {
                             return $.Deferred().reject('blah').promise();
                         });
 
-                        var rm = createStrategy(false, fakeAuth, dummyRunid);
+                        var rm = createStrategy(false, fakeAuth);
                         var resetStub = sinon.stub(rm, 'reset', function () { 
                             return $.Deferred().resolve('works').promise();
                         });
 
                         var failSpy = sinon.spy();
-                        return rm.getRun(rs).then(function () {
+                        return rm.getRun(rs, dummyRunid).then(function () {
+                            expect(loadStub).to.have.been.calledOnce;
                             expect(resetStub).to.have.been.calledOnce;
                         }, failSpy).then(function () {
                             expect(failSpy).to.not.have.been.called;
@@ -126,7 +110,7 @@
                         return $.Deferred().resolve().promise();
                     });
 
-                    var rm = createStrategy(true, fakeAuth, null);
+                    var rm = createStrategy(true, fakeAuth);
                     var resetStub = sinon.stub(rm, 'reset', function () { 
                         return $.Deferred().resolve('works').promise();
                     });
@@ -150,7 +134,7 @@
                         }).promise();
                     });
 
-                    var rm = createStrategy(true, fakeAuth, null);
+                    var rm = createStrategy(true, fakeAuth);
                     return rm.reset(rs).then(function () {
                         expect(createStub).to.have.been.calledOnce;
                         var args = rs.create.getCall(0).args;
@@ -165,7 +149,7 @@
                         }).promise();
                     });
 
-                    var rm = createStrategy(true, fakeAuth, null);
+                    var rm = createStrategy(true, fakeAuth);
                     return rm.reset(rs).then(function () {
                         expect(createStub).to.have.been.calledOnce;
                         var args = createStub.getCall(0).args;

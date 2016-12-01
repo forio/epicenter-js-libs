@@ -1,20 +1,8 @@
 'use strict';
 
 var Base = require('./none-strategy');
-var SessionManager = require('../../store/session-manager');
 var classFrom = require('../../util/inherit');
 var AuthManager = require('../auth-manager');
-
-var keyNames = require('../key-names');
-
-var defaults = {
-    sessionKey: keyNames.STRATEGY_SESSION_KEY,
-    path: ''
-};
-
-function setRunInSession(sessionKey, run, sessionManager) {
-    sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: run.id }));
-}
 
 /**
 * Conditional Creation Strategy
@@ -23,7 +11,7 @@ function setRunInSession(sessionKey, run, sessionManager) {
 */
 
 var Strategy = classFrom(Base, {
-    constructor: function Strategy(condition, options) {
+    constructor: function Strategy(condition) {
         if (condition == null) { //eslint-disable-line
             //TODO: not sure why this is explicitly ==
             throw new Error('Conditional strategy needs a condition to create a run');
@@ -31,13 +19,9 @@ var Strategy = classFrom(Base, {
 
         this._auth = new AuthManager();
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
-        this.options = $.extend(true, {}, defaults, options);
-        this.sessionManager = new SessionManager(options);
     },
 
     reset: function (runService) {
-        var me = this;
-
         var userSession = this._auth.getCurrentUserSessionInfo();
         var opt = $.extend({
             scope: { group: userSession.groupName }
@@ -46,18 +30,15 @@ var Strategy = classFrom(Base, {
         return runService
                 .create(opt)
                 .then(function (run) {
-                    setRunInSession(me.options.sessionKey, run, me.sessionManager);
                     run.freshlyCreated = true;
                     return run;
                 });
     },
 
-    getRun: function (runService) {
-        var sessionStore = this.sessionManager.getStore();
-        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
+    getRun: function (runService, runIdInSession) {
         var me = this;
-        if (runSession && runSession.runId) {
-            return this.loadAndCheck(runService, runSession).catch(function () {
+        if (runIdInSession) {
+            return this.loadAndCheck(runService, runIdInSession).catch(function () {
                 return me.reset(runService); //if it got the wrong cookie for e.g.
             });
         } else {
@@ -65,12 +46,12 @@ var Strategy = classFrom(Base, {
         }
     },
 
-    loadAndCheck: function (runService, runSession, filters) {
+    loadAndCheck: function (runService, runIdInSession, filters) {
         var shouldCreate = false;
         var me = this;
 
         return runService
-            .load(runSession.runId, filters, {
+            .load(runIdInSession, filters, {
                 success: function (run, msg, headers) {
                     shouldCreate = me.condition(run, headers);
                 }
