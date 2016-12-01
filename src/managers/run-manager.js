@@ -53,6 +53,7 @@ var strategiesMap = require('./run-strategies/strategies-map');
 var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
+var AuthManager = require('./auth-manager');
 
 var keyNames = require('./key-names');
 
@@ -81,7 +82,6 @@ function setRunInSession(sessionKey, runid, sessionManager) {
 }
 
 var defaults = {
-
     sessionKey: keyNames.STRATEGY_SESSION_KEY,
 
     /**
@@ -113,6 +113,7 @@ function RunManager(options) {
     }
 
     this.sessionManager = new SessionManager(this.options);
+    this.authManager = new AuthManager();
 }
 
 RunManager.prototype = {
@@ -142,8 +143,9 @@ RunManager.prototype = {
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
         var runid = runSession && runSession.runId;
 
+        var authSession = this.authManager.getCurrentUserSessionInfo();
         return this.strategy
-                .getRun(this.run, runid).then(function (run) {
+                .getRun(this.run, runid, authSession).then(function (run) {
                     if (run && run.id) {
                         setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
@@ -170,7 +172,8 @@ RunManager.prototype = {
      */
     reset: function () {
         var me = this;
-        return this.strategy.reset(this.run).then(function (run) {
+        var authSession = this.authManager.getCurrentUserSessionInfo();
+        return this.strategy.reset(this.run, authSession).then(function (run) {
             if (run && run.id) {
                 setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                 me.run.updateConfig({ filter: run.id });
