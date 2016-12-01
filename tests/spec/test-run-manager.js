@@ -20,7 +20,10 @@
         // get should return what's stored in the session cookie
         getCurrentUserSessionInfo: sinon.stub().returns(sampleSession)
     };
-
+    var fakeInvalidAuth = {
+        // get should return what's stored in the session cookie
+        getCurrentUserSessionInfo: sinon.stub().returns({})
+    };
     describe('Run Manager', function () {
         describe('constructor options', function () {
             describe('run', function () {
@@ -81,6 +84,46 @@
         });
 
         describe('User Session', function () {
+            describe('if required by strategy', function () {
+                var rm;
+                beforeEach(function () {
+                    var runid = 'dummyrunid';
+                    var getRunSpy = sinon.spy(function () {
+                        return $.Deferred().resolve({ id: runid }).promise();
+                    });
+                    var myStrategy = function () {
+                        return {
+                            getRun: getRunSpy,
+                            reset: sinon.spy(),
+                        };
+                    };
+                    var strategySpy = sinon.spy(myStrategy);
+                    strategySpy.requiresAuth = true;
+                    rm = new F.manager.RunManager({
+                        strategy: strategySpy,
+                        run: runOptions,
+                    });
+                    rm.authManager = fakeInvalidAuth;
+                });
+
+                it('#getRun throw an error if strategy requires auth but it\'s not given', function () {
+                    var successSpy = sinon.spy();
+                    var failSpy = sinon.spy();
+                    return rm.getRun().then(successSpy).catch(failSpy).then(function () {
+                        expect(successSpy).to.not.have.been.called;
+                        expect(failSpy).to.have.been.called;
+                    });
+                });
+
+                it('#reset throw an error if strategy requires auth but it\'s not given', function () {
+                    var successSpy = sinon.spy();
+                    var failSpy = sinon.spy();
+                    return rm.reset().then(successSpy).catch(failSpy).then(function () {
+                        expect(successSpy).to.not.have.been.called;
+                        expect(failSpy).to.have.been.called;
+                    });
+                });
+            });
             it('should pass in session to #getRun', function () {
                 var runid = 'dummyrunid';
                 var getRunSpy = sinon.spy(function () {
@@ -190,6 +233,10 @@
                         id: sampleRunid
                     }).promise();
                 });
+                sinon.stub(rs, 'load', function (runid, filters, options) {
+                    options.success({ id: runid });
+                    return $.Deferred().resolve({ id: runid }).promise();
+                });
                 var rm = new F.manager.RunManager({
                     strategy: 'always-new',
                     run: rs,
@@ -227,6 +274,10 @@
                         return $.Deferred().resolve({
                             id: sampleRunid
                         }).promise();
+                    });
+                    sinon.stub(rs, 'load', function (runid, filters, options) {
+                        options.success({ id: runid });
+                        return $.Deferred().resolve({ id: runid }).promise();
                     });
                     var rm = new F.manager.RunManager({
                         sessionKey: 'abc',

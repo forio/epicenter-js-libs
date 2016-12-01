@@ -80,6 +80,6 @@ var Strategy = classFrom(IdentityStrategy, {
         });
     },
 
-});
+}, { requiresAuth: true });
 
 module.exports = Strategy;

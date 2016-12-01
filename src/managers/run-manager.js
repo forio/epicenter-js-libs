@@ -49,12 +49,13 @@
 */
 
 'use strict';
-var strategiesMap = require('./run-strategies/strategies-map');
+var strategies = require('./run-strategies');
 var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
 var AuthManager = require('./auth-manager');
 
+var util = require('../util/object-util');
 var keyNames = require('./key-names');
 
 function patchRunService(service, manager) {
@@ -78,7 +79,9 @@ function patchRunService(service, manager) {
 }
 
 function setRunInSession(sessionKey, runid, sessionManager) {
-    sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
+    if (sessionKey) {
+        sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
+    }
 }
 
 var defaults = {
@@ -103,14 +106,16 @@ function RunManager(options) {
     }
     patchRunService(this.run, this);
 
-    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap[this.options.strategy];
+    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategies.get(this.options.strategy);
     if (!StrategyCtor) {
         throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
     }
-    this.strategy = new StrategyCtor(this.options);
-    if (!this.strategy.getRun || !this.strategy.reset) {
+    var strategy = new StrategyCtor(this.options);
+    if (!strategy.getRun || !strategy.reset) {
         throw new Error('All strategies should implement a `getRun` and `reset` interface', this.options.strategy);
     }
+    strategy.requiresAuth = StrategyCtor.requiresAuth;
+    this.strategy = strategy;
 
     this.sessionManager = new SessionManager(this.options);
     this.authManager = new AuthManager();
@@ -144,6 +149,10 @@ RunManager.prototype = {
         var runid = runSession && runSession.runId;
 
         var authSession = this.authManager.getCurrentUserSessionInfo();
+        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
+            console.error('No user-session available', this.options.strategy, 'requires authentication.');
+            return $.Deferred().reject('No user-session available').promise();
+        }
         return this.strategy
                 .getRun(this.run, authSession, runid).then(function (run) {
                     if (run && run.id) {
@@ -173,6 +182,10 @@ RunManager.prototype = {
     reset: function () {
         var me = this;
         var authSession = this.authManager.getCurrentUserSessionInfo();
+        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
+            console.error('No user-session available', this.options.strategy, 'requires authentication.');
+            return $.Deferred().reject('No user-session available').promise();
+        }
         return this.strategy.reset(this.run, authSession).then(function (run) {
             if (run && run.id) {
                 setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
@@ -183,4 +196,5 @@ RunManager.prototype = {
     }
 };
 
+RunManager.strategies = strategies;
 module.exports = RunManager;

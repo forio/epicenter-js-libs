@@ -13,6 +13,8 @@
  *     * If the cookie does not exist, create a new run for this end user. 
  */
 
+//TODO: Rename this as 'new run per session?';
+//
 'use strict';
 
 var classFrom = require('../../util/inherit');
