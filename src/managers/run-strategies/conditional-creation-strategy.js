@@ -11,7 +11,7 @@ var AuthManager = require('../auth-manager');
 */
 
 var Strategy = classFrom(Base, {
-    constructor: function Strategy(condition, options) {
+    constructor: function Strategy(condition) {
         if (condition == null) { //eslint-disable-line
             //TODO: not sure why this is explicitly ==
             throw new Error('Conditional strategy needs a condition to create a run');
@@ -19,7 +19,6 @@ var Strategy = classFrom(Base, {
 
         this._auth = new AuthManager();
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
-        this.options = options;
     },
 
     reset: function (runService) {
