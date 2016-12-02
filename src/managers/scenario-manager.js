@@ -1,78 +1,98 @@
 'use strict';
 
-var SessionManager = require('../store/session-manager');
+var RunManager = require('./run-manager');
 var RunService = require('../service/run-api-service');
+var SessionManager = require('../store/session-manager');
 
-module.exports = function (config) {
-    var defaults = {
-        /**
-         * Criteria by which to filter runs. Defaults to empty string.
-         * @type {Object}
-         */
-        filter: '',
+var defaults = {
+    token: undefined,
+    account: undefined,
+    project: undefined,
+    model: undefined,
 
-        /**
-         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter. Defaults to `true`.
-         * @type {boolean}
-         */
-        autoRestore: false,
-    };
-
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-
-    var publicAsyncAPI = {
-        loadSavedRuns: function (filter, outputModifier) {
-            var defaultFilter = {
-                saved: true
-            };
-
-            var outputOptions = {
-                sort: 'created',
-                direction: 'asc'
-            };
-            var newFilter = $.extend({}, defaultFilter, filter);
-            var rs = new RunService(serviceOptions);
-            return rs.query(newFilter, $.extend({}, outputOptions, outputModifier));
-        },
-        saveRun: function (run, name) {
-            if (!(run instanceof RunService)) {
-                run = new RunService($.extend(true, {}, serviceOptions, { filter: run }));
-            }
-            return run.save({ saved: true, name: name });
-        },
-        archiveRun: function (run) {
-            if (!(run instanceof RunService)) {
-                run = new RunService($.extend(true, {}, serviceOptions, { filter: run }));
-            }
-            return run.save({ saved: false });
-        },
-        /**
-         * [description]
-         * @param  {Array} runObjects Array of objects with signature { id: X, name: Y }
-         * @param  {Array} variables  [description]
-         * @return {[type]}            [description]
-         */
-        fetchVariablesForRuns: function (runObjects, variables) {
-            var promises = [];
-            var response = [];
-
-            if (!variables || !variables.length) {
-                return $.Deferred().resolve().promise();
-            }
-            runObjects.forEach(function (run) {
-                var r = new RunService($.extend({}, serviceOptions, { filter: run.id }));
-                var prom = r.variables().query([].concat(variables)).then(function (variables) {
-                    response.push({ id: run.id, name: run.name, variables: variables });
-                    return variables;
-                });
-                promises.push(prom);
-            });
-
-            return $.when.apply(null, promises).then(function () {
-                return response;
-            });
-        }
-    };
-    $.extend(this, publicAsyncAPI);
+    baselineRunName: 'Baseline',
 };
+
+function ScenarioManager(config) {
+    var sessionManager = new SessionManager();
+    this.serviceOptions = sessionManager.getMergedOptions(defaults, config);
+    this.baselineManager = new RunManager({
+        strategy: 'baseline',
+        sessionKey: 'sm-baseline-run',
+        run: this.serviceOptions,
+    });
+    this.currentRunManager = new RunManager({
+        strategy: 'new-if-stepped',
+        sessionKey: 'sm-current-run',
+        run: this.serviceOptions,
+    });
+
+    this.runService = new RunService(this.serviceOptions);
+
+    this.baseLineProm = this.baselineManager.getRun();
+}
+
+ScenarioManager.prototype = {
+    getBaseLineRun: function () {
+        return this.baseLineProm;
+    },
+    resetBaseLine: function () {
+        return this.baselineManager.reset();
+    },
+
+    getCurrentRun: function () {
+        return this.currentRunManager.getRun();
+    },
+    resetCurrentRun: function () {
+        return this.currentRunManager.reset();
+    },
+
+    mark: function (runid, toMark) {
+        return this.runService.save(toMark, { filter: runid });
+    },
+    markSaved: function (runid, isSaved) {
+        var val = !(isSaved === false);
+        return this.mark(runid, { saved: val });
+    },
+    markTrashed: function (runid, isTrashed) {
+        var val = !(isTrashed === false);
+        return this.mark(runid, { saved: val });
+    },
+
+    getSavedRuns: function () {
+        //TODO: Add group/user scope filters here
+        var opModifiers = {
+            sort: 'created',
+            direction: 'asc'
+        };
+        var me = this;
+        return this.baseLineProm.then(function () {
+            return me.runService.query({ saved: true, trashed: false }, opModifiers);
+        });
+    },
+
+    fetchVariablesForRuns: function (runObjects, variables) {
+        var promises = [];
+        var response = [];
+
+        if (!variables || !variables.length) {
+            return $.Deferred().resolve().promise();
+        }
+        var opModifiers = {
+            sort: 'created',
+            direction: 'asc'
+        };
+        runObjects.forEach(function (run) {
+            var prom = this.runService.variables().query([].concat(variables), opModifiers, { filter: run.id }).then(function (variables) {
+                response.push({ id: run.id, name: run.name, variables: variables });
+                return variables;
+            });
+            promises.push(prom);
+        });
+        return $.when.apply(null, promises).then(function () {
+            return response;
+        });
+    }
+};
+
+module.exports = ScenarioManager;

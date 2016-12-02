@@ -3,7 +3,6 @@ var defaultRunOptions = {
     project: $('#txtProject').val(),
     model: 'model.vmf',
 };
-var am = new F.manager.AuthManager();
 var rm = new F.manager.RunManager({
     strategy: 'new-if-stepped',
     run: defaultRunOptions
@@ -24,7 +23,7 @@ rm.getRun().then(function (cr) {
 
 
 window.rm = rm;
-
+var am = new F.manager.AuthManager();
 $('#btnLogin').click(function (evt) {
     evt.preventDefault();
     am.login({
