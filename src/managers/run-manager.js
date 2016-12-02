@@ -49,10 +49,14 @@
 */
 
 'use strict';
-var strategiesMap = require('./run-strategies/strategies-map');
+var strategies = require('./run-strategies');
 var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
+var SessionManager = require('../store/session-manager');
+var AuthManager = require('./auth-manager');
 
+var util = require('../util/object-util');
+var keyNames = require('./key-names');
 
 function patchRunService(service, manager) {
     if (service.patched) {
@@ -74,13 +78,19 @@ function patchRunService(service, manager) {
     return service;
 }
 
+function setRunInSession(sessionKey, runid, sessionManager) {
+    if (sessionKey) {
+        sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
+    }
+}
 
 var defaults = {
+    sessionKey: keyNames.STRATEGY_SESSION_KEY,
+
     /**
      * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../strategies/) for details. Defaults to `new-if-initialized`.
      * @type {String}
      */
-
     strategy: 'new-if-initialized'
 };
 
@@ -94,19 +104,21 @@ function RunManager(options) {
     } else {
         throw new Error('No run options passed to RunManager');
     }
-
     patchRunService(this.run, this);
 
-    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap[this.options.strategy];
-
+    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategies.get(this.options.strategy);
     if (!StrategyCtor) {
         throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
     }
-
-    this.strategy = new StrategyCtor(this.options);
-    if (!this.strategy.getRun || !this.strategy.reset) {
+    var strategy = new StrategyCtor(this.options);
+    if (!strategy.getRun || !strategy.reset) {
         throw new Error('All strategies should implement a `getRun` and `reset` interface', this.options.strategy);
     }
+    strategy.requiresAuth = StrategyCtor.requiresAuth;
+    this.strategy = strategy;
+
+    this.sessionManager = new SessionManager(this.options);
+    this.authManager = new AuthManager();
 }
 
 RunManager.prototype = {
@@ -132,9 +144,19 @@ RunManager.prototype = {
      */
     getRun: function () {
         var me = this;
+        var sessionStore = this.sessionManager.getStore();
+        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
+        var runid = runSession && runSession.runId;
+
+        var authSession = this.authManager.getCurrentUserSessionInfo();
+        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
+            console.error('No user-session available', this.options.strategy, 'requires authentication.');
+            return $.Deferred().reject('No user-session available').promise();
+        }
         return this.strategy
-                .getRun(this.run).then(function (run) {
+                .getRun(this.run, authSession, runid).then(function (run) {
                     if (run && run.id) {
+                        setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
                     }
                     return run;
@@ -159,8 +181,14 @@ RunManager.prototype = {
      */
     reset: function () {
         var me = this;
-        return this.strategy.reset(this.run).then(function (run) {
+        var authSession = this.authManager.getCurrentUserSessionInfo();
+        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
+            console.error('No user-session available', this.options.strategy, 'requires authentication.');
+            return $.Deferred().reject('No user-session available').promise();
+        }
+        return this.strategy.reset(this.run, authSession).then(function (run) {
             if (run && run.id) {
+                setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                 me.run.updateConfig({ filter: run.id });
             }
             return run;
@@ -168,4 +196,5 @@ RunManager.prototype = {
     }
 };
 
+RunManager.strategies = strategies;
 module.exports = RunManager;

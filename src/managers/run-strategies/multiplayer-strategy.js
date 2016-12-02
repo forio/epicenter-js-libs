@@ -9,24 +9,16 @@ var classFrom = require('../../util/inherit');
 
 var IdentityStrategy = require('./none-strategy');
 var WorldApiAdapter = require('../../service/world-api-adapter');
-var AuthManager = require('../auth-manager');
 
-var defaults = {
-    store: {
-        synchronous: true
-    }
-};
+var defaults = {};
 
 var Strategy = classFrom(IdentityStrategy, {
-
     constructor: function (options) {
         this.options = $.extend(true, {}, defaults, options);
-        this._auth = new AuthManager();
         this.worldApi = new WorldApiAdapter(this.options.run);
     },
 
-    reset: function () {
-        var session = this._auth.getCurrentUserSessionInfo();
+    reset: function (runService, session) {
         var curUserId = session.userId;
         var curGroupName = session.groupName;
 
@@ -37,8 +29,7 @@ var Strategy = classFrom(IdentityStrategy, {
             }.bind(this));
     },
 
-    getRun: function (runService) {
-        var session = this._auth.getCurrentUserSessionInfo();
+    getRun: function (runService, session) {
         var curUserId = session.userId;
         var curGroupName = session.groupName;
         var worldApi = this.worldApi;
@@ -54,7 +45,6 @@ var Strategy = classFrom(IdentityStrategy, {
             if (!world) {
                 return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: me.options, session: session });
             }
-
             return worldApi.getCurrentRunId({ model: model, filter: world.id })
                 .then(function (id) {
                     return runService.load(id);
@@ -65,7 +55,7 @@ var Strategy = classFrom(IdentityStrategy, {
 
         var serverError = function (error) {
             // is this possible?
-            dtd.reject(error, session, me.options);
+            return dtd.reject(error, session, me.options);
         };
 
         this.worldApi

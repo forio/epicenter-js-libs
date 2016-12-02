@@ -1,20 +1,7 @@
 'use strict';
 
 var Base = require('./none-strategy');
-var SessionManager = require('../../store/session-manager');
 var classFrom = require('../../util/inherit');
-var AuthManager = require('../auth-manager');
-
-var keyNames = require('../key-names');
-
-var defaults = {
-    sessionKey: keyNames.STRATEGY_SESSION_KEY,
-    path: ''
-};
-
-function setRunInSession(sessionKey, run, sessionManager) {
-    sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: run.id }));
-}
 
 /**
 * Conditional Creation Strategy
@@ -23,61 +10,52 @@ function setRunInSession(sessionKey, run, sessionManager) {
 */
 
 var Strategy = classFrom(Base, {
-    constructor: function Strategy(condition, options) {
+    constructor: function Strategy(condition) {
         if (condition == null) { //eslint-disable-line
             //TODO: not sure why this is explicitly ==
             throw new Error('Conditional strategy needs a condition to create a run');
         }
-
-        this._auth = new AuthManager();
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
-        this.options = $.extend(true, {}, defaults, options);
-        this.sessionManager = new SessionManager(options);
     },
 
-    reset: function (runService) {
-        var me = this;
-
-        var userSession = this._auth.getCurrentUserSessionInfo();
+    reset: function (runService, userSession) {
+        var group = userSession && userSession.groupName;
         var opt = $.extend({
-            scope: { group: userSession.groupName }
+            scope: { group: group }
         }, runService.getCurrentConfig());
 
         return runService
                 .create(opt)
                 .then(function (run) {
-                    setRunInSession(me.options.sessionKey, run, me.sessionManager);
                     run.freshlyCreated = true;
                     return run;
                 });
     },
 
-    getRun: function (runService) {
-        var sessionStore = this.sessionManager.getStore();
-        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
+    getRun: function (runService, userSession, runIdInSession) {
         var me = this;
-        if (runSession && runSession.runId) {
-            return this.loadAndCheck(runService, runSession).catch(function () {
-                return me.reset(runService); //if it got the wrong cookie for e.g.
+        if (runIdInSession) {
+            return this.loadAndCheck(runService, userSession, runIdInSession).catch(function () {
+                return me.reset(runService, userSession); //if it got the wrong cookie for e.g.
             });
         } else {
-            return this.reset(runService);
+            return this.reset(runService, userSession);
         }
     },
 
-    loadAndCheck: function (runService, runSession, filters) {
+    loadAndCheck: function (runService, userSession, runIdInSession) {
         var shouldCreate = false;
         var me = this;
 
         return runService
-            .load(runSession.runId, filters, {
+            .load(runIdInSession, null, {
                 success: function (run, msg, headers) {
                     shouldCreate = me.condition(run, headers);
                 }
             })
             .then(function (run) {
                 if (shouldCreate) {
-                    return me.reset(runService);
+                    return me.reset(runService, userSession);
                 }
                 return run;
             });
