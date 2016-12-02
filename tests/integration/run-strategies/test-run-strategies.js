@@ -13,9 +13,14 @@ rm.getRun().then(function (cr) {
     rs.variables().query(['Price']).then(function (r) {
         $('#txtPriceDecision').val(r.Price);
     });
+    window.rs = rs;
     console.log(cr);
 });
 
+
+$('#txtPriceDecision').on('change', function (evt) {
+    window.rs.variables().save({ Price: Number(evt.target.value) });
+});
 
 $('#btnTrashRun').on('click', function () {
     var runid = $('#txtTrashRun').val();

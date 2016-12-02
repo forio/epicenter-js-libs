@@ -31,9 +31,11 @@ module.exports = classFrom(Base, {
         var filter = { 
             saved: true, 
             name: BASELINE_NAME,
-            'user.id': userSession.userId || '0000',
             'scope.group': userSession.groupName,
         };
+        if (userSession.userId) {
+            filter['user.id'] = userSession.userId;
+        }
         var me = this;
         return runService.filter(filter, { 
             startrecord: 0,
@@ -47,4 +49,4 @@ module.exports = classFrom(Base, {
             return runs[0];
         });
     }
-});
+}, { requiresAuth: true });

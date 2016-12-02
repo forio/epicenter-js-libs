@@ -21,9 +21,11 @@ module.exports = classFrom(Base, {
 
     getRun: function (runService, userSession) {
         var defaultFilterParams = {
-            'user.id': userSession.userId || '0000',
             'scope.group': userSession.groupName
         };
+        if (userSession.userId) {
+            defaultFilterParams['user.id'] = userSession.userId;
+        }
         var filter = $.extend(true, {}, defaultFilterParams, { 
             saved: false, 
             trashed: false, //TODO change to '!=true' once EPICENTER-2500 is fixed
@@ -53,4 +55,4 @@ module.exports = classFrom(Base, {
             });
         });
     }
-});
+}, { requiresAuth: true });
