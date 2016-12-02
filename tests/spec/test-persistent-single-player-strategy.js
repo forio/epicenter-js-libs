@@ -27,13 +27,13 @@
         });
 
         describe('getRun', function () {
-            var rs, createStub, queryStub, loadStub, rm;
+            var rs, createStub, queryStub, loadStub, rm; //eslint-disable-line
             beforeEach(function () {
-                var sucessHeader = {
-                    getResponseHeader: function () {
-                        return 'persistent';
-                    }
-                };
+                // var sucessHeader = {
+                //     getResponseHeader: function () {
+                //         return 'persistent';
+                //     }
+                // };
                 var falseHeader = {
                     getResponseHeader: function () {
                         return 'sdfs';
@@ -84,7 +84,7 @@
             });
             it('should create new if not runs available', function () {
                 var rs = new F.service.Run(runOptions);
-                var queryStub = sinon.stub(rs, 'query', function () {
+                sinon.stub(rs, 'query', function () {
                     return $.Deferred().resolve([]);
                 });
                 var createStub = sinon.stub(rs, 'create', function () {
