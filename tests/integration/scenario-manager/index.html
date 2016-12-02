@@ -35,6 +35,7 @@
            <tr>
                <th class="strong"> Scenario Name </th>
                <th></th>
+               <th></th>
            </tr>
         </thead>
         <tbody class="runsList">
@@ -44,6 +45,7 @@
     <script id="runTemplate" type="text/template">
         <tr data-runid="<%= run.id %>">
             <td><%= run.name %></td>
+            <td><%= run.id %></td>
             <td><% if (!run.nonRemovable) { %> <button class="btn btn-link btn-remove pull-right">Remove</button> <% } %></td>
         </tr>
     </script>

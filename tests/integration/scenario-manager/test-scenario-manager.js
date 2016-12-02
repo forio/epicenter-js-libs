@@ -35,3 +35,13 @@ sm.getSavedRuns().then(function (runs) {
         $('.runsList').append(templated);
     });
 });
+
+$('body').on('click', '.btn-remove', function (evt) {
+    evt.preventDefault();
+    var $target = $(evt.target).parents('tr');
+    var runid = $target.data('runid').trim();
+
+    sm.archiveRun(runid).then(function () {
+        window.location.reload();
+    });
+});

@@ -50,13 +50,17 @@ ScenarioManager.prototype = {
     mark: function (runid, toMark) {
         return this.runService.save(toMark, { filter: runid });
     },
-    markSaved: function (runid, isSaved) {
+    saveRun: function (runid, name, isSaved) {
         var val = !(isSaved === false);
-        return this.mark(runid, { saved: val });
+        var param = { saved: val };
+        if (name) {
+            param.name = name;
+        }
+        return this.mark(runid, param);
     },
-    markTrashed: function (runid, isTrashed) {
+    archiveRun: function (runid, isTrashed) {
         var val = !(isTrashed === false);
-        return this.mark(runid, { saved: val });
+        return this.mark(runid, { trashed: val });
     },
 
     getSavedRuns: function () {
