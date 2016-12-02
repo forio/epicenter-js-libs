@@ -13,8 +13,8 @@ module.exports = classFrom(Base, {
             scope: { group: group }
         }, runService.getCurrentConfig());
         return runService.create(opt).then(function (createResponse) {
-            return runService.save({ trashed: false }).then(function (patchResponse) {
-                return $.extend(true, {}, createResponse, patchResponse); //TODO remove this once EPICENTER-2500 is fixed
+            return runService.save({ trashed: false }).then(function (patchResponse) { //TODO remove this once EPICENTER-2500 is fixed
+                return $.extend(true, {}, createResponse, patchResponse);
             });
         });
     },
@@ -27,7 +27,6 @@ module.exports = classFrom(Base, {
             defaultFilterParams['user.id'] = userSession.userId;
         }
         var filter = $.extend(true, {}, defaultFilterParams, { 
-            saved: false, 
             trashed: false, //TODO change to '!=true' once EPICENTER-2500 is fixed
         }); //Can also filter by time0, but assuming if it's stepped it'll be saved
         var me = this;
@@ -38,20 +37,23 @@ module.exports = classFrom(Base, {
             direction: 'desc'
         };
         return runService.filter(filter, outputModifiers).then(function (runs) {
-            if (runs.length) {
-                return runs[0];
+            if (!runs.length) {
+                return me.reset(runService, userSession);
             }
-            var lastSavedRunFilter = $.extend(true, {}, defaultFilterParams, { saved: true });
-            return runService.filter(lastSavedRunFilter, outputModifiers).then(function (savedRuns) {
-                if (!savedRuns.length) {
-                    return me.reset(runService, userSession);
-                } else {
-                    var basedOnRunid = savedRuns[0].id;
-                    var sa = new StateService();
-                    return sa.clone({ runId: basedOnRunid, stopBefore: 'stepTo ' }).then(function (response) {
-                        console.log('res', response);
-                    });
-                }
+            var lastRun = runs[0];
+            if (lastRun.saved !== true) {
+                return lastRun;
+            }
+
+            var basedOnRunid = lastRun.id;
+            var sa = new StateService();
+            return sa.clone({ runId: basedOnRunid, stopBefore: 'stepTo' }).then(function (response) {
+                return runService.load(response.run);
+            }).then(function (run) {
+                //TODO remove this once EPICENTER-2500 is fixed
+                return runService.save({ trashed: false }).then(function (patchResponse) {
+                    return $.extend(true, {}, run, patchResponse);
+                });
             });
         });
     }

@@ -6,12 +6,36 @@
     <script src="../../../dist/epicenter-edge.js"></script>
 </head>
 <body>
+    <section>
+      <form action="">
+        <label for="">Account</label>
+        <input type="text" id="txtAccount"  value="team-naren">
+        <br/>
+
+        <label for="">Project</label>
+        <input type="text" id="txtProject" value="authenticated-smart-watch" >
+        <br/>
+
+        <label for="">Username</label>
+        <input type="text" id="txtUsername" value="a1" >
+        <br/>
+
+        <label for="">Password</label>
+        <input type="text" id="txtPassword" value="a1a1a1a1" >
+        <br/>
+        <button id="btnLogin"> Login </button>
+        <a href="#" id='logout'> Logout</a>
+      </form>
+    </section>
+
     <div>
         <h6>Set Trashed flag</h6>
-        <input type="text" id="txtTrashRun" placeholder="run id" />
+        <input type="text" id="txtTrashRun" style="width: 400px" placeholder="run id" />
         <input type="checkbox" id="chkTrashRun">
         <button id="btnTrashRun">Trash Run</button>
     </div>
+
+    <h3 id="time"></h3>
     
     <div>
         <h6>Decisions</h6>
