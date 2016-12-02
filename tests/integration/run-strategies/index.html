@@ -6,19 +6,19 @@
     <script src="../../../dist/epicenter-edge.js"></script>
 </head>
 <body>
-    <script>
-        var rm = new F.manager.RunManager({
-            strategy: 'new-if-stepped',
-            run: {
-                account: 'jaimedp',
-                project: 'glasses',
-                model: 'gglasses.vmf'
-            }
-        });
-        
-        rm.getRun().then(function (cr) {
-            console.log(cr);
-        });
-    </script>
+    <div>
+        <h6>Set Trashed flag</h6>
+        <input type="text" id="txtTrashRun" placeholder="run id" />
+        <input type="checkbox" id="chkTrashRun">
+        <button id="btnTrashRun">Trash Run</button>
+    </div>
+    
+    <div>
+        <h6>Decisions</h6>
+        <input type="text" id="txtPriceDecision" />
+    </div>
+
+    <button id="btnSaveAndSimulate">Save and simulate</button>
+    <script src="./test-run-strategies.js"></script>
 </body>
 </html>

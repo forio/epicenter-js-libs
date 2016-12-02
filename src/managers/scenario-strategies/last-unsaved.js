@@ -13,7 +13,7 @@ module.exports = classFrom(Base, {
             scope: { group: group }
         }, runService.getCurrentConfig());
         return runService.create(opt).then(function (createResponse) {
-            runService.save({ trashed: false }).then(function (patchResponse) {
+            return runService.save({ trashed: false }).then(function (patchResponse) {
                 return $.extend(true, {}, createResponse, patchResponse); //TODO remove this once EPICENTER-2500 is fixed
             });
         });
