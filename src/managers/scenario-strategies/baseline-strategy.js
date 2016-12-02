@@ -42,7 +42,7 @@ module.exports = classFrom(Base, {
             direction: 'desc'
         }).then(function (runs) {
             if (!runs.length) {
-                return me.reset();
+                return me.reset(runService, userSession);
             }
             return runs[0];
         });

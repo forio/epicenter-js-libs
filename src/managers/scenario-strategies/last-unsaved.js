@@ -4,19 +4,30 @@ var StateService = require('../../service/state-api-adapter');
 
 var Base = {};
 module.exports = classFrom(Base, {
-    constructor: function (runService, options) {
-        this.runService = runService;
-        this.runoptions = options.run;
+    constructor: function (options) {
     },
 
-    //TODO: Make sure this is passing the scope etc
-    reset: function (runServiceOptions) {
-        var rs = this.runService;
-        return rs.create(this.runoptions);
+    reset: function (runService, userSession) {
+        var group = userSession && userSession.groupName;
+        var opt = $.extend({
+            scope: { group: group }
+        }, runService.getCurrentConfig());
+        return runService.create(opt).then(function (createResponse) {
+            runService.save({ trashed: false }).then(function (patchResponse) {
+                return $.extend(true, {}, createResponse, patchResponse); //TODO remove this once EPICENTER-2500 is fixed
+            });
+        });
     },
 
-    getRun: function (runService) {
-        var filter = { saved: false, trashed: '!=true' }; //Can also filter by time0, but assuming if it's stepped it'll be saved
+    getRun: function (runService, userSession) {
+        var defaultFilterParams = {
+            'user.id': userSession.userId || '0000',
+            'scope.group': userSession.groupName
+        };
+        var filter = $.extend(true, {}, defaultFilterParams, { 
+            saved: false, 
+            trashed: false, //TODO change to '!=true' once EPICENTER-2500 is fixed
+        }); //Can also filter by time0, but assuming if it's stepped it'll be saved
         var me = this;
         var outputModifiers = { 
             startrecord: 0,
@@ -28,15 +39,16 @@ module.exports = classFrom(Base, {
             if (runs.length) {
                 return runs[0];
             }
-            return runService.filter({ saved: true }, outputModifiers).then(function (savedRuns) {
+            var lastSavedRunFilter = $.extend(true, {}, defaultFilterParams, { saved: true });
+            return runService.filter(lastSavedRunFilter, outputModifiers).then(function (savedRuns) {
                 if (!savedRuns.length) {
-                    return me.reset();
+                    return me.reset(runService, userSession);
                 } else {
                     var basedOnRunid = savedRuns[0].id;
                     var sa = new StateService();
-                    return sa.clone({ runId: basedOnRunid, stopBefore: 'stepTo ' }).then(function (newRun) {
-                        me.runService.updateConfig({ filter: newRun.id });
-                    }); //TODO: figure out if run instance needs to be updated
+                    return sa.clone({ runId: basedOnRunid, stopBefore: 'stepTo ' }).then(function (response) {
+                        console.log('res', response);
+                    });
                 }
             });
         });
