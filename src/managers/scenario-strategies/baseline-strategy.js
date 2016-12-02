@@ -5,30 +5,35 @@ var Base = {};
 var BASELINE_NAME = 'baseline';
 module.exports = classFrom(Base, {
     constructor: function (runService, options) {
-        this.runService = runService;
-        this.runoptions = options.run;
     },
 
-    //TODO: Make sure this is passing the scope etc
-    reset: function (runServiceOptions) {
-        var rs = this.runService;
-        return rs.create(this.runoptions).then(function (createResponse) {
-            return rs.save({
+    reset: function (runService, userSession) {
+        var group = userSession && userSession.groupName;
+        var opt = $.extend({
+            scope: { group: group }
+        }, runService.getCurrentConfig());
+
+        return runService.create(opt).then(function (createResponse) {
+            return runService.save({
                 saved: true,
                 name: BASELINE_NAME
             }).then(function (patchResponse) {
                 return $.extend(true, {}, createResponse, patchResponse);
             });
         }).then(function (mergedResponse) {
-            return rs.do({ stepTo: 'end' }).then(function () {
+            return runService.do({ stepTo: 'end' }).then(function () {
                 return mergedResponse;
             });
         });
     },
 
-    //FIXME: store this in a cookie?
-    getRun: function (runService) {
-        var filter = { saved: true, name: BASELINE_NAME };
+    getRun: function (runService, userSession, runIdInSession) {
+        var filter = { 
+            saved: true, 
+            name: BASELINE_NAME,
+            'user.id': userSession.userId || '0000',
+            'scope.group': userSession.groupName,
+        };
         var me = this;
         return runService.filter(filter, { 
             startrecord: 0,
