@@ -16,6 +16,7 @@ module.exports = classFrom(Base, {
         return runService.create(opt).then(function (createResponse) {
             return runService.save({
                 saved: true,
+                trashed: false, //TODO remove this once EPICENTER-2500 is fixed
                 name: BASELINE_NAME
             }).then(function (patchResponse) {
                 return $.extend(true, {}, createResponse, patchResponse);
@@ -30,6 +31,7 @@ module.exports = classFrom(Base, {
     getRun: function (runService, userSession, runIdInSession) {
         var filter = { 
             saved: true, 
+            trashed: false, //TODO remove this once EPICENTER-2500 is fixed
             name: BASELINE_NAME,
             'scope.group': userSession.groupName,
         };
