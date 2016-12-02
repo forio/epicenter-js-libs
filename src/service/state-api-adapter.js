@@ -51,6 +51,15 @@ module.exports = function (config) {
     };
 
     var publicAPI = {
+        load: function (runId, options) {
+            var httpParams = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + runId }
+            );
+            return http.get('', httpParams);
+        },
+
         /**
         * Replay a run. After this call, the run, with its original run id, is now available [in memory](../../../run_persistence/#runs-in-memory). (It continues to be persisted into the Epicenter database at regular intervals.)
         *
