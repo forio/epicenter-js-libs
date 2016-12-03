@@ -36,6 +36,28 @@ sm.getSavedRuns().then(function (runs) {
     });
 });
 
+sm.getCurrentRun().then(function (run) {
+    $('#currentRunId').html(run.id);
+    var rs = new F.service.Run(run);
+    rs.variables().query(['Price[X5]', 'Time']).then(function (r) {
+        var index = r['Price[X5]'].length - 1;
+        $('#txtPriceDecision').val(r['Price[X5]'][index]);
+        $('#time').html(r['Time'][index]);
+    });
+    window.cr = rs;
+});
+
+$('#txtPriceDecision').on('change', function (evt) {
+    window.cr.variables().save({ 'Price[X5]': Number(evt.target.value) });
+});
+$('#btnSaveAndSimulate').on('click', function () {
+    sm.saveRun(window.cr).then(function () {
+        window.cr.do({ stepTo: 'end' }).then(function () {
+            console.log('simulated');
+        });
+    });
+});
+
 $('body').on('click', '.btn-remove', function (evt) {
     evt.preventDefault();
     var $target = $(evt.target).parents('tr');

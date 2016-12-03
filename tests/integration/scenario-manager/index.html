@@ -1,11 +1,12 @@
 <!doctype html>
 <html>
 <head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
     <script src="../../../dist/epicenter-edge.js"></script>
 </head>
-<body>
+<body class="container-fluid">
     <section>
       <form action="">
         <label for="">Account</label>
@@ -29,27 +30,52 @@
     </section>
     <hr>
     
-    <h3>Run Manager</h3>
-    <table class="table">
-        <thead>
-           <tr>
-               <th class="strong"> Scenario Name </th>
-               <th></th>
-               <th></th>
-           </tr>
-        </thead>
-        <tbody class="runsList">
+    <div class="row">
+        <div class="col-xs-6">
+            <h3>Run Manager</h3>
+            <table class="table">
+                <thead>
+                   <tr>
+                       <th class="strong"> Scenario Name </th>
+                       <th></th>
+                       <th></th>
+                   </tr>
+                </thead>
+                <tbody class="runsList">
 
-        </tbody>
-    </table>
-    <script id="runTemplate" type="text/template">
-        <tr data-runid="<%= run.id %>">
-            <td><%= run.name %></td>
-            <td><%= run.id %></td>
-            <td><% if (!run.nonRemovable) { %> <button class="btn btn-link btn-remove pull-right">Remove</button> <% } %></td>
-        </tr>
-    </script>
+                </tbody>
+            </table>
+            <script id="runTemplate" type="text/template">
+                <tr data-runid="<%= run.id %>">
+                    <td><%= run.name %></td>
+                    <td><%= run.id %></td>
+                    <td><% if (!run.nonRemovable) { %> <button class="btn btn-link btn-remove pull-right">Remove</button> <% } %></td>
+                </tr>
+            </script>
 
+        </div>
+        <div class="col-xs-6">
+            <h2>Current Run </h2>
+
+            <div>
+                <h6>rundid</h6>
+                <span id="currentRunId"></span>
+            </div>
+            <h6 id="time"></h6>
+
+            <div>
+                <h6>Decisions</h6>
+                <input type="text" id="txtPriceDecision" />
+            </div>
+            <button id="btnSaveAndSimulate">Save and simulate</button>
+
+            <div>
+                <h6>Output</h6>
+                <ul id="results"></ul>
+            </div>
+        </div>
+    </div>
+    
 
     <script src="./test-scenario-manager.js"></script>
 </body>

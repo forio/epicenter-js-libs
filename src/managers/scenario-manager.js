@@ -47,20 +47,21 @@ ScenarioManager.prototype = {
         return this.currentRunManager.reset();
     },
 
-    mark: function (runid, toMark) {
-        return this.runService.save(toMark, { filter: runid });
+    mark: function (run, toMark) {
+        var rs = (run instanceof RunService) ? run : new RunService({ id: run });
+        return rs.save(toMark);
     },
-    saveRun: function (runid, name, isSaved) {
+    saveRun: function (run, name, isSaved) {
         var val = !(isSaved === false);
         var param = { saved: val };
         if (name) {
             param.name = name;
         }
-        return this.mark(runid, param);
+        return this.mark(run, param);
     },
-    archiveRun: function (runid, isTrashed) {
+    archiveRun: function (run, isTrashed) {
         var val = !(isTrashed === false);
-        return this.mark(runid, { trashed: val });
+        return this.mark(run, { trashed: val });
     },
 
     getSavedRuns: function () {
