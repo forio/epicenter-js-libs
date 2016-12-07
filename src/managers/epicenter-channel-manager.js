@@ -148,7 +148,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @return {Channel} Channel instance
      */
     getGroupChannel: function (groupName) {
-        var session = this.sessionManager.getSession();
+        var session = this.sessionManager.getMergedOptions(this.options);
         groupName = getFromSessionOrError(groupName, 'group', session);
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
@@ -193,7 +193,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        var session = this.sessionManager.getSession();
+        var session = this.sessionManager.getMergedOptions(this.options);
 
         groupName = getFromSessionOrError(groupName, 'group', session);
         var account = getFromSessionOrError('', 'account', session);
@@ -241,7 +241,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        var session = this.sessionManager.getSession();
+        var session = this.sessionManager.getMergedOptions(this.options);
 
         var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
         userid = getFromSessionOrError(userid, 'userId', session);
@@ -290,7 +290,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             throw new Error('Please specify a world id');
         }
 
-        var session = this.sessionManager.getSession();
+        var session = this.sessionManager.getMergedOptions(this.options);
         userid = getFromSessionOrError(userid, 'userId', session);
         groupName = getFromSessionOrError(groupName, 'group', session);
 
@@ -358,7 +358,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             throw new Error('Please specify a collection to listen on.');
         }
 
-        var session = this.sessionManager.getSession();
+        var session = this.sessionManager.getMergedOptions(this.options);
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
         var baseTopic = ['/data', account, project, collection].join('/');
