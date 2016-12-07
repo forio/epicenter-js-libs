@@ -64,7 +64,7 @@ ScenarioManager.prototype = {
         return this.mark(run, { trashed: val });
     },
 
-    getSavedRuns: function () {
+    getSavedRuns: function (variables, options) {
         //TODO: Add group/user scope filters here
         var opModifiers = {
             sort: 'created',
@@ -72,30 +72,19 @@ ScenarioManager.prototype = {
         };
         var me = this;
         return this.baseLineProm.then(function () {
-            return me.runService.query({ saved: true, trashed: false }, opModifiers);
-        });
-    },
-
-    fetchVariablesForRuns: function (runObjects, variables) {
-        var promises = [];
-        var response = [];
-
-        if (!variables || !variables.length) {
-            return $.Deferred().resolve().promise();
-        }
-        var opModifiers = {
-            sort: 'created',
-            direction: 'asc'
-        };
-        runObjects.forEach(function (run) {
-            var prom = this.runService.variables().query([].concat(variables), opModifiers, { filter: run.id }).then(function (variables) {
-                response.push({ id: run.id, name: run.name, variables: variables });
-                return variables;
+            return me.runService.query({ saved: true, trashed: false }, opModifiers).then(function (savedRuns) {
+                if (!variables || !variables.length) {
+                    return savedRuns;
+                }
+                var promises = savedRuns.map(function (run) {
+                    var prom = me.runService.variables().query([].concat(variables), {}, { filter: run.id }).then(function (variables) {
+                        run.variables = variables;
+                        return run;
+                    });
+                    return prom;
+                });
+                return $.when.apply(null, promises);
             });
-            promises.push(prom);
-        });
-        return $.when.apply(null, promises).then(function () {
-            return response;
         });
     }
 };
