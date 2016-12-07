@@ -22,22 +22,20 @@ var SavedRunsManager = function (config) {
     }
 };
 
+function mark(run, toMark) {
+    var rs = (run instanceof RunService) ? run : new RunService({ id: run });
+    return rs.save(toMark);
+}
 SavedRunsManager.prototype = {
-    mark: function (run, toMark) {
-        var rs = (run instanceof RunService) ? run : new RunService({ id: run });
-        return rs.save(toMark);
-    },
-    add: function (run, name, isSaved) {
-        var val = !(isSaved === false);
-        var param = { saved: val };
+    save: function (run, name) {
+        var param = { saved: true, trashed: false };
         if (name) {
             param.name = name;
         }
-        return this.mark(run, param);
+        return mark(run, param);
     },
-    remove: function (run, isTrashed) {
-        var val = !(isTrashed === false);
-        return this.mark(run, { trashed: val });
+    remove: function (run) {
+        return mark(run, { saved: false, trashed: true });
     },
     getRuns: function (variables, options) {
         //TODO: Add group/user scope filters here

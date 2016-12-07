@@ -50,7 +50,28 @@
         });
 
         describe('User Session', function () {
-     
+            //Test to make sure the right session ids are set
+        });
+
+        describe('#save', function () {
+            var rs, saveStub, srm;
+            beforeEach(function () {
+                rs = new RunService(runOptions);
+                saveStub = sinon.stub(rs, 'save', function (params) {
+                    return $.Deferred().resolve(params).promise();
+                });
+                srm = new SavedRunsManager({
+                    run: runOptions
+                });
+            });
+            it('should call the run service with the right saved flag', function () {
+                return srm.save(rs).then(function () {
+                    expect(saveStub).to.have.been.calledOnce;
+
+                    var args = saveStub.getCall(0).args;
+                    expect(args[0]).to.eql({ saved: true, trashed: false });
+                });
+            });
         });
     });
 }());
