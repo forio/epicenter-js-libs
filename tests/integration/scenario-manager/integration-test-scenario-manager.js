@@ -19,7 +19,7 @@ var defaultRunOptions = {
 var sm = new F.manager.ScenarioManager(defaultRunOptions);
 
 var runRowtemplate = _.template($('#runTemplate').html());
-sm.getSavedRuns().then(function (runs) {
+sm.savedRuns.getRuns().then(function (runs) {
     $('.runsList').empty();
     // console.log(runs);
     if (!runs.length) {
@@ -36,7 +36,7 @@ sm.getSavedRuns().then(function (runs) {
     });
 });
 
-sm.getCurrentRun().then(function (run) {
+sm.current.getRun().then(function (run) {
     $('#currentRunId').html(run.id);
     var rs = new F.service.Run(run);
     rs.variables().query(['Price[X5]', 'Time']).then(function (r) {
@@ -51,7 +51,7 @@ $('#txtPriceDecision').on('change', function (evt) {
     window.cr.variables().save({ 'Price[X5]': Number(evt.target.value) });
 });
 $('#btnSaveAndSimulate').on('click', function () {
-    sm.saveRun(window.cr).then(function () {
+    sm.savedRuns.add(window.cr).then(function () {
         window.cr.do({ stepTo: 'end' }).then(function () {
             console.log('simulated');
         });
@@ -63,7 +63,7 @@ $('body').on('click', '.btn-remove', function (evt) {
     var $target = $(evt.target).parents('tr');
     var runid = $target.data('runid').trim();
 
-    sm.archiveRun(runid).then(function () {
+    sm.savedRuns.remove(runid).then(function () {
         window.location.reload();
     });
 });
