@@ -8,7 +8,6 @@ var SavedRunsManager = function (config) {
 
     };
     var options = $.extend(true, {}, defaults, config);
-
     if (options.run) {
         if (options.run instanceof RunService) {
             this.runService = options.run;
@@ -22,20 +21,26 @@ var SavedRunsManager = function (config) {
     }
 };
 
-function mark(run, toMark) {
-    var rs = (run instanceof RunService) ? run : new RunService({ id: run });
-    return rs.save(toMark);
-}
 SavedRunsManager.prototype = {
-    save: function (run, name) {
-        var param = { saved: true, trashed: false };
-        if (name) {
-            param.name = name;
+    mark: function (run, toMark) {
+        var rs;
+        if (run instanceof RunService) {
+            rs = run;
+        } else if (!(typeof Run === 'string')) {
+            var existingOptions = this.runService.getCurrentConfig();
+            rs = new RunService($.extend(true, {}, existingOptions, { id: run }));
+        } else {
+            throw new Error('Invalid run object provided');
         }
-        return mark(run, param);
+        return rs.save(toMark);
     },
-    remove: function (run) {
-        return mark(run, { saved: false, trashed: true });
+    save: function (run, otherFields) {
+        var param = $.extend(true, {}, otherFields, { saved: true, trashed: false });
+        return this.mark(run, param);
+    },
+    remove: function (run, otherFields) {
+        var param = $.extend(true, {}, otherFields, { saved: false, trashed: true });
+        return this.mark(run, param);
     },
     getRuns: function (variables, options) {
         //TODO: Add group/user scope filters here
