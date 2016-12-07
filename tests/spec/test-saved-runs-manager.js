@@ -153,5 +153,15 @@
                 expect(function () { srm.mark(); }).to.throw(Error);
             });
         });
+
+        describe('#getRuns', function () {
+            var rs, queryStub;
+            beforeEach(function () {
+                
+            });
+            it('', function () {
+                
+            });
+        });
     });
 }());
