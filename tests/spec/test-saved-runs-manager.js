@@ -29,7 +29,7 @@
         // get should return what's stored in the session cookie
         getCurrentUserSessionInfo: sinon.stub().returns({})
     };
-    describe.only('Saved Runs Manager', function () {
+    describe('Saved Runs Manager', function () {
         var server;
         var rs, saveStub, srm;
 
@@ -155,12 +155,88 @@
         });
 
         describe('#getRuns', function () {
-            var rs, queryStub;
+            var rs, queryStub, variableQuerySpy, srm;
             beforeEach(function () {
-                
+                rs = new F.service.Run(runOptions);
+                variableQuerySpy = sinon.spy(function (variables) {
+                    if (variables[0] === 'fail') {
+                        return $.Deferred().reject().promise();
+                    }
+                    return $.Deferred().resolve({
+                        price: 2
+                    }).promise();
+                });
+                queryStub = sinon.stub(rs, 'query', function (options) {
+                    return $.Deferred().resolve([
+                        { id: 'run1' },
+                        { id: 'run2' },
+                    ]).promise();
+                });
+                sinon.stub(rs, 'variables', function (options) {
+                    return {
+                        query: variableQuerySpy
+                    };
+                });
+                srm = new SavedRunsManager({
+                    run: rs
+                });
             });
-            it('', function () {
-                
+
+            it('should pass the right saved filter', function () {
+                return srm.getRuns().then(function () {
+                    expect(queryStub).to.have.been.calledOnce;
+
+                    var args = queryStub.getCall(0).args;
+                    expect(args[0]).to.eql({ saved: true, trashed: false });
+                });
+            });
+            it('should allow passing in additonal filters', function () {
+                return srm.getRuns(null, { foo: 'bar' }).then(function () {
+                    expect(queryStub).to.have.been.calledOnce;
+
+                    var args = queryStub.getCall(0).args;
+                    expect(args[0]).to.eql({ saved: true, trashed: false, foo: 'bar' });
+                });
+            });
+            it('should return an array of runs', function () {
+                return srm.getRuns().then(function (runs) {
+                    expect(runs).to.eql([
+                        { id: 'run1' },
+                        { id: 'run2' },
+                    ]);
+                });
+            });
+            describe('Variables', function () {
+                it('should pass variables to variables service', function () {
+                    return srm.getRuns('Price', { foo: 'bar' }).then(function () {
+                        var args = variableQuerySpy.getCall(0).args;
+                        expect(args[0]).to.eql(['Price']);
+                    });
+                });
+                it('should add variables to response', function () {
+                    return srm.getRuns('Price', { foo: 'bar' }).then(function (runs) {
+                        expect(runs).to.eql([
+                            { id: 'run1', variables: { price: 2 } },
+                            { id: 'run2', variables: { price: 2 } },
+                        ]);
+                    });
+                });
+                it('should ignore failed variables for any run', function () {
+                    var successSpy = sinon.spy(function (r) {
+                        return r;
+                    });
+                    var failSpy = sinon.spy(function (r) {
+                        return r;
+                    });
+                    return srm.getRuns('fail', { foo: 'bar' }).then(successSpy).catch(failSpy).then(function (runs) {
+                        expect(successSpy).to.have.been.called;
+                        expect(failSpy).to.not.have.been.called;
+                        expect(runs).to.eql([
+                            { id: 'run1', variables: {} },
+                            { id: 'run2', variables: {} },
+                        ]);
+                    });
+                });
             });
         });
     });

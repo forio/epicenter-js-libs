@@ -42,25 +42,37 @@ SavedRunsManager.prototype = {
         var param = $.extend(true, {}, otherFields, { saved: false, trashed: true });
         return this.mark(run, param);
     },
-    getRuns: function (variables, options) {
+    getRuns: function (variables, filter, options) {
         //TODO: Add group/user scope filters here
+        var actingFilter = $.extend(true, {}, {
+            saved: true, trashed: false
+        }, filter);
+
         var opModifiers = {
             sort: 'created',
             direction: 'asc'
         };
-        return this.runService.query({ saved: true, trashed: false }, opModifiers).then(function (savedRuns) {
+        var me = this;
+        return this.runService.query(actingFilter, opModifiers).then(function (savedRuns) {
             if (!variables || !variables.length) {
                 return savedRuns;
             }
-            var me = this;
             var promises = savedRuns.map(function (run) {
                 var prom = me.runService.variables().query([].concat(variables), {}, { filter: run.id }).then(function (variables) {
                     run.variables = variables;
                     return run;
+                }).catch(function (err) {
+                    if (err) {
+                        console.error(err);
+                    }
+                    run.variables = {};
+                    return run;
                 });
                 return prom;
             });
-            return $.when.apply(null, promises);
+            return $.when.apply(null, promises).then(function () {
+                return Array.apply(null, arguments);
+            });
         });
     }
 };
