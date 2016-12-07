@@ -1,53 +1,8 @@
 'use strict';
 
 var RunManager = require('./run-manager');
-var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
-
-var SavedRunsService = function (options, baseLineProm) {
-    var runService = new RunService(options);
-
-    return {
-        mark: function (run, toMark) {
-            var rs = (run instanceof RunService) ? run : new RunService({ id: run });
-            return rs.save(toMark);
-        },
-        add: function (run, name, isSaved) {
-            var val = !(isSaved === false);
-            var param = { saved: val };
-            if (name) {
-                param.name = name;
-            }
-            return this.mark(run, param);
-        },
-        remove: function (run, isTrashed) {
-            var val = !(isTrashed === false);
-            return this.mark(run, { trashed: val });
-        },
-        getRuns: function (variables, options) {
-            //TODO: Add group/user scope filters here
-            var opModifiers = {
-                sort: 'created',
-                direction: 'asc'
-            };
-            return baseLineProm.then(function () {
-                return runService.query({ saved: true, trashed: false }, opModifiers).then(function (savedRuns) {
-                    if (!variables || !variables.length) {
-                        return savedRuns;
-                    }
-                    var promises = savedRuns.map(function (run) {
-                        var prom = runService.variables().query([].concat(variables), {}, { filter: run.id }).then(function (variables) {
-                            run.variables = variables;
-                            return run;
-                        });
-                        return prom;
-                    });
-                    return $.when.apply(null, promises);
-                });
-            });
-        }
-    };
-};
+var SavedRunsManager = require('./saved-run-manager');
 
 var defaults = {
     token: undefined,
@@ -74,7 +29,16 @@ function ScenarioManager(config) {
 
     var baseLineProm = this.baseline.getRun();
 
-    this.savedRuns = new SavedRunsService(this.serviceOptions, baseLineProm);
+    this.savedRuns = new SavedRunsManager(this.serviceOptions);
+
+    var orig = this.savedRuns.getRuns;
+    this.savedRuns.getRuns = function () {
+        var args = arguments;
+        var me = this;
+        return baseLineProm.then(function () {
+            return orig.apply(me.savedRuns, args);
+        });
+    };
 }
 
 module.exports = ScenarioManager;
