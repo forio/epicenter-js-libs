@@ -16,14 +16,6 @@
         groupName: 'group-123',
         isFac: false
     };
-    var fakeAuth = {
-        // get should return what's stored in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns(sampleSession)
-    };
-    var fakeInvalidAuth = {
-        // get should return what's stored in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns({})
-    };
     describe('Run Manager', function () {
         describe('constructor options', function () {
             describe('run', function () {
@@ -80,6 +72,24 @@
                     var strategySpy = sinon.spy(myStrategy);
                     expect(function () { new F.manager.RunManager({ strategy: strategySpy, run: runOptions }); }).to.throw(Error);
                 });
+                it('should pass through options to strategies', function () {
+                    var myStrategy = function () {
+                        return {
+                            getRun: sinon.spy(),
+                            reset: sinon.spy(),
+                        };
+                    };
+                    var strategySpy = sinon.spy(myStrategy);
+                    new F.manager.RunManager({
+                        strategy: strategySpy,
+                        run: runOptions,
+                        someCustomOption: 'booo',
+                    });
+
+                    var args = strategySpy.getCall(0).args;
+                    expect(args[0].run).to.eql(runOptions);
+                    expect(args[0].someCustomOption).to.eql('booo');
+                });
             });
         });
 
@@ -103,7 +113,7 @@
                         strategy: strategySpy,
                         run: runOptions,
                     });
-                    rm.authManager = fakeInvalidAuth;
+                    sinon.stub(rm.sessionManager, 'getSession').returns({});
                 });
 
                 it('#getRun throw an error if strategy requires auth but it\'s not given', function () {
@@ -140,9 +150,11 @@
                     strategy: strategySpy,
                     run: runOptions,
                 });
-                rm.authManager = fakeAuth;
+
+                var sessionStub = sinon.stub(rm.sessionManager, 'getSession').returns(sampleSession);
                 return rm.getRun().then(function () {
                     expect(getRunSpy.getCall(0).args[1]).to.eql(sampleSession);
+                    sessionStub.restore();
                 });
             });
             it('should pass in session to #reset', function () {
@@ -162,23 +174,28 @@
                     strategy: strategySpy,
                     run: runOptions,
                 });
-                rm.authManager = fakeAuth;
+                var sessionStub = sinon.stub(rm.sessionManager, 'getSession').returns(sampleSession);
                 return rm.reset().then(function () {
                     expect(resetSpy.getCall(0).args[1]).to.eql(sampleSession);
+                    sessionStub.restore();
                 });
             });
         });
         describe('Run Session', function () {
-            var getSpy, setSpy, dummySessionStore;
+            var getSpy, setSpy, dummySessionStore, runid = 'dummyrunid';
             beforeEach(function () {
-                getSpy = sinon.spy(function (runid) { 
-                    return runid ? JSON.stringify({
-                        runId: runid
-                    }) : null;
+                getSpy = sinon.spy(function (key) { 
+                    if (key !== 'missing-runid') {
+                        return JSON.stringify({ runId: runid });
+                    }
+                    return null;
                 });
                 setSpy = sinon.spy();
 
                 dummySessionStore = {
+                    getSession: function () {
+                        return {};
+                    },
                     getStore: function () {
                         return {
                             get: getSpy,
@@ -188,23 +205,7 @@
                 };
             });
 
-            function createFakeSessionStore(runid) {
-                var dummySessionStore = {
-                    getStore: function () {
-                        return {
-                            get: function () { 
-                                return runid ? JSON.stringify({
-                                    runId: runid
-                                }) : null;
-                            },
-                            set: function () { },
-                        };
-                    }
-                };
-                return dummySessionStore;
-            }
             it('should pass runid in session into strategy', function () {
-                var runid = 'dummyrunid';
                 var getRunSpy = sinon.spy(function () {
                     return $.Deferred().resolve({ id: runid }).promise();
                 });
@@ -219,7 +220,7 @@
                     strategy: strategySpy,
                     run: runOptions,
                 });
-                rm.sessionManager = createFakeSessionStore(runid);
+                rm.sessionManager = dummySessionStore;
                 return rm.getRun().then(function () {
                     expect(getRunSpy.getCall(0).args[2]).to.equal(runid);
                 });
@@ -297,12 +298,12 @@
             
         });
         describe('#getRun', function () {
-            var rm, runid = 'newrun', getRunSpy, strategySpy;
+            var rm, runid = 'newrun', getRunSpy, myStrategy, strategySpy;
             beforeEach(function () {
                 getRunSpy = sinon.spy(function () {
                     return $.Deferred().resolve({ id: runid }).promise();
                 });
-                var myStrategy = function () {
+                myStrategy = function () {
                     return {
                         getRun: getRunSpy,
                         reset: sinon.spy(),
@@ -328,6 +329,59 @@
                 return rm.getRun().then(function () {
                     var config = rm.run.getCurrentConfig();
                     expect(config.id).to.equal(runid);
+                });
+            });
+            describe('variables', function () {
+                var rs, variableStub, rm;
+                beforeEach(function () {
+                    rs = new F.service.Run(runOptions);
+                    var variableQuerySpy = sinon.spy(function () {
+                        return $.Deferred().resolve({
+                            price: 2
+                        }).promise();
+                    });
+                    variableStub = sinon.stub(rs, 'variables', function (options) {
+                        return {
+                            query: variableQuerySpy
+                        };
+                    });
+                    rm = new F.manager.RunManager({
+                        strategy: myStrategy,
+                        run: rs,
+                    });
+                });
+                it('should not call the variables service if no variables provided', function () {
+                    return rm.getRun().then(function () {
+                        expect(variableStub).to.not.have.been.called;
+                    });
+                });
+                it('should call variables service if variables provided', function () {
+                    return rm.getRun('price').then(function (run) {
+                        expect(variableStub).to.have.been.calledOnce;
+
+                        var args = rs.variables().query.getCall(0).args;
+                        expect(args[0]).to.eql('price');
+                        expect(run.variables).to.eql({ price: 2 });
+                    });
+                });
+                it('should return a run with no variables if variables call fails', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var variableQuerySpy = sinon.spy(function () {
+                        return $.Deferred().reject().promise();
+                    });
+                    variableStub = sinon.stub(rs, 'variables', function (options) {
+                        return {
+                            query: variableQuerySpy
+                        };
+                    });
+                    var rm = new F.manager.RunManager({
+                        strategy: myStrategy,
+                        run: rs,
+                    });
+                    return rm.getRun('price').then(function (run) {
+                        expect(variableStub).to.have.been.calledOnce;
+                        expect(run.variables).to.eql({ });
+                    });
                 });
             });
         });

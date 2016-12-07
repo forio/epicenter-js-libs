@@ -62,15 +62,6 @@
                 });
                 rm = new Strategy();
             });
-            it('should reject if no usersession is passed in', function () {
-                var successSpy = sinon.spy();
-                var failSpy = sinon.spy();
-
-                return rm.getRun(rs).then(successSpy).catch(failSpy).then(function () {
-                    expect(successSpy).to.not.have.been.called;
-                    expect(failSpy).to.have.been.calledOnce;
-                });
-            });
             it('should query for all runs in group', function () {
                 return rm.getRun(rs, auth).then(function () {
                     expect(queryStub).to.have.been.calledOnce;
@@ -108,15 +99,6 @@
                     }).promise();
                 });
                 rm = new Strategy();
-            });
-            it('should reject if no usersession is passed in', function () {
-                var successSpy = sinon.spy();
-                var failSpy = sinon.spy();
-
-                return rm.reset(rs).then(successSpy).catch(failSpy).then(function () {
-                    expect(successSpy).to.not.have.been.called;
-                    expect(failSpy).to.have.been.calledOnce;
-                });
             });
             it('should call runservice.create', function () {
                 return rm.reset(rs, { groupName: 'group-123' }).then(function () {
