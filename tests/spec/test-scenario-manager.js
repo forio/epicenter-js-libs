@@ -13,20 +13,12 @@
 
     var sampleSession = {
         auth_token: '',
-        account: 'forio-dev',
-        project: 'js-libs',
+        account: 'forio-dev-cookie',
+        project: 'js-libs-cookie',
         userId: '123',
         groupId: 'group123',
         groupName: 'group-123',
         isFac: false
-    };
-    var fakeAuth = {
-        // get should return what's stored in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns(sampleSession)
-    };
-    var fakeInvalidAuth = {
-        // get should return what's stored in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns({})
     };
 
     describe.only('Scenario Manager', function () {
@@ -68,7 +60,7 @@
             });
             it('should pass through the right options', function () {
                 var sm = new ScenarioManager(runOptions);
-                sm.baseline.authManager = fakeInvalidAuth;
+                sinon.stub(sm.baseline.sessionManager, 'getSession').returns(sampleSession);
 
                 return sm.baseline.getRun().then(function (run) {
                     var config = sm.baseline.run.getCurrentConfig();
@@ -81,6 +73,16 @@
             it('should create a new current run manager', function () {
                 var sm = new ScenarioManager();
                 expect(sm.current).to.be.instanceof(RunManager);
+            });
+            it('should pass through the right options', function () {
+                var sm = new ScenarioManager(runOptions);
+                sinon.stub(sm.current.sessionManager, 'getSession').returns(sampleSession);
+
+                return sm.current.getRun().then(function (run) {
+                    var config = sm.current.run.getCurrentConfig();
+                    expect(config.account).to.equal(runOptions.account);
+                    expect(config.project).to.equal(runOptions.project);
+                });
             });
         });
         describe('saved runs', function () {
