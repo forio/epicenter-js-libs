@@ -80,6 +80,24 @@
                     var strategySpy = sinon.spy(myStrategy);
                     expect(function () { new F.manager.RunManager({ strategy: strategySpy, run: runOptions }); }).to.throw(Error);
                 });
+                it('should pass through options to strategies', function () {
+                    var myStrategy = function () {
+                        return {
+                            getRun: sinon.spy(),
+                            reset: sinon.spy(),
+                        };
+                    };
+                    var strategySpy = sinon.spy(myStrategy);
+                    new F.manager.RunManager({
+                        strategy: strategySpy,
+                        run: runOptions,
+                        someCustomOption: 'booo',
+                    });
+
+                    var args = strategySpy.getCall(0).args;
+                    expect(args[0].run).to.eql(runOptions);
+                    expect(args[0].someCustomOption).to.eql('booo');
+                });
             });
         });
 
