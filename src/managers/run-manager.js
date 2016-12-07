@@ -53,7 +53,6 @@ var strategies = require('./run-strategies');
 var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
-var AuthManager = require('./auth-manager');
 
 var util = require('../util/object-util');
 var keyNames = require('./key-names');
@@ -118,7 +117,6 @@ function RunManager(options) {
     this.strategy = strategy;
 
     this.sessionManager = new SessionManager(this.options);
-    this.authManager = new AuthManager();
 }
 
 RunManager.prototype = {
@@ -148,7 +146,7 @@ RunManager.prototype = {
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
         var runid = runSession && runSession.runId;
 
-        var authSession = this.authManager.getCurrentUserSessionInfo();
+        var authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject('No user-session available').promise();
@@ -192,7 +190,7 @@ RunManager.prototype = {
      */
     reset: function () {
         var me = this;
-        var authSession = this.authManager.getCurrentUserSessionInfo();
+        var authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject('No user-session available').promise();

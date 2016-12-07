@@ -16,14 +16,6 @@
         groupName: 'group-123',
         isFac: false
     };
-    var fakeAuth = {
-        // get should return what's stored in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns(sampleSession)
-    };
-    var fakeInvalidAuth = {
-        // get should return what's stored in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns({})
-    };
     describe('Run Manager', function () {
         describe('constructor options', function () {
             describe('run', function () {
@@ -121,7 +113,7 @@
                         strategy: strategySpy,
                         run: runOptions,
                     });
-                    rm.authManager = fakeInvalidAuth;
+                    sinon.stub(rm.sessionManager, 'getSession').returns({});
                 });
 
                 it('#getRun throw an error if strategy requires auth but it\'s not given', function () {
@@ -158,9 +150,11 @@
                     strategy: strategySpy,
                     run: runOptions,
                 });
-                rm.authManager = fakeAuth;
+
+                var sessionStub = sinon.stub(rm.sessionManager, 'getSession').returns(sampleSession);
                 return rm.getRun().then(function () {
                     expect(getRunSpy.getCall(0).args[1]).to.eql(sampleSession);
+                    sessionStub.restore();
                 });
             });
             it('should pass in session to #reset', function () {
@@ -180,23 +174,28 @@
                     strategy: strategySpy,
                     run: runOptions,
                 });
-                rm.authManager = fakeAuth;
+                var sessionStub = sinon.stub(rm.sessionManager, 'getSession').returns(sampleSession);
                 return rm.reset().then(function () {
                     expect(resetSpy.getCall(0).args[1]).to.eql(sampleSession);
+                    sessionStub.restore();
                 });
             });
         });
         describe('Run Session', function () {
-            var getSpy, setSpy, dummySessionStore;
+            var getSpy, setSpy, dummySessionStore, runid = 'dummyrunid';
             beforeEach(function () {
-                getSpy = sinon.spy(function (runid) { 
-                    return runid ? JSON.stringify({
-                        runId: runid
-                    }) : null;
+                getSpy = sinon.spy(function (key) { 
+                    if (key !== 'missing-runid') {
+                        return JSON.stringify({ runId: runid });
+                    }
+                    return null;
                 });
                 setSpy = sinon.spy();
 
                 dummySessionStore = {
+                    getSession: function () {
+                        return {};
+                    },
                     getStore: function () {
                         return {
                             get: getSpy,
@@ -206,23 +205,7 @@
                 };
             });
 
-            function createFakeSessionStore(runid) {
-                var dummySessionStore = {
-                    getStore: function () {
-                        return {
-                            get: function () { 
-                                return runid ? JSON.stringify({
-                                    runId: runid
-                                }) : null;
-                            },
-                            set: function () { },
-                        };
-                    }
-                };
-                return dummySessionStore;
-            }
             it('should pass runid in session into strategy', function () {
-                var runid = 'dummyrunid';
                 var getRunSpy = sinon.spy(function () {
                     return $.Deferred().resolve({ id: runid }).promise();
                 });
@@ -237,7 +220,7 @@
                     strategy: strategySpy,
                     run: runOptions,
                 });
-                rm.sessionManager = createFakeSessionStore(runid);
+                rm.sessionManager = dummySessionStore;
                 return rm.getRun().then(function () {
                     expect(getRunSpy.getCall(0).args[2]).to.equal(runid);
                 });
