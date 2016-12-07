@@ -26,9 +26,6 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     reset: function (runService, userSession) {
-        if (!userSession || userSession === {}) {
-            return $.Deferred().reject('No user-session provided. Persistent single-player strategy needs a logged-in user.').promise();
-        }
         var group = userSession.groupName;
         var opt = $.extend({
             scope: { group: group }
@@ -42,9 +39,6 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     getRun: function (runService, userSession) {
-        if (!userSession || userSession === {}) {
-            return $.Deferred().reject('No user-session provided. Persistent single-player strategy needs a logged-in user.').promise();
-        }
         var me = this;
         return runService.query({
             'user.id': userSession.userId || '0000',
