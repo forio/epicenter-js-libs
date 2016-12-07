@@ -3,16 +3,25 @@
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
 
-var SavedRunsManager = function (options) {
-    var runService;
-    if (options instanceof RunService) {
-        runService = options;
-    } else {
-        var sm = new SessionManager(options);
-        var mergedOpts = sm.getMergedOptions({}, options);
-        runService = new RunService(mergedOpts);
-    }
+var SavedRunsManager = function (config) {
+    var defaults = {
 
+    };
+    var options = $.extend(true, {}, defaults, config);
+
+    var runService;
+    if (options.run) {
+        if (options.run instanceof RunService) {
+            runService = options.run;
+        } else {
+            var sm = new SessionManager(options.run);
+            var mergedOpts = sm.getMergedOptions({}, options.run);
+            runService = new RunService(mergedOpts);
+        }
+    } else {
+        throw new Error('No run options passed to SavedRunsManager');
+    }
+    
     return {
         mark: function (run, toMark) {
             var rs = (run instanceof RunService) ? run : new RunService({ id: run });
