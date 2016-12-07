@@ -57,10 +57,16 @@ var ChannelManager = function (options) {
         logLevel: 'info',
 
         /**
-         * Whether websocket support is active. Defaults to `false`; Epicenter doesn't currently support communication through websockets.
+         * Whether websocket support is active. Defaults to `true`
          * @type {boolean}
          */
-        websocketEnabled: false,
+        websocketEnabled: true,
+
+        /**
+         * Whether the ACK extension enabled. See https://docs.cometd.org/current/reference/#_extensions_acknowledge for more info
+         * @type {boolean}
+         */
+        ackEnabled: true,
 
         /**
          * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true to re-use the same connection across instances.
@@ -98,6 +104,7 @@ var ChannelManager = function (options) {
     ChannelManager.prototype._cometd = cometd;
 
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
+    cometd.ackEnabled = defaultCometOptions.ackEnabled;
 
     this.isConnected = false;
     var connectionBroken = function (message) {
