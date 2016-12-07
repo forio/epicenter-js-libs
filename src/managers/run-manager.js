@@ -142,7 +142,7 @@ RunManager.prototype = {
      *
      * @return {$promise} Promise to complete the call.
      */
-    getRun: function () {
+    getRun: function (variables) {
         var me = this;
         var sessionStore = this.sessionManager.getStore();
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
@@ -158,6 +158,17 @@ RunManager.prototype = {
                     if (run && run.id) {
                         setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
+
+                        if (variables && variables.length) {
+                            return me.run.variables().query(variables).then(function (results) {
+                                run.variables = results;
+                                return run;
+                            }).catch(function (err) {
+                                run.variables = {};
+                                console.error(err);
+                                return run;
+                            });
+                        }
                     }
                     return run;
                 });

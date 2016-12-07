@@ -315,12 +315,12 @@
             
         });
         describe('#getRun', function () {
-            var rm, runid = 'newrun', getRunSpy, strategySpy;
+            var rm, runid = 'newrun', getRunSpy, myStrategy, strategySpy;
             beforeEach(function () {
                 getRunSpy = sinon.spy(function () {
                     return $.Deferred().resolve({ id: runid }).promise();
                 });
-                var myStrategy = function () {
+                myStrategy = function () {
                     return {
                         getRun: getRunSpy,
                         reset: sinon.spy(),
@@ -346,6 +346,59 @@
                 return rm.getRun().then(function () {
                     var config = rm.run.getCurrentConfig();
                     expect(config.id).to.equal(runid);
+                });
+            });
+            describe('variables', function () {
+                var rs, variableStub, rm;
+                beforeEach(function () {
+                    rs = new F.service.Run(runOptions);
+                    var variableQuerySpy = sinon.spy(function () {
+                        return $.Deferred().resolve({
+                            price: 2
+                        }).promise();
+                    });
+                    variableStub = sinon.stub(rs, 'variables', function (options) {
+                        return {
+                            query: variableQuerySpy
+                        };
+                    });
+                    rm = new F.manager.RunManager({
+                        strategy: myStrategy,
+                        run: rs,
+                    });
+                });
+                it('should not call the variables service if no variables provided', function () {
+                    return rm.getRun().then(function () {
+                        expect(variableStub).to.not.have.been.called;
+                    });
+                });
+                it('should call variables service if variables provided', function () {
+                    return rm.getRun('price').then(function (run) {
+                        expect(variableStub).to.have.been.calledOnce;
+
+                        var args = rs.variables().query.getCall(0).args;
+                        expect(args[0]).to.eql('price');
+                        expect(run.variables).to.eql({ price: 2 });
+                    });
+                });
+                it('should return a run with no variables if variables call fails', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var variableQuerySpy = sinon.spy(function () {
+                        return $.Deferred().reject().promise();
+                    });
+                    variableStub = sinon.stub(rs, 'variables', function (options) {
+                        return {
+                            query: variableQuerySpy
+                        };
+                    });
+                    var rm = new F.manager.RunManager({
+                        strategy: myStrategy,
+                        run: rs,
+                    });
+                    return rm.getRun('price').then(function (run) {
+                        expect(variableStub).to.have.been.calledOnce;
+                        expect(run.variables).to.eql({ });
+                    });
                 });
             });
         });
