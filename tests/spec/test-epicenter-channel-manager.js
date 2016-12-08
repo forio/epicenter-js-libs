@@ -16,11 +16,11 @@
         };
 
         before(function () {
-            oldCometd = $.Cometd;
-            $.Cometd = mockCometd;
+            oldCometd = $.CometD;
+            $.CometD = mockCometd;
         });
         after(function () {
-            $.Cometd = oldCometd;
+            $.CometD = oldCometd;
         });
         afterEach(function () {
             Manager.prototype._cometd = null;
