@@ -149,7 +149,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      */
     getGroupChannel: function (groupName) {
         var session = this.sessionManager.getMergedOptions(this.options);
-        groupName = getFromSessionOrError(groupName, 'group', session);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
 
@@ -195,7 +195,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         }
         var session = this.sessionManager.getMergedOptions(this.options);
 
-        groupName = getFromSessionOrError(groupName, 'group', session);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
 
@@ -245,7 +245,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
 
         var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
         userid = getFromSessionOrError(userid, 'userId', session);
-        groupName = getFromSessionOrError(groupName, 'group', session);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
 
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
@@ -292,7 +292,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
 
         var session = this.sessionManager.getMergedOptions(this.options);
         userid = getFromSessionOrError(userid, 'userId', session);
-        groupName = getFromSessionOrError(groupName, 'group', session);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
 
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
