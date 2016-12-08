@@ -33,17 +33,18 @@ $(function () {
     $('#btnBindGroupChannel').click(function (evt) {
         evt.preventDefault();
         var gc = cm.getGroupChannel();
-        var bindElementToTopic = function (elem, topic) {
-            var $elem = $(elem);
-            gc.subscribe(topic, function (payload) {
-                $elem.val($elem.val() + payload.data);
-            });
-            $elem.change(function () {
-                gc.publish(topic, $elem.val());
-            });
-        };
-        bindElementToTopic('#txtGroupTextAll', '*');
-        bindElementToTopic('#txtGroupTextSpecific', 'specificTopic');
+
+        var topic = 'specificTopic';
+        $('#txtGroupTextSpecific').on('change', function (evt) {
+            gc.publish(topic, $(evt.target).val());
+        });
+
+        gc.subscribe(topic, function (payload) {
+            $('#txtGroupTextSpecific-op').html(payload.data);
+        });
+        gc.subscribe('*', function (payload) {
+            $('#txtGroupTextAll-op').html(payload.data);
+        });
     });
 
     $('#logout').click(function (evt) {
@@ -54,32 +55,38 @@ $(function () {
     });
 
 
-    var worldManager = new F.manager.WorldManager({
-        run: $.extend({}, {
-            account: 'team-naren',
-            model: 'model.eqn',
-            project: 'multiplayer-test'
-        }, server)
-    });
-    worldManager.getCurrentWorld().then(function (worldObject, worldService) {
-        console.log('wm', arguments);
-        window.worldS = worldService;
-        var worldChannel = cm.getWorldChannel(worldObject);
-        worldChannel.subscribe('', function () {
-            console.log('stuff', arguments);
+    $('#btnBindToWorld').on('click', function () {
+        var worldManager = new F.manager.WorldManager({
+            run: $.extend({}, {
+                account: $('#txtAccount').val(),
+                model: $('#txtModel').val(),
+                project: $('#txtProject').val(),
+            }, server)
         });
+        worldManager.getCurrentWorld().then(function (worldObject, worldService) {
+            console.log('wm', arguments);
+            window.worldS = worldService;
+            var worldChannel = cm.getWorldChannel(worldObject);
+            worldChannel.subscribe('', function (data) {
+                $('#generalWorldNotifications').append('<li><code>' + JSON.stringify(data) + '</code></li<');
+                console.log('stuff', arguments);
+            });
 
-        var presenceChannel = cm.getPresenceChannel(worldObject);
-        presenceChannel.on('presence', function (evt, notification) {
-            console.log('online', notification);
+            var presenceChannel = cm.getPresenceChannel(worldObject);
+            presenceChannel.on('presence', function (evt, notification) {
+                $('#presencechannelNotifications').append('<li><code>' + JSON.stringify(notification) + '</code></li<');
+                console.log('online', notification);
+            });
+
+            window.wc = worldChannel;
         });
-
-        window.wc = worldChannel;
+        worldManager.getCurrentRun().then(function (runObject, runservice) {
+            console.log('current run', arguments);
+            window.rs = runservice;
+            // $('#currentRunId').html(runservice.getCurrentConfig().id);
+        });
     });
-    worldManager.getCurrentRun().then(function (runObject, runservice) {
-        console.log('current run', arguments);
-        window.rs = runservice;
-    });
+    
 
     window.datachannel = null;
     window.ds = null;
@@ -94,7 +101,7 @@ $(function () {
         window.ds.save({ thisExists: true, val: 'Chinese' });
         window.datachannel = cm.getDataChannel(collName);
         window.datachannel.subscribe('', function (data, meta) {
-            console.log('data changed', data, meta);
+            $('#data-api-output').append('<li> Data: <code>' + JSON.stringify(data) + '</code> <br/> meta: <code>' + JSON.stringify(meta) + '</code></li>');
         });
     });
 

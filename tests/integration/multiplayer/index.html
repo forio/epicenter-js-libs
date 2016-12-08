@@ -4,62 +4,157 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title> Multiplayer test </title>
-</head>
-<body>
-
     <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="../../../dist/epicenter-multiplayer-dependencies.min.js"></script>
     <script src="../../../dist/epicenter-edge.js"></script>
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        section {
+            padding: 30px 0;
+            border-top: 1px dotted silver;
+        }
+        .instructions {
+            color: blue;
+        }
+    </style>
+</head>
+<body class="container">
+    <section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
 
-    <div id="content">
-        <h4> Online/offline Check</h4>
-        <span> You are currently </span> <em id="status"> </em>
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="multiplayer-test" >
+                <br/>
 
-        <section>
-          <form action="">
-            <label for="">Account</label>
-            <input type="text" id="txtAccount"  value="team-naren">
-            <br/
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="a1" >
+                <br/>
 
-            <label for="">Project</label>
-            <input type="text" id="txtProject" value="multiplayer-test" >
-            <br/
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="a1a1a1a1" >
+                <br/>
 
-            <label for="">Username</label>
-            <input type="text" id="txtUsername" value="a1" >
-            <br/
+                <label for="">Model</label>
+                <input type="text" id="txtModel" value="model.vmf" >
+                <br/>
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              Make sure you enter info for 
+              <ul>
+                  <li>A team account</li>
+                  <li>Push channel turned on</li>
+              </ul>
+          </div>
+      </div>
+    </section>
 
-            <label for="">Password</label>
-            <input type="text" id="txtPassword" value="a1a1a1a1" >
-            <br/
-            <br/>
-            <button id="btnLogin"> Login </button>
-            <a href="#" id='logout'> Logout</a>
-          </form>
-        </section>
+    <h4> Online / offline check</h4>
+    <section class="row">
+        <div class="col-xs-6">
+            <span> You are currently </span> <em id="status"> </em>
+        </div>
+        <div class="col-xs-6 instructions">
+            Toggle your network connection online/offline to see status on left change.
+        </div>
+    </section>
+    
 
-
-        <section>
+    <h4> Channel Publish Notifications</h4>
+    <section class="row">
+        <div class="col-xs-6">
             <button id="btnBindGroupChannel"> Bind group Channel</button>
-            <h4> Group Channel (listening on *) </h4>
-            <textarea id="txtGroupTextAll" id="" cols="30" rows="10"></textarea>
-        </section>
-        <section>
-            <h4> Group Channel (listening on 'sometopic') </h4>
-            <textarea id="txtGroupTextSpecific" id="" cols="30" rows="10"></textarea>
-        </section>
 
-        <h4> Data API check </h4>
-        <label for=""> Create Collection </label>
-        <input type="text" value="testmay18" id="txtCollName" />
-        <button id="btnCreateCollection"> Create & Bind to collection </button>
-        <br>
-        <input type="text" value="asdf" id="txtTextForData" />
-        <button id="btnAddToCollection"> Add random stuff to collection </button>
+            <div class="row">
+                <div class="col-xs-6">
+                    <h5> Group Channel (bound on 'sometopic') </h5>
+                    <textarea id="txtGroupTextSpecific" id="" cols="30" rows="10"></textarea>            
+                </div>
+                <div class="col-xs-6">
+                    <h5> Output listening on 'sometopic' </h5>
+                    <code id="txtGroupTextSpecific-op">
+                        
+                    </code>
 
-    </div>
+                    <h5> Output listening on 'sometopic' </h5>
+                    <code id="txtGroupTextAll-op">
+                        
+                    </code>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 instructions">
+            <ul>
+                <li> Click 'bind group channel'</li>
+                <li> Type in textarea </li>
+                <li> Value in BOTH output areas should be updated on blur</li>
+            </ul>
+        </div>
+    </section>
+
+
+    <h4> Data API Channel Notifications</h4>
+    <section class="row">
+        <div class="col-xs-6">
+
+            <label for="txtCollName"> Collection Name </label>
+            <input type="text" value="testmay18" id="txtCollName" />
+            <button id="btnCreateCollection"> Create & Bind to collection </button>
+
+            <br>
+            <label for="txtTextForData"> Data to add </label>
+            <input type="text" value="asdf" id="txtTextForData" />
+            <button id="btnAddToCollection"> Add random stuff to collection </button>
+
+            <hr/>
+            <h5>Ouput</h5>
+            <ul id="data-api-output"></ul>
+        </div>
+        <div class="col-xs-6 instructions">
+            <ol>
+                <li> Enter a collection name and click 'Create & bind'</li>
+                <li> Watch output log grow as things happen</li>
+            </ol>
+        </div>
+    </section>
+
+
+    <h4>World API Notifications. Not currently working, think issue is in test-scripts</h4>
+    <section class="row">
+        <div class="col-xs-6">
+            <button id="btnBindToWorld">Bind to WorldAPI</button>
+
+            <h6>Current Run id</h6>
+            <span id="currentRunId"></span>
+
+            <h5>Presence channel notifications</h5>
+            <ul id="presencechannelNotifications">
+                
+            </ul>
+
+            <br/>
+            <h5>General world notifications</h5>
+            <ul id="generalWorldNotifications">
+                
+            </ul>
+        </div>
+        <div class="col-xs-6 instructions">
+            <ol>
+                <li> Login </li>
+                <li> Click on the bind button</li>
+                <li> Do the same in another window and see presence notifications</li>
+            </ol>
+        </div>
+    </section>
+
     <script src="test-script.js"></script>
 
 </body>
