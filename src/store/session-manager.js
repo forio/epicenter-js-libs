@@ -85,6 +85,20 @@ var SessionManager = function (managerOptions) {
                  * @type {String}
                  */
                 token: session.auth_token,
+
+                /**
+                 * The account. If left undefined, taken from the cookie session.
+                 * @type {String}
+                 */
+                account: session.account,
+
+                /**
+                 * The project. If left undefined, taken from the cookie session.
+                 * @type {String}
+                 */
+                project: session.project,
+
+
                 /**
                  * The group name. If left undefined, taken from the cookie session.
                  * @type {String}
