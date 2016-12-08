@@ -3,7 +3,8 @@
 $(function () {
     var server = {
         server: {
-            host: 'api.forio.com'
+            host: 'epimon3.foriodev.com',
+            protocol: 'http'
         }
     };
 
@@ -87,9 +88,10 @@ $(function () {
         window.ds = new F.service.Data({
             root: collName,
             account: 'team-naren',
-            project: 'multiplayer-test'
+            project: 'multiplayer-test',
+            server: server.server,
         });
-        window.ds.save({ thisExists: true, val: 'Chinese (汉语 / 漢語; Hànyǔ or 中文; Zhōngwén' });
+        window.ds.save({ thisExists: true, val: 'Chinese' });
         window.datachannel = cm.getDataChannel(collName);
         window.datachannel.subscribe('', function (data, meta) {
             console.log('data changed', data, meta);
