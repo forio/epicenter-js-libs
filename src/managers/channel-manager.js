@@ -57,13 +57,13 @@ var ChannelManager = function (options) {
         logLevel: 'info',
 
         /**
-         * Whether websocket support is active. Defaults to `true`
+         * Whether websocket support is active. Defaults to `true`.
          * @type {boolean}
          */
         websocketEnabled: true,
 
         /**
-         * Whether the ACK extension enabled. See https://docs.cometd.org/current/reference/#_extensions_acknowledge for more info
+         * Whether the ACK extension is enabled. See https://docs.cometd.org/current/reference/#_extensions_acknowledge for more info.
          * @type {boolean}
          */
         ackEnabled: true,
