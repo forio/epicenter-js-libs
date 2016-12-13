@@ -101,7 +101,7 @@ module.exports = classFrom(Base, {
     },
 
     getWorldNames: function () {
-        return this.pluck('name');
+        return this.pluck('name').sort();
     },
 
     getNextWorldName: function () {
