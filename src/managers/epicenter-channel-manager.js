@@ -33,8 +33,6 @@ var classFrom = require('../util/inherit');
 var urlService = require('../service/url-config-service');
 var SessionManager = require('../store/session-manager');
 
-var AuthManager = require('./auth-manager');
-
 var validTypes = {
     project: true,
     group: true,
@@ -44,14 +42,10 @@ var validTypes = {
     general: true,
     chat: true
 };
-var session = new AuthManager();
-var getFromSettingsOrSessionOrError = function (value, sessionKeyName, settings) {
+var getFromSessionOrError = function (value, sessionKeyName, settings) {
     if (!value) {
-        var userInfo = session.getCurrentUserSessionInfo();
         if (settings && settings[sessionKeyName]) {
             value = settings[sessionKeyName];
-        } else if (userInfo[sessionKeyName]) {
-            value = userInfo[sessionKeyName];
         } else {
             throw new Error(sessionKeyName + ' not found. Please log-in again, or specify ' + sessionKeyName + ' explicitly');
         }
@@ -61,7 +55,7 @@ var getFromSettingsOrSessionOrError = function (value, sessionKeyName, settings)
 var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
     constructor: function (options) {
-        this.sessionManager = new SessionManager();
+        this.sessionManager = new SessionManager(options);
         var defaultCometOptions = this.sessionManager.getMergedOptions(options);
 
         var urlOpts = urlService(defaultCometOptions.server);
@@ -154,9 +148,10 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @return {Channel} Channel instance
      */
     getGroupChannel: function (groupName) {
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
-        var account = getFromSettingsOrSessionOrError('', 'account', this.options);
-        var project = getFromSettingsOrSessionOrError('', 'project', this.options);
+        var session = this.sessionManager.getMergedOptions(this.options);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
 
         var baseTopic = ['/group', account, project, groupName].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
@@ -198,9 +193,11 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
-        var account = getFromSettingsOrSessionOrError('', 'account', this.options);
-        var project = getFromSettingsOrSessionOrError('', 'project', this.options);
+        var session = this.sessionManager.getMergedOptions(this.options);
+
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
 
         var baseTopic = ['/world', account, project, groupName, worldid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
@@ -244,12 +241,14 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
-        userid = getFromSettingsOrSessionOrError(userid, 'userId', this.options);
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
+        var session = this.sessionManager.getMergedOptions(this.options);
 
-        var account = getFromSettingsOrSessionOrError('', 'account', this.options);
-        var project = getFromSettingsOrSessionOrError('', 'project', this.options);
+        var userid = ($.isPlainObject(user) && user.id) ? user.id : user;
+        userid = getFromSessionOrError(userid, 'userId', session);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
+
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
 
         var baseTopic = ['/user', account, project, groupName, worldid, userid].join('/');
         return __super.getChannel.call(this, { base: baseTopic });
@@ -290,11 +289,13 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!worldid) {
             throw new Error('Please specify a world id');
         }
-        userid = getFromSettingsOrSessionOrError(userid, 'userId', this.options);
-        groupName = getFromSettingsOrSessionOrError(groupName, 'groupName', this.options);
 
-        var account = getFromSettingsOrSessionOrError('', 'account', this.options);
-        var project = getFromSettingsOrSessionOrError('', 'project', this.options);
+        var session = this.sessionManager.getMergedOptions(this.options);
+        userid = getFromSessionOrError(userid, 'userId', session);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
+
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
 
         var baseTopic = ['/user', account, project, groupName, worldid].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
@@ -356,8 +357,10 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         if (!collection) {
             throw new Error('Please specify a collection to listen on.');
         }
-        var account = getFromSettingsOrSessionOrError('', 'account', this.options);
-        var project = getFromSettingsOrSessionOrError('', 'project', this.options);
+
+        var session = this.sessionManager.getMergedOptions(this.options);
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
         var baseTopic = ['/data', account, project, collection].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
 

@@ -85,11 +85,30 @@ var SessionManager = function (managerOptions) {
                  * @type {String}
                  */
                 token: session.auth_token,
+
+                /**
+                 * The account. If left undefined, taken from the cookie session.
+                 * @type {String}
+                 */
+                account: session.account,
+
+                /**
+                 * The project. If left undefined, taken from the cookie session.
+                 * @type {String}
+                 */
+                project: session.project,
+
+
                 /**
                  * The group name. If left undefined, taken from the cookie session.
                  * @type {String}
                  */
                 group: session.groupName,
+                /**
+                 * Alias for group. 
+                 * @type {String}
+                 */
+                groupName: session.groupName, //It's a little weird that it's called groupName in the cookie, but 'group' in all the service options, so normalize for both
                 /**
                  * The group id. If left undefined, taken from the cookie session.
                  * @type {String}
