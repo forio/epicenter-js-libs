@@ -23,18 +23,6 @@ rm.getRun().then(function (cr) {
 
 
 window.rm = rm;
-var am = new F.manager.AuthManager();
-$('#btnLogin').click(function (evt) {
-    evt.preventDefault();
-    am.login({
-        userName: $('#txtUsername').val(),
-        password: $('#txtPassword').val(),
-        account: $('#txtAccount').val(),
-        project: $('#txtProject').val()
-    }).then(function () {
-        window.alert('login successful');
-    });
-});
 $('#txtPriceDecision').on('change', function (evt) {
     window.rs.variables().save({ 'Price[X5]': Number(evt.target.value) });
 });

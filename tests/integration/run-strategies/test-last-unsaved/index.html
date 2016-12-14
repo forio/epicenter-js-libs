@@ -7,26 +7,37 @@
     <script src="../../../../dist/epicenter-edge.js"></script>
 </head>
 <body class="container-fluid">
-    <section>
-      <form action="">
-        <label for="">Account</label>
-        <input type="text" id="txtAccount"  value="team-naren">
-        <br/>
+    <section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
 
-        <label for="">Project</label>
-        <input type="text" id="txtProject" value="authenticated-smart-watch" >
-        <br/>
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="multiplayer-test" >
+                <br/>
 
-        <label for="">Username</label>
-        <input type="text" id="txtUsername" value="a1" >
-        <br/>
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="a1" >
+                <br/>
 
-        <label for="">Password</label>
-        <input type="text" id="txtPassword" value="a1a1a1a1" >
-        <br/>
-        <button id="btnLogin"> Login </button>
-        <a href="#" id='logout'> Logout</a>
-      </form>
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="a1a1a1a1" >
+                <br/>
+
+                <label for="">Model</label>
+                <input type="text" id="txtModel" value="model.vmf" >
+                <br/>
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              
+          </div>
+      </div>
     </section>
 
     <div>
@@ -44,6 +55,7 @@
     </div>
 
     <button id="btnSaveAndSimulate">Save and simulate</button>
+    <script src="../../common.js"></script>
     <script src="./integration-test-run-strategies.js"></script>
 </body>
 </html>
