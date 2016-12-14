@@ -1,78 +1,48 @@
 'use strict';
-
-var SessionManager = require('../store/session-manager');
 var RunService = require('../service/run-api-service');
 
-module.exports = function (config) {
-    var defaults = {
-        /**
-         * Criteria by which to filter runs. Defaults to empty string.
-         * @type {Object}
-         */
-        filter: '',
-
-        /**
-         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter. Defaults to `true`.
-         * @type {boolean}
-         */
-        autoRestore: false,
-    };
-
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-
-    var publicAsyncAPI = {
-        loadSavedRuns: function (filter, outputModifier) {
-            var defaultFilter = {
-                saved: true
-            };
-
-            var outputOptions = {
-                sort: 'created',
-                direction: 'asc'
-            };
-            var newFilter = $.extend({}, defaultFilter, filter);
-            var rs = new RunService(serviceOptions);
-            return rs.query(newFilter, $.extend({}, outputOptions, outputModifier));
-        },
-        saveRun: function (run, name) {
-            if (!(run instanceof RunService)) {
-                run = new RunService($.extend(true, {}, serviceOptions, { filter: run }));
-            }
-            return run.save({ saved: true, name: name });
-        },
-        archiveRun: function (run) {
-            if (!(run instanceof RunService)) {
-                run = new RunService($.extend(true, {}, serviceOptions, { filter: run }));
-            }
-            return run.save({ saved: false });
-        },
-        /**
-         * [description]
-         * @param  {Array} runObjects Array of objects with signature { id: X, name: Y }
-         * @param  {Array} variables  [description]
-         * @return {[type]}            [description]
-         */
-        fetchVariablesForRuns: function (runObjects, variables) {
-            var promises = [];
-            var response = [];
-
-            if (!variables || !variables.length) {
-                return $.Deferred().resolve().promise();
-            }
-            runObjects.forEach(function (run) {
-                var r = new RunService($.extend({}, serviceOptions, { filter: run.id }));
-                var prom = r.variables().query([].concat(variables)).then(function (variables) {
-                    response.push({ id: run.id, name: run.name, variables: variables });
-                    return variables;
-                });
-                promises.push(prom);
-            });
-
-            return $.when.apply(null, promises).then(function () {
-                return response;
-            });
-        }
-    };
-    $.extend(this, publicAsyncAPI);
+var defaults = {
+    validFilter: { saved: true }
 };
+
+function ScenarioManager(options) {
+    this.options = $.extend(true, {}, defaults, options);
+    this.runService = this.options.run || new RunService(this.options);
+}
+
+ScenarioManager.prototype = {
+    getRuns: function (filter) {
+        this.filter = $.extend(true, {}, this.options.validFilter, filter);
+        return this.runService.query(this.filter);
+    },
+
+    loadVariables: function (vars) {
+        return this.runService.query(this.filter, { include: vars });
+    },
+
+    save: function (run, meta) {
+        return this._getService(run).save($.extend(true, {}, { saved: true }, meta));
+    },
+
+    archive: function (run) {
+        return this._getService(run).save({ saved: false });
+    },
+
+    _getService: function (run) {
+        if (typeof run === 'string') {
+            return new RunService($.extend(true, {}, this.options, { filter: run }));
+        }
+
+        if (typeof run === 'object' && run instanceof RunService) {
+            return run;
+        }
+
+        throw new Error('Save method requires a run service or a runId');
+    },
+
+    getRun: function (runId) {
+        return new RunService($.extend(true, {}, this.options, { filter: runId }));
+    }
+};
+
+module.exports = ScenarioManager;
