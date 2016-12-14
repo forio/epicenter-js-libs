@@ -9,12 +9,12 @@ var libDefaults = {
      * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
      * @type {String}
      */
-    account: urlConfig.accountPath,
+    account: urlConfig.accountPath || undefined,
     /**
      * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
      * @type {String}
      */
-    project: urlConfig.projectPath,
+    project: urlConfig.projectPath || undefined,
     isLocal: urlConfig.isLocalhost(),
     isCustomDomain: urlConfig.isCustomDomain,
     store: {}
