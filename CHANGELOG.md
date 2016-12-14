@@ -49,6 +49,19 @@ This mirrors getting it through `F.manager.strategy` - this endpoint is now cons
 
 This interface now introduces a new way to 'register' named run strategies for use with the Run Manager. <See jsdocs for strategies/index.js for more info>. Note you can still by-pass registering by calling the RunManager with a function, i.e., `new F.manager.RunManager({ strategy: function(){}})`, so this is a backwards compatible change which just additionally allows naming.  
 
+### Bug fixes
+#### Run Manager's current instance of the run is always valid/up-to-date.
+The 'current run service' of the run manager can be access through `rm.run`; however this was buggy before. For instance
+```
+    var rm = new F.manager.RunManager();
+    var id = rm.run.getCurrentConfig().id; //assume id 1
+    rm.reset().then(function () {
+        var newid = rm.run.getCurrentConfig().id; //should be 2 but used to return 1 before
+    })
+```
+
+### `runService.query` and `runService.filter` return empty arrays for no results.
+Due to a quirk in the platform `runService.query` used to return an array of runs if it found any, or an empty _Object_ ({}), if none existed. They now correctly return empty arrays instead.
 
 <a name="2.0.1"></a>
 ### 2.0.1 (2016-11-18)
