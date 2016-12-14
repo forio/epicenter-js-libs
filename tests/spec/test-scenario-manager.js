@@ -21,7 +21,7 @@
         isFac: false
     };
 
-    describe.only('Scenario Manager', function () {
+    describe('Scenario Manager', function () {
         var server;
         beforeEach(function () {
             server = sinon.fakeServer.create();

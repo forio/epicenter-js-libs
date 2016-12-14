@@ -1,4 +1,67 @@
 
+###Run Manager changes
+#### `getRun` allows populating run with variables
+`getRun` now takes in 'variables' as an argument; if provided it'll populate the run it gets with the provided variables. 
+
+```js
+    rm.getRun(['Price', 'Sales'], function (run) {
+        console.log(run.variables.Price, run.variables.Sales);
+    });
+```
+
+Note: The `getRun` method will not throw an error if you try to get a variable which doesn't exist; in this case the variables list will just be empty, and any errors will be logged to the console.
+
+#### Better validation
+RunManager now catches common errors like passing in wrong strategy names, or missing run options.
+
+#### More context available for strategy implementations
+The original function of the Run Manager was to just find the right strategy and call it, leaving all the 'heavy lifting' of authentication etc to each individual strategy. Now the run-manager does more work upfront and just passes in the appropriate information to each strategy, namely:
+
+- Each strategy is mandated to have a `#getRun` and `#reset` function; these functions were initially called by the run manager with no arguments, but now their signature is:
+```js
+/**
+ + Gets the 'correct' run (the definition of 'currect' depends on strategy implementation)
+ + @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
+ + @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
+ + @param  {String} runIdInSession the RunManager stores the 'last accessed' run in a cookie;  this refers to the last-used runid
+ + @return {Promise}             
+ */
+getRun: function (runService, userSession, runIdInSession){}
+
+
+/**
+ + Resets current run
+ + @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
+ + @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
+ + @return {Promise}             
+ */
+reset: function (runService, userSession){}
+```
+
+- The runid returned by the `#getRun` method is now stored in a session by the run-manager, taking over the burden of session management from the individual strategies. This runid is provided as a parameter to next call to strategy.getRun; the strategy can opt to validate this runid and return it or ignore it altogether depending on it's goal.
+
+- Each strategy can register itself as requiring authentication or not (see next section for how to register); if a strategy does so the RunManager takes care of ensuring there's a valid user session before any of the methods on the strategy are called, moving the responsibility from the strategy to the RunManager. The strategy can still opt to handle this itself by not declaring 'requiresAuth', and do it's own validation of the 'user session' object which will be passed to it's #getRun and #reset methods.
+
+
+#### F.manager.RunManager.strategies
+You can access a list of available strategies via `F.manager.RunManager.strategies`. 
+This mirrors getting it through `F.manager.strategy` - this endpoint is now considered **Deprecated** and may be removed in a future release.
+
+This interface now introduces a new way to 'register' named run strategies for use with the Run Manager. <See jsdocs for strategies/index.js for more info>. Note you can still by-pass registering by calling the RunManager with a function, i.e., `new F.manager.RunManager({ strategy: function(){}})`, so this is a backwards compatible change which just additionally allows naming.  
+
+### Bug fixes
+#### Run Manager's current instance of the run is always valid/up-to-date.
+The 'current run service' of the run manager can be access through `rm.run`; however this was buggy before. For instance
+```
+    var rm = new F.manager.RunManager();
+    var id = rm.run.getCurrentConfig().id; //assume id 1
+    rm.reset().then(function () {
+        var newid = rm.run.getCurrentConfig().id; //should be 2 but used to return 1 before
+    })
+```
+
+### `runService.query` and `runService.filter` return empty arrays for no results.
+Due to a quirk in the platform `runService.query` used to return an array of runs if it found any, or an empty _Object_ ({}), if none existed. They now correctly return empty arrays instead.
 
 <a name="2.0.1"></a>
 ### 2.0.1 (2016-11-18)
