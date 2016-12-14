@@ -18,6 +18,12 @@ var Strategy = classFrom(Base, {
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
     },
 
+    /**
+     * Resets current run
+     * @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
+     * @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
+     * @return {Promise}             
+     */
     reset: function (runService, userSession) {
         var group = userSession && userSession.groupName;
         var opt = $.extend({
@@ -32,6 +38,13 @@ var Strategy = classFrom(Base, {
                 });
     },
 
+    /**
+     * Gets the 'correct' run (the definition of 'currect' depends on strategy implementation)
+     * @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
+     * @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
+     * @param  {String} runIdInSession the RunManager stores the 'last accessed' run in a cookie;  this refers to the last-used runid
+     * @return {Promise}             
+     */
     getRun: function (runService, userSession, runIdInSession) {
         var me = this;
         if (runIdInSession) {
