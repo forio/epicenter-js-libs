@@ -411,22 +411,25 @@ module.exports = function (config) {
             var $d = $.Deferred();
             var postOptions = $.extend(true, {}, serviceOptions, options);
 
+            var responses = [];
             var doSingleOp = function () {
                 var op = ops.shift();
                 var arg = args.shift();
 
                 me.do(op, arg, {
-                    success: function () {
+                    success: function (result) {
+                        responses.push(result);
                         if (ops.length) {
                             doSingleOp();
                         } else {
-                            $d.resolve.apply(this, arguments);
-                            postOptions.success.apply(this, arguments);
+                            $d.resolve(responses);
+                            postOptions.success(responses, me);
                         }
                     },
-                    error: function () {
-                        $d.reject.apply(this, arguments);
-                        postOptions.error.apply(this, arguments);
+                    error: function (err) {
+                        responses.push(err);
+                        $d.reject(responses);
+                        postOptions.error(responses, me);
                     }
                 });
             };
@@ -471,14 +474,24 @@ module.exports = function (config) {
                     this.do(ops[i], args[i])
                 );
             }
+
+            var me = this;
             $.when.apply(this, queue)
                 .then(function () {
-                    $d.resolve.apply(this, arguments);
-                    postOptions.success.apply(this.arguments);
+                    var args = Array.prototype.slice.call(arguments);
+                    var actualResponse = args.map(function (a) {
+                        return a[0];
+                    });
+                    $d.resolve(actualResponse);
+                    postOptions.success(actualResponse, me);
                 })
                 .fail(function () {
-                    $d.reject.apply(this, arguments);
-                    postOptions.error.apply(this.arguments);
+                    var args = Array.prototype.slice.call(arguments);
+                    var actualResponse = args.map(function (a) {
+                        return a[0];
+                    });
+                    $d.reject(actualResponse);
+                    postOptions.error(actualResponse, me);
                 });
 
             return $d.promise();

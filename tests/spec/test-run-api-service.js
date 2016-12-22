@@ -38,10 +38,10 @@
                 };
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
             });
-            server.respondWith('POST', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/operations\/(.*)/,
-                function (xhr, prefix, accountproject, operation) {
+            server.respondWith('POST', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/operations\/(.*)\//,
+                function (xhr, prefix, operation) {
                     xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({
-                        name: 'operation', result: 'foo'
+                        name: operation, result: operation
                     }));
                 });
             // General GET
@@ -628,7 +628,12 @@
                 });
 
                 it('should call success function with all responses', function () {
-                    
+                    var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
+                    var spy = sinon.spy();
+                    return rs.serial(['init', 'foo']).then(spy).then(function () {
+                        spy.should.have.been.calledOnce;
+                        spy.should.have.been.calledWith([{ name: 'init', result: 'init' }, { name: 'foo', result: 'foo' }]);
+                    });
                 });
             });
 
@@ -645,6 +650,14 @@
                     rs.parallel([{ first: [1, 2] }, { second: [2, 3] }]);
 
                     server.requests.length.should.equal(2);
+                });
+                it('should call success function with all responses', function () {
+                    var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
+                    var spy = sinon.spy();
+                    return rs.parallel(['init', 'foo']).then(spy).then(function () {
+                        spy.should.have.been.calledOnce;
+                        spy.should.have.been.calledWith([{ name: 'init', result: 'init' }, { name: 'foo', result: 'foo' }]);
+                    });
                 });
             });
         });
