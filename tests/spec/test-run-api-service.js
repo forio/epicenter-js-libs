@@ -25,7 +25,8 @@
             server.respondWith('PATCH', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith('POST', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+
+            server.respondWith('POST', /(.*)\/run\/[^\/]*\/[^\/]*\/$/, function (xhr, id) {
                 var resp = {
                     id: '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
                     model: 'model.vmf',
@@ -37,7 +38,12 @@
                 };
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
             });
-
+            server.respondWith('POST', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/operations\/(.*)/,
+                function (xhr, prefix, accountproject, operation) {
+                    xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({
+                        name: 'operation', result: 'foo'
+                    }));
+                });
             // General GET
             server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
@@ -619,6 +625,10 @@
                     var req = server.requests.pop();
                     req.url.should.equal(baseURL + ';saved=true/operations/init/');
                     req.requestBody.should.equal(JSON.stringify({ arguments: [] }));
+                });
+
+                it('should call success function with all responses', function () {
+                    
                 });
             });
 
