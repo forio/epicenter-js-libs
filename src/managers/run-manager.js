@@ -138,6 +138,7 @@ RunManager.prototype = {
      *          rm.run.do('runModel');
      *      });
      *
+     * @param {Array} variables List of variables to populate on the new run
      * @return {$promise} Promise to complete the call.
      */
     getRun: function (variables) {

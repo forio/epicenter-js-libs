@@ -11,24 +11,6 @@
     };
 
     var baseURL = (new F.service.URL({ accountPath: runOptions.account, projectPath: runOptions.project })).getAPIPath('run');
-
-    var sampleSession = {
-        auth_token: '',
-        account: 'forio-dev',
-        project: 'js-libs',
-        userId: '123',
-        groupId: 'group123',
-        groupName: 'group-123',
-        isFac: false
-    };
-    var fakeAuth = {
-        // get should return what's stored in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns(sampleSession)
-    };
-    var fakeInvalidAuth = {
-        // get should return what's stored in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns({})
-    };
     describe('Saved Runs Manager', function () {
         var server;
         var rs, saveStub, srm;
