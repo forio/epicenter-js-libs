@@ -22,6 +22,7 @@ function ScenarioManager(config) {
         run: serviceOptions,
     });
 
+    //TODO: Creating on init to make sure the 'getruns' call sees this, but ajax on constructor sounds unexpected. Maybe do it on 'getRuns' instead?
     var baseLineProm = this.baseline.getRun();
 
     this.savedRuns = new SavedRunsManager({
