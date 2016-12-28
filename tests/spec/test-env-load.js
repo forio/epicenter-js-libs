@@ -1,6 +1,8 @@
 (function () {
     'use strict';
 
+    var version = (new F.service.URL()).versionPath;
+
     function getHost() {
         return window.location.host || ''; //for phantomjs
     }
@@ -29,7 +31,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                req.url.should.equal(window.location.protocol + '//' + getHost() + '/epicenter/v1/config');
+                req.url.should.equal(window.location.protocol + '//' + getHost() + '/epicenter/' + version + 'config');
 
                 F.service.URL.defaults = oldDefaults;
             });
@@ -40,7 +42,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                req.url.should.equal('https://forio.com/epicenter/v1/config');
+                req.url.should.equal('https://forio.com/epicenter/' + version + 'config');
 
                 F.service.URL.defaults = oldDefaults;
             });

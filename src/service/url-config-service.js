@@ -107,7 +107,7 @@ var UrlConfigService = function (config) {
             if (api === 'config') {
                 var actualProtocol = window.location.protocol.replace(':', '');
                 var configProtocol = (options.isLocalhost()) ? this.protocol : actualProtocol;
-                return configProtocol + '://' + actingHost + '/epicenter/v1/config';
+                return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
             }
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
 
