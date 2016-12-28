@@ -3,7 +3,7 @@ var defaultRunOptions = {
     project: $('#txtProject').val(),
     model: 'model.vmf',
 };
-var sm = new F.manager.ScenarioManager(defaultRunOptions);
+var sm = new F.manager.ScenarioManager({ run: defaultRunOptions });
 
 var runRowtemplate = _.template($('#runTemplate').html());
 sm.savedRuns.getRuns().then(function (runs) {

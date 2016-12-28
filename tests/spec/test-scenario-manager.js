@@ -55,11 +55,11 @@
 
         describe('baseline', function () {
             it('should create a new baseline run manager', function () {
-                var sm = new ScenarioManager();
+                var sm = new ScenarioManager({ run: runOptions });
                 expect(sm.baseline).to.be.instanceof(RunManager);
             });
             it('should pass through the right options', function () {
-                var sm = new ScenarioManager(runOptions);
+                var sm = new ScenarioManager({ run: runOptions });
                 sinon.stub(sm.baseline.sessionManager, 'getSession').returns(sampleSession);
 
                 return sm.baseline.getRun().then(function (run) {
@@ -71,11 +71,11 @@
         });
         describe('current run', function () {
             it('should create a new current run manager', function () {
-                var sm = new ScenarioManager();
+                var sm = new ScenarioManager({ run: runOptions });
                 expect(sm.current).to.be.instanceof(RunManager);
             });
             it('should pass through the right options', function () {
-                var sm = new ScenarioManager(runOptions);
+                var sm = new ScenarioManager({ run: runOptions });
                 sinon.stub(sm.current.sessionManager, 'getSession').returns(sampleSession);
 
                 return sm.current.getRun().then(function (run) {
@@ -87,7 +87,7 @@
         });
         describe('saved runs', function () {
             it('should create a new saved run manager', function () {
-                var sm = new ScenarioManager();
+                var sm = new ScenarioManager({ run: runOptions });
                 expect(sm.savedRuns).to.be.instanceof(SavedRunsManager);
             });
         });
