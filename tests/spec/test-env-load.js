@@ -29,7 +29,7 @@
 
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
-                req.url.should.equal('https://' + getHost() + '/epicenter/v1/config');
+                req.url.should.equal(window.location.protocol + '//' + getHost() + '/epicenter/v1/config');
 
                 F.service.URL.defaults = oldDefaults;
             });
