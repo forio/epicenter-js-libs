@@ -189,7 +189,7 @@ RunManager.prototype = {
      * **Parameters**
      * @return {Promise}
      */
-    reset: function () {
+    reset: function (options) {
         var me = this;
         var authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
@@ -200,8 +200,16 @@ RunManager.prototype = {
             if (run && run.id) {
                 setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                 me.run.updateConfig({ filter: run.id });
+
+                if (options && options.success) {
+                    options.success(run);
+                }
             }
             return run;
+        }, function (err) {
+            if (options && options.error) {
+                options.error(err);
+            }
         });
     }
 };
