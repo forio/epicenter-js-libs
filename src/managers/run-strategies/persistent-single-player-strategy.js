@@ -25,32 +25,33 @@ var Strategy = classFrom(IdentityStrategy, {
         this.stateApi = new StateApi();
     },
 
-    reset: function (runService, userSession) {
+    reset: function (runService, userSession, options) {
         var group = userSession.groupName;
         var opt = $.extend({
             scope: { group: group }
         }, runService.getCurrentConfig());
         return runService
-            .create(opt)
+            .create(opt, options)
             .then(function (run) {
                 run.freshlyCreated = true;
                 return run;
             });
     },
 
-    getRun: function (runService, userSession) {
+    getRun: function (runService, userSession, runIdInSession, options) {
         var me = this;
+        //FIXME: this should only load 'last run' into memory
         return runService.query({
             'user.id': userSession.userId || '0000',
             'scope.group': userSession.groupName
         }).then(function (runs) {
-            return me._loadAndCheck(runService, userSession, runs);
+            return me._loadAndCheck(runService, userSession, runs, options);
         });
     },
 
-    _loadAndCheck: function (runService, userSession, runs) {
+    _loadAndCheck: function (runService, userSession, runs, options) {
         if (!runs || !runs.length) {
-            return this.reset(runService, userSession);
+            return this.reset(runService, userSession, options);
         }
 
         var dateComp = function (a, b) { return new Date(b.date) - new Date(a.date); };

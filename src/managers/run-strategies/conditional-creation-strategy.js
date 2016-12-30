@@ -22,16 +22,17 @@ var Strategy = classFrom(Base, {
      * Resets current run
      * @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
      * @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
+     * @param  {Object} options (Optional) See RunService#create for supported options
      * @return {Promise}             
      */
-    reset: function (runService, userSession) {
+    reset: function (runService, userSession, options) {
         var group = userSession && userSession.groupName;
         var opt = $.extend({
             scope: { group: group }
         }, runService.getCurrentConfig());
 
         return runService
-                .create(opt)
+                .create(opt, options)
                 .then(function (run) {
                     run.freshlyCreated = true;
                     return run;
@@ -43,20 +44,21 @@ var Strategy = classFrom(Base, {
      * @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
      * @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
      * @param  {String} runIdInSession the RunManager stores the 'last accessed' run in a cookie;  this refers to the last-used runid
+     * @param  {Object} options (Optional) See RunService#create for supported options
      * @return {Promise}             
      */
-    getRun: function (runService, userSession, runIdInSession) {
+    getRun: function (runService, userSession, runIdInSession, options) {
         var me = this;
         if (runIdInSession) {
-            return this.loadAndCheck(runService, userSession, runIdInSession).catch(function () {
-                return me.reset(runService, userSession); //if it got the wrong cookie for e.g.
+            return this.loadAndCheck(runService, userSession, runIdInSession, options).catch(function () {
+                return me.reset(runService, userSession, options); //if it got the wrong cookie for e.g.
             });
         } else {
-            return this.reset(runService, userSession);
+            return this.reset(runService, userSession, options);
         }
     },
 
-    loadAndCheck: function (runService, userSession, runIdInSession) {
+    loadAndCheck: function (runService, userSession, runIdInSession, options) {
         var shouldCreate = false;
         var me = this;
 
@@ -68,7 +70,7 @@ var Strategy = classFrom(Base, {
             })
             .then(function (run) {
                 if (shouldCreate) {
-                    return me.reset(runService, userSession);
+                    return me.reset(runService, userSession, options);
                 }
                 return run;
             });

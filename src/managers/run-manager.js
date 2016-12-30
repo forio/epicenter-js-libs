@@ -138,9 +138,11 @@ RunManager.prototype = {
      *          rm.run.do('runModel');
      *      });
      *
+     * @param {Array} variables (Optional) if provided it'll populate the run it gets with the provided variables.
+     * @param {Object} options (Optional) these will be passed on to RunService#create if the strategy does create a new run
      * @return {$promise} Promise to complete the call.
      */
-    getRun: function (variables) {
+    getRun: function (variables, options) {
         var me = this;
         var sessionStore = this.sessionManager.getStore();
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
@@ -152,7 +154,7 @@ RunManager.prototype = {
             return $.Deferred().reject('No user-session available').promise();
         }
         return this.strategy
-                .getRun(this.run, authSession, runid).then(function (run) {
+                .getRun(this.run, authSession, runid, options).then(function (run) {
                     if (run && run.id) {
                         setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
