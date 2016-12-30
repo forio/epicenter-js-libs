@@ -79,6 +79,7 @@ function patchRunService(service, manager) {
 
 function setRunInSession(sessionKey, runid, sessionManager) {
     if (sessionKey) {
+        //TODO: Put the entire  runobject in session? This'll help things like the baseline strategy determine if it's good enough without making an ajax call
         sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
     }
 }
@@ -138,10 +139,11 @@ RunManager.prototype = {
      *          rm.run.do('runModel');
      *      });
      *
-     * @param {Array} variables List of variables to populate on the new run
+     * @param {Array} variables (Optional) if provided it'll populate the run it gets with the provided variables.
+     * @param {Object} options (Optional) these will be passed on to RunService#create if the strategy does create a new run
      * @return {$promise} Promise to complete the call.
      */
-    getRun: function (variables) {
+    getRun: function (variables, options) {
         var me = this;
         var sessionStore = this.sessionManager.getStore();
         var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
@@ -153,7 +155,7 @@ RunManager.prototype = {
             return $.Deferred().reject('No user-session available').promise();
         }
         return this.strategy
-                .getRun(this.run, authSession, runid).then(function (run) {
+                .getRun(this.run, authSession, runid, options).then(function (run) {
                     if (run && run.id) {
                         setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
@@ -196,20 +198,12 @@ RunManager.prototype = {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject('No user-session available').promise();
         }
-        return this.strategy.reset(this.run, authSession).then(function (run) {
+        return this.strategy.reset(this.run, authSession, options).then(function (run) {
             if (run && run.id) {
                 setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                 me.run.updateConfig({ filter: run.id });
-
-                if (options && options.success) {
-                    options.success(run);
-                }
             }
             return run;
-        }, function (err) {
-            if (options && options.error) {
-                options.error(err);
-            }
         });
     }
 };

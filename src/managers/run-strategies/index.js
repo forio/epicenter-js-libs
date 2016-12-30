@@ -9,6 +9,7 @@ var list = {
     baseline: require('../scenario-strategies/baseline-strategy'),
     'new-if-stepped': require('../scenario-strategies/last-unsaved'),
     'conditional-creation': require('./conditional-creation-strategy'),
+    'reuse-last-initialized': require('./reuse-last-initialized'),
 };
 
 module.exports = {

@@ -419,6 +419,26 @@
                     expect(config.id).to.equal(runid);
                 });
             });
+            describe('When used as an operation', function () {
+                var resetStub;
+                beforeEach(function () {
+                    resetStub = sinon.stub(rm, 'reset').returns($.Deferred().resolve().promise());
+                });
+                afterEach(function () {
+                    resetStub.restore();
+                });
+                it('should patch `do` function of the run service to call the strategy reset', function () {
+                    return rm.run.do('reset').then(function () {
+                        expect(resetStub).to.have.been.calledOnce;
+                    });
+                });
+                it('should pass on reset options', function () {
+                    var options = { success: 'yay' };
+                    return rm.run.do('reset', null, options).then(function () {
+                        expect(resetStub).to.have.been.calledWith(options);
+                    });
+                });
+            });
         });
     });
 }());
