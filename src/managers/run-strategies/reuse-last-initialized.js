@@ -6,7 +6,7 @@ var Base = {};
 var defaults = {
     /**
      * Operations to run in the model for initialization to be considered complete.
-     * @type {Array}
+     * @type {Array} Can be in any of the formats Runservice#serial supports
      */
     initOperation: [],
 
@@ -38,7 +38,7 @@ module.exports = classFrom(Base, {
                 return createResponse;
             });
         }).then(function (createResponse) {
-            return runService.save(this.options.flag).then(function (patchResponse) {
+            return runService.save(me.options.flag).then(function (patchResponse) {
                 return $.extend(true, {}, createResponse, patchResponse);
             });
         });

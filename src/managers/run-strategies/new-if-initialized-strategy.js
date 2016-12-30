@@ -23,7 +23,7 @@ var __super = ConditionalStrategy.prototype;
 var Strategy = classFrom(ConditionalStrategy, {
     constructor: function (options) {
         __super.constructor.call(this, this.createIf, options);
-        console.warn('This strategy is deprecated; all runs now default to being initialized by default making this redundant');
+        console.warn('This strategy is deprecated; all runs now default to being initialized by default making this redundant. Consider using `reuse-last-initialized` instead.');
     },
 
     createIf: function (run, headers) {
