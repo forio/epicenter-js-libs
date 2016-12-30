@@ -1,3 +1,20 @@
+### New 'reuse-last-initialized' strategy
+This release adds a new `reuse-last-initialized` strategy. This is intended to be a more flexible replacement for the `new-if-initialized` strategy (which is now deprecated).
+
+#####Example use-cases:
+- You have a time-based model and always want the run you're operating on to be at step 10
+```js
+    var rm = new F.manager.RunManager({
+        strategy: 'reuse-last-initialized',
+        strategyOptions: {
+            initOperation: [{ step: 10 }]
+        }
+    })
+```
+
+- You have a custom initialization function in your model, and want to make sure it's always executed for new runs.
+
+`strategyOptions` is a field you can generally use to pass options to different strategies; while `reuse-last-initialized` is currently the only strategy which uses it, you can still use this field while registering custom strategies. 
 
 ###Run Manager changes
 #### `getRun` allows populating run with variables
