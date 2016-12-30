@@ -26,6 +26,7 @@ var __super = ConditionalStrategy.prototype;
 var Strategy = classFrom(ConditionalStrategy, {
     constructor: function (options) {
         __super.constructor.call(this, this.createIf, options);
+        console.warn('This strategy is deprecated; the run-service now sets a header to automatically bring back runs into memory');
     },
 
     createIf: function (run, headers) {
