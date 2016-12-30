@@ -7,6 +7,7 @@ var list = {
     'persistent-single-player': require('./persistent-single-player-strategy'),
     none: require('./none-strategy'),
     'conditional-creation': require('./conditional-creation-strategy'),
+    'reuse-last-initialized': require('./reuse-last-initialized'),
 };
 
 module.exports = {
