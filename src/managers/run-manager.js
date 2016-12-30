@@ -79,6 +79,7 @@ function patchRunService(service, manager) {
 
 function setRunInSession(sessionKey, runid, sessionManager) {
     if (sessionKey) {
+        //TODO: Put the entire  runobject in session? This'll help things like the baseline strategy determine if it's good enough without making an ajax call
         sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
     }
 }
