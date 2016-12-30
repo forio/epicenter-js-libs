@@ -195,20 +195,12 @@ RunManager.prototype = {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject('No user-session available').promise();
         }
-        return this.strategy.reset(this.run, authSession).then(function (run) {
+        return this.strategy.reset(this.run, authSession, options).then(function (run) {
             if (run && run.id) {
                 setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
                 me.run.updateConfig({ filter: run.id });
-
-                if (options && options.success) {
-                    options.success(run);
-                }
             }
             return run;
-        }, function (err) {
-            if (options && options.error) {
-                options.error(err);
-            }
         });
     }
 };
