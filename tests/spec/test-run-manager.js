@@ -419,7 +419,7 @@
                     expect(config.id).to.equal(runid);
                 });
             });
-            describe.only('When used as an operation', function () {
+            describe('When used as an operation', function () {
                 var resetStub;
                 beforeEach(function () {
                     resetStub = sinon.stub(rm, 'reset').returns($.Deferred().resolve().promise());
