@@ -12,7 +12,6 @@ var classFrom = require('../../util/inherit');
 var Strategy = classFrom(Base, {
     constructor: function Strategy(condition) {
         if (condition == null) { //eslint-disable-line
-            //TODO: not sure why this is explicitly ==
             throw new Error('Conditional strategy needs a condition to create a run');
         }
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
@@ -40,7 +39,7 @@ var Strategy = classFrom(Base, {
     },
 
     /**
-     * Gets the 'correct' run (the definition of 'currect' depends on strategy implementation)
+     * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation)
      * @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
      * @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
      * @param  {String} runIdInSession the RunManager stores the 'last accessed' run in a cookie;  this refers to the last-used runid

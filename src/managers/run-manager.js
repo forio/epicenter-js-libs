@@ -91,7 +91,7 @@ var defaults = {
      * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../strategies/) for details. Defaults to `new-if-initialized`.
      * @type {String}
      */
-    strategy: 'new-if-initialized'
+    strategy: 'new-if-missing'
 };
 
 function RunManager(options) {

@@ -1,6 +1,6 @@
 var list = {
-    'new-if-initialized': require('./new-if-initialized-strategy'),
-    'new-if-persisted': require('./new-if-persisted-strategy'),
+    'new-if-initialized': require('./new-if-initialized-strategy'), //deprecated
+    'new-if-persisted': require('./new-if-persisted-strategy'), //deprecated
     'new-if-missing': require('./new-if-missing-strategy'),
     'always-new': require('./always-new-strategy'),
     multiplayer: require('./multiplayer-strategy'),
