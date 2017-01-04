@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Presence Api Integration Test</title>
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../dist/epicenter-multiplayer-dependencies.min.js"></script>
+    <script src="../../../dist/epicenter-edge.js"></script>
+
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        section {
+            padding: 30px 0;
+            border-top: 1px dotted silver;
+        }
+        .instructions {
+            color: blue;
+        }
+    </style>
+</head>
+<body class="container">
+	<section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="forio-dev">
+                <br/>
+
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="epicenter-js-test" >
+                <br/>
+
+                <label for="">Group</label>
+                <input type="text" id="txtGroup" value="tomtest-dec-2016" >
+                <br/>
+
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="tom1" >
+                <br/>
+
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="password1" >
+                <br/>
+        				<button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              Make sure you enter info for 
+              <ul>
+                  <li>A team account</li>
+                  <li>Push channel turned on</li>
+              </ul>
+          </div>
+      </div>
+    </section>
+
+	<h4>Presence Api</h4>
+    <section class="row">
+  	<h3>Mark Online</h3>
+    <button id="btnMarkOnline">Mark Online Without UserId</button>
+		<button id="btnMarkOnlineWithId">Mark Online With UserId</button>
+    <br />
+    <button id="btnMarkOffline">Mark Offline Without UserId</button>
+    <button id="btnMarkOfflineWithId">Mark Offline With UserId</button>
+    <h3>Get Status</h3>
+    <button id="btnGetStatus">Get Status</button>
+    <p id="status"></p>
+    </section>
+    <script src="presence-script.js"></script>
+</body>
