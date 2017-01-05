@@ -14,7 +14,7 @@ var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
 var apiEndpoint = 'presence';
-
+var ChannelManager = require('../managers/epicenter-channel-manager');
 module.exports = function (config) {
     var defaults = {
         /**
@@ -116,6 +116,18 @@ module.exports = function (config) {
                 { url: urlConfig.getAPIPath(apiEndpoint) + urlConfig.accountPath + '/' + urlConfig.projectPath + '/' + groupName }
             );
             return http.get({}, httpOptions);
+        },
+
+        getChannel: function (params, options) {
+            options = options || {};
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.groupName) {
+                throw new Error('No groupName specified.');
+            }
+            var groupName = isString ? params : objParams.groupName;
+            var cm = new ChannelManager(options);
+            return cm.getPresenceChannel(groupName);
         }
 
 

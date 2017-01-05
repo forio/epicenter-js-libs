@@ -29,6 +29,8 @@ $(function () {
     });
 
     var pr = new F.service.Presence();
+    var channel = pr.getChannel();
+    console.log(channel);
     $('#btnMarkOnline').click(function (evt) {
         evt.preventDefault();
         pr.markOnline().then(function (msg) {
