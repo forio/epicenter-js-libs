@@ -154,7 +154,17 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var project = getFromSessionOrError('', 'project', session);
 
         var baseTopic = ['/group', account, project, groupName].join('/');
-        return __super.getChannel.call(this, { base: baseTopic });
+        var channel = __super.getChannel.call(this, { base: baseTopic });
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            var callbackWithoutPresenceData = function (payload) {
+                if (payload.data && payload.data.type !== 'user') {
+                    callback.call(context, payload);
+                }
+            };
+            return oldsubs.call(channel, topic, callbackWithoutPresenceData, context, options);
+        };
+        return channel;
     },
 
     /**
@@ -284,45 +294,23 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
-    getPresenceChannel: function (world, userid, groupName) {
-        var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
-        if (!worldid) {
-            throw new Error('Please specify a world id');
-        }
-
+    getPresenceChannel: function (groupName) {
         var session = this.sessionManager.getMergedOptions(this.options);
-        userid = getFromSessionOrError(userid, 'userId', session);
         groupName = getFromSessionOrError(groupName, 'groupName', session);
-
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
 
-        var baseTopic = ['/user', account, project, groupName, worldid].join('/');
+        var baseTopic = ['/group', account, project, groupName].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
-
-        var lastPingTime = { };
-
-        var PING_INTERVAL = 6000;
-        channel.subscribe('internal-ping-channel', function (notification) {
-            var incomingUserId = notification.data.user;
-            if (!lastPingTime[incomingUserId] && incomingUserId !== userid) {
-                channel.trigger('presence', { userId: incomingUserId, online: true });
-            }
-            lastPingTime[incomingUserId] = (new Date()).valueOf();
-        });
-
-        setInterval(function () {
-            channel.publish('internal-ping-channel', { user: userid });
-
-            $.each(lastPingTime, function (key, value) {
-                var now = (new Date()).valueOf();
-                if (value && value + (PING_INTERVAL * 2) < now) {
-                    lastPingTime[key] = null;
-                    channel.trigger('presence', { userId: key, online: false });
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            var callbackWithOnlyPresenceData = function (payload) {
+                if (payload.data && payload.data.type === 'user' && payload.data.user) {
+                    callback.call(context, payload);
                 }
-            });
-        }, PING_INTERVAL);
-
+            };
+            return oldsubs.call(channel, topic, callbackWithOnlyPresenceData, context, options);
+        };
         return channel;
     },
 
