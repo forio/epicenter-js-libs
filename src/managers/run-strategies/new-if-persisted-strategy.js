@@ -1,4 +1,6 @@
 /**
+ * **This strategy is deprecated; the [Run Service](../run-api-service/) now sets a header to automatically bring back runs into memory.** (See `autoRestore` under the Run Service Configuration Options for additional information.)
+ * 
  * The `new-if-persisted` strategy creates a new run when the current one becomes persisted (end user is idle for a set period), but otherwise uses the current one. 
  * 
  * Using this strategy means that when end users navigate between pages in your project, or refresh their browsers, they will still be working with the same run. 
