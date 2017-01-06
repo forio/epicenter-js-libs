@@ -88,10 +88,10 @@ var defaults = {
     sessionKey: keyNames.STRATEGY_SESSION_KEY,
 
     /**
-     * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../strategies/) for details. Defaults to `new-if-initialized`.
+     * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../strategies/) for details. Defaults to `new-if-missing`.
      * @type {String}
      */
-    strategy: 'new-if-initialized'
+    strategy: 'new-if-missing'
 };
 
 function RunManager(options) {
