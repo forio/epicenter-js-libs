@@ -25,8 +25,10 @@ You can also [create your own](#create-your-own).
 <? }); ?>
 
 <a name="create-your-own"></a>
-#### Create your own
+#### Create Your Own
 
-You can create your own strategy by passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. 
+You can create your own strategy by:
 
-Strategy functions must return a boolean value for whether or not to create a new run.
+* Passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. Strategy functions must return a boolean value for whether or not to create a new run. 
+* Optionally, passing in a `strategyOptions` object with any configuration options that your strategy function may use. 
+
