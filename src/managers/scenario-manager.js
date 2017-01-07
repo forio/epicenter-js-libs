@@ -46,4 +46,3 @@ ScenarioManager.prototype = {
 };
 
 module.exports = ScenarioManager;
-

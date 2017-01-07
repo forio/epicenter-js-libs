@@ -9,26 +9,16 @@ var classFrom = require('../../util/inherit');
 
 var IdentityStrategy = require('./none-strategy');
 var WorldApiAdapter = require('../../service/world-api-adapter');
-var AuthManager = require('../auth-manager');
 
-var defaults = {
-    store: {
-        synchronous: true
-    }
-};
+var defaults = {};
 
 var Strategy = classFrom(IdentityStrategy, {
-
-    constructor: function (runService, options) {
-        this.runService = runService;
+    constructor: function (options) {
         this.options = $.extend(true, {}, defaults, options);
-        this._auth = new AuthManager();
-        this._loadRun = this._loadRun.bind(this);
         this.worldApi = new WorldApiAdapter(this.options.run);
     },
 
-    reset: function () {
-        var session = this._auth.getCurrentUserSessionInfo();
+    reset: function (runService, session) {
         var curUserId = session.userId;
         var curGroupName = session.groupName;
 
@@ -39,8 +29,7 @@ var Strategy = classFrom(IdentityStrategy, {
             }.bind(this));
     },
 
-    getRun: function () {
-        var session = this._auth.getCurrentUserSessionInfo();
+    getRun: function (runService, session) {
         var curUserId = session.userId;
         var curGroupName = session.groupName;
         var worldApi = this.worldApi;
@@ -56,16 +45,17 @@ var Strategy = classFrom(IdentityStrategy, {
             if (!world) {
                 return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: me.options, session: session });
             }
-
             return worldApi.getCurrentRunId({ model: model, filter: world.id })
-                .then(me._loadRun)
+                .then(function (id) {
+                    return runService.load(id);
+                })
                 .then(dtd.resolve)
                 .fail(dtd.reject);
         };
 
         var serverError = function (error) {
             // is this possible?
-            dtd.reject(error, session, me.options);
+            return dtd.reject(error, session, me.options);
         };
 
         this.worldApi
@@ -76,9 +66,6 @@ var Strategy = classFrom(IdentityStrategy, {
         return dtd.promise();
     },
 
-    _loadRun: function (id, options) {
-        return this.runService.load(id, null, options);
-    }
 });
 
 module.exports = Strategy;

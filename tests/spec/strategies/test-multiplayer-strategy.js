@@ -16,11 +16,6 @@
         getWorlds: /multiplayer\/world\/\?((?:project=js-libs|account=forio-dev|group=group\-123|&userId=123)&?){4}/gi,
     };
 
-    var fakeAuth = {
-        // get should return what's stoed in the session cookie
-        getCurrentUserSessionInfo: sinon.stub().returns(cookieContents)
-    };
-
     var server;
 
     var setupResponse = function (verb, endpoint, statusCode, resp, respHeaders) {
@@ -78,10 +73,7 @@
                     model: 'model_file'
                 }
             }, options));
-
-            // this is briddle, it knows too much about the internals of the run manager
-            // but replace the cookie store with a stub
-            rm.strategy._auth = fakeAuth;
+            sinon.stub(rm.sessionManager, 'getSession').returns(cookieContents);
             return rm;
         }
 

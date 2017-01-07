@@ -250,7 +250,9 @@ module.exports = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
 
-            return http.splitGet(outputModifier, httpOptions);
+            return http.splitGet(outputModifier, httpOptions).then(function (r) {
+                return (r === {}) ? [] : r;
+            });
         },
 
         /**
@@ -272,7 +274,9 @@ module.exports = function (config) {
             }
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
-            return http.splitGet(outputModifier, httpOptions);
+            return http.splitGet(outputModifier, httpOptions).then(function (r) {
+                return (r === {}) ? [] : r;
+            });
         },
 
         /**
@@ -514,6 +518,14 @@ module.exports = function (config) {
     var publicSyncAPI = {
         getCurrentConfig: function () {
             return serviceOptions;
+        },
+        updateConfig: function (config) {
+            if (config && config.id) {
+                config.filter = config.id;
+            } else if (config && config.filter) {
+                config.id = config.filter;
+            }
+            serviceOptions = $.extend(true, {}, serviceOptions, config);
         },
         /**
           * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.

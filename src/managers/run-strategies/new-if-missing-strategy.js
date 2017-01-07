@@ -13,6 +13,8 @@
  *     * If the cookie does not exist, create a new run for this end user. 
  */
 
+//TODO: Rename this as 'new run per session?';
+//
 'use strict';
 
 var classFrom = require('../../util/inherit');
@@ -25,8 +27,8 @@ var __super = ConditionalStrategy.prototype;
 *  this is useful for baseRuns.
 */
 var Strategy = classFrom(ConditionalStrategy, {
-    constructor: function (runService, options) {
-        __super.constructor.call(this, runService, this.createIf, options);
+    constructor: function (options) {
+        __super.constructor.call(this, this.createIf, options);
     },
 
     createIf: function (run, headers) {

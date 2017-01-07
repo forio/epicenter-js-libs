@@ -49,10 +49,13 @@
 */
 
 'use strict';
-var strategiesMap = require('./run-strategies/strategies-map');
+var strategies = require('./run-strategies');
 var specialOperations = require('./special-operations');
 var RunService = require('../service/run-api-service');
+var SessionManager = require('../store/session-manager');
 
+var util = require('../util/object-util');
+var keyNames = require('./key-names');
 
 function patchRunService(service, manager) {
     if (service.patched) {
@@ -74,14 +77,21 @@ function patchRunService(service, manager) {
     return service;
 }
 
+function setRunInSession(sessionKey, runid, sessionManager) {
+    if (sessionKey) {
+        //TODO: Put the entire  runobject in session? This'll help things like the baseline strategy determine if it's good enough without making an ajax call
+        sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
+    }
+}
 
 var defaults = {
+    sessionKey: keyNames.STRATEGY_SESSION_KEY,
+
     /**
-     * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../strategies/) for details. Defaults to `new-if-initialized`.
+     * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../strategies/) for details. Defaults to `new-if-missing`.
      * @type {String}
      */
-
-    strategy: 'new-if-initialized'
+    strategy: 'new-if-missing'
 };
 
 function RunManager(options) {
@@ -89,19 +99,25 @@ function RunManager(options) {
 
     if (this.options.run instanceof RunService) {
         this.run = this.options.run;
-    } else {
+    } else if (this.options.run) {
         this.run = new RunService(this.options.run);
+    } else {
+        throw new Error('No run options passed to RunManager');
     }
-
     patchRunService(this.run, this);
 
-    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategiesMap[this.options.strategy];
-
+    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategies.get(this.options.strategy);
     if (!StrategyCtor) {
         throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
     }
+    var strategy = new StrategyCtor(this.options);
+    if (!strategy.getRun || !strategy.reset) {
+        throw new Error('All strategies should implement a `getRun` and `reset` interface', this.options.strategy);
+    }
+    strategy.requiresAuth = StrategyCtor.requiresAuth;
+    this.strategy = strategy;
 
-    this.strategy = new StrategyCtor(this.run, this.options);
+    this.sessionManager = new SessionManager(this.options);
 }
 
 RunManager.prototype = {
@@ -123,11 +139,40 @@ RunManager.prototype = {
      *          rm.run.do('runModel');
      *      });
      *
+     * @param {Array} variables (Optional) if provided it'll populate the run it gets with the provided variables.
+     * @param {Object} options (Optional) these will be passed on to RunService#create if the strategy does create a new run
      * @return {$promise} Promise to complete the call.
      */
-    getRun: function () {
+    getRun: function (variables, options) {
+        var me = this;
+        var sessionStore = this.sessionManager.getStore();
+        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
+        var runid = runSession && runSession.runId;
+
+        var authSession = this.sessionManager.getSession();
+        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
+            console.error('No user-session available', this.options.strategy, 'requires authentication.');
+            return $.Deferred().reject('No user-session available').promise();
+        }
         return this.strategy
-                .getRun();
+                .getRun(this.run, authSession, runid, options).then(function (run) {
+                    if (run && run.id) {
+                        setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
+                        me.run.updateConfig({ filter: run.id });
+
+                        if (variables && variables.length) {
+                            return me.run.variables().query(variables).then(function (results) {
+                                run.variables = results;
+                                return run;
+                            }).catch(function (err) {
+                                run.variables = {};
+                                console.error(err);
+                                return run;
+                            });
+                        }
+                    }
+                    return run;
+                });
     },
 
     /**
@@ -144,12 +189,24 @@ RunManager.prototype = {
      *      });
      *
      * **Parameters**
-     * @param {Object} runServiceOptions The options object to configure the Run Service. See [Run API Service](../run-api-service/) for more.
      * @return {Promise}
      */
-    reset: function (runServiceOptions) {
-        return this.strategy.reset(runServiceOptions);
+    reset: function (options) {
+        var me = this;
+        var authSession = this.sessionManager.getSession();
+        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
+            console.error('No user-session available', this.options.strategy, 'requires authentication.');
+            return $.Deferred().reject('No user-session available').promise();
+        }
+        return this.strategy.reset(this.run, authSession, options).then(function (run) {
+            if (run && run.id) {
+                setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
+                me.run.updateConfig({ filter: run.id });
+            }
+            return run;
+        });
     }
 };
 
+RunManager.strategies = strategies;
 module.exports = RunManager;
