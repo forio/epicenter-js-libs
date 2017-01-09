@@ -1,12 +1,23 @@
-var am = new F.manager.AuthManager();
 $('#btnLogin').click(function (evt) {
     evt.preventDefault();
-    am.login({
+
+    var params = {
         userName: $('#txtUsername').val(),
         password: $('#txtPassword').val(),
         account: $('#txtAccount').val(),
         project: $('#txtProject').val()
-    }).then(function () {
+    };
+
+    var amParams = {};
+    if ($('#txtServer').val()) {
+        amParams.server = {
+            host: $('#txtServer').val(),
+            protocol: 'http',
+        };
+    }
+    window.am = new F.manager.AuthManager(amParams);
+
+    am.login(params).then(function () {
         window.alert('login successful');
     });
 });

@@ -1,7 +1,13 @@
+
+
 var defaultRunOptions = {
-    account: $('#txtAccount').val(),
-    project: $('#txtProject').val(),
-    model: 'model.vmf',
+    account: 'team-naren',
+    project: 'authenticated-glasses',
+    model: 'gglasses.vmf',
+};
+defaultRunOptions.server = {
+    host: 'epistage2.foriodev.com',
+    protocol: 'http',
 };
 var sm = new F.manager.ScenarioManager({ run: defaultRunOptions });
 
@@ -38,10 +44,8 @@ $('#txtPriceDecision').on('change', function (evt) {
     window.cr.variables().save({ 'Price[X5]': Number(evt.target.value) });
 });
 $('#btnSaveAndSimulate').on('click', function () {
-    sm.savedRuns.add(window.cr).then(function () {
-        window.cr.do({ stepTo: 'end' }).then(function () {
-            console.log('simulated');
-        });
+    sm.current.save().then(function () {
+        console.log('simulated');
     });
 });
 
