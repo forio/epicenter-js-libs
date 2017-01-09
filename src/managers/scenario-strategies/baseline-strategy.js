@@ -3,6 +3,8 @@ var classFrom = require('../../util/inherit');
 
 var Base = {};
 var BASELINE_NAME = 'baseline';
+
+//FIXME: Merge with reuse-last-initialized
 module.exports = classFrom(Base, {
     constructor: function (runService, options) {
     },
@@ -22,6 +24,7 @@ module.exports = classFrom(Base, {
                 return $.extend(true, {}, createResponse, patchResponse);
             });
         }).then(function (mergedResponse) {
+            //FIXME: Fix hard-coded 'stepto' assumption
             return runService.do({ stepTo: 'end' }).then(function () {
                 return mergedResponse;
             });

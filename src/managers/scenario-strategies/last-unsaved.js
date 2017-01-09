@@ -47,6 +47,7 @@ module.exports = classFrom(Base, {
 
             var basedOnRunid = lastRun.id;
             var sa = new StateService();
+            //FIXME: Fix hard-coded 'stepto' assumption
             return sa.clone({ runId: basedOnRunid, stopBefore: 'stepTo' }).then(function (response) {
                 return runService.load(response.run);
             }).then(function (run) {
