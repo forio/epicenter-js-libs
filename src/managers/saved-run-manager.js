@@ -5,17 +5,18 @@ var SessionManager = require('../store/session-manager');
 
 var SavedRunsManager = function (config) {
     var defaults = {
-
+        scopeByGroup: true,
+        scopeByUser: true,
     };
+
     var options = $.extend(true, {}, defaults, config);
     if (options.run) {
         if (options.run instanceof RunService) {
             this.runService = options.run;
         } else {
-            var sm = new SessionManager(options.run);
-            var mergedOpts = sm.getMergedOptions({}, options.run);
-            this.runService = new RunService(mergedOpts);
+            this.runService = new RunService(options.run);
         }
+        this.options = options;
     } else {
         throw new Error('No run options passed to SavedRunsManager');
     }
@@ -43,22 +44,36 @@ SavedRunsManager.prototype = {
         return this.mark(run, param);
     },
     getRuns: function (variables, filter, options) {
-        //TODO: Add group/user scope filters here
-        var actingFilter = $.extend(true, {}, {
-            saved: true, trashed: false
-        }, filter);
+        var defaults = {
+            saved: true, 
+            trashed: false,
+        };
+
+        var sm = new SessionManager();
+        var session = sm.getSession(this.runService.getCurrentConfig());
+        var isEmptySession = !!Object.keys(session).length;
+        if (isEmptySession && (this.scopeByGroup || this.scopeByUser)) {
+            return $.Deferred().reject('SavedRunManager is missing session information').promise();
+        }
+        if (this.options.scopeByGroup) {
+            defaults['scope.group'] = session.groupName;
+        }
+        if (this.options.scopeByUser) {
+            defaults['user.id'] = session.userId;
+        }
+        var actingFilter = $.extend(true, {}, defaults, filter);
 
         var opModifiers = {
             sort: 'created',
             direction: 'asc'
         };
-        var me = this;
         return this.runService.query(actingFilter, opModifiers).then(function (savedRuns) {
             if (!variables || !variables.length) {
                 return savedRuns;
             }
             var promises = savedRuns.map(function (run) {
-                var prom = me.runService.variables().query([].concat(variables), {}, { filter: run.id }).then(function (variables) {
+                var rs = new RunService(run);
+                var prom = rs.variables().query([].concat(variables)).then(function (variables) {
                     run.variables = variables;
                     return run;
                 }).catch(function (err) {
