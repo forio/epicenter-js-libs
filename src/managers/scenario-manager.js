@@ -21,19 +21,25 @@ function ScenarioManager(config) {
         run: serviceOptions.run,
     });
 
-    //TODO: Creating on init to make sure the 'getruns' call sees this, but ajax on constructor sounds unexpected. Maybe do it on 'getRuns' instead?
-    var baseLineProm = this.baseline.getRun();
-
     this.savedRuns = new SavedRunsManager({
         run: serviceOptions.run,
     });
 
-    var orig = this.savedRuns.getRuns;
+    var origGetRuns = this.savedRuns.getRuns;
+    var me = this;
     this.savedRuns.getRuns = function () {
         var args = Array.apply(null, arguments);
-        var me = this;
-        return baseLineProm.then(function () {
-            return orig.apply(me.savedRuns, args);
+        return me.baseline.getRun().then(function () {
+            return origGetRuns.apply(me.savedRuns, args);
+        });
+    };
+
+    //DIXME: This is too dependent on 'step' being available, make configurable
+    this.current.save = function (metadata, operations) {
+        return me.current.getRun().then(function () {
+            return me.current.run.do({ stepTo: 'end' });
+        }).then(function () {
+            return me.savedRuns.save(me.current.run, metadata);
         });
     };
 }
