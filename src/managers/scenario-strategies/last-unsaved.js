@@ -9,9 +9,12 @@ module.exports = classFrom(Base, {
 
     reset: function (runService, userSession) {
         var group = userSession && userSession.groupName;
-        var opt = $.extend({
-            scope: { group: group }
-        }, runService.getCurrentConfig());
+        var opt = $.extend(true, {}, runService.getCurrentConfig());
+        if (group) {
+            $.extend(opt, {
+                scope: { group: group }
+            });
+        }
         return runService.create(opt).then(function (createResponse) {
             return runService.save({ trashed: false }).then(function (patchResponse) { //TODO remove this once EPICENTER-2500 is fixed
                 return $.extend(true, {}, createResponse, patchResponse);
@@ -21,9 +24,11 @@ module.exports = classFrom(Base, {
 
     getRun: function (runService, userSession) {
         var defaultFilterParams = {
-            'scope.group': userSession.groupName
         };
-        if (userSession.userId) {
+        if (userSession && userSession.groupName) {
+            defaultFilterParams['scope.group'] = userSession.groupName;
+        }
+        if (userSession && userSession.userId) {
             defaultFilterParams['user.id'] = userSession.userId;
         }
         var filter = $.extend(true, {}, defaultFilterParams, { 
@@ -31,8 +36,8 @@ module.exports = classFrom(Base, {
         }); //Can also filter by time0, but assuming if it's stepped it'll be saved
         var me = this;
         var outputModifiers = { 
-            startrecord: 0,
-            endrecord: 0,
+            // startrecord: 0,  //TODO: Uncomment when EPICENTER-2569 is fixed
+            // endrecord: 0,
             sort: 'created', 
             direction: 'desc'
         };
@@ -58,4 +63,4 @@ module.exports = classFrom(Base, {
             });
         });
     }
-}, { requiresAuth: true });
+}, { requiresAuth: false });

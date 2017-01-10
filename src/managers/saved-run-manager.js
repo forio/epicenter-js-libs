@@ -51,14 +51,10 @@ SavedRunsManager.prototype = {
 
         var sm = new SessionManager();
         var session = sm.getSession(this.runService.getCurrentConfig());
-        var isEmptySession = !!Object.keys(session).length;
-        if (isEmptySession && (this.scopeByGroup || this.scopeByUser)) {
-            return $.Deferred().reject('SavedRunManager is missing session information').promise();
-        }
-        if (this.options.scopeByGroup) {
+        if (this.options.scopeByGroup && session.groupName) {
             defaults['scope.group'] = session.groupName;
         }
-        if (this.options.scopeByUser) {
+        if (this.options.scopeByUser && session.userId) {
             defaults['user.id'] = session.userId;
         }
         var actingFilter = $.extend(true, {}, defaults, filter);

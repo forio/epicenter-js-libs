@@ -11,9 +11,12 @@ module.exports = classFrom(Base, {
 
     reset: function (runService, userSession) {
         var group = userSession && userSession.groupName;
-        var opt = $.extend({
-            scope: { group: group }
-        }, runService.getCurrentConfig());
+        var opt = $.extend(true, {}, runService.getCurrentConfig());
+        if (group) {
+            $.extend(opt, {
+                scope: { group: group }
+            });
+        }
 
         return runService.create(opt).then(function (createResponse) {
             return runService.save({
@@ -36,15 +39,17 @@ module.exports = classFrom(Base, {
             saved: true, 
             trashed: false, //TODO remove this once EPICENTER-2500 is fixed
             name: BASELINE_NAME,
-            'scope.group': userSession.groupName,
         };
-        if (userSession.userId) {
+        if (userSession && userSession.groupName) {
+            filter['scope.group'] = userSession.groupName;
+        }
+        if (userSession && userSession.userId) {
             filter['user.id'] = userSession.userId;
         }
         var me = this;
         return runService.filter(filter, { 
-            startrecord: 0,
-            endrecord: 0,
+            // startrecord: 0, //TODO: Uncomment when EPICENTER-2569 is fixed
+            // endrecord: 0,
             sort: 'created', 
             direction: 'desc'
         }).then(function (runs) {
@@ -54,4 +59,4 @@ module.exports = classFrom(Base, {
             return runs[0];
         });
     }
-}, { requiresAuth: true });
+}, { requiresAuth: false });
