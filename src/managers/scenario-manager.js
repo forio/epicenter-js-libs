@@ -5,6 +5,7 @@ var SavedRunsManager = require('./saved-run-manager');
 
 var defaults = {
     baselineRunName: 'Baseline',
+    advanceOperation: [{ stepTo: 'end' }]
 };
 
 var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
@@ -17,6 +18,10 @@ function ScenarioManager(config) {
         strategy: BaselineStrategy,
         sessionKey: 'sm-baseline-run',
         run: opts.run,
+        strategyOptions: {
+            baselineName: opts.baselineRunName,
+            initOperation: opts.advanceOperation
+        }
     });
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
@@ -24,8 +29,12 @@ function ScenarioManager(config) {
         run: opts.run,
     });
 
+    var ignoreOperations = ([].concat(opts.advanceOperation)).map(function (opn) {
+        return opn.name;
+    });
     this.savedRuns = new SavedRunsManager($.extend(true, {}, opts.savedRuns, {
         run: opts.run,
+        ignoreOperations: ignoreOperations
     }));
 
     var origGetRuns = this.savedRuns.getRuns;
@@ -40,7 +49,7 @@ function ScenarioManager(config) {
     //FIXME: This is too dependent on 'step' being available, make configurable
     this.current.save = function (metadata, operations) {
         return me.current.getRun().then(function () {
-            return me.current.run.do({ stepTo: 'end' });
+            return me.current.run.serial(opts.advanceOperation);
         }).then(function () {
             return me.savedRuns.save(me.current.run, metadata);
         });
