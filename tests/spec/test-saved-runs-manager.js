@@ -11,7 +11,7 @@
     };
 
     var baseURL = (new F.service.URL({ accountPath: runOptions.account, projectPath: runOptions.project })).getAPIPath('run');
-    describe('Saved Runs Manager', function () {
+    describe.only('Saved Runs Manager', function () {
         var server;
         var rs, saveStub, srm;
 
@@ -20,11 +20,10 @@
             server.respondWith('PATCH', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
-                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({
-                    price: 2,
-                }));
+            server.respondWith('GET', /(.*)\/run\/[^\/]*\/[^\/]*\/(.*)/, function (xhr, prefix, scripts) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ price: 2 }));
             });
+
             server.respondImmediately = true;
 
             rs = new RunService(runOptions);
@@ -58,10 +57,6 @@
                     expect(function () { new SavedRunsManager({ }); }).to.throw(Error);
                 });
             });
-        });
-
-        describe('User Session', function () {
-            //Test to make sure the right session ids are set
         });
 
         describe('#save', function () {
@@ -188,6 +183,30 @@
                     ]);
                 });
             });
+
+            describe('User Session', function () {
+                it('should query by group name if session available', function () {
+                    var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
+                        groupName: 'foo'
+                    });
+                    return srm.getRuns().then(function (runs) {
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['scope.group']).to.eql('foo');
+                        sessionStub.restore();
+                    });
+                });
+                it('should query by user if session available', function () {
+                    var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
+                        userId: 'foo'
+                    });
+                    return srm.getRuns().then(function (runs) {
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['user.id']).to.eql('foo');
+                        sessionStub.restore();
+                    });
+                });
+            });
+
             describe('Variables', function () {
                 //FIXME: Check server response instead
                 it.skip('should pass variables to variables service', function () {

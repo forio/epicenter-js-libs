@@ -3,13 +3,15 @@
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
 
-var injectScopeFromSession = require('./strategy-utils').injectScopeFromSession;
+var injectFiltersFromSession = require('./strategy-utils').injectFiltersFromSession;
 
 var SavedRunsManager = function (config) {
     var defaults = {
         scopeByGroup: true,
         scopeByUser: true,
     };
+
+    this.sessionManager = new SessionManager();
 
     var options = $.extend(true, {}, defaults, config);
     if (options.run) {
@@ -46,10 +48,9 @@ SavedRunsManager.prototype = {
         return this.mark(run, param);
     },
     getRuns: function (variables, filter, modifiers) {
-        var sm = new SessionManager();
-        var session = sm.getSession(this.runService.getCurrentConfig());
+        var session = this.sessionManager.getSession(this.runService.getCurrentConfig());
 
-        var scopedFilter = injectScopeFromSession($.extend(true, {}, filter, {
+        var scopedFilter = injectFiltersFromSession($.extend(true, {}, filter, {
             saved: true, 
             trashed: false,
         }), session, this.options);
