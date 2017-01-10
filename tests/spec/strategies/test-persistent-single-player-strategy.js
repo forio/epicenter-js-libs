@@ -29,16 +29,6 @@
         describe('getRun', function () {
             var rs, createStub, filterStub, loadStub, rm; //eslint-disable-line
             beforeEach(function () {
-                // var sucessHeader = {
-                //     getResponseHeader: function () {
-                //         return 'persistent';
-                //     }
-                // };
-                var falseHeader = {
-                    getResponseHeader: function () {
-                        return 'sdfs';
-                    }
-                };
                 rs = new F.service.Run(runOptions);
                 createStub = sinon.stub(rs, 'create', function () {
                     return $.Deferred().resolve({
@@ -57,7 +47,7 @@
                     ]).promise();
                 });
                 loadStub = sinon.stub(rs, 'load', function (runid, filters, options) {
-                    options.success({ id: runid }, null, falseHeader);
+                    options.success({ id: runid }, null);
                     return $.Deferred().resolve({ id: runid }).promise();
                 });
                 rm = new Strategy();

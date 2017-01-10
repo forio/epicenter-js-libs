@@ -1,14 +1,14 @@
 var list = {
+    'conditional-creation': require('./conditional-creation-strategy'),
     'new-if-initialized': require('./new-if-initialized-strategy'), //deprecated
     'new-if-persisted': require('./new-if-persisted-strategy'), //deprecated
+    multiplayer: require('./multiplayer-strategy'),
     'new-if-missing': require('./new-if-missing-strategy'),
     'always-new': require('./always-new-strategy'),
-    multiplayer: require('./multiplayer-strategy'),
     'persistent-single-player': require('./persistent-single-player-strategy'),
     none: require('./none-strategy'),
     baseline: require('../scenario-strategies/baseline-strategy'),
     'new-if-stepped': require('../scenario-strategies/last-unsaved'),
-    'conditional-creation': require('./conditional-creation-strategy'),
     'reuse-last-initialized': require('./reuse-last-initialized'),
 };
 

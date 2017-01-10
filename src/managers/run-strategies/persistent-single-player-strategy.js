@@ -18,7 +18,16 @@ var IdentityStrategy = require('./none-strategy');
 var injectFiltersFromSession = require('../strategy-utils').injectFiltersFromSession;
 var injectScopeFromSession = require('../strategy-utils').injectScopeFromSession;
 
+var defaults = {
+    filter: {},
+};
+
 var Strategy = classFrom(IdentityStrategy, {
+    constructor: function Strategy(options) {
+        var strategyOptions = options ? options.strategyOptions : {};
+        this.options = $.extend(true, {}, defaults, strategyOptions);
+    },
+
     reset: function (runService, userSession, options) {
         var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
         return runService
@@ -30,7 +39,7 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     getRun: function (runService, userSession, runIdInSession, options) {
-        var filter = injectFiltersFromSession({}, userSession);
+        var filter = injectFiltersFromSession(this.options.filter, userSession);
         var me = this;
         return runService.filter(filter, { 
             startrecord: 0,
