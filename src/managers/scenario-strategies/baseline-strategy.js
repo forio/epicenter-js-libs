@@ -1,6 +1,7 @@
 'use strict';
 var classFrom = require('../../util/inherit');
 var injectFiltersFromSession = require('../strategy-utils').injectFiltersFromSession;
+var injectScopeFromSession = require('../strategy-utils').injectScopeFromSession;
 
 var Base = {};
 var BASELINE_NAME = 'baseline';
@@ -11,13 +12,7 @@ module.exports = classFrom(Base, {
     },
 
     reset: function (runService, userSession) {
-        var group = userSession && userSession.groupName;
-        var opt = $.extend(true, {}, runService.getCurrentConfig());
-        if (group) {
-            $.extend(opt, {
-                scope: { group: group }
-            });
-        }
+        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
 
         return runService.create(opt).then(function (createResponse) {
             return runService.save({

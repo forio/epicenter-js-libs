@@ -15,5 +15,16 @@ module.exports = {
             currentFilter['user.id'] = session.userId;
         }
         return currentFilter;
+    },
+
+    injectScopeFromSession: function (currentParams, session) {
+        var group = session && session.groupName;
+        var params = $.extend(true, {}, currentParams);
+        if (group) {
+            $.extend(params, {
+                scope: { group: group }
+            });
+        }
+        return params;
     }
 };
