@@ -59,12 +59,14 @@ SavedRunsManager.prototype = {
             sort: 'created',
             direction: 'asc'
         }, modifiers);
+        var me = this;
         return this.runService.query(scopedFilter, opModifiers).then(function (savedRuns) {
             if (!variables || !variables.length) {
                 return savedRuns;
             }
             var promises = savedRuns.map(function (run) {
-                var rs = new RunService(run);
+                var config = $.extend(true, {}, me.runService.getCurrentConfig(), run);
+                var rs = new RunService(config);
                 var prom = rs.variables().query([].concat(variables)).then(function (variables) {
                     run.variables = variables;
                     return run;

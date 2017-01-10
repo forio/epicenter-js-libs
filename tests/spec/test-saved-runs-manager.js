@@ -11,7 +11,7 @@
     };
 
     var baseURL = (new F.service.URL({ accountPath: runOptions.account, projectPath: runOptions.project })).getAPIPath('run');
-    describe.only('Saved Runs Manager', function () {
+    describe('Saved Runs Manager', function () {
         var server;
         var rs, saveStub, srm;
 
@@ -20,8 +20,12 @@
             server.respondWith('PATCH', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith('GET', /(.*)\/run\/[^\/]*\/[^\/]*\/(.*)/, function (xhr, prefix, scripts) {
-                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ price: 2 }));
+            server.respondWith('GET', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/[^\/]*\/\?include=(.*)/, function (xhr, prefix, variable) {
+                if (variable === 'fail') {
+                    xhr.respond(400);
+                } else {
+                    xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ price: 2 }));
+                }
             });
 
             server.respondImmediately = true;
@@ -137,17 +141,9 @@
         });
 
         describe('#getRuns', function () {
-            var rs, queryStub, variableQuerySpy, srm;
+            var rs, queryStub, srm;
             beforeEach(function () {
                 rs = new F.service.Run(runOptions);
-                variableQuerySpy = sinon.spy(function (variables) {
-                    if (variables[0] === 'fail') {
-                        return $.Deferred().reject().promise();
-                    }
-                    return $.Deferred().resolve({
-                        price: 2
-                    }).promise();
-                });
                 queryStub = sinon.stub(rs, 'query', function (options) {
                     return $.Deferred().resolve([
                         { id: 'run1' },
@@ -208,11 +204,10 @@
             });
 
             describe('Variables', function () {
-                //FIXME: Check server response instead
-                it.skip('should pass variables to variables service', function () {
-                    return srm.getRuns('Price', { foo: 'bar' }).then(function () {
-                        var args = variableQuerySpy.getCall(0).args;
-                        expect(args[0]).to.eql(['Price']);
+                it('should pass variables to variables service', function () {
+                    return srm.getRuns('Price', { foo: 'bar' }).then(function (res) {
+                        var req = server.requests[0];
+                        expect(req.url).to.eql('https://api.forio.com/v2/run/forio-dev/js-libs/run1/variables/?include=Price');
                     });
                 });
                 it('should add variables to response', function () {
@@ -223,8 +218,7 @@
                         ]);
                     });
                 });
-                //FIXME: Check server response instead
-                it.skip('should ignore failed variables for any run', function () {
+                it('should ignore failed variables for any run', function () {
                     var successSpy = sinon.spy(function (r) {
                         return r;
                     });
