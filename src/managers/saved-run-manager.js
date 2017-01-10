@@ -3,6 +3,8 @@
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
 
+var injectScopeFromSession = require('./strategy-utils').injectScopeFromSession;
+
 var SavedRunsManager = function (config) {
     var defaults = {
         scopeByGroup: true,
@@ -43,27 +45,20 @@ SavedRunsManager.prototype = {
         var param = $.extend(true, {}, otherFields, { saved: false, trashed: true });
         return this.mark(run, param);
     },
-    getRuns: function (variables, filter, options) {
-        var defaults = {
-            saved: true, 
-            trashed: false,
-        };
-
+    getRuns: function (variables, filter, modifiers) {
         var sm = new SessionManager();
         var session = sm.getSession(this.runService.getCurrentConfig());
-        if (this.options.scopeByGroup && session.groupName) {
-            defaults['scope.group'] = session.groupName;
-        }
-        if (this.options.scopeByUser && session.userId) {
-            defaults['user.id'] = session.userId;
-        }
-        var actingFilter = $.extend(true, {}, defaults, filter);
 
-        var opModifiers = {
+        var scopedFilter = injectScopeFromSession($.extend(true, {}, filter, {
+            saved: true, 
+            trashed: false,
+        }), session, this.options);
+
+        var opModifiers = $.extend(true, {}, {
             sort: 'created',
             direction: 'asc'
-        };
-        return this.runService.query(actingFilter, opModifiers).then(function (savedRuns) {
+        }, modifiers);
+        return this.runService.query(scopedFilter, opModifiers).then(function (savedRuns) {
             if (!variables || !variables.length) {
                 return savedRuns;
             }
