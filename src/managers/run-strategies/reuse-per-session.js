@@ -1,5 +1,5 @@
 /**
- * The `new-if-missing` strategy creates a new run when the current one is not in the browser cookie.
+ * The `reuse-per-session` strategy creates a new run when the current one is not in the browser cookie.
  * 
  * Using this strategy means that when end users navigate between pages in your project, or refresh their browsers, they will still be working with the same run.
  *
@@ -10,7 +10,9 @@
  * * Check the `sessionKey` cookie.
  *     * This cookie is set by the [Run Manager](../run-manager/) and configurable through its options. 
  *     * If the cookie exists, use the run id stored there. 
- *     * If the cookie does not exist, create a new run for this end user. 
+ *     * If the cookie does not exist, create a new run for this end user.
+ *
+ *  @alias:'new-if-missing'
  */
 
 'use strict';

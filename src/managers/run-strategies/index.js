@@ -5,8 +5,6 @@ var list = {
 
     'always-new': require('./always-new-strategy'),
     none: require('./none-strategy'),
-    baseline: require('../scenario-strategies/baseline-strategy'),
-    'reuse-last-unsaved': require('../scenario-strategies/reuse-last-unsaved'),
 
     multiplayer: require('./multiplayer-strategy'),
     'never-reuse': require('./always-new-strategy'),
