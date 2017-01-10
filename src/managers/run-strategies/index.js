@@ -1,16 +1,24 @@
 var list = {
     'conditional-creation': require('./conditional-creation-strategy'),
-    'new-if-initialized': require('./new-if-initialized-strategy'), //deprecated
-    'new-if-persisted': require('./new-if-persisted-strategy'), //deprecated
-    multiplayer: require('./multiplayer-strategy'),
-    'new-if-missing': require('./new-if-missing-strategy'),
+    'new-if-initialized': require('./deprecated/new-if-initialized-strategy'), //deprecated
+    'new-if-persisted': require('./deprecated/new-if-persisted-strategy'), //deprecated
+
     'always-new': require('./always-new-strategy'),
-    'persistent-single-player': require('./persistent-single-player-strategy'),
     none: require('./none-strategy'),
     baseline: require('../scenario-strategies/baseline-strategy'),
     'new-if-stepped': require('../scenario-strategies/last-unsaved'),
+
+    multiplayer: require('./multiplayer-strategy'),
+    'never-reuse': require('./always-new-strategy'),
+    'reuse-per-session': require('./reuse-per-session'),
+    'reuse-across-sessions': require('./reuse-across-sessions'),
     'reuse-last-initialized': require('./reuse-last-initialized'),
 };
+
+//Add back older aliases
+list['new-if-missing'] = list['reuse-per-session'];
+list['persistent-single-player'] = list['reuse-across-sessions'];
+
 
 module.exports = {
     /**

@@ -13,11 +13,11 @@ module.exports = function (grunt) {
             },
             files: {
                 'documentation/generated/strategies/index.html.md': [
+                    'src/managers/run-strategies/deprecated/new-if-persisted-strategy.js',
+                    'src/managers/run-strategies/deprecated/new-if-initialized-strategy.js',
                     'src/managers/run-strategies/always-new-strategy.js', 
-                    'src/managers/run-strategies/new-if-persisted-strategy.js',
-                    'src/managers/run-strategies/new-if-missing-strategy.js',
-                    'src/managers/run-strategies/new-if-initialized-strategy.js',
-                    'src/managers/run-strategies/persistent-single-player-strategy.js',
+                    'src/managers/run-strategies/reuse-per-session.js',
+                    'src/managers/run-strategies/reuse-across-sessions.js',
                     'src/managers/run-strategies/multiplayer-strategy.js',
                     'src/managers/run-strategies/none-strategy.js',
                 ],
