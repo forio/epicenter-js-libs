@@ -191,6 +191,21 @@
                         sessionStub.restore();
                     });
                 });
+                it('should not query by group name if told not to', function () {
+                    var srm = new SavedRunsManager({
+                        run: rs,
+                        scopeByGroup: false,
+                    });
+                    var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
+                        groupName: 'foo'
+                    });
+                    return srm.getRuns().then(function (runs) {
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['scope.group']).to.eql(undefined);
+                        sessionStub.restore();
+                    });
+
+                });
                 it('should query by user if session available', function () {
                     var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
                         userId: 'foo'
@@ -200,6 +215,21 @@
                         expect(args[0]['user.id']).to.eql('foo');
                         sessionStub.restore();
                     });
+                });
+                it('should not query by userid if told not to', function () {
+                    var srm = new SavedRunsManager({
+                        run: rs,
+                        scopeByUser: false,
+                    });
+                    var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
+                        userId: 'foo'
+                    });
+                    return srm.getRuns().then(function (runs) {
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['user.id']).to.eql(undefined);
+                        sessionStub.restore();
+                    });
+
                 });
             });
 
