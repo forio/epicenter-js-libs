@@ -1,5 +1,6 @@
 'use strict';
 var classFrom = require('../../util/inherit');
+var injectFiltersFromSession = require('../strategy-utils').injectFiltersFromSession;
 
 var Base = {};
 var BASELINE_NAME = 'baseline';
@@ -35,17 +36,12 @@ module.exports = classFrom(Base, {
     },
 
     getRun: function (runService, userSession, runIdInSession) {
-        var filter = { 
+        var filter = injectFiltersFromSession({ 
             saved: true, 
             trashed: false, //TODO remove this once EPICENTER-2500 is fixed
             name: BASELINE_NAME,
-        };
-        if (userSession && userSession.groupName) {
-            filter['scope.group'] = userSession.groupName;
-        }
-        if (userSession && userSession.userId) {
-            filter['user.id'] = userSession.userId;
-        }
+        }, userSession);
+
         var me = this;
         return runService.filter(filter, { 
             // startrecord: 0, //TODO: Uncomment when EPICENTER-2569 is fixed
