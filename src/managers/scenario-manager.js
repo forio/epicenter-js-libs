@@ -7,16 +7,19 @@ var defaults = {
     baselineRunName: 'Baseline',
 };
 
+var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
+var LastUnsavedStrategy = require('./scenario-strategies/reuse-last-unsaved');
+
 function ScenarioManager(config) {
     var serviceOptions = $.extend(true, {}, defaults, config);
 
     this.baseline = new RunManager({
-        strategy: 'baseline',
+        strategy: BaselineStrategy,
         sessionKey: 'sm-baseline-run',
         run: serviceOptions.run,
     });
     this.current = new RunManager({
-        strategy: 'new-if-stepped',
+        strategy: LastUnsavedStrategy,
         sessionKey: 'sm-current-run',
         run: serviceOptions.run,
     });
@@ -34,7 +37,7 @@ function ScenarioManager(config) {
         });
     };
 
-    //DIXME: This is too dependent on 'step' being available, make configurable
+    //FIXME: This is too dependent on 'step' being available, make configurable
     this.current.save = function (metadata, operations) {
         return me.current.getRun().then(function () {
             return me.current.run.do({ stepTo: 'end' });
