@@ -50,8 +50,8 @@ module.exports = classFrom(Base, {
         var filter = injectFiltersFromSession(this.options.flag, userSession);
         var me = this;
         return runService.filter(filter, { 
-            startrecord: 0,
-            endrecord: 0,
+            // startrecord: 0,  //TODO: Uncomment when EPICENTER-2569 is fixed
+            // endrecord: 0,
             sort: 'created', 
             direction: 'desc'
         }).then(function (runs) {

@@ -18,8 +18,8 @@
  */
 
 'use strict';
-var classFrom = require('../../util/inherit');
-var ConditionalStrategy = require('./conditional-creation-strategy');
+var classFrom = require('../../../util/inherit');
+var ConditionalStrategy = require('../conditional-creation-strategy');
 
 var __super = ConditionalStrategy.prototype;
 

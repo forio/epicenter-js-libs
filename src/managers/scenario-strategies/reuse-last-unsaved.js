@@ -8,6 +8,8 @@ var injectScopeFromSession = require('../strategy-utils').injectScopeFromSession
 var Base = {};
 module.exports = classFrom(Base, {
     constructor: function (options) {
+        var strategyOptions = options ? options.strategyOptions : {};
+        this.options = strategyOptions
     },
 
     reset: function (runService, userSession) {
@@ -41,8 +43,7 @@ module.exports = classFrom(Base, {
 
             var basedOnRunid = lastRun.id;
             var sa = new StateService();
-            //FIXME: Fix hard-coded 'stepto' assumption
-            return sa.clone({ runId: basedOnRunid, stopBefore: 'stepTo' }).then(function (response) {
+            return sa.clone({ runId: basedOnRunid, exclude: me.options.ignoreOperations }).then(function (response) {
                 return runService.load(response.run);
             }).then(function (run) {
                 //TODO remove this once EPICENTER-2500 is fixed

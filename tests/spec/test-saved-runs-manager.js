@@ -20,11 +20,14 @@
             server.respondWith('PATCH', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
-                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({
-                    price: 2,
-                }));
+            server.respondWith('GET', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/[^\/]*\/\?include=(.*)/, function (xhr, prefix, variable) {
+                if (variable === 'fail') {
+                    xhr.respond(400);
+                } else {
+                    xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ price: 2 }));
+                }
             });
+
             server.respondImmediately = true;
 
             rs = new RunService(runOptions);
@@ -58,10 +61,6 @@
                     expect(function () { new SavedRunsManager({ }); }).to.throw(Error);
                 });
             });
-        });
-
-        describe('User Session', function () {
-            //Test to make sure the right session ids are set
         });
 
         describe('#save', function () {
@@ -142,17 +141,9 @@
         });
 
         describe('#getRuns', function () {
-            var rs, queryStub, variableQuerySpy, srm;
+            var rs, queryStub, srm;
             beforeEach(function () {
                 rs = new F.service.Run(runOptions);
-                variableQuerySpy = sinon.spy(function (variables) {
-                    if (variables[0] === 'fail') {
-                        return $.Deferred().reject().promise();
-                    }
-                    return $.Deferred().resolve({
-                        price: 2
-                    }).promise();
-                });
                 queryStub = sinon.stub(rs, 'query', function (options) {
                     return $.Deferred().resolve([
                         { id: 'run1' },
@@ -188,12 +179,65 @@
                     ]);
                 });
             });
+
+            describe('User Session', function () {
+                it('should query by group name if session available', function () {
+                    var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
+                        groupName: 'foo'
+                    });
+                    return srm.getRuns().then(function (runs) {
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['scope.group']).to.eql('foo');
+                        sessionStub.restore();
+                    });
+                });
+                it('should not query by group name if told not to', function () {
+                    var srm = new SavedRunsManager({
+                        run: rs,
+                        scopeByGroup: false,
+                    });
+                    var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
+                        groupName: 'foo'
+                    });
+                    return srm.getRuns().then(function (runs) {
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['scope.group']).to.eql(undefined);
+                        sessionStub.restore();
+                    });
+
+                });
+                it('should query by user if session available', function () {
+                    var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
+                        userId: 'foo'
+                    });
+                    return srm.getRuns().then(function (runs) {
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['user.id']).to.eql('foo');
+                        sessionStub.restore();
+                    });
+                });
+                it('should not query by userid if told not to', function () {
+                    var srm = new SavedRunsManager({
+                        run: rs,
+                        scopeByUser: false,
+                    });
+                    var sessionStub = sinon.stub(srm.sessionManager, 'getSession').returns({
+                        userId: 'foo'
+                    });
+                    return srm.getRuns().then(function (runs) {
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['user.id']).to.eql(undefined);
+                        sessionStub.restore();
+                    });
+
+                });
+            });
+
             describe('Variables', function () {
-                //FIXME: Check server response instead
-                it.skip('should pass variables to variables service', function () {
-                    return srm.getRuns('Price', { foo: 'bar' }).then(function () {
-                        var args = variableQuerySpy.getCall(0).args;
-                        expect(args[0]).to.eql(['Price']);
+                it('should pass variables to variables service', function () {
+                    return srm.getRuns('Price', { foo: 'bar' }).then(function (res) {
+                        var req = server.requests[0];
+                        expect(req.url).to.eql('https://api.forio.com/v2/run/forio-dev/js-libs/run1/variables/?include=Price');
                     });
                 });
                 it('should add variables to response', function () {
@@ -204,8 +248,7 @@
                         ]);
                     });
                 });
-                //FIXME: Check server response instead
-                it.skip('should ignore failed variables for any run', function () {
+                it('should ignore failed variables for any run', function () {
                     var successSpy = sinon.spy(function (r) {
                         return r;
                     });

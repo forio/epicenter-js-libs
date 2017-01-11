@@ -4,7 +4,7 @@ var defaultRunOptions = {
     model: 'model.vmf',
 };
 var rm = new F.manager.RunManager({
-    strategy: 'new-if-stepped',
+    strategy: 'reuse-last-unsaved',
     run: defaultRunOptions
 });
 

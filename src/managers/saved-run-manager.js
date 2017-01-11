@@ -3,11 +3,15 @@
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
 
+var injectFiltersFromSession = require('./strategy-utils').injectFiltersFromSession;
+
 var SavedRunsManager = function (config) {
     var defaults = {
         scopeByGroup: true,
         scopeByUser: true,
     };
+
+    this.sessionManager = new SessionManager();
 
     var options = $.extend(true, {}, defaults, config);
     if (options.run) {
@@ -27,7 +31,7 @@ SavedRunsManager.prototype = {
         var rs;
         if (run instanceof RunService) {
             rs = run;
-        } else if (!(typeof Run === 'string')) {
+        } else if (run && (typeof run === 'string')) {
             var existingOptions = this.runService.getCurrentConfig();
             rs = new RunService($.extend(true, {}, existingOptions, { id: run }));
         } else {
@@ -43,32 +47,26 @@ SavedRunsManager.prototype = {
         var param = $.extend(true, {}, otherFields, { saved: false, trashed: true });
         return this.mark(run, param);
     },
-    getRuns: function (variables, filter, options) {
-        var defaults = {
+    getRuns: function (variables, filter, modifiers) {
+        var session = this.sessionManager.getSession(this.runService.getCurrentConfig());
+
+        var scopedFilter = injectFiltersFromSession($.extend(true, {}, filter, {
             saved: true, 
             trashed: false,
-        };
+        }), session, this.options);
 
-        var sm = new SessionManager();
-        var session = sm.getSession(this.runService.getCurrentConfig());
-        if (this.options.scopeByGroup && session.groupName) {
-            defaults['scope.group'] = session.groupName;
-        }
-        if (this.options.scopeByUser && session.userId) {
-            defaults['user.id'] = session.userId;
-        }
-        var actingFilter = $.extend(true, {}, defaults, filter);
-
-        var opModifiers = {
+        var opModifiers = $.extend(true, {}, {
             sort: 'created',
             direction: 'asc'
-        };
-        return this.runService.query(actingFilter, opModifiers).then(function (savedRuns) {
+        }, modifiers);
+        var me = this;
+        return this.runService.query(scopedFilter, opModifiers).then(function (savedRuns) {
             if (!variables || !variables.length) {
                 return savedRuns;
             }
             var promises = savedRuns.map(function (run) {
-                var rs = new RunService(run);
+                var config = $.extend(true, {}, me.runService.getCurrentConfig(), run);
+                var rs = new RunService(config);
                 var prom = rs.variables().query([].concat(variables)).then(function (variables) {
                     run.variables = variables;
                     return run;
