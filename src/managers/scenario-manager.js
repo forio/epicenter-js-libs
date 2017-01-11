@@ -25,18 +25,22 @@ function ScenarioManager(config) {
             initOperation: opts.advanceOperation
         }
     });
+
+    var ignoreOperations = ([].concat(opts.advanceOperation)).map(function (opn) {
+        return Object.keys(opn)[0];
+    });
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
         sessionKey: 'sm-current-run',
         run: opts.run,
+        strategyOptions: {
+            ignoreOperations: ignoreOperations
+        }
     });
 
-    var ignoreOperations = ([].concat(opts.advanceOperation)).map(function (opn) {
-        return opn.name;
-    });
+    
     this.savedRuns = new SavedRunsManager($.extend(true, {}, opts.savedRuns, {
         run: opts.run,
-        ignoreOperations: ignoreOperations
     }));
 
     var origGetRuns = this.savedRuns.getRuns;

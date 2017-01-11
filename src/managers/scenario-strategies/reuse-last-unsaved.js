@@ -8,7 +8,8 @@ var injectScopeFromSession = require('../strategy-utils').injectScopeFromSession
 var Base = {};
 module.exports = classFrom(Base, {
     constructor: function (options) {
-        this.options = $.extend(true, {}, options);
+        var strategyOptions = options ? options.strategyOptions : {};
+        this.options = strategyOptions
     },
 
     reset: function (runService, userSession) {
