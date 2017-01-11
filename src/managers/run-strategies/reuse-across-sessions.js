@@ -9,7 +9,7 @@
  *     * If there are no runs (either in memory or in the database), create a new one.
  *     * If there are runs, take the latest (most recent) one.
  *
- * @alias: persistent-single-player
+ * @name persistent-single-player
  */
 
 'use strict';

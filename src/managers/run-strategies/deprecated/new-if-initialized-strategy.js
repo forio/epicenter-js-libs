@@ -12,6 +12,8 @@
  *      * If the run's `initialized` field is `true`, create a new run.
  *      * Otherwise, use the existing run.
  *  * If the cookie does not exist, create a new run for this end user.
+ *  
+ *  @deprecated Consider using `reuse-last-initialized` instead
  */
 
 'use strict';

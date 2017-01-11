@@ -15,6 +15,8 @@
  *      * If the run is in memory, use the run.
  *      * If the run is only persisted (and not still in memory), create a new run for this end user.
  *      * If the cookie does not exist, create a new run for this end user.
+ *
+ * @deprecated The run-service now sets a header to automatically bring back runs into memory
  */
 
 'use strict';

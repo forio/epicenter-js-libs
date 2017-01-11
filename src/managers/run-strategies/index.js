@@ -3,17 +3,17 @@ var list = {
     'new-if-initialized': require('./deprecated/new-if-initialized-strategy'), //deprecated
     'new-if-persisted': require('./deprecated/new-if-persisted-strategy'), //deprecated
 
-    'always-new': require('./always-new-strategy'),
     none: require('./none-strategy'),
 
     multiplayer: require('./multiplayer-strategy'),
-    'never-reuse': require('./always-new-strategy'),
+    'reuse-never': require('./reuse-never'),
     'reuse-per-session': require('./reuse-per-session'),
     'reuse-across-sessions': require('./reuse-across-sessions'),
     'reuse-last-initialized': require('./reuse-last-initialized'),
 };
 
 //Add back older aliases
+list['always-new'] = list['reuse-never'];
 list['new-if-missing'] = list['reuse-per-session'];
 list['persistent-single-player'] = list['reuse-across-sessions'];
 

@@ -12,7 +12,7 @@
  *     * If the cookie exists, use the run id stored there. 
  *     * If the cookie does not exist, create a new run for this end user.
  *
- * @alias:'new-if-missing'
+ * @name new-if-missing
  */
 
 'use strict';
