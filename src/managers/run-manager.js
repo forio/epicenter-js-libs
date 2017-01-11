@@ -189,6 +189,7 @@ RunManager.prototype = {
      *      });
      *
      * **Parameters**
+     * @param {Object} options (Optional) run-creation params to pass in if needed
      * @return {Promise}
      */
     reset: function (options) {

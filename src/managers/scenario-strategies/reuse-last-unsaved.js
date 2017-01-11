@@ -9,7 +9,7 @@ var Base = {};
 module.exports = classFrom(Base, {
     constructor: function (options) {
         var strategyOptions = options ? options.strategyOptions : {};
-        this.options = strategyOptions
+        this.options = strategyOptions;
     },
 
     reset: function (runService, userSession) {
