@@ -13,7 +13,9 @@ var LastUnsavedStrategy = require('./scenario-strategies/reuse-last-unsaved');
 
 function ScenarioManager(config) {
     var opts = $.extend(true, {}, defaults, config);
-
+    if (config && config.advanceOperation) {
+        opts.advanceOperation = config.advanceOperation; //jquery.extend does a poor job trying to merge arrays
+    }
     this.baseline = new RunManager({
         strategy: BaselineStrategy,
         sessionKey: 'sm-baseline-run',
@@ -46,7 +48,6 @@ function ScenarioManager(config) {
         });
     };
 
-    //FIXME: This is too dependent on 'step' being available, make configurable
     this.current.save = function (metadata, operations) {
         return me.current.getRun().then(function () {
             return me.current.run.serial(opts.advanceOperation);

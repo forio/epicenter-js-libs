@@ -8,6 +8,7 @@
     var runOptions = {
         model: 'model.eqn',
         account: 'forio-dev',
+        id: 'good',
         project: 'js-libs'
     };
 
@@ -28,7 +29,8 @@
             server.respondWith('PATCH', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
-            server.respondWith('POST', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+
+            server.respondWith('POST', /(.*)\/run\/[^\/]*\/[^\/]*\/$/, function (xhr, id) {
                 var resp = {
                     id: '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
                     model: 'model.vmf',
@@ -40,7 +42,13 @@
                 };
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
             });
-
+            server.respondWith('POST', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/operations\/(.*)\//,
+                function (xhr, prefix, operation) {
+                    xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({
+                        name: operation, result: operation
+                    }));
+                });
+            
             // General GET
             server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
@@ -66,6 +74,65 @@
                     var config = sm.baseline.run.getCurrentConfig();
                     expect(config.account).to.equal(runOptions.account);
                     expect(config.project).to.equal(runOptions.project);
+                });
+            });
+            describe('on getRun', function () {
+                it('should return existing runs if it finds one', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var sampleBaseline = {
+                        id: 'run1',
+                        name: 'baseline',
+                        saved: true
+                    };
+                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([
+                        sampleBaseline
+                    ]).promise());
+                    var sm = new ScenarioManager({ run: rs });
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(run).to.eql(sampleBaseline);
+                    });
+                });
+                it('should create & step if no existing runs found', function () {
+                    var rs = new F.service.Run(runOptions);
+                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([]).promise());
+                    var sm = new ScenarioManager({ run: rs });
+                    var createStub = sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                    var serialStub = sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(createStub).to.have.been.calledOnce;
+                        expect(serialStub).to.have.been.calledOnce;
+                        expect(serialStub).to.have.been.calledWith([{ stepTo: 'end' }]);
+                    });
+                });
+                it('should allow changing the initial operation', function () {
+                    var rs = new F.service.Run(runOptions);
+                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([]).promise());
+                    var sm = new ScenarioManager({ 
+                        run: rs,
+                        advanceOperation: [{ foo: 'bar' }]
+                    });
+                    sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                    var serialStub = sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(serialStub).to.have.been.calledWith([{ foo: 'bar' }]);
+                    });
+                });
+                it('should mark as saved', function () {
+                    var rs = new F.service.Run(runOptions);
+                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([]).promise());
+                    var sm = new ScenarioManager({ 
+                        run: rs,
+                        baselineRunName: 'batman'
+                    });
+                    sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                    sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
+                    var saveStub = sinon.stub(sm.baseline.run, 'save').returns($.Deferred().resolve([]).promise());
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(saveStub).to.have.been.calledOnce;
+                        var args = saveStub.getCall(0).args;
+                        expect(args[0].name).to.eql('batman');
+                        expect(args[0].saved).to.eql(true);
+                    });
                 });
             });
         });
