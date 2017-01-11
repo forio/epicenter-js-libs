@@ -1,10 +1,19 @@
 'use strict';
 
 var RunManager = require('./run-manager');
-var SavedRunsManager = require('./saved-run-manager');
+var SavedRunsManager = require('./saved-runs-manager');
 
 var defaults = {
+    /**
+     * Name of the baseline run
+     * @type {String}
+     */
     baselineRunName: 'Baseline',
+
+    /**
+     * Operation to perform on each run to indicate that it's complete
+     * @type {Array}
+     */
     advanceOperation: [{ stepTo: 'end' }]
 };
 
@@ -16,6 +25,11 @@ function ScenarioManager(config) {
     if (config && config.advanceOperation) {
         opts.advanceOperation = config.advanceOperation; //jquery.extend does a poor job trying to merge arrays
     }
+    
+    /**
+     * A Run Manager instance with a strategy which generates a new baseline if none exists
+     * @type {RunManager}
+     */
     this.baseline = new RunManager({
         strategy: BaselineStrategy,
         sessionKey: 'sm-baseline-run',
@@ -26,19 +40,10 @@ function ScenarioManager(config) {
         }
     });
 
-    var ignoreOperations = ([].concat(opts.advanceOperation)).map(function (opn) {
-        return Object.keys(opn)[0];
-    });
-    this.current = new RunManager({
-        strategy: LastUnsavedStrategy,
-        sessionKey: 'sm-current-run',
-        run: opts.run,
-        strategyOptions: {
-            ignoreOperations: ignoreOperations
-        }
-    });
-
-    
+    /**
+     * Instance of a SavedRunsManager
+     * @type {SavedRunsManager}
+     */
     this.savedRuns = new SavedRunsManager($.extend(true, {}, opts.savedRuns, {
         run: opts.run,
     }));
@@ -52,7 +57,28 @@ function ScenarioManager(config) {
         });
     };
 
-    this.current.save = function (metadata, operations) {
+    var ignoreOperations = ([].concat(opts.advanceOperation)).map(function (opn) {
+        return Object.keys(opn)[0];
+    });
+    /**
+     * A Run Manager instance with a strategy which always returns the last un-saved runs; 'current' runs are typically used for setting decisions in Run Comparison projects
+     * @type {RunManager}
+     */
+    this.current = new RunManager({
+        strategy: LastUnsavedStrategy,
+        sessionKey: 'sm-current-run',
+        run: opts.run,
+        strategyOptions: {
+            ignoreOperations: ignoreOperations
+        }
+    });
+
+    /**
+     * Saves the current run and applies the `advance` operation on it
+     * @param  {Object} metadata   metadata to save, for e.g., the run name
+     * @return {Promise}
+     */
+    this.current.saveAndAdvance = function (metadata) {
         return me.current.getRun().then(function () {
             return me.current.run.serial(opts.advanceOperation);
         }).then(function () {

@@ -217,7 +217,7 @@
                     });
                 });
             });
-            describe('#save', function () {
+            describe('#saveAndAdvance', function () {
                 it('should update the current run', function () {
                     var rs = new F.service.Run(runOptions);
                     var sampleRun = {
@@ -232,7 +232,7 @@
                     });
                     var saveStub = sinon.stub(sm.savedRuns, 'save').returns($.Deferred().resolve({}).promise());
                     sinon.stub(sm.current, 'getRun').returns($.Deferred().resolve({ id: 'foo' }).promise());
-                    return sm.current.save({ name: 'robin' }).then(function (run) {
+                    return sm.current.saveAndAdvance({ name: 'robin' }).then(function (run) {
                         expect(serialStub).to.have.been.calledOnce;
                         expect(serialStub).to.have.been.calledWith([{ foo: 'bar' }]);
 
