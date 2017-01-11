@@ -217,13 +217,44 @@
                     });
                 });
             });
+            describe('#save', function () {
+                it('should update the current run', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var sampleRun = {
+                        id: 'run1',
+                        name: 'food',
+                        saved: true
+                    };
+                    var serialStub = sinon.stub(rs, 'serial').returns($.Deferred().resolve([sampleRun]).promise());
+                    var sm = new ScenarioManager({ 
+                        run: rs,
+                        advanceOperation: [{ foo: 'bar' }]
+                    });
+                    var saveStub = sinon.stub(sm.savedRuns, 'save').returns($.Deferred().resolve({}).promise());
+                    sinon.stub(sm.current, 'getRun').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                    return sm.current.save({ name: 'robin' }).then(function (run) {
+                        expect(serialStub).to.have.been.calledOnce;
+                        expect(serialStub).to.have.been.calledWith([{ foo: 'bar' }]);
+
+                        expect(saveStub).to.have.been.calledOnce;
+                        var args = saveStub.getCall(0).args;
+                        expect(args[1].name).to.eql('robin');
+                    });
+                });
+            });
         });
         describe('saved runs', function () {
             it('should create a new saved run manager', function () {
                 var sm = new ScenarioManager({ run: runOptions });
                 expect(sm.savedRuns).to.be.instanceof(SavedRunsManager);
             });
+            it('should wait till baseline is done before creating a new run', function () {
+                var sm = new ScenarioManager({ run: runOptions });
+                var getBaselineStub = sinon.stub(sm.baseline, 'getRun').returns($.Deferred().resolve({ id: 3 }).promise());
+                return sm.savedRuns.getRuns().then(function () {
+                    expect(getBaselineStub).to.have.been.calledOnce;
+                });
+            });
         });
-       
     });
 }());
