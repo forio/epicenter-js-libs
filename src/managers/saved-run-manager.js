@@ -31,7 +31,7 @@ SavedRunsManager.prototype = {
         var rs;
         if (run instanceof RunService) {
             rs = run;
-        } else if (!(typeof Run === 'string')) {
+        } else if (run && (typeof run === 'string')) {
             var existingOptions = this.runService.getCurrentConfig();
             rs = new RunService($.extend(true, {}, existingOptions, { id: run }));
         } else {
