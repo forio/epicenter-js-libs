@@ -1,4 +1,15 @@
 
+<a name="2.1.0"></a>
+### 2.1.0 (2017-01-11)
+
+This release introduces the WebSocket protocol of the channel manager.
+
+* **Improvement**: Epicenter.js now supports the websockets protocol for the cometd library used in the Channel Manager. 
+	* By default, websocket support is enabled. You can change this in the Channel Manager configuration options.
+	* When websocket support is enabled, the Channel Manager will attempt to connect using websockets, and if it cannot, will fall back to using the long poll transport.
+* **Bug fix**: Epicenter.js now gets its protocol (`http` vs. `https`) from the URL of the page it is being run on.
+* **Internal**: The automated test framework is updated; it no longer relies on `bower` and now supports Mac OS X through Sierra.
+
 
 <a name="2.0.1"></a>
 ### 2.0.1 (2016-11-18)
