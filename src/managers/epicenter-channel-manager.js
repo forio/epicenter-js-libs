@@ -52,6 +52,11 @@ var getFromSessionOrError = function (value, sessionKeyName, settings) {
     }
     return value;
 };
+
+var isPresenceData = function (payload) {
+    return payload.data && payload.data.type === 'user' && payload.data.user;
+};
+
 var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
     constructor: function (options) {
@@ -158,7 +163,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var oldsubs = channel.subscribe;
         channel.subscribe = function (topic, callback, context, options) {
             var callbackWithoutPresenceData = function (payload) {
-                if (payload.data && payload.data.type !== 'user') {
+                if (!isPresenceData(payload)) {
                     callback.call(context, payload);
                 }
             };
@@ -305,7 +310,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var oldsubs = channel.subscribe;
         channel.subscribe = function (topic, callback, context, options) {
             var callbackWithOnlyPresenceData = function (payload) {
-                if (payload.data && payload.data.type === 'user' && payload.data.user) {
+                if (isPresenceData(payload)) {
                     callback.call(context, payload);
                 }
             };

@@ -71,7 +71,7 @@ $(function () {
         pr.getStatus().then(function (status) {
             $('#status').html(
                 status.map(function (u) {
-                    return u.userId + ' (' + u.ttlSeconds + ') ' + u.message;
+                    return u.userName + ' - ' + u.userId + ' (' + u.ttlSeconds + ') ' + u.message;
                 }).join(', '));
         });
     }
@@ -175,5 +175,12 @@ $(function () {
         evt.preventDefault();
         pc2.unsubscribe(pcToken2);
         getStatus();
+    });
+
+    cm.on('connect', function () {
+        $('#channel-status').html('connected');
+    });
+    cm.on('disconnect', function () {
+        $('#channel-status').html('disconnected');
     });
 });

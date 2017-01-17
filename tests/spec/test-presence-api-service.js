@@ -28,7 +28,7 @@
 
         describe('markOnline', function () {
             it('should call POST on the Presence API with the userId parameter and the token', function () {
-                createPresenceAdapter({ token: '123' })
+                createPresenceAdapter({ token: '123', groupName: 'test-group' })
                     .markOnline('abc123');
 
                 var req = server.requests.pop();
@@ -48,7 +48,7 @@
 
         describe('markOffline', function () {
             it('should call Delete on the Presence API with the userId parameter and the token', function () {
-                createPresenceAdapter({ token: '123' })
+                createPresenceAdapter({ token: '123', groupName: 'test-group' })
                     .markOffline('abc123');
 
                 var req = server.requests.pop();

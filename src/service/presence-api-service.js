@@ -7,7 +7,9 @@
  * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/).
  *
  *      var pr = new F.service.Presence({ token: 'user-or-project-access-token' });
- *      pr.get({ account: 'acme', project: 'sample' });
+ *      pr.markOnline('example-userId')
+ *      pr.markOffline('example-userId')
+ *      pr.getStatus();
  */
 
 var ConfigService = require('./configuration-service');
@@ -15,6 +17,7 @@ var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
 var apiEndpoint = 'presence';
 var ChannelManager = require('../managers/epicenter-channel-manager');
+var Member = require('../service/member-api-adapter');
 module.exports = function (config) {
     var defaults = {
         /**
@@ -30,7 +33,7 @@ module.exports = function (config) {
         project: undefined,
 
         /**
-         * Epicenter group id. Defaults to a blank string. Note that this is the group *name*, not the group *id*. If left blank taken from the session manager.
+         * Epicenter group name. Defaults to a blank string. Note that this is the group *name*, not the group *id*. If left blank taken from the session manager.
          * @type {string}
          */
         groupName: undefined,
@@ -65,72 +68,89 @@ module.exports = function (config) {
 
     var getFinalParams = function (params) {
         if (typeof params === 'object') {
-            return $.extend(true, serviceOptions, params);
+            return $.extend(true, {}, serviceOptions, params);
         }
         return serviceOptions;
     };
 
     var publicAPI = {
-        markOnline: function (params, options) {
+        markOnline: function (userId, options) {
             options = options || {};
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.groupName) {
+            var isString = typeof userId === 'string';
+            var objParams = getFinalParams(userId);
+            if (!objParams.groupName && !options.groupName) {
                 throw new Error('No groupName specified.');
             }
-            var userId = isString ? params : objParams.userId;
-            var groupName = objParams.groupName;
-            var httpOptions = $.extend(true, serviceOptions,
-                options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + urlConfig.accountPath + '/' + urlConfig.projectPath + '/' + groupName + '/' + userId }
+            userId = isString ? userId : objParams.userId;
+            var groupName = options.groupName || objParams.groupName;
+            var httpOptions = $.extend(true, {}, serviceOptions, options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId }
             );
             return http.post({ message: 'online' }, httpOptions);
         },
 
-        markOffline: function (params, options) {
+        markOffline: function (userId, options) {
             options = options || {};
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.groupName) {
+            var isString = typeof userId === 'string';
+            var objParams = getFinalParams(userId);
+            if (!objParams.groupName && !options.groupName) {
                 throw new Error('No groupName specified.');
             }
-            var userId = isString ? params : objParams.userId;
-            var groupName = objParams.groupName;
-            var httpOptions = $.extend(true, serviceOptions,
-                options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + urlConfig.accountPath + '/' + urlConfig.projectPath + '/' + groupName + '/' + userId }
+            userId = isString ? userId : objParams.userId;
+            var groupName = options.groupName || objParams.groupName;
+            var httpOptions = $.extend(true, {}, serviceOptions, options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId }
             );
             return http.delete({}, httpOptions);
         },
 
-        getStatus: function (params, options) {
+        getStatus: function (groupName, options) {
             options = options || {};
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.groupName) {
+            var isString = typeof groupName === 'string';
+            var objParams = getFinalParams(groupName);
+            if (!groupName && !objParams.groupName) {
                 throw new Error('No groupName specified.');
             }
-            var groupName = isString ? params : objParams.groupName;
-            var httpOptions = $.extend(true, serviceOptions,
-                options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + urlConfig.accountPath + '/' + urlConfig.projectPath + '/' + groupName }
+            groupName = groupName || objParams.groupName;
+            var httpOptions = $.extend(true, {}, serviceOptions, options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + groupName }
             );
-            return http.get({}, httpOptions);
+            if (!isString) {
+                var dfd = $.Deferred();
+                var m = new Member();
+                m.getGroupDetails(objParams.groupId).then(function (group) {
+                    var members = group.members;
+                    http.get({}, httpOptions).then(function (status) {
+                        dfd.resolve(status.map(function (onlineUser) {
+                            var user = members.find(function (m) {
+                                return m.userId === onlineUser.userId;
+                            });
+                            if (user) {
+                                onlineUser.userName = user.userName;
+                                onlineUser.firstName = user.firstName;
+                                onlineUser.lastName = user.lastName;
+                            }
+                            return onlineUser;
+                        }));
+                    });
+                });
+                return dfd.promise();
+            } else {
+                return http.get({}, httpOptions);
+            }
         },
 
-        getChannel: function (params, options) {
+        getChannel: function (groupName, options) {
             options = options || {};
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
+            var isString = typeof groupName === 'string';
+            var objParams = getFinalParams(groupName);
             if (!isString && !objParams.groupName) {
                 throw new Error('No groupName specified.');
             }
-            var groupName = isString ? params : objParams.groupName;
+            groupName = isString ? groupName : objParams.groupName;
             var cm = new ChannelManager(options);
             return cm.getPresenceChannel(groupName);
         }
-
-
     };
 
     $.extend(this, publicAPI);

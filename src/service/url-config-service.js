@@ -102,7 +102,7 @@ var UrlConfigService = function (config) {
         }()),
 
         getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data', 'file'];
+            var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
 
             if (api === 'config') {
                 // var base = options.isLocalhost() ? '' : 
