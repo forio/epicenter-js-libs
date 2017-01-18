@@ -8,13 +8,14 @@ module.exports = {
         };
         var opts = $.extend(true, {}, defaults, options);
 
+        var filter = $.extend(true, {}, currentFilter);
         if (opts.scopeByGroup && session && session.groupName) {
-            currentFilter['scope.group'] = session.groupName;
+            filter['scope.group'] = session.groupName;
         }
         if (opts.scopeByUser && session && session.userId) {
-            currentFilter['user.id'] = session.userId;
+            filter['user.id'] = session.userId;
         }
-        return currentFilter;
+        return filter;
     },
 
     injectScopeFromSession: function (currentParams, session) {
