@@ -30,8 +30,32 @@ module.exports = {
      * @param  {String} strategyName Name of strategy to get
      * @return {Function}              Strategy function
      */
-    get: function (strategyName) {
+    byName: function (strategyName) {
         return list[strategyName];
+    },
+
+    getBestStrategy: function (options) {
+        var strategy = options.strategy;
+        if (!strategy) {
+            if (options.strategyOptions && options.strategyOptions.initOperation) {
+                strategy = 'reuse-last-initialized';
+            } else {
+                strategy = 'reuse-per-session';
+            }
+        }
+
+        var StrategyCtor = typeof strategy === 'function' ? strategy : this.byName(strategy);
+        if (!StrategyCtor) {
+            throw new Error('Specified run creation strategy was invalid:', strategy);
+        }
+
+        var strategyInstance = new StrategyCtor(options);
+        if (!strategyInstance.getRun || !strategyInstance.reset) {
+            throw new Error('All strategies should implement a `getRun` and `reset` interface', options.strategy);
+        }
+        strategyInstance.requiresAuth = StrategyCtor.requiresAuth;
+
+        return strategyInstance;
     },
 
     /**

@@ -51,6 +51,7 @@
 'use strict';
 var strategies = require('./run-strategies');
 var specialOperations = require('./special-operations');
+
 var RunService = require('../service/run-api-service');
 var SessionManager = require('../store/session-manager');
 
@@ -86,12 +87,6 @@ function setRunInSession(sessionKey, runid, sessionManager) {
 
 var defaults = {
     sessionKey: keyNames.STRATEGY_SESSION_KEY,
-
-    /**
-     * Run creation strategy for when to create a new run and when to reuse an end user's existing run. See [Run Manager Strategies](../strategies/) for details. Defaults to `new-if-initialized`.
-     * @type {String}
-     */
-    strategy: 'new-if-missing'
 };
 
 function RunManager(options) {
@@ -106,17 +101,7 @@ function RunManager(options) {
     }
     patchRunService(this.run, this);
 
-    var StrategyCtor = typeof this.options.strategy === 'function' ? this.options.strategy : strategies.get(this.options.strategy);
-    if (!StrategyCtor) {
-        throw new Error('Specified run creation strategy was invalid:', this.options.strategy);
-    }
-    var strategy = new StrategyCtor(this.options);
-    if (!strategy.getRun || !strategy.reset) {
-        throw new Error('All strategies should implement a `getRun` and `reset` interface', this.options.strategy);
-    }
-    strategy.requiresAuth = StrategyCtor.requiresAuth;
-    this.strategy = strategy;
-
+    this.strategy = strategies.getBestStrategy(this.options);
     this.sessionManager = new SessionManager(this.options);
 }
 
