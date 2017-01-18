@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * See integration-test-scenario-manager for usage examples
+ */
 var RunManager = require('./run-manager');
 var SavedRunsManager = require('./saved-runs-manager');
 

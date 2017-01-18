@@ -1,7 +1,30 @@
+<a name="2.2.0"></a>
+### 2.2.0 
+
+This is one of our biggest releases of EpicenterJS in a while, and comes with a host of changes especially to `RunManager` and `run strategies`. This also adds a new `ScenarioManager` for working with time-based projects involving run-comparisons.
+
+## Consolidating strategies
+Over time we added a lot of strategies to EpicenterJS to cover different use-cases; over time, as our platform grew some of those strategies had been made redundant and just contributed to making the choice of which strategy to use harder. We're addressing this with some efficiency and usability improvements across strategies, namely:
+
+### Renamed Strategies
+The following strategies have been renamed for clarity:
+- `persistent-single-player` has been renamed to `reuse-across-sessions`
+- `always-new` has been renamed to `reuse-never`
+- `new-if-missing` has been renamed to `reuse-per-session`
+
+The older names will continue to work, but may be removed at a future release.
+
+### Deprecated strategies
+The following strategies are now considered deprecated. 
+- new-if-initialized  (All runs now default to being initialized by default making this redundant)
+- new-if-persisted (The run-service now sets a header to automatically bring back runs into memory)
+
+You can still use them, but they may not accomplish what you expect and will be removed in a later release.
+
 ### New 'reuse-last-initialized' strategy
 This release adds a new `reuse-last-initialized` strategy. This is intended to be a more flexible replacement for the `new-if-initialized` strategy (which is now deprecated).
 
-#####Example use-cases:
+####Example use-cases:
 - You have a time-based model and always want the run you're operating on to be at step 10
 ```js
     var rm = new F.manager.RunManager({
@@ -16,8 +39,16 @@ This release adds a new `reuse-last-initialized` strategy. This is intended to b
 
 `strategyOptions` is a field you can generally use to pass options to different strategies; while `reuse-last-initialized` is currently the only strategy which uses it, you can still use this field while registering custom strategies. 
 
-###Run Manager changes
-#### `getRun` allows populating run with variables
+### Summary
+All this consolidation comes with the benefit of deciding what strategy to use easier than ever. i.e.,
+- `reuse-per-session`: You re-use the same run until your each time you use the authentication manager to log-out, upon which you get a new run the next time you log back in. Useful for projects designed to be completed in a single session.
+- `reuse-across-sessions`: You re-use the same run until it's explicitly reset. Useful for projects designed to be played across a multiple sessions.
+- `reuse-never`: You get a new run each time you refresh the page.
+- `multiplayer`: the only strategy available for multiplayer projects.
+
+
+##Run Manager changes
+### `getRun` allows populating run with variables
 `getRun` now takes in 'variables' as an argument; if provided it'll populate the run it gets with the provided variables. 
 
 ```js
@@ -28,10 +59,10 @@ This release adds a new `reuse-last-initialized` strategy. This is intended to b
 
 Note: The `getRun` method will not throw an error if you try to get a variable which doesn't exist; in this case the variables list will just be empty, and any errors will be logged to the console.
 
-#### Better validation
+### Better validation
 RunManager now catches common errors like passing in wrong strategy names, or missing run options.
 
-#### More context available for strategy implementations
+### More context available for strategy implementations
 The original function of the Run Manager was to just find the right strategy and call it, leaving all the 'heavy lifting' of authentication etc to each individual strategy. Now the run-manager does more work upfront and just passes in the appropriate information to each strategy, namely:
 
 - Each strategy is mandated to have a `#getRun` and `#reset` function; these functions were initially called by the run manager with no arguments, but now their signature is:
@@ -60,11 +91,18 @@ reset: function (runService, userSession){}
 - Each strategy can register itself as requiring authentication or not (see next section for how to register); if a strategy does so the RunManager takes care of ensuring there's a valid user session before any of the methods on the strategy are called, moving the responsibility from the strategy to the RunManager. The strategy can still opt to handle this itself by not declaring 'requiresAuth', and do it's own validation of the 'user session' object which will be passed to it's #getRun and #reset methods.
 
 
-#### F.manager.RunManager.strategies
+### F.manager.RunManager.strategies
 You can access a list of available strategies via `F.manager.RunManager.strategies`. 
 This mirrors getting it through `F.manager.strategy` - this endpoint is now considered **Deprecated** and may be removed in a future release.
 
 This interface now introduces a new way to 'register' named run strategies for use with the Run Manager. <See jsdocs for strategies/index.js for more info>. Note you can still by-pass registering by calling the RunManager with a function, i.e., `new F.manager.RunManager({ strategy: function(){}})`, so this is a backwards compatible change which just additionally allows naming.  
+
+## Scenario Manager
+This release introduces a new Scenario Manager, accessible as `F.manager.ScenarioManager`. This is mostly useful for time-based models (Vensim/Stella/Powersim/SimLang), but can be adapted to working with other languages as well.
+
+See individual Scenario Manager docs and examples for more details [TODO: LINK HERE ONCE WE HAVE GOOD JSDOCS]
+
+
 
 ### Bug fixes
 #### Run Manager's current instance of the run is always valid/up-to-date.
@@ -78,7 +116,7 @@ The 'current run service' of the run manager can be access through `rm.run`; how
 ```
 
 ### `runService.query` and `runService.filter` return empty arrays for no results.
-Due to a quirk in the platform `runService.query` used to return an array of runs if it found any, or an empty _Object_ ({}), if none existed. They now correctly return empty arrays instead.
+Due to a quirk in the platform `runService.query` used to return an array of runs if it found any, or an empty _Object_ ({}), if none existed. They now correctly return empty arrays instead. This may be a **Breaking Change** if you were relying on the older behavior.
 
 <a name="2.0.1"></a>
 ### 2.0.1 (2016-11-18)
