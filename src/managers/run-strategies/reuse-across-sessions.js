@@ -43,7 +43,7 @@ var Strategy = classFrom(IdentityStrategy, {
             });
     },
 
-    getRun: function (runService, userSession, runIdInSession, options) {
+    getRun: function (runService, userSession, runSession, options) {
         var filter = injectFiltersFromSession(this.options.filter, userSession);
         var me = this;
         return runService.filter(filter, { 
