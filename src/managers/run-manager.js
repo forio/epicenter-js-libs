@@ -78,10 +78,10 @@ function patchRunService(service, manager) {
     return service;
 }
 
-function setRunInSession(sessionKey, runid, sessionManager) {
+function setRunInSession(sessionKey, run, sessionManager) {
     if (sessionKey) {
-        //TODO: Put the entire  runobject in session? This'll help things like the baseline strategy determine if it's good enough without making an ajax call
-        sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: runid }));
+        delete run.variables;
+        sessionManager.getStore().set(sessionKey, JSON.stringify(run));
     }
 }
 
@@ -131,8 +131,14 @@ RunManager.prototype = {
     getRun: function (variables, options) {
         var me = this;
         var sessionStore = this.sessionManager.getStore();
-        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
-        var runid = runSession && runSession.runId;
+
+        var sessionContents = sessionStore.get(this.options.sessionKey);
+        var runSession = JSON.parse(sessionContents || '{}');
+        
+        if (runSession.runId) {
+            //EpiJS < 2.2 used runId as key, so maintain comptaibility. Remove at some future date (Summer `17?)
+            runSession.id = runSession.runId;
+        }
 
         var authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
@@ -140,9 +146,9 @@ RunManager.prototype = {
             return $.Deferred().reject('No user-session available').promise();
         }
         return this.strategy
-                .getRun(this.run, authSession, runid, options).then(function (run) {
+                .getRun(this.run, authSession, runSession, options).then(function (run) {
                     if (run && run.id) {
-                        setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
+                        setRunInSession(me.options.sessionKey, run, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
 
                         if (variables && variables.length) {

@@ -71,10 +71,10 @@ The original function of the Run Manager was to just find the right strategy and
  + Gets the 'correct' run (the definition of 'currect' depends on strategy implementation)
  + @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
  + @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
- + @param  {String} runIdInSession the RunManager stores the 'last accessed' run in a cookie;  this refers to the last-used runid
+ + @param  {Object} runSession the RunManager serializes the 'last accessed' run in a cookie and provides it each time getRun is called
  + @return {Promise}             
  */
-getRun: function (runService, userSession, runIdInSession){}
+getRun: function (runService, userSession, runSession){}
 
 
 /**
@@ -86,7 +86,7 @@ getRun: function (runService, userSession, runIdInSession){}
 reset: function (runService, userSession){}
 ```
 
-- The runid returned by the `#getRun` method is now stored in a session by the run-manager, taking over the burden of session management from the individual strategies. This runid is provided as a parameter to next call to strategy.getRun; the strategy can opt to validate this runid and return it or ignore it altogether depending on it's goal.
+- The run returned by the `#getRun` method is now serialized and stored in a session by the run-manager, taking over the burden of session management from the individual strategies. This run is provided as a parameter to next call to strategy.getRun; the strategy can opt to validate this run (based on runid or any other parameters) and return it or ignore it altogether depending on it's goal.
 
 - Each strategy can register itself as requiring authentication or not (see next section for how to register); if a strategy does so the RunManager takes care of ensuring there's a valid user session before any of the methods on the strategy are called, moving the responsibility from the strategy to the RunManager. The strategy can still opt to handle this itself by not declaring 'requiresAuth', and do it's own validation of the 'user session' object which will be passed to it's #getRun and #reset methods.
 

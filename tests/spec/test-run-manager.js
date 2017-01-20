@@ -182,11 +182,11 @@
             });
         });
         describe('Run Session', function () {
-            var getSpy, setSpy, dummySessionStore, runid = 'dummyrunid';
+            var getSpy, setSpy, dummySessionStore, runSession = { id: 'dummyrunid' };
             beforeEach(function () {
                 getSpy = sinon.spy(function (key) { 
                     if (key !== 'missing-runid') {
-                        return JSON.stringify({ runId: runid });
+                        return JSON.stringify(runSession);
                     }
                     return null;
                 });
@@ -207,7 +207,7 @@
 
             it('should pass runid in session into strategy', function () {
                 var getRunSpy = sinon.spy(function () {
-                    return $.Deferred().resolve({ id: runid }).promise();
+                    return $.Deferred().resolve(runSession).promise();
                 });
                 var myStrategy = function () {
                     return {
@@ -222,17 +222,15 @@
                 });
                 rm.sessionManager = dummySessionStore;
                 return rm.getRun().then(function () {
-                    expect(getRunSpy.getCall(0).args[2]).to.equal(runid);
+                    expect(getRunSpy.getCall(0).args[2]).to.eql(runSession);
                 });
             });
 
             it('should update store with sessionkey name after run creation', function () {
-                var sampleRunid = 'samplerunid';
+                var createResponse = { id: 'samplerunid' };
                 var rs = new F.service.Run(runOptions);
                 sinon.stub(rs, 'create', function (options) {
-                    return $.Deferred().resolve({
-                        id: sampleRunid
-                    }).promise();
+                    return $.Deferred().resolve(createResponse).promise();
                 });
                 sinon.stub(rs, 'load', function (runid, filters, options) {
                     options.success({ id: runid });
@@ -245,6 +243,9 @@
                 rm.sessionManager = dummySessionStore;
                 return rm.getRun().then(function () {
                     expect(setSpy).to.have.been.calledOnce;
+
+                    var args = setSpy.getCall(0).args;
+                    expect(JSON.parse(args[1]).id).to.eql('samplerunid');
                 });
             });
             describe('custom session keys', function () {
@@ -291,7 +292,7 @@
 
                         var args = setSpy.getCall(0).args;
                         expect(args[0]).to.equal('abc');
-                        expect(args[1]).to.equal(JSON.stringify({ runId: sampleRunid }));
+                        expect(JSON.parse(args[1]).id).to.equal(sampleRunid);
                     });
                 });
             });

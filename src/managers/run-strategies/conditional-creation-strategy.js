@@ -42,14 +42,14 @@ var Strategy = classFrom(Base, {
      * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation)
      * @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
      * @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
-     * @param  {String} runIdInSession the RunManager stores the 'last accessed' run in a cookie;  this refers to the last-used runid
+     * @param  {Object} runSession the RunManager stores the 'last accessed' run in a cookie and passes it back here
      * @param  {Object} options (Optional) See RunService#create for supported options
      * @return {Promise}             
      */
-    getRun: function (runService, userSession, runIdInSession, options) {
+    getRun: function (runService, userSession, runSession, options) {
         var me = this;
-        if (runIdInSession) {
-            return this.loadAndCheck(runService, userSession, runIdInSession, options).catch(function () {
+        if (runSession && runSession.id) {
+            return this.loadAndCheck(runService, userSession, runSession.id, options).catch(function () {
                 return me.reset(runService, userSession, options); //if it got the wrong cookie for e.g.
             });
         } else {
