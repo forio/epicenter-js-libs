@@ -131,7 +131,14 @@ RunManager.prototype = {
     getRun: function (variables, options) {
         var me = this;
         var sessionStore = this.sessionManager.getStore();
-        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey) || '{}');
+
+        var sessionContents = sessionStore.get(this.options.sessionKey);
+        var runSession = JSON.parse(sessionContents || '{}');
+        
+        if (runSession.runId) {
+            //EpiJS < 2.2 used runId as key, so maintain comptaibility. Remove at some future date (Summer `17?)
+            runSession.id = runSession.runId;
+        }
 
         var authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
