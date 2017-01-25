@@ -49,7 +49,7 @@ var Strategy = classFrom(Base, {
     getRun: function (runService, userSession, runSession, options) {
         var me = this;
         if (runSession && runSession.id) {
-            return this.loadAndCheck(runService, userSession, runSession.id, options).catch(function () {
+            return this.loadAndCheck(runService, userSession, runSession, options).catch(function () {
                 return me.reset(runService, userSession, options); //if it got the wrong cookie for e.g.
             });
         } else {
@@ -57,14 +57,14 @@ var Strategy = classFrom(Base, {
         }
     },
 
-    loadAndCheck: function (runService, userSession, runIdInSession, options) {
+    loadAndCheck: function (runService, userSession, runSession, options) {
         var shouldCreate = false;
         var me = this;
 
         return runService
-            .load(runIdInSession, null, {
+            .load(runSession.id, null, {
                 success: function (run, msg, headers) {
-                    shouldCreate = me.condition(run, headers);
+                    shouldCreate = me.condition(run, headers, userSession, runSession);
                 }
             })
             .then(function (run) {

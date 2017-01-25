@@ -44,6 +44,9 @@ module.exports = {
             }
         }
 
+        if (strategy.getRun) {
+            return strategy;
+        }
         var StrategyCtor = typeof strategy === 'function' ? strategy : this.byName(strategy);
         if (!StrategyCtor) {
             throw new Error('Specified run creation strategy was invalid:', strategy);
