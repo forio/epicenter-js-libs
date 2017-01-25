@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="../../../dist/epicenter-edge.js"></script>
+</head>
+<body>
+    <div class="hero">
+        instructions: This should get you a new run every minute
+    </div>
+    <h1></h1>
+    <h4></h4>
+    <code>
+        <pre id="result">
+            
+        </pre>
+    </code>
+    <script>
+        var ConditionalStrategy = F.manager.RunManager.strategies.byName('conditional-creation');
+        var myNewStrategy = new ConditionalStrategy(function (run, headers, usersession, runsession) { 
+            var created = (new Date(run.created)).valueOf();
+            var timeAgo = Date.now() - created;
+            var runLifetime = 1;
+
+            var minsAgo = timeAgo / (1000 * 60);
+            console.log(minsAgo);
+            var d = new Date();
+            $('h4').html(d);
+
+            return minsAgo > runLifetime;
+        });
+
+        var rm = new F.manager.RunManager({
+            strategy: myNewStrategy,
+            run: {
+                account: 'jaimedp',
+                project: 'glasses',
+                model: 'gglasses.vmf'
+            }
+        });
+        rm.getRun().then(function (cr) {
+            $('#result').html(JSON.stringify(cr, 4, 4));
+            $('h1').html(cr.id);
+            console.log(cr);
+        });
+    </script>
+</body>
+</html>
