@@ -3,8 +3,7 @@
 $(function () {
     var server = {
         server: {
-            host: 'epimon3.foriodev.com',
-            protocol: 'http'
+
         }
     };
 
