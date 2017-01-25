@@ -661,29 +661,7 @@
                 });
             });
         });
-        describe('#urlConfig', function () {
-            it('should be set after #query', function () {
-                var rs = new RunService({ account: account, project: project });
-                rs.query({ saved: true, '.price': '>1' });
-
-                rs.urlConfig.filter = ';saved=true;.price=>1';
-
-                rs.query({ saved: false, '.sales': '<4' });
-                rs.urlConfig.filter = ';saved=false;.sales=<4';
-            });
-
-
-            it('should be set after #load', function () {
-                var rs = new RunService({ account: account, project: project });
-                rs.load('myfancyrunid', { include: 'score' });
-
-                rs.urlConfig.filter = 'myfancyrunid';
-
-                rs.load('myfancyrunid2', { include: 'score' });
-                rs.urlConfig.filter = 'myfancyrunid2';
-            });
-        });
-        describe.only('#getCurrentConfig', function () {
+        describe('#getCurrentConfig', function () {
             it('should return the current service options', function () {
                 var rs = new RunService({ account: account, project: project });
                 var conf = rs.getCurrentConfig();
