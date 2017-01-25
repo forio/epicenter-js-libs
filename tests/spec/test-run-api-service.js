@@ -681,5 +681,24 @@
                 });
             });
         });
+        describe.only('#updateConfig', function () {
+            it('should update service options', function () {
+                var oldUrl = (new F.service.URL({ accountPath: account, projectPath: project })).getAPIPath('run');
+                var rs = new RunService({ account: account, project: project });
+                
+                return rs.filter({}).then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(oldUrl + ';/');
+
+                    rs.updateConfig({ account: 'abcd' });
+                    var newUrl = (new F.service.URL({ accountPath: 'abcd', projectPath: project })).getAPIPath('run');
+
+                    return rs.filter({}).then(function () {
+                        var req = server.requests.pop();
+                        req.url.should.equal(newUrl + ';/');
+                    });
+                });
+            });
+        });
     });
 }());
