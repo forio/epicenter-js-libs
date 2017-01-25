@@ -5,6 +5,7 @@
  */
 var RunManager = require('./run-manager');
 var SavedRunsManager = require('./saved-runs-manager');
+var strategyUtils = require('./strategy-utils');
 
 var defaults = {
     /**
@@ -17,7 +18,25 @@ var defaults = {
      * Operation to perform on each run to indicate that it's complete
      * @type {Array}
      */
-    advanceOperation: [{ stepTo: 'end' }]
+    advanceOperation: [{ stepTo: 'end' }],
+
+    /**
+     * Additional options to pass-through to run creation (for e.g., `files` etc)
+     * @type {Object}
+     */
+    run: {},
+
+    /**
+     * Additional options to pass-through to run creation, specifically for the baseline. This will over-ride any options provided under `run`
+     * @type {Object}
+     */
+    baselineRun: {},
+
+    /**
+     * Additional options to pass-through to run creation, specifically for the current run. This will over-ride any options provided under `run`
+     * @type {Object}
+     */
+    currentRun: {},
 };
 
 var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
@@ -36,7 +55,7 @@ function ScenarioManager(config) {
     this.baseline = new RunManager({
         strategy: BaselineStrategy,
         sessionKey: 'sm-baseline-run',
-        run: opts.run,
+        run: strategyUtils.mergeRunOptions(opts.run, opts.currentRun),
         strategyOptions: {
             baselineName: opts.baselineRunName,
             initOperation: opts.advanceOperation
@@ -70,7 +89,7 @@ function ScenarioManager(config) {
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
         sessionKey: 'sm-current-run',
-        run: opts.run,
+        run: strategyUtils.mergeRunOptions(opts.run, opts.currentRun),
         strategyOptions: {
             ignoreOperations: ignoreOperations
         }
