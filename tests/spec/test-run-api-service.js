@@ -683,5 +683,25 @@
                 rs.urlConfig.filter = 'myfancyrunid2';
             });
         });
+        describe.only('#getCurrentConfig', function () {
+            it('should return the current service options', function () {
+                var rs = new RunService({ account: account, project: project });
+                var conf = rs.getCurrentConfig();
+
+                conf.account.should.equal(account);
+                conf.project.should.equal(project);
+            });
+            it('should update config after creation', function () {
+                var rs = new RunService({ account: account, project: project });
+                var conf = rs.getCurrentConfig();
+                conf.id.should.equal('');
+
+                return rs.create().then(function () {
+                    var newConf = rs.getCurrentConfig();
+                    newConf.filter.should.equal('065dfe50-d29d-4b55-a0fd-30868d7dd26c');
+                    newConf.id.should.equal('065dfe50-d29d-4b55-a0fd-30868d7dd26c');
+                });
+            });
+        });
     });
 }());
