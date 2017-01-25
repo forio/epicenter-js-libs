@@ -121,20 +121,19 @@ module.exports = function (config) {
         serviceOptions.filter = serviceOptions.id;
     }
 
-    var urlConfig;
-    function updateURLConfig(serviceOptions) {
-        urlConfig = new ConfigService(serviceOptions).get('server');
-        if (serviceOptions.account) {
-            urlConfig.accountPath = serviceOptions.account;
+    function updateURLConfig(opts) {
+        var urlConfig = new ConfigService(opts).get('server');
+        if (opts.account) {
+            urlConfig.accountPath = opts.account;
         }
-        if (serviceOptions.project) {
-            urlConfig.projectPath = serviceOptions.project;
+        if (opts.project) {
+            urlConfig.projectPath = opts.project;
         }
 
         urlConfig.filter = ';';
         urlConfig.getFilterURL = function () {
             var url = urlConfig.getAPIPath('run');
-            var filter = qutil.toMatrixFormat(serviceOptions.filter);
+            var filter = qutil.toMatrixFormat(opts.filter);
 
             if (filter) {
                 url += filter + '/';
@@ -143,10 +142,10 @@ module.exports = function (config) {
         };
 
         urlConfig.addAutoRestoreHeader = function (options) {
-            var filter = serviceOptions.filter;
+            var filter = opts.filter;
             // The semicolon separated filter is used when filter is an object
             var isFilterRunId = filter && $.type(filter) === 'string';
-            if (serviceOptions.autoRestore && isFilterRunId) {
+            if (opts.autoRestore && isFilterRunId) {
                 // By default autoreplay the run by sending this header to epicenter
                 // https://forio.com/epicenter/docs/public/rest_apis/aggregate_run_api/#retrieving
                 var autorestoreOpts = {
@@ -159,32 +158,40 @@ module.exports = function (config) {
 
             return options;
         };
+        return urlConfig;
     }
-    updateURLConfig(serviceOptions); //making a function so #updateConfig can call this; change when refactored
 
-    var httpOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getFilterURL
-    });
+    var http;
+    var httpOptions; //FIXME: Make this side-effect-less
+    function updateHTTPConfig(serviceOptions, urlConfig) {
+        httpOptions = $.extend(true, {}, serviceOptions.transport, {
+            url: urlConfig.getFilterURL
+        });
 
-    if (serviceOptions.token) {
-        httpOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
+        if (serviceOptions.token) {
+            httpOptions.headers = {
+                Authorization: 'Bearer ' + serviceOptions.token
+            };
+        }
+        http = new TransportFactory(httpOptions);
+        http.splitGet = rutil.splitGetFactory(httpOptions);
     }
-    var http = new TransportFactory(httpOptions);
-    http.splitGet = rutil.splitGetFactory(httpOptions);
 
-    var setFilterOrThrowError = function (options) {
+    var urlConfig = updateURLConfig(serviceOptions); //making a function so #updateConfig can call this; change when refactored
+    updateHTTPConfig(serviceOptions, urlConfig);
+   
+
+    function setFilterOrThrowError(options) {
         if (options.id) {
-            serviceOptions.filter = options.id;
+            serviceOptions.filter = serviceOptions.id = options.id;
         }
         if (options.filter) {
-            serviceOptions.filter = options.filter;
+            serviceOptions.filter = serviceOptions.id = options.filter;
         }
         if (!serviceOptions.filter) {
             throw new Error('No filter specified to apply operations against');
         }
-    };
+    }
 
     var publicAsyncAPI = {
         urlConfig: urlConfig,
@@ -543,7 +550,8 @@ module.exports = function (config) {
                 config.id = config.filter;
             }
             serviceOptions = $.extend(true, {}, serviceOptions, config);
-            updateURLConfig(serviceOptions);
+            urlConfig = updateURLConfig(serviceOptions);
+            updateHTTPConfig(serviceOptions, urlConfig);
         },
         /**
           * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.

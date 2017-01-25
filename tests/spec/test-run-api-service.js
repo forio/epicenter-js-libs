@@ -686,17 +686,43 @@
                 var oldUrl = (new F.service.URL({ accountPath: account, projectPath: project })).getAPIPath('run');
                 var rs = new RunService({ account: account, project: project });
                 
-                return rs.filter({}).then(function () {
+                return rs.create().then(function () {
                     var req = server.requests.pop();
-                    req.url.should.equal(oldUrl + ';/');
+                    req.url.should.equal(oldUrl);
 
                     rs.updateConfig({ account: 'abcd' });
                     var newUrl = (new F.service.URL({ accountPath: 'abcd', projectPath: project })).getAPIPath('run');
 
-                    return rs.filter({}).then(function () {
+                    return rs.create().then(function () {
                         var req = server.requests.pop();
-                        req.url.should.equal(newUrl + ';/');
+                        req.url.should.equal(newUrl);
                     });
+                });
+            });
+
+            it('should update filter/id given either', function () {
+                var rs = new RunService({ account: account, project: project, id: 'foo' });
+                return rs.load().then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'foo/');
+                    rs.updateConfig({ filter: 'bar' });
+                    return rs.load().then(function () {
+                        var req = server.requests.pop();
+                        req.url.should.equal(baseURL + 'bar/');
+                        rs.updateConfig({ id: 'boo' });
+                        return rs.load().then(function () {
+                            var req = server.requests.pop();
+                            req.url.should.equal(baseURL + 'boo/');
+                        });
+                    });
+                });
+            });
+            it('should do nothing if no options passed in', function () {
+                var rs = new RunService({ account: account, project: project, id: 'foo' });
+                rs.updateConfig();
+                return rs.load().then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'foo/');
                 });
             });
         });
