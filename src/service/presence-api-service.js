@@ -115,7 +115,7 @@ module.exports = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options,
                 { url: urlConfig.getAPIPath(apiEndpoint) + groupName }
             );
-            if (!isString) {
+            var addUsername = function () {
                 var dfd = $.Deferred();
                 var m = new Member();
                 m.getGroupDetails(objParams.groupId).then(function (group) {
@@ -135,6 +135,10 @@ module.exports = function (config) {
                     });
                 });
                 return dfd.promise();
+            };
+            if (!isString) {
+                // This will only work if the user requesting is a facilitator due to Member API permission 
+                return addUsername();
             } else {
                 return http.get({}, httpOptions);
             }
