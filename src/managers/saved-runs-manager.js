@@ -69,11 +69,17 @@ SavedRunsManager.prototype = {
      */
     mark: function (run, toMark) {
         var rs;
+        var existingOptions = this.runService.getCurrentConfig();
         if (run instanceof RunService) {
             rs = run;
         } else if (run && (typeof run === 'string')) {
-            var existingOptions = this.runService.getCurrentConfig();
             rs = new RunService($.extend(true, {}, existingOptions, { id: run }));
+        } else if ($.isArray(run)) {
+            var me = this;
+            var proms = run.map(function (r) {
+                return me.mark(r, toMark);
+            });
+            return $.when.apply(null, proms);
         } else {
             throw new Error('Invalid run object provided');
         }

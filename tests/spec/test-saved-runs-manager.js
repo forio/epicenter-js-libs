@@ -135,6 +135,18 @@
                     expect(JSON.parse(req.requestBody)).to.eql({ name: 'foo' });
                 });
             });
+            it('should allow passing in an array of runs', function () {
+                var runids = ['a', 'b', 'c'];
+                server.requests = [];
+                return srm.mark(runids, { foo: 'bar' }).then(function () {
+                    expect(server.requests.length).to.equal(runids.length);
+                    server.requests.forEach(function (req, index) {
+                        var split = req.url.split('/');
+                        var runidPath = split[split.length - 2];
+                        expect(runidPath).to.equal(runids[index]);
+                    });
+                });
+            });
             it('should throw an error for invalid run service provided', function () {
                 expect(function () { srm.mark(); }).to.throw(Error);
             });
