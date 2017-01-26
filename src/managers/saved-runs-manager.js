@@ -73,7 +73,7 @@ SavedRunsManager.prototype = {
         if (run instanceof RunService) {
             rs = run;
         } else if (run && (typeof run === 'string')) {
-            rs = new RunService($.extend(true, {}, existingOptions, { id: run }));
+            rs = new RunService($.extend(true, {}, existingOptions, { id: run, autoRestore: false }));
         } else if ($.isArray(run)) {
             var me = this;
             var proms = run.map(function (r) {
@@ -111,7 +111,7 @@ SavedRunsManager.prototype = {
                 return savedRuns;
             }
             var promises = savedRuns.map(function (run) {
-                var config = $.extend(true, {}, me.runService.getCurrentConfig(), run);
+                var config = $.extend(true, {}, me.runService.getCurrentConfig(), run, { autoRestore: false });
                 var rs = new RunService(config);
                 var prom = rs.variables().query([].concat(variables)).then(function (variables) {
                     run.variables = variables;
