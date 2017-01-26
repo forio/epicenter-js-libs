@@ -681,7 +681,7 @@
                 });
             });
         });
-        describe.only('#updateConfig', function () {
+        describe('#updateConfig', function () {
             it('should update service options', function () {
                 var oldUrl = (new F.service.URL({ accountPath: account, projectPath: project })).getAPIPath('run');
                 var rs = new RunService({ account: account, project: project });
