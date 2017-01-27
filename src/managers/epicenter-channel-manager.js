@@ -294,8 +294,6 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Parameters**
      *
-     * @param  {String|Object} world World object or id.
-     * @param  {String|Object} userid (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
      * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
