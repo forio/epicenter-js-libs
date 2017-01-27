@@ -79,6 +79,12 @@
                     expect(config.project).to.equal(runOptions.project);
                 });
             });
+            it('should merge baseline options', function () {
+                var sm = new ScenarioManager({ run: runOptions, baselineRun: { account: 'batman' } });
+                var config = sm.baseline.run.getCurrentConfig();
+                expect(config.account).to.equal('batman');
+                expect(config.project).to.equal('js-libs');
+            });
             describe('getRun', function () {
                 it('should return existing runs if it finds one', function () {
                     var rs = new F.service.Run(runOptions);
@@ -143,6 +149,12 @@
             it('should create a new current run manager', function () {
                 var sm = new ScenarioManager({ run: runOptions });
                 expect(sm.current).to.be.instanceof(RunManager);
+            });
+            it('should merge current run options', function () {
+                var sm = new ScenarioManager({ run: runOptions, currentRun: { account: 'batman' } });
+                var config = sm.current.run.getCurrentConfig();
+                expect(config.account).to.equal('batman');
+                expect(config.project).to.equal('js-libs');
             });
             it('should pass through the right options', function () {
                 var sm = new ScenarioManager({ run: runOptions });

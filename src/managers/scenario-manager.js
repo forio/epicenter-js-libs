@@ -55,7 +55,7 @@ function ScenarioManager(config) {
     this.baseline = new RunManager({
         strategy: BaselineStrategy,
         sessionKey: 'sm-baseline-run',
-        run: strategyUtils.mergeRunOptions(opts.run, opts.currentRun),
+        run: strategyUtils.mergeRunOptions(opts.run, opts.baselineRun),
         strategyOptions: {
             baselineName: opts.baselineRunName,
             initOperation: opts.advanceOperation
@@ -66,9 +66,9 @@ function ScenarioManager(config) {
      * Instance of a SavedRunsManager
      * @type {SavedRunsManager}
      */
-    this.savedRuns = new SavedRunsManager($.extend(true, {}, opts.savedRuns, {
+    this.savedRuns = new SavedRunsManager($.extend(true, {}, {
         run: opts.run,
-    }));
+    }, opts.savedRuns));
 
     var origGetRuns = this.savedRuns.getRuns;
     var me = this;
