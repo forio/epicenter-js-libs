@@ -103,32 +103,12 @@ SavedRunsManager.prototype = {
 
         var opModifiers = $.extend(true, {}, {
             sort: 'created',
-            direction: 'asc'
+            direction: 'asc',
         }, modifiers);
-        var me = this;
-        return this.runService.query(scopedFilter, opModifiers).then(function (savedRuns) {
-            if (!variables || !variables.length) {
-                return savedRuns;
-            }
-            var promises = savedRuns.map(function (run) {
-                var config = $.extend(true, {}, me.runService.getCurrentConfig(), run, { autoRestore: false });
-                var rs = new RunService(config);
-                var prom = rs.variables().query([].concat(variables)).then(function (variables) {
-                    run.variables = variables;
-                    return run;
-                }).catch(function (err) {
-                    if (err) {
-                        console.error(err);
-                    }
-                    run.variables = {};
-                    return run;
-                });
-                return prom;
-            });
-            return $.when.apply(null, promises).then(function () {
-                return Array.apply(null, arguments);
-            });
-        });
+        if (variables) {
+            opModifiers.include = [].concat(variables);
+        }
+        return this.runService.query(scopedFilter, opModifiers);
     }
 };
 module.exports = SavedRunsManager;

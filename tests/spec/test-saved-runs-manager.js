@@ -20,6 +20,7 @@
             server.respondWith('PATCH', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
+
             server.respondWith('GET', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/[^\/]*\/\?include=(.*)/, function (xhr, prefix, variable) {
                 if (variable === 'fail') {
                     xhr.respond(400);
@@ -246,34 +247,18 @@
             });
 
             describe('Variables', function () {
-                it('should pass variables to variables service', function () {
+                it('should pass single variables to variables service', function () {
                     return srm.getRuns('Price', { foo: 'bar' }).then(function (res) {
-                        var req = server.requests[0];
-                        expect(req.url).to.eql('https://api.forio.com/v2/run/forio-dev/js-libs/run1/variables/?include=Price');
+                        expect(queryStub).to.have.been.calledOnce;
+                        var args = queryStub.getCall(0).args;
+                        expect(args[1].include).to.eql(['Price']);
                     });
                 });
-                it('should add variables to response', function () {
-                    return srm.getRuns('Price', { foo: 'bar' }).then(function (runs) {
-                        expect(runs).to.eql([
-                            { id: 'run1', variables: { price: 2 } },
-                            { id: 'run2', variables: { price: 2 } },
-                        ]);
-                    });
-                });
-                it('should ignore failed variables for any run', function () {
-                    var successSpy = sinon.spy(function (r) {
-                        return r;
-                    });
-                    var failSpy = sinon.spy(function (r) {
-                        return r;
-                    });
-                    return srm.getRuns('fail', { foo: 'bar' }).then(successSpy).catch(failSpy).then(function (runs) {
-                        expect(successSpy).to.have.been.called;
-                        expect(failSpy).to.not.have.been.called;
-                        expect(runs).to.eql([
-                            { id: 'run1', variables: {} },
-                            { id: 'run2', variables: {} },
-                        ]);
+                it('should pass multi variables to variables service', function () {
+                    return srm.getRuns(['Price', 'Costs'], { foo: 'bar' }).then(function (res) {
+                        expect(queryStub).to.have.been.calledOnce;
+                        var args = queryStub.getCall(0).args;
+                        expect(args[1].include).to.eql(['Price', 'Costs']);
                     });
                 });
             });
