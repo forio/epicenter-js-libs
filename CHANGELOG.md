@@ -100,6 +100,9 @@ This interface now introduces a new way to 'register' named run strategies for u
 ## Scenario Manager
 This release introduces a new Scenario Manager, accessible as `F.manager.ScenarioManager`. This is mostly useful for time-based models (Vensim/Stella/Powersim/SimLang), but can be adapted to working with other languages as well.
 
+The best way to think of the Scenario Manager 
+
+
 See individual Scenario Manager docs and examples for more details [TODO: LINK HERE ONCE WE HAVE GOOD JSDOCS]
 
 

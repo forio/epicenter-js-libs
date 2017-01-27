@@ -5,6 +5,7 @@
  */
 var RunManager = require('./run-manager');
 var SavedRunsManager = require('./saved-runs-manager');
+var strategyUtils = require('./strategy-utils');
 
 var defaults = {
     /**
@@ -17,7 +18,25 @@ var defaults = {
      * Operation to perform on each run to indicate that it's complete
      * @type {Array}
      */
-    advanceOperation: [{ stepTo: 'end' }]
+    advanceOperation: [{ stepTo: 'end' }],
+
+    /**
+     * Additional options to pass-through to run creation (for e.g., `files` etc)
+     * @type {Object}
+     */
+    run: {},
+
+    /**
+     * Additional options to pass-through to run creation, specifically for the baseline. This will over-ride any options provided under `run`
+     * @type {Object}
+     */
+    baselineRun: {},
+
+    /**
+     * Additional options to pass-through to run creation, specifically for the current run. This will over-ride any options provided under `run`
+     * @type {Object}
+     */
+    currentRun: {},
 };
 
 var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
@@ -36,7 +55,7 @@ function ScenarioManager(config) {
     this.baseline = new RunManager({
         strategy: BaselineStrategy,
         sessionKey: 'sm-baseline-run',
-        run: opts.run,
+        run: strategyUtils.mergeRunOptions(opts.run, opts.baselineRun),
         strategyOptions: {
             baselineName: opts.baselineRunName,
             initOperation: opts.advanceOperation
@@ -47,9 +66,9 @@ function ScenarioManager(config) {
      * Instance of a SavedRunsManager
      * @type {SavedRunsManager}
      */
-    this.savedRuns = new SavedRunsManager($.extend(true, {}, opts.savedRuns, {
+    this.savedRuns = new SavedRunsManager($.extend(true, {}, {
         run: opts.run,
-    }));
+    }, opts.savedRuns));
 
     var origGetRuns = this.savedRuns.getRuns;
     var me = this;
@@ -70,7 +89,7 @@ function ScenarioManager(config) {
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
         sessionKey: 'sm-current-run',
-        run: opts.run,
+        run: strategyUtils.mergeRunOptions(opts.run, opts.currentRun),
         strategyOptions: {
             ignoreOperations: ignoreOperations
         }
@@ -86,6 +105,8 @@ function ScenarioManager(config) {
             return me.current.run.serial(opts.advanceOperation);
         }).then(function () {
             return me.savedRuns.save(me.current.run, metadata);
+        }).then(function () {
+            return me.current.getRun(); //to update the .run instance
         });
     };
 }

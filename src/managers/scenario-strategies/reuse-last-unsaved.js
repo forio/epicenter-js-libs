@@ -32,7 +32,7 @@ module.exports = classFrom(Base, {
             sort: 'created', 
             direction: 'desc'
         };
-        return runService.filter(filter, outputModifiers).then(function (runs) {
+        return runService.query(filter, outputModifiers).then(function (runs) {
             if (!runs.length) {
                 return me.reset(runService, userSession);
             }

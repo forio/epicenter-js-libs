@@ -94,7 +94,7 @@ function RunManager(options) {
 
     if (this.options.run instanceof RunService) {
         this.run = this.options.run;
-    } else if (this.options.run) {
+    } else if (!util.isEmpty(this.options.run)) {
         this.run = new RunService(this.options.run);
     } else {
         throw new Error('No run options passed to RunManager');

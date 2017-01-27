@@ -1,6 +1,16 @@
 'use strict';
 
+var RunService = require('../service/run-api-service');
+
 module.exports = {
+    mergeRunOptions: function (run, options) {
+        if (run instanceof RunService) {
+            run.updateConfig(options);
+            return run;
+        } 
+        return $.extend(true, {}, run, options);
+    },
+
     injectFiltersFromSession: function (currentFilter, session, options) {
         var defaults = {
             scopeByGroup: true,

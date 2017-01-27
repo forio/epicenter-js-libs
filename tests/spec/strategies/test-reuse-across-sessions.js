@@ -27,7 +27,7 @@
         });
 
         describe('getRun', function () {
-            var rs, createStub, filterStub, loadStub, rm; //eslint-disable-line
+            var rs, createStub, queryStub, loadStub, rm; //eslint-disable-line
             beforeEach(function () {
                 rs = new F.service.Run(runOptions);
                 createStub = sinon.stub(rs, 'create', function () {
@@ -35,7 +35,7 @@
                         id: 'def'
                     }).promise();
                 });
-                filterStub = sinon.stub(rs, 'filter', function () {
+                queryStub = sinon.stub(rs, 'query', function () {
                     return $.Deferred().resolve([
                         {
                             id: 'run1',
@@ -54,8 +54,8 @@
             });
             it('should query for all runs in group', function () {
                 return rm.getRun(rs, auth).then(function () {
-                    expect(filterStub).to.have.been.calledOnce;
-                    var args = filterStub.getCall(0).args;
+                    expect(queryStub).to.have.been.calledOnce;
+                    var args = queryStub.getCall(0).args;
                     
                     expect(args[0]).to.eql({
                         'user.id': auth.userId,
@@ -65,7 +65,7 @@
             });
             it('should create new if not runs available', function () {
                 var rs = new F.service.Run(runOptions);
-                sinon.stub(rs, 'filter', function () {
+                sinon.stub(rs, 'query', function () {
                     return $.Deferred().resolve([]);
                 });
                 var createStub = sinon.stub(rs, 'create', function () {

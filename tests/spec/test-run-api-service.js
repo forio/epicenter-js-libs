@@ -661,26 +661,81 @@
                 });
             });
         });
-        describe('#urlConfig', function () {
-            it('should be set after #query', function () {
+        describe('#getCurrentConfig', function () {
+            it('should return the current service options', function () {
                 var rs = new RunService({ account: account, project: project });
-                rs.query({ saved: true, '.price': '>1' });
+                var conf = rs.getCurrentConfig();
 
-                rs.urlConfig.filter = ';saved=true;.price=>1';
+                conf.account.should.equal(account);
+                conf.project.should.equal(project);
+            });
+            it('should update config after creation', function () {
+                var rs = new RunService({ account: account, project: project });
+                var conf = rs.getCurrentConfig();
+                conf.id.should.equal('');
 
-                rs.query({ saved: false, '.sales': '<4' });
-                rs.urlConfig.filter = ';saved=false;.sales=<4';
+                return rs.create().then(function () {
+                    var newConf = rs.getCurrentConfig();
+                    newConf.filter.should.equal('065dfe50-d29d-4b55-a0fd-30868d7dd26c');
+                    newConf.id.should.equal('065dfe50-d29d-4b55-a0fd-30868d7dd26c');
+                });
+            });
+        });
+        describe('#updateConfig', function () {
+            it('should update service options', function () {
+                var oldUrl = (new F.service.URL({ accountPath: account, projectPath: project })).getAPIPath('run');
+                var rs = new RunService({ account: account, project: project });
+                
+                return rs.create().then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(oldUrl);
+
+                    rs.updateConfig({ account: 'abcd' });
+                    var newUrl = (new F.service.URL({ accountPath: 'abcd', projectPath: project })).getAPIPath('run');
+
+                    return rs.create().then(function () {
+                        var req = server.requests.pop();
+                        req.url.should.equal(newUrl);
+                    });
+                });
             });
 
-
-            it('should be set after #load', function () {
-                var rs = new RunService({ account: account, project: project });
-                rs.load('myfancyrunid', { include: 'score' });
-
-                rs.urlConfig.filter = 'myfancyrunid';
-
-                rs.load('myfancyrunid2', { include: 'score' });
-                rs.urlConfig.filter = 'myfancyrunid2';
+            it('should update filter/id given either', function () {
+                var rs = new RunService({ account: account, project: project, id: 'foo' });
+                return rs.load().then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'foo/');
+                    rs.updateConfig({ filter: 'bar' });
+                    return rs.load().then(function () {
+                        var req = server.requests.pop();
+                        req.url.should.equal(baseURL + 'bar/');
+                        rs.updateConfig({ id: 'boo' });
+                        return rs.load().then(function () {
+                            var req = server.requests.pop();
+                            req.url.should.equal(baseURL + 'boo/');
+                        });
+                    });
+                });
+            });
+            it('should update url for variable service', function () {
+                var rs = new RunService({ account: account, project: project, id: 'foo' });
+                return rs.variables().query('v1').then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'foo/variables/?v1');
+                    rs.updateConfig({ filter: 'bar' });
+                    return rs.variables().query('v1').then(function () {
+                        var req = server.requests.pop();
+                        req.url.should.equal(baseURL + 'bar/variables/?v1');
+                    });
+                });
+            });
+            it('should do nothing if no options passed in', function () {
+                var rs = new RunService({ account: account, project: project, id: 'foo' });
+                rs.updateConfig();
+                return rs.load().then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'foo/');
+                });
             });
         });
     });

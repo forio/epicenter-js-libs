@@ -69,11 +69,17 @@ SavedRunsManager.prototype = {
      */
     mark: function (run, toMark) {
         var rs;
+        var existingOptions = this.runService.getCurrentConfig();
         if (run instanceof RunService) {
             rs = run;
         } else if (run && (typeof run === 'string')) {
-            var existingOptions = this.runService.getCurrentConfig();
-            rs = new RunService($.extend(true, {}, existingOptions, { id: run }));
+            rs = new RunService($.extend(true, {}, existingOptions, { id: run, autoRestore: false }));
+        } else if ($.isArray(run)) {
+            var me = this;
+            var proms = run.map(function (r) {
+                return me.mark(r, toMark);
+            });
+            return $.when.apply(null, proms);
         } else {
             throw new Error('Invalid run object provided');
         }
@@ -97,32 +103,12 @@ SavedRunsManager.prototype = {
 
         var opModifiers = $.extend(true, {}, {
             sort: 'created',
-            direction: 'asc'
+            direction: 'asc',
         }, modifiers);
-        var me = this;
-        return this.runService.query(scopedFilter, opModifiers).then(function (savedRuns) {
-            if (!variables || !variables.length) {
-                return savedRuns;
-            }
-            var promises = savedRuns.map(function (run) {
-                var config = $.extend(true, {}, me.runService.getCurrentConfig(), run);
-                var rs = new RunService(config);
-                var prom = rs.variables().query([].concat(variables)).then(function (variables) {
-                    run.variables = variables;
-                    return run;
-                }).catch(function (err) {
-                    if (err) {
-                        console.error(err);
-                    }
-                    run.variables = {};
-                    return run;
-                });
-                return prom;
-            });
-            return $.when.apply(null, promises).then(function () {
-                return Array.apply(null, arguments);
-            });
-        });
+        if (variables) {
+            opModifiers.include = [].concat(variables);
+        }
+        return this.runService.query(scopedFilter, opModifiers);
     }
 };
 module.exports = SavedRunsManager;

@@ -121,66 +121,77 @@ module.exports = function (config) {
         serviceOptions.filter = serviceOptions.id;
     }
 
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
-
-    urlConfig.filter = ';';
-    urlConfig.getFilterURL = function () {
-        var url = urlConfig.getAPIPath('run');
-        var filter = qutil.toMatrixFormat(serviceOptions.filter);
-
-        if (filter) {
-            url += filter + '/';
+    function updateURLConfig(opts) {
+        var urlConfig = new ConfigService(opts).get('server');
+        if (opts.account) {
+            urlConfig.accountPath = opts.account;
         }
-        return url;
-    };
-
-    urlConfig.addAutoRestoreHeader = function (options) {
-        var filter = serviceOptions.filter;
-        // The semicolon separated filter is used when filter is an object
-        var isFilterRunId = filter && $.type(filter) === 'string';
-        if (serviceOptions.autoRestore && isFilterRunId) {
-            // By default autoreplay the run by sending this header to epicenter
-            // https://forio.com/epicenter/docs/public/rest_apis/aggregate_run_api/#retrieving
-            var autorestoreOpts = {
-                headers: {
-                    'X-AutoRestore': true
-                }
-            };
-            return $.extend(true, autorestoreOpts, options);
+        if (opts.project) {
+            urlConfig.projectPath = opts.project;
         }
 
-        return options;
-    };
+        urlConfig.filter = ';';
+        urlConfig.getFilterURL = function (filter) {
+            var url = urlConfig.getAPIPath('run');
+            var filterMatrix = qutil.toMatrixFormat(filter || opts.filter);
 
-    var httpOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getFilterURL
-    });
-
-    if (serviceOptions.token) {
-        httpOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
+            if (filterMatrix) {
+                url += filterMatrix + '/';
+            }
+            return url;
         };
-    }
-    var http = new TransportFactory(httpOptions);
-    http.splitGet = rutil.splitGetFactory(httpOptions);
 
-    var setFilterOrThrowError = function (options) {
+        urlConfig.addAutoRestoreHeader = function (options) {
+            var filter = opts.filter;
+            // The semicolon separated filter is used when filter is an object
+            var isFilterRunId = filter && $.type(filter) === 'string';
+            if (opts.autoRestore && isFilterRunId) {
+                // By default autoreplay the run by sending this header to epicenter
+                // https://forio.com/epicenter/docs/public/rest_apis/aggregate_run_api/#retrieving
+                var autorestoreOpts = {
+                    headers: {
+                        'X-AutoRestore': true
+                    }
+                };
+                return $.extend(true, autorestoreOpts, options);
+            }
+
+            return options;
+        };
+        return urlConfig;
+    }
+
+    var http;
+    var httpOptions; //FIXME: Make this side-effect-less
+    function updateHTTPConfig(serviceOptions, urlConfig) {
+        httpOptions = $.extend(true, {}, serviceOptions.transport, {
+            url: urlConfig.getFilterURL
+        });
+
+        if (serviceOptions.token) {
+            httpOptions.headers = {
+                Authorization: 'Bearer ' + serviceOptions.token
+            };
+        }
+        http = new TransportFactory(httpOptions);
+        http.splitGet = rutil.splitGetFactory(httpOptions);
+    }
+
+    var urlConfig = updateURLConfig(serviceOptions); //making a function so #updateConfig can call this; change when refactored
+    updateHTTPConfig(serviceOptions, urlConfig);
+   
+
+    function setFilterOrThrowError(options) {
         if (options.id) {
-            serviceOptions.filter = options.id;
+            serviceOptions.filter = serviceOptions.id = options.id;
         }
         if (options.filter) {
-            serviceOptions.filter = options.filter;
+            serviceOptions.filter = serviceOptions.id = options.filter;
         }
         if (!serviceOptions.filter) {
             throw new Error('No filter specified to apply operations against');
         }
-    };
+    }
 
     var publicAsyncAPI = {
         urlConfig: urlConfig,
@@ -201,7 +212,7 @@ module.exports = function (config) {
          */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath('run') });
-            var runApiParams = ['model', 'scope', 'files'];
+            var runApiParams = ['model', 'scope', 'files', 'ephemeral'];
             if (typeof params === 'string') {
                 // this is just the model name
                 params = { model: params };
@@ -246,8 +257,7 @@ module.exports = function (config) {
          * @return {Promise}
          */
         query: function (qs, outputModifier, options) {
-            serviceOptions.filter = qs; //shouldn't be able to over-ride
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var httpOptions = $.extend(true, {}, serviceOptions, { url: urlConfig.getFilterURL(qs) }, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
 
             return http.splitGet(outputModifier, httpOptions).then(function (r) {
@@ -539,6 +549,9 @@ module.exports = function (config) {
                 config.id = config.filter;
             }
             serviceOptions = $.extend(true, {}, serviceOptions, config);
+            urlConfig = updateURLConfig(serviceOptions);
+            this.urlConfig = urlConfig;
+            updateHTTPConfig(serviceOptions, urlConfig);
         },
         /**
           * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.

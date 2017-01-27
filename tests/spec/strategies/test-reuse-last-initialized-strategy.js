@@ -16,10 +16,10 @@
         }); 
 
         describe('#getRun', function () {
-            var rs, strategy, resetStub, filterstub;
+            var rs, strategy, resetStub, queryStub;
             beforeEach(function () {
                 rs = new F.service.Run(runOptions);
-                filterstub = sinon.stub(rs, 'filter').returns($.Deferred().resolve([]).promise());
+                queryStub = sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
                 strategy = new Strategy({
                     strategyOptions: {
                         initOperation: ['foo'],
@@ -32,14 +32,14 @@
             });
             it('should filter for runs matching flag', function () {
                 return strategy.getRun(rs).then(function () {
-                    expect(filterstub).to.have.been.calledWith({
+                    expect(queryStub).to.have.been.calledWith({
                         foo: 'bar'
                     });
                 });
             });
             it('should filter by groupname if provided', function () {
                 return strategy.getRun(rs, { groupName: 'groupName' }).then(function () {
-                    expect(filterstub).to.have.been.calledWith({
+                    expect(queryStub).to.have.been.calledWith({
                         foo: 'bar',
                         'scope.group': 'groupName',
                     });
@@ -47,7 +47,7 @@
             });
             it('should filter by userId if provided', function () {
                 return strategy.getRun(rs, { userId: 'userId' }).then(function () {
-                    expect(filterstub).to.have.been.calledWith({
+                    expect(queryStub).to.have.been.calledWith({
                         foo: 'bar',
                         'user.id': 'userId',
                     });
@@ -60,7 +60,7 @@
             });
             it('should return the run if found', function () {
                 var rs = new F.service.Run(runOptions);
-                sinon.stub(rs, 'filter').returns($.Deferred().resolve([{ id: 'x' }]).promise());
+                sinon.stub(rs, 'query').returns($.Deferred().resolve([{ id: 'x' }]).promise());
                 return strategy.getRun(rs, { userId: 'userId' }).then(function (run) {
                     expect(resetStub).to.not.have.been.called;
                     expect(run).to.eql({ id: 'x' });
