@@ -49,7 +49,7 @@ module.exports = classFrom(Base, {
     getRun: function (runService, userSession, runSession, options) {
         var filter = injectFiltersFromSession(this.options.flag, userSession);
         var me = this;
-        return runService.filter(filter, { 
+        return runService.query(filter, { 
             // startrecord: 0,  //TODO: Uncomment when EPICENTER-2569 is fixed
             // endrecord: 0,
             sort: 'created', 

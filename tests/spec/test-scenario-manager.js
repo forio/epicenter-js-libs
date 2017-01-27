@@ -87,7 +87,7 @@
                         name: 'baseline',
                         saved: true
                     };
-                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([
+                    sinon.stub(rs, 'query').returns($.Deferred().resolve([
                         sampleBaseline
                     ]).promise());
                     var sm = new ScenarioManager({ run: rs });
@@ -97,7 +97,7 @@
                 });
                 it('should create & step if no existing runs found', function () {
                     var rs = new F.service.Run(runOptions);
-                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([]).promise());
+                    sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
                     var sm = new ScenarioManager({ run: rs });
                     var createStub = sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
                     var serialStub = sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
@@ -109,7 +109,7 @@
                 });
                 it('should allow changing the initial operation', function () {
                     var rs = new F.service.Run(runOptions);
-                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([]).promise());
+                    sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
                     var sm = new ScenarioManager({ 
                         run: rs,
                         advanceOperation: [{ foo: 'bar' }]
@@ -122,7 +122,7 @@
                 });
                 it('should mark as saved', function () {
                     var rs = new F.service.Run(runOptions);
-                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([]).promise());
+                    sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
                     var sm = new ScenarioManager({ 
                         run: rs,
                         baselineRunName: 'batman'
@@ -162,7 +162,7 @@
                         name: 'food',
                         saved: false
                     };
-                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([
+                    sinon.stub(rs, 'query').returns($.Deferred().resolve([
                         sampleRun
                     ]).promise());
                     var sm = new ScenarioManager({ run: rs });
@@ -172,7 +172,7 @@
                 });
                 it('should create a new run if no runs are found', function () {
                     var rs = new F.service.Run(runOptions);
-                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([]).promise());
+                    sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
                     var createStub = sinon.stub(rs, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
                     var sm = new ScenarioManager({ run: rs });
                     return sm.current.getRun().then(function (run) {
@@ -187,7 +187,7 @@
                         name: 'food',
                         saved: true
                     };
-                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([sampleRun]).promise());
+                    sinon.stub(rs, 'query').returns($.Deferred().resolve([sampleRun]).promise());
                     var loadStub = sinon.stub(rs, 'load').returns($.Deferred().resolve(sampleRun).promise());
                     sinon.stub(rs, 'save').returns($.Deferred().resolve({}).promise());
                     var sm = new ScenarioManager({ run: rs });
@@ -203,7 +203,7 @@
                         name: 'food',
                         saved: true
                     };
-                    sinon.stub(rs, 'filter').returns($.Deferred().resolve([sampleRun]).promise());
+                    sinon.stub(rs, 'query').returns($.Deferred().resolve([sampleRun]).promise());
                     sinon.stub(rs, 'load').returns($.Deferred().resolve(sampleRun).promise());
                     sinon.stub(rs, 'save').returns($.Deferred().resolve({}).promise());
                     var sm = new ScenarioManager({ 
