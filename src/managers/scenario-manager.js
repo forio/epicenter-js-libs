@@ -105,6 +105,8 @@ function ScenarioManager(config) {
             return me.current.run.serial(opts.advanceOperation);
         }).then(function () {
             return me.savedRuns.save(me.current.run, metadata);
+        }).then(function () {
+            return me.current.getRun(); //to update the .run instance
         });
     };
 }
