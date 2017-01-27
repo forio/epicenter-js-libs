@@ -5,6 +5,7 @@
  */
 
 var F = {
+    _private: {}, //need this hook now because tests expect everything to be global. Delete once tests are browserified
     util: {},
     factory: {},
     transport: {},
@@ -25,7 +26,7 @@ if (!global.SKIP_ENV_LOAD) {
 F.util.query = require('./util/query-util');
 F.util.run = require('./util/run-util');
 F.util.classFrom = require('./util/inherit');
-F.util.strategy = require('./managers/strategy-utils'); // This is private and should go away once tests are browserified
+F._private.strategyutils = require('./managers/strategy-utils');
 
 F.factory.Transport = require('./transport/http-transport-factory');
 F.transport.Ajax = require('./transport/ajax-http-transport');
