@@ -717,6 +717,18 @@
                     });
                 });
             });
+            it('should update url for variable service', function () {
+                var rs = new RunService({ account: account, project: project, id: 'foo' });
+                return rs.variables().query('v1').then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'foo/variables/?v1');
+                    rs.updateConfig({ filter: 'bar' });
+                    return rs.variables().query('v1').then(function () {
+                        var req = server.requests.pop();
+                        req.url.should.equal(baseURL + 'bar/variables/?v1');
+                    });
+                });
+            });
             it('should do nothing if no options passed in', function () {
                 var rs = new RunService({ account: account, project: project, id: 'foo' });
                 rs.updateConfig();

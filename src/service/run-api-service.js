@@ -551,6 +551,7 @@ module.exports = function (config) {
             }
             serviceOptions = $.extend(true, {}, serviceOptions, config);
             urlConfig = updateURLConfig(serviceOptions);
+            this.urlConfig = urlConfig;
             updateHTTPConfig(serviceOptions, urlConfig);
         },
         /**

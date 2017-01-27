@@ -36,6 +36,7 @@
      var serviceOptions = $.extend({}, defaults, config);
 
      var getURL = function () {
+        //TODO: Replace with getCurrentconfig instead?
          return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
      };
 
