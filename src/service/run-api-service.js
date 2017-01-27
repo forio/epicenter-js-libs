@@ -131,12 +131,12 @@ module.exports = function (config) {
         }
 
         urlConfig.filter = ';';
-        urlConfig.getFilterURL = function () {
+        urlConfig.getFilterURL = function (filter) {
             var url = urlConfig.getAPIPath('run');
-            var filter = qutil.toMatrixFormat(opts.filter);
+            var filterMatrix = qutil.toMatrixFormat(filter || opts.filter);
 
-            if (filter) {
-                url += filter + '/';
+            if (filterMatrix) {
+                url += filterMatrix + '/';
             }
             return url;
         };
@@ -257,8 +257,7 @@ module.exports = function (config) {
          * @return {Promise}
          */
         query: function (qs, outputModifier, options) {
-            serviceOptions.filter = qs; //shouldn't be able to over-ride
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var httpOptions = $.extend(true, {}, serviceOptions, { url: urlConfig.getFilterURL(qs) }, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
 
             return http.splitGet(outputModifier, httpOptions).then(function (r) {
