@@ -80,7 +80,7 @@
                 });
             });
             it('should merge baseline options', function () {
-                var sm = new ScenarioManager({ run: runOptions, baselineRun: { account: 'batman' } });
+                var sm = new ScenarioManager({ run: runOptions, baseline: { run: { account: 'batman' } } });
                 var config = sm.baseline.run.getCurrentConfig();
                 expect(config.account).to.equal('batman');
                 expect(config.project).to.equal('js-libs');
@@ -131,7 +131,9 @@
                     sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
                     var sm = new ScenarioManager({ 
                         run: rs,
-                        baselineRunName: 'batman'
+                        baseline: {
+                            runName: 'batman'
+                        }
                     });
                     sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
                     sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
@@ -151,7 +153,7 @@
                 expect(sm.current).to.be.instanceof(RunManager);
             });
             it('should merge current run options', function () {
-                var sm = new ScenarioManager({ run: runOptions, currentRun: { account: 'batman' } });
+                var sm = new ScenarioManager({ run: runOptions, current: { run: { account: 'batman' } } });
                 var config = sm.current.run.getCurrentConfig();
                 expect(config.account).to.equal('batman');
                 expect(config.project).to.equal('js-libs');

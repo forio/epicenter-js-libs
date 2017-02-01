@@ -4,7 +4,7 @@ var ReuseinitStrategy = require('../run-strategies/reuse-last-initialized');
 
 module.exports = function (options) {
     var defaults = {
-        baselineName: 'baseline',
+        baselineName: 'Baseline',
         initOperation: [{ stepTo: 'end' }]
     };
     var strategyOptions = options ? options.strategyOptions : {};

@@ -7,13 +7,9 @@ var RunManager = require('./run-manager');
 var SavedRunsManager = require('./saved-runs-manager');
 var strategyUtils = require('./strategy-utils');
 
-var defaults = {
-    /**
-     * Name of the baseline run
-     * @type {String}
-     */
-    baselineRunName: 'Baseline',
+var NoneStrategy = require('./run-strategies/none-strategy');
 
+var defaults = {
     /**
      * Operation to perform on each run to indicate that it's complete
      * @type {Array}
@@ -26,17 +22,29 @@ var defaults = {
      */
     run: {},
 
-    /**
-     * Additional options to pass-through to run creation, specifically for the baseline. This will over-ride any options provided under `run`
-     * @type {Object}
-     */
-    baselineRun: {},
+    includeBaseLine: true,
 
-    /**
-     * Additional options to pass-through to run creation, specifically for the current run. This will over-ride any options provided under `run`
-     * @type {Object}
-     */
-    currentRun: {},
+    baseline: {
+        /**
+         * Name of the baseline run
+         * @type {String}
+         */
+        runName: 'Baseline',
+
+        /**
+         * Additional options to pass-through to run creation, specifically for the baseline. This will over-ride any options provided under `run`
+         * @type {Object}
+         */
+        run: {}
+    },
+
+    current: {
+        /**
+         * Additional options to pass-through to run creation, specifically for the current run. This will over-ride any options provided under `run`
+         * @type {Object}
+         */
+        run: {}
+    },
 };
 
 var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
@@ -47,17 +55,18 @@ function ScenarioManager(config) {
     if (config && config.advanceOperation) {
         opts.advanceOperation = config.advanceOperation; //jquery.extend does a poor job trying to merge arrays
     }
-    
+
+    var BaselineStrategyToUse = opts.includeBaseLine ? BaselineStrategy : NoneStrategy;
     /**
      * A Run Manager instance with a strategy which generates a new baseline if none exists
      * @type {RunManager}
      */
     this.baseline = new RunManager({
-        strategy: BaselineStrategy,
+        strategy: BaselineStrategyToUse,
         sessionKey: 'sm-baseline-run',
-        run: strategyUtils.mergeRunOptions(opts.run, opts.baselineRun),
+        run: strategyUtils.mergeRunOptions(opts.run, opts.baseline.run),
         strategyOptions: {
-            baselineName: opts.baselineRunName,
+            baselineName: opts.baseline.runName,
             initOperation: opts.advanceOperation
         }
     });
@@ -89,7 +98,7 @@ function ScenarioManager(config) {
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
         sessionKey: 'sm-current-run',
-        run: strategyUtils.mergeRunOptions(opts.run, opts.currentRun),
+        run: strategyUtils.mergeRunOptions(opts.run, opts.current.run),
         strategyOptions: {
             ignoreOperations: ignoreOperations
         }
