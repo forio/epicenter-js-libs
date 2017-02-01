@@ -22,8 +22,8 @@ module.exports = classFrom(Base, {
         return $.Deferred().resolve().promise();
     },
 
-    getRun: function () {
+    getRun: function (runService) {
         // return a usable run
-        return $.Deferred().resolve(this.runService).promise();
+        return $.Deferred().resolve(runService).promise();
     }
 });
