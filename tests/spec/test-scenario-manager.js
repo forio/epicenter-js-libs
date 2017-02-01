@@ -80,7 +80,7 @@
                 });
             });
             it('should merge baseline options', function () {
-                var sm = new ScenarioManager({ run: runOptions, baselineRun: { account: 'batman' } });
+                var sm = new ScenarioManager({ run: runOptions, baseline: { run: { account: 'batman' } } });
                 var config = sm.baseline.run.getCurrentConfig();
                 expect(config.account).to.equal('batman');
                 expect(config.project).to.equal('js-libs');

@@ -25,14 +25,14 @@ var defaults = {
          * Name of the baseline run
          * @type {String}
          */
-        runName: 'Baseline'
-    },
+        runName: 'Baseline',
 
-    /**
-     * Additional options to pass-through to run creation, specifically for the baseline. This will over-ride any options provided under `run`
-     * @type {Object}
-     */
-    baselineRun: {},
+        /**
+         * Additional options to pass-through to run creation, specifically for the baseline. This will over-ride any options provided under `run`
+         * @type {Object}
+         */
+        run: {}
+    },
 
     /**
      * Additional options to pass-through to run creation, specifically for the current run. This will over-ride any options provided under `run`
@@ -57,7 +57,7 @@ function ScenarioManager(config) {
     this.baseline = new RunManager({
         strategy: BaselineStrategy,
         sessionKey: 'sm-baseline-run',
-        run: strategyUtils.mergeRunOptions(opts.run, opts.baselineRun),
+        run: strategyUtils.mergeRunOptions(opts.run, opts.baseline.run),
         strategyOptions: {
             baselineName: opts.baseline.runName,
             initOperation: opts.advanceOperation
