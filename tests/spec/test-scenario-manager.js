@@ -131,7 +131,9 @@
                     sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
                     var sm = new ScenarioManager({ 
                         run: rs,
-                        baselineRunName: 'batman'
+                        baseline: {
+                            runName: 'batman'
+                        }
                     });
                     sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
                     sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());

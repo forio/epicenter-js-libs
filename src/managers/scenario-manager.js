@@ -9,12 +9,6 @@ var strategyUtils = require('./strategy-utils');
 
 var defaults = {
     /**
-     * Name of the baseline run
-     * @type {String}
-     */
-    baselineRunName: 'Baseline',
-
-    /**
      * Operation to perform on each run to indicate that it's complete
      * @type {Array}
      */
@@ -25,6 +19,14 @@ var defaults = {
      * @type {Object}
      */
     run: {},
+
+    baseline: {
+        /**
+         * Name of the baseline run
+         * @type {String}
+         */
+        runName: 'Baseline'
+    },
 
     /**
      * Additional options to pass-through to run creation, specifically for the baseline. This will over-ride any options provided under `run`
@@ -57,7 +59,7 @@ function ScenarioManager(config) {
         sessionKey: 'sm-baseline-run',
         run: strategyUtils.mergeRunOptions(opts.run, opts.baselineRun),
         strategyOptions: {
-            baselineName: opts.baselineRunName,
+            baselineName: opts.baseline.runName,
             initOperation: opts.advanceOperation
         }
     });

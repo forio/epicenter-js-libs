@@ -100,12 +100,48 @@ This interface now introduces a new way to 'register' named run strategies for u
 ## Scenario Manager
 This release introduces a new Scenario Manager, accessible as `F.manager.ScenarioManager`. This is mostly useful for time-based models (Vensim/Stella/Powersim/SimLang), but can be adapted to working with other languages as well.
 
-The best way to think of the Scenario Manager 
+The ScenarioManager can be thought of a collection of RunManagers with pre-configured strategies. Just as the RunManager provides use-case-based abstractions and utilities for managing the RunService, the ScenarioManager provides the same for the _RunManager_. 
 
+There are usually 3 components to building a Run Comparison:
+
+- You need a `baseline run` to compare against; a baseline is defined as a run "advanced to the end"† with just the model defaults.
+- You need `current run` in which to make decisions. Your current run should always be at 'step 0', and should maintain state across different sessions.
+- You need to manage a list of `saved runs`. A "Saved Run" is a run which has it's "saved" property set to true - this should be any run which you want to use for comparisons later.
+
+To satisfy these needs a ScenarioManager instance has 3 methods:
+
+### Baseline
+```js
+var sm = new F.manager.ScenarioManager();
+sm.baseline //An instance of a Run Manager with a 'baseline' strategy which locates the last undeleted baseline or creates one.
+sm.baseline.reset() //reset the baseline, useful if the model has changed since the baseline was created
+sm.baseline.getRun() // Typical Run Manager operation which returns a run
+```
+
+### Current
+```js
+var sm = new F.manager.ScenarioManager();
+sm.current //An instance of a Run Manager with a strategy which picks up the last unsaved run (which implies a run which hasn't been advanced)
+sm.current.reset() //reset the decisions made on the current ru
+sm.current.getRun() // Typical Run Manager operation which returns a run
+```
+
+The current RunManager also has an additional utility method `saveAndAdvance`; this
+- Sets the saved property of the current run to true (thereby no longer making this 'current', since the current is unsaved by definition)
+- Performs the advanceOperation
+- Adds any metadata provided to the run; typically used for naming the run
+
+### Saved Runs
+```js
+var sm = new F.manager.ScenarioManager();
+sm.savedRuns //An instance of a Saved Runs Manager
+```
+
+The savedruns manager gives you utility functions for dealing with multiple runs (saving, deleting, listing). [TODO: LINK TO JSDOCS]
+
+† By default the advance operation is assumed to be `stepTo: end` which works for all time-based models supported by Epicenter. If you're using a different language or need to change this just pass in a different `advanceOperation` option while creating the ScenarioManager
 
 See individual Scenario Manager docs and examples for more details [TODO: LINK HERE ONCE WE HAVE GOOD JSDOCS]
-
-
 
 ### Bug fixes
 #### Run Manager's current instance of the run is always valid/up-to-date.
@@ -120,6 +156,7 @@ The 'current run service' of the run manager can be access through `rm.run`; how
 
 ### `runService.query` and `runService.filter` return empty arrays for no results.
 Due to a quirk in the platform `runService.query` used to return an array of runs if it found any, or an empty _Object_ ({}), if none existed. They now correctly return empty arrays instead. This may be a **Breaking Change** if you were relying on the older behavior.
+
 
 <a name="2.0.1"></a>
 ### 2.0.1 (2016-11-18)
