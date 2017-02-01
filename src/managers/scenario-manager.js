@@ -34,11 +34,13 @@ var defaults = {
         run: {}
     },
 
-    /**
-     * Additional options to pass-through to run creation, specifically for the current run. This will over-ride any options provided under `run`
-     * @type {Object}
-     */
-    currentRun: {},
+    current: {
+        /**
+         * Additional options to pass-through to run creation, specifically for the current run. This will over-ride any options provided under `run`
+         * @type {Object}
+         */
+        run: {}
+    },
 };
 
 var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
@@ -91,7 +93,7 @@ function ScenarioManager(config) {
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
         sessionKey: 'sm-current-run',
-        run: strategyUtils.mergeRunOptions(opts.run, opts.currentRun),
+        run: strategyUtils.mergeRunOptions(opts.run, opts.current.run),
         strategyOptions: {
             ignoreOperations: ignoreOperations
         }
