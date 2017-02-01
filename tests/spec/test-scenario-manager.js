@@ -64,6 +64,29 @@
             server.restore();
         });
 
+
+        describe('Options', function () {
+            describe('#includeBaseLine', function () {
+                it('should not create baseline if set', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var createStub = sinon.stub(rs, 'create');
+                    var queryStub = sinon.stub(rs, 'query');
+                    var sm = new ScenarioManager({ run: rs, includeBaseLine: false });
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(createStub).to.not.have.been.called;
+                        expect(queryStub).to.not.have.been.called;
+                    });
+                });
+                it('should still get saved runs', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var sm = new ScenarioManager({ run: rs, includeBaseLine: false });
+                    var getRunsStub = sinon.stub(sm.savedRuns, 'getRuns').returns($.Deferred().resolve([]).promise());
+                    return sm.savedRuns.getRuns().then(function () {
+                        expect(getRunsStub).to.have.been.calledOnce;
+                    });
+                });
+            });
+        });
         describe('baseline', function () {
             it('should create a new baseline run manager', function () {
                 var sm = new ScenarioManager({ run: runOptions });
