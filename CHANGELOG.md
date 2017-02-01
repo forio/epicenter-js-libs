@@ -100,12 +100,12 @@ This interface now introduces a new way to 'register' named run strategies for u
 ## Scenario Manager
 This release introduces a new Scenario Manager, accessible as `F.manager.ScenarioManager`. This is mostly useful for time-based models (Vensim/Stella/Powersim/SimLang), but can be adapted to working with other languages as well.
 
-The ScenarioManager can be thought of a collection of RunManagers with pre-configured strategies. Just as the RunManager provides use-case-based abstractions and utilities for managing the RunService, the ScenarioManager provides the same for the _RunManager_. 
+The ScenarioManager can be thought of a collection of RunManagers with pre-configured strategies. Just as the RunManager provides use-case-based abstractions and utilities for managing the RunService, the ScenarioManager does the same for the _RunManager_. 
 
 There are usually 3 components to building a Run Comparison:
 
-- You need a `baseline run` to compare against; a baseline is defined as a run "advanced to the end"† with just the model defaults.
-- You need `current run` in which to make decisions. Your current run should always be at 'step 0', and should maintain state across different sessions.
+- You'll have a `current run` in which to make decisions; this is defined as a run which hasn't been advanced yet, and hence use to set your initial decisions on. Your current run should maintain state across different sessions.
+- You'll usually have a `baseline run` to compare against; a baseline is defined as a run "advanced to the end"† with just the model defaults.
 - You need to manage a list of `saved runs`. A "Saved Run" is a run which has it's "saved" property set to true - this should be any run which you want to use for comparisons later.
 
 To satisfy these needs a ScenarioManager instance has 3 methods:
@@ -117,6 +117,8 @@ sm.baseline //An instance of a Run Manager with a 'baseline' strategy which loca
 sm.baseline.reset() //reset the baseline, useful if the model has changed since the baseline was created
 sm.baseline.getRun() // Typical Run Manager operation which returns a run
 ```
+
+If you don't need a baseline for your particular case, you can disable auto-creation of baseline runs by passing in `includeBaseline: false` to your scenario manager options.
 
 ### Current
 ```js
