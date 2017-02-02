@@ -318,7 +318,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             $d.resolve(memberInfo);
         };
 
-        var memberAdapter = new MemberAdapter({ token: params.token, server: options.server });
+        var memberAdapter = new MemberAdapter({ token: params.token, server: adapterOptions.server });
         memberAdapter.getGroupsForUser(params, adapterOptions).fail($d.reject);
         return $d.promise();
     },

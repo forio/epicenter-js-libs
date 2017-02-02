@@ -5,6 +5,8 @@ var StorageFactory = require('./store-factory');
 var optionUtils = require('../util/option-utils');
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
+var EPI_MANAGER_KEY = 'epicenter.token'; //can't be under key-names, or logout will clear this too
+
 var defaults = {
     /**
      * Where to store user access tokens for temporary access. Defaults to storing in a cookie in the browser.
@@ -78,18 +80,43 @@ var SessionManager = function (managerOptions) {
             var baseOptions = getBaseOptions(overrides);
             var session = this.getSession(overrides);
 
+            var token = session.auth_token;
+            if (!token) {
+                var factory = new StorageFactory();
+                token = factory.get(EPI_MANAGER_KEY);
+            }
+
             var sessionDefaults = {
                 /**
                  * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
                  * @see [Authentication API Service](../auth-api-service/) for getting tokens.
                  * @type {String}
                  */
-                token: session.auth_token,
+                token: token,
+
+                /**
+                 * The account. If left undefined, taken from the cookie session.
+                 * @type {String}
+                 */
+                account: session.account,
+
+                /**
+                 * The project. If left undefined, taken from the cookie session.
+                 * @type {String}
+                 */
+                project: session.project,
+
+
                 /**
                  * The group name. If left undefined, taken from the cookie session.
                  * @type {String}
                  */
                 group: session.groupName,
+                /**
+                 * Alias for group. 
+                 * @type {String}
+                 */
+                groupName: session.groupName, //It's a little weird that it's called groupName in the cookie, but 'group' in all the service options, so normalize for both
                 /**
                  * The group id. If left undefined, taken from the cookie session.
                  * @type {String}

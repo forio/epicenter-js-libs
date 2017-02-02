@@ -105,8 +105,9 @@ var UrlConfigService = function (config) {
             var PROJECT_APIS = ['run', 'data', 'file'];
 
             if (api === 'config') {
-                // var base = options.isLocalhost() ? '' : 
-                return this.protocol + '://' + actingHost + '/epicenter/v1/config';
+                var actualProtocol = window.location.protocol.replace(':', '');
+                var configProtocol = (options.isLocalhost()) ? this.protocol : actualProtocol;
+                return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
             }
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
 
