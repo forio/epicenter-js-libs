@@ -95,12 +95,12 @@ module.exports = function (config) {
             var postParams = {
                 userName: httpOptions.userName,
             };
+            if (httpOptions.password) {
+                postParams.password = httpOptions.password;
+            }
             if (httpOptions.account) {
                 //pass in null for account under options if you don't want it to be sent
                 postParams.account = httpOptions.account;
-            }
-            if (httpOptions.password) {
-                postParams.password = httpOptions.password;
             }
             return http.post(postParams, httpOptions);
         },
