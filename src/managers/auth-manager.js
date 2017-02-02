@@ -188,7 +188,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             };
 
             if (!isTeamMember) {
-                me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
+                me.getUserGroups({ userId: userInfo.user_id, token: token, server: adapterOptions.server }, userGroupOpts)
                     .then(handleGroupList, $d.reject);
             } else {
                 var opts = objectAssign({}, userGroupOpts, { token: token });
@@ -318,7 +318,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             $d.resolve(memberInfo);
         };
 
-        var memberAdapter = new MemberAdapter({ token: params.token });
+        var memberAdapter = new MemberAdapter({ token: params.token, server: options.server });
         memberAdapter.getGroupsForUser(params, adapterOptions).fail($d.reject);
         return $d.promise();
     },
