@@ -25,8 +25,36 @@ You can also [create your own](#create-your-own).
 <? }); ?>
 
 <a name="create-your-own"></a>
-#### Create your own
+#### Create Your Own
 
-You can create your own strategy by passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. 
+You can create your own strategy by passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. Strategy functions must return objects of the form:
 
-Strategy functions must return a boolean value for whether or not to create a new run.
+	{
+		getRun: function() {},
+		reset: function() {}
+	}
+
+Some strategies have options you can specify through `strategyOptions` in the [Run Manager](../run-manager/). If you create your own strategy, this options object is passed in to your strategy function constructor. 
+
+For example:
+
+	// myNewStrategy.js
+	var classFrom = require('../../util/inherit');
+	var Base = {};
+	var defaults = { };
+	module.exports = classFrom(Base, {
+	    constructor: function (options) {
+	        this.options = $.extend(true, {}, defaults, options.strategyOptions);
+	        // parse or set options as needed
+	    },
+	    getRun: function (runService, session) {
+	    	// return the correct run
+	    	// for example, the most recent run that matches some critiera of your choosing
+	    },
+	    reset: function (runService, session) {
+	    	// how to respond to a reset call
+	    	// for example, by creating a new run
+	    }
+	});
+
+

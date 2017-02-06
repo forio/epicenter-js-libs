@@ -189,6 +189,7 @@ RunManager.prototype = {
      *      });
      *
      * **Parameters**
+     * @param {Object} options (Optional) Overrides for configuration options.
      * @return {Promise}
      */
     reset: function (options) {
