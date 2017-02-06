@@ -1,7 +1,7 @@
 /**
  * The `reuse-last-initialized` strategy looks for the most recent run that matches particular critiera; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations. 
  *
- * This strategy is useful if you have a custom initialization function in your model, and want to make sure it's always executed for new runs. This strategy is also useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
+ * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *
  *      var rm = new F.manager.RunManager({
  *          strategy: 'reuse-last-initialized',
@@ -10,6 +10,8 @@
  *          }
  *      });
  * 
+ * This strategy is also useful if you have a custom initialization function in your model, and want to make sure it's always executed for new runs.
+ *
  * Specifically, the strategy is:
  *
  * * Look for the most recent run that matches the (optional) `flag` criteria
