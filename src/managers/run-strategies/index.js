@@ -32,7 +32,6 @@ module.exports = {
      * @param  {Function} strategy Your strategy constructor. Will be called with `new` on RunManager initialization
      * @param  {Object} options  Options for strategy
      * @param  {Boolean} options.requiresAuth Specify if the strategy requires an valid user-session to work
-     * @return {None}
      */
     register: function (name, strategy, options) {
         strategy.options = options;
