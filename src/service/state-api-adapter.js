@@ -2,7 +2,9 @@
 /**
  * ## State API Adapter
  *
- * The State API Adapter allows you to replay or clone runs. It brings existing, persisted run data from the database back into memory, using the same run id (`replay`) or a new run id (`clone`). Runs must be in memory in order for you to update variables or call operations on them.
+ * The State API Adapter allows you to view the history of a run, and to replay or clone runs. 
+ *
+ * The State API Adapter brings existing, persisted run data from the database back into memory, using the same run id (`replay`) or a new run id (`clone`). Runs must be in memory in order for you to update variables or call operations on them.
  *
  * Specifically, the State API Adapter works by "re-running" the run (user interactions) from the creation of the run up to the time it was last persisted in the database. This process uses the current version of the run's model. Therefore, if the model has changed since the original run was created, the retrieved run will use the new model — and may end up having different values or behavior as a result. Use with care!
  *
@@ -51,6 +53,22 @@ module.exports = function (config) {
     };
 
     var publicAPI = {
+
+        /**
+        * View the history of a run.
+        * 
+        *  **Example**
+        *
+        *      var sa = new F.service.State();
+        *      sa.load('0000015a06bb58613b28b57365677ec89ec5').then(function(history) {
+        *            console.log('history = ', history);
+        *      });
+        *
+        *  **Parameters**
+        * @param {string} runId The id of the run.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
+        */
         load: function (runId, options) {
             var httpParams = $.extend(true, {},
                 serviceOptions,
