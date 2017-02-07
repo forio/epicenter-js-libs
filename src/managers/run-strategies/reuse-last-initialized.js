@@ -15,7 +15,7 @@
  * Specifically, the strategy is:
  *
  * * Look for the most recent run that matches the (optional) `flag` criteria
- * * If it cannot find one, create a new run. Immediately "initialize" this new run by:
+ * * If there are no runs that match the `flag` criteria, create a new run. Immediately "initialize" this new run by:
  *     *  Calling the model operation(s) specified in the `initOperation` array.
  *     *  Optionally, setting a `flag` in the run.
  *

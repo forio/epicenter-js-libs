@@ -1,9 +1,9 @@
 /**
  * The `reuse-per-session` strategy creates a new run when the current one is not in the browser cookie.
  * 
- * Using this strategy means that when end users navigate between pages in your project, or refresh their browsers, they will still be working with the same run.
+ * Using this strategy means that when end users navigate between pages in your project, or refresh their browsers, they will still be working with the same run. However, if end users close their browsers and return to the project at a later date, a new run is created.
  *
- * This strategy is useful if your project is structured such that immediately after a run is created, the model is executed completely (for example, a Vensim model that is stepped to the end as soon as it is created). In other words, you care whether you have a run, but as long as you have one, you are certain that this run is the one you are interested in. 
+ * This strategy is useful if your project is structured such that immediately after a run is created, the model is executed completely (for example, a Vensim model that is stepped to the end as soon as it is created). In contrast, if end users play with your project for an extended period of time, executing the model step by step, the `reuse-across-sessions` strategy is probably a better choice (it allows end users to pick up where they left off, rather than starting from scratch each browser session).
  * 
  * Specifically, the strategy is:
  *
