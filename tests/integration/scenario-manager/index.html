@@ -65,6 +65,12 @@
                 <tr data-runid="<%= run.id %>">
                     <td><%= run.name %></td>
                     <td><%= run.id %></td>
+                    <td>
+                        <% Object.keys(run.variables).forEach(function (v) { %>
+                            <%= v %>: <%= run.variables[v] %>
+                            <br/>
+                        <% }) %>
+                    </td>
                     <td><% if (!run.nonRemovable) { %> <button class="btn btn-link btn-remove pull-right">Remove</button> <% } %></td>
                 </tr>
             </script>

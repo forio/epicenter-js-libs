@@ -23,14 +23,15 @@ $('#txtPriceDecision').on('change', function (evt) {
 });
 $('#btnSaveAndSimulate').on('click', function () {
     sm.current.saveAndAdvance().then(function () {
-        console.log('simulated');
+        window.alert('simulated');
     });
 });
 
 
+window.sm = sm;
 //Saved run tests
 var runRowtemplate = _.template($('#runTemplate').html());
-sm.savedRuns.getRuns().then(function (runs) {
+sm.savedRuns.getRuns([decisionVariable, 'Time']).then(function (runs) {
     $('.runsList').empty();
     // console.log(runs);
     if (!runs.length) {

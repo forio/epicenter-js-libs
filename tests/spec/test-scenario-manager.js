@@ -254,7 +254,7 @@
 
                         expect(saveStub).to.have.been.calledOnce;
                         var saveArgs = saveStub.getCall(0).args;
-                        expect(saveArgs[0]).to.eql({ id: 'clonedrun', account: runOptions.account, project: runOptions.project });
+                        expect(saveArgs[0]).to.eql('clonedrun');
                     });
                 });
                 it('should return the right output', function () {
