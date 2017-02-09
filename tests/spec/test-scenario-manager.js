@@ -219,7 +219,7 @@
                     });
                 });
             });
-            describe.only('#saveAndAdvance', function () {
+            describe('#saveAndAdvance', function () {
                 var rs, serialStub, sm, saveStub;
                 beforeEach(function () {
                     rs = new F.service.Run(runOptions);
@@ -229,8 +229,9 @@
                         advanceOperation: [{ myadvance: 'opn' }]
                     });
                     sinon.stub(sm.current, 'getRun').returns($.Deferred().resolve({ id: 'currentrun' }).promise());
-                    saveStub = sinon.stub(sm.savedRuns, 'save', function (foo) {
-                        return $.Deferred().resolve(foo).promise();
+                    saveStub = sinon.stub(sm.savedRuns, 'save', function (run, patchData) {
+                        var toReturn = $.extend(true, {}, run, patchData, { saved: true });
+                        return $.Deferred().resolve(toReturn).promise();
                     });
                 });
                 it('execute the right sequence of operations', function () {
@@ -248,27 +249,22 @@
                         expect(saveStub).to.have.been.calledAfter(serialStub);
                     });
                 });
-                it('should update the current run', function () {
-                    var rs = new F.service.Run(runOptions);
-                    var sampleRun = {
-                        id: 'run1',
-                        name: 'food',
-                        saved: true
-                    };
-                    var serialStub = sinon.stub(rs, 'serial').returns($.Deferred().resolve([sampleRun]).promise());
-                    var sm = new ScenarioManager({ 
-                        run: rs,
-                        advanceOperation: [{ foo: 'bar' }]
+                it('should return the right output', function () {
+                    return sm.current.saveAndAdvance().then(function (newrun) {
+                        expect(newrun).to.eql({ id: 'clonedrun', saved: true });
                     });
-                    var saveStub = sinon.stub(sm.savedRuns, 'save').returns($.Deferred().resolve({}).promise());
-                    sinon.stub(sm.current, 'getRun').returns($.Deferred().resolve({ id: 'foo' }).promise());
-                    return sm.current.saveAndAdvance({ name: 'robin' }).then(function (run) {
-                        expect(serialStub).to.have.been.calledOnce;
-                        expect(serialStub).to.have.been.calledWith([{ foo: 'bar' }]);
-
-                        expect(saveStub).to.have.been.calledOnce;
-                        var args = saveStub.getCall(0).args;
-                        expect(args[1].name).to.eql('robin');
+                });
+                it('should save metadata', function () {
+                    return sm.current.saveAndAdvance({ name: 'bar' }).then(function (newrun) {
+                        var saveArgs = saveStub.getCall(0).args;
+                        expect(saveArgs[1]).to.eql({ name: 'bar' });
+                        expect(newrun).to.eql({ id: 'clonedrun', name: 'bar', saved: true });
+                    });
+                });
+                it('should not affect current run instance', function () {
+                    return sm.current.saveAndAdvance({ name: 'bar' }).then(function (newrun) {
+                        var config = sm.current.run.getCurrentConfig();
+                        expect(config.id).to.eql('good');
                     });
                 });
             });

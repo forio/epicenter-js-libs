@@ -116,7 +116,7 @@ function ScenarioManager(config) {
         }
         function markSaved(run) {
             return me.savedRuns.save(run, metadata).then(function (savedResponse) {
-                return $.extend(true, run, savedResponse);
+                return $.extend(true, {}, run, savedResponse);
             });
         }
         function advance(run) {
