@@ -22,7 +22,8 @@ $('#txtPriceDecision').on('change', function (evt) {
     sm.current.run.variables().save(params);
 });
 $('#btnSaveAndSimulate').on('click', function () {
-    sm.current.saveAndAdvance().then(function () {
+    var name = $('#txtRunName').val();
+    sm.current.saveAndAdvance({ name: name }).then(function () {
         window.alert('simulated');
     });
 });
