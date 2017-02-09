@@ -8,15 +8,18 @@ var defaultRunOptions = {
 
 var sm = new F.manager.ScenarioManager({ run: defaultRunOptions });
 //Current Run tests
-sm.current.getRun(['Price', 'Time']).then(function (run) {
+var decisionVariable = 'Price';
+sm.current.getRun([decisionVariable, 'Time']).then(function (run) {
     $('#currentRunId').html(run.id);
-    var index = run.variables['Price'].length - 1;
-    $('#txtPriceDecision').val(run.variables['Price'][index]);
+    var index = run.variables[decisionVariable].length - 1;
+    $('#txtPriceDecision').val(run.variables[decisionVariable][index]);
     $('#time').html(run.variables['Time'][index]);
 });
 
 $('#txtPriceDecision').on('change', function (evt) {
-    sm.current.run.save({ 'Price': Number(evt.target.value) });
+    var params = {};
+    params[decisionVariable] = Number(evt.target.value);
+    sm.current.run.variables().save(params);
 });
 $('#btnSaveAndSimulate').on('click', function () {
     sm.current.saveAndAdvance().then(function () {
