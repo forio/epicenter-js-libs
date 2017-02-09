@@ -120,7 +120,8 @@ function ScenarioManager(config) {
             });
         }
         function advance(run) {
-            return me.current.run.serial(opts.advanceOperation).then(function () {
+            var rs = new RunService(run);
+            return rs.serial(opts.advanceOperation).then(function () {
                 return run;
             });
         }
