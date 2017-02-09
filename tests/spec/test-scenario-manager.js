@@ -5,6 +5,8 @@
     var RunManager = F.manager.RunManager;
     var SavedRunsManager = F.manager.SavedRunsManager;
 
+    var baseStateURL = (new F.service.URL()).getAPIPath('model/state');
+
     var runOptions = {
         model: 'model.eqn',
         account: 'forio-dev',
@@ -50,11 +52,11 @@
                 });
 
             server.respondWith('POST', /(.*)\/state\/(.*)/, function (xhr, id) {
-                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ run: 'foo' }));
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ run: 'clonedrun' }));
             });
             
-            server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
-                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+            server.respondWith('GET', /(.*)\/run\/[^\/]*\/[^\/]*\/(.*)/, function (xhr, base, id) {
+                xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ id: id.replace('/', '') }));
                 return true;
             });
             server.respondImmediately = true;
@@ -217,7 +219,35 @@
                     });
                 });
             });
-            describe('#saveAndAdvance', function () {
+            describe.only('#saveAndAdvance', function () {
+                var rs, serialStub, sm, saveStub;
+                beforeEach(function () {
+                    rs = new F.service.Run(runOptions);
+                    serialStub = sinon.stub(rs, 'serial').returns($.Deferred().resolve([{ foo: 'bar' }]).promise());
+                    sm = new ScenarioManager({ 
+                        run: rs,
+                        advanceOperation: [{ myadvance: 'opn' }]
+                    });
+                    sinon.stub(sm.current, 'getRun').returns($.Deferred().resolve({ id: 'currentrun' }).promise());
+                    saveStub = sinon.stub(sm.savedRuns, 'save', function (foo) {
+                        return $.Deferred().resolve(foo).promise();
+                    });
+                });
+                it('execute the right sequence of operations', function () {
+                    return sm.current.saveAndAdvance().then(function (newrun) {
+                        var cloneRequest = server.requests.shift();
+                        cloneRequest.method.toUpperCase().should.equal('POST');
+                        cloneRequest.url.should.equal(baseStateURL + 'currentrun');
+                        
+                        expect(serialStub).to.have.been.calledOnce;
+                        expect(serialStub).to.have.been.calledWith([{ myadvance: 'opn' }]);
+
+                        expect(saveStub).to.have.been.calledOnce;
+                        var saveArgs = saveStub.getCall(0).args;
+                        expect(saveArgs[0]).to.eql({ id: 'clonedrun' });
+                        expect(saveStub).to.have.been.calledAfter(serialStub);
+                    });
+                });
                 it('should update the current run', function () {
                     var rs = new F.service.Run(runOptions);
                     var sampleRun = {
