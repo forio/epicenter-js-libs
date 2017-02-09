@@ -233,12 +233,12 @@
                         advanceOperation: [{ myadvance: 'opn' }]
                     });
                     sinon.stub(sm.current, 'getRun').returns($.Deferred().resolve({ id: 'currentrun' }).promise());
-                    saveStub = sinon.stub(sm.savedRuns, 'save', function (run, patchData) {
-                        var toReturn = $.extend(true, {}, run, patchData, { saved: true });
+                    saveStub = sinon.stub(sm.savedRuns, 'save', function (runid, patchData) {
+                        var toReturn = $.extend(true, {}, { id: runid }, patchData, { saved: true });
                         return $.Deferred().resolve(toReturn).promise();
                     });
                 });
-                it.only('execute the right sequence of operations', function () {
+                it('execute the right sequence of operations', function () {
                     return sm.current.saveAndAdvance().then(function (newrun) {
                         var cloneRequest = server.requests.shift();
                         cloneRequest.method.toUpperCase().should.equal('POST');
@@ -259,14 +259,14 @@
                 });
                 it('should return the right output', function () {
                     return sm.current.saveAndAdvance().then(function (newrun) {
-                        expect(newrun).to.eql({ id: 'clonedrun', saved: true });
+                        expect(newrun).to.eql({ id: 'clonedrun', account: runOptions.account, project: runOptions.project, saved: true });
                     });
                 });
                 it('should save metadata', function () {
                     return sm.current.saveAndAdvance({ name: 'bar' }).then(function (newrun) {
                         var saveArgs = saveStub.getCall(0).args;
                         expect(saveArgs[1]).to.eql({ name: 'bar' });
-                        expect(newrun).to.eql({ id: 'clonedrun', name: 'bar', saved: true });
+                        expect(newrun).to.eql({ id: 'clonedrun', account: runOptions.account, project: runOptions.project, name: 'bar', saved: true });
                     });
                 });
                 it('should not affect current run instance', function () {
