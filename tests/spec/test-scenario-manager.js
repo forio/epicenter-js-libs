@@ -216,43 +216,6 @@
                         expect(createStub).to.have.been.calledOnce;
                     });
                 });
-
-                it('should clone to create new run if last run was saved', function () {
-                    var rs = new F.service.Run(runOptions);
-                    var sampleRun = {
-                        id: 'run1',
-                        name: 'food',
-                        saved: true
-                    };
-                    sinon.stub(rs, 'query').returns($.Deferred().resolve([sampleRun]).promise());
-                    var loadStub = sinon.stub(rs, 'load').returns($.Deferred().resolve(sampleRun).promise());
-                    sinon.stub(rs, 'save').returns($.Deferred().resolve({}).promise());
-                    var sm = new ScenarioManager({ run: rs });
-                    return sm.current.getRun().then(function (run) {
-                        expect(server.requests.length).to.eql(1);
-                        expect(loadStub).to.have.been.calledWith('foo');
-                    });
-                });
-                it('should exclude the right operations from clone', function () {
-                    var rs = new F.service.Run(runOptions);
-                    var sampleRun = {
-                        id: 'run1',
-                        name: 'food',
-                        saved: true
-                    };
-                    sinon.stub(rs, 'query').returns($.Deferred().resolve([sampleRun]).promise());
-                    sinon.stub(rs, 'load').returns($.Deferred().resolve(sampleRun).promise());
-                    sinon.stub(rs, 'save').returns($.Deferred().resolve({}).promise());
-                    var sm = new ScenarioManager({ 
-                        run: rs,
-                        advanceOperation: [{ foo: 'bar' }]
-                    });
-                    return sm.current.getRun().then(function (run) {
-                        var req = server.requests[0];
-                        expect(server.requests.length).to.eql(1);
-                        expect(req.requestBody).to.eql(JSON.stringify({ action: 'clone', exclude: ['foo'] }));
-                    });
-                });
             });
             describe('#saveAndAdvance', function () {
                 it('should update the current run', function () {
