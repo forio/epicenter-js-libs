@@ -39,14 +39,14 @@ $(function () {
             window.alert('unsuccessful! Check authorization');
         });
     });
-    
+
     $('#btnMarkOnlineWithId').click(function (evt) {
         evt.preventDefault();
         pr.markOnline('3bf6710c-11ae-4935-8d2f-b8143976df21').then(function (msg) {
             window.alert('marked online!');
         }).fail(function () {
             window.alert('unsuccessful! Check authorization');
-        }); 
+        });
     });
 
     $('#btnMarkOffline').click(function (evt) {
@@ -76,7 +76,7 @@ $(function () {
         });
     }
 
-    $('#btnGetStatus').click(function (evt) { 
+    $('#btnGetStatus').click(function (evt) {
         evt.preventDefault();
         getStatus();
     });
@@ -96,9 +96,9 @@ $(function () {
             var user = payload && payload.data.user && payload.data.user.lastName;
             var subType = payload && payload.data.subType;
             if (user && subType) {
-                $('#publishGroupStatus').append(user + '(' + subType + '), ');        
+                $('#publishGroupStatus').append(user + '(' + subType + '), ');
             } else {
-                $('#publishGroupStatus').append(payload.data.test + ', ');     
+                $('#publishGroupStatus').append(payload.data.test + ', ');
             }
         });
         getStatus();
@@ -121,9 +121,9 @@ $(function () {
             var user = payload && payload.data.user && payload.data.user.lastName;
             var subType = payload && payload.data.subType;
             if (user && subType) {
-                $('#publishGroupStatus2').append(user + '(' + subType + '), ');     
+                $('#publishGroupStatus2').append(user + '(' + subType + '), ');
             } else {
-                $('#publishGroupStatus2').append(payload.data.test + ', ');     
+                $('#publishGroupStatus2').append(payload.data.test + ', ');
             }
         });
         getStatus();

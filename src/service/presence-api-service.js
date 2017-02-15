@@ -17,7 +17,7 @@ var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
 var apiEndpoint = 'presence';
 var ChannelManager = require('../managers/epicenter-channel-manager');
-var Member = require('../service/member-api-adapter');
+
 module.exports = function (config) {
     var defaults = {
         /**
@@ -166,7 +166,6 @@ module.exports = function (config) {
          */
         getStatus: function (groupName, options) {
             options = options || {};
-            var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);
             if (!groupName && !objParams.groupName) {
                 throw new Error('No groupName specified.');
@@ -175,33 +174,7 @@ module.exports = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options,
                 { url: urlConfig.getAPIPath(apiEndpoint) + groupName }
             );
-            var addUsername = function () {
-                var dfd = $.Deferred();
-                var m = new Member();
-                m.getGroupDetails(objParams.groupId).then(function (group) {
-                    var members = group.members;
-                    http.get({}, httpOptions).then(function (status) {
-                        dfd.resolve(status.map(function (onlineUser) {
-                            var user = members.find(function (m) {
-                                return m.userId === onlineUser.userId;
-                            });
-                            if (user) {
-                                onlineUser.userName = user.userName;
-                                onlineUser.firstName = user.firstName;
-                                onlineUser.lastName = user.lastName;
-                            }
-                            return onlineUser;
-                        }));
-                    });
-                });
-                return dfd.promise();
-            };
-            if (!isString) {
-                // This will only work if the user requesting is a facilitator due to Member API permission
-                return addUsername();
-            } else {
-                return http.get({}, httpOptions);
-            }
+            return http.get({}, httpOptions);
         },
 
         /**
