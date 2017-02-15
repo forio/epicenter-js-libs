@@ -76,14 +76,14 @@ module.exports = function (config) {
     var publicAPI = {
         /**
          * Mark an user online in the presence api
-         * 
+         *
          *
          * **Example**
          *
          *     var pr = new F.service.Presence();
          *     pr.markOnline('userId').then(() => (userOnline) {
          *     })
-         *     
+         *
          * **Return Value**
          *
          * promise with user marked online
@@ -91,7 +91,7 @@ module.exports = function (config) {
          * **Parameters**
          *
          * @param  {String} userId(optional)
-         * @param  {Object} options: additional options to change the presence service defaults 
+         * @param  {Object} options: additional options to change the presence service defaults
          * @return {Promise} promise
          */
         markOnline: function (userId, options) {
@@ -111,14 +111,14 @@ module.exports = function (config) {
 
         /**
          * Mark an user offline in the presence api
-         * 
+         *
          *
          * **Example**
          *
          *     var pr = new F.service.Presence();
          *     pr.markOffline('userId').then(() => (userOnline) {
          *     })
-         *     
+         *
          * **Return Value**
          *
          * promise with user marked offline
@@ -126,7 +126,7 @@ module.exports = function (config) {
          * **Parameters**
          *
          * @param  {String} userId(optional)
-         * @param  {Object} options: additional options to change the presence service defaults 
+         * @param  {Object} options: additional options to change the presence service defaults
          * @return {Promise} promise
          */
         markOffline: function (userId, options) {
@@ -146,14 +146,14 @@ module.exports = function (config) {
 
         /**
          * Get a list of online users
-         * 
+         *
          *
          * **Example**
          *
          *     var pr = new F.service.Presence();
          *     pr.getStatus('groupName').then(() => (onlineUsers) {
          *     })
-         *     
+         *
          * **Return Value**
          *
          * promise with response of online users
@@ -161,7 +161,7 @@ module.exports = function (config) {
          * **Parameters**
          *
          * @param  {String} groupName(optional)
-         * @param  {Object} options: additional options to change the presence service defaults 
+         * @param  {Object} options: additional options to change the presence service defaults
          * @return {Promise} promise
          */
         getStatus: function (groupName, options) {
@@ -197,7 +197,7 @@ module.exports = function (config) {
                 return dfd.promise();
             };
             if (!isString) {
-                // This will only work if the user requesting is a facilitator due to Member API permission 
+                // This will only work if the user requesting is a facilitator due to Member API permission
                 return addUsername();
             } else {
                 return http.get({}, httpOptions);
@@ -206,14 +206,14 @@ module.exports = function (config) {
 
         /**
          * Shorthand for getting the presenceChannel for live status update of users getting online
-         * 
+         *
          *
          * **Example**
          *
          *     var pr = new F.service.Presence();
          *     pr.getChannel('groupName').then(() => (userOnline) {
          *     })
-         *     
+         *
          * **Return Value**
          *
          * Presence channel
@@ -221,7 +221,7 @@ module.exports = function (config) {
          * **Parameters**
          *
          * @param  {String} groupName(optional)
-         * @param  {Object} options: additional options to change the presence service defaults 
+         * @param  {Object} options: additional options to change the presence service defaults
          * @return {Channel} presence Channel
          */
         getChannel: function (groupName, options) {
