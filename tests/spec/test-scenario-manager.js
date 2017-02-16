@@ -110,7 +110,7 @@
                     return sm.baseline.getRun().then(function (run) {
                         expect(createStub).to.have.been.calledOnce;
                         expect(serialStub).to.have.been.calledOnce;
-                        expect(serialStub).to.have.been.calledWith([{ stepTo: 'end' }]);
+                        expect(serialStub).to.have.been.calledWith([{ name: 'stepTo', params: ['end'] }]);
                     });
                 });
                 it('should allow changing the initial operation', function () {
