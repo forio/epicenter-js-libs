@@ -4,7 +4,7 @@
  *
  * The Run API Service allows you to perform common tasks around creating and updating runs, variables, and data.
  *
- * When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly. This is because the Run Manager gives you control over run creation depending on run states.
+ * When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly. This is because the Run Manager (and associated [run strategies](../strategies/)) gives you control over run creation depending on run states.
  *
  * However, many of the Epicenter sample projects use a Run Service, because generally the sample projects are played in one end user session and don't care about run states or [run strategies](../strategies/). The Run API Service is also useful for building an interface for a facilitator, because it makes it easy to list data across multiple runs (using the `filter()` and `query()` methods).
  *
@@ -60,20 +60,20 @@ var SessionManager = require('../store/session-manager');
 module.exports = function (config) {
     var defaults = {
         /**
-         * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
+         * For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
          * @type {String}
          */
         token: undefined,
 
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL.
          * @type {String}
          */
         account: undefined,
 
         /**
-         * The project id. Defaults to empty string. If left undefined, taken from the URL.
+         * The project id. Defaults to undefined. If left undefined, taken from the URL.
          * @type {String}
          */
         project: undefined,
@@ -91,7 +91,7 @@ module.exports = function (config) {
         id: '',
 
         /**
-         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter. Defaults to `true`.
+         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to `true`.
          * @type {boolean}
          */
         autoRestore: true,
@@ -199,7 +199,7 @@ module.exports = function (config) {
         /**
          * Create a new run.
          *
-         * NOTE: Typically this is not used! Use `RunManager.getRun()` with a `strategy` of `always-new`, or use `RunManager.reset()`. See [Run Manager](../run-manager/) for more details.
+         * NOTE: Typically this is not used! Use `RunManager.getRun()` with a `strategy` of `reuse-never`, or use `RunManager.reset()`. See [Run Manager](../run-manager/) for more details.
          *
          *  **Example**
          *
@@ -251,7 +251,7 @@ module.exports = function (config) {
          *       });
          *
          * **Parameters**
-         * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
          * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} options (Optional) Overrides for configuration options.
          * @return {Promise}
@@ -271,7 +271,7 @@ module.exports = function (config) {
          * Similar to `.query()`.
          *
          * **Parameters**
-         * @param {Object} filter Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your Julia model).
+         * @param {Object} filter Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
          * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} options (Optional) Overrides for configuration options.
          * @return {Promise}
@@ -290,9 +290,9 @@ module.exports = function (config) {
         },
 
         /**
-         * Get data for a specific run. This includes standard run data such as the account, model, project, and created and last modified dates. To request specific model variables, pass them as part of the `filters` parameter.
+         * Get data for a specific run. This includes standard run data such as the account, model, project, and created and last modified dates. To request specific model variables or run record variables, pass them as part of the `filters` parameter.
          *
-         * Note that if the run is [in memory](../../../run_persistence/#runs-in-memory), any model variables are available; if the run is [in the database](../../../run_persistence/#runs-in-db), only model variables that have been persisted &mdash; that is, `record`ed in your Julia model &mdash; are available.
+         * Note that if the run is [in memory](../../../run_persistence/#runs-in-memory), any model variables are available; if the run is [in the database](../../../run_persistence/#runs-in-db), only model variables that have been persisted &mdash; that is, `record`ed or saved in your model &mdash; are available.
          *
          * **Example**
          *
@@ -338,9 +338,9 @@ module.exports = function (config) {
         },
 
         /**
-         * Call a method from the model.
+         * Call an operation from the model.
          *
-         * Depending on the language in which you have written your model, the method may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
+         * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * The `params` argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
          *
@@ -348,19 +348,19 @@ module.exports = function (config) {
          *
          * **Examples**
          *
-         *      // method "solve" takes no arguments
+         *      // operation "solve" takes no arguments
          *     rs.do('solve');
-         *      // method "echo" takes one argument, a string
+         *      // operation "echo" takes one argument, a string
          *     rs.do('echo', ['hello']);
-         *      // method "echo" takes one argument, a string
+         *      // operation "echo" takes one argument, a string
          *     rs.do('echo', 'hello');
-         *      // method "sumArray" takes one argument, an array
+         *      // operation "sumArray" takes one argument, an array
          *     rs.do('sumArray', [[4,2,1]]);
-         *      // method "add" takes two arguments, both integers
+         *      // operation "add" takes two arguments, both integers
          *     rs.do({ name:'add', params:[2,4] });
          *
          * **Parameters**
-         * @param {String} operation Name of method.
+         * @param {String} operation Name of operation.
          * @param {Array} params (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
          * @param {Object} options (Optional) Overrides for configuration options.
          * @return {Promise}
@@ -390,27 +390,27 @@ module.exports = function (config) {
         },
 
         /**
-         * Call several methods from the model, sequentially.
+         * Call several operations from the model, sequentially.
          *
-         * Depending on the language in which you have written your model, the methods may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
+         * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * **Examples**
          *
-         *      // methods "initialize" and "solve" do not take any arguments
+         *      // operations "initialize" and "solve" do not take any arguments
          *     rs.serial(['initialize', 'solve']);
-         *      // methods "init" and "reset" take two arguments each
+         *      // operations "init" and "reset" take two arguments each
          *     rs.serial([  { name: 'init', params: [1,2] },
          *                  { name: 'reset', params: [2,3] }]);
-         *      // method "init" takes two arguments,
-         *      // method "runmodel" takes none
+         *      // operation "init" takes two arguments,
+         *      // operation "runmodel" takes none
          *     rs.serial([  { name: 'init', params: [1,2] },
          *                  { name: 'runmodel', params: [] }]);
          *
          * **Parameters**
-         * @param {Array} operations If none of the methods take parameters, pass an array of the method names (strings). If any of the methods do take parameters, pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters.
+         * @param {Array} operations If none of the operations take parameters, pass an array of the operation names (strings). If any of the operations do take parameters, pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
          * @param {Object} options (Optional) Overrides for configuration options.
-         * @return {Promise}
+         * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         serial: function (operations, params, options) {
             var opParams = rutil.normalizeOperations(operations, params);
@@ -450,25 +450,25 @@ module.exports = function (config) {
         },
 
         /**
-         * Call several methods from the model, executing them in parallel.
+         * Call several operations from the model, executing them in parallel.
          *
-         * Depending on the language in which you have written your model, the methods may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
+         * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
          * **Example**
          *
-         *      // methods "solve" and "reset" do not take any arguments
+         *      // operations "solve" and "reset" do not take any arguments
          *     rs.parallel(['solve', 'reset']);
-         *      // methods "add" and "subtract" take two arguments each
+         *      // operations "add" and "subtract" take two arguments each
          *     rs.parallel([ { name: 'add', params: [1,2] },
          *                   { name: 'subtract', params:[2,3] }]);
-         *      // methods "add" and "subtract" take two arguments each
+         *      // operations "add" and "subtract" take two arguments each
          *     rs.parallel({ add: [1,2], subtract: [2,4] });
          *
          * **Parameters**
-         * @param {Array|Object} operations If none of the methods take parameters, pass an array of the method names (as strings). If any of the methods do take parameters, you have two options. You can pass an array of objects, each of which contains a method name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the method name and a (possibly empty) array of parameters.
+         * @param {Array|Object} operations If none of the operations take parameters, pass an array of the operation names (as strings). If any of the operations do take parameters, you have two options. You can pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the operation name and a (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
          * @param {Object} options (Optional) Overrides for configuration options.
-         * @return {Promise}
+         * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         parallel: function (operations, params, options) {
             var $d = $.Deferred();
