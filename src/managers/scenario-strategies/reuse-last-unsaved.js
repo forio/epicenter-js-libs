@@ -1,3 +1,22 @@
+/**
+ * ## Current (reuse-last-unsaved)
+ *
+ * The `reuse-last-unsaved` strategy returns the most recent run that is not `trashed` and also not `saved`.
+ * 
+ * Using this strategy means that end users continue working with the most recent run that has not been explicitly tagged by the project. However, if there are no runs for this end user, a new run is created.
+ * 
+ * Specifically, the strategy is:
+ *
+ * * Check the `saved` and `trashed` fields of the run to determine if the run has been explicitly saved or explicitly 'thrown away' (marked as no longer useful).
+ *     * Return the most recent run that is not `trashed` and also not `saved`.
+ *     * If the most recent run that is not `trashed` _is_ `saved`, then clone it and return the clone.
+ *     * If there are no runs, create a new run for this end user. 
+ *
+ * An instance of a [Run Manager](../run-manager/) with this strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.current`. See [more information](../#properties) on using `.current` within the Scenario Manager.
+ *
+ * @name new-if-missing
+ */
+
 'use strict';
 var classFrom = require('../../util/inherit');
 var StateService = require('../../service/state-api-adapter');
