@@ -71,6 +71,12 @@ var strategyUtils = require('./strategy-utils');
 
 var NoneStrategy = require('./run-strategies/none-strategy');
 
+var StateService = require('../service/state-api-adapter');
+var RunService = require('../service/run-api-service');
+
+var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
+var LastUnsavedStrategy = require('./scenario-strategies/reuse-last-unsaved');
+
 var defaults = {
     /**
      * Operations to perform on each run to indicate that the run is complete. Operations are executed serially. Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
@@ -112,9 +118,6 @@ var defaults = {
     },
 };
 
-var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
-var LastUnsavedStrategy = require('./scenario-strategies/reuse-last-unsaved');
-
 function ScenarioManager(config) {
     var opts = $.extend(true, {}, defaults, config);
     if (config && config.advanceOperation) {
@@ -153,9 +156,6 @@ function ScenarioManager(config) {
         });
     };
 
-    var ignoreOperations = ([].concat(opts.advanceOperation)).map(function (opn) {
-        return Object.keys(opn)[0];
-    });
     /**
      * A [Run Manager](../run-manager/) instance with a strategy which always returns the last unsaved run (or create a new run, if there are none). The current (last unsaved) run is defined as a run that hasn't been advanced yet, and so can be used to set initial decisions. Typically current runs are used for setting decisions being made by the end user in the UI, then advanced and added to the list of saved runs.
      * @return {RunManager}
@@ -163,10 +163,7 @@ function ScenarioManager(config) {
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
         sessionKey: 'sm-current-run',
-        run: strategyUtils.mergeRunOptions(opts.run, opts.current.run),
-        strategyOptions: {
-            ignoreOperations: ignoreOperations
-        }
+        run: strategyUtils.mergeRunOptions(opts.run, opts.current.run)
     });
 
     /**
@@ -175,13 +172,29 @@ function ScenarioManager(config) {
      * @return {Promise}
      */
     this.current.saveAndAdvance = function (metadata) {
-        return me.current.getRun().then(function () {
-            return me.current.run.serial(opts.advanceOperation);
-        }).then(function () {
-            return me.savedRuns.save(me.current.run, metadata);
-        }).then(function () {
-            return me.current.getRun(); //to update the .run instance
-        });
+        function clone(run) {
+            var sa = new StateService();
+            return sa.clone({ runId: run.id }).then(function (response) {
+                var rs = new RunService(me.current.run.getCurrentConfig());
+                return rs.load(response.run);
+            });
+        }
+        function markSaved(run) {
+            return me.savedRuns.save(run.id, metadata).then(function (savedResponse) {
+                return $.extend(true, {}, run, savedResponse);
+            });
+        }
+        function advance(run) {
+            var rs = new RunService(run);
+            return rs.serial(opts.advanceOperation).then(function () {
+                return run;
+            });
+        }
+        return me.current
+                .getRun()
+                .then(clone)
+                .then(advance)
+                .then(markSaved);
     };
 }
 
