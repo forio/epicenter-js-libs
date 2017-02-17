@@ -1,7 +1,19 @@
 <a name="2.2.0"></a>
 ### 2.2.0 
 
-This is one of our biggest releases of Epicenter.js in a while. There are several major changes to the Run Manager and run strategies. There is also a new Scenario Manager for working with time-based projects involving run comparisons.
+This is one of our biggest releases of Epicenter.js in a while. It includes:
+
+* A change in the jQuery version required.
+* Several major changes to the run strategies and Run Manager.
+* A new Scenario Manager for working with time-based projects involving run comparisons.
+* Several bug fixes.
+
+### jQuery Version Requirements
+
+Starting in [Epcienter.js 2.0](https://github.com/forio/epicenter-js-libs/releases/tag/v2.0), we introduced support for jQuery 3.1.0. Changes are backwards compatible, so you could use either jQuery 2.1.4 (as for previous releases of Epicenter.js) or jQuery 3.1.0.
+
+Epicenter.js 2.2.0 introduces breaking changes, however, so **for Epicenter.js 2.2.0 and later, jQuery 3.1.0 or later is required**.
+
 
 ### Run Strategy Changes: Consolidating Strategies
 
@@ -114,22 +126,24 @@ You can access a list of available strategies via `F.manager.RunManager.strategi
 
 This behavior mirrors getting the list through `F.manager.strategy`; however, `F.manager.strategy` is now considered **Deprecated** and may be removed in a future release.
 
-The `F.manager.RunManager.strategies` interface now introduces a new way to register named Run Strategies for use with the Run Manager. <See jsdocs for strategies/index.js for more info>. Note you can still bypass registering by calling the RunManager with a function, i.e., `new F.manager.RunManager({ strategy: function(){}})`, so this is a backwards compatible change which just additionally allows naming.
+The `F.manager.RunManager.strategies.register()` interface now introduces a new way to register named Run Strategies for use with the Run Manager. Note you can still bypass registering by calling the RunManager with a function, i.e., `new F.manager.RunManager({ strategy: function(){}})`, so this is a backwards compatible change which just additionally allows naming.
+
+See the [run strategies](http://forio.com/epicenter/docs/public/api_adapters/generated/strategies/) page for more on strategies.
 
 ### Scenario Manager
 
 This release introduces a new Scenario Manager, accessible as `F.manager.ScenarioManager`. 
 
-The Scenario Manager can be thought of as a collection of Run Managers with pre-configured strategies. Just as the Run Manager provides use case-based abstractions and utilities for managing the Run Service, the Scenario Manager does the same for the Run Manager. 
-
 Each Scenario Manager allows you to compare the results of several runs. This is mostly useful for time-based models (Vensim, Powersim, SimLang, Stella), but can be adapted to working with other languages as well.
 
-There are usually three components to building a run comparison:
+The Scenario Manager can be thought of as a collection of Run Managers with pre-configured strategies. Just as the Run Manager provides use case -based abstractions and utilities for managing the Run Service, the Scenario Manager does the same for the Run Manager. 
 
-- You'll have a `current run` in which to make decisions; this is defined as a run that hasn't been advanced yet, and so can be used to set your initial decisions. Your current run should maintain state across different sessions.
-- You'll usually have a `baseline run` to compare against; a baseline is defined as a run "advanced to the end" with just the model defaults.
+There are typically three components to building a run comparison:
+
+- A `baseline` run to compare against; a baseline is defined as a run "advanced to the end" with just the model defaults.
 	- By default the "advance" operation is assumed to be `stepTo: end` which works for all time-based models supported by Epicenter. If you're using a different language, or need to change this, just pass in a different `advanceOperation` option while creating the Scenario Manager.
-- You need to manage a list of `saved runs`. This includes any run which you want to use for comparisons. The implementation of a "saved run" is just a run which has its `saved` property set to true.
+- A `current` run in which to make decisions; this is defined as a run that hasn't been advanced yet, and so can be used to set your initial decisions. Your current run should maintain state across different sessions.
+- A list of `saved` runs; this includes any run which you want to use for comparisons. The implementation of a "saved run" is just a run which has its `saved` property set to true.
 
 To satisfy these needs a Scenario Manager instance has three Run Managers:
 
@@ -163,9 +177,7 @@ var sm = new F.manager.ScenarioManager();
 sm.savedRuns // An instance of a Saved Runs Manager
 ```
 
-The `savedRuns` manager gives you utility functions for dealing with multiple runs (saving, deleting, listing). [TODO: LINK TO JSDOCS]
-
-See individual Scenario Manager docs and examples for more details [TODO: LINK HERE ONCE WE HAVE GOOD JSDOCS]
+The `savedRuns` manager gives you utility functions for dealing with multiple runs (saving, deleting, listing). See [more information on saved runs](http://forio.com/epicenter/docs/public/api_adapters/generated/scenario-manager/saved/), or the [Scenario Manager docs](http://forio.com/epicenter/docs/public/api_adapters/generated/scenario-manager/) for examples and more details.
 
 ### Bug Fixes
 
@@ -187,6 +199,9 @@ The 'current run service' of the Run Manager can be accessed through `rm.run`; h
 
 Due to a quirk in the Epicenter platform, in previous releases, `runService.query()` and `runService.filter()` returned an array of runs if they found any, or an empty _Object_ (`{}`), if no matching runs existed. These methods now correctly return empty arrays. However, this may be a **Breaking Change** if you were relying on the older behavior.
 
+#### `runService.serial()` and `runService.parallel()` return arrays as callback parameters.
+
+Previously, the callback parameter for `runService.serial()` or `runService.parallel()` contained only the result for the most recently executed operation. Now, the parameter to the callback is an array. Each array element is an object containing the results of one operation.
 
 <a name="2.0.1"></a>
 ### 2.0.1 (2016-11-18)
