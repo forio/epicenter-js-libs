@@ -116,6 +116,12 @@ var defaults = {
     current: {
         run: {}
     },
+
+    /**
+     * Options to pass through to the `savedRuns` list. See the [Saved Runs Manager](./saved/) for complete description of available options. Defaults to empty object.
+     * @type {Oobject}
+     */
+    savedRuns: {}
 };
 
 function ScenarioManager(config) {
