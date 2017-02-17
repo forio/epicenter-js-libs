@@ -25,37 +25,40 @@
 *
 *       var sm = new F.manager.ScenarioManager();
 *
-*       // the baseline is an instance of a Run Manager with a 'baseline' strategy 
-*       // which locates the last undeleted baseline run, or creates a new one
+*       // the baseline is an instance of a Run Manager,
+*       // with a strategy which locates the last undeleted baseline run, or creates a new one
 *       // typically displayed in the project's UI as part of a run comparison table or chart
 *       var baselineRM = sm.baseline;
 *
-*       // the Run Manager operation, which returns a run
+*       // the Run Manager operation, which returns a 'correct' run
 *       sm.baseline.getRun();
-*       // reset the baseline run
+*       // the Run Manager operation, which resets the baseline run
 *       // useful if the model has changed since the baseline run was created
 *       sm.baseline.reset(); 
 *
-*       // the current is an instance of a Run Manager with a strategy 
-*       // which picks up the last unsaved run ('unsaved' implies a run which hasn't been advanced)
+*       // the current is an instance of a Run Manager,
+*       // with a strategy which picks up the last unsaved run 
+*       // ('unsaved' implies a run which hasn't been advanced)
 *       // typically used to store the decisions being made by the end user, 
 *       // then advanced and added to the list of saved runs
 *       var currentRM = sm.current;
 *
-*       // the Run Manager operation, which returns a run
+*       // the Run Manager operation, which returns a 'correct' run
 *       sm.current.getRun();
-*       // reset the decisions made on the current run
+*       // the Run Manager operation, which resets the decisions made on the current run
 *       sm.current.reset();
-*       // advance the current run and save it
-*       // this has the side effect of making the "current" run no longer current -- it becomes part of the saved runs instead
+*       // clone the current run, advance it and save it
+*       // this has the side effect of making the "current" run no longer current
+*       // (it becomes part of the saved runs list)
 *       sm.current.saveAndAdvance();
 *
-*       // the savedRuns is an instance of a Saved Runs Manager (itself a variant of a Run Manager)
-*       // typically each of the saved runs is displayed in the project's UI as part of a run comparison table or chart
+*       // the savedRuns is an instance of a Saved Runs Manager 
+*       // (itself a variant of a Run Manager)
+*       // typically displayed in the project's UI as part of a run comparison table or chart
 *       var savedRM = sm.savedRuns;
 *       // mark a run as saved, adding it to the set of saved runs
 *       sm.savedRuns.save(run);
-*       // mark a run as removed, removing it from the set of removed runs
+*       // mark a run as removed, removing it from the set of saved runs
 *       sm.savedRuns.remove(run);
 *       // list the saved runs, optionally including some specific model variables for each
 *       sm.savedRuns.getRuns();
@@ -173,7 +176,13 @@ function ScenarioManager(config) {
     });
 
     /**
-     * Saves the current run and applies the `advanceOperation` on it. (*Note!* This has the side effect of making the current run no longer current: the current is unsaved by definition.) Additionally, adds any provided metadata to the run; typically used for naming the run. Available only for the Scenario Manager's `current` property (Run Manager). 
+     * Clones the current run, saves it, and applies the `advanceOperation` on it. Additionally, adds any provided metadata to the run; typically used for naming the run. Available only for the Scenario Manager's `current` property (Run Manager). 
+     *
+     * **Example**
+     *
+     *      var sm = new F.manager.ScenarioManager();
+     *      sm.current.saveAndAdvance({'myRunName': 'sample policy decisions'});
+     *
      * @param  {Object} metadata   Metadata to save, for example, the run name.
      * @return {Promise}
      */
