@@ -7,6 +7,8 @@
  *
  * An instance of a [Run Manager](../run-manager/) with this strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.baseline`. See [more information](../#properties) on using `.baseline` within the Scenario Manager.
  *
+ * See also: [additional information on run strategies](../../strategies/).
+ *
  */
 
 'use strict';
