@@ -15,7 +15,7 @@
 *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
 *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
 *
-* The constructor takes an optional options parameter in which you can specify the `account` and `token` if they are not already available in the current context.
+* The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
 var ConfigService = require('./configuration-service');
