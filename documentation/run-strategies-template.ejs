@@ -8,26 +8,30 @@ isPage: true
 
 The [Run Manager](../run-manager/) gives you control over run creation, depending on run state. You can select run creation stratgies (rules) for which runs end users of your project work with when they log in to your project.
 
-There are several strategies included in epicenter.js:
+There are several strategies included in Epicenter.js:
 
 <? docfiles.forEach(function (doc) { ?><? var moduleName = doc.filename.split('/').pop().split('.')[0].replace('-strategy', '') ?>
 * [<?= moduleName ?>](#<?= moduleName ?>)<? }); ?>
 
-You can also [create your own](#create-your-own).
+In addition, there are two strategies currently used by the Epicenter.js [Scenario Manager](../scenario-manager/):
+
+* [baseline](../scenario-manager/baseline/)
+* [current](../scenario-manager/current/)
+
+You can also [create your own strategy](#create-your-own) and see [more details on working with Run Strategies](#working-with-run-strategies).
 
 <? docfiles.forEach(function (doc) { ?>
     <? var moduleName = doc.filename.split('/').pop().split('.')[0].replace('-strategy', '') ?>
     <? var moduleDoc = doc.javadoc.shift() ?>
     <a name="<?= moduleName ?>"></a>
-    #### <?= moduleName ?> 
-    <? if (moduleDoc.name){ ?>###### a.k.a <?= moduleDoc.name ?> <? } ?><? if (moduleDoc.deprecated){ ?>##### DEPRECATED<? } ?>
+    ### <?= moduleName ?> <? if (moduleDoc.name){ ?> **a.k.a <?= moduleDoc.name ?>** <? } ?><? if (moduleDoc.deprecated){ ?>(**DEPRECATED**)<? } ?>
 
     <?= moduleDoc.description ?>
     <? console.log(moduleDoc) ?>
 <? }); ?>
 
 <a name="create-your-own"></a>
-#### Create your own
+### Create your Own
 
 You can create your own strategy by passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. Strategy functions must return objects of the form:
 
