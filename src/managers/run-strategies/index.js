@@ -1,7 +1,7 @@
 /**
  * ### Working with Run Strategies
  *
- * You can access a list of available strategies using `F.manager.RunManager.strategies`. You can also ask for a particular strategy by name.
+ * You can access a list of available strategies using `F.manager.RunManager.strategies.list`. You can also ask for a particular strategy by name.
  *
  * If you decide to [create your own run strategy](#create-your-own), you can register your strategy. Registering your strategy means that:
  *
@@ -33,13 +33,23 @@ list['persistent-single-player'] = list['reuse-across-sessions'];
 
 module.exports = {
     /**
-     * List of available strategies. The key is the strategy name and value is the strategy constructor.
+     * List of available strategies. Within this object, each key is the strategy name and the associated value is the strategy constructor.
      * @type {Object} 
      */
     list: list,
 
     /**
      * Gets strategy by name.
+     *
+     * **Example**
+     *
+     *      var mystrat = F.manager.RunManager.strategies.byName('reuse-across-sessions');
+     *      // shows strategy function
+     *      console.log('mystrat = ', mystrat);
+     *      // create a new run manager using this strategy
+     *      var rm = new F.manager.RunManager({strategy: mystrat, run: { model: 'model.vmf'} });
+     *
+     * **Parameters**
      * @param  {String} strategyName Name of strategy to get.
      * @return {Function} Strategy function.
      */
@@ -76,6 +86,23 @@ module.exports = {
 
     /**
      * Adds a new strategy.
+     *
+     * **Example**
+     *
+     *      // this "favorite run" strategy always returns the same run, no matter what
+     *      F.manager.RunManager.strategies.register(
+     *          'favRun', 
+     *          function() { 
+     *              return { getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
+     *                      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
+     *              } 
+     *          }, 
+     *          { requiresAuth: true }
+     *      );
+     *      
+     *      var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
+     *
+     * **Parameters**
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.
      * @param  {Function} strategy Your strategy constructor. Will be called with `new` on Run Manager initialization.
      * @param  {Object} options  Options for strategy.

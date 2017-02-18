@@ -20,6 +20,7 @@ module.exports = function (grunt) {
                     'src/managers/run-strategies/none-strategy.js',
                     'src/managers/run-strategies/deprecated/new-if-initialized-strategy.js',
                     'src/managers/run-strategies/deprecated/new-if-persisted-strategy.js',
+                    'src/managers/run-strategies/index.js' // must go at the end! we are special-casing the processing of this file
                 ],
             }
         },

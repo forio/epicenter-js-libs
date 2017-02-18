@@ -183,6 +183,7 @@ function ScenarioManager(config) {
      *      var sm = new F.manager.ScenarioManager();
      *      sm.current.saveAndAdvance({'myRunName': 'sample policy decisions'});
      *
+     * **Parameters**
      * @param  {Object} metadata   Metadata to save, for example, the run name.
      * @return {Promise}
      */

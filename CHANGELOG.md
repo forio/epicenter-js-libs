@@ -122,7 +122,7 @@ reset: function (runService, userSession){}
 
 #### F.manager.RunManager.strategies
 
-You can access a list of available strategies via `F.manager.RunManager.strategies`. 
+You can access a list of available strategies via `F.manager.RunManager.strategies.list`. 
 
 This behavior mirrors getting the list through `F.manager.strategy`; however, `F.manager.strategy` is now considered **Deprecated** and may be removed in a future release.
 
