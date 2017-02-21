@@ -75,9 +75,6 @@ module.exports = function (grunt) {
                     src: 'src/managers/channel-manager.js',
                     dest: 'documentation/generated/channel-manager/index.html.md'
                 }, {
-                    src: 'src/managers/saved-run-manager.js',
-                    dest: 'documentation/generated/saved-runs-manager/index.html.md'
-                }, {
                     src: 'src/managers/scenario-manager.js',
                     dest: 'documentation/generated/scenario-manager/index.html.md'
                 }, {
