@@ -12,7 +12,7 @@
  *     * If the most recent run that is not `trashed` _is_ `saved`, then clone it and return the clone.
  *     * If there are no runs, create a new run for this end user. 
  *
- * An instance of a [Run Manager](../run-manager/) with this strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.current`. See [more information](../#properties) on using `.current` within the Scenario Manager.
+ * An instance of a [Run Manager](../../run-manager/) with this strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.current`. See [more information](../#properties) on using `.current` within the Scenario Manager.
  *
  * See also: [additional information on run strategies](../../strategies/).
  * @name new-if-missing

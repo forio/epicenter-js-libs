@@ -16,13 +16,13 @@ var injectFiltersFromSession = require('./strategy-utils').injectFiltersFromSess
 var SavedRunsManager = function (config) {
     var defaults = {
         /**
-         * If set, will only pull runs from current group. Defaults to true.
+         * If set, will only pull runs from current group. Defaults to `true`.
          * @type {Boolean}
          */
         scopeByGroup: true,
 
         /**
-         * If set, will only pull runs from current user. Defaults to true.
+         * If set, will only pull runs from current user. Defaults to `true`.
          *
          * For multiplayer run comparison projects, set this to false so that all end users in a group can view the shared set of saved runs.
          * @type {Boolean}
@@ -88,9 +88,10 @@ SavedRunsManager.prototype = {
      * **Example**
      *
      *      var sm = new F.manager.ScenarioManager();
-     *      sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', { 'myRunName': 'sample policy decisions' });
+     *      sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
+     *          { 'myRunName': 'sample policy decisions' });
      *
-     * @param  {String|RunService} run  Run to operate on.
+     * @param  {String|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
      * @param  {Object} toMark Fields to set, as name : value pairs.
      * @return {Promise}
      */
@@ -126,8 +127,8 @@ SavedRunsManager.prototype = {
      *      });
      *
      * @param  {Array} variables (Optional) If provided, in the returned list of runs, each run will have a `.variables` property with these set.
-     * @param  {Object} filter    (Optional) Any filters to apply while fetching the run. See [RunService#filter](../../) for details)
-     * @param  {Object} modifiers (Optional) Use for paging/sorting etc. @see RunService#filter for more details
+     * @param  {Object} filter    (Optional) Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
+     * @param  {Object} modifiers (Optional) Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
      * @return {Promise}
      */
     getRuns: function (variables, filter, modifiers) {

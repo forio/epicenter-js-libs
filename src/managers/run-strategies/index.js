@@ -43,11 +43,11 @@ module.exports = {
      *
      * **Example**
      *
-     *      var mystrat = F.manager.RunManager.strategies.byName('reuse-across-sessions');
+     *      var reuseStrat = F.manager.RunManager.strategies.byName('reuse-across-sessions');
      *      // shows strategy function
-     *      console.log('mystrat = ', mystrat);
+     *      console.log('reuseStrat = ', reuseStrat);
      *      // create a new run manager using this strategy
-     *      var rm = new F.manager.RunManager({strategy: mystrat, run: { model: 'model.vmf'} });
+     *      var rm = new F.manager.RunManager({strategy: reuseStrat, run: { model: 'model.vmf'} });
      *
      * **Parameters**
      * @param  {String} strategyName Name of strategy to get.
@@ -90,6 +90,7 @@ module.exports = {
      * **Example**
      *
      *      // this "favorite run" strategy always returns the same run, no matter what
+     *      // (not a useful strategy, except as an example)
      *      F.manager.RunManager.strategies.register(
      *          'favRun', 
      *          function() { 
@@ -104,9 +105,9 @@ module.exports = {
      *
      * **Parameters**
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.
-     * @param  {Function} strategy Your strategy constructor. Will be called with `new` on Run Manager initialization.
+     * @param  {Function} strategy The strategy constructor. Will be called with `new` on Run Manager initialization.
      * @param  {Object} options  Options for strategy.
-     * @param  {Boolean} options.requiresAuth Specify if the strategy requires an valid user session to work.
+     * @param  {Boolean} options.requiresAuth Specify if the strategy requires a valid user session to work.
      */
     register: function (name, strategy, options) {
         strategy.options = options;

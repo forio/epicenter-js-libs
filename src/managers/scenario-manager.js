@@ -95,6 +95,7 @@ var defaults = {
 
     /**
      * Whether or not to include a baseline run in this Scenario Manager. Defaults to `true`.
+     * @type {Boolean}
      */
     includeBaseLine: true,
 
@@ -122,7 +123,7 @@ var defaults = {
 
     /**
      * Options to pass through to the `savedRuns` list. See the [Saved Runs Manager](./saved/) for complete description of available options. Defaults to empty object.
-     * @type {Oobject}
+     * @type {Object}
      */
     savedRuns: {}
 };
