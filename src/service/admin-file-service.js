@@ -89,13 +89,25 @@ module.exports = function (config) {
         var fileName = filePath.pop();
         filePath = filePath.join('/');
         var path = serviceOptions.folderType + '/' + filePath;
-        var upload = uploadBody(fileName, contents);
+
+        var extraParams = {};
+        if (contents instanceof FormData) {
+            extraParams = {
+                data: contents,
+                processData: false,
+                contentType: false,
+            };
+        } else {
+            var upload = uploadBody(fileName, contents);
+            extraParams = {
+                data: upload.body,
+                contentType: 'multipart/form-data; boundary=' + upload.boundary
+            };
+        }
 
         return $.extend(true, {}, serviceOptions, options, {
             url: urlConfig.getAPIPath('file') + path,
-            data: upload.body,
-            contentType: 'multipart/form-data; boundary=' + upload.boundary
-        });
+        }, extraParams);
     }
 
     var publicAsyncAPI = {
@@ -116,20 +128,19 @@ module.exports = function (config) {
         /**
          * Replaces the file at the given file path.
          * @param  {String} filePath Path to the file
-         * @param  {String} contents Contents to write to file
+         * @param  {String || FormData } contents Contents to write to file
          * @param  {Object} options  (Optional) Overrides for configuration options
          * @return {Promise}
          */
         replace: function (filePath, contents, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
-
             return http.put(httpOptions.data, httpOptions);
         },
 
         /**
          * Creates a file in the given file path.
          * @param  {String} filePath Path to the file
-         * @param  {String} contents Contents to write to file
+         * @param  {String || FormData } contents Contents to write to file
          * @param  {Boolean} replaceExisting Replace file if it already exists; defaults to false
          * @param  {Object} options (Optional) Overrides for configuration options
          * @return {Promise}

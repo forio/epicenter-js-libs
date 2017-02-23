@@ -18,7 +18,7 @@
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
             server.respondWith(/(.*)\/file\/forio\/upload\/static/, function (xhr, id) {
-                if (xhr.requestBody) {
+                if (xhr.requestBody && xhr.requestBody.indexOf) {
                     if (xhr.requestBody.indexOf('existing.html') > -1 && xhr.method === 'POST') {
                         return xhr.respond(409, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
                     } else if (xhr.requestBody.indexOf('new.html') > -1 && xhr.method === 'PUT') {
@@ -80,28 +80,38 @@
         });
 
         describe('#replaceFile', function () {
+            var fs;
+            beforeEach(function () {
+                fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+            });
             it('Should do a PUT', function () {
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.replace('test.html', '<html></html>');
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('PUT');
+                return fs.replace('test.html', '<html></html>').then(function () {
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('PUT');
+                });
             });
             it('Should use the right url', function () {
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.replace('test.html', '<html></html>');
-
-                var req = server.requests.pop();
-                req.url.should.equal(uploadBase + 'static/');
+                return fs.replace('test.html', '<html></html>').then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(uploadBase + 'static/');
+                });
             });
             it('Should set the right content', function () {
                 var content = '<html></html>';
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.replace('test.html', content);
-
-                var req = server.requests.pop();
-                req.requestBody.should.include(content);
-                req.requestBody.should.include('test.html');
+                return fs.replace('test.html', content).then(function () {
+                    var req = server.requests.pop();
+                    req.requestBody.should.include(content);
+                    req.requestBody.should.include('test.html');
+                });
+            });
+            it('should accept formdata', function () {
+                var content = '<html></html>';
+                var formData = new FormData();
+                formData.append('file', content, 'file.html');
+                return fs.replace('test.html', formData).then(function () {
+                    var req = server.requests.pop();
+                    expect(req.requestBody).to.be.instanceof(FormData);
+                });
             });
         });
 
