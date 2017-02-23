@@ -103,14 +103,18 @@ var UrlConfigService = function (config) {
 
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file'];
-
-            if (api === 'config') {
+            var apiMapping = {
+                channel: 'channel/subscribe'
+            };
+            var apiEndpoint = apiMapping[api] || api;
+            
+            if (apiEndpoint === 'config') {
                 // var base = options.isLocalhost() ? '' : 
                 return this.protocol + '://' + actingHost + '/epicenter/v1/config';
             }
-            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
+            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
 
-            if ($.inArray(api, PROJECT_APIS) !== -1) {
+            if ($.inArray(apiEndpoint, PROJECT_APIS) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath + '/';
             }
             return apiPath;
