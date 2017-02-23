@@ -1,14 +1,14 @@
 /**
  *
- * ## Presence API Adapter
+ * ## Presence API Service
  *
- * The Presence API Adapter provides methods to get and set the presence of a user in a project. It is based on query capabilities of the underlying RESTful [Presence API](../../../rest_apis/presence/).
+ * The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This can be done explicitly: you can make a call to indicate that a particular end user is online or offline. This is also done automatically: in projects that use [channels](../epicenter-channel-manager/), the end user's presence is published automatically on a "presence" channel that is specific to each group.
  *
- * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/).
+ * The Presence API Service is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). It is typically used only in multiplayer projects, to facilitate end users communicating with each other. It is based on the query capabilities of the underlying RESTful [Presence API](../../../rest_apis/presence/).
  *
- *      var pr = new F.service.Presence({ token: 'user-or-project-access-token' });
- *      pr.markOnline('example-userId')
- *      pr.markOffline('example-userId')
+ *      var pr = new F.service.Presence();
+ *      pr.markOnline('example-userId');
+ *      pr.markOffline('example-userId');
  *      pr.getStatus();
  */
 
@@ -21,19 +21,19 @@ var ChannelManager = require('../managers/epicenter-channel-manager');
 module.exports = function (config) {
     var defaults = {
         /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL or session manager.
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL or session manager.
          * @type {String}
          */
         account: undefined,
 
         /**
-         * The project id. Defaults to empty string. If left undefined, taken from the URL or session manager.
+         * The project id. Defaults to undefined. If left undefined, taken from the URL or session manager.
          * @type {String}
          */
         project: undefined,
 
         /**
-         * Epicenter group name. Defaults to a blank string. Note that this is the group *name*, not the group *id*. If left blank taken from the session manager.
+         * Epicenter group name. Defaults to undefined. Note that this is the group *name*, not the group *id*. If left blank, taken from the session manager.
          * @type {string}
          */
         groupName: undefined,
@@ -75,23 +75,24 @@ module.exports = function (config) {
 
     var publicAPI = {
         /**
-         * Mark an user online in the presence api
+         * Marks an end user online.
          *
          *
          * **Example**
          *
          *     var pr = new F.service.Presence();
-         *     pr.markOnline('userId').then(() => (userOnline) {
-         *     })
+         *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74').then(function(presenceObj) {
+         *          console.log('user ', presenceObj.userId, ' now online, as of ', presenceObj.lastModified);
+         *     });
          *
          * **Return Value**
          *
-         * promise with user marked online
+         * Promise with presence information for user marked online.
          *
          * **Parameters**
          *
-         * @param  {String} userId(optional)
-         * @param  {Object} options: additional options to change the presence service defaults
+         * @param  {String} userId (optional) If not provided, taken from session cookie.
+         * @param  {Object} options Additional options to change the presence service defaults.
          * @return {Promise} promise
          */
         markOnline: function (userId, options) {
@@ -110,23 +111,22 @@ module.exports = function (config) {
         },
 
         /**
-         * Mark an user offline in the presence api
+         * Marks an end user offline.
          *
          *
          * **Example**
          *
          *     var pr = new F.service.Presence();
-         *     pr.markOffline('userId').then(() => (userOnline) {
-         *     })
+         *     pr.markOffline('0000015a68d806bc09cd0a7d207f44ba5f74');
          *
          * **Return Value**
          *
-         * promise with user marked offline
+         * Promise to remove presence record for end user.
          *
          * **Parameters**
          *
-         * @param  {String} userId(optional)
-         * @param  {Object} options: additional options to change the presence service defaults
+         * @param  {String} userId (optional) If not provided, taken from session cookie.
+         * @param  {Object} options Additional options to change the presence service defaults.
          * @return {Promise} promise
          */
         markOffline: function (userId, options) {
@@ -145,23 +145,26 @@ module.exports = function (config) {
         },
 
         /**
-         * Get a list of online users
+         * Returns a list of all end users in this group that are currently online.
          *
          *
          * **Example**
          *
          *     var pr = new F.service.Presence();
-         *     pr.getStatus('groupName').then(() => (onlineUsers) {
-         *     })
+         *     pr.getStatus('groupName').then(function(onlineUsers) {
+         *          for (var i=0; i < onlineUsers.length; i++) {
+         *               console.log('user ', onlineUsers[i].userId, ' is online as of ', onlineUsers[i].lastModified);
+         *          }
+         *     });
          *
          * **Return Value**
          *
-         * promise with response of online users
+         * Promise with response of online users
          *
          * **Parameters**
          *
-         * @param  {String} groupName(optional)
-         * @param  {Object} options: additional options to change the presence service defaults
+         * @param  {String} groupName (optional) If not provided, taken from session cookie.
+         * @param  {Object} options Additional options to change the presence service defaults.
          * @return {Promise} promise
          */
         getStatus: function (groupName, options) {
@@ -178,24 +181,24 @@ module.exports = function (config) {
         },
 
         /**
-         * Shorthand for getting the presenceChannel for live status update of users getting online
+         * End users are automatically marked online and offline in a "presence" channel that is specific to each group. Gets this channel (an instance of the [Channel Service](../channel-service/)) for the given group. (Note that this Channel Service instance is also available from the [Epicenter Channel Manager getPresenceChannel()](../epicenter-channel-manager/#getPresenceChannel).)
          *
          *
          * **Example**
          *
          *     var pr = new F.service.Presence();
-         *     pr.getChannel('groupName').then(() => (userOnline) {
-         *     })
+         *     var cm = pr.getChannel('group1');
+         *     cm.publish('', 'a message to presence channel');
          *
          * **Return Value**
          *
-         * Presence channel
+         * Channel instance for Presence channel
          *
          * **Parameters**
          *
-         * @param  {String} groupName(optional)
-         * @param  {Object} options: additional options to change the presence service defaults
-         * @return {Channel} presence Channel
+         * @param  {String} groupName (optional) If not provided, taken from session cookie.
+         * @param  {Object} options Additional options to change the presence service defaults
+         * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
             options = options || {};
