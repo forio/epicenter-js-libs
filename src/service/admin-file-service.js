@@ -3,9 +3,21 @@
  *
  * The File API Service allows you to upload and download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. It is based on the Epicenter File API.
  *
- * The Asset API Service (https://forio.com/epicenter/docs/public/api_adapters/generated/asset-api-adapter/) is typically used for all project use cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
+ *       var fa = new F.service.File({
+ *          account: 'acme-simulations',
+ *          project: 'supply-chain-game',
+ *       });
+ *       fa.create('test.txt', 'these are my filecontents');
  *
- * Partially implemented.
+ *       // alternatively, create a new file using a file uploaded through a file input
+ *       // <input id="fileupload" type="file">
+ *       //
+ *       $('#fileupload').on('change', function (e) {
+ *          var file = e.target.files[0];
+ *          var data = new FormData();
+ *          data.append('file', file, file.name);
+ *          fa.create(file.name, data);
+ *       });
  */
 
 'use strict';
@@ -89,13 +101,25 @@ module.exports = function (config) {
         var fileName = filePath.pop();
         filePath = filePath.join('/');
         var path = serviceOptions.folderType + '/' + filePath;
-        var upload = uploadBody(fileName, contents);
+
+        var extraParams = {};
+        if (contents instanceof FormData) {
+            extraParams = {
+                data: contents,
+                processData: false,
+                contentType: false,
+            };
+        } else {
+            var upload = uploadBody(fileName, contents);
+            extraParams = {
+                data: upload.body,
+                contentType: 'multipart/form-data; boundary=' + upload.boundary
+            };
+        }
 
         return $.extend(true, {}, serviceOptions, options, {
             url: urlConfig.getAPIPath('file') + path,
-            data: upload.body,
-            contentType: 'multipart/form-data; boundary=' + upload.boundary
-        });
+        }, extraParams);
     }
 
     var publicAsyncAPI = {
@@ -116,20 +140,19 @@ module.exports = function (config) {
         /**
          * Replaces the file at the given file path.
          * @param  {String} filePath Path to the file
-         * @param  {String} contents Contents to write to file
+         * @param  {String | FormData } contents Contents to write to file
          * @param  {Object} options  (Optional) Overrides for configuration options
          * @return {Promise}
          */
         replace: function (filePath, contents, options) {
             var httpOptions = uploadFileOptions(filePath, contents, options);
-
             return http.put(httpOptions.data, httpOptions);
         },
 
         /**
          * Creates a file in the given file path.
          * @param  {String} filePath Path to the file
-         * @param  {String} contents Contents to write to file
+         * @param  {String | FormData } contents Contents to write to file
          * @param  {Boolean} replaceExisting Replace file if it already exists; defaults to false
          * @param  {Object} options (Optional) Overrides for configuration options
          * @return {Promise}
