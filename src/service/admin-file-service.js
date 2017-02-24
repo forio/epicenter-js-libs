@@ -3,9 +3,21 @@
  *
  * The File API Service allows you to upload and download files directly onto Epicenter, analogous to using the File Manager UI in Epicenter directly or SFTPing files in. It is based on the Epicenter File API.
  *
- * The Asset API Service (https://forio.com/epicenter/docs/public/api_adapters/generated/asset-api-adapter/) is typically used for all project use cases, and it's unlikely this File Service will be used directly except by Admin tools (e.g. Flow Inspector).
+ *       var fa = new F.service.File({
+ *          account: 'acme-simulations',
+ *          project: 'supply-chain-game',
+ *       });
+ *       fa.create('test.txt', 'these are my filecontents');
  *
- * Partially implemented.
+ *       // alternatively, create a new file using a file uploaded through a file input
+ *       // <input id="fileupload" type="file">
+ *       //
+ *       $('#fileupload').on('change', function (e) {
+ *          var file = e.target.files[0];
+ *          var data = new FormData();
+ *          data.append('file', file, file.name);
+ *          fa.create(file.name, data);
+ *       });
  */
 
 'use strict';
