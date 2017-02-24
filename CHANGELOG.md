@@ -1,11 +1,12 @@
 <a name="2.2.0"></a>
-### 2.2.0 
+### 2.2.0 (2017-02-24)
 
 This is one of our biggest releases of Epicenter.js in a while. It includes:
 
 * A change in the jQuery version required.
 * Several major changes to the run strategies and Run Manager.
 * A new Scenario Manager for working with time-based projects involving run comparisons.
+* A new Presence Service for tracking end users status (online, offline) in multiplayer games.
 * Several bug fixes.
 
 ### jQuery Version Requirements
@@ -179,6 +180,10 @@ sm.savedRuns // An instance of a Saved Runs Manager
 
 The `savedRuns` manager gives you utility functions for dealing with multiple runs (saving, deleting, listing). See [more information on saved runs](http://forio.com/epicenter/docs/public/api_adapters/generated/scenario-manager/saved/), or the [Scenario Manager docs](http://forio.com/epicenter/docs/public/api_adapters/generated/scenario-manager/) for examples and more details.
 
+### Presence Service
+
+The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This can be done explicitly: you can make a call, using this service, to indicate that a particular end user is online or offline. This is also done automatically: in projects that use channels, the end user's presence is published automatically on a "presence" channel that is specific to each group. See [complete details on the Presence Service](http://forio.com/epicenter/docs/public/api_adapters/generated/presence-api-service/) and also the updated [Epicenter Channel Manager's getPresenceChannel()](http://forio.com/epicenter/docs/public/api_adapters/generated/epicenter-channel-manager/#getpresencechannel).
+
 ### Bug Fixes
 
 This release also includes several bug fixes.
@@ -202,6 +207,11 @@ Due to a quirk in the Epicenter platform, in previous releases, `runService.quer
 #### `runService.serial()` and `runService.parallel()` return arrays as callback parameters.
 
 Previously, the callback parameter for `runService.serial()` or `runService.parallel()` contained only the result for the most recently executed operation. Now, the parameter to the callback is an array. Each array element is an object containing the results of one operation.
+
+#### Channel calls respect version
+
+All calls to the cometD channel now respect the versionPath of the rest of the Epicenter.js library.
+
 
 <a name="2.0.1"></a>
 ### 2.0.1 (2016-11-18)
