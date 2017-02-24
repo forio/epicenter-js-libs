@@ -140,7 +140,7 @@ module.exports = function (config) {
         /**
          * Replaces the file at the given file path.
          * @param  {String} filePath Path to the file
-         * @param  {String || FormData } contents Contents to write to file
+         * @param  {String | FormData } contents Contents to write to file
          * @param  {Object} options  (Optional) Overrides for configuration options
          * @return {Promise}
          */
@@ -152,7 +152,7 @@ module.exports = function (config) {
         /**
          * Creates a file in the given file path.
          * @param  {String} filePath Path to the file
-         * @param  {String || FormData } contents Contents to write to file
+         * @param  {String | FormData } contents Contents to write to file
          * @param  {Boolean} replaceExisting Replace file if it already exists; defaults to false
          * @param  {Object} options (Optional) Overrides for configuration options
          * @return {Promise}

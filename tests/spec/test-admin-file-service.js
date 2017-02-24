@@ -142,17 +142,14 @@
                     req.requestBody.should.include('test.html');
                 });
             });
-            it('should overwrite if file is present and `replaceExisting` is set', function (done) {
+            it('should overwrite if file is present and `replaceExisting` is set', function () {
                 server.requests = [];
-               return fs.create('existing.html', '<html></html>', true).then(function () {
+                return fs.create('existing.html', '<html></html>', true).then(function () {
                     server.requests.should.have.lengthOf(2);
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('PUT');
                     req = server.requests.pop();
                     req.method.toUpperCase().should.equal('POST');
-                    done();
-                }, function () {
-                    done(new Error('Should not fail'));
                 });
             });
             it('should accept formdata', function () {
@@ -163,6 +160,7 @@
                     var req = server.requests.pop();
                     expect(req.requestBody).to.be.instanceof(FormData);
                 });
+            });
         });
         describe('#remove', function () {
             it('Should do a DELETE', function () {
