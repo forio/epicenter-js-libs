@@ -81,9 +81,11 @@ module.exports = function (config) {
          * **Example**
          *
          *     var pr = new F.service.Presence();
-         *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74').then(function(presenceObj) {
-         *          console.log('user ', presenceObj.userId, ' now online, as of ', presenceObj.lastModified);
-         *     });
+         *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74')
+         *          .then(function(presenceObj) {
+         *               console.log('user ', presenceObj.userId, 
+         *                    ' now online, as of ', presenceObj.lastModified);
+         *          });
          *
          * **Return Value**
          *
@@ -153,7 +155,8 @@ module.exports = function (config) {
          *     var pr = new F.service.Presence();
          *     pr.getStatus('groupName').then(function(onlineUsers) {
          *          for (var i=0; i < onlineUsers.length; i++) {
-         *               console.log('user ', onlineUsers[i].userId, ' is online as of ', onlineUsers[i].lastModified);
+         *               console.log('user ', onlineUsers[i].userId, 
+         *                    ' is online as of ', onlineUsers[i].lastModified);
          *          }
          *     });
          *
