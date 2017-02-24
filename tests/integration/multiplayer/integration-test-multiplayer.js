@@ -2,10 +2,10 @@
 
 $(function () {
     var server = {
-        server: {
-            host: 'epimon3.foriodev.com',
-            protocol: 'http'
-        }
+        // server: {
+        //     host: 'epimon3.foriodev.com',
+        //     protocol: 'http'
+        // }
     };
 
     var cm = new F.manager.ChannelManager(server);
