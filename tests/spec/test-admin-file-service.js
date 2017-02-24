@@ -116,34 +116,35 @@
         });
 
         describe('#create', function () {
+            var fs;
+            beforeEach(function () {
+                fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
+            });
             it('Should do a POST', function () {
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.create('test.html', '<html></html>');
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('POST');
+                return fs.create('test.html', '<html></html>').then(function () {
+                    var req = server.requests.pop();
+                    req.method.toUpperCase().should.equal('POST');
+                });
             });
             it('Should use the right url', function () {
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.create('test.html', '<html></html>');
-
-                var req = server.requests.pop();
-                req.url.should.equal(uploadBase + 'static/');
+                return fs.create('test.html', '<html></html>').then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(uploadBase + 'static/');
+                });
             });
             it('Should set the right content', function () {
                 var content = '<html></html>';
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.create('test.html', content);
-                server.requests.should.have.lengthOf(2);
+                return fs.create('test.html', content).then(function () {
+                    server.requests.should.have.lengthOf(2);
 
-                var req = server.requests.pop();
-                req.requestBody.should.include(content);
-                req.requestBody.should.include('test.html');
+                    var req = server.requests.pop();
+                    req.requestBody.should.include(content);
+                    req.requestBody.should.include('test.html');
+                });
             });
             it('should overwrite if file is present and `replaceExisting` is set', function (done) {
                 server.requests = [];
-                var fs = new FileService({ account: account, project: projectUpload, folderType: 'static' });
-                fs.create('existing.html', '<html></html>', true).then(function () {
+               return fs.create('existing.html', '<html></html>', true).then(function () {
                     server.requests.should.have.lengthOf(2);
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('PUT');
@@ -154,6 +155,14 @@
                     done(new Error('Should not fail'));
                 });
             });
+            it('should accept formdata', function () {
+                var content = '<html></html>';
+                var formData = new FormData();
+                formData.append('file', content, 'file.html');
+                return fs.create('test.html', formData).then(function () {
+                    var req = server.requests.pop();
+                    expect(req.requestBody).to.be.instanceof(FormData);
+                });
         });
         describe('#remove', function () {
             it('Should do a DELETE', function () {
