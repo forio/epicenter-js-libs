@@ -281,10 +281,16 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *         model: 'model.eqn'
      *     });
      *     worldManager.getCurrentWorld().then(function (worldObject, worldService) {
-     *         var presenceChannel = cm.getPresenceChannel(worldObject);
-     *         presenceChannel.on('presence', function (evt, notification) {
-     *              console.log(notification.online, notification.userId);
-     *          });
+     *         var pc = cm.getPresenceChannel(); 
+     *         pc.subscribe('', function (data) {
+     *             // 'data' is the entire message object to the channel; parse for information of interest
+     *             if (data.data.subType === 'disconnect') {
+     *                  console.log('user ', data.data.user.userName, 'disconnected at ', data.data.date);
+     *             }
+     *             if (data.data.subType === 'connect') {
+     *                  console.log('user ', data.data.user.userName, 'connected at ', data.data.date);
+     *             }
+     *         });
      *      });
      *
      *
