@@ -1,5 +1,5 @@
 /**
- * The `reuse-last-initialized` strategy looks for the most recent run that matches particular critiera; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations. 
+ * The `reuse-last-initialized` strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations. 
  *
  * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *

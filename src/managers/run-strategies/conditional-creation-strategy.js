@@ -20,8 +20,8 @@ var Strategy = classFrom(Base, {
 
     /**
      * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
-     * @param  {RunService} runService A Run Service instance for the 'correct' run, as determined by the Run Manager.
-     * @param  {Object} userSession Information about the current user seesion. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
      * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
      * @return {Promise}             
      */
@@ -41,8 +41,8 @@ var Strategy = classFrom(Base, {
 
     /**
      * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation).
-     * @param  {RunService} runService A Run Service instance for the 'correct' run, as determined by the Run Manager.
-     * @param  {Object} userSession Information about the current user seesion. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
      * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
      * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
      * @return {Promise}             

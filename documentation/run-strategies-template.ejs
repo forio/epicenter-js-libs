@@ -15,10 +15,7 @@ There are several strategies included in Epicenter.js:
 <? docfiles.forEach(function (doc) { ?><? var moduleName = doc.filename.split('/').pop().split('.')[0].replace('-strategy', '') ?>
 * [<?= moduleName ?>](#<?= moduleName ?>)<? }); ?>
 
-In addition, there are two strategies currently used only by the [Scenario Manager](../scenario-manager/):
 
-* [baseline](../scenario-manager/baseline/)
-* [current](../scenario-manager/current/)
 
 You can also [create your own strategy](#create-your-own) and see [more details on working with Run Strategies](#working-with-run-strategies).
 
@@ -36,7 +33,7 @@ You can also [create your own strategy](#create-your-own) and see [more details 
 <a name="create-your-own"></a>
 ### Create your Own
 
-You can create your own strategy by passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. Strategy functions must return objects of the form:
+You can create your own strategy by passing in a function as the `strategy` parameter to the `F.manager.RunManager()` instantiation call. Strategy functions must return objects of the form:
 
 	{
 		getRun: function() {},
@@ -47,24 +44,21 @@ Some strategies have options you can specify through `strategyOptions` in the [R
 
 For example:
 
-	// myNewStrategy.js
-	var classFrom = require('../../util/inherit');
-	var Base = {};
-	var defaults = { };
-	module.exports = classFrom(Base, {
-	    constructor: function (options) {
-	        this.options = $.extend(true, {}, defaults, options.strategyOptions);
-	        // parse or set options as needed
-	    },
-	    getRun: function (runService, session) {
-	    	// return the correct run
-	    	// for example, the most recent run that matches some criteria of your choosing
-	    },
-	    reset: function (runService, session) {
-	    	// how to respond to a reset call
-	    	// for example, by creating a new run
-	    }
-	});
+    // example create-your-own strategy provides a new run every minute
+
+    var ConditionalStrategy = F.manager.RunManager.strategies.byName('conditional-creation');
+    var myNewStrategy = new ConditionalStrategy(function (run, headers, usersession, runsession) { 
+        var created = (new Date(run.created)).valueOf();
+        var timeAgo = Date.now() - created;
+        var runLifetime = 1;
+        var minsAgo = timeAgo / (1000 * 60);
+        return minsAgo > runLifetime;
+    });
+
+    var rm = new F.manager.RunManager({
+        strategy: myNewStrategy,
+        run: { ... }
+    });
 
     <? var moduleDoc = top.javadoc.shift() ?>
     <?= moduleDoc.description ?>

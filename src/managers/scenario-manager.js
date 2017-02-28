@@ -3,17 +3,17 @@
 *
 * In some projects, often called "turn-by-turn" projects, end users advance through the project's model step-by-step, working either individually or together to make decisions at each step. 
 *
-* In other projects, often called "run comparison" or "scenario comparison" projects, end users set some initial decisions, then simulate the model to its end. Typically end users will do this several times, and compare the results. 
+* In other projects, often called "run comparison" or "scenario comparison" projects, end users set some initial decisions, then simulate the model to its end. Typically end users will do this several times, creating several runs, and compare the results. 
 *
-* The Scenario Manager makes it easy to create these "run comparison" projects. Each Scenario Manager allows you to compare the results of several runs. This is mostly useful for time-based models ([Vensim](../../../model_code/vensim/), [Powersim](../../../model_code/powersim/), [SimLang](../../../model_code/forio_simlang)), but can be adapted to working with other languages as well.
+* The Scenario Manager makes it easy to create these "run comparison" projects. Each Scenario Manager allows you to compare the results of several runs. This is mostly useful for time-based models; by default, you can use the Scenario Manager with [Vensim](../../../model_code/vensim/), [Powersim](../../../model_code/powersim/), and [SimLang](../../../model_code/forio_simlang). (You can use the Scenario Manager with other languages as well, by using the Scenario Manager's [configuration options](#configuration-options) to change the `advanceOperation`.)
 *
 * The Scenario Manager can be thought of as a collection of [Run Managers](../run-manager/) with pre-configured [strategies](../strategies/). Just as the Run Manager provides use case -based abstractions and utilities for managing the [Run Service](../run-api-service/), the Scenario Manager does the same for the Run Manager.
 *
 * There are typically three components to building a run comparison:
 *
-* * A `baseline` run to compare against; this is defined as a run "advanced to the end" using just the model defaults.
-* * A `current` run in which to make decisions; this is defined as a run that hasn't been advanced yet, and so can be used to set initial decisions. The current run should maintain state across different sessions.
-* * A list of `saved` runs; this includes any run which you want to use for comparisons.
+* * A `current` run in which to make decisions; this is defined as a run that hasn't been advanced yet, and so can be used to set initial decisions. The current run maintains state across different sessions.
+* * A list of `saved` runs, that is, all runs that you want to use for comparisons.
+* * A `baseline` run to compare against; this is defined as a run "advanced to the end" of your model using just the model defaults. Comparing against a baseline run is optional; you can [configure](#configuration-options) the Scenario Manager to not include one.
 *
 * To satisfy these needs a Scenario Manager instance has three Run Managers: [baseline](./baseline/), [current](./current/), and [savedRuns](./saved/).
 *
@@ -25,44 +25,44 @@
 *
 *       var sm = new F.manager.ScenarioManager();
 *
-*       // the baseline is an instance of a Run Manager,
-*       // with a strategy which locates the last undeleted baseline run, or creates a new one
-*       // typically displayed in the project's UI as part of a run comparison table or chart
-*       var baselineRM = sm.baseline;
-*
-*       // the Run Manager operation, which returns a 'correct' run
-*       sm.baseline.getRun();
-*       // the Run Manager operation, which resets the baseline run
-*       // useful if the model has changed since the baseline run was created
-*       sm.baseline.reset(); 
-*
-*       // the current is an instance of a Run Manager,
-*       // with a strategy which picks up the last unsaved run 
-*       // ('unsaved' implies a run which hasn't been advanced)
-*       // typically used to store the decisions being made by the end user, 
-*       // then advanced and added to the list of saved runs
+*       // The current is an instance of a Run Manager,
+*       // with a strategy which picks up the most recent unsaved run.
+*       // It is typically used to store the decisions being made by the end user. 
 *       var currentRM = sm.current;
 *
-*       // the Run Manager operation, which returns a 'correct' run
+*       // The Run Manager operation, which retrieves the current run.
 *       sm.current.getRun();
-*       // the Run Manager operation, which resets the decisions made on the current run
+*       // The Run Manager operation, which resets the decisions made on the current run.
 *       sm.current.reset();
-*       // clone the current run, advance it and save it
-*       // this has the side effect of making the "current" run no longer current
-*       // (it becomes part of the saved runs list)
+*       // A special method on the current run,
+*       // which clones the current run, then advances and saves this clone
+*       // (it becomes part of the saved runs list).
+*       // The current run is unchanged and can continue to be used
+*       // to store decisions being made by the end user.
 *       sm.current.saveAndAdvance();
 *
-*       // the savedRuns is an instance of a Saved Runs Manager 
-*       // (itself a variant of a Run Manager)
-*       // typically displayed in the project's UI as part of a run comparison table or chart
+*       // The savedRuns is an instance of a Saved Runs Manager 
+*       // (itself a variant of a Run Manager).
+*       // It is typically displayed in the project's UI as part of a run comparison table or chart.
 *       var savedRM = sm.savedRuns;
-*       // mark a run as saved, adding it to the set of saved runs
+*       // Mark a run as saved, adding it to the set of saved runs.
 *       sm.savedRuns.save(run);
-*       // mark a run as removed, removing it from the set of saved runs
+*       // Mark a run as removed, removing it from the set of saved runs.
 *       sm.savedRuns.remove(run);
-*       // list the saved runs, optionally including some specific model variables for each
+*       // List the saved runs, optionally including some specific model variables for each.
 *       sm.savedRuns.getRuns();
 *
+*       // The baseline is an instance of a Run Manager,
+*       // with a strategy which locates the most recent baseline run
+*       // (that is, flagged as `saved` and not `trashed`), or creates a new one.
+*       // It is typically displayed in the project's UI as part of a run comparison table or chart.
+*       var baselineRM = sm.baseline;
+*
+*       // The Run Manager operation, which retrieves the baseline run.
+*       sm.baseline.getRun();
+*       // The Run Manager operation, which resets the baseline run.
+*       // Useful if the model has changed since the baseline run was created.
+*       sm.baseline.reset(); 
 */
 
 'use strict';
@@ -82,7 +82,7 @@ var LastUnsavedStrategy = require('./scenario-strategies/reuse-last-unsaved');
 
 var defaults = {
     /**
-     * Operations to perform on each run to indicate that the run is complete. Operations are executed serially. Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
+     * Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
      * @type {Array}
      */
     advanceOperation: [{ name: 'stepTo', params: ['end'] }],
@@ -136,7 +136,7 @@ function ScenarioManager(config) {
 
     var BaselineStrategyToUse = opts.includeBaseLine ? BaselineStrategy : NoneStrategy;
     /**
-     * A [Run Manager](../run-manager/) instance containing a 'baseline' run to compare against (the last undeleted baseline run, if available, or a new run). A baseline is defined as a run "advanced to the end" using just the model defaults. The baseline run is typically displayed in the project's UI as part of a run comparison table or chart.
+     * A [Run Manager](../run-manager/) instance containing a 'baseline' run to compare against; this is defined as a run "advanced to the end" of your model using just the model defaults. By default the "advance" operation is assumed to be `stepTo: end`, which works for time-based models in [Vensim](../../../model_code/vensim/), [Powersim](../../../model_code/powersim/), and [SimLang](../../../model_code/forio_simlang). If you're using a different language, or need to change this, just pass in a different `advanceOperation` option while creating the Scenario Manager. The baseline run is typically displayed in the project's UI as part of a run comparison table or chart.
      * @return {RunManager}
      */
     this.baseline = new RunManager({
@@ -150,7 +150,7 @@ function ScenarioManager(config) {
     });
 
     /**
-     * A [SavedRunsManager](../saved-runs-manager/) instance containing a list of saved runs. The saved runs are typically displayed in the project's UI as part of a run comparison table or chart.
+     * A [SavedRunsManager](../saved-runs-manager/) instance containing a list of saved runs, that is, all runs that you want to use for comparisons. The saved runs are typically displayed in the project's UI as part of a run comparison table or chart.
      * @return {SavedRunsManager}
      */
     this.savedRuns = new SavedRunsManager($.extend(true, {}, {
@@ -167,7 +167,7 @@ function ScenarioManager(config) {
     };
 
     /**
-     * A [Run Manager](../run-manager/) instance with a strategy which always returns the last unsaved run (or create a new run, if there are none). The current (last unsaved) run is defined as a run that hasn't been advanced yet, and so can be used to set initial decisions. Typically current runs are used for setting decisions being made by the end user in the UI, then advanced and added to the list of saved runs.
+     * A [Run Manager](../run-manager/) instance containing a 'current' run; this is defined as a run that hasn't been advanced yet, and so can be used to set initial decisions. The current run is typically used to store the decisions being made by the end user.
      * @return {RunManager}
      */
     this.current = new RunManager({
@@ -177,7 +177,9 @@ function ScenarioManager(config) {
     });
 
     /**
-     * Clones the current run, saves it, and applies the `advanceOperation` on it. Additionally, adds any provided metadata to the run; typically used for naming the run. Available only for the Scenario Manager's `current` property (Run Manager). 
+     * Clones the current run, advances this clone by calling the `advanceOperation`, and saves the cloned run (it becomes part of the `savedRuns` list). Additionally, adds any provided metadata to the cloned run; typically used for naming the run. The current run is unchanged and can continue to be used to store decisions being made by the end user.
+     *
+     * Available only for the Scenario Manager's `current` property (Run Manager). 
      *
      * **Example**
      *
