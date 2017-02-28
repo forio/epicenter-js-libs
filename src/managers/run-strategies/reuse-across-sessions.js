@@ -1,7 +1,7 @@
 /**
  * The `reuse-across-sessions` strategy returns the latest (most recent) run for this user, whether it is in memory or not. If there are no runs for this user, it creates a new one.
  *
- * This strategy is useful if your project executes your model step by step (as opposed to a project where the model is executed completely, for example, a Vensim model that is immediately stepped to the end). It is useful if end users play with your project for an extended period of time, possibly over several sessions.
+ * This strategy is useful if end users are using your project for an extended period of time, possibly over several sessions. This is most common in cases where a user of your project executes the model step by step (as opposed to a project where the model is executed completely, for example, a Vensim model that is immediately stepped to the end).
  *
  * Specifically, the strategy is:
  * 
@@ -21,7 +21,7 @@ var injectScopeFromSession = require('../strategy-utils').injectScopeFromSession
 
 var defaults = {
     /**
-     * (Optional) additional criteria to use while selecting the last run
+     * (Optional) Additional criteria to use while selecting the last run
      * @type {Object}
      */
     filter: {},

@@ -20,6 +20,7 @@ module.exports = function (grunt) {
                     'src/managers/run-strategies/none-strategy.js',
                     'src/managers/run-strategies/deprecated/new-if-initialized-strategy.js',
                     'src/managers/run-strategies/deprecated/new-if-persisted-strategy.js',
+                    'src/managers/run-strategies/index.js' // must go at the end! we are special-casing the processing of this file
                 ],
             }
         },
@@ -74,13 +75,18 @@ module.exports = function (grunt) {
                     src: 'src/managers/channel-manager.js',
                     dest: 'documentation/generated/channel-manager/index.html.md'
                 }, {
-                    src: 'src/managers/saved-run-manager.js',
-                    dest: 'documentation/generated/saved-runs-manager/index.html.md'
-                }, {
                     src: 'src/managers/scenario-manager.js',
                     dest: 'documentation/generated/scenario-manager/index.html.md'
-                },
-                {
+                }, {
+                    src: 'src/managers/scenario-strategies/baseline-strategy.js',
+                    dest: 'documentation/generated/scenario-manager/baseline/index.html.md'
+                }, {
+                    src: 'src/managers/scenario-strategies/reuse-last-unsaved.js',
+                    dest: 'documentation/generated/scenario-manager/current/index.html.md'
+                }, {
+                    src: 'src/managers/saved-runs-manager.js',
+                    dest: 'documentation/generated/scenario-manager/saved/index.html.md'
+                }, {
                     src: 'src/managers/epicenter-channel-manager.js',
                     dest: 'documentation/generated/epicenter-channel-manager/index.html.md'
                 }

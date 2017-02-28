@@ -1,7 +1,13 @@
 <a name="2.2.0"></a>
-### 2.2.0 
+### 2.2.0 (2017-03-01)
 
-This is one of our biggest releases of Epicenter.js in a while. There are several major changes to the Run Manager and run strategies. There is also a new Scenario Manager for working with time-based projects involving run comparisons.
+This is one of our biggest releases of Epicenter.js in a while. It includes:
+
+* Several major changes to the run strategies and Run Manager.
+* A new Scenario Manager for working with time-based projects involving run comparisons.
+* A new Presence Service for tracking end users status (online, offline) in multiplayer games.
+* A change in the jQuery version required.
+* Several bug fixes.
 
 ### Run Strategy Changes: Consolidating Strategies
 
@@ -29,7 +35,7 @@ You can still use these strategies, but they may not accomplish what you expect,
 
 This release adds a new `reuse-last-initialized` strategy. It is intended to be a more flexible replacement for the `new-if-initialized` strategy (which is now deprecated).
 
-This strategy looks for the most recent run that matches particular critiera; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations.
+This strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations.
 
 **Examples**:
 
@@ -87,7 +93,7 @@ The original purpose of the Run Manager was to just find the right strategy and 
 /**
  + Gets the 'correct' run (the definition of 'correct' depends on strategy implementation)
  + @param  {RunService} runService A Run Service instance for the 'correct' run as determined by the Run Manager
- + @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
+ + @param  {Object} userSession Information about the current user session. See AuthManager#getCurrentUserSession for format
  + @param  {Object} runSession The Run Manager serializes the 'last accessed' run in a cookie and provides it each time `getRun()` is called
  + @return {Promise}             
  */
@@ -97,7 +103,7 @@ getRun: function (runService, userSession, runSession){}
 /**
  + Resets current run
  + @param  {RunService} runService  A Run Service instance for the 'correct' run as determined by the Run Manager
- + @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
+ + @param  {Object} userSession Information about the current user session. See AuthManager#getCurrentUserSession for format
  + @return {Promise}             
  */
 reset: function (runService, userSession){}
@@ -110,35 +116,38 @@ reset: function (runService, userSession){}
 
 #### F.manager.RunManager.strategies
 
-You can access a list of available strategies via `F.manager.RunManager.strategies`. 
+You can access a list of available strategies via `F.manager.RunManager.strategies.list`. 
 
 This behavior mirrors getting the list through `F.manager.strategy`; however, `F.manager.strategy` is now considered **Deprecated** and may be removed in a future release.
 
-The `F.manager.RunManager.strategies` interface now introduces a new way to register named Run Strategies for use with the Run Manager. <See jsdocs for strategies/index.js for more info>. Note you can still bypass registering by calling the RunManager with a function, i.e., `new F.manager.RunManager({ strategy: function(){}})`, so this is a backwards compatible change which just additionally allows naming.
+The `F.manager.RunManager.strategies.register()` interface now introduces a new way to register named Run Strategies for use with the Run Manager. Note you can still bypass registering by calling the RunManager with a function, i.e., `new F.manager.RunManager({ strategy: function(){}})`, so this is a backwards compatible change which just additionally allows naming.
+
+See the [run strategies](http://forio.com/epicenter/docs/public/api_adapters/generated/strategies/) page for more on strategies.
 
 ### Scenario Manager
 
 This release introduces a new Scenario Manager, accessible as `F.manager.ScenarioManager`. 
 
-The Scenario Manager can be thought of as a collection of Run Managers with pre-configured strategies. Just as the Run Manager provides use case-based abstractions and utilities for managing the Run Service, the Scenario Manager does the same for the Run Manager. 
-
 Each Scenario Manager allows you to compare the results of several runs. This is mostly useful for time-based models (Vensim, Powersim, SimLang, Stella), but can be adapted to working with other languages as well.
 
-There are usually three components to building a run comparison:
+The Scenario Manager can be thought of as a collection of Run Managers with pre-configured strategies. Just as the Run Manager provides use case -based abstractions and utilities for managing the Run Service, the Scenario Manager does the same for the Run Manager. 
 
-- You'll have a `current run` in which to make decisions; this is defined as a run that hasn't been advanced yet, and so can be used to set your initial decisions. Your current run should maintain state across different sessions.
-- You'll usually have a `baseline run` to compare against; a baseline is defined as a run "advanced to the end" with just the model defaults.
-	- By default the "advance" operation is assumed to be `stepTo: end` which works for all time-based models supported by Epicenter. If you're using a different language, or need to change this, just pass in a different `advanceOperation` option while creating the Scenario Manager.
-- You need to manage a list of `saved runs`. This includes any run which you want to use for comparisons. The implementation of a "saved run" is just a run which has its `saved` property set to true.
+There are typically three components to building a run comparison:
+
+- A `current` run in which to make decisions;
+- A list of `saved` runs, that is, all runs that you want to use for comparisons;
+- A `baseline` run to compare against (optional).
+
+See the [Scenario Manager docs](http://forio.com/epicenter/docs/public/api_adapters/generated/scenario-manager/) for examples and more details.
 
 To satisfy these needs a Scenario Manager instance has three Run Managers:
 
 #### Baseline
 ```js
 var sm = new F.manager.ScenarioManager();
-sm.baseline // An instance of a Run Manager with a 'baseline' strategy which locates the last undeleted baseline run, or creates a new one.
+sm.baseline // An instance of a Run Manager with a strategy which locates the most recent baseline run (that is, flagged as `saved` and not `trashed`), or creates a new one.
 sm.baseline.reset() // Reset the baseline run. Useful if the model has changed since the baseline run was created.
-sm.baseline.getRun() // Typical Run Manager operation which returns a run.
+sm.baseline.getRun() // Typical Run Manager operation which retrieves the baseline run.
 ```
 
 If you don't need a baseline for your particular case, you can disable auto-creation of baseline runs by passing in `includeBaseline: false` to your Scenario Manager options.
@@ -146,16 +155,12 @@ If you don't need a baseline for your particular case, you can disable auto-crea
 #### Current
 ```js
 var sm = new F.manager.ScenarioManager();
-sm.current // An instance of a Run Manager with a strategy which picks up the last unsaved run (`unsaved` implies a run which hasn't been advanced)
+sm.current // An instance of a Run Manager with a strategy which picks up the most recent run (`unsaved` implies a run which hasn't been advanced)
 sm.current.reset() // Reset the decisions made on the current run
-sm.current.getRun() // Typical Run Manager operation which returns a run
+sm.current.getRun() // Typical Run Manager operation which retrieves the current run
 ```
 
-The `current` Run Manager also has an additional utility method `saveAndAdvance`. This method:
-
-- Sets the `saved` property of the current run to true. (*Note!* This has the side effect of making the current run no longer current: the current is unsaved by definition.)
-- Performs the `advanceOperation`.
-- Adds any provided metadata to the run; typically used for naming the run.
+The `current` Run Manager also has an additional utility method `saveAndAdvance`. This method clones the current run, then advances and saves this clone (it becomes part of the saved runs list). The current run is unchanged and can continue to be used to store decisions being made by the end user.
 
 #### Saved Runs
 ```js
@@ -163,9 +168,19 @@ var sm = new F.manager.ScenarioManager();
 sm.savedRuns // An instance of a Saved Runs Manager
 ```
 
-The `savedRuns` manager gives you utility functions for dealing with multiple runs (saving, deleting, listing). [TODO: LINK TO JSDOCS]
+The `savedRuns` manager gives you utility functions for dealing with multiple runs (saving, deleting, listing). See [more information on saved runs](http://forio.com/epicenter/docs/public/api_adapters/generated/scenario-manager/saved/), or the [Scenario Manager docs](http://forio.com/epicenter/docs/public/api_adapters/generated/scenario-manager/) for examples and more details.
 
-See individual Scenario Manager docs and examples for more details [TODO: LINK HERE ONCE WE HAVE GOOD JSDOCS]
+### Presence Service
+
+The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This can be done explicitly: you can make a call, using this service, to indicate that a particular end user is online or offline. This is also done automatically: in projects that use channels, the end user's presence is published automatically on a "presence" channel that is specific to each group. See [complete details on the Presence Service](http://forio.com/epicenter/docs/public/api_adapters/generated/presence-api-service/) and also the updated [Epicenter Channel Manager's getPresenceChannel()](http://forio.com/epicenter/docs/public/api_adapters/generated/epicenter-channel-manager/#getpresencechannel).
+
+
+### jQuery Version Requirements
+
+Starting in [Epicenter.js 2.0](https://github.com/forio/epicenter-js-libs/releases/tag/v2.0), we introduced support for jQuery 3.1.0. Changes are backwards compatible, so you could use either jQuery 2.1.4 (as for previous releases of Epicenter.js) or jQuery 3.1.0.
+
+Epicenter.js 2.2.0 introduces breaking changes, however, so **for Epicenter.js 2.2.0 and later, jQuery 3.1.0 or later is required**.
+
 
 ### Bug Fixes
 
@@ -186,6 +201,14 @@ The 'current run service' of the Run Manager can be accessed through `rm.run`; h
 #### `runService.query()` and `runService.filter()` return empty arrays for no results.
 
 Due to a quirk in the Epicenter platform, in previous releases, `runService.query()` and `runService.filter()` returned an array of runs if they found any, or an empty _Object_ (`{}`), if no matching runs existed. These methods now correctly return empty arrays. However, this may be a **Breaking Change** if you were relying on the older behavior.
+
+#### `runService.serial()` and `runService.parallel()` return arrays as callback parameters.
+
+Previously, the callback parameter for `runService.serial()` or `runService.parallel()` contained only the result for the most recently executed operation. Now, the parameter to the callback is an array. Each array element is an object containing the results of one operation.
+
+#### Channel calls respect version
+
+All calls to the cometD channel now respect the versionPath of the rest of the Epicenter.js library.
 
 
 <a name="2.0.1"></a>

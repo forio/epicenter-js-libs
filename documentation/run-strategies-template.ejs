@@ -4,16 +4,20 @@ layout: "default"
 isPage: true
 ---
 
+<? var top = docfiles.pop() ?>
+
 ## Run Manager Strategies
 
 The [Run Manager](../run-manager/) gives you control over run creation, depending on run state. You can select run creation stratgies (rules) for which runs end users of your project work with when they log in to your project.
 
-There are several strategies included in epicenter.js:
+There are several strategies included in Epicenter.js:
 
 <? docfiles.forEach(function (doc) { ?><? var moduleName = doc.filename.split('/').pop().split('.')[0].replace('-strategy', '') ?>
 * [<?= moduleName ?>](#<?= moduleName ?>)<? }); ?>
 
-You can also [create your own](#create-your-own).
+
+
+You can also [create your own strategy](#create-your-own) and see [more details on working with Run Strategies](#working-with-run-strategies).
 
 <? docfiles.forEach(function (doc) { ?>
     <? var moduleName = doc.filename.split('/').pop().split('.')[0].replace('-strategy', '') ?>
@@ -27,8 +31,87 @@ You can also [create your own](#create-your-own).
 <? }); ?>
 
 <a name="create-your-own"></a>
-#### Create your own
+### Create your Own
 
-You can create your own strategy by passing in a function in the `strategy` parameter to the `F.manager.RunManager()` instantiation call. 
+You can create your own strategy by passing in a function as the `strategy` parameter to the `F.manager.RunManager()` instantiation call. Strategy functions must return objects of the form:
 
-Strategy functions must return a boolean value for whether or not to create a new run.
+	{
+		getRun: function() {},
+		reset: function() {}
+	}
+
+Some strategies have options you can specify through `strategyOptions` in the [Run Manager](../run-manager/). If you create your own strategy, this options object is passed in to your strategy function constructor. 
+
+For example:
+
+	// example create-your-own strategy provides a new run every minute
+
+	var ConditionalStrategy = F.manager.RunManager.strategies.byName('conditional-creation');
+	var myNewStrategy = new ConditionalStrategy(function (run, headers, usersession, runsession) { 
+		var created = (new Date(run.created)).valueOf();
+		var timeAgo = Date.now() - created;
+		var runLifetime = 1;
+		var minsAgo = timeAgo / (1000 * 60);
+		return minsAgo > runLifetime;
+	});
+
+	var rm = new F.manager.RunManager({
+		strategy: myNewStrategy,
+		run: { ... }
+	});
+
+    <? var moduleDoc = top.javadoc.shift() ?>
+    <?= moduleDoc.description ?>
+
+
+    <? var firstTag = moduleDoc.raw.tags[0] ?>
+
+
+    <? var configStart = 0 ?>
+    <? top.javadoc.forEach(function (block) { ?>
+        <? if (!block.paramStr && (block.returnTags.length == 0)) { ?>
+            <? if (configStart === 0) { ?>
+                #### Configuration Options
+
+                <? configStart = 1 ?>
+            <? } ?>
+            <? var configOption =  block.raw.code.split(':')[0] ?>
+
+            ##### <?= configOption ?>
+
+            <? block.raw.tags.forEach(function (tag) { ?>
+                <? if (tag.type === 'type') { ?>
+                    - *<?= tag.types[0] ?>* 
+                <? } ?>
+                <? if (tag.type === 'see') { ?>
+                    - See: <?= tag.local ?>
+                <? } ?>
+            <? }) ?>
+
+            <?= block.description ?>
+            
+        <? } ?>
+    <? }) ?>
+
+    <? var methodStart = 0 ?>
+    <? top.javadoc.forEach(function (block) { ?>
+        <? if (block.paramStr) { ?>
+            <? if (methodStart === 0) { ?>
+                #### Methods
+
+                <? methodStart = 1 ?>
+            <? } ?>
+
+            <? var methodName = block.raw.code.split(':')[0] ?>
+            <? methodName = methodName.split(' =')[0] ?>
+
+            ##### <?= methodName ?>
+            <?= block.description ?>
+
+            <? block.paramTags.forEach(function (tag) { ?>
+                - `<?= tag.name ?>`: *<?= tag.joinedTypes ?>* <?= tag.description ?>
+            <? }) ?>
+
+        <? } ?>
+    <? }) ?>
+

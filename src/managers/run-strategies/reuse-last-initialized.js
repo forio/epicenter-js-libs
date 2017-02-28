@@ -1,3 +1,26 @@
+/**
+ * The `reuse-last-initialized` strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations. 
+ *
+ * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
+ *
+ *      var rm = new F.manager.RunManager({
+ *          strategy: 'reuse-last-initialized',
+ *          strategyOptions: {
+ *              initOperation: [{ step: 10 }]
+ *          }
+ *      });
+ * 
+ * This strategy is also useful if you have a custom initialization function in your model, and want to make sure it's always executed for new runs.
+ *
+ * Specifically, the strategy is:
+ *
+ * * Look for the most recent run that matches the (optional) `flag` criteria
+ * * If there are no runs that match the `flag` criteria, create a new run. Immediately "initialize" this new run by:
+ *     *  Calling the model operation(s) specified in the `initOperation` array.
+ *     *  Optionally, setting a `flag` in the run.
+ *
+ */
+
 'use strict';
 var classFrom = require('../../util/inherit');
 var injectFiltersFromSession = require('../strategy-utils').injectFiltersFromSession;
@@ -7,13 +30,13 @@ var Base = {};
 
 var defaults = {
     /**
-     * Operations to run in the model for initialization to be considered complete.
-     * @type {Array} Can be in any of the formats Runservice#serial supports
+     * Operations to execute in the model for initialization to be considered complete.
+     * @type {Array} Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
      */
     initOperation: [],
 
     /**
-     * (Optional) Flag to set in run after initialization operation is run. You'd typically not override this unless you need to set additional properties as well.
+     * (Optional) Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
      * @type {Object}
      */
     flag: null,

@@ -4,9 +4,10 @@ var Base = require('./none-strategy');
 var classFrom = require('../../util/inherit');
 
 /**
-* Conditional Creation Strategy
+* ## Conditional Creation Strategy
+*
 * This strategy will try to get the run stored in the cookie and
-* evaluate if needs to create a new run by calling the 'condition' function
+* evaluate if it needs to create a new run by calling the `condition` function.
 */
 
 var Strategy = classFrom(Base, {
@@ -18,10 +19,10 @@ var Strategy = classFrom(Base, {
     },
 
     /**
-     * Resets current run
-     * @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
-     * @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
-     * @param  {Object} options (Optional) See RunService#create for supported options
+     * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
      * @return {Promise}             
      */
     reset: function (runService, userSession, options) {
@@ -39,11 +40,11 @@ var Strategy = classFrom(Base, {
     },
 
     /**
-     * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation)
-     * @param  {RunService} runService  a Run Service instance for the 'current run' as determined by the Run Manager
-     * @param  {Object} userSession Information about the current user seesion. See AuthManager#getCurrentUserSession for format
-     * @param  {Object} runSession the RunManager stores the 'last accessed' run in a cookie and passes it back here
-     * @param  {Object} options (Optional) See RunService#create for supported options
+     * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation).
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
+     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
      * @return {Promise}             
      */
     getRun: function (runService, userSession, runSession, options) {

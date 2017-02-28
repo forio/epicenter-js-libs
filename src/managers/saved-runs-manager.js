@@ -1,5 +1,10 @@
 /**
- * Provides convention-based convenience methods for working with multiple runs.
+ * ## Saved Runs Manager
+ *
+ * The Saved Runs Manager is a specific type of [Run Manager](../../run-manager/) which provides access to a list of runs (rather than just one run). It also provides utility functions for dealing with multiple runs (e.g. saving, deleting, listing).
+ *
+ * An instance of a Saved Runs Manager is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.savedRuns`. See [more information](../#properties) on using `.savedRuns` within the Scenario Manager.
+ *
  */
 'use strict';
 
@@ -11,13 +16,15 @@ var injectFiltersFromSession = require('./strategy-utils').injectFiltersFromSess
 var SavedRunsManager = function (config) {
     var defaults = {
         /**
-         * If set, will only pull runs from current group by default
+         * If set, will only pull runs from current group. Defaults to `true`.
          * @type {Boolean}
          */
         scopeByGroup: true,
 
         /**
-         * If set, will only pull runs from current user by default
+         * If set, will only pull runs from current user. Defaults to `true`.
+         *
+         * For multiplayer run comparison projects, set this to false so that all end users in a group can view the shared set of saved runs.
          * @type {Boolean}
          */
         scopeByUser: true,
@@ -40,9 +47,17 @@ var SavedRunsManager = function (config) {
 
 SavedRunsManager.prototype = {
     /**
-     * Mark a run as saved
-     * @param  {String|RunService} run         run to save
-     * @param  {Object} otherFields (Optional) any other meta-data to save with the run
+     * Marks a run as saved. 
+     *
+     * Note that while any run can be saved, only runs which also match the configuration options `scopeByGroup` and `scopeByUser` are returned by the `getRuns()` method.
+     *
+     * **Example**
+     *
+     *      var sm = new F.manager.ScenarioManager();
+     *      sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
+     *
+     * @param  {String|RunService} run Run to save. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+     * @param  {Object} otherFields (Optional) Any other meta-data to save with the run.
      * @return {Promise}
      */
     save: function (run, otherFields) {
@@ -50,9 +65,15 @@ SavedRunsManager.prototype = {
         return this.mark(run, param);
     },
     /**
-     * Mark as a run as removed; the inverse of marking as saved
-     * @param  {String|RunService} run run to save
-     * @param  {Object} otherFields (Optional) any other meta-data to save with the run
+     * Marks a run as removed; the inverse of marking as saved.
+     *
+     * **Example**
+     *
+     *      var sm = new F.manager.ScenarioManager();
+     *      sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
+     *
+     * @param  {String|RunService} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+     * @param  {Object} otherFields (Optional) any other meta-data to save with the run.
      * @return {Promise}
      */
     remove: function (run, otherFields) {
@@ -62,9 +83,16 @@ SavedRunsManager.prototype = {
 
 
     /**
-     * Set additional fields on a run. This is just a convenience method for RunService#save
-     * @param  {String|RunService} run  run to operate on.
-     * @param  {Object} toMark Fields to set
+     * Sets additional fields on a run. This is a convenience method for [RunService#save](../../run-api-service/#save).
+     *
+     * **Example**
+     *
+     *      var sm = new F.manager.ScenarioManager();
+     *      sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
+     *          { 'myRunName': 'sample policy decisions' });
+     *
+     * @param  {String|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+     * @param  {Object} toMark Fields to set, as name : value pairs.
      * @return {Promise}
      */
     mark: function (run, toMark) {
@@ -87,10 +115,20 @@ SavedRunsManager.prototype = {
     },
 
     /**
-     * Returns a list of saved runs
-     * @param  {Array} variables (Optional) if provided the returned list of runs will have a `.variables` property with these set.
-     * @param  {Object} filter    (Optional) Any filters to apply while fetching the run (@see RunService#filter for details)
-     * @param  {Object} modifiers (Optional) Use for paging/sorting etc. @see RunService#filter for more details
+     * Returns a list of saved runs.
+     *
+     * **Example**
+     *
+     *      var sm = new F.manager.ScenarioManager();
+     *      sm.savedRuns.getRuns().then(function (runs) {
+     *          for (var i=0; i<runs.length; i++) {
+     *              console.log('run id of saved run: ', runs[i].id);
+     *          }
+     *      });
+     *
+     * @param  {Array} variables (Optional) If provided, in the returned list of runs, each run will have a `.variables` property with these set.
+     * @param  {Object} filter    (Optional) Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
+     * @param  {Object} modifiers (Optional) Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
      * @return {Promise}
      */
     getRuns: function (variables, filter, modifiers) {
