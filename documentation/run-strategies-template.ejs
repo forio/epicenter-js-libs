@@ -44,21 +44,21 @@ Some strategies have options you can specify through `strategyOptions` in the [R
 
 For example:
 
-    // example create-your-own strategy provides a new run every minute
+	// example create-your-own strategy provides a new run every minute
 
-    var ConditionalStrategy = F.manager.RunManager.strategies.byName('conditional-creation');
-    var myNewStrategy = new ConditionalStrategy(function (run, headers, usersession, runsession) { 
-        var created = (new Date(run.created)).valueOf();
-        var timeAgo = Date.now() - created;
-        var runLifetime = 1;
-        var minsAgo = timeAgo / (1000 * 60);
-        return minsAgo > runLifetime;
-    });
+	var ConditionalStrategy = F.manager.RunManager.strategies.byName('conditional-creation');
+	var myNewStrategy = new ConditionalStrategy(function (run, headers, usersession, runsession) { 
+		var created = (new Date(run.created)).valueOf();
+		var timeAgo = Date.now() - created;
+		var runLifetime = 1;
+		var minsAgo = timeAgo / (1000 * 60);
+		return minsAgo > runLifetime;
+	});
 
-    var rm = new F.manager.RunManager({
-        strategy: myNewStrategy,
-        run: { ... }
-    });
+	var rm = new F.manager.RunManager({
+		strategy: myNewStrategy,
+		run: { ... }
+	});
 
     <? var moduleDoc = top.javadoc.shift() ?>
     <?= moduleDoc.description ?>
