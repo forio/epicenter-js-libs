@@ -28,3 +28,4 @@ The other, less commonly used adapters include:
 * [User Adapter](../generated/user-api-adapter/)
 * [Member Adapter](../generated/member-api-adapter/)
 * [Introspection Service](../generated/introspection-api-service/)
+* [Presence Service](../generated/presence-api-service/)

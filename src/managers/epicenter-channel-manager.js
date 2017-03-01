@@ -52,6 +52,11 @@ var getFromSessionOrError = function (value, sessionKeyName, settings) {
     }
     return value;
 };
+
+var isPresenceData = function (payload) {
+    return payload.data && payload.data.type === 'user' && payload.data.user;
+};
+
 var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
     constructor: function (options) {
@@ -154,7 +159,17 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var project = getFromSessionOrError('', 'project', session);
 
         var baseTopic = ['/group', account, project, groupName].join('/');
-        return __super.getChannel.call(this, { base: baseTopic });
+        var channel = __super.getChannel.call(this, { base: baseTopic });
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            var callbackWithoutPresenceData = function (payload) {
+                if (!isPresenceData(payload)) {
+                    callback.call(context, payload);
+                }
+            };
+            return oldsubs.call(channel, topic, callbackWithoutPresenceData, context, options);
+        };
+        return channel;
     },
 
     /**
@@ -255,22 +270,23 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
     },
 
     /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) that automatically tracks the presence of an [end user](../../../glossary/#users), that is, whether the end user is currently online in this group and world. Notifications are automatically sent when the end user comes online, and when the end user goes offline (not present for more than 2 minutes). Useful in multiplayer games for letting each end user know whether other users in their shared world are also online.
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) that automatically tracks the presence of an [end user](../../../glossary/#users), that is, whether the end user is currently online in this group. Notifications are automatically sent when the end user comes online, and when the end user goes offline (not present for more than 2 minutes). Useful in multiplayer games for letting each end user know whether other users in their group are also online.
+     *
+     * Note that the presence channel is tracking all end users in a group. In particular, if the project additionally splits each group into [worlds](../world-manager/), this channel continues to show notifications for all end users in the group (not restricted by worlds).
      *
      * **Example**
      *
      *     var cm = new F.manager.ChannelManager();
-     *     var worldManager = new F.manager.WorldManager({
-     *         account: 'acme-simulations',
-     *         project: 'supply-chain-game',
-     *         model: 'model.eqn'
+     *     var pc = cm.getPresenceChannel(); 
+     *     pc.subscribe('', function (data) {
+     *          // 'data' is the entire message object to the channel; parse for information of interest
+     *          if (data.data.subType === 'disconnect') {
+     *               console.log('user ', data.data.user.userName, 'disconnected at ', data.data.date);
+     *          }
+     *          if (data.data.subType === 'connect') {
+     *               console.log('user ', data.data.user.userName, 'connected at ', data.data.date);
+     *          }
      *     });
-     *     worldManager.getCurrentWorld().then(function (worldObject, worldService) {
-     *         var presenceChannel = cm.getPresenceChannel(worldObject);
-     *         presenceChannel.on('presence', function (evt, notification) {
-     *              console.log(notification.online, notification.userId);
-     *          });
-     *      });
      *
      *
      * **Return Value**
@@ -279,50 +295,26 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Parameters**
      *
-     * @param  {String|Object} world World object or id.
-     * @param  {String|Object} userid (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {String} groupName (Optional) Group the end user is in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
-    getPresenceChannel: function (world, userid, groupName) {
-        var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
-        if (!worldid) {
-            throw new Error('Please specify a world id');
-        }
-
+    getPresenceChannel: function (groupName) {
         var session = this.sessionManager.getMergedOptions(this.options);
-        userid = getFromSessionOrError(userid, 'userId', session);
         groupName = getFromSessionOrError(groupName, 'groupName', session);
-
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
 
-        var baseTopic = ['/user', account, project, groupName, worldid].join('/');
+        var baseTopic = ['/group', account, project, groupName].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
-
-        var lastPingTime = { };
-
-        var PING_INTERVAL = 6000;
-        channel.subscribe('internal-ping-channel', function (notification) {
-            var incomingUserId = notification.data.user;
-            if (!lastPingTime[incomingUserId] && incomingUserId !== userid) {
-                channel.trigger('presence', { userId: incomingUserId, online: true });
-            }
-            lastPingTime[incomingUserId] = (new Date()).valueOf();
-        });
-
-        setInterval(function () {
-            channel.publish('internal-ping-channel', { user: userid });
-
-            $.each(lastPingTime, function (key, value) {
-                var now = (new Date()).valueOf();
-                if (value && value + (PING_INTERVAL * 2) < now) {
-                    lastPingTime[key] = null;
-                    channel.trigger('presence', { userId: key, online: false });
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            var callbackWithOnlyPresenceData = function (payload) {
+                if (isPresenceData(payload)) {
+                    callback.call(context, payload);
                 }
-            });
-        }, PING_INTERVAL);
-
+            };
+            return oldsubs.call(channel, topic, callbackWithOnlyPresenceData, context, options);
+        };
         return channel;
     },
 
