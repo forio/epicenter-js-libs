@@ -2,7 +2,7 @@
  *
  * ## Presence API Service
  *
- * The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This can be done explicitly: you can make a call to indicate that a particular end user is online or offline. This is also done automatically: in projects that use [channels](../epicenter-channel-manager/), the end user's presence is published automatically on a "presence" channel that is specific to each group.
+ * The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use [channels](../epicenter-channel-manager/), the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. 
  *
  * The Presence API Service is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). It is typically used only in multiplayer projects, to facilitate end users communicating with each other. It is based on the query capabilities of the underlying RESTful [Presence API](../../../rest_apis/multiplayer/presence/).
  *
@@ -75,7 +75,7 @@ module.exports = function (config) {
 
     var publicAPI = {
         /**
-         * Marks an end user online.
+         * Marks an end user as online.
          *
          *
          * **Example**
@@ -113,7 +113,7 @@ module.exports = function (config) {
         },
 
         /**
-         * Marks an end user offline.
+         * Marks an end user as offline.
          *
          *
          * **Example**
