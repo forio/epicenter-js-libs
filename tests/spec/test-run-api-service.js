@@ -535,7 +535,16 @@
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + ';saved=true/');
                 req.requestBody.should.equal(JSON.stringify(params));
+            });
 
+            it('should save variables with &', function () {
+                var params = { '&test&': true, '&test2&': '&' };
+                var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
+                rs.save(params);
+                var req = server.requests.pop();
+
+                req.url.should.equal(baseURL + ';saved=true/');
+                req.requestBody.should.equal(JSON.stringify(params));
             });
         });
         //variables
