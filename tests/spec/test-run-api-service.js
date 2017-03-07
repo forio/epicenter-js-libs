@@ -416,16 +416,18 @@
 
             it('should call GET with & in long variable names', function () {
                 var rs = new RunService({ account: account, project: project });
-                var variableObj = {};
                 var variableArray = [];
-                for (var i = 0; i < 150; i++) {
-                    var name = '&variable' + i;
-                    variableObj[name] = true;
-                    variableArray.push(name + '=true');
+                for (var i = 0; i < 500; i++) {
+                    var name = '&variable';
+                    variableArray.push(name);
                 }
-                rs.query(variableObj);
-                var req = server.requests.pop();
-                req.url.should.equal(baseURL + ';' + variableArray.join(';') + '/');
+                rs.query({}, { include: variableArray });
+                server.respond();
+                server.requests.length.should.be.above(1);
+                server.requests.forEach(function (xhr) {
+                    xhr.url.length.should.be.below(2049);
+                });
+
             });
         });
 
