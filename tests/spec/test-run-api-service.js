@@ -406,6 +406,27 @@
                     fail.should.not.have.been.called;
                 });
             });
+
+            it('should call GET with & in variable name', function () {
+                var rs = new RunService({ account: account, project: project });
+                rs.query({ '&saved': true, '.price&': '1' });
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + ';&saved=true;.price&=1/');
+            });
+
+            it('should call GET with & in long variable names', function () {
+                var rs = new RunService({ account: account, project: project });
+                var variableObj = {};
+                var variableArray = [];
+                for (var i = 0; i < 150; i++) {
+                    var name = '&variable' + i;
+                    variableObj[name] = true;
+                    variableArray.push(name + '=true');
+                }
+                rs.query(variableObj);
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + ';' + variableArray.join(';') + '/');
+            });
         });
 
         describe('#filter', function () {
@@ -502,6 +523,31 @@
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + 'myfancyrunid/');
                 req.requestHeaders['X-AutoRestore'].should.equal(true);
+            });
+            it('should do an GET with & in variable name', function () {
+                var rs = new RunService({ account: account, project: project });
+                rs.load('myfancyrunid', { include: 'score&' });
+
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + 'myfancyrunid/?include=score&');
+
+            });
+            it('should do an GET with & in variable names', function () {
+                var rs = new RunService({ account: account, project: project });
+                rs.load('myfancyrunid', { include: ['score&', '&score2'] });
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + 'myfancyrunid/?include=score&,&score2');
+            });
+
+            it('should do an GET with & in long variable names', function () {
+                var rs = new RunService({ account: account, project: project });
+                var include = [];
+                for (var i = 0; i < 300; i++) {
+                    include.push('score' + i + '&');
+                }
+                rs.load('myfancyrunid', { include: include });
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + 'myfancyrunid/?include=' + include.join(','));
             });
         });
 
