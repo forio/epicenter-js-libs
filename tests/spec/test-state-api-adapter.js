@@ -34,6 +34,23 @@
             callback.should.have.been.called;
         });
 
+        describe('#load', function () {
+            it('should do a GET', function () {
+                var ds = new StateService();
+                ds.load('X');
+
+                var req = server.requests.pop();
+                req.method.toUpperCase().should.equal('GET');
+            });
+            it('should hit the right url', function () {
+                var ds = new StateService();
+                ds.load('X');
+
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + 'X');
+            });
+        });
+
         describe('#replay', function () {
             it('Should do a POST', function () {
                 var ds = new StateService();

@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../dist/epicenter-multiplayer-dependencies.min.js"></script>
+    <script src="../../../dist/epicenter-edge.js"></script>
+</head>
+<body class="container-fluid">
+    <section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
+
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="authenticated-smart-watch" >
+                <br/>
+
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="a1" >
+                <br/>
+
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="a1a1a1a1" >
+                <br/>
+
+                <label for="">Model</label>
+                <input type="text" id="txtModel" value="model.vmf" >
+                <br/>
+
+                <label for="">Server</label>
+                <input type="text" id="txtServer" value="" >
+                <br/>
+
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              
+          </div>
+      </div>
+    </section>
+    
+    <div class="row">
+        <div class="col-xs-8">
+            <div class="row">
+                <div class="col-xs-8">
+                    <h3>Run Manager</h3>
+                    <table class="table">
+                        <thead>
+                           <tr>
+                               <th class="strong"> Scenario Name </th>
+                               <th></th>
+                               <th></th>
+                               <th></th>
+                           </tr>
+                        </thead>
+                        <tbody class="runsList">
+
+                        </tbody>
+                    </table>
+                    <script id="runTemplate" type="text/template">
+                        <tr data-runid="<%= run.id %>">
+                            <td><%= run.name %></td>
+                            <td><%= run.id %></td>
+                            <td>
+                                <% Object.keys(run.variables).forEach(function (v) { %>
+                                    <%= v %>: <%= run.variables[v] %>
+                                    <br/>
+                                <% }) %>
+                            </td>
+                            <td><% if (!run.nonRemovable) { %> <button class="btn btn-link btn-remove pull-right">Remove</button> <% } %></td>
+                        </tr>
+                    </script>
+
+                </div>
+                <div class="col-xs-4">
+                    <h2>Current Run </h2>
+
+                    <div>
+                        <h6>rundid</h6>
+                        <span id="currentRunId"></span>
+                    </div>
+                    <h6 id="time"></h6>
+
+                    <div>
+                        <h6>Decisions</h6>
+                        <input type="text" id="txtPriceDecision" />
+                    </div>
+                    <div>
+                        <h6>Name</h6>
+                        <input type="text" id="txtRunName" />
+                    </div>
+
+                    <button id="btnSaveAndSimulate">Save and simulate</button>
+
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-4">
+            <section>
+                <h3>Instructions</h3>
+                <div>
+                    <h4>Login to a project which uses the google glasses model, and ideally also has a model.cfg with "Price" and "Time</h4>
+
+                    <h6>Test decision state is kept for current run</h6>
+                    <ul>
+                        <li> Make a decision on the right and tab out. Note runid on top </li>
+                        <li>Refresh</li>
+                        <li><strong>Expected:</strong> Both runid & the decision value should've maintained their values</li>
+                    </ul>
+
+                    <h6>Test SaveAndAdvance</h6>
+                    <ul>
+                        <li> Make a decision on the right and tab out. Note runid on top </li>
+                        <li> Enter run name </li>
+                        <li>Hit the advance button. Wait for confirmation alert</li>
+                        <li>Refresh</li>
+                        <li><strong>Expected:</strong> Both runid & the decision value on right should've maintained their values</li>
+                        <li><strong>Expected:</strong> A new row should've been added to table on the left with the name of your run and right decisions</li>
+                    </ul>
+
+                    <h6>Test Removing runs</h6>
+                    <ul>
+                        <li> Hit remove on a row on the left </li>
+                        <li>Refresh</li>
+                        <li><strong>Expected:</strong> That row should no longer be there</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script src="../common.js"></script>
+    <script src="./integration-test-scenario-manager.js"></script>
+</body>
+</html>

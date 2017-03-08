@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="../../../dist/epicenter-edge.js"></script>
+</head>
+<body>
+    <script>
+        var rm = new F.manager.RunManager({
+            strategy: 'reuse-last-initialized',
+            strategyOptions: {
+                initOperation: [{ stepTo: 'end' }]
+            },
+            run: {
+                account: 'jaimedp',
+                project: 'glasses',
+                model: 'gglasses.vmf'
+            }
+        });
+        
+        rm.getRun().then(function (cr) {
+            console.log(cr);
+        });
+    </script>
+</body>
+</html>

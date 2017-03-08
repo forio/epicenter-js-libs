@@ -2,9 +2,10 @@
 
 $(function () {
     var server = {
-        server: {
-
-        }
+        // server: {
+        //     host: 'epimon3.foriodev.com',
+        //     protocol: 'http'
+        // }
     };
 
     var cm = new F.manager.ChannelManager(server);
@@ -15,19 +16,6 @@ $(function () {
         $('#status').html('disconnected');
     });
 
-
-    var am = new F.manager.AuthManager(server);
-    $('#btnLogin').click(function (evt) {
-        evt.preventDefault();
-        am.login({
-            userName: $('#txtUsername').val(),
-            password: $('#txtPassword').val(),
-            account: $('#txtAccount').val(),
-            project: $('#txtProject').val()
-        }).then(function () {
-            window.alert('login successful');
-        });
-    });
 
     $('#btnBindGroupChannel').click(function (evt) {
         evt.preventDefault();
@@ -45,14 +33,6 @@ $(function () {
             $('#txtGroupTextAll-op').html(payload.data);
         });
     });
-
-    $('#logout').click(function (evt) {
-        evt.preventDefault();
-        am.logout().then(function () {
-            window.alert('logged out');
-        });
-    });
-
 
     $('#btnBindToWorld').on('click', function () {
         var worldManager = new F.manager.WorldManager({

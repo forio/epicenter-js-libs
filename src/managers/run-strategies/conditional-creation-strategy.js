@@ -1,94 +1,76 @@
 'use strict';
 
 var Base = require('./none-strategy');
-var SessionManager = require('../../store/session-manager');
 var classFrom = require('../../util/inherit');
-var AuthManager = require('../auth-manager');
-
-var keyNames = require('../key-names');
-
-var defaults = {
-    sessionKey: keyNames.STRATEGY_SESSION_KEY,
-    path: ''
-};
-
-function setRunInSession(sessionKey, run, sessionManager) {
-    sessionManager.getStore().set(sessionKey, JSON.stringify({ runId: run.id }));
-}
 
 /**
-* Conditional Creation Strategy
+* ## Conditional Creation Strategy
+*
 * This strategy will try to get the run stored in the cookie and
-* evaluate if needs to create a new run by calling the 'condition' function
+* evaluate if it needs to create a new run by calling the `condition` function.
 */
 
 var Strategy = classFrom(Base, {
-    constructor: function Strategy(runService, condition, options) {
+    constructor: function Strategy(condition) {
         if (condition == null) { //eslint-disable-line
-            //TODO: not sure why this is explicitly ==
             throw new Error('Conditional strategy needs a condition to create a run');
         }
-
-        this._auth = new AuthManager();
-        this.run = runService;
         this.condition = typeof condition !== 'function' ? function () { return condition; } : condition;
-        this.options = $.extend(true, {}, defaults, options);
-        this.sessionManager = new SessionManager(options);
-        this.runOptions = this.options.run;
     },
 
-    runOptionsWithScope: function () {
-        var userSession = this._auth.getCurrentUserSessionInfo();
-        return $.extend({
-            scope: { group: userSession.groupName }
-        }, this.runOptions);
+    /**
+     * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
+     * @return {Promise}             
+     */
+    reset: function (runService, userSession, options) {
+        var group = userSession && userSession.groupName;
+        var opt = $.extend({
+            scope: { group: group }
+        }, runService.getCurrentConfig());
+
+        return runService
+                .create(opt, options)
+                .then(function (run) {
+                    run.freshlyCreated = true;
+                    return run;
+                });
     },
 
-    reset: function (runServiceOptions) {
+    /**
+     * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation).
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
+     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
+     * @return {Promise}             
+     */
+    getRun: function (runService, userSession, runSession, options) {
         var me = this;
-        var opt = this.runOptionsWithScope();
-
-        return this.run
-                .create(opt, runServiceOptions)
-            .then(function (run) {
-                setRunInSession(me.options.sessionKey, run, me.sessionManager);
-                run.freshlyCreated = true;
-                return run;
-            });
-    },
-
-    getRun: function () {
-        var sessionStore = this.sessionManager.getStore();
-        var runSession = JSON.parse(sessionStore.get(this.options.sessionKey));
-        var me = this;
-        if (runSession && runSession.runId) {
-            return this._loadAndCheck(runSession).fail(function () {
-                return me.reset(); //if it got the wrong cookie for e.g.
+        if (runSession && runSession.id) {
+            return this.loadAndCheck(runService, userSession, runSession, options).catch(function () {
+                return me.reset(runService, userSession, options); //if it got the wrong cookie for e.g.
             });
         } else {
-            return this.reset();
+            return this.reset(runService, userSession, options);
         }
     },
 
-    _loadAndCheck: function (runSession) {
+    loadAndCheck: function (runService, userSession, runSession, options) {
         var shouldCreate = false;
         var me = this;
 
-        return this.run
-            .load(runSession.runId, null, {
+        return runService
+            .load(runSession.id, null, {
                 success: function (run, msg, headers) {
-                    shouldCreate = me.condition(run, headers);
+                    shouldCreate = me.condition(run, headers, userSession, runSession);
                 }
             })
             .then(function (run) {
                 if (shouldCreate) {
-                    var opt = me.runOptionsWithScope();
-                    return me.run.create(opt)
-                    .then(function (run) {
-                        setRunInSession(me.options.sessionKey, run, me.sessionManager);
-                        run.freshlyCreated = true;
-                        return run;
-                    });
+                    return me.reset(runService, userSession, options);
                 }
                 return run;
             });

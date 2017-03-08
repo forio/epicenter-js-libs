@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="../../../../dist/epicenter-edge.js"></script>
+</head>
+<body class="container-fluid">
+    <section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
+
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="authenticated-smart-watch" >
+                <br/>
+
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="a1" >
+                <br/>
+
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="a1a1a1a1" >
+                <br/>
+
+                <label for="">Model</label>
+                <input type="text" id="txtModel" value="model.vmf" >
+                <br/>
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              
+          </div>
+      </div>
+    </section>
+
+    <div>
+        <h6>Set Trashed flag</h6>
+        <input type="text" id="txtTrashRun" style="width: 400px" placeholder="run id" />
+        <input type="checkbox" id="chkTrashRun">
+        <button id="btnTrashRun">Trash Run</button>
+    </div>
+
+    <h3 id="time"></h3>
+    
+    <div>
+        <h6>Decisions</h6>
+        <input type="text" id="txtPriceDecision" />
+    </div>
+
+    <button id="btnSaveAndSimulate">Save and simulate</button>
+    <script src="../../common.js"></script>
+    <script src="./integration-test-run-strategies.js"></script>
+</body>
+</html>

@@ -5,7 +5,7 @@
  * 
  * However, if they are idle for longer than your project's **Model Session Timeout** (configured in your project's [Settings](../../../updating_your_settings/)), then their run is persisted; the next time they interact with the project, they will get a new run. (See more background on [Run Persistence](../../../run_persistence/).)
  * 
- * This strategy is useful for multi-page projects where end users play through a simulation in one sitting, stepping through the model sequentially (for example, a Vensim model that uses the `step` operation) or calling specific functions until the model is "complete." However, you will need  to guarantee that your end users will remain engaged with the project from beginning to end &mdash; or at least, if they are idle for longer than the **Model Session Timeout**, that it is okay for them to start the project from scratch (with an uninitialized model). 
+ * This strategy is useful for multi-page projects where end users play through a simulation in one sitting, stepping through the model sequentially (for example, a Vensim model that uses the `step` operation) or calling specific functions until the model is "complete." However, you will need to guarantee that your end users will remain engaged with the project from beginning to end &mdash; or at least, that if they are idle for longer than the **Model Session Timeout**, it is okay for them to start the project from scratch (with an uninitialized model). 
  * 
  * Specifically, the strategy is:
  *
@@ -15,17 +15,20 @@
  *      * If the run is in memory, use the run.
  *      * If the run is only persisted (and not still in memory), create a new run for this end user.
  *      * If the cookie does not exist, create a new run for this end user.
+ *
+ * @deprecated The run-service now sets a header to automatically bring back runs into memory
  */
 
 'use strict';
-var classFrom = require('../../util/inherit');
-var ConditionalStrategy = require('./conditional-creation-strategy');
+var classFrom = require('../../../util/inherit');
+var ConditionalStrategy = require('../conditional-creation-strategy');
 
 var __super = ConditionalStrategy.prototype;
 
 var Strategy = classFrom(ConditionalStrategy, {
-    constructor: function (runService, options) {
-        __super.constructor.call(this, runService, this.createIf, options);
+    constructor: function (options) {
+        __super.constructor.call(this, this.createIf, options);
+        console.warn('This strategy is deprecated; the run-service now sets a header to automatically bring back runs into memory');
     },
 
     createIf: function (run, headers) {

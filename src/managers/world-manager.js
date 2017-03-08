@@ -42,8 +42,7 @@ var worldApi;
 
 function buildStrategy(worldId, dtd) {
 
-    return function Ctor(runService, options) {
-        this.runService = runService;
+    return function Ctor(options) {
         this.options = options;
 
         $.extend(this, {
@@ -51,14 +50,14 @@ function buildStrategy(worldId, dtd) {
                 throw new Error('not implementd. Need api changes');
             },
 
-            getRun: function () {
+            getRun: function (runService) {
                 var me = this;
                 //get or create!
                 // Model is required in the options
                 var model = this.options.run.model || this.options.model;
                 return worldApi.getCurrentRunId({ model: model, filter: worldId })
                     .then(function (runId) {
-                        return me.runService.load(runId);
+                        return runService.load(runId);
                     })
                     .then(function (run) {
                         dtd.resolveWith(me, [run]);
@@ -144,7 +143,6 @@ module.exports = function (options) {
                     run: runOpts
                 });
                 var rm = new RunManager(opt);
-
                 return rm.getRun()
                     .then(function (run) {
                         dtd.resolve(run, rm.runService, rm);

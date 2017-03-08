@@ -10,5 +10,8 @@ module.exports = {
         }
 
         return res;
+    },
+    isEmpty: function isEmpty(value) {
+        return (!value || ($.isPlainObject(value) && Object.keys(value).length === 0));
     }
 };

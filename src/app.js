@@ -5,6 +5,7 @@
  */
 
 var F = {
+    _private: {}, //need this hook now because tests expect everything to be global. Delete once tests are browserified
     util: {},
     factory: {},
     transport: {},
@@ -25,6 +26,7 @@ if (!global.SKIP_ENV_LOAD) {
 F.util.query = require('./util/query-util');
 F.util.run = require('./util/run-util');
 F.util.classFrom = require('./util/inherit');
+F._private.strategyutils = require('./managers/strategy-utils');
 
 F.factory.Transport = require('./transport/http-transport-factory');
 F.transport.Ajax = require('./transport/ajax-http-transport');
@@ -52,14 +54,10 @@ F.manager.ScenarioManager = require('./managers/scenario-manager');
 F.manager.RunManager = require('./managers/run-manager');
 F.manager.AuthManager = require('./managers/auth-manager');
 F.manager.WorldManager = require('./managers/world-manager');
+F.manager.SavedRunsManager = require('./managers/saved-runs-manager');
 
-F.manager.strategy['always-new'] = require('./managers/run-strategies/always-new-strategy');
-F.manager.strategy['conditional-creation'] = require('./managers/run-strategies/conditional-creation-strategy');
-F.manager.strategy.identity = require('./managers/run-strategies/none-strategy');
-F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if-missing-strategy');
-F.manager.strategy['new-if-missing'] = require('./managers/run-strategies/new-if-missing-strategy');
-F.manager.strategy['new-if-persisted'] = require('./managers/run-strategies/new-if-persisted-strategy');
-F.manager.strategy['new-if-initialized'] = require('./managers/run-strategies/new-if-initialized-strategy');
+var strategies = require('./managers/run-strategies');
+F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
 F.service.Channel = require('./service/channel-service');

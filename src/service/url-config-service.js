@@ -103,15 +103,19 @@ var UrlConfigService = function (config) {
 
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
-
-            if (api === 'config') {
+            var apiMapping = {
+                channel: 'channel/subscribe'
+            };
+            var apiEndpoint = apiMapping[api] || api;
+            
+            if (apiEndpoint === 'config') {
                 var actualProtocol = window.location.protocol.replace(':', '');
                 var configProtocol = (options.isLocalhost()) ? this.protocol : actualProtocol;
                 return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
             }
-            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + api + '/';
+            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
 
-            if ($.inArray(api, PROJECT_APIS) !== -1) {
+            if ($.inArray(apiEndpoint, PROJECT_APIS) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath + '/';
             }
             return apiPath;

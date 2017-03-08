@@ -29,8 +29,8 @@
  */
 
 var ChannelManager = require('./channel-manager');
+var ConfigService = require('../service/configuration-service');
 var classFrom = require('../util/inherit');
-var urlService = require('../service/url-config-service');
 var SessionManager = require('../store/session-manager');
 
 var validTypes = {
@@ -63,10 +63,9 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         this.sessionManager = new SessionManager(options);
         var defaultCometOptions = this.sessionManager.getMergedOptions(options);
 
-        var urlOpts = urlService(defaultCometOptions.server);
+        var urlConfig = new ConfigService(defaultCometOptions).get('server');
         if (!defaultCometOptions.url) {
-            //Default epicenter cometd endpoint
-            defaultCometOptions.url = urlOpts.protocol + '://' + urlOpts.host + '/channel/subscribe';
+            defaultCometOptions.url = urlConfig.getAPIPath('channel');
         }
 
         if (defaultCometOptions.handshake === undefined) {
