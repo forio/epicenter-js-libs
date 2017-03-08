@@ -102,15 +102,16 @@ var UrlConfigService = function (config) {
         }()),
 
         getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data', 'file'];
+            var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
             var apiMapping = {
                 channel: 'channel/subscribe'
             };
             var apiEndpoint = apiMapping[api] || api;
             
             if (apiEndpoint === 'config') {
-                // var base = options.isLocalhost() ? '' : 
-                return this.protocol + '://' + actingHost + '/epicenter/v1/config';
+                var actualProtocol = window.location.protocol.replace(':', '');
+                var configProtocol = (options.isLocalhost()) ? this.protocol : actualProtocol;
+                return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
             }
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
 
