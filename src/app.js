@@ -45,6 +45,7 @@ F.service.Member = require('./service/member-api-adapter');
 F.service.Asset = require('./service/asset-api-adapter');
 F.service.Group = require('./service/group-api-service');
 F.service.Introspect = require('./service/introspection-api-service');
+F.service.Presence = require('./service/presence-api-service');
 
 F.store.Cookie = require('./store/cookie-store');
 F.factory.Store = require('./store/store-factory');

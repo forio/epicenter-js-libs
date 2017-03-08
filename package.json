@@ -1,6 +1,6 @@
 {
   "name": "epicenter-js",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/forio/epicenter-js-libs"
@@ -18,7 +18,7 @@
     "grunt-conventional-changelog": "^6.1.0",
     "grunt-eslint": "^19.0.0",
     "grunt-markdox": "^1.2.1",
-    "grunt-mocha-phantom-istanbul": "^0.1.1",
+    "grunt-mocha-phantom-istanbul-senluchen2015": "0.2.1",
     "grunt-template-module": "^0.5.0",
     "husky": "^0.11.7",
     "istanbul": "^0.4.5",
