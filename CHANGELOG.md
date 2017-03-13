@@ -1,5 +1,5 @@
 <a name="2.2.0"></a>
-### 2.2.0 (2017-03-01)
+### 2.2.0 (2017-03-15)
 
 This is one of our biggest releases of Epicenter.js in a while. It includes:
 
@@ -172,7 +172,7 @@ The `savedRuns` manager gives you utility functions for dealing with multiple ru
 
 ### Presence Service
 
-The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This can be done explicitly: you can make a call, using this service, to indicate that a particular end user is online or offline. This is also done automatically: in projects that use channels, the end user's presence is published automatically on a "presence" channel that is specific to each group. See [complete details on the Presence Service](http://forio.com/epicenter/docs/public/api_adapters/generated/presence-api-service/) and also the updated [Epicenter Channel Manager's getPresenceChannel()](http://forio.com/epicenter/docs/public/api_adapters/generated/epicenter-channel-manager/#getpresencechannel).
+The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use channels, the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. See [complete details on the Presence Service](http://forio.com/epicenter/docs/public/api_adapters/generated/presence-api-service/) and also the updated [Epicenter Channel Manager's getPresenceChannel()](http://forio.com/epicenter/docs/public/api_adapters/generated/epicenter-channel-manager/#getpresencechannel).
 
 
 ### jQuery Version Requirements
