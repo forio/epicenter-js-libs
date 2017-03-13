@@ -155,7 +155,7 @@ module.exports={
 (function (global){
 /**
  * Epicenter Javascript libraries
- * v2.1.0
+ * v2.2.0
  * https://github.com/forio/epicenter-js-libs
  */
 
@@ -217,7 +217,7 @@ F.manager.strategy = strategies.list; //TODO: this is not really a manager so na
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
 F.service.Channel = require('./service/channel-service');
 
-F.version = '2.1.0';
+F.version = '2.2.0';
 F.api = require('./api-version.json');
 
 global.F = F;
