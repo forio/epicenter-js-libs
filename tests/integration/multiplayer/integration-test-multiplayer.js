@@ -2,10 +2,11 @@
 
 $(function () {
     var server = {
-        // server: {
-        //     host: 'epimon3.foriodev.com',
-        //     protocol: 'http'
-        // }
+        websocketEnabled: false,
+        server: {
+            host: 'epistage2.foriodev.com',
+            protocol: 'http'
+        }
     };
 
     var cm = new F.manager.ChannelManager(server);

@@ -30,8 +30,8 @@
     "prepush": "grunt validate"
   },
   "dependencies": {
+    "cometd-jquery": "github:forio/cometd-jquery",
     "Base64": "^1.0.0",
-    "cometd-jquery": "^3.0.0",
     "jquery": "^2.1.1"
   }
 }
