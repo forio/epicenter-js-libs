@@ -200,6 +200,27 @@
                 var req = server.requests.pop();
                 req.requestHeaders.should.not.have.property('X-AutoRestore');
             });
+
+            it('should call GET with & in variable name', function () {
+                vs.query(['&saved', '.price&']);
+                var req = server.requests.pop();
+                req.url.should.equal(baseURL + ';/variables/?include=&saved,.price&');
+            });
+
+            it('should call GET with & in long variable names', function () {
+                var variableArray = [];
+                for (var i = 0; i < 500; i++) {
+                    var name = '&variable';
+                    variableArray.push(name);
+                }
+                vs.query(variableArray);
+                server.respond();
+                server.requests.length.should.be.above(1);
+                server.requests.forEach(function (xhr) {
+                    xhr.url.length.should.be.below(2049);
+                });
+
+            });
         });
 
 
