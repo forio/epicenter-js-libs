@@ -3,10 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> Presence Api Integration Test</title>
+    <title> Presence API Integration Test</title>
     <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../../../dist/epicenter-multiplayer-dependencies.min.js"></script>
-    <script src="../../../dist/epicenter-edge.js"></script>
+    <!-- <script src="../../../dist/epicenter-multiplayer-dependencies.min.js"></script>
+    <script src="../../../dist/epicenter-edge.js"></script>-->
+    <script src="//forio.com/tools/js-libs/2.2.0/epicenter.js"></script>
+    <script src="//forio.com/tools/js-libs/2.2.0/epicenter-multiplayer-dependencies.js"></script>
 
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <style>
@@ -48,52 +50,94 @@
               </form>
           </div>
           <div class="col-xs-6">
-              Make sure you enter info for 
+              Make sure you enter info for: 
               <ul>
                   <li>A team account</li>
                   <li>Push channel turned on</li>
               </ul>
-
+              Other usernames in the default (forio-dev/epicenter-js-test) project: 
+              <ul>
+                  <li>tom2 (end user, same password as above)</li>
+                  <li>tomfac (facilitator, same password as above)</li>
+              </ul>
           </div>
       </div>
     </section>
 
-	<h4>Presence Api</h4>
-    <section>
-        <p>Testing the presence service. Specifically testing, markOnline, markOffline, getStatus and presence channel</p>
-        <p>Try to test group channel and presence channel separately</p>
-    </section>
+	<h4>Presence API Integration Test</h4>
     <section class="row">
-  	<h3>Mark Online / Offline</h3>
-    <button id="btnMarkOnline">Mark Online Without UserId</button>
-		<button id="btnMarkOnlineWithId">Mark Online With UserId</button>
-    <br />
-    <button id="btnMarkOffline">Mark Offline Without UserId</button>
-    <button id="btnMarkOfflineWithId">Mark Offline With UserId</button>
-    <h3>Get Status</h3>
-    <button id="btnGetStatus">Get Status</button>
-    <p id="status"></p>
-    <h3>Group Channel Test</h3>
-    <h4>User1</h4>
-    <button id="subscribeToChannel">Subscribe</button>
-    <button id="unsubscribeToChannel">Unsubscribe</button>
-    <button id="publish">Publish</button>
-    <p id="publishGroupStatus">Status: </p>
-    <h4>User2</h4>
-    <button id="subscribeToChannel2">Subscribe</button>
-    <button id="unsubscribeToChannel2">Unsubscribe</button>
-    <p id="publishGroupStatus2">Status: </p>
-    <h3>Presence Channel Test</h3>
-    <h4>User1</h4>
-    <button id="subscribeToPresenceChannel">Subscribe</button>
-    <button id="unsubscribeToPresenceChannel">Unsubscribe</button>
-    <button id="publishPresence">Publish (should have no effect)</button>
-    <p id="publishStatus">Status: </p>
-    <h4>User2</h4>
-    <button id="subscribeToPresenceChannel2">Subscribe</button>
-    <button id="unsubscribeToPresenceChannel2">Unsubscribe</button>
-    <p id="publishStatus2">Status: </p>
-    <p>Channel Status: <span id="channel-status"></span></p>
+        <div class="row">
+            <div class="col-xs-6">
+                <h3>Channel Status</h3>
+                <p>Channel Status: <span id="channel-status"></span></p>
+                <h3>Mark Online / Offline</h3>
+                <button id="btnMarkOnline">Mark Online Without UserId</button>
+                    <button id="btnMarkOnlineWithId">Mark Online With UserId</button>
+                <br />
+                <button id="btnMarkOffline">Mark Offline Without UserId</button>
+                <button id="btnMarkOfflineWithId">Mark Offline With UserId</button>
+                <h3>Get Status</h3>
+                <button id="btnGetStatus">Get Status</button>
+                <p id="status"></p>
+                <h3>Group Channel Test</h3>
+                <h4>User1</h4>
+                <button id="subscribeToChannel">Subscribe</button>
+                <button id="unsubscribeToChannel">Unsubscribe</button>
+                <button id="publish">Publish</button>
+                <p id="publishGroupStatus">Status: </p>
+                <h4>User2</h4>
+                <button id="subscribeToChannel2">Subscribe</button>
+                <button id="unsubscribeToChannel2">Unsubscribe</button>
+                <p id="publishGroupStatus2">Status: </p>
+                <h3>Presence Channel Test</h3>
+                <h4>User1</h4>
+                <button id="subscribeToPresenceChannel">Subscribe</button>
+                <button id="unsubscribeToPresenceChannel">Unsubscribe</button>
+                <button id="publishPresence">Publish (should have no effect)</button>
+                <p id="publishStatus">Status: </p>
+                <h4>User2</h4>
+                <button id="subscribeToPresenceChannel2">Subscribe</button>
+                <button id="unsubscribeToPresenceChannel2">Unsubscribe</button>
+                <p id="publishStatus2">Status: </p>
+            </div>
+            <div class="col-xs-6">
+                <h3>Presence Service Testing Instructions</h3>
+                <ul>
+                    <li>First, log in (above).</li>
+                    <li>Next, refresh the page. Confirm that <strong>Channel Status</strong> is "Connected".</li>
+                    <li><strong>Mark Online / Offline</strong>: Tests the presense service markOnline() and markOffline() functions. 
+                        <ul><li>The "Without UserId" marks the currently logged in user.</li><li>The "With UserId" marks end user tom2 (forio-dev team). (<strong>Note!</strong> This will only succeed if you are logged in as tom2 or as the facilitator. Standard end users can only mark themselves online; facilitator end users can mark anyone in their group online.)</li></ul>
+                    </li>
+                    <li><strong>Get Status</strong>: See who is online.  
+                        <ul>
+                            <li>Click the "Get Status" button to list the usernames and user ids of end users who are currently logged in and online.</li>
+                            <li>Users are considered online if: <ul><li>They have been explicitly markOnline()'d.</li><li>They subscribe to the Group Channel.</li></ul></li>
+                        </ul>
+                    </li>
+                    <li><strong>Group Channel Test</strong>: If you are subscribed to the channel, then when you or another user in the group choose to "Publish", the Group Channel Status is updated with the information published.
+                        <ul>
+                            <li>User 1 is the currently logged in user.</li>
+                            <li>User 2 is tom2 (end user). (<strong>Note!</strong> Working with the "User 2" buttons will only succeed if you are logged in as tom2 or as the facilitator.)</li>
+                            <li>First, click "Subscribe" for an end user that you are logged in as.</li>
+                            <li>Click "Publish" and notice that the Group Channel Status is updated with the published information ("100").</li>
+                            <li>If a different user (e.g. one logged in from a second, incognito, window) is also subscribed to this channel and chooses to Publish, notice that the Group Channel Status here is updated with their published information also.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Presence Channel Test</strong>: If you are subscribed to the channel, then when another user in this group logs in, the Presence Channel Status for the subscribed user shows that the other user has connected.
+                        <ul>
+                            <li>User 1 is the currently logged in user.</li>
+                            <li>User 2 is tom2 (end user). (<strong>Note!</strong> Working with the "User 2" buttons will only succeed if you are logged in as tom2 or as the facilitator.)</li>
+                            <li>First, click "Subscribe" for an end user that you are logged in as.</li>
+                            <li><i>In a second, incognito, window</i>, load this same page. Log in as a different user than you initially used. Subscribe to the Presence Channel</li>
+                            <li>Back in this window, notice that the Presence Channel Status is updated with "connect" info from the user you logged in as in the second window.</li>
+                            <li>If the user in the second, incognito, window disconnects (logs out, or you close the window), notice that the Presence Channel Status is updated with "disconnect" info for that use.</li>
+                            <li>If you have "Unsubscribe"d, you should no longer see these updates.</li>
+                        </ul>
+                    </li> 
+                </ul>
+            </div>
+        </div>
+        
     </section>
 
 
