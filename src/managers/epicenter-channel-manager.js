@@ -8,9 +8,7 @@
  * <a name="background"></a>
  * ### Channel Background
  *
- * Channel notifications are only available for [team projects](../../../glossary/#team). To enable notifications for your project, [update your project settings](../../../updating_your_settings/#general-settings) to turn on the **Push Channel** setting, and optionally enable authorization for the channel.
- *
- * There are two main use cases for the push channel: event notifications and chat messages.
+ * Channel notifications are only available for [team projects](../../../glossary/#team). There are two main use cases for the push channel: event notifications and chat messages.
  *
  * #### Event Notifications
  *
@@ -45,6 +43,7 @@
  *     var cm = new F.manager.ChannelManager();
  *     var gc = cm.getGroupChannel();
  *     gc.subscribe('', function(data) { console.log(data); });
+ *     gc.publish('', { message: 'a new message to the group' });
  * 
  * For a more detailed example, see a [complete publish and subscribe example](../../../rest_apis/multiplayer/channel/#epijs-example).
  *
@@ -317,7 +316,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *     var cm = new F.manager.ChannelManager();
      *     var pc = cm.getPresenceChannel(); 
      *     pc.subscribe('', function (data) {
-     *          // 'data' is the entire message object to the channel; parse for information of interest
+     *          // 'data' is the entire message object to the channel; 
+     *          // parse for information of interest
      *          if (data.data.subType === 'disconnect') {
      *               console.log('user ', data.data.user.userName, 'disconnected at ', data.data.date);
      *          }

@@ -14,6 +14,15 @@
  *        var cs = new F.service.Channel();
  *        cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
  *
+ * If you are working through the [Epicenter Channel Manager](../epicenter-channel-manager/), when you ask to "get" a particular channel, you are really asking for an instance of the Channel Service with a topic already set, for example to the appropriate group or world:
+ *
+ *      var cm = new F.manager.ChannelManager();
+ *      var gc = cm.getGroupChannel();
+ *      // because we used an Epicenter Channel Manager to get the group channel,
+ *      // subscribe() and publish() here default to the base topic for the group
+ *      gc.subscribe('', function(data) { console.log(data); });
+ *      gc.publish('', { message: 'a new message to the group' });
+ *
  * The parameters for instantiating a Channel Service include:
  *
  * * `options` The options object to configure the Channel Service.
