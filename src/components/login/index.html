@@ -8,20 +8,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- the inserted pop over is compatible with bootstrap classes, so optionally you can include bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
         <!-- login.css provides styling for the group selector pop over dialog -->
-        <link rel="stylesheet" href="https://forio.com/tools/js-libs/<%= version %>/components/login/login.css">
+        <link rel="stylesheet" href="//forio.com/tools/js-libs/<%= version %>/components/login/login.css">
 
-        <!-- make sure to include jquery, epicenter.js and login.js -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-        <script src="https://forio.com/tools/js-libs/<%= version %>/epicenter.min.js"></script>
-        <script src="https://forio.com/tools/js-libs/<%= version %>/components/login/login.js"></script>
+        <!-- make sure to include jquery, epicenter.js, and login.js -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="//forio.com/tools/js-libs/<%= version %>/epicenter.min.js"></script>
+        <script src="//forio.com/tools/js-libs/<%= version %>/components/login/login.js"></script>
     </head>
     <body>
         <!--
-            The main login form. Make sure you make the id="login". Also you can specify a
-            page to redirect to after logging in using the action property.
+            The main login form.
+            The form id must be "login". 
+            The form action is the page where users are directed after successfully logging in.
+            If you change the form action, make the corresponding change in auth.js (pages.student).
 
             Inside the form, specify the username and password fields that the JavaScript
             will use as credentials to login. Optionally you can specify an account
