@@ -64,6 +64,7 @@
  * * `options.userId` Epicenter user id used for authentication. Optional; `options.userName` is preferred.
  * * `options.token` Epicenter token used for authentication. (You can retrieve this using `authManager.getToken()` from the [Authorization Manager](../auth-manager/).)
  * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
+  * * `options.shareConnection` Whether to share a websocket connection across multiple instances of the [Channel Manager](../channel-manager/). In general, every channel that a project subscribes to should use the same connection, so set this to `true`.
  */
 
 var ChannelManager = require('./channel-manager');
@@ -134,11 +135,12 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *      var cm = new F.manager.EpicenterChannelManager();
-     *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
+     *      var cm = new F.manager.ChannelManager({shareConnection: true});
+     *      var channel1 = cm.getChannel('/group/acme/supply-chain-game/');
+     *      var channel2 = cm.getChannel('/data/acme/supply-chain-game/survey-responses/');
      *
-     *      channel.subscribe('topic', callback);
-     *      channel.publish('topic', { myData: 100 });
+     *      channel1.subscribe('topic', callback);
+     *      channel1.publish('topic', { myData: 100 });
      *
      * **Parameters**
      * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
@@ -176,7 +178,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *     var cm = new F.manager.ChannelManager();
+     *     var cm = new F.manager.ChannelManager({shareConnection: true});
      *     var gc = cm.getGroupChannel();
      *     gc.subscribe('broadcasts', callback);
      *
@@ -216,7 +218,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *     var cm = new F.manager.ChannelManager();
+     *     var cm = new F.manager.ChannelManager({shareConnection: true});
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
      *         project: 'supply-chain-game',
@@ -262,7 +264,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *     var cm = new F.manager.ChannelManager();
+     *     var cm = new F.manager.ChannelManager({shareConnection: true});
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
      *         project: 'supply-chain-game',
@@ -313,7 +315,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *     var cm = new F.manager.ChannelManager();
+     *     var cm = new F.manager.ChannelManager({shareConnection: true});
      *     var pc = cm.getPresenceChannel(); 
      *     pc.subscribe('', function (data) {
      *          // 'data' is the entire message object to the channel; 
@@ -363,7 +365,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * **Example**
      *
-     *     var cm = new F.manager.ChannelManager();
+     *     var cm = new F.manager.ChannelManager({shareConnection: true});
      *     var dc = cm.getDataChannel('survey-responses');
      *     dc.subscribe('', function(data, meta) {
      *          console.log(data);
