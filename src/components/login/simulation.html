@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- optionally you can include bootstrap and/or other styling -->
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//forio.com/tools/js-libs/<%= version %>/components/login/login.css">
+
+        <!-- make sure to include jquery and epicenter.js -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="//forio.com/tools/js-libs/<%= version %>/epicenter.min.js"></script>
+
+        <!-- for every page you want to protect, include auth.js and a call to check whether the user is logged in -->
+        <script src="//forio.com/tools/js-libs/<%= version %>/components/login/auth.js"></script>
+        <script>auth.checkLogin();</script>
+
+        <!-- for every page on which you want a logout button, include the logout script -->
+        <script src="//forio.com/tools/js-libs/<%= version %>/components/login/logout.js"></script>
+    </head>
+    <body>
+        <!--
+            The main page for your simulation.
+        -->
+        <div class="body">This is the main page for the simulation. Only standard (non-facilitator) end users who are logged in will have access to this page.</div>
+
+        <!-- the logout link or button calls the logout script -->
+        <a href="#" class="logout">Log out</a>
+
+        <div class="powered-by"></div>
+    </body>
+</html>
