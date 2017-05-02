@@ -1,4 +1,4 @@
-$(function () {
+
     'use strict';
 
     var authManager = new F.manager.AuthManager();
@@ -11,8 +11,8 @@ $(function () {
     */
     var pages = {
         fac: 'facilitator.html',
-        student: 'simulation.html',
-        login: 'index.html'
+        student: 'index.html',
+        login: 'login.html'
     };
 
     function redirectToLogin(error) {
@@ -37,38 +37,40 @@ $(function () {
         return pageKey;
     }
 
-    window.auth = {
-        checkLogin: function () {
-            var session = authManager.getCurrentUserSessionInfo();
-            var isFac = session.isFac || session.isTeamMember;
-            if (!session || Object.keys(session).length === 0) {
-                redirectToLogin();
-                return false;
-            }
-
-            var currentPage = findCurrentPage();
-            if (isFac && currentPage === 'student') {
-                window.location.href = pages.fac;
-                return false;
-            } else if (!isFac && currentPage !== 'student') {
-                window.location.href = pages.student;
-                return false;
-            }
-            return true;
+    function checkLoginAndRedirect() {
+        var session = authManager.getCurrentUserSessionInfo();
+        var isFac = session.isFac || session.isTeamMember;
+        if (!session || Object.keys(session).length === 0) {
+            redirectToLogin();
+            return false;
         }
-    };
-})();
 
-
-/* 
-   The provided .html pages (simulation.html, facilitator.html) call auth.checkLogin(),
-   redirecting to the login page if the user is not logged in.
-   If you want to perform additional actions, you could use:
-
-    if (auth.checkLogin()) {
-        console.log('Session found!');
-        // Execute your app's code
+        var currentPage = findCurrentPage();
+        if (isFac && currentPage !== 'fac') { // Facilitators are always sent to the fac page.
+            window.location.href = pages.fac;
+            return false;
+        } else if (!isFac && currentPage === 'fac') { // Standard end users trying to access the fac page are redirected.
+            window.location.href = pages.student;
+            return false;
+        } else if (!isFac) {
+            /*
+                Optionally, you can redirect standard end users to the student page.
+                However, if you have a multiple pages for standard end users, 
+                you probably want to leave them where they are.
+            */
+            // window.location.href = pages.student;
+            return false;
+        }
+        return true;
     }
-    // else it will be automatically redirected to pages.login (index.html) if no session is found
 
-*/
+    function logout() {
+        authManager.logout().then(function (token) {
+            console.log('Logged out, redirecting to login page');
+            authManager.sessionManager.getStore().remove('epicenter-scenario');
+            window.location.href = pages.login;
+        });
+    }
+
+    checkLoginAndRedirect();
+
