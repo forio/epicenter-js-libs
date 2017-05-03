@@ -662,6 +662,7 @@ module.exports = function (config) {
         */
         newRunForWorld: function (worldId, options) {
             var currentRunOptions = $.extend(true, {},
+                serviceOptions,
                 options,
                 { filter: worldId || serviceOptions.filter }
             );
