@@ -295,6 +295,27 @@
                         expect(JSON.parse(args[1]).id).to.equal(sampleRunid);
                     });
                 });
+                it('should allow sessionkeys as functions', function () {
+                    var myStrategy = function () {
+                        return {
+                            getRun: sinon.spy(function () {
+                                return $.Deferred().resolve({ id: 'runid' }).promise();
+                            }),
+                            reset: sinon.spy(),
+                        };
+                    };
+                    var strategySpy = sinon.spy(myStrategy);
+                    var rm = new F.manager.RunManager({
+                        sessionKey: function () { return 'abc'; },
+                        strategy: strategySpy,
+                        run: runOptions,
+                    });
+                    rm.sessionManager = dummySessionStore;
+                    return rm.getRun().then(function () {
+                        expect(setSpy.getCall(0).args[0]).to.equal('abc');
+                        expect(getSpy.getCall(0).args[0]).to.equal('abc');
+                    });
+                });
             });
             
         });
