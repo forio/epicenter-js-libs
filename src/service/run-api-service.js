@@ -12,6 +12,7 @@
  *
  * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
  * * `project`: Epicenter project id.
+ * * `id`: (Optional) The run id of an existing run. If there is a specific run you'd like to work with, you can include it.
  *
  * For example,
  *
@@ -24,7 +25,7 @@
  *      });
  *
  *
- * Additionally, all API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below.
+ * Additionally, all API calls take in an `options` object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below. In particular, passing `{ id: 'a-run-id' }` in this `options` object allows you to make calls to an existing run.
  *
  * Note that in addition to the `account`, `project`, and `model`, the Run Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
  *
@@ -85,7 +86,7 @@ module.exports = function (config) {
         filter: '',
 
         /**
-         * Convenience alias for filter.
+         * Convenience alias for filter. Pass in an existing run id to interact with a particular run.
          * @type {String}
          */
         id: '',
@@ -325,6 +326,9 @@ module.exports = function (config) {
          *     // update 'saved' field of run record, and update values of model variables for this run
          *     rs.save({ saved: true, variables: { a: 23, b: 23 } });
          *
+         *     // update 'saved' field of run record for a particular run
+         *     rs.save({ saved: true }, { id: '0000015bf2a04995880df6b868d23eb3d229' });
+         *
          * **Parameters**
          * @param {Object} attributes The run data and variables to save.
          * @param {Object} attributes.variables Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
@@ -358,6 +362,8 @@ module.exports = function (config) {
          *     rs.do('sumArray', [[4,2,1]]);
          *      // operation "add" takes two arguments, both integers
          *     rs.do({ name:'add', params:[2,4] });
+         *      // call operation "solve" on a different run 
+         *     rs.do('solve', { id: '0000015bf2a04995880df6b868d23eb3d229' });
          *
          * **Parameters**
          * @param {String} operation Name of operation.
