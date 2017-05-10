@@ -12,7 +12,11 @@
  *
  * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
  * * `project`: Epicenter project id.
- * * `id`: (Optional) The run id of an existing run. If there is a specific run you'd like to work with, you can include it.
+ *
+ * If you know in advance that you would like to work with particular, existing run(s), you can optionally pass in:
+ *
+ * * `filter`: (Optional) Criteria by which to filter for existing runs. 
+ * * `id`: (Optional) The run id of an existing run. This is a convenience alias for using filter, in the case where you only want to work with one run.
  *
  * For example,
  *
@@ -524,7 +528,7 @@ module.exports = function (config) {
          *     });
          *
          * **Parameters**
-         * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`.
+         * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`. Note that the `runID` is optional if the Run Service is already associated with a particular run (because `id` was passed in when the Run Service was initialized). If provided, the `runID` overrides the `id` currently associated with the Run Service.
          * @param  {Object} introspectionConfig (Optional) Service options for Introspection Service
          * @return {Promise}
          */
