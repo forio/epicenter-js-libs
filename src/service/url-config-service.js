@@ -106,6 +106,10 @@ var UrlConfigService = function (config) {
             var apiMapping = {
                 channel: 'channel/subscribe'
             };
+            var endpointsWithoutTrailingSlash = {
+                channel: true,
+            };
+
             var apiEndpoint = apiMapping[api] || api;
             
             if (apiEndpoint === 'config') {
@@ -113,7 +117,9 @@ var UrlConfigService = function (config) {
                 var configProtocol = (options.isLocalhost()) ? this.protocol : actualProtocol;
                 return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
             }
-            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
+
+            var trailing = endpointsWithoutTrailingSlash[api] ? '' : '/';
+            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + trailing;
 
             if ($.inArray(apiEndpoint, PROJECT_APIS) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath + '/';

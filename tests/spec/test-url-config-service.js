@@ -43,6 +43,10 @@
                 url.getAPIPath('abc').should.equal('udp://myapi.forio.com/' + version + 'abc/');
             });
 
+            it('should not add trailing slash for urls which don\'t support it', function () {
+                var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
+                url.getAPIPath('channel').should.equal('https://' + url.host + '/' + version + 'channel/subscribe');
+            });
             it('should allow setting account and project for file api', function () {
                 var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
                 url.getAPIPath('file').should.equal('https://' + url.host + '/' + version + 'file/forioAccount/forioProj/');
