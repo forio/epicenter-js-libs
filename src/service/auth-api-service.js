@@ -47,10 +47,17 @@ module.exports = function (config) {
     var serviceOptions = $.extend({}, defaults, config);
     var urlConfig = new ConfigService(serviceOptions).get('server');
 
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
+    var httpOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath('authentication')
     });
-    var http = new TransportFactory(transportOptions);
+
+    if (serviceOptions.token) {
+        httpOptions.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+
+    var http = new TransportFactory(httpOptions);
 
     var publicAPI = {
 
@@ -75,8 +82,9 @@ module.exports = function (config) {
          */
         login: function (options) {
             var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
-            if (!httpOptions.userName || !httpOptions.password) {
-                var resp = { status: 401, statusMessage: 'No username or password specified.' };
+            if (!httpOptions.userName || !(httpOptions.password || httpOptions.token)) {
+
+                var resp = { status: 401, statusMessage: 'No username or password/token specified.' };
                 if (options.error) {
                     options.error.call(this, resp);
                 }
@@ -86,13 +94,14 @@ module.exports = function (config) {
 
             var postParams = {
                 userName: httpOptions.userName,
-                password: httpOptions.password,
             };
+            if (httpOptions.password) {
+                postParams.password = httpOptions.password;
+            }
             if (httpOptions.account) {
                 //pass in null for account under options if you don't want it to be sent
                 postParams.account = httpOptions.account;
             }
-
             return http.post(postParams, httpOptions);
         },
 

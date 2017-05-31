@@ -188,7 +188,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             };
 
             if (!isTeamMember) {
-                me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
+                me.getUserGroups({ userId: userInfo.user_id, token: token, server: adapterOptions.server }, userGroupOpts)
                     .then(handleGroupList, $d.reject);
             } else {
                 var opts = objectAssign({}, userGroupOpts, { token: token });
