@@ -22,7 +22,7 @@
 *
 *   * `strategyOptions`: (optional) Additional options passed directly to the [run creation strategy](../strategies/).
 *
-*   * `sessionKey`: (optional) Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter.
+*   * `sessionKey`: (optional) Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtime.
 *
 *
 * After instantiating a Run Manager, make a call to `getRun()` whenever you need to access a run for this end user. The `RunManager.run` contains the instantiated [Run Service](../run-api-service/). The Run Service allows you to access variables, call operations, etc.
@@ -87,6 +87,11 @@ function patchRunService(service, manager) {
     return service;
 }
 
+function sessionKeyFromOptions(options) {
+    var sessionKey = $.isFunction(options.sessionKey) ? options.sessionKey() : options.sessionKey;
+    return sessionKey;
+}
+
 function setRunInSession(sessionKey, run, sessionManager) {
     if (sessionKey) {
         delete run.variables;
@@ -148,7 +153,7 @@ RunManager.prototype = {
         var me = this;
         var sessionStore = this.sessionManager.getStore();
 
-        var sessionContents = sessionStore.get(this.options.sessionKey);
+        var sessionContents = sessionStore.get(sessionKeyFromOptions(this.options));
         var runSession = JSON.parse(sessionContents || '{}');
         
         if (runSession.runId) {
@@ -164,7 +169,7 @@ RunManager.prototype = {
         return this.strategy
                 .getRun(this.run, authSession, runSession, options).then(function (run) {
                     if (run && run.id) {
-                        setRunInSession(me.options.sessionKey, run, me.sessionManager);
+                        setRunInSession(sessionKeyFromOptions(me.options), run, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
 
                         if (variables && variables.length) {
@@ -208,7 +213,7 @@ RunManager.prototype = {
         }
         return this.strategy.reset(this.run, authSession, options).then(function (run) {
             if (run && run.id) {
-                setRunInSession(me.options.sessionKey, run.id, me.sessionManager);
+                setRunInSession(sessionKeyFromOptions(me.options), run.id, me.sessionManager);
                 me.run.updateConfig({ filter: run.id });
             }
             return run;
