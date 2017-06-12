@@ -71,6 +71,7 @@
 var RunManager = require('./run-manager');
 var SavedRunsManager = require('./saved-runs-manager');
 var strategyUtils = require('./strategy-utils');
+var rutil = require('../util/run-util');
 
 var NoneStrategy = require('./run-strategies/none-strategy');
 
@@ -193,7 +194,9 @@ function ScenarioManager(config) {
     this.current.saveAndAdvance = function (metadata) {
         function clone(run) {
             var sa = new StateService();
-            return sa.clone({ runId: run.id }).then(function (response) {
+            var advanceOpns = rutil.normalizeOperations(opts.advanceOperation); 
+            //run i'm cloning shouldn't have the advance operations there by default, but just in case
+            return sa.clone({ runId: run.id, exclude: advanceOpns.ops }).then(function (response) {
                 var rs = new RunService(me.current.run.getCurrentConfig());
                 return rs.load(response.run);
             });
