@@ -1,3 +1,9 @@
+<a name="2.2.1"></a>
+### 2.2.1 (2017-05-11)
+
+This is a minor bugfix release. In previous releases, calls to `newRunForWorld` were not correctly picking up the configuration passed in to the WorldService constructor. This has been resolved.
+
+
 <a name="2.2.0"></a>
 ### 2.2.0 (2017-03-15)
 

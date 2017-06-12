@@ -6,12 +6,17 @@
  *
  * When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly. This is because the Run Manager (and associated [run strategies](../strategies/)) gives you control over run creation depending on run states.
  *
- * However, many of the Epicenter sample projects use a Run Service, because generally the sample projects are played in one end user session and don't care about run states or [run strategies](../strategies/). The Run API Service is also useful for building an interface for a facilitator, because it makes it easy to list data across multiple runs (using the `filter()` and `query()` methods).
+ * The Run API Service is useful for building an interface where you want to show data across multiple runs (this is easy using the `filter()` and `query()` methods). For instance, you would probably use a Run Service to build a page for a facilitator. This is because a facilitator typically wants to evaluate performance from multiple end users, each of whom have been working with their own run.
  *
  * To use the Run API Service, instantiate it by passing in:
  *
  * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
  * * `project`: Epicenter project id.
+ *
+ * If you know in advance that you would like to work with particular, existing run(s), you can optionally pass in:
+ *
+ * * `filter`: (Optional) Criteria by which to filter for existing runs. 
+ * * `id`: (Optional) The run id of an existing run. This is a convenience alias for using filter, in the case where you only want to work with one run.
  *
  * For example,
  *
@@ -24,7 +29,7 @@
  *      });
  *
  *
- * Additionally, all API calls take in an "options" object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below.
+ * Additionally, all API calls take in an `options` object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below. In particular, passing `{ id: 'a-run-id' }` in this `options` object allows you to make calls to an existing run.
  *
  * Note that in addition to the `account`, `project`, and `model`, the Run Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
  *
@@ -85,7 +90,7 @@ module.exports = function (config) {
         filter: '',
 
         /**
-         * Convenience alias for filter.
+         * Convenience alias for filter. Pass in an existing run id to interact with a particular run.
          * @type {String}
          */
         id: '',
@@ -325,6 +330,9 @@ module.exports = function (config) {
          *     // update 'saved' field of run record, and update values of model variables for this run
          *     rs.save({ saved: true, variables: { a: 23, b: 23 } });
          *
+         *     // update 'saved' field of run record for a particular run
+         *     rs.save({ saved: true }, { id: '0000015bf2a04995880df6b868d23eb3d229' });
+         *
          * **Parameters**
          * @param {Object} attributes The run data and variables to save.
          * @param {Object} attributes.variables Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
@@ -358,6 +366,8 @@ module.exports = function (config) {
          *     rs.do('sumArray', [[4,2,1]]);
          *      // operation "add" takes two arguments, both integers
          *     rs.do({ name:'add', params:[2,4] });
+         *      // call operation "solve" on a different run 
+         *     rs.do('solve', { id: '0000015bf2a04995880df6b868d23eb3d229' });
          *
          * **Parameters**
          * @param {String} operation Name of operation.
@@ -518,7 +528,7 @@ module.exports = function (config) {
          *     });
          *
          * **Parameters**
-         * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`.
+         * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`. Note that the `runID` is optional if the Run Service is already associated with a particular run (because `id` was passed in when the Run Service was initialized). If provided, the `runID` overrides the `id` currently associated with the Run Service.
          * @param  {Object} introspectionConfig (Optional) Service options for Introspection Service
          * @return {Promise}
          */
