@@ -133,13 +133,15 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             var isTeamMember = userInfo.parent_account_id === null;
             var requiresGroup = adapterOptions.requiresGroup && project;
 
+            var userName = (userInfo.user_name || '').split('/')[0]; //of form <user>/<team>
             var sessionInfo = {
                 auth_token: token,
                 account: adapterOptions.account,
                 project: project,
                 userId: userInfo.user_id,
                 groups: oldGroups,
-                isTeamMember: isTeamMember
+                isTeamMember: isTeamMember,
+                userName: userName,
             };
             // The group is not required if the user is not logging into a project
             if (!requiresGroup) {

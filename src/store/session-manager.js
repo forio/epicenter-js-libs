@@ -40,8 +40,6 @@ var SessionManager = function (managerOptions) {
             getStore(options).set(EPI_SESSION_KEY, serialized);
         },
         getSession: function (options) {
-            // var session = getStore(options).get(EPI_SESSION_KEY) || '{}';
-            // return JSON.parse(session);
             var store = getStore(options);
             var finalOpts = store.serviceOptions;
             var serialized = store.get(EPI_SESSION_KEY) || '{}';
@@ -122,7 +120,8 @@ var SessionManager = function (managerOptions) {
                  * @type {String}
                  */
                 groupId: session.groupId,
-                userId: session.userId
+                userId: session.userId,
+                userName: session.userName,
             };
             return $.extend(true, sessionDefaults, baseOptions);
         }

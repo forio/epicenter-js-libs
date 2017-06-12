@@ -1,7 +1,7 @@
 (function () {
     'use strict';
     describe('Auth Manager', function () {
-        var server, token, userInfo, cookie, multipleGroupsResponse, teamMemberResponse;
+        var server, token, userInfo, cookie, multipleGroupsResponse, teamMemberResponse, am;
         before(function () {
             teamMemberResponse = false;
             multipleGroupsResponse = false;
@@ -28,7 +28,7 @@
                 cid: 'login',
                 grant_type: 'password',
                 user_id: '550a2b8b-80f7-4a72-80be-033f87c79cf0',
-                user_name: 'ricardo001/accountName/',
+                user_name: 'test/accountName/',
                 email: 'none@none.com',
                 iat: 1417567152,
                 exp: 1417610352,
@@ -89,8 +89,15 @@
             server.respondImmediately = true;
         });
 
+        beforeEach(function () {
+            am = new F.manager.AuthManager({
+                account: 'accountName',
+                project: 'projectName',
+            });
+        });
         afterEach(function () {
             server.requests = [];
+            am.sessionManager.removeSession();
         });
         after(function () {
             server.restore();
@@ -98,133 +105,113 @@
 
         describe('Login', function () {
             it('should construct the right authenticaton request', function () {
-                var am = new F.manager.AuthManager({
-                    account: 'accountName',
-                    project: 'projectName',
-                });
                 am.login({ userName: 'test', password: 'test' });
                 var req = server.requests[0];
                 req.method.toUpperCase().should.equal('POST');
                 req.url.should.match(/https:\/\/(.*)\/(.*)\/authentication\/?/);
             });
 
-            it('should call members API on sucessful login', function (done) {
+            it('should call members API on sucessful login', function () {
                 var am = new F.manager.AuthManager({
                     account: 'accountName',
                     project: 'projectName',
                 });
-                am.login({ userName: 'test', password: 'test' }).then(function (response) {
+                return am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     response.auth.access_token.should.equal(token);
                     response.user.should.eql(userInfo);
-                    done();
-                }).fail(function () {
-                    done(new Error('Login should not fail'));
                 });
             });
 
-            it('should set the session', function (done) {
-                var am = new F.manager.AuthManager({
-                    account: 'accountName',
-                    project: 'projectName',
-                });
-                am.login({ userName: 'test', password: 'test' }).then(function (response) {
+            it('should set the session', function () {
+                return am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     var session = am.getCurrentUserSessionInfo();
                     session.groupName.should.equal('rv-test');
                     session.groupId.should.equal('111efcc9-726c-47b8-ba94-2895f110bd39');
                     session.account.should.equal('accountName');
                     session.project.should.equal('projectName');
                     session.userId.should.equal('550a2b8b-80f7-4a72-80be-033f87c79cf0');
+                    session.userName.should.equal('test');
                     session.isFac.should.be.false;
-                    am.sessionManager.removeSession();
-                    done();
                 }).fail(function () {
-                    done(new Error('Login should not fail'));
+                    throw new Error('Login should not fail');
                 });
             });
 
-            it('should fail when the user has multiple groups', function (done) {
+            it('should fail when the user has multiple groups', function () {
                 multipleGroupsResponse = true;
-                var am = new F.manager.AuthManager({
-                    account: 'accountName',
-                    project: 'projectName',
+                var sucessSpy = sinon.spy(function (p) { 
+                    return $.Deferred().resolve(p).promise(); 
                 });
-                am.login({ userName: 'test', password: 'test' }).then(function (response) {
-                    multipleGroupsResponse = false;
-                    done(new Error('Login should not work'));
-                }).fail(function (data) {
-                    multipleGroupsResponse = false;
+                var failSpy = sinon.spy(function (p) { 
+                    return $.Deferred().resolve(p).promise(); 
+                });
+                return am.login({ userName: 'test', password: 'test' }).then(sucessSpy, failSpy).then(function () {
+                    sucessSpy.should.not.have.been.called;
+                    failSpy.should.have.been.calledOnce;
+
+                    var data = failSpy.getCall(0).args[0];
                     data.userGroups.should.have.lengthOf(2);
-                    done();
+                    multipleGroupsResponse = false;
+
                 });
             });
 
-            it('should work when a group is specified', function (done) {
+            it('should work when a group is specified', function () {
                 multipleGroupsResponse = true;
-                var am = new F.manager.AuthManager({
-                    account: 'accountName',
-                    project: 'projectName',
-                });
-                am.login({ userName: 'test', password: 'test', groupId: '111efcc9-726c-47b8-ba94-2895f110bd32' }).then(function (response) {
+                return am.login({ userName: 'test', password: 'test', groupId: '111efcc9-726c-47b8-ba94-2895f110bd32' }).then(function (response) {
                     var session = am.getCurrentUserSessionInfo();
                     session.groupName.should.equal('rv-test2');
                     multipleGroupsResponse = false;
-                    am.sessionManager.removeSession();
-                    done();
                 }).fail(function () {
                     multipleGroupsResponse = false;
-                    done(new Error('Login should work'));
                 });
             });
 
-            it('should not work when a wrong group is used', function (done) {
+            it('should not work when a wrong group is used', function () {
                 multipleGroupsResponse = true;
-                var am = new F.manager.AuthManager({
-                    account: 'accountName',
-                    project: 'projectName',
+                var sucessSpy = sinon.spy(function (p) { 
+                    return $.Deferred().resolve(p).promise(); 
                 });
-                am.login({ userName: 'test', password: 'test', groupId: 'wrong-id' }).then(function (response) {
-                    multipleGroupsResponse = false;
-                    done(new Error('Login should not work'));
-                }).fail(function (data) {
+                var failSpy = sinon.spy(function (p) { 
+                    return $.Deferred().resolve(p).promise(); 
+                });
+                return am.login({ userName: 'test', password: 'test', groupId: 'wrong-id' }).then(sucessSpy, failSpy).then(function (data) {
+                    sucessSpy.should.not.have.been.called;
+                    failSpy.should.have.been.calledOnce;
+
                     multipleGroupsResponse = false;
                     data.userGroups.should.have.lengthOf(2);
-                    done();
                 });
             });
 
-            it('should log a team member and get all the groups in the project', function (done) {
+            it('should log a team member and get all the groups in the project', function () {
                 teamMemberResponse = true;
-                var am = new F.manager.AuthManager({
-                    account: 'accountName',
-                    project: 'projectName',
-                });
-                am.login({ userName: 'test', password: 'test' }).then(function (response) {
+                return am.login({ userName: 'test', password: 'test' }).then(function (response) {
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('GET');
                     req.url.should.match(/https:\/\/(.*)\/(.*)\/group\/local\/?/);
 
                     var session = am.getCurrentUserSessionInfo();
                     session.groupName.should.equal('rv-test');
-                    am.sessionManager.removeSession();
-                    done();
-                }).fail(function (data) {
-                    done(new Error('Login should work'));
                 });
                 
             });
 
-            it('should fail with the list of groups on a team member login with no group', function (done) {
+            it('should fail with the list of groups on a team member login with no group', function () {
                 multipleGroupsResponse = true;
                 teamMemberResponse = true;
-                var am = new F.manager.AuthManager({
-                    account: 'accountName',
-                    project: 'projectName',
+
+                var sucessSpy = sinon.spy(function (p) { 
+                    return $.Deferred().resolve(p).promise(); 
                 });
-                am.login({ userName: 'test', password: 'test' }).then(function (response) {
-                    multipleGroupsResponse = false;
-                    teamMemberResponse = false;
-                    done(new Error('Login should not work'));
-                }).fail(function (data) {
+                var failSpy = sinon.spy(function (p) { 
+                    return $.Deferred().resolve(p).promise(); 
+                });
+
+                return am.login({ userName: 'test', password: 'test' }).then(sucessSpy, failSpy).then(function (data) {
+                    sucessSpy.should.not.have.been.called;
+                    failSpy.should.have.been.calledOnce;
+                    
                     var req = server.requests.pop();
                     req.method.toUpperCase().should.equal('GET');
                     req.url.should.match(/https:\/\/(.*)\/(.*)\/group\/local\/?/);
@@ -232,7 +219,6 @@
                     multipleGroupsResponse = false;
                     teamMemberResponse = false;
                     data.userGroups.should.have.lengthOf(2);
-                    done();
                 });
             });
         });
