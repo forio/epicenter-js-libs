@@ -8,10 +8,10 @@ var MAX_URL_LENGTH = 2048;
 module.exports = (function () {
     return {
         /**
-         * returns operations of the form `[[op1,op2], [arg1, arg2]]`
+         * normalizes different types of operation inputs
          * @param  {Object|Array|String} operations operations to perform
          * @param  {Array} args arguments for operation
-         * @return {String}    Matrix-format query parameters
+         * @return {String} operations of the form `{ ops: [], args: [] }`
          */
         normalizeOperations: function (operations, args) {
             if (!args) {

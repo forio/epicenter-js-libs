@@ -257,6 +257,15 @@
                         expect(saveArgs[0]).to.eql('clonedrun');
                     });
                 });
+                it('should exclude operations from clone', function () {
+                    return sm.current.saveAndAdvance().then(function (newrun) {
+                        var cloneRequest = server.requests.shift();
+                        cloneRequest.url.should.equal(baseStateURL + 'currentrun');
+
+                        var posted = JSON.parse(cloneRequest.requestBody);
+                        expect(posted.exclude).to.eql(['myadvance']);
+                    });
+                });
                 it('should return the right output', function () {
                     return sm.current.saveAndAdvance().then(function (newrun) {
                         expect(newrun).to.eql({ id: 'clonedrun', account: runOptions.account, project: runOptions.project, saved: true });
