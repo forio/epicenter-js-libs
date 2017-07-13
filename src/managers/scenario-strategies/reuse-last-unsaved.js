@@ -35,16 +35,14 @@ module.exports = classFrom(Base, {
     reset: function (runService, userSession, options) {
         var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
         return runService.create(opt, options).then(function (createResponse) {
-            return runService.save({ trashed: false }).then(function (patchResponse) { //TODO remove this once EPICENTER-2500 is fixed
-                return $.extend(true, {}, createResponse, patchResponse, { freshlyCreated: true });
-            });
+            return $.extend(true, {}, createResponse, { freshlyCreated: true });
         });
     },
 
     getRun: function (runService, userSession) {
         var filter = injectFiltersFromSession({ 
             saved: false,
-            trashed: false, //TODO change to '!=true' once EPICENTER-2500 is fixed
+            trashed: false, //TODO: change to '!=true' once EPICENTER-2500 is fixed
         }, userSession);
         var me = this;
         var outputModifiers = { 
