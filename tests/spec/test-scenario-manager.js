@@ -285,6 +285,20 @@
                     });
                 });
             });
+            describe('#reset', function () {
+                it('should pass through options to rs:create', function () {
+                    var rs = new F.service.Run(runOptions);
+                    var sm = new ScenarioManager({ run: rs });
+                    var createStub = sinon.stub(rs, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+
+                    var options = { sucess: sinon.spy() };
+                    return sm.current.reset(options).then(function () {
+                        var args = createStub.getCall(0).args;
+                        expect(args[0].model).to.eql(runOptions.model);
+                        expect(args[1]).to.eql(options);
+                    });
+                });
+            });
         });
         describe('saved runs', function () {
             it('should create a new saved run manager', function () {
