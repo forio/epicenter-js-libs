@@ -32,9 +32,9 @@ module.exports = classFrom(Base, {
         this.options = strategyOptions;
     },
 
-    reset: function (runService, userSession) {
+    reset: function (runService, userSession, options) {
         var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
-        return runService.create(opt).then(function (createResponse) {
+        return runService.create(opt, options).then(function (createResponse) {
             return runService.save({ trashed: false }).then(function (patchResponse) { //TODO remove this once EPICENTER-2500 is fixed
                 return $.extend(true, {}, createResponse, patchResponse, { freshlyCreated: true });
             });

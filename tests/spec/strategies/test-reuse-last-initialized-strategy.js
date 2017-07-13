@@ -91,6 +91,15 @@
                     expect(createStub).to.have.been.calledOnce;
                 });
             });
+            it('should pass through options to create', function () {
+                var options = { sucess: sinon.spy() };
+                return strategy.reset(rs, {}, options).then(function () {
+                    var args = createStub.getCall(0).args;
+
+                    expect(args[0].model).to.eql(runOptions.model);
+                    expect(args[1]).to.eql(options);
+                });
+            });
             it('should call `serial` on the new run with the new operations', function () {
                 return strategy.reset(rs).then(function () {
                     expect(serialStub).to.have.been.calledOnce;

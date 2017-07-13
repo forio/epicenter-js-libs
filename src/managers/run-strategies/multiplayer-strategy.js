@@ -18,14 +18,14 @@ var Strategy = classFrom(IdentityStrategy, {
         this.worldApi = new WorldApiAdapter(this.options.run);
     },
 
-    reset: function (runService, session) {
+    reset: function (runService, session, options) {
         var curUserId = session.userId;
         var curGroupName = session.groupName;
 
         return this.worldApi
             .getCurrentWorldForUser(curUserId, curGroupName)
             .then(function (world) {
-                return this.worldApi.newRunForWorld(world.id).then(function (runid) {
+                return this.worldApi.newRunForWorld(world.id, options).then(function (runid) {
                     return {
                         id: runid
                     };
