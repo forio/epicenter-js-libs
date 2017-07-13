@@ -25,7 +25,11 @@ var Strategy = classFrom(IdentityStrategy, {
         return this.worldApi
             .getCurrentWorldForUser(curUserId, curGroupName)
             .then(function (world) {
-                return this.worldApi.newRunForWorld(world.id);
+                return this.worldApi.newRunForWorld(world.id).then(function (runid) {
+                    return {
+                        id: runid
+                    };
+                });
             }.bind(this));
     },
 
