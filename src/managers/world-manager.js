@@ -114,7 +114,7 @@ module.exports = function (options) {
         *
         * **Example**
         *
-        *       wMgr.getCurrentRun({model: 'myModel.py'})
+        *       wMgr.getCurrentRun('myModel.py')
         *           .then(function(run, runService) {
         *               console.log(run.id);
         *               runService.do('startGame');
