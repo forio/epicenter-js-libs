@@ -1,3 +1,38 @@
+<a name="2.3.0"></a>
+### 2.3.0 (2017-08-18)
+
+#### Features:
+##### The `sessionKey` parameter of the RunManager can now optionally be provided a function instead of a string. 
+
+This is useful if you want to optionally skip setting/over-writing a cookie based on an external flag. For instance, maybe you'd rather not save a cookie while impersonating another user:
+```js
+new F.manager.RunManager({
+    sessionKey: function() {
+        var session = window.getSession();
+        return (session.isImpersonating) ? false : 'epicenterjs.session';
+    }
+});
+```
+  
+##### Current session information now includes the `userName` of the currently logged in user.
+
+```js
+var am = new F.manager.AuthManager();
+var session = am.getCurrentUserSessionInfo();
+console.log(session.userName)
+```
+
+#### Bug fixes:
+
+##### Scenario Manager: The `advance` operation is now explicitly excluded when cloning. This should be a no-op in most cases, but fixes cases where your base-run is corrupt.
+
+##### Multiplayer strategy fixes:
+* Multiplayer strategy correctly returns back a runid, to satisfy the strategy contract
+* Run options are now correctly passed through to Multiplayer strategy
+
+##### Fixed a documentation issue where `worldManager.getCurrentRun` incorrectly showed passing in an object instead of a string.
+
+
 <a name="2.2.1"></a>
 ### 2.2.1 (2017-05-11)
 
@@ -47,14 +82,14 @@ This strategy looks for the most recent run that matches particular criteria; if
 
 - You have a time-based model and always want the run you're operating on to be at step 10:
 
-	```js
-	    var rm = new F.manager.RunManager({
-	        strategy: 'reuse-last-initialized',
-	        strategyOptions: {
-	            initOperation: [{ step: 10 }]
-	        }
-	    })
-	```
+```js
+    var rm = new F.manager.RunManager({
+        strategy: 'reuse-last-initialized',
+        strategyOptions: {
+            initOperation: [{ step: 10 }]
+        }
+    })
+```
 
 - You have a custom initialization function in your model, and want to make sure it's always executed for new runs.
 
