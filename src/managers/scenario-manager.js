@@ -23,7 +23,11 @@
 *
 * **Example**
 *
-*       var sm = new F.manager.ScenarioManager();
+*       var sm = new F.manager.ScenarioManager({
+*           run: {
+*               model: 'mymodel.vmf'
+*           }
+*       });
 *
 *       // The current is an instance of a Run Manager,
 *       // with a strategy which picks up the most recent unsaved run.
