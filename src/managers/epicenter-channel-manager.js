@@ -44,7 +44,7 @@
  *     var gc = cm.getGroupChannel();
  *     gc.subscribe('', function(data) { console.log(data); });
  *     gc.publish('', { message: 'a new message to the group' });
- * 
+ *
  * For a more detailed example, see a [complete publish and subscribe example](../../../rest_apis/multiplayer/channel/#epijs-example).
  *
  * For details on what data is published automatically to which channels, see [Automatic Publishing of Events](../../../rest_apis/multiplayer/channel/#publish-message-auto).
@@ -314,9 +314,9 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * **Example**
      *
      *     var cm = new F.manager.ChannelManager();
-     *     var pc = cm.getPresenceChannel(); 
+     *     var pc = cm.getPresenceChannel();
      *     pc.subscribe('', function (data) {
-     *          // 'data' is the entire message object to the channel; 
+     *          // 'data' is the entire message object to the channel;
      *          // parse for information of interest
      *          if (data.data.subType === 'disconnect') {
      *               console.log('user ', data.data.user.userName, 'disconnected at ', data.data.date);
@@ -405,7 +405,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                     dataPath: payload.data.data.path,
                 };
                 var actualData = payload.data.data;
-                if (actualData.data) { //Delete notifications are one data-level behind of course
+                if (actualData.data !== undefined) { //Delete notifications are one data-level behind of course
                     actualData = actualData.data;
                 }
 
