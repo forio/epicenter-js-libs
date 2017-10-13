@@ -31,6 +31,7 @@
  * * `options` The options object to configure the Channel Manager. Besides the common options listed here, see http://docs.cometd.org/reference/javascript.html for other supported options.
  * * `options.url` The Cometd endpoint URL.
  * * `options.websocketEnabled` Whether websocket support is active (boolean).
+ * * `options.shareConnection` Whether to share a websocket connection across multiple instances of the Channel Manager. In general, every channel that a project subscribes to should use the same connection, so set this to `true`.
  * * `options.channel` Other defaults to pass on to instances of the underlying Channel Service. See [Channel Service](../channel-service/) for details.
  *
  */
@@ -72,7 +73,7 @@ var ChannelManager = function (options) {
         ackEnabled: true,
 
         /**
-         * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true to re-use the same connection across instances.
+         * If `false` each instance of Channel will have a separate cometd connection to server, which can be noisy. Set to `true` to re-use the same connection across instances. In general, every channel that a project subscribes to should use the same connection.
          * @type {boolean}
          */
         shareConnection: false,
@@ -171,7 +172,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      * **Example**
      *
-     *      var cm = new F.manager.ChannelManager();
+     *      var cm = new F.manager.ChannelManager({shareConnection: true});
      *      var channel = cm.getChannel();
      *
      *      channel.subscribe('topic', callback);
