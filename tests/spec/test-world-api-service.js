@@ -396,6 +396,14 @@
                 expect(body.maxUsers).to.be.equal(5);
             });
 
+            it('should pass the userIds if specificed in options', function () {
+                createWorldAdapter({ group: 'group-name' }).autoAssign({ userIds: ['a', 'b', 'c', 'd', 'e'] });
+
+                var req = server.requests.pop();
+                var body = JSON.parse(req.requestBody);
+                expect(body.userIds).to.eql(['a', 'b', 'c', 'd', 'e']);
+            });
+
             describe('getProjectSettings', function () {
                 it('should GET to multiplayer/project API with correct settings', function () {
                     createWorldAdapter().getProjectSettings();

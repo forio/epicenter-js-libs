@@ -59,7 +59,7 @@ module.exports = function (config) {
          */
         group: undefined,
 
-       /**
+        /**
          * The model file to use to create runs in this world. Defaults to undefined.
          * @type {String}
          */
@@ -690,6 +690,8 @@ module.exports = function (config) {
         *
         * **Parameters**
         * @param {object} options (Optional) Options object to override global options.
+        * @param {number} options.maxUsers Sets the maximum number of users in a world.
+        * @param {string[]} options.userIds A list of users to be assigned be assigned instead of all end users in the group.
         * @return {Promise}
         *
         */
@@ -710,6 +712,10 @@ module.exports = function (config) {
 
             if (opt.maxUsers) {
                 params.maxUsers = opt.maxUsers;
+            }
+
+            if (opt.userIds) {
+                params.userIds = opt.userIds;
             }
 
             return http.post(params, opt);
