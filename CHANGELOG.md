@@ -1,3 +1,10 @@
+<a name="2.3.1"></a>
+#### Bug fixes:
+* Fix inconsistent format for `getDataChannel`
+Due to a bad falsy check, boolean values used to be incorrectly returned under `data.data` if it was `false` and under `data` for anything else. It's consistently returned under `data` now. Note that this is a **breaking change** if you were relying on the older incorrect format.
+
+* Pass through `userIds` for the `autoAssign` method in the World API Adapter. It was being ignored before. 
+
 <a name="2.3.0"></a>
 ### 2.3.0 (2017-08-18)
 
