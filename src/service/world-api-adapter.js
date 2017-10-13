@@ -59,7 +59,7 @@ module.exports = function (config) {
          */
         group: undefined,
 
-       /**
+        /**
          * The model file to use to create runs in this world. Defaults to undefined.
          * @type {String}
          */
@@ -710,6 +710,10 @@ module.exports = function (config) {
 
             if (opt.maxUsers) {
                 params.maxUsers = opt.maxUsers;
+            }
+
+            if (opt.userIds) {
+                params.userIds = opt.userIds;
             }
 
             return http.post(params, opt);
