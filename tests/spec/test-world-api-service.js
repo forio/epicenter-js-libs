@@ -397,15 +397,11 @@
             });
 
             it('should pass the userIds if specificed in options', function () {
-                createWorldAdapter({ group: 'group-name' }).autoAssign({ userIds: ['0', '1', '2', '3', '4'] });
+                createWorldAdapter({ group: 'group-name' }).autoAssign({ userIds: ['a', 'b', 'c', 'd', 'e'] });
 
                 var req = server.requests.pop();
                 var body = JSON.parse(req.requestBody);
-                expect(body.userIds[0]).to.be.equal('0');
-                expect(body.userIds[1]).to.be.equal('1');
-                expect(body.userIds[2]).to.be.equal('2');
-                expect(body.userIds[3]).to.be.equal('3');
-                expect(body.userIds[4]).to.be.equal('4');
+                expect(body.userIds).to.eql(['a', 'b', 'c', 'd', 'e']);
             });
 
             describe('getProjectSettings', function () {

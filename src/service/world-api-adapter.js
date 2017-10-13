@@ -690,6 +690,8 @@ module.exports = function (config) {
         *
         * **Parameters**
         * @param {object} options (Optional) Options object to override global options.
+        * @param {number} options.maxUsers Sets the maximum number of users in a world.
+        * @param {string[]} options.userIds A list of users to be assigned be assigned instead of all end users in the group.
         * @return {Promise}
         *
         */
