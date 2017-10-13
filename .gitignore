@@ -7,6 +7,8 @@ pids
 *.pid
 *.seed
 
+ideas.md
+
 .*
 !.jshintrc
 !.eslintrc
