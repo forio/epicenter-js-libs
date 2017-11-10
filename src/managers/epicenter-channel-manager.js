@@ -71,6 +71,9 @@ var ConfigService = require('../service/configuration-service');
 var classFrom = require('../util/inherit');
 var SessionManager = require('../store/session-manager');
 
+var WorldService = require('../service/world-api-adapter');
+var PresenceService = require('../service/presence-api-service');
+
 var validTypes = {
     project: true,
     group: true,
@@ -269,6 +272,47 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                 operations: ['operation'],
                 presence: ['connect', 'disconnect'],
             };
+            if (topic === 'presence') {
+                var wm = new WorldService({ 
+                    account: account,
+                    project: project,
+                    filter: worldid
+                });
+                var pres = new PresenceService({
+                    account: account,
+                    project: project,
+                });
+                var worldLoadPromise = wm.load();
+                var presenceLoadPromise = pres.getStatus();
+                $.when(worldLoadPromise, presenceLoadPromise).then(function (worldRes, presenceRes) {
+                    var world = worldRes[0];
+                    var presenceList = presenceRes[0];
+
+                    world.users.forEach(function (user) {
+                        var id = user.userId;
+                        var matchingStatus = $.grep(presenceList || [], function (status) {
+                            return status.userId === id;
+                        });
+                        if (matchingStatus[0]) {
+                            var fakeMeta = {
+                                date: Date.now(),
+                                channel: baseTopic,
+                                type: 'presence',
+                                subType: 'connect',
+                                source: 'presenceAPI',
+                            };
+                            var fakeUser = {
+                                account: account,
+                                id: id,
+                                isOnline: true,
+                                lastName: user.lastName,
+                                userName: user.userName,
+                            };
+                            callback(fakeUser, fakeMeta); //eslint-disable-line callback-return
+                        }
+                    });
+                });
+            }
             var filterByType = function (res) {
                 var subType = res.data.subType;
                 var topicMatch = subType === topic || (topicAliases[topic] && topicAliases[topic].indexOf(subType) !== -1);
@@ -280,7 +324,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                 if (topicMatch && initiatorMatch) {
                     var meta = {
                         user: res.data.user,
-                        data: res.data.date,
+                        date: res.data.date,
                         channel: res.channel,
                         type: topic,
                         subType: subType,
