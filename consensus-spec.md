@@ -32,52 +32,34 @@ Base URL: `/multiplayer/world/<worldid>/consensus/<name>/<arbitrary-stage-identi
 POST `/multiplayer/world/<worldid>/consensus/step/1`
 ```js
 {
-    operations: [
-        {
-            "name": "step_to",
-            "arguments": [ 2 ],
-        }
-    ],
     requiredRoles: ['leader', 'marathoner']; // If roles is empty, use all required roles for the world by default
 }
 ```
-
-POST `/multiplayer/world/<worldid>/consensus/somevariable/<arbitrary-identifier>`
-```js
-{
-    variables: {
-        "Everyone Done": 1
-    },
-    requiredRoles: ['leader', 'marathoner']; // If roles is empty, use all required roles for the world by default
-}
-```
-
-POST `/multiplayer/world/<worldid>/consensus/somevariables`
-`{}`
 
 #### Response
 * `201` If consensus point doesn't exist, and has been created
-* `300` If consensus already exists
-* `409` If consensus was already created, but with different parameters
+* `200` If consensus was already created, with the *same* roles
+* `409` If consensus was already created, but with different required roles
 
 Returns consensus object
 ```js
 {
     name: 'Foobar',
-    created: <timestamp>
-    updated: <timestamp>
+    created: <timestamp>,
+    updated: <timestamp>,
+    creator: <user object>, #NiceToHave
     complete: false,
-    status: [{
-        name: 'John Smith',
-        id: '',
-        role: 'Leader',
-        data: {}
-    }], //Array of user objects with extra fields for "role" + data, (See "updating status" for data)
-    pendingRoles: ['marathoner' ] //Array of role names
-    submittedRoles: ['leader'] //Array of role names
-
-    requiredRoles: [],
-    result: {} //result of either operation or variable, only populated if complete
+    submitted: [
+        //Array of user objects with the addition of 2 additional fields
+        // 1. 'role' 
+        // 2. 'submissionTime': <timestamp> #NiceToHave
+        { name: 'Smith', role: 'leader', ...otheruser props} 
+    ],
+    pending: [
+        //Array of user objects with the addition of a 'role' field
+        { name: 'Mary', role: 'marathoner', ...otheruser props} 
+    ] 
+    requiredRoles: ['leader', 'marathoner', ...],
 }
 ```
 
@@ -88,12 +70,20 @@ GET `/multiplayer/world/<worldid>/consensus/<name>`
     - Array of consensus objects, sorted by 'updated'
 GET `/multiplayer/world/<worldid>/consensus/<name>?complete=true (For reporting in facilitator screens)`
 
-###Updating status
-POST `/multiplayer/world/<worldid>/consensus/<name>/<stage>/status`
-{ data: 'foobar' } -- overwrites what's already there. Arbitrary user data
-DELETE `/multiplayer/world/<worldid>/consensus/<name>/<stage>/status`
+###Updating consensus (signalling you're done)
+Consensus endpoint supports either `/variables` or `/operations` at the end, parallel to run api. POSTing to **either** of those for a given consensus endpoint would signal your completion.
 
-Should pull up userid from auth-token (and infer role)
+POST `/multiplayer/world/<worldid>/consensus/<name>/<stage>/variables`
+{ variable1: 2, variable2: 3 }
+
+POST `/multiplayer/world/<worldid>/consensus/<name>/<stage>/operations`
+[{ name: 'step', ..}], //operations api format
+
+Both those endpoints should support DELETE, to 'undo' your signal (of course the last person to do this won't have the luxury of that since it'll already be triggered).
+DELETE `/multiplayer/world/<worldid>/consensus/<name>/<stage>/variables`
+
+Note theres no role or user info in the url, it should infer both from the auth token.
+A bad POST (say typo in variable name) should return the same error codes variable API does. This should only affect the last person to do so of course. This should not trigger completion of consensus.
 
 ## Use-case solutions
 (Assume there are 2 required roles P1 & P2 for these examples)
@@ -101,33 +91,43 @@ Should pull up userid from auth-token (and infer role)
 ### Wharton: Advance to next step once everyone finishes decisions
 
 Simulation starts
-- P1 POST `/consensus/step/<current round>` `{ operations: [{ name: "step_to", arguments:[<current_round+1] }] }`
+- P1 POST `/consensus/step/<current round>` 
 Gets 201
-- P2 POST `/consensus/step/<current round>` `{ operations: [{ name: "step_to", arguments:[<current_round+1] }] }`
+- P2 POST `/consensus/step/<current round>`
 Gets 200
 
-- P1 PUT `/consensus/step/<current round>/status` `{ data: 'I'm done' }`
-    * Response has pending players
-- P2 PUT `/consensus/step/<current round>/status` `{ data: 'I'm done' }`
+- P1 POST `/consensus/step/<current round>/operations`
+    `[{ name: "step_to", arguments:[<current_round+1] }]`
+
+* Response is consensus object with pending players
+P1 can do a DELETE at this point to 'undo'
+
+* P2 POST `/consensus/step/<current round>/operations`
+    `[{ name: "step_to", arguments:[<current_round+1] }]`
 
 Sim advances to next round. Cometd notifications for operation
-- P1 PUT `/consensus/step/<current round>/status` `{ data: 'I'm done' }`
-- P1 DELETE `/consensus/step/<current round>/status` undo
+
 
 ### Wharton: Set variable once everyone agrees on same market to enter
 Assume 2 markets M1, M2
-- P1&P2 POST `/consensus/market/M1` `{ variables: { 'Market': 1 }}`
-- P1&P2 POST `/consensus/market/M2` `{ variables: { 'Market': 2 }}`
+- P1&P2 POST `/consensus/market/M1`
+- P1&P2 POST `/consensus/market/M2`
 
-- P1 PUT `/consensus/market/M1` `{ data: 'I chose M1 because blah blah' }`
-Listens on /consensus/market (not market/M1), which returns
+- P1 POST `/consensus/market/M1/variables` 
+{ Market : 1 }
+
+P1 then Listens on /consensus/market (not market/M1), which returns
 [{
     name: 'M1',
     complete: false..
+    <consensus object>
 }]
 
-- P1 PUT `/consensus/market/M2` `{ data: 'I chose M2 because blah blah' }`
+- P1 POST `/consensus/market/M2/variables` 
+{ Market : 2 }
+
 Listens on /consensus/market, which returns
+```
 [{
     name: 'M1',
     complete: false..
@@ -135,6 +135,7 @@ Listens on /consensus/market, which returns
     name: 'M2',
     complete: false
 }]
+```
 
 UI uses this to DELETE appropriate and resubmit for right endpoint
 
@@ -147,4 +148,4 @@ P1 POST `/consensus/gametype/<someid>` `{ requiredRoles: [P1] }`
 P2 POST `/consensus/gametype/<someid>` `{ requiredRoles: [P2] }` //409 conflict, role already exists
     -- won't try to choose anything after that
 
-P2 PUT /`consensus/gametype/1/status` `{ data: 'foobar' }` //consensus is still not marked complete since P2 isn't a required role
+P2 POST /`consensus/gametype/1/variables` `{ v1: 'foobar' }` //consensus is still not marked complete since P2 isn't a required role
