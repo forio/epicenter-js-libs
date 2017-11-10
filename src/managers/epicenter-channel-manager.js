@@ -252,7 +252,57 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var project = getFromSessionOrError('', 'project', session);
 
         var baseTopic = ['/world', account, project, groupName, worldid].join('/');
-        return __super.getChannel.call(this, { base: baseTopic });
+        var channel = __super.getChannel.call(this, { base: baseTopic });
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            if (!topic) {
+                return oldsubs.call(channel, topic, callback, context, options);
+            }
+
+            var defaults = {
+                includeMine: true
+            };
+            var opts = $.extend({}, defaults, options);
+            var topicAliases = {
+                reset: ['new'],
+                roles: ['assign', 'unassign', 'assignchange'],
+                operations: ['operation'],
+                presence: ['connect', 'disconnect'],
+            };
+            var filterByType = function (res) {
+                var subType = res.data.subType;
+                var topicMatch = subType === topic || (topicAliases[topic] && topicAliases[topic].indexOf(subType) !== -1);
+                var notificationFrom = res.data.user;
+
+                var isMine = session.userid === notificationFrom.id;
+                var initiatorMatch = isMine && opts.includeMine || !isMine;
+                var payload = res.data.data;
+                if (topicMatch && initiatorMatch) {
+                    var meta = {
+                        user: res.data.user,
+                        data: res.data.date,
+                        channel: res.channel,
+                        type: topic,
+                        subType: subType,
+                    };
+                    if (topic === 'variables' || topic === 'operation') {
+                        return callback(payload[topic], meta);
+                    } else if (subType === 'new') {
+                        return callback(payload.run, meta);
+                    } else if (topic === 'roles') {
+                        return callback(payload.user, meta);
+                    } else if (topic === 'presence') {
+                        var user = res.data.user;
+                        user.isOnline = subType === 'connect';
+                        return callback(user, meta);
+                    }
+                    return callback.call(context, res);
+                }
+            };
+            return oldsubs.call(channel, '', filterByType, context, options);
+
+        };
+        return channel;
     },
 
     /**
