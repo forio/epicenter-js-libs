@@ -40,6 +40,7 @@ var SessionManager = require('../store/session-manager');
 
 var ChannelManager = function (options) {
     if (!$.cometd) {
+        console.error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
         throw new Error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
     }
     if (!options || !options.url) {
