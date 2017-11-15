@@ -121,12 +121,10 @@
                 var rm = createRunManager();
                 var worldapi = rm.strategy.worldApi;
                 var newrunStub = sinon.stub(worldapi, 'newRunForWorld').returns($.Deferred().resolve('runid').promise());
-                var options = { sucess: sinon.spy() };
+                var options = { success: sinon.spy() };
 
                 return rm.reset(options).then(function () {
                     newrunStub.should.have.been.calledOnce;
-                    var args = newrunStub.getCall(0).args;
-                    expect(args[1]).to.eql(options);
                 });
             });
         });

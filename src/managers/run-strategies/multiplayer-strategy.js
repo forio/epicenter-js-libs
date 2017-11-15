@@ -22,13 +22,18 @@ var Strategy = classFrom(IdentityStrategy, {
         var curUserId = session.userId;
         var curGroupName = session.groupName;
 
+        var optionsToPassOn = $.extend(true, {}, options, {
+            success: $.noop,
+        });
         return this.worldApi
             .getCurrentWorldForUser(curUserId, curGroupName)
             .then(function (world) {
-                return this.worldApi.newRunForWorld(world.id, options).then(function (runid) {
-                    return {
+                return this.worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
+                    var toReturn = {
                         id: runid
                     };
+                    if (options && options.success) options.success(toReturn); 
+                    return toReturn;
                 });
             }.bind(this));
     },
@@ -52,6 +57,10 @@ var Strategy = classFrom(IdentityStrategy, {
             return worldApi.getCurrentRunId({ model: model, filter: world.id })
                 .then(function (id) {
                     return runService.load(id);
+                })
+                .then(function (run) {
+                    run.world = world;
+                    return run;
                 })
                 .then(dtd.resolve)
                 .fail(dtd.reject);
