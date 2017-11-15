@@ -284,6 +284,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                 });
                 var worldLoadPromise = wm.load();
                 var presenceLoadPromise = pres.getStatus();
+                //FIXME: Cache promise
                 $.when(worldLoadPromise, presenceLoadPromise).then(function (worldRes, presenceRes) {
                     var world = worldRes[0];
                     var presenceList = presenceRes[0];
@@ -316,11 +317,14 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             var filterByType = function (res) {
                 var subType = res.data.subType;
                 var topicMatch = subType === topic || (topicAliases[topic] && topicAliases[topic].indexOf(subType) !== -1);
-                var notificationFrom = res.data.user;
-
-                var isMine = session.userid === notificationFrom.id;
-                var initiatorMatch = isMine && opts.includeMine || !isMine;
+                var notificationFrom = res.data.user || {};
                 var payload = res.data.data;
+                if (topic === 'reset') {
+                    notificationFrom = payload.run.user; //reset doesn't give back user info otherwise
+                }
+
+                var isMine = session.userId === notificationFrom.id;
+                var initiatorMatch = isMine && opts.includeMine || !isMine;
                 if (topicMatch && initiatorMatch) {
                     var meta = {
                         user: res.data.user,
@@ -339,6 +343,8 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                         var user = res.data.user;
                         user.isOnline = subType === 'connect';
                         return callback(user, meta);
+                    } else if (topic === 'reset') {
+                        return callback(payload, meta);
                     }
                     return callback.call(context, res);
                 }
