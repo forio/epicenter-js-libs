@@ -16,7 +16,6 @@ var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
 var apiEndpoint = 'presence';
-var ChannelManager = require('../managers/epicenter-channel-manager');
 
 module.exports = function (config) {
     var defaults = {
@@ -204,6 +203,7 @@ module.exports = function (config) {
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
+            var ChannelManager = require('../managers/epicenter-channel-manager');
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);
