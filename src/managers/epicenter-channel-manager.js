@@ -338,6 +338,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
                     } else if (subType === 'new') {
                         return callback(payload.run, meta);
                     } else if (topic === 'roles') {
+                        //FIXME: this doesn't work
                         return callback(payload.user, meta);
                     } else if (topic === 'presence') {
                         var user = res.data.user;
