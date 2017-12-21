@@ -201,7 +201,16 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                         groups.forEach(function (group) {
                             group.groupId = group.id;
                         });
-                        handleGroupList(groups);
+
+                        if (groups.length) {
+                            handleGroupList(groups);
+                        } else {
+                            //either it's a private project or there are no groups
+                            sessionManager.saveSession(sessionInfo);
+                            outSuccess.apply(this, [data]);
+                            $d.resolve(data);
+                            return;
+                        }
                     }, $d.reject);
             }
         };
