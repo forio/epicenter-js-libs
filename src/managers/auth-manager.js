@@ -115,10 +115,10 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
             return JSON.parse(atob(encoded));
         };
 
-        var handleGroupError = function (message, statusCode, data) {
+        var handleGroupError = function (message, statusCode, data, type) {
             // logout the user since it's in an invalid state with no group selected
             me.logout().then(function () {
-                var error = $.extend(true, {}, data, { statusText: message, status: statusCode });
+                var error = $.extend(true, {}, data, { statusText: message, status: statusCode, type: type });
                 $d.reject(error);
             });
         };
@@ -156,7 +156,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
                 var group = null;
                 if (groupList.length === 0) {
-                    handleGroupError('The user has no groups associated in this account', 401, data);
+                    handleGroupError('The user has no groups associated in this account', 403, data, 'NO_GROUPS');
                     return;
                 } else if (groupList.length === 1) {
                     // Select the only group
@@ -185,7 +185,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                     outSuccess.apply(this, [data]);
                     $d.resolve(data);
                 } else {
-                    handleGroupError('This user is associated with more than one group. Please specify a group id to log into and try again', 403, data);
+                    handleGroupError('This user is associated with more than one group. Please specify a group id to log into and try again', 403, data, 'MULTIPLE_GROUPS');
                 }
             };
 

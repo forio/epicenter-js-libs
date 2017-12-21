@@ -3,7 +3,7 @@ $(function () {
 
     var groupSelectionTemplate;
 
-    var showError = function (msg, status) {
+    var showError = function (msg) {
         $('#login-message').text(msg).show();
     };
 
@@ -83,9 +83,15 @@ $(function () {
             if (error.status === 401) {
                 showError('Invalid user name or password.', error.status);
             } else if (error.status === 403) {
-                selectGroup(userName, password, account, project, error.userGroups, action);
+                if (error.type === 'MULTIPLE_GROUPS') {
+                    selectGroup(userName, password, account, project, error.userGroups, action);
+                } else if (error.type === 'NO_GROUPS') {
+                    showError('The user has no groups associated in this account');
+                } else {
+                    showError(error.statusText || ('Unknown Error' + error.status));
+                }
             } else {
-                showError('Unknown error occured. Please try again. (' + error.status + ')', error.status);
+                showError('Unknown error occured. Please try again. (' + error.status + ')');
             }
 
             $('button', form).attr('disabled', null).removeClass('disabled');

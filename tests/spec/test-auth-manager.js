@@ -1,10 +1,11 @@
 (function () {
     'use strict';
     describe('Auth Manager', function () {
-        var server, token, userInfo, cookie, multipleGroupsResponse, teamMemberResponse, am;
+        var server, token, userInfo, cookie, multipleGroupsResponse, noGroupResponse, teamMemberResponse, am;
         before(function () {
             teamMemberResponse = false;
             multipleGroupsResponse = false;
+            noGroupResponse = false;
             var cookieStr = '';
             cookie = {
                 get: function () {
@@ -60,30 +61,40 @@
                     active: true
                 }
             ];
-            var singleGroup = [
-                {
-                    members: groupMembers,
-                    account: 'accountName',
-                    project: 'projectName',
-                    type: 'local',
-                    groupId: '111efcc9-726c-47b8-ba94-2895f110bd39',
-                    name: 'rv-test'
+            
+            function getResponse() {
+                var singleGroup = [
+                    {
+                        members: groupMembers,
+                        account: 'accountName',
+                        project: 'projectName',
+                        type: 'local',
+                        groupId: '111efcc9-726c-47b8-ba94-2895f110bd39',
+                        name: 'rv-test'
+                    }
+                ];
+                if (multipleGroupsResponse) {
+                    var multipleGroups = singleGroup.concat({
+                        members: groupMembers,
+                        account: 'accountName',
+                        project: 'projectName',
+                        type: 'local',
+                        groupId: '111efcc9-726c-47b8-ba94-2895f110bd32',
+                        name: 'rv-test2'
+                    });
+
+                    return multipleGroups;
+                } else if (noGroupResponse) {
+                    return [];
                 }
-            ];
-            var multipleGroups = singleGroup.concat({
-                members: groupMembers,
-                account: 'accountName',
-                project: 'projectName',
-                type: 'local',
-                groupId: '111efcc9-726c-47b8-ba94-2895f110bd32',
-                name: 'rv-test2'
-            });
+                return singleGroup;
+            }
             server.respondWith(/(.*)\/member\/local/, function (xhr, id) {
-                var response = multipleGroupsResponse ? multipleGroups : singleGroup;
+                var response = getResponse();
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(response));
             });
             server.respondWith(/(.*)\/group\/local/, function (xhr, id) {
-                var response = multipleGroupsResponse ? multipleGroups : singleGroup;
+                var response = getResponse();
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(response));
             });
             server.respondImmediately = true;
@@ -155,6 +166,24 @@
 
                 });
             });
+            it('should fail when the user belongs to no groups', function () {
+                noGroupResponse = true;
+                var sucessSpy = sinon.spy(function (p) { 
+                    return $.Deferred().resolve(p).promise(); 
+                });
+                var failSpy = sinon.spy(function (p) { 
+                    return $.Deferred().resolve(p).promise(); 
+                });
+                return am.login({ userName: 'test', password: 'test' }).then(sucessSpy, failSpy).then(function () {
+                    sucessSpy.should.not.have.been.called;
+                    failSpy.should.have.been.calledOnce;
+
+                    var data = failSpy.getCall(0).args[0];
+                    data.status.should.equal(403);
+                    data.type.should.equal('NO_GROUPS');
+                    noGroupResponse = false;
+                });
+            });
 
             it('should work when a group is specified', function () {
                 multipleGroupsResponse = true;
@@ -167,22 +196,22 @@
                 });
             });
 
-            it('should not work when a wrong group is used', function () {
-                multipleGroupsResponse = true;
-                var sucessSpy = sinon.spy(function (p) { 
-                    return $.Deferred().resolve(p).promise(); 
-                });
-                var failSpy = sinon.spy(function (p) { 
-                    return $.Deferred().resolve(p).promise(); 
-                });
-                return am.login({ userName: 'test', password: 'test', groupId: 'wrong-id' }).then(sucessSpy, failSpy).then(function (data) {
-                    sucessSpy.should.not.have.been.called;
-                    failSpy.should.have.been.calledOnce;
+            // it('should not work when a wrong group is used', function () {
+            //     multipleGroupsResponse = true;
+            //     var sucessSpy = sinon.spy(function (p) { 
+            //         return $.Deferred().resolve(p).promise(); 
+            //     });
+            //     var failSpy = sinon.spy(function (p) { 
+            //         return $.Deferred().resolve(p).promise(); 
+            //     });
+            //     return am.login({ userName: 'test', password: 'test', groupId: 'wrong-id' }).then(sucessSpy, failSpy).then(function (data) {
+            //         sucessSpy.should.not.have.been.called;
+            //         failSpy.should.have.been.calledOnce;
 
-                    multipleGroupsResponse = false;
-                    data.userGroups.should.have.lengthOf(2);
-                });
-            });
+            //         multipleGroupsResponse = false;
+            //         data.userGroups.should.have.lengthOf(2);
+            //     });
+            // });
 
             it('should log a team member and get all the groups in the project', function () {
                 teamMemberResponse = true;
