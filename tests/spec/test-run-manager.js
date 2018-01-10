@@ -249,6 +249,33 @@
                 });
             });
             describe('custom session keys', function () {
+                it.only('should set default session key', function () {
+                    var myStrategy = function () {
+                        return {
+                            getRun: sinon.spy(function () {
+                                return $.Deferred().resolve({ id: 'runid' }).promise();
+                            }),
+                            reset: sinon.spy(),
+                        };
+                    };
+                    var strategySpy = sinon.spy(myStrategy);
+                    var rm = new F.manager.RunManager({
+                        strategy: strategySpy,
+                        run: runOptions,
+                    });
+                    rm.sessionManager = dummySessionStore;
+                    var defaultcookiekey = [
+                        F.constants.STRATEGY_SESSION_KEY, 
+                        runOptions.account, 
+                        runOptions.project, 
+                        runOptions.model
+                    ].join('-');
+
+                    return rm.getRun().then(function () {
+                        expect(getSpy.getCall(0).args[0]).to.equal(defaultcookiekey);
+                        expect(setSpy.getCall(0).args[0]).to.equal(defaultcookiekey);
+                    });
+                });
                 it('should read from custom session keys', function () {
                     var myStrategy = function () {
                         return {

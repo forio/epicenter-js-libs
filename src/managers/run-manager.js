@@ -87,8 +87,9 @@ function patchRunService(service, manager) {
     return service;
 }
 
-function sessionKeyFromOptions(options) {
-    var sessionKey = $.isFunction(options.sessionKey) ? options.sessionKey() : options.sessionKey;
+function sessionKeyFromOptions(options, runService) {
+    var config = runService.getCurrentConfig();
+    var sessionKey = $.isFunction(options.sessionKey) ? options.sessionKey(config) : options.sessionKey;
     return sessionKey;
 }
 
@@ -100,7 +101,13 @@ function setRunInSession(sessionKey, run, sessionManager) {
 }
 
 var defaults = {
-    sessionKey: keyNames.STRATEGY_SESSION_KEY,
+    sessionKey: function (config) { 
+        var baseKey = keyNames.STRATEGY_SESSION_KEY;
+        var key = ['account', 'project', 'model'].reduce(function (accum, key) {
+            return config[key] ? accum + '-' + config[key] : accum; 
+        }, baseKey);
+        return key;
+    }
 };
 
 function RunManager(options) {
@@ -153,7 +160,7 @@ RunManager.prototype = {
         var me = this;
         var sessionStore = this.sessionManager.getStore();
 
-        var sessionContents = sessionStore.get(sessionKeyFromOptions(this.options));
+        var sessionContents = sessionStore.get(sessionKeyFromOptions(this.options, me.run));
         var runSession = JSON.parse(sessionContents || '{}');
         
         if (runSession.runId) {
@@ -169,8 +176,9 @@ RunManager.prototype = {
         return this.strategy
                 .getRun(this.run, authSession, runSession, options).then(function (run) {
                     if (run && run.id) {
-                        setRunInSession(sessionKeyFromOptions(me.options), run, me.sessionManager);
                         me.run.updateConfig({ filter: run.id });
+                        var sessionKey = sessionKeyFromOptions(me.options, me.run);
+                        setRunInSession(sessionKey, run, me.sessionManager);
 
                         if (variables && variables.length) {
                             return me.run.variables().query(variables).then(function (results) {
@@ -213,8 +221,9 @@ RunManager.prototype = {
         }
         return this.strategy.reset(this.run, authSession, options).then(function (run) {
             if (run && run.id) {
-                setRunInSession(sessionKeyFromOptions(me.options), run.id, me.sessionManager);
                 me.run.updateConfig({ filter: run.id });
+                var sessionKey = sessionKeyFromOptions(me.options, me.run);
+                setRunInSession(sessionKey, run.id, me.sessionManager);
             }
             return run;
         });

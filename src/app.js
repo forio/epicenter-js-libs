@@ -65,5 +65,7 @@ F.service.Channel = require('./service/channel-service');
 F.version = '<%= version %>';
 F.api = require('./api-version.json');
 
+F.constants = require('./managers/key-names');
+
 global.F = F;
 module.exports = F;
