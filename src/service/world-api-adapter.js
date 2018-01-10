@@ -25,6 +25,9 @@ var ConfigService = require('./configuration-service');
 // var qutil = require('../util/query-util');
 var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
+
+var ConsensusService = require('./consensus/consensus-service');
+
 var _pick = require('../util/object-util')._pick;
 
 var apiBase = 'multiplayer/';
@@ -756,6 +759,14 @@ module.exports = function (config) {
 
             opt.url += [opt.account, opt.project].join('/');
             return http.get(null, opt);
+        },
+
+        consensus: function (name) {
+            var con = new ConsensusService($.extend(true, {}, serviceOptions, {
+                worldId: serviceOptions.id,
+                consensusName: name
+            }));
+            return con;
         }
 
     };
