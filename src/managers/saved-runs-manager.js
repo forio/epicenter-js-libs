@@ -134,9 +134,11 @@ SavedRunsManager.prototype = {
     getRuns: function (variables, filter, modifiers) {
         var session = this.sessionManager.getSession(this.runService.getCurrentConfig());
 
+        var runopts = this.runService.getCurrentConfig();
         var scopedFilter = injectFiltersFromSession($.extend(true, {}, {
             saved: true, 
             trashed: false,
+            model: runopts.model,
         }, filter), session, this.options);
 
         var opModifiers = $.extend(true, {}, {

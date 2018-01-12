@@ -5,7 +5,6 @@
     var RunService = F.service.Run;
 
     var runOptions = {
-        model: 'model.eqn',
         account: 'forio-dev',
         project: 'js-libs',
     };
@@ -168,6 +167,24 @@
                 });
             });
 
+            it('should query with model when provided', function () {
+                var rs = new F.service.Run($.extend(true, {}, runOptions, { model: 'model.eqn' }));
+                var queryStub = sinon.stub(rs, 'query', function (options) {
+                    return $.Deferred().resolve([
+                        { id: 'run1' },
+                        { id: 'run2' },
+                    ]).promise();
+                });
+                var srm = new SavedRunsManager({
+                    run: rs,
+                });
+                return srm.getRuns(null, { foo: 'bar' }).then(function () {
+                    expect(queryStub).to.have.been.calledOnce;
+
+                    var args = queryStub.getCall(0).args;
+                    expect(args[0]).to.eql({ saved: true, trashed: false, foo: 'bar', model: 'model.eqn' });
+                });
+            });
             it('should pass the right saved filter', function () {
                 return srm.getRuns().then(function () {
                     expect(queryStub).to.have.been.calledOnce;
