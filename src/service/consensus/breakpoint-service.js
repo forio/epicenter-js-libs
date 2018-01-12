@@ -38,12 +38,12 @@ module.exports = function (config) {
     }
     var http = new TransportFactory(transportOptions);
 
-    var breakpointURLSegnment = [serviceOptions.worldId, serviceOptions.consensusName, serviceOptions.breakpointName].join('/');
+    var breakpointURLSegment = [serviceOptions.worldId, serviceOptions.consensusName, serviceOptions.breakpointName].join('/');
 
     var publicAPI = {
         create: function (params, options) {
             var opts = $.extend(true, {}, params); 
-            var url = transportOptions.url + breakpointURLSegnment;
+            var url = transportOptions.url + breakpointURLSegment;
             var httpOptions = $.extend(true, {}, serviceOptions, { url: url }, options);
             if (opts.roles && Array.isArray(opts.roles)) {
                 opts.roles = opts.roles.reduce(function (accum, role) {
@@ -53,6 +53,15 @@ module.exports = function (config) {
             }
             return http.post(opts, httpOptions);
         },
+        delete: function (options) {
+            var url = transportOptions.url + [breakpointURLSegment].join('/');
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+
+            return http.delete({}, $.extend(true, {}, httpOptions, {
+                url: url
+            }));
+        },
+
         submitWithVariables: function () {
 
         },
@@ -61,7 +70,7 @@ module.exports = function (config) {
             var prms = (result.args[0].length && (result.args[0] !== null && result.args[0] !== undefined)) ? result.args[0] : [];
             var httpOptions = $.extend(true, {}, serviceOptions, options);
 
-            var url = transportOptions.url + ['actions', breakpointURLSegnment].join('/');
+            var url = transportOptions.url + ['actions', breakpointURLSegment].join('/');
 
             return http.post({ 
                 operations: [
@@ -71,8 +80,13 @@ module.exports = function (config) {
                 url: url
             }));
         },
-        undoSubmit: function () {
+        undoSubmit: function (options) {
+            var url = transportOptions.url + ['actions', breakpointURLSegment].join('/');
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
 
+            return http.delete({}, $.extend(true, {}, httpOptions, {
+                url: url
+            }));
         },
     };
     return publicAPI;

@@ -20,19 +20,21 @@ wm.getCurrentWorld().then((worldRes)=> {
     }
 
     $('#btnConsensusCreate').on('click', ()=> {
-        // var wm = new F.manager.WorldManager({
-        //     ...defaults,
-        //     model: 'bikes-multiplayer.xlsx'
-        // })
-        // wm.getCurrentRun();
-
         var bp = getBPService();
         bp.create();
+    });
+    $('#btnConsensusDelete').on('click', ()=> {
+        var bp = getBPService();
+        bp.delete();
     });
 
     $('#btnConsensusOperationSubmit').click(()=> {
         var bp = getBPService();
         bp.submitWithOperations('step');
+    });
+    $('#btnConsensusOperationRevoke').click(()=> {
+        var bp = getBPService();
+        bp.undoSubmit();
     });
 
     $('#btnReset').click(()=> {
@@ -43,6 +45,13 @@ wm.getCurrentWorld().then((worldRes)=> {
 
 
     ws.load().then((res)=> {
+        var cm = new F.manager.ChannelManager(defaults);
+        var worldChannel = cm.getWorldChannel(res);
+        worldChannel.subscribe('', function (data) {
+            $('#generalWorldNotifications').append('<li><code>' + JSON.stringify(data) + '</code></li<');
+            console.log('stuff', arguments);
+        });
+
         var runid = res.run;
         var rs = new F.service.Run({
             ...defaults,
