@@ -70,7 +70,9 @@ module.exports = classFrom(Base, {
     },
 
     getRun: function (runService, userSession, runSession, options) {
-        var filter = injectFiltersFromSession(this.options.flag, userSession);
+        var sessionFilter = injectFiltersFromSession(this.options.flag, userSession);
+        var runopts = runService.getCurrentConfig();
+        var filter = $.extend(true, {}, sessionFilter, { model: runopts.model });
         var me = this;
         return runService.query(filter, { 
             // startrecord: 0,  //TODO: Uncomment when EPICENTER-2569 is fixed

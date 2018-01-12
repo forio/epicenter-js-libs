@@ -3,7 +3,6 @@
 
     var Strategy = F.manager.strategy['reuse-last-initialized'];
     var runOptions = {
-        model: 'model.eqn',
         account: 'forio-dev',
         project: 'js-libs'
     };
@@ -42,6 +41,26 @@
                     expect(queryStub).to.have.been.calledWith({
                         foo: 'bar',
                         'scope.group': 'groupName',
+                    });
+                });
+            });
+            it('should filter by model name where provided', function () {
+                var rs = new F.service.Run($.extend(true, {}, runOptions, { model: 'model.eqn' }));
+                var queryStub = sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
+                var strategy = new Strategy({
+                    strategyOptions: {
+                        initOperation: ['foo'],
+                        flag: {
+                            foo: 'bar'
+                        }
+                    }
+                });
+                sinon.stub(strategy, 'reset').returns($.Deferred().resolve({}).promise());
+                return strategy.getRun(rs, { groupName: 'groupName' }).then(function () {
+                    expect(queryStub).to.have.been.calledWith({
+                        foo: 'bar',
+                        'scope.group': 'groupName',
+                        model: 'model.eqn',
                     });
                 });
             });
