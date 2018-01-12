@@ -133,6 +133,13 @@ var defaults = {
     savedRuns: {}
 };
 
+function cookieNameFromOptions(prefix, config) {
+    var key = ['account', 'project', 'model'].reduce(function (accum, key) {
+        return config[key] ? accum + '-' + config[key] : accum; 
+    }, prefix);
+    return key;
+}
+
 function ScenarioManager(config) {
     var opts = $.extend(true, {}, defaults, config);
     if (config && config.advanceOperation) {
@@ -146,7 +153,7 @@ function ScenarioManager(config) {
      */
     this.baseline = new RunManager({
         strategy: BaselineStrategyToUse,
-        sessionKey: 'sm-baseline-run',
+        sessionKey: cookieNameFromOptions.bind(null, 'sm-baseline-run'),
         run: strategyUtils.mergeRunOptions(opts.run, opts.baseline.run),
         strategyOptions: {
             baselineName: opts.baseline.runName,
@@ -177,7 +184,7 @@ function ScenarioManager(config) {
      */
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
-        sessionKey: 'sm-current-run',
+        sessionKey: cookieNameFromOptions.bind(null, 'sm-current-run'),
         run: strategyUtils.mergeRunOptions(opts.run, opts.current.run)
     });
 
