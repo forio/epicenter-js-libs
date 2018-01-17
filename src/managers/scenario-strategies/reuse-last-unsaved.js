@@ -39,10 +39,12 @@ module.exports = classFrom(Base, {
         });
     },
 
-    getRun: function (runService, userSession) {
+    getRun: function (runService, userSession, opts) {
+        var runopts = runService.getCurrentConfig();
         var filter = injectFiltersFromSession({ 
             saved: false,
-            trashed: false, //TODO: change to '!=true' once EPICENTER-2500 is fixed
+            trashed: false, //TODO: change to '!=true' once EPICENTER-2500 is fixed,
+            model: runopts.model,
         }, userSession);
         var me = this;
         var outputModifiers = { 
