@@ -326,6 +326,15 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     },
 
     /**
+     * Helper method to check if you're currently logged in
+     * @return {Boolean} true if you're logged in
+     */
+    isLoggedIn: function () {
+        var session = this.getCurrentUserSessionInfo();
+        return !!(session && session.userId);
+    },
+
+    /**
      * Returns session information for the current user, including the `userId`, `account`, `project`, `groupId`, `groupName`, `isFac` (whether the end user is a facilitator of this group), and `auth_token` (user access token).
      *
      * *Important*: This method is synchronous. The session information is returned immediately in an object; no callbacks or promises are needed.

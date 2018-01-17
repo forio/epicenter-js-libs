@@ -223,6 +223,21 @@
             });
         });
 
+        describe('#isLoggedIn', function () {
+            it('should return false by default', function () {
+                am.isLoggedIn().should.equal(false);
+            });
+            it('should return true after logging in', function () {
+                return am.login({ userName: 'test', password: 'test' }).then(function () {
+                    am.isLoggedIn().should.equal(true);
+                });
+            });
+            it('should return true after logging out', function () {
+                return am.logout().then(function () {
+                    am.isLoggedIn().should.equal(false);
+                });
+            });
+        });
         describe('Logout', function () {
             it('should remove the epicenter cookie', function (done) {
                 sinon.spy(cookie, 'set');
