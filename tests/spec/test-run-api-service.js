@@ -44,6 +44,12 @@
                         name: operation, result: operation
                     }));
                 });
+
+            server.respondWith('DELETE', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
+                xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
+                return true;
+            });
+
             // General GET
             server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
@@ -508,6 +514,24 @@
                 var req = server.requests.pop();
                 req.url.should.equal(baseURL + 'myfancyrunid/');
                 req.requestHeaders['X-AutoRestore'].should.equal(true);
+            });
+        });
+        describe('#removeFromMemory', function () {
+            it('should make a delete call with the run id', function () {
+                var rs = new RunService({ account: account, project: project });
+                return rs.removeFromMemory('myfancyrunid').then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'myfancyrunid');
+                    req.method.toLowerCase().should.equal('delete');
+                });
+            });
+            it('should pick up run id from service options if provided', function () {
+                var rs = new RunService({ account: account, project: project, id: 'myfancyrunid' });
+                return rs.removeFromMemory().then(function () {
+                    var req = server.requests.pop();
+                    req.url.should.equal(baseURL + 'myfancyrunid/');
+                    req.method.toLowerCase().should.equal('delete');
+                });
             });
         });
 

@@ -318,6 +318,22 @@ module.exports = function (config) {
             return http.get(filters, httpOptions);
         },
 
+        /**
+         * Removes specified runid from memory
+         *
+         * See [details on run persistence](../../../run_persistence/#runs-in-memory)
+         * @param  {String} [runID]   id of run to remove
+         * @param  {Object} [filters] (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param  {Object} [options] (Optional) Overrides for configuration options.
+         * @return {Promise}
+         */
+        removeFromMemory: function (runID, filters, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            if (runID) {
+                httpOptions.url = urlConfig.getAPIPath('run') + runID;
+            }
+            return http.delete({}, httpOptions);
+        },
 
         /**
          * Save attributes (data, model variables) of the run.
