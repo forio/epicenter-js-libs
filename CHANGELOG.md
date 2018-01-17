@@ -1,3 +1,16 @@
+<a name="2.4.0"></a>
+#### Bug Fixes:
+- `AuthManager` incorrectly threw an "Invalid Password" error if you had an account for a project but weren't part of a group. It now correctly throws a `NO_GROUPS` error.
+
+#### Features:
+- `AuthManager` now includes a `isLoggedIn` helper method to check if you're currently logged in.
+- `AuthManager` now supports logging into Private projects with your author account
+
+- The `RunManager` and `ScenarioManager` now scope cookies by account, project, and model name. This helps differentiate cookies for different projects when you're working locally, and also eases workflow for working with multiple models within a project.
+- `reuse-last-initialized` strategy, as well as all the `ScenarioManager` strategies now scope runs by model name.
+
+- `RunService` now includes a `removeFromMemory` method as a performance optimization.
+- 
 <a name="2.3.1"></a>
 #### Bug fixes:
 * Fix inconsistent format for `getDataChannel`
