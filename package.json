@@ -27,6 +27,8 @@
     "uglify-js": "^2.7.3"
   },
   "scripts": {
+    "build": "grunt production",
+    "start": "grunt",
     "prepush": "grunt validate"
   },
   "dependencies": {

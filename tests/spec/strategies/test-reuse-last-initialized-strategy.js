@@ -32,7 +32,8 @@
             it('should filter for runs matching flag', function () {
                 return strategy.getRun(rs).then(function () {
                     expect(queryStub).to.have.been.calledWith({
-                        foo: 'bar'
+                        foo: 'bar',
+                        trashed: false,
                     });
                 });
             });
@@ -40,6 +41,7 @@
                 return strategy.getRun(rs, { groupName: 'groupName' }).then(function () {
                     expect(queryStub).to.have.been.calledWith({
                         foo: 'bar',
+                        trashed: false,
                         'scope.group': 'groupName',
                     });
                 });
@@ -59,6 +61,7 @@
                 return strategy.getRun(rs, { groupName: 'groupName' }).then(function () {
                     expect(queryStub).to.have.been.calledWith({
                         foo: 'bar',
+                        trashed: false,
                         'scope.group': 'groupName',
                         model: 'model.eqn',
                     });
@@ -68,6 +71,7 @@
                 return strategy.getRun(rs, { userId: 'userId' }).then(function () {
                     expect(queryStub).to.have.been.calledWith({
                         foo: 'bar',
+                        trashed: false,
                         'user.id': 'userId',
                     });
                 });
