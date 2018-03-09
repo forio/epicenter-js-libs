@@ -1,3 +1,16 @@
+<a name="2.5.0"></a>
+#### Bug Fixes:
+- `reuse-last-initialized` strategy used to select the last initialized run even if it was trashed; now it ignores trashed runs.
+- For Vensim models you can now pass in `cinFiles` as an option while creating a run. e.g.
+
+```
+    var rs = new F.service.Run();
+    rs.create({
+        model: 'hello_world.jl',
+        cinFiles: ['a.cin', 'b.cin']
+    });
+```
+
 <a name="2.4.0"></a>
 #### Bug Fixes:
 - `AuthManager` incorrectly threw an "Invalid Password" error if you had an account for a project but weren't part of a group. It now correctly throws a `NO_GROUPS` error.
