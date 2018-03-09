@@ -1,6 +1,11 @@
 <a name="2.5.0"></a>
 #### Bug Fixes:
 - `reuse-last-initialized` strategy used to select the last initialized run even if it was trashed; now it ignores trashed runs.
+
+#### Improvements:
+- `reuse-last-initialized`, `reuse-last-unsaved`, `reuse-across-sessions` only query for the last run, instead of querying for every run and picking the last one. Should have no practical impact, except it'll be faster if you have a lot of runs.
+
+#### Features:
 - For Vensim models you can now pass in `cinFiles` as an option while creating a run. e.g.
 
 ```

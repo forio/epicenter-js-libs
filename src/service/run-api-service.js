@@ -321,6 +321,10 @@ module.exports = function (config) {
         /**
          * Removes specified runid from memory
          *
+         * **Example**
+         *
+         *     rs.removeFromMemory('bb589677-d476-4971-a68e-0c58d191e450');
+         *
          * See [details on run persistence](../../../run_persistence/#runs-in-memory)
          * @param  {String} [runID]   id of run to remove
          * @param  {Object} [filters] (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).

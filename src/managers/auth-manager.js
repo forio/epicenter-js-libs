@@ -336,6 +336,13 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
     /**
      * Helper method to check if you're currently logged in
+     *
+     *  **Example**
+     *  
+     *      var amILoggedIn = authMgr.isLoggedIn();
+     *
+     * **Parameters**
+     * @param {none} none
      * @return {Boolean} true if you're logged in
      */
     isLoggedIn: function () {
