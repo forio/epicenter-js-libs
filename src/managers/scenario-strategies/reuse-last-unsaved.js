@@ -43,13 +43,13 @@ module.exports = classFrom(Base, {
         var runopts = runService.getCurrentConfig();
         var filter = injectFiltersFromSession({ 
             saved: false,
-            trashed: false, //TODO: change to '!=true' once EPICENTER-2500 is fixed,
+            trashed: false,
             model: runopts.model,
         }, userSession);
         var me = this;
         var outputModifiers = { 
-            // startrecord: 0,  //TODO: Uncomment when EPICENTER-2569 is fixed
-            // endrecord: 0,
+            startrecord: 0,
+            endrecord: 0,
             sort: 'created', 
             direction: 'desc'
         };

@@ -75,8 +75,8 @@ module.exports = classFrom(Base, {
         var filter = $.extend(true, { trashed: false }, sessionFilter, { model: runopts.model });
         var me = this;
         return runService.query(filter, { 
-            // startrecord: 0,  //TODO: Uncomment when EPICENTER-2569 is fixed
-            // endrecord: 0,
+            startrecord: 0,
+            endrecord: 0,
             sort: 'created', 
             direction: 'desc'
         }).then(function (runs) {
