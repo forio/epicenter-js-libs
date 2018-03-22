@@ -21,6 +21,7 @@ function getLocalHost(existingFn, host) {
             var isLocal = !host || //phantomjs
                 host === '127.0.0.1' || 
                 host.indexOf('local.') === 0 || 
+                host.indexOf('ngrok') !== -1 || 
                 host.indexOf('localhost') === 0;
             return isLocal;
         };
