@@ -12,7 +12,7 @@ module.exports = function (config) {
         account: undefined,
         project: undefined,
         worldId: '',
-        consensusName: '',
+        name: '',
     };
 
     var sessionManager = new SessionManager();
@@ -45,9 +45,11 @@ module.exports = function (config) {
         list: function () {
 
         },
-        breakpoints: function (breakpointName) {
-            var bp = new BreakpointService($.extend(true, {}, serviceOptions, {
-                breakpointName: breakpointName
+        breakpoints: function (breakpointName, options) {
+            var opts = $.extend({}, true, serviceOptions, options);
+            var bp = new BreakpointService($.extend({}, true, opts, {
+                consensusName: opts.name,
+                name: breakpointName,
             }));
             return bp;
         }

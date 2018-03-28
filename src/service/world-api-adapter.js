@@ -761,10 +761,14 @@ module.exports = function (config) {
             return http.get(null, opt);
         },
 
-        consensus: function (name) {
+        consensus: function (name, options) {
+            var opts = $.extend(true, {}, serviceOptions, options);
+            if (!opts.id) {
+                throw new Error('No world id provided; use `.consensus(name, { id: worldid})');
+            }
             var con = new ConsensusService($.extend(true, {}, serviceOptions, {
-                worldId: serviceOptions.id,
-                consensusName: name
+                worldId: opts.id,
+                name: name
             }));
             return con;
         }

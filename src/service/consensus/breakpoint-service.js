@@ -14,7 +14,7 @@ module.exports = function (config) {
         project: undefined,
         worldId: '',
         consensusName: '',
-        breakpointName: '',
+        name: '',
     };
 
     var sessionManager = new SessionManager();
@@ -38,7 +38,7 @@ module.exports = function (config) {
     }
     var http = new TransportFactory(transportOptions);
 
-    var breakpointURLSegment = [serviceOptions.worldId, serviceOptions.consensusName, serviceOptions.breakpointName].join('/');
+    var breakpointURLSegment = [serviceOptions.worldId, serviceOptions.consensusName, serviceOptions.name].join('/');
 
     var publicAPI = {
         create: function (params, options) {
@@ -76,11 +76,15 @@ module.exports = function (config) {
 
             var url = transportOptions.url + ['actions', breakpointURLSegment].join('/');
 
-            return http.post({ 
-                operations: [
-                    { name: result.ops[0], arguments: prms }
-                ]
-            }, $.extend(true, {}, httpOptions, {
+            // "actions": {"<role>": [<action>,...]}}
+            // {"proc": {"name": "<func name>", "arguments": [<list of args>]}}
+
+            return http.post({
+                actions: [{
+                    proc: { name: result.ops[0], arguments: prms }
+                }],
+            }
+            , $.extend(true, {}, httpOptions, {
                 url: url
             }));
         },
