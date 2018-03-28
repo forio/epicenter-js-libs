@@ -45,7 +45,7 @@
                 <br/>
 
                 <label for="">Server</label>
-                <input type="text" id="txtServer" />
+                <input type="text" id="txtServer" value="test.forio.com" />
 
                 <button id="btnLogin"> Login </button>
                 <a href="#" id='logout'> Logout</a>
@@ -60,23 +60,32 @@
           </div>
       </div>
     </section>
-    <section>
-        <label for="">ConsensusName</label>
-        <input type="text" id="txtConsensus" value="foo" />
-        <label for="">Breakpointname</label>
-        <input type="text" id="txtBreakpoint" value="bar" />
+    <div class="row">
+        <div class="col-xs-6">
+            <section>
+                <label for="">ConsensusName</label>
+                <input type="text" id="txtConsensus" value="foo" />
+                <label for="">Breakpointname</label>
+                <input type="text" id="txtBreakpoint" value="bar" />
 
-        <button id="btnConsensusCreate">Create Consensus Point</button>
-        <button id="btnConsensusDelete">Delete Consensus Point</button>
-    </section>
+                <button id="btnConsensusCreate">Create Consensus Point</button>
+                <button id="btnConsensusDelete">Delete Consensus Point</button>
+            </section>
 
-    <section>
-        <button id="btnConsensusOperationSubmit">Submit for operation step</button>
-        <button id="btnConsensusOperationRevoke">Revoke operation step</button>
-    </section>
-    <section>
-        <button id="btnReset">Reset</button>
-    </section>
+            <section>
+                <button id="btnConsensusOperationSubmit">Submit for operation step</button>
+                <button id="btnConsensusOperationRevoke">Revoke operation step</button>
+            </section>
+            <section>
+                <button id="btnReset">Reset</button>
+            </section>
+        </div>
+        <div class="col-xs-6">
+            <h6>World channel notifications</h6>
+            <ul id="generalWorldNotifications"></ul>
+        </div>
+    </div>
+   
     
 
     <script src="../../common.js"></script>
