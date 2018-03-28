@@ -62,10 +62,14 @@ module.exports = function (config) {
             }));
         },
 
-        submitWithVariables: function () {
-
+        forceClose: function (options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var url = transportOptions.url + ['close', breakpointURLSegment].join('/');
+            return http.post({}, $.extend(true, {}, httpOptions, {
+                url: url
+            }));
         },
-        submitWithOperations: function (operation, args, options) {
+        submitActions: function (operation, args, options) {
             var result = rutil.normalizeOperations(operation, args);
             var prms = (result.args[0].length && (result.args[0] !== null && result.args[0] !== undefined)) ? result.args[0] : [];
             var httpOptions = $.extend(true, {}, serviceOptions, options);
