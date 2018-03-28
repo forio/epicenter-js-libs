@@ -40,7 +40,7 @@ var RunManager = require('./run-manager');
 var AuthManager = require('./auth-manager');
 var worldApi;
 
-function buildStrategy(worldId, dtd) {
+function buildStrategy(worldId) {
 
     return function Ctor(options) {
         this.options = options;
@@ -51,18 +51,12 @@ function buildStrategy(worldId, dtd) {
             },
 
             getRun: function (runService) {
-                var me = this;
-                //get or create!
                 // Model is required in the options
                 var model = this.options.run.model || this.options.model;
                 return worldApi.getCurrentRunId({ model: model, filter: worldId })
                     .then(function (runId) {
                         return runService.load(runId);
-                    })
-                    .then(function (run) {
-                        dtd.resolveWith(me, [run]);
-                    })
-                    .fail(dtd.reject);
+                    });
             }
         }
         );
@@ -125,19 +119,16 @@ module.exports = function (options) {
         * @return {Promise}
         */
         getCurrentRun: function (model) {
-            var dtd = $.Deferred();
             var session = this._auth.getCurrentUserSessionInfo();
             var curUserId = session.userId;
             var curGroupName = session.groupName;
 
-            function getAndRestoreLatestRun(world) {
+            return this.getCurrentWorld(curUserId, curGroupName).then(function getAndRestoreLatestRun(world) {
                 if (!world) {
-                    return dtd.reject({ error: 'The user is not part of any world!' });
+                    return $.Deferred().reject({ error: 'The user is not part of any world!' }).promise();
                 }
-
-                var currentWorldId = world.id;
                 var runOpts = $.extend(true, me.options, { model: model });
-                var strategy = buildStrategy(currentWorldId, dtd);
+                var strategy = buildStrategy(world.id);
                 var opt = $.extend(true, {}, {
                     strategy: strategy,
                     run: runOpts
@@ -145,14 +136,10 @@ module.exports = function (options) {
                 var rm = new RunManager(opt);
                 return rm.getRun()
                     .then(function (run) {
-                        dtd.resolve(run, rm.runService, rm);
+                        run.world = world;
+                        return run;
                     });
-            }
-
-            this.getCurrentWorld(curUserId, curGroupName)
-                .then(getAndRestoreLatestRun);
-
-            return dtd.promise();
+            });
         }
     };
 
