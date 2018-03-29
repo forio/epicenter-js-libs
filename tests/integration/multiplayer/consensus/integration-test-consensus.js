@@ -1,7 +1,12 @@
+var server = $('#txtServer').val();
 var defaults = {
     account: 'team-naren',
     project: 'multiplayer-test',
     model: $('#txtModel').val().trim(),
+    server: {
+        host: server,
+        // protocol: server ? 'http' : 'https'
+    }
 };
 
 var am = new F.manager.AuthManager();
@@ -10,7 +15,8 @@ if (!am.isLoggedIn()) {
 } else {
     var wm = new F.manager.WorldManager(defaults);
     $('button').prop('disabled', true);
-    wm.getCurrentWorld().then((worldRes)=> {
+    wm.getCurrentRun().then(function (run) {
+        var worldRes = run.world;
         $('button').prop('disabled', false);
 
         var worldId = worldRes.id;
@@ -18,27 +24,39 @@ if (!am.isLoggedIn()) {
             ...defaults,
             id: worldId
         });
-        function getBPService() {
-            var bp = ws.consensus($('#txtConsensus').val()).breakpoints($('#txtBreakpoint').val());
+        function getConsensusService() {
+            var bp = ws.consensus({ 
+                consensusGroup:  $('#txtConsensus').val(),
+                name: $('#txtBreakpoint').val(),
+            });
             return bp;
         }
 
         $('#btnConsensusCreate').on('click', ()=> {
-            var bp = getBPService();
-            bp.create();
+            var bp = getConsensusService();
+            bp.create({
+                defaultActions: {
+                    P1: [{ name: 'step', arguments: [] }]
+                },
+                ttlSeconds: 10
+            });
         });
         $('#btnConsensusDelete').on('click', ()=> {
-            var bp = getBPService();
+            var bp = getConsensusService();
             bp.delete();
         });
 
         $('#btnConsensusOperationSubmit').click(()=> {
-            var bp = getBPService();
-            bp.submitWithOperations('step');
+            var bp = getConsensusService();
+            bp.submitActions([{ name: 'step', arguments: [] }]);
         });
         $('#btnConsensusOperationRevoke').click(()=> {
-            var bp = getBPService();
+            var bp = getConsensusService();
             bp.undoSubmit();
+        });
+        $('#btnForceClose').click(()=> {
+            var bp = getConsensusService();
+            bp.forceClose();
         });
 
         $('#btnReset').click(()=> {
@@ -48,22 +66,20 @@ if (!am.isLoggedIn()) {
         });
 
 
-        ws.load().then((res)=> {
-            var cm = new F.manager.ChannelManager(defaults);
-            var worldChannel = cm.getWorldChannel(res);
-            worldChannel.subscribe('', function (data) {
-                $('#generalWorldNotifications').append('<li><pre><code>' + JSON.stringify(data, null, 4) + '</code></pre></li>');
-                console.log('World Channel notification', arguments);
-            });
+        var cm = new F.manager.ChannelManager(defaults);
+        var worldChannel = cm.getWorldChannel(worldId);
+        worldChannel.subscribe('', function (data) {
+            $('#generalWorldNotifications').append('<li><pre><code>' + JSON.stringify(data, null, 4) + '</code></pre></li>');
+            console.log('World Channel notification', arguments);
+        });
 
-            var runid = res.run;
-            var rs = new F.service.Run({
-                ...defaults,
-                id: runid,
-            });
-            rs.load(runid, { include: ['Time', 'Step']}).then((run)=> {
-                console.log('Got current run variables', run.variables);
-            });
+        var runid = run.id;
+        var rs = new F.service.Run({
+            ...defaults,
+            id: runid,
+        });
+        rs.load(runid, { include: ['Time', 'Step']}).then((run)=> {
+            console.log('Got current run variables', run.variables);
         });
     });
 }
