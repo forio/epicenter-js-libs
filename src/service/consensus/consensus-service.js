@@ -52,6 +52,16 @@ module.exports = function (config) {
     }
 
     var publicAPI = {
+        /**
+         * Creates a new consensus point
+         * @param  {object} params  creation options
+         * @param  {string[]|{string: number}} params.roles
+         * @param  {number} params.ttlSeconds How long the consensus point lasts for - note you'll still have to explicitly call `forceClose` yourself after timer runs out
+         * @param  {boolean} params.executeActionsImmediately Determines if actions are immediately sent to the server. If set to false, only the *last* action which completes the consensus will be passed on
+         * @param  {{string:object[]}} params.defaultActions Actions to take if the role specified in the key does not submit
+         * @param  {object} options Overrides for service options
+         * @return {Promise}
+         */
         create: function (params, options) {
             var opts = $.extend(true, {}, params); 
             var url = transportOptions.url + urlSegment;
@@ -92,6 +102,13 @@ module.exports = function (config) {
                 return res;
             });
         },
+
+        /**
+         * Deletes current consensus point
+         * 
+         * @param {object} options Overrides for service options
+         * @returns {Promise}
+         */
         delete: function (options) {
             var url = transportOptions.url + [urlSegment].join('/');
             var httpOptions = $.extend(true, {}, serviceOptions, options);
@@ -101,6 +118,12 @@ module.exports = function (config) {
             }));
         },
 
+        /**
+         * Marks current consensus point as complete. Default actions, if specified, will be sent for defaulting roles.
+         * 
+         * @param {object} options Overrides for service options
+         * @returns {Promise}
+         */
         forceClose: function (options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             var url = transportOptions.url + ['close', urlSegment].join('/');
@@ -108,6 +131,14 @@ module.exports = function (config) {
                 url: url
             }));
         },
+
+        /**
+         * Submits actions for your turn and marks you as having `submitted`. If `executeActionsImmediately` was set to `true` while creating the consensus point, the actions will be immediately sent to the model.
+         * 
+         * @param {object[]} actions Actions to send
+         * @param {object} options Overrides for service options
+         * @returns {Promise}
+         */
         submitActions: function (actions, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             var url = transportOptions.url + ['actions', urlSegment].join('/');
@@ -118,6 +149,13 @@ module.exports = function (config) {
                 url: url
             }));
         },
+
+         /**
+         * Reverts submission. Note if `executeActionsImmediately` was set to `true` while creating the consensus point the action will have already been passed on to the model.
+         * 
+         * @param {object} options Overrides for service options
+         * @returns {Promise}
+         */
         undoSubmit: function (options) {
             var url = transportOptions.url + ['actions', urlSegment].join('/');
             var httpOptions = $.extend(true, {}, serviceOptions, options);

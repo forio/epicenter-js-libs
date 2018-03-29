@@ -761,6 +761,13 @@ module.exports = function (config) {
             return http.get(null, opt);
         },
 
+        /**
+         * Get an instance of a consensus service for current world
+         * 
+         * @param {string|{ consensusGroup: string, name: string}} conOpts creates a consensus with an optional group name. If not specified, created under the 'default' group
+         * @param {object} options Overrides for service options
+         * @returns {ConsensusService}
+         */
         consensus: function (conOpts, options) {
             var opts = $.extend(true, {}, serviceOptions, options);
             if (!opts.id) {
