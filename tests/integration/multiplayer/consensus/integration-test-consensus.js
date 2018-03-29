@@ -73,6 +73,22 @@ if (!am.isLoggedIn()) {
             console.log('World Channel notification', arguments);
         });
 
+        // var world = new F.service.World({ id: worldId, account: 'team-naren', project: 'multiplayer-test', server: {
+        //     host: 'test.forio.com'
+        // } });
+        // var consensusService = world.consensus({ consensusGroup: 'year', name: '2' });
+        // consensusService.create({ 
+        //     ttlSeconds: 10,
+        //     defaultActions: {
+        //         P1: [{ name: 'step', arguments: [] }],
+        //         P2: [{ name: 'step', arguments: [] }],
+        //     },
+        // }).then((res)=> {
+        //     setTimeout(()=> {
+        //         consensusService.forceClose();
+        //     }, res.timeLeft * 1000);
+        // });
+
         var runid = run.id;
         var rs = new F.service.Run({
             ...defaults,
@@ -83,5 +99,3 @@ if (!am.isLoggedIn()) {
         });
     });
 }
-
-
