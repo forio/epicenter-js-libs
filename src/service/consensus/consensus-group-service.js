@@ -1,9 +1,8 @@
 'use strict';
 
 var ConfigService = require('../configuration-service');
-var TransportFactory = require('../../transport/http-transport-factory');
 var SessionManager = require('../../store/session-manager');
-var BreakpointService = require('./breakpoint-service');
+var ConsensusService = require('./consensus-service.js');
 
 var apiEndpoint = 'multiplayer/consensus';
 module.exports = function ConsensusGroupService(config) {
@@ -34,9 +33,6 @@ module.exports = function ConsensusGroupService(config) {
             Authorization: 'Bearer ' + serviceOptions.token
         };
     }
-    var http = new TransportFactory(transportOptions);
-
-    var knownBreakpoints = {};
 
     var publicAPI = {
         delete: function () {
@@ -47,7 +43,7 @@ module.exports = function ConsensusGroupService(config) {
         },
         consensus: function (name, options) {
             var opts = $.extend({}, true, serviceOptions, options);
-            var bp = new BreakpointService($.extend({}, true, opts, {
+            var bp = new ConsensusService($.extend({}, true, opts, {
                 consensusGroup: opts.name,
                 name: name,
             }));

@@ -3,9 +3,8 @@
 var ConfigService = require('../configuration-service');
 var TransportFactory = require('../../transport/http-transport-factory');
 var SessionManager = require('../../store/session-manager');
-var rutil = require('../../util/run-util');
 
-var apiEndpoint = 'multiplayer/consensus';
+var API_ENDPOINT = 'multiplayer/consensus';
 
 module.exports = function (config) {
     var defaults = {
@@ -29,7 +28,7 @@ module.exports = function (config) {
     }
 
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
+        url: urlConfig.getAPIPath(API_ENDPOINT)
     });
     if (serviceOptions.token) {
         transportOptions.headers = {

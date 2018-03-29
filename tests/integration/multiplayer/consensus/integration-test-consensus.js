@@ -20,19 +20,18 @@ if (!am.isLoggedIn()) {
         $('button').prop('disabled', false);
 
         var worldId = worldRes.id;
-        var  ws = new F.service.World({
-            ...defaults,
+        var ws = new F.service.World($.extend(true, {}, defaults, {
             id: worldId
-        });
+        }));
         function getConsensusService() {
             var bp = ws.consensus({ 
-                consensusGroup:  $('#txtConsensus').val(),
-                name: $('#txtBreakpoint').val(),
+                consensusGroup: $('#txtConsensusGroup').val(),
+                name: $('#txtConsensus').val(),
             });
             return bp;
         }
 
-        $('#btnConsensusCreate').on('click', ()=> {
+        $('#btnConsensusCreate').on('click', function () {
             var bp = getConsensusService();
             bp.create({
                 defaultActions: {
@@ -41,26 +40,26 @@ if (!am.isLoggedIn()) {
                 ttlSeconds: 10
             });
         });
-        $('#btnConsensusDelete').on('click', ()=> {
+        $('#btnConsensusDelete').on('click', function () {
             var bp = getConsensusService();
             bp.delete();
         });
 
-        $('#btnConsensusOperationSubmit').click(()=> {
+        $('#btnConsensusOperationSubmit').click(function () {
             var bp = getConsensusService();
             bp.submitActions([{ name: 'step', arguments: [] }]);
         });
-        $('#btnConsensusOperationRevoke').click(()=> {
+        $('#btnConsensusOperationRevoke').click(function () {
             var bp = getConsensusService();
             bp.undoSubmit();
         });
-        $('#btnForceClose').click(()=> {
+        $('#btnForceClose').click(function () {
             var bp = getConsensusService();
             bp.forceClose();
         });
 
-        $('#btnReset').click(()=> {
-            ws.newRunForWorld(worldId).then((res)=> {
+        $('#btnReset').click(function () {
+            ws.newRunForWorld(worldId).then(function (res) {
                 alert('reset complete');
             });
         });
@@ -84,17 +83,16 @@ if (!am.isLoggedIn()) {
         //         P2: [{ name: 'step', arguments: [] }],
         //     },
         // }).then((res)=> {
-        //     setTimeout(()=> {
+        //     setTimeout(function () {
         //         consensusService.forceClose();
         //     }, res.timeLeft * 1000);
         // });
 
         var runid = run.id;
-        var rs = new F.service.Run({
-            ...defaults,
-            id: runid,
-        });
-        rs.load(runid, { include: ['Time', 'Step']}).then((run)=> {
+        var rs = new F.service.Run($.extend(true, {}, defaults, {
+            id: runid
+        }));
+        rs.load(runid, { include: ['Time', 'Step'] }).then(function (run) {
             console.log('Got current run variables', run.variables);
         });
     });
