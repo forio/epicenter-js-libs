@@ -120,6 +120,20 @@ module.exports = function (config) {
         },
 
         /**
+         * Returns current consensus point
+         * 
+         * @param {object} options Overrides for service options
+         * @returns {Promise}
+         */
+        load: function (options) {
+            var url = transportOptions.url + [urlSegment].join('/');
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            return http.get({}, $.extend(true, {}, httpOptions, {
+                url: url
+            }));
+        },
+
+        /**
          * Deletes current consensus point
          * 
          * @param {object} options Overrides for service options
