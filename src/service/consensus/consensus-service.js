@@ -104,6 +104,21 @@ module.exports = function (config) {
             return http.post(postParams, httpOptions);
         },
 
+        updateDefaults: function (params, options) {
+            var opts = $.extend(true, {}, params); 
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var url = transportOptions.url + ['actions', urlSegment].join('/');
+
+            if (!opts.actions) {
+                throw new Error('updateDefaults: Need to pass in actions to update');
+            }
+            return http.patch({
+                actions: normalizeActions(opts.actions)
+            }, $.extend(true, {}, httpOptions, {
+                url: url
+            }));
+        },
+
         /**
          * Deletes current consensus point
          * 

@@ -45,6 +45,10 @@ if (!am.isLoggedIn()) {
             var bp = getConsensusService();
             bp.delete();
         });
+        $('#btnUpdateDefaults').on('click', function () {
+            var bp = getConsensusService();
+            bp.updateDefaults({ actions: [{ name: 'step', arguments: [Math.random()] }] });
+        });
 
         $('#btnConsensusOperationSubmit').click(function () {
             var bp = getConsensusService();
