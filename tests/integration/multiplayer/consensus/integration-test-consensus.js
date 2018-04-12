@@ -35,7 +35,8 @@ if (!am.isLoggedIn()) {
             var bp = getConsensusService();
             bp.create({
                 defaultActions: {
-                    P1: [{ name: 'step', arguments: [] }]
+                    P1: [{ name: 'step', arguments: [] }],
+                    P2: [{ name: 'step2', arguments: [] }]
                 },
                 ttlSeconds: 10
             });
@@ -95,5 +96,8 @@ if (!am.isLoggedIn()) {
         rs.load(runid, { include: ['Time', 'Step'] }).then(function (run) {
             console.log('Got current run variables', run.variables);
         });
+    }, function (err) {
+        console.error('Error getting current run', err);
+        $('button').prop('disabled', false);
     });
 }

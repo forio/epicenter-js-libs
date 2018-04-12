@@ -78,10 +78,6 @@ module.exports = function (config) {
                     } else {
                         accum.roles = fieldVal;
                     }
-                } else if (field === 'ttlSeconds') { //FIXME: rename in epicenter
-                    accum.actuationSeconds = fieldVal;
-                } else if (field === 'executeActionsImmediately') { //FIXME: rename in epicenter
-                    accum.transparent = fieldVal;
                 } else if (field === 'defaultActions') { //FIXME: rename in epicenter
                     accum.actions = Object.keys(fieldVal).reduce(function (rolesAccum, roleName) {
                         rolesAccum[roleName] = normalizeActions(fieldVal[roleName]);
@@ -93,14 +89,19 @@ module.exports = function (config) {
                 return accum;
             }, {});
 
-            return http.post(postParams, httpOptions).then(function (res) {
-                if (opts.ttlSeconds) {
-                    var timeSpent = +(new Date(res.now)) - +(new Date(res.created));
-                    var timeSpentSeconds = Math.ceil(timeSpent / 1000);
-                    res.timeLeft = Math.max(opts.ttlSeconds - timeSpentSeconds, 0);
-                }
-                return res;
-            });
+            // if (postParams.transparent === undefined) {
+            //     //pick best value based on options provided
+            //     var areAllActionsSame = true;
+            //     postParams.actions.forEach(function (action, index) {
+            //         var lastAction = postParams.actions[index - 1];
+            //         if (lastAction && lastAction.proc.name !== action.proc.name) {
+            //             areAllActionsSame = false;
+            //         }
+            //     });
+            //     postParams.transparent = !areAllActionsSame;
+            // }
+
+            return http.post(postParams, httpOptions);
         },
 
         /**
