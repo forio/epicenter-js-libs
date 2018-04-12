@@ -45,7 +45,7 @@ module.exports = function (config) {
         }
         return [].concat(actions).map(function (action) {
             if (action.arguments) {
-                return { proc: action };
+                return { execute: action };
             }
             return action;
         });
