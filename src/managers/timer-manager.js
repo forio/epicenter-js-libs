@@ -23,10 +23,10 @@ function getAPIKeyName(options) {
         if (!options.scopeOptions) {
             throw new Error('Run Scope requires passing in run options' + scope);
         }
-        // var rm = new RunManager(options.scopeOptions);
-        // return rm.getRun().then(function (run) {
-        //     return [options.name, 'run', run.id].join('-');
-        // });
+        var rm = new RunManager(options.scopeOptions);
+        return rm.getRun().then(function (run) {
+            return [options.name, 'run', run.id].join('-');
+        });
     }
     throw new Error('Unknown scope ' + scope);
 }
@@ -36,6 +36,20 @@ function getStore(options, key) {
         root: key
     }));
     return ds;
+}
+
+function doAction(action, merged) {
+    var ts = new TimeService(merged);
+    return getAPIKeyName(merged).then(function (key) {
+        return ts.getTime().then(function (t) {
+            var ds = getStore(merged, key);
+            return ds.pushToArray('time/actions', { 
+                type: action, time: t.toISOString()
+            });
+        }, function (err) {
+            console.error('Timermanager start: Timer error', err);
+        });
+    });
 }
 // Interface that all strategies need to implement
 module.exports = classFrom(Base, {
@@ -79,28 +93,15 @@ module.exports = classFrom(Base, {
 
     start: function (opts) {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        var ts = new TimeService(merged);
-        return getAPIKeyName(merged).then(function (key) {
-            return ts.getTime().then(function (t) {
-                var ds = getStore(merged, key);
-                return ds.pushToArray('time/actions', { 
-                    action: 'START', startTime: t.toISOString()
-                });
-            }, function (err) {
-                console.error('Timermanager start: Timer error', err);
-            });
-        });
+        return doAction('START', merged);
     },
     pause: function (opts) {
-        var authSession = this.sessionManager.getSession();
-        var merged = $.extend(true, {}, this.options, opts);
-        var ts = new TimeService(merged);
-        return getAPIKeyName(this.options, authSession).then(function (key) {
-            var ds = getStore(merged, key + '/actions/foo');
-            return ts.getTime().then(function (t) {
-                return ds.save({ action: 'PAUSE', time: t });
-            });
-        });
+        var merged = this.sessionManager.getMergedOptions(this.options, opts);
+        return doAction('PAUSE', merged);
+    },
+    resume: function (opts) {
+        var merged = this.sessionManager.getMergedOptions(this.options, opts);
+        return doAction('RESUME', merged);
     },
 
     getTime: function (opts) {
@@ -110,16 +111,38 @@ module.exports = classFrom(Base, {
             return ts.getTime().then(function (currentTime) {
                 var ds = getStore(merged, key);
                 return ds.load().then(function (doc) {
-                    var actions = doc.actions;
-                    var time = actions.reduce(function (accum, action) {
-                        if (action === 'START') {
-                            accum.elapsedTime = (+currentTime - action.start);
-                            accum.timeLeft = Math.max(action.totalTime - accum.elapsedTime, 0);
-                            accum.startTime = accum.startTime;
-                            accum.totalTime = accum.totalTime;
+                    var actions = doc[0].actions;
+                    var totalTime = doc[0].totalTime;
+
+                    var reduced = actions.reduce(function (accum, action) {
+                        var ts = +(new Date(action.time));
+                        if (action.type === 'START') {
+                            accum.startTime = ts;
+                        } else if (action.type === 'PAUSE') {
+                            accum.lastPausedTime = ts;
+                        } else if (action.type === 'RESUME') {
+                            var pausedTime = ts - accum.lastPausedTime;
+                            accum.totalPausedTime += pausedTime;
+                            accum.lastPausedTime = 0;
                         }
-                    }, { elapsedTime: 0 });
-                    return time;
+                        return accum;
+                    }, { startTime: 0, lastPausedTime: 0, totalPauseTime: 0 });
+
+                    var current = +currentTime;
+                    var elapsed = current - reduced.startTime + reduced.totalPauseTime;
+                    var remaining = Math.max(0, totalTime - elapsed);
+
+                    var secs = Math.floor(remaining / 1000);
+                    var minutesRemaining = Math.floor(secs / 60);
+                    var secondsRemaining = Math.floor(secs % 60);
+                    return {
+                        elapsed: elapsed,
+                        remaining: {
+                            time: remaining,
+                            minutes: minutesRemaining,
+                            seconds: secondsRemaining,
+                        }
+                    };
                 }, function () {
                     throw new Error('Timer has not been started yet');
                 });

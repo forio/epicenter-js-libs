@@ -1,13 +1,7 @@
 'use strict';
 
 $(function () {
-    var server = {
-        websocketEnabled: false,
-        server: {
-            host: 'epistage2.foriodev.com',
-            protocol: 'http'
-        }
-    };
+    var server = {};
 
     var cm = new F.manager.ChannelManager(server);
     cm.on('connect', function () {

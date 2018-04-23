@@ -26,7 +26,6 @@ tm.getChannel().then(function (channel) {
 
 
 $('#btnDelete').click(function () {
-   
     tm.cancel().then(function () {
         window.alert('cleared');
     });
@@ -35,7 +34,14 @@ $('#btnstart').click(function (evt) {
     var tm = new F.manager.TimerManager({
         scope: 'GROUP',
     });
-    tm.start().then(()=> {
+    tm.start();
+});
 
+$('#btnUpdateTime').click(function (evt) {
+    var tm = new F.manager.TimerManager({
+        scope: 'GROUP',
+    });
+    tm.getTime().then(function (time) {
+        console.log(time);
     });
 });
