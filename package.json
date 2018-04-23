@@ -8,22 +8,22 @@
   "main": "src/app.js",
   "devDependencies": {
     "browserify-istanbul": "^2.0.0",
-    "growl": "^1.8.1",
-    "grunt": "^1.0.1",
-    "grunt-browserify": "^5.0.0",
+    "growl": "^1.10.5",
+    "grunt": "^1.0.2",
+    "grunt-browserify": "^5.3.0",
     "grunt-bump": "^0.8.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-uglify": "^2.0.0",
-    "grunt-contrib-watch": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.1",
     "grunt-conventional-changelog": "^6.1.0",
     "grunt-eslint": "^19.0.0",
     "grunt-markdox": "^1.2.1",
     "grunt-mocha-phantom-istanbul-senluchen2015": "0.2.1",
     "grunt-template-module": "^0.5.0",
-    "husky": "^0.11.7",
+    "husky": "^0.14.3",
     "istanbul": "^0.4.5",
-    "minifyify": "^7.3.3",
-    "object-assign": "^4.1.0",
+    "minifyify": "^7.3.5",
+    "object-assign": "^4.1.1",
     "uglify-js": "^2.7.3"
   },
   "scripts": {
@@ -32,8 +32,8 @@
     "prepush": "grunt validate"
   },
   "dependencies": {
+    "Base64": "^1.0.1",
     "cometd-jquery": "github:forio/cometd-jquery",
-    "Base64": "^1.0.0",
-    "jquery": "^2.1.1"
+    "jquery": "^3.3.1"
   }
 }

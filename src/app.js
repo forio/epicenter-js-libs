@@ -56,6 +56,7 @@ F.manager.RunManager = require('./managers/run-manager');
 F.manager.AuthManager = require('./managers/auth-manager');
 F.manager.WorldManager = require('./managers/world-manager');
 F.manager.SavedRunsManager = require('./managers/saved-runs-manager');
+F.manager.TimerManager = require('./managers/timer-manager');
 
 var strategies = require('./managers/run-strategies');
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
