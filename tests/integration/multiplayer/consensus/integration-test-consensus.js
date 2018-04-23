@@ -34,9 +34,10 @@ if (!am.isLoggedIn()) {
         $('#btnConsensusCreate').on('click', function () {
             var bp = getConsensusService();
             bp.create({
+                executeActionsImmediately: true,
                 defaultActions: {
-                    P1: [{ name: 'step', arguments: [] }],
-                    P2: [{ name: 'step2', arguments: [] }]
+                    P2: [{ name: 'step', arguments: [2] }],
+                    P1: [{ name: 'step', arguments: [1] }],
                 },
                 ttlSeconds: 10
             });
