@@ -46,8 +46,9 @@ F.service.Asset = require('./service/asset-api-adapter');
 F.service.Group = require('./service/group-api-service');
 F.service.Introspect = require('./service/introspection-api-service');
 F.service.Presence = require('./service/presence-api-service');
-
+F.service.Time = require('./service/time-api-service');
 F.store.Cookie = require('./store/cookie-store');
+
 F.factory.Store = require('./store/store-factory');
 
 F.manager.ScenarioManager = require('./managers/scenario-manager');
