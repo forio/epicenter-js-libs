@@ -33,6 +33,8 @@ var qutil = require('../util/query-util');
 var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
 
+var ChannelManager = require('../managers/epicenter-channel-manager');
+
 module.exports = function (config) {
     var defaults = {
         /**
@@ -179,6 +181,12 @@ module.exports = function (config) {
             return http.post(attrs, httpOptions);
         },
 
+        pushToArray: function (key, val, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            httpOptions.url = getURL('', httpOptions.root + '/' + key);
+            return http.post(val, httpOptions);
+        },
+
         /**
          * Save (create or replace) data in a named document or element within the collection. 
          * 
@@ -272,8 +280,13 @@ module.exports = function (config) {
                 httpOptions.url = getURL(keys, httpOptions.root);
             }
             return http.delete(params, httpOptions);
-        }
+        },
 
+        getChannel: function (options) {
+            var opts = $.extend(true, {}, serviceOptions, options);
+            var cm = new ChannelManager(opts);
+            return cm.getDataChannel(opts.root);
+        }
         // Epicenter doesn't allow nuking collections
         //     /**
         //      * Removes collection being referenced
