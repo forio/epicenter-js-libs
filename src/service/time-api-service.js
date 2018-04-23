@@ -21,6 +21,11 @@ module.exports = function (config) {
         getTime: function () {
             return http.get().then(function (t) { 
                 return new Date(t); 
+            }).catch(function (e) {
+                //EPICENTER-3516 wrong response-type
+                if (e.responseText) {
+                    return new Date(e.responseText);
+                }
             });
         }
     };
