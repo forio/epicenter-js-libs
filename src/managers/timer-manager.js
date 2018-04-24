@@ -19,7 +19,7 @@ var STATES = {
 };
 
 function getAPIKeyName(options) {
-    var scope = options.scope;
+    var scope = options.scope.toUpperCase();
     if (scope === SCOPES.GROUP) {
         return $.Deferred().resolve([options.name, options.groupName].join('-')).promise();
     } else if (scope === SCOPES.USER) {

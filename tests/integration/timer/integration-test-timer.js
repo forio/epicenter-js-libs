@@ -1,45 +1,51 @@
-$('#btnCreate').click(function (evt) {
+function getTm(evt, options) {
     evt.preventDefault();
+    var $section = $(evt.target).closest('section');
+    var scope = $section.data('scope');
+    var timeLimit = +$section.find('.time-limit').val() * 60 * 1000;
 
-    var scope = $('#scope').val();
-    var timeLimit = +$('#txtTimeLimit').val() * 60 * 1000;
-
-    var tm = new F.manager.TimerManager({
+    var tm = new F.manager.TimerManager($.extend({
         scope: scope,
         time: timeLimit,
-    });
+        tickInterval: 1,
+    }, options));
+    return tm;
+}
+
+$('.btn-create').click(function (evt) {
+    var tm = getTm(evt);
     tm.create().then(function () {
         window.alert('Timer created');
     });
-});
 
-
-var tm = new F.manager.TimerManager({
-    scope: 'GROUP',
-});
-tm.getChannel().then(function (channel) {
-    channel.subscribe('', function (d) {
-        console.log('Channel', d); 
+    tm.getChannel().then(function (channel) {
+        channel.subscribe('TICK', function (d) {
+            console.log('Channel', d); 
+        });
+        channel.subscribe('COMPLETE', function (d) {
+            console.log('COMPLETE', d); 
+        });
     });
 });
 
 
-
-$('#btnDelete').click(function () {
-    tm.cancel().then(function () {
+$('.btn-delete').click(function (evt) {
+    getTm(evt).cancel().then(function () {
         window.alert('cleared');
     });
 });
-$('#btnstart').click(function (evt) {
-    tm.start();
-});$('#btnpause').click(function (evt) {
-    tm.pause();
-});$('#btnresume').click(function (evt) {
-    tm.resume();
+$('.btnstart').click(function (evt) {
+    getTm(evt).start();
+});
+$('.btnpause').click(function (evt) {
+    getTm(evt).pause();
+});
+$('.btnresume').click(function (evt) {
+    getTm(evt).resume();
 });
 
-$('#btnUpdateTime').click(function (evt) {
-    tm.getTime().then(function (time) {
+$('.btnUpdateTime').click(function (evt) {
+    getTm(evt).getTime().then(function (time) {
         console.log(time);
     }, function (e) {
         console.error('btnUpdateTime error', e);
