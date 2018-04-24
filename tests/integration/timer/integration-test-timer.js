@@ -31,17 +31,17 @@ $('#btnDelete').click(function () {
     });
 });
 $('#btnstart').click(function (evt) {
-    var tm = new F.manager.TimerManager({
-        scope: 'GROUP',
-    });
     tm.start();
+});$('#btnpause').click(function (evt) {
+    tm.pause();
+});$('#btnresume').click(function (evt) {
+    tm.resume();
 });
 
 $('#btnUpdateTime').click(function (evt) {
-    var tm = new F.manager.TimerManager({
-        scope: 'GROUP',
-    });
     tm.getTime().then(function (time) {
         console.log(time);
+    }, function (e) {
+        console.error('btnUpdateTime error', e);
     });
 });

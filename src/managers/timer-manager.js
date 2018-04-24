@@ -12,6 +12,11 @@ var SCOPES = {
     RUN: 'RUN',
     USER: 'USER'
 };
+var STATES = {
+    STARTED: 'STARTED',
+    PAUSED: 'PAUSED',
+    RESUMED: 'RESUMED',
+};
 
 function getAPIKeyName(options) {
     var scope = options.scope;
@@ -45,11 +50,56 @@ function doAction(action, merged) {
             var ds = getStore(merged, key);
             return ds.pushToArray('time/actions', { 
                 type: action, time: t.toISOString()
+            }).catch(function (res) {
+                if (res.status === 404) {
+                    var errorMsg = 'Timer: Collection ' + key + ' not found. Did you create it?';
+                    console.error(errorMsg);
+                    throw new Error(errorMsg);
+                }
+                throw res;
             });
         }, function (err) {
             console.error('Timermanager start: Timer error', err);
         });
     });
+}
+
+function reduceActions(actions, currentTime, totalTime) {
+    var reduced = actions.reduce(function (accum, action) {
+        var ts = +(new Date(action.time));
+        if (action.type === STATES.STARTED && !accum.startTime) {
+            accum.startTime = ts;
+        } else if (action.type === STATES.PAUSED && !accum.lastPausedTime) {
+            accum.lastPausedTime = ts;
+            accum.elapsedTime = ts - accum.startTime;
+        } else if (action.type === STATES.RESUMED && accum.lastPausedTime) {
+            var pausedTime = ts - accum.lastPausedTime;
+            accum.totalPauseTime += pausedTime;
+            accum.lastPausedTime = 0;
+            accum.elapsedTime = 0;
+        }
+        return accum;
+    }, { startTime: 0, lastPausedTime: 0, totalPauseTime: 0, elapsedTime: 0 });
+
+    var lastAction = actions[actions.length - 1];
+    var isPaused = !!(lastAction && lastAction.type === STATES.PAUSED);
+
+    var current = +currentTime;
+    var elapsed = isPaused ? reduced.elapsedTime : (current - (reduced.startTime || current) + reduced.totalPauseTime);
+    var remaining = Math.max(0, totalTime - elapsed);
+
+    var secs = Math.floor(remaining / 1000);
+    var minutesRemaining = Math.floor(secs / 60);
+    var secondsRemaining = Math.floor(secs % 60);
+    return {
+        elapsed: elapsed,
+        isPaused: isPaused,
+        remaining: {
+            time: remaining,
+            minutes: minutesRemaining,
+            seconds: secondsRemaining,
+        },
+    };
 }
 // Interface that all strategies need to implement
 module.exports = classFrom(Base, {
@@ -76,13 +126,6 @@ module.exports = classFrom(Base, {
             return ds.saveAs('time', { totalTime: merged.time, actions: [] });
         });
     },
-    update: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return getAPIKeyName(merged).then(function (key) {
-            var ds = getStore(merged, key);
-            return ds.saveAs('totalTime', merged.time);
-        });
-    },
     cancel: function (opts) {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
         return getAPIKeyName(merged).then(function (key) {
@@ -93,15 +136,15 @@ module.exports = classFrom(Base, {
 
     start: function (opts) {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction('START', merged);
+        return doAction(STATES.STARTED, merged);
     },
     pause: function (opts) {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction('PAUSE', merged);
+        return doAction(STATES.PAUSED, merged);
     },
     resume: function (opts) {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction('RESUME', merged);
+        return doAction(STATES.RESUMED, merged);
     },
 
     getTime: function (opts) {
@@ -110,41 +153,15 @@ module.exports = classFrom(Base, {
         return getAPIKeyName(merged).then(function (key) {
             return ts.getTime().then(function (currentTime) {
                 var ds = getStore(merged, key);
-                return ds.load().then(function (doc) {
+                return ds.load().then(function calculateTimeLeft(doc) {
+                    if (!doc || !doc[0]) {
+                        throw new Error('Timer has not been started yet');
+                    }
                     var actions = doc[0].actions;
                     var totalTime = doc[0].totalTime;
-
-                    var reduced = actions.reduce(function (accum, action) {
-                        var ts = +(new Date(action.time));
-                        if (action.type === 'START') {
-                            accum.startTime = ts;
-                        } else if (action.type === 'PAUSE') {
-                            accum.lastPausedTime = ts;
-                        } else if (action.type === 'RESUME') {
-                            var pausedTime = ts - accum.lastPausedTime;
-                            accum.totalPausedTime += pausedTime;
-                            accum.lastPausedTime = 0;
-                        }
-                        return accum;
-                    }, { startTime: 0, lastPausedTime: 0, totalPauseTime: 0 });
-
-                    var current = +currentTime;
-                    var elapsed = current - reduced.startTime + reduced.totalPauseTime;
-                    var remaining = Math.max(0, totalTime - elapsed);
-
-                    var secs = Math.floor(remaining / 1000);
-                    var minutesRemaining = Math.floor(secs / 60);
-                    var secondsRemaining = Math.floor(secs % 60);
-                    return {
-                        elapsed: elapsed,
-                        remaining: {
-                            time: remaining,
-                            minutes: minutesRemaining,
-                            seconds: secondsRemaining,
-                        }
-                    };
-                }, function () {
-                    throw new Error('Timer has not been started yet');
+                    
+                    var reduced = reduceActions(actions, currentTime, totalTime);
+                    return $.extend(true, {}, doc[0], reduced);
                 });
             });
         });
