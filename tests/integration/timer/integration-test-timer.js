@@ -15,14 +15,18 @@ function getTm(evt, options) {
 
 var tm = new F.manager.TimerManager({
     scope: 'group',
-    tickInterval: 1,
+    tickInterval: 1000,
 });
 var channel = tm.getChannel();
 
-channel.subscribe('', function (d, meta) {
-    console.log('global listener', d, meta);
+channel.subscribe('', function (d) {
+    console.log('global listener', d);
 });
-
+channel.subscribe('tick', function (d) {
+    $('#mins').html(d.tick.remaining.minutes);
+    $('#seconds').html(d.tick.remaining.seconds);
+    console.log('tick listener', d.tick.remaining);
+});
 // channel.subscribe('tick', function (d) {
 //     console.log('tick', d);
 // });

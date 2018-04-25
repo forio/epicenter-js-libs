@@ -4,6 +4,7 @@ var classFrom = require('../util/inherit');
 var Dataservice = require('../service/data-api-service');
 var TimeService = require('../service/time-api-service');
 var SessionManager = require('../store/session-manager');
+var Channel = require('../util/channel');
 
 var Base = {};
 
@@ -96,6 +97,7 @@ function reduceActions(actions, currentTime) {
     return {
         elapsed: elapsed,
         isPaused: isPaused,
+        currentTime: current,
         remaining: {
             time: remaining,
             minutes: minutesRemaining,
@@ -116,6 +118,7 @@ module.exports = classFrom(Base, {
 
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new SessionManager(this.options);
+        this.channel = new Channel();
     },
 
     create: function (opts) {
@@ -168,7 +171,53 @@ module.exports = classFrom(Base, {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
         var key = getAPIKeyName(merged);
         var ds = getStore(merged, key);
-        return ds.getChannel();
+        var dataChannel = ds.getChannel();
+        var me = this;
+
+        function createTimer(actions, currentTime) {
+            if (me.interval || !merged.tickInterval) {
+                return;
+            }
+            me.interval = setInterval(function () {
+                currentTime = currentTime + merged.tickInterval;
+                var reduced = reduceActions(actions, currentTime);
+                if (reduced.remaining.time === 0) {
+                    me.channel.publish({ complete: reduced });
+                    clearInterval(me.interval);
+                    ///TODO: Unsubscribe from data channel
+                    me.interval = null;
+                }
+                me.channel.publish({ tick: reduced });
+            }, merged.tickInterval);
+
+            var reduced = reduceActions(actions, currentTime);
+            me.channel.publish({ tick: reduced });
+        }
+
+        me.subsid = dataChannel.subscribe('', function (res, meta) {
+            if (meta.dataPath.indexOf('/actions') === -1) { //create
+                var ts = new TimeService(merged);
+                return ts.getTime().then(function (currentTime) {
+                    var reduced = reduceActions(res.actions, currentTime);
+                    me.channel.publish({ create: reduced });
+                    createTimer(res.actions, +currentTime);
+                });
+            } else if (meta.subType === 'delete') {
+                clearInterval(me.interval);
+            } else {
+                var actions = res; //you only get the array back
+                var lastAction = actions[actions.length - 1];
+                var params = {};
+                params[lastAction.type] = lastAction.time;
+                me.channel.publish(params);
+            }
+        });
+
+        me.getTime(merged).then(function (res) {
+            createTimer(res.actions, res.currentTime); //failure means timer hasn't been created, in which case the datachannel subscription should handle 
+        });
+
+        return this.channel;
     },
 
 });
