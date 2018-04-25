@@ -1,19 +1,17 @@
-'use strict';
+import classFrom from 'util/inherit';
+import Dataservice from 'service/data-api-service';
+import TimeService from 'service/time-api-service';
+import SessionManager from 'store/session-manager';
+import Channel from 'util/channel';
 
-var classFrom = require('../util/inherit');
-var Dataservice = require('../service/data-api-service');
-var TimeService = require('../service/time-api-service');
-var SessionManager = require('../store/session-manager');
-var Channel = require('../util/channel');
+const Base = {};
 
-var Base = {};
-
-var SCOPES = {
+const SCOPES = {
     GROUP: 'GROUP',
     RUN: 'RUN',
     USER: 'USER'
 };
-var STATES = {
+const STATES = {
     CREATED: 'CREATED',
     STARTED: 'STARTED',
     PAUSED: 'PAUSED',
@@ -21,7 +19,7 @@ var STATES = {
 };
 
 function getAPIKeyName(options) {
-    var scope = options.scope.toUpperCase();
+    const scope = options.scope.toUpperCase();
     if (scope === SCOPES.GROUP) {
         return [options.name, options.groupName].join('-');
     } else if (scope === SCOPES.USER) {
@@ -30,7 +28,7 @@ function getAPIKeyName(options) {
         // if (!options.scopeOptions) {
         //     throw new Error('Run Scope requires passing in run options' + scope);
         // }
-        // var rm = new RunManager(options.scopeOptions);
+        // const rm = new RunManager(options.scopeOptions);
         // return rm.getRun().then(function (run) {
         //     return [options.name, 'run', run.id].join('-');
         // });
@@ -39,22 +37,22 @@ function getAPIKeyName(options) {
 }
 
 function getStore(options, key) {
-    var ds = new Dataservice($.extend(true, {}, options, {
+    const ds = new Dataservice($.extend(true, {}, options, {
         root: key
     }));
     return ds;
 }
 
 function doAction(action, merged) {
-    var ts = new TimeService(merged);
-    var key = getAPIKeyName(merged);
+    const ts = new TimeService(merged);
+    const key = getAPIKeyName(merged);
     return ts.getTime().then(function (t) {
-        var ds = getStore(merged, key);
+        const ds = getStore(merged, key);
         return ds.pushToArray('time/actions', { 
             type: action, time: t.toISOString()
         }).catch(function (res) {
             if (res.status === 404) {
-                var errorMsg = 'Timer: Collection ' + key + ' not found. Did you create it?';
+                const errorMsg = 'Timer: Collection ' + key + ' not found. Did you create it?';
                 console.error(errorMsg);
                 throw new Error(errorMsg);
             }
@@ -66,8 +64,8 @@ function doAction(action, merged) {
 }
 
 function reduceActions(actions, currentTime) {
-    var reduced = actions.reduce(function (accum, action) {
-        var ts = +(new Date(action.time));
+    const reduced = actions.reduce(function (accum, action) {
+        const ts = +(new Date(action.time));
         if (action.type === STATES.CREATED) {
             accum.timeLimit = action.timeLimit;
         } else if (action.type === STATES.STARTED && !accum.startTime) {
@@ -76,7 +74,7 @@ function reduceActions(actions, currentTime) {
             accum.lastPausedTime = ts;
             accum.elapsedTime = ts - accum.startTime;
         } else if (action.type === STATES.RESUMED && accum.lastPausedTime) {
-            var pausedTime = ts - accum.lastPausedTime;
+            const pausedTime = ts - accum.lastPausedTime;
             accum.totalPauseTime += pausedTime;
             accum.lastPausedTime = 0;
             accum.elapsedTime = 0;
@@ -84,16 +82,16 @@ function reduceActions(actions, currentTime) {
         return accum;
     }, { startTime: 0, lastPausedTime: 0, totalPauseTime: 0, elapsedTime: 0, timeLimit: 0 });
 
-    var lastAction = actions[actions.length - 1];
-    var isPaused = !!(lastAction && lastAction.type === STATES.PAUSED);
+    const lastAction = actions[actions.length - 1];
+    const isPaused = !!(lastAction && lastAction.type === STATES.PAUSED);
 
-    var current = +currentTime;
-    var elapsed = isPaused ? reduced.elapsedTime : (current - (reduced.startTime || current) + reduced.totalPauseTime);
-    var remaining = Math.max(0, reduced.timeLimit - elapsed);
+    const current = +currentTime;
+    const elapsed = isPaused ? reduced.elapsedTime : (current - (reduced.startTime || current) + reduced.totalPauseTime);
+    const remaining = Math.max(0, reduced.timeLimit - elapsed);
 
-    var secs = Math.floor(remaining / 1000);
-    var minutesRemaining = Math.floor(secs / 60);
-    var secondsRemaining = Math.floor(secs % 60);
+    const secs = Math.floor(remaining / 1000);
+    const minutesRemaining = Math.floor(secs / 60);
+    const secondsRemaining = Math.floor(secs % 60);
     return {
         elapsed: elapsed,
         isPaused: isPaused,
@@ -106,9 +104,9 @@ function reduceActions(actions, currentTime) {
     };
 }
 // Interface that all strategies need to implement
-module.exports = classFrom(Base, {
+const Timermanager = classFrom(Base, {
     constructor: function (options) {
-        var defaults = {
+        const defaults = {
             account: undefined,
             project: undefined,
 
@@ -122,57 +120,57 @@ module.exports = classFrom(Base, {
     },
 
     create: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
+        const merged = this.sessionManager.getMergedOptions(this.options, opts);
         if (!merged.time || isNaN(+merged.time)) {
             throw new Error('Timer Manager: expected number time, received ' + merged.time);
         }
-        var key = getAPIKeyName(merged);
-        var ds = getStore(merged, key);
+        const key = getAPIKeyName(merged);
+        const ds = getStore(merged, key);
         return ds.saveAs('time', { actions: [{ type: STATES.CREATED, timeLimit: merged.time }] });
     },
     cancel: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        var key = getAPIKeyName(merged);
-        var ds = getStore(merged, key);
+        const merged = this.sessionManager.getMergedOptions(this.options, opts);
+        const key = getAPIKeyName(merged);
+        const ds = getStore(merged, key);
         return ds.remove();
     },
 
     start: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
+        const merged = this.sessionManager.getMergedOptions(this.options, opts);
         return doAction(STATES.STARTED, merged);
     },
     pause: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
+        const merged = this.sessionManager.getMergedOptions(this.options, opts);
         return doAction(STATES.PAUSED, merged);
     },
     resume: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
+        const merged = this.sessionManager.getMergedOptions(this.options, opts);
         return doAction(STATES.RESUMED, merged);
     },
 
     getTime: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        var ts = new TimeService(merged);
-        var key = getAPIKeyName(merged);
+        const merged = this.sessionManager.getMergedOptions(this.options, opts);
+        const ts = new TimeService(merged);
+        const key = getAPIKeyName(merged);
         return ts.getTime().then(function (currentTime) {
-            var ds = getStore(merged, key);
+            const ds = getStore(merged, key);
             return ds.load().then(function calculateTimeLeft(doc) {
                 if (!doc || !doc[0]) {
                     throw new Error('Timer has not been started yet');
                 }
-                var actions = doc[0].actions;
-                var reduced = reduceActions(actions, currentTime);
+                const actions = doc[0].actions;
+                const reduced = reduceActions(actions, currentTime);
                 return $.extend(true, {}, doc[0], reduced);
             });
         });
     },
 
     getChannel: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        var key = getAPIKeyName(merged);
-        var ds = getStore(merged, key);
-        var dataChannel = ds.getChannel();
-        var me = this;
+        const merged = this.sessionManager.getMergedOptions(this.options, opts);
+        const key = getAPIKeyName(merged);
+        const ds = getStore(merged, key);
+        const dataChannel = ds.getChannel();
+        const me = this;
 
         function createTimer(actions, currentTime) {
             if (me.interval || !merged.tickInterval) {
@@ -180,7 +178,7 @@ module.exports = classFrom(Base, {
             }
             me.interval = setInterval(function () {
                 currentTime = currentTime + merged.tickInterval;
-                var reduced = reduceActions(actions, currentTime);
+                const reduced = reduceActions(actions, currentTime);
                 if (reduced.remaining.time === 0) {
                     me.channel.publish('complete', reduced);
                     clearInterval(me.interval);
@@ -190,15 +188,15 @@ module.exports = classFrom(Base, {
                 me.channel.publish('tick', reduced);
             }, merged.tickInterval);
 
-            var reduced = reduceActions(actions, currentTime);
+            const reduced = reduceActions(actions, currentTime);
             me.channel.publish('tick', reduced);
         }
 
         me.subsid = dataChannel.subscribe('', function (res, meta) {
             if (meta.dataPath.indexOf('/actions') === -1) { //create
-                var ts = new TimeService(merged);
+                const ts = new TimeService(merged);
                 return ts.getTime().then(function (currentTime) {
-                    var reduced = reduceActions(res.actions, currentTime);
+                    const reduced = reduceActions(res.actions, currentTime);
                     me.channel.publish('create', reduced);
                     createTimer(res.actions, +currentTime);
                 });
@@ -207,8 +205,8 @@ module.exports = classFrom(Base, {
                 me.channel.publish('reset');
 
             } else {
-                var actions = res; //you only get the array back
-                var lastAction = actions[actions.length - 1];
+                const actions = res; //you only get the array back
+                const lastAction = actions[actions.length - 1];
                 me.channel.publish(lastAction.type, lastAction);
             }
         });
@@ -219,5 +217,6 @@ module.exports = classFrom(Base, {
 
         return this.channel;
     },
-
 });
+
+export default Timermanager;

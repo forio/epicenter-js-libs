@@ -46,6 +46,7 @@ src/components/**/templates.js
 local/
 
 dist/epicenter-edge.js
+dist/epicenter-edge.js.map
 dist/epicenter-edge-instrumented.js
 
 #instanbul related

@@ -60,7 +60,7 @@ module.exports = function (grunt) {
                 libraryTarget: 'var'
             },
             module: {
-                rules: [] //meant for testing in a new browser so no babel transpiling required
+                rules: [babelloader]
             },
             plugins: [],
             devtool: 'cheap-module-source-map',
