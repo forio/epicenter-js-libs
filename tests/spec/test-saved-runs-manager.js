@@ -20,7 +20,7 @@
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
 
-            server.respondWith('GET', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/[^\/]*\/\?include=(.*)/, function (xhr, prefix, variable) {
+            server.respondWith('GET', /(.*)\/run\/[^/]*\/[^/]*\/[^/]*\/[^/]*\/\?include=(.*)/, function (xhr, prefix, variable) {
                 if (variable === 'fail') {
                     xhr.respond(400);
                 } else {

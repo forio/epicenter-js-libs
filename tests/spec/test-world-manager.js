@@ -37,7 +37,7 @@
         var server;
         before(function () {
             server = sinon.fakeServer.create();
-            var getworldsPattern = /multiplayer\/world\/\?((?:project=js-libs|account=forio|group=group\-321|&userId=user\-123)&?){4}/;
+            var getworldsPattern = /multiplayer\/world\/\?((?:project=js-libs|account=forio|group=group-321|&userId=user-123)&?){4}/;
 
             // get & load runId
             server.respondWith('POST', /\/world\/worldid2\/run/, function (xhr) {
@@ -56,7 +56,7 @@
             });
 
             // get run header
-            server.respondWith('GET', /run\/forio\/js\-libs\/run2/, function (xhr, id) {
+            server.respondWith('GET', /run\/forio\/js-libs\/run2/, function (xhr, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({
                     id: 'run2',
                     lastModified: '123'
@@ -103,10 +103,10 @@
                 var req = server.requests[0];
                 req.method.toUpperCase().should.equal('GET');
                 req.url.should.match(/\/world\//);
-                req.url.should.match(/group=group\-321/);
+                req.url.should.match(/group=group-321/);
                 req.url.should.match(/account=forio/);
                 req.url.should.match(/project=js-libs/);
-                req.url.should.match(/userId=user\-123/);
+                req.url.should.match(/userId=user-123/);
 
             });
 
@@ -131,10 +131,10 @@
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
                 req.url.should.match(/\/world\//);
-                req.url.should.match(/group=group\-321/);
-                req.url.should.match(/account=other\-account/);
-                req.url.should.match(/project=other\-project/);
-                req.url.should.match(/userId=user\-123/);
+                req.url.should.match(/group=group-321/);
+                req.url.should.match(/account=other-account/);
+                req.url.should.match(/project=other-project/);
+                req.url.should.match(/userId=user-123/);
             });
         });
 
@@ -167,10 +167,10 @@
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
                 req.url.should.match(/\/world\//);
-                req.url.should.match(/group=group\-321/);
+                req.url.should.match(/group=group-321/);
                 req.url.should.match(/account=forio/);
                 req.url.should.match(/project=js-libs/);
-                req.url.should.match(/userId=user\-123/);
+                req.url.should.match(/userId=user-123/);
             });
 
             it('should return the latest world object in the promise', function (done) {

@@ -33,7 +33,7 @@
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
             });
 
-            server.respondWith('POST', /(.*)\/run\/[^\/]*\/[^\/]*\/$/, function (xhr, id) {
+            server.respondWith('POST', /(.*)\/run\/[^/]*\/[^/]*\/$/, function (xhr, id) {
                 var resp = {
                     id: '065dfe50-d29d-4b55-a0fd-30868d7dd26c',
                     model: 'model.vmf',
@@ -45,7 +45,7 @@
                 };
                 xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
             });
-            server.respondWith('POST', /(.*)\/run\/[^\/]*\/[^\/]*\/[^\/]*\/operations\/(.*)\//,
+            server.respondWith('POST', /(.*)\/run\/[^/]*\/[^/]*\/[^/]*\/operations\/(.*)\//,
                 function (xhr, prefix, operation) {
                     xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({
                         name: operation, result: operation
@@ -56,7 +56,7 @@
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ run: 'clonedrun' }));
             });
             
-            server.respondWith('GET', /(.*)\/run\/([^\/]*)\/([^\/]*)\/(.*)/, function (xhr, base, account, project, id) {
+            server.respondWith('GET', /(.*)\/run\/([^/]*)\/([^/]*)\/(.*)/, function (xhr, base, account, project, id) {
                 xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ 
                     id: id.replace('/', ''),
                     account: account,

@@ -68,20 +68,20 @@ var UrlConfigService = function (config) {
         }()),
 
         isCustomDomain: (function () {
-            var path = options.pathname.split('\/');
+            var path = options.pathname.split('/');
             var pathHasApp = path && path[1] === 'app';
             return (!options.isLocalhost() && !pathHasApp);
         }()),
 
         appPath: (function () {
-            var path = options.pathname.split('\/');
+            var path = options.pathname.split('/');
 
             return path && path[1] || '';
         }()),
 
         accountPath: (function () {
             var accnt = '';
-            var path = options.pathname.split('\/');
+            var path = options.pathname.split('/');
             if (path && path[1] === 'app') {
                 accnt = path[2];
             }
@@ -90,7 +90,7 @@ var UrlConfigService = function (config) {
 
         projectPath: (function () {
             var prj = '';
-            var path = options.pathname.split('\/');
+            var path = options.pathname.split('/');
             if (path && path[1] === 'app') {
                 prj = path[3]; //eslint-disable-line no-magic-numbers
             }

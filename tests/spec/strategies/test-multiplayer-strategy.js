@@ -13,7 +13,7 @@
 
     var queryMatchers = {
         worldEndpoint: /multiplayer\/world/i,
-        getWorlds: /multiplayer\/world\/\?((?:project=js-libs|account=forio-dev|group=group\-123|&userId=123)&?){4}/gi,
+        getWorlds: /multiplayer\/world\/\?((?:project=js-libs|account=forio-dev|group=group-123|&userId=123)&?){4}/gi,
     };
 
     var server;

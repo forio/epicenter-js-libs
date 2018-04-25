@@ -2326,20 +2326,20 @@ var UrlConfigService = function (config) {
         }(),
 
         isCustomDomain: function () {
-            var path = options.pathname.split('\/');
+            var path = options.pathname.split('/');
             var pathHasApp = path && path[1] === 'app';
             return !options.isLocalhost() && !pathHasApp;
         }(),
 
         appPath: function () {
-            var path = options.pathname.split('\/');
+            var path = options.pathname.split('/');
 
             return path && path[1] || '';
         }(),
 
         accountPath: function () {
             var accnt = '';
-            var path = options.pathname.split('\/');
+            var path = options.pathname.split('/');
             if (path && path[1] === 'app') {
                 accnt = path[2];
             }
@@ -2348,7 +2348,7 @@ var UrlConfigService = function (config) {
 
         projectPath: function () {
             var prj = '';
-            var path = options.pathname.split('\/');
+            var path = options.pathname.split('/');
             if (path && path[1] === 'app') {
                 prj = path[3]; //eslint-disable-line no-magic-numbers
             }
@@ -3808,7 +3808,7 @@ module.exports = function (config) {
          */
         get: function (key) {
             var cookie = this.serviceOptions.cookie;
-            var cookieReg = new RegExp('(?:^|;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$');
+            var cookieReg = new RegExp('(?:^|;)\\s*' + encodeURIComponent(key).replace(/[-.+*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$');
             var res = cookieReg.exec(cookie.get());
             var val = res ? decodeURIComponent(res[1]) : null;
             return val;
@@ -3840,7 +3840,7 @@ module.exports = function (config) {
          */
         destroy: function () {
             var cookie = this.serviceOptions.cookie;
-            var aKeys = cookie.get().replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);
+            var aKeys = cookie.get().replace(/((?:^|\s*;)[^=]+)(?=;|$)|^\s*|\s*(?:=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:=[^;]*)?;\s*/);
             for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
                 var cookieKey = decodeURIComponent(aKeys[nIdx]);
                 this.remove(cookieKey);
@@ -6012,7 +6012,7 @@ var F = {
 
 F.load = __webpack_require__(36);
 
-if (!global.SKIP_ENV_LOAD) {
+if (!window.SKIP_ENV_LOAD) {
     F.load();
 }
 
@@ -6049,7 +6049,7 @@ F.manager.RunManager = __webpack_require__(16);
 F.manager.AuthManager = __webpack_require__(34);
 F.manager.WorldManager = __webpack_require__(55);
 F.manager.SavedRunsManager = __webpack_require__(33);
-F.manager.TimerManager = __webpack_require__(56);
+F.manager.TimerManager = __webpack_require__(56).default;
 
 var strategies = __webpack_require__(31);
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
@@ -8289,16 +8289,29 @@ module.exports = function (options) {
 
 /***/ }),
 /* 56 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_util_inherit__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_data_api_service__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_data_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_service_data_api_service__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_time_api_service__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_time_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_service_time_api_service__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_channel__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_channel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_util_channel__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
-var classFrom = __webpack_require__(3);
-var Dataservice = __webpack_require__(23);
-var TimeService = __webpack_require__(30);
-var SessionManager = __webpack_require__(0);
-var Channel = __webpack_require__(57);
+
+
+
+
 
 var Base = {};
 
@@ -8324,7 +8337,7 @@ function getAPIKeyName(options) {
         // if (!options.scopeOptions) {
         //     throw new Error('Run Scope requires passing in run options' + scope);
         // }
-        // var rm = new RunManager(options.scopeOptions);
+        // const rm = new RunManager(options.scopeOptions);
         // return rm.getRun().then(function (run) {
         //     return [options.name, 'run', run.id].join('-');
         // });
@@ -8333,14 +8346,14 @@ function getAPIKeyName(options) {
 }
 
 function getStore(options, key) {
-    var ds = new Dataservice($.extend(true, {}, options, {
+    var ds = new __WEBPACK_IMPORTED_MODULE_1_service_data_api_service___default.a($.extend(true, {}, options, {
         root: key
     }));
     return ds;
 }
 
 function doAction(action, merged) {
-    var ts = new TimeService(merged);
+    var ts = new __WEBPACK_IMPORTED_MODULE_2_service_time_api_service___default.a(merged);
     var key = getAPIKeyName(merged);
     return ts.getTime().then(function (t) {
         var ds = getStore(merged, key);
@@ -8400,121 +8413,142 @@ function reduceActions(actions, currentTime) {
     };
 }
 // Interface that all strategies need to implement
-module.exports = classFrom(Base, {
-    constructor: function (options) {
-        var defaults = {
-            account: undefined,
-            project: undefined,
 
-            name: 'timer',
-            scope: 'run'
-        };
-
-        this.options = $.extend(true, {}, defaults, options);
-        this.sessionManager = new SessionManager(this.options);
-        this.channel = new Channel();
-    },
-
-    create: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        if (!merged.time || isNaN(+merged.time)) {
-            throw new Error('Timer Manager: expected number time, received ' + merged.time);
-        }
-        var key = getAPIKeyName(merged);
-        var ds = getStore(merged, key);
-        return ds.saveAs('time', { actions: [{ type: STATES.CREATED, timeLimit: merged.time }] });
-    },
-    cancel: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        var key = getAPIKeyName(merged);
-        var ds = getStore(merged, key);
-        return ds.remove();
-    },
-
-    start: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction(STATES.STARTED, merged);
-    },
-    pause: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction(STATES.PAUSED, merged);
-    },
-    resume: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction(STATES.RESUMED, merged);
-    },
-
-    getTime: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        var ts = new TimeService(merged);
-        var key = getAPIKeyName(merged);
-        return ts.getTime().then(function (currentTime) {
-            var ds = getStore(merged, key);
-            return ds.load().then(function calculateTimeLeft(doc) {
-                if (!doc || !doc[0]) {
-                    throw new Error('Timer has not been started yet');
-                }
-                var actions = doc[0].actions;
-                var reduced = reduceActions(actions, currentTime);
-                return $.extend(true, {}, doc[0], reduced);
-            });
-        });
-    },
-
-    getChannel: function (opts) {
-        var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        var key = getAPIKeyName(merged);
-        var ds = getStore(merged, key);
-        var dataChannel = ds.getChannel();
-        var me = this;
-
-        function createTimer(actions, currentTime) {
-            if (me.interval || !merged.tickInterval) {
-                return;
-            }
-            me.interval = setInterval(function () {
-                currentTime = currentTime + merged.tickInterval;
-                var reduced = reduceActions(actions, currentTime);
-                if (reduced.remaining.time === 0) {
-                    me.channel.publish('complete', reduced);
-                    clearInterval(me.interval);
-                    ///TODO: Unsubscribe from data channel
-                    me.interval = null;
-                }
-                me.channel.publish('tick', reduced);
-            }, merged.tickInterval);
-
-            var reduced = reduceActions(actions, currentTime);
-            me.channel.publish('tick', reduced);
-        }
-
-        me.subsid = dataChannel.subscribe('', function (res, meta) {
-            if (meta.dataPath.indexOf('/actions') === -1) {
-                //create
-                var ts = new TimeService(merged);
-                return ts.getTime().then(function (currentTime) {
-                    var reduced = reduceActions(res.actions, currentTime);
-                    me.channel.publish('create', reduced);
-                    createTimer(res.actions, +currentTime);
-                });
-            } else if (meta.subType === 'delete') {
-                clearInterval(me.interval);
-                me.channel.publish('reset');
-            } else {
-                var actions = res; //you only get the array back
-                var lastAction = actions[actions.length - 1];
-                me.channel.publish(lastAction.type, lastAction);
-            }
-        });
-
-        me.getTime(merged).then(function (res) {
-            createTimer(res.actions, res.currentTime); //failure means timer hasn't been created, in which case the datachannel subscription should handle 
-        });
-
-        return this.channel;
+var Timermanager = function () {
+    function Timermanager() {
+        _classCallCheck(this, Timermanager);
     }
 
-});
+    _createClass(Timermanager, [{
+        key: 'constructo',
+        value: function constructo(options) {
+            var defaults = {
+                account: undefined,
+                project: undefined,
+
+                name: 'timer',
+                scope: 'run'
+            };
+
+            this.options = $.extend(true, {}, defaults, options);
+            this.sessionManager = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(this.options);
+            this.channel = new __WEBPACK_IMPORTED_MODULE_4_util_channel___default.a();
+        }
+    }, {
+        key: 'create',
+        value: function create(opts) {
+            var merged = this.sessionManager.getMergedOptions(this.options, opts);
+            if (!merged.time || isNaN(+merged.time)) {
+                throw new Error('Timer Manager: expected number time, received ' + merged.time);
+            }
+            var key = getAPIKeyName(merged);
+            var ds = getStore(merged, key);
+            return ds.saveAs('time', { actions: [{ type: STATES.CREATED, timeLimit: merged.time }] });
+        }
+    }, {
+        key: 'cancel',
+        value: function cancel(opts) {
+            var merged = this.sessionManager.getMergedOptions(this.options, opts);
+            var key = getAPIKeyName(merged);
+            var ds = getStore(merged, key);
+            return ds.remove();
+        }
+    }, {
+        key: 'start',
+        value: function start(opts) {
+            var merged = this.sessionManager.getMergedOptions(this.options, opts);
+            return doAction(STATES.STARTED, merged);
+        }
+    }, {
+        key: 'pause',
+        value: function pause(opts) {
+            var merged = this.sessionManager.getMergedOptions(this.options, opts);
+            return doAction(STATES.PAUSED, merged);
+        }
+    }, {
+        key: 'resume',
+        value: function resume(opts) {
+            var merged = this.sessionManager.getMergedOptions(this.options, opts);
+            return doAction(STATES.RESUMED, merged);
+        }
+    }, {
+        key: 'getTime',
+        value: function getTime(opts) {
+            var merged = this.sessionManager.getMergedOptions(this.options, opts);
+            var ts = new __WEBPACK_IMPORTED_MODULE_2_service_time_api_service___default.a(merged);
+            var key = getAPIKeyName(merged);
+            return ts.getTime().then(function (currentTime) {
+                var ds = getStore(merged, key);
+                return ds.load().then(function calculateTimeLeft(doc) {
+                    if (!doc || !doc[0]) {
+                        throw new Error('Timer has not been started yet');
+                    }
+                    var actions = doc[0].actions;
+                    var reduced = reduceActions(actions, currentTime);
+                    return $.extend(true, {}, doc[0], reduced);
+                });
+            });
+        }
+    }, {
+        key: 'getChannel',
+        value: function getChannel(opts) {
+            var merged = this.sessionManager.getMergedOptions(this.options, opts);
+            var key = getAPIKeyName(merged);
+            var ds = getStore(merged, key);
+            var dataChannel = ds.getChannel();
+            var me = this;
+
+            function createTimer(actions, currentTime) {
+                if (me.interval || !merged.tickInterval) {
+                    return;
+                }
+                me.interval = setInterval(function () {
+                    currentTime = currentTime + merged.tickInterval;
+                    var reduced = reduceActions(actions, currentTime);
+                    if (reduced.remaining.time === 0) {
+                        me.channel.publish('complete', reduced);
+                        clearInterval(me.interval);
+                        ///TODO: Unsubscribe from data channel
+                        me.interval = null;
+                    }
+                    me.channel.publish('tick', reduced);
+                }, merged.tickInterval);
+
+                var reduced = reduceActions(actions, currentTime);
+                me.channel.publish('tick', reduced);
+            }
+
+            me.subsid = dataChannel.subscribe('', function (res, meta) {
+                if (meta.dataPath.indexOf('/actions') === -1) {
+                    //create
+                    var ts = new __WEBPACK_IMPORTED_MODULE_2_service_time_api_service___default.a(merged);
+                    return ts.getTime().then(function (currentTime) {
+                        var reduced = reduceActions(res.actions, currentTime);
+                        me.channel.publish('create', reduced);
+                        createTimer(res.actions, +currentTime);
+                    });
+                } else if (meta.subType === 'delete') {
+                    clearInterval(me.interval);
+                    me.channel.publish('reset');
+                } else {
+                    var actions = res; //you only get the array back
+                    var lastAction = actions[actions.length - 1];
+                    me.channel.publish(lastAction.type, lastAction);
+                }
+            });
+
+            me.getTime(merged).then(function (res) {
+                createTimer(res.actions, res.currentTime); //failure means timer hasn't been created, in which case the datachannel subscription should handle 
+            });
+
+            return this.channel;
+        }
+    }]);
+
+    return Timermanager;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Timermanager);
 
 /***/ }),
 /* 57 */
