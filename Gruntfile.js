@@ -5,16 +5,16 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json')
     });
 
-    grunt.file.expand('grunt/*.js').forEach(function (task) {
+    grunt.file.expand('build/*.js').forEach(function (task) {
         require('./' + task)(grunt);
     });
 
-    grunt.registerTask('test', ['templates', 'browserify:edge', 'browserify:instrumented', 'browserify:components', 'mocha', 'coverage-report']);
+    grunt.registerTask('test', ['templates', 'webpack:edge', 'webpack:components', 'mocha', 'coverage-report']);
     grunt.registerTask('documentation', ['eslint', 'markdox']);
     grunt.registerTask('validate', ['eslint', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
-    grunt.registerTask('components', ['templates', 'browserify:components', 'copy:components']);
-    grunt.registerTask('production', ['concatCometd', 'validate', 'browserify:mapped', 'browserify:min', 'components', 'documentation']);
+    grunt.registerTask('components', ['templates', 'webpack:components', 'copy:components']);
+    grunt.registerTask('production', ['concatCometd', 'validate', 'webpack:mapped', 'webpack:min', 'components', 'documentation']);
 
     grunt.registerTask('release', function (type) {
         //TODO: Integrate 'changelog' in here when it's stable
@@ -24,5 +24,5 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('default', ['concatCometd', 'browserify:edge', 'browserify:instrumented', 'components', 'watch']);
+    grunt.registerTask('default', ['concatCometd', 'webpack:edge', 'components', 'watch']);
 };

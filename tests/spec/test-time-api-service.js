@@ -4,7 +4,7 @@
 
     var baseURL = (new F.service.URL()).getAPIPath('time');
 
-    describe.only('Timer API Service', function () {
+    describe('Timer API Service', function () {
         var server;
         before(function () {
             server = sinon.fakeServer.create();

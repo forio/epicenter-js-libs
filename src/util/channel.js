@@ -23,23 +23,23 @@ module.exports = function createChannel(options) {
     var i = 0;
     var subsMap = {};
 
-    function notifySubs(subs, data) {
+    function notifySubs(subs, key, data) {
         var knownKeys = Object.keys(data);
         var isWildCardMatch = subs.topics.indexOf('') !== -1;
         if (isWildCardMatch) {
             subs.callback(data);
         }
-        var isTopicsMatch = intersection(knownKeys, subs.topics).length === subs.topics.length;
+        var isTopicsMatch = subs.topics.indexOf(key) !== -1;
         if (isTopicsMatch) {
             var dataToSend = pick(data, subs.topics);
             subs.callback(dataToSend);
         }
     }
     return {
-        publish: function (data) {
+        publish: function (key, data) {
             Object.keys(subsMap).forEach(function (id) {
                 var subs = subsMap[id];
-                notifySubs(subs, data);
+                notifySubs(subs, key, data);
             });
             return $.Deferred().resolve(data).promise();
         },

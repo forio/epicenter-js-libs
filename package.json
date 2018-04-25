@@ -7,10 +7,19 @@
   },
   "main": "src/app.js",
   "devDependencies": {
-    "browserify-istanbul": "^2.0.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-istanbul": "^4.1.6",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
+    "babel-plugin-transform-es2015-block-scoping": "^6.26.0",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
+    "babel-plugin-transform-es2015-computed-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-es2015-template-literals": "^6.22.0",
     "growl": "^1.10.5",
     "grunt": "^1.0.2",
-    "grunt-browserify": "^5.3.0",
     "grunt-bump": "^0.8.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-uglify": "^2.0.0",
@@ -20,16 +29,17 @@
     "grunt-markdox": "^1.2.1",
     "grunt-mocha-phantom-istanbul-senluchen2015": "0.2.1",
     "grunt-template-module": "^0.5.0",
+    "grunt-webpack": "^3.1.1",
     "husky": "^0.14.3",
-    "istanbul": "^0.4.5",
-    "minifyify": "^7.3.5",
     "object-assign": "^4.1.1",
-    "uglify-js": "^2.7.3"
+    "uglify-js": "^2.7.3",
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
   },
   "scripts": {
-    "build": "grunt production",
-    "start": "grunt",
-    "prepush": "grunt validate"
+    "build": "./node_modules/grunt-cli/bin/grunt production",
+    "start": "./node_modules/grunt-cli/bin/grunt",
+    "prepush": "./node_modules/grunt-cli/bin/grunt validate"
   },
   "dependencies": {
     "Base64": "^1.0.1",

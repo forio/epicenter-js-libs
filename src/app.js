@@ -1,9 +1,3 @@
-/**
- * Epicenter Javascript libraries
- * v<%= version %>
- * https://github.com/forio/epicenter-js-libs
- */
-
 var F = {
     _private: {}, //need this hook now because tests expect everything to be global. Delete once tests are browserified
     util: {},
@@ -19,7 +13,7 @@ var F = {
 
 F.load = require('./env-load');
 
-if (!global.SKIP_ENV_LOAD) {
+if (!window.SKIP_ENV_LOAD) {
     F.load();
 }
 
@@ -64,10 +58,9 @@ F.manager.strategy = strategies.list; //TODO: this is not really a manager so na
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager');
 F.service.Channel = require('./service/channel-service');
 
-F.version = '<%= version %>';
+if (RELEASE_VERSION) F.version = RELEASE_VERSION; //eslint-disable-line no-undef
 F.api = require('./api-version.json');
 
 F.constants = require('./managers/key-names');
 
-global.F = F;
 module.exports = F;
