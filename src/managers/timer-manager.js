@@ -13,6 +13,7 @@ var SCOPES = {
     USER: 'USER'
 };
 var STATES = {
+    CREATED: 'CREATED',
     STARTED: 'STARTED',
     PAUSED: 'PAUSED',
     RESUMED: 'RESUMED',
@@ -64,10 +65,12 @@ function doAction(action, merged) {
     });
 }
 
-function reduceActions(actions, currentTime, totalTime) {
+function reduceActions(actions, currentTime) {
     var reduced = actions.reduce(function (accum, action) {
         var ts = +(new Date(action.time));
-        if (action.type === STATES.STARTED && !accum.startTime) {
+        if (action.type === STATES.CREATED) {
+            accum.timeLimit = action.timeLimit;
+        } else if (action.type === STATES.STARTED && !accum.startTime) {
             accum.startTime = ts;
         } else if (action.type === STATES.PAUSED && !accum.lastPausedTime) {
             accum.lastPausedTime = ts;
@@ -79,14 +82,14 @@ function reduceActions(actions, currentTime, totalTime) {
             accum.elapsedTime = 0;
         }
         return accum;
-    }, { startTime: 0, lastPausedTime: 0, totalPauseTime: 0, elapsedTime: 0 });
+    }, { startTime: 0, lastPausedTime: 0, totalPauseTime: 0, elapsedTime: 0, timeLimit: 0 });
 
     var lastAction = actions[actions.length - 1];
     var isPaused = !!(lastAction && lastAction.type === STATES.PAUSED);
 
     var current = +currentTime;
     var elapsed = isPaused ? reduced.elapsedTime : (current - (reduced.startTime || current) + reduced.totalPauseTime);
-    var remaining = Math.max(0, totalTime - elapsed);
+    var remaining = Math.max(0, reduced.timeLimit - elapsed);
 
     var secs = Math.floor(remaining / 1000);
     var minutesRemaining = Math.floor(secs / 60);
@@ -123,7 +126,7 @@ module.exports = classFrom(Base, {
         }
         return getAPIKeyName(merged).then(function (key) {
             var ds = getStore(merged, key);
-            return ds.saveAs('time', { totalTime: merged.time, actions: [] });
+            return ds.saveAs('time', { actions: [{ type: STATES.CREATED, timeLimit: merged.time }] });
         });
     },
     cancel: function (opts) {
@@ -158,9 +161,7 @@ module.exports = classFrom(Base, {
                         throw new Error('Timer has not been started yet');
                     }
                     var actions = doc[0].actions;
-                    var totalTime = doc[0].totalTime;
-                    
-                    var reduced = reduceActions(actions, currentTime, totalTime);
+                    var reduced = reduceActions(actions, currentTime);
                     return $.extend(true, {}, doc[0], reduced);
                 });
             });
