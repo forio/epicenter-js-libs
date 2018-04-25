@@ -104,8 +104,8 @@ function reduceActions(actions, currentTime) {
     };
 }
 // Interface that all strategies need to implement
-const Timermanager = classFrom(Base, {
-    constructor: function (options) {
+class Timermanager {
+    constructo(options) {
         const defaults = {
             account: undefined,
             project: undefined,
@@ -117,9 +117,9 @@ const Timermanager = classFrom(Base, {
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new SessionManager(this.options);
         this.channel = new Channel();
-    },
+    }
 
-    create: function (opts) {
+    create(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         if (!merged.time || isNaN(+merged.time)) {
             throw new Error('Timer Manager: expected number time, received ' + merged.time);
@@ -127,28 +127,28 @@ const Timermanager = classFrom(Base, {
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
         return ds.saveAs('time', { actions: [{ type: STATES.CREATED, timeLimit: merged.time }] });
-    },
-    cancel: function (opts) {
+    }
+    cancel(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
         return ds.remove();
-    },
+    }
 
-    start: function (opts) {
+    start(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         return doAction(STATES.STARTED, merged);
-    },
-    pause: function (opts) {
+    }
+    pause(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         return doAction(STATES.PAUSED, merged);
-    },
-    resume: function (opts) {
+    }
+    resume(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         return doAction(STATES.RESUMED, merged);
-    },
+    }
 
-    getTime: function (opts) {
+    getTime(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const ts = new TimeService(merged);
         const key = getAPIKeyName(merged);
@@ -163,9 +163,9 @@ const Timermanager = classFrom(Base, {
                 return $.extend(true, {}, doc[0], reduced);
             });
         });
-    },
+    }
 
-    getChannel: function (opts) {
+    getChannel(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
@@ -216,7 +216,7 @@ const Timermanager = classFrom(Base, {
         });
 
         return this.channel;
-    },
-});
+    }
+}
 
 export default Timermanager;
