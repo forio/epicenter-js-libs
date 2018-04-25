@@ -7,10 +7,32 @@ function getTm(evt, options) {
     var tm = new F.manager.TimerManager($.extend({
         scope: scope,
         time: timeLimit,
-        tickInterval: 1,
+        tickInterval: 1000,
     }, options));
     return tm;
 }
+
+
+var tm = new F.manager.TimerManager({
+    scope: 'group',
+    tickInterval: 1,
+});
+var channel = tm.getChannel();
+
+channel.subscribe('', function (d, meta) {
+    console.log('global listener', d, meta);
+});
+
+// channel.subscribe('tick', function (d) {
+//     console.log('tick', d);
+// });
+// channel.subscribe('actions', function (d) {
+//     console.log('actions', d);
+// });
+// channel.subscribe('complete', function (d) {
+//     console.log('actions', d);
+// });
+
 
 $('.btn-create').click(function (evt) {
     var tm = getTm(evt);
@@ -18,14 +40,7 @@ $('.btn-create').click(function (evt) {
         window.alert('Timer created');
     });
 
-    tm.getChannel().then(function (channel) {
-        channel.subscribe('TICK', function (d) {
-            console.log('Channel', d); 
-        });
-        channel.subscribe('COMPLETE', function (d) {
-            console.log('COMPLETE', d); 
-        });
-    });
+    
 });
 
 

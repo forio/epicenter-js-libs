@@ -22,17 +22,17 @@ var STATES = {
 function getAPIKeyName(options) {
     var scope = options.scope.toUpperCase();
     if (scope === SCOPES.GROUP) {
-        return $.Deferred().resolve([options.name, options.groupName].join('-')).promise();
+        return [options.name, options.groupName].join('-');
     } else if (scope === SCOPES.USER) {
         return [options.name, options.userName].join('-');
     } else if (scope === SCOPES.RUN) {
-        if (!options.scopeOptions) {
-            throw new Error('Run Scope requires passing in run options' + scope);
-        }
-        var rm = new RunManager(options.scopeOptions);
-        return rm.getRun().then(function (run) {
-            return [options.name, 'run', run.id].join('-');
-        });
+        // if (!options.scopeOptions) {
+        //     throw new Error('Run Scope requires passing in run options' + scope);
+        // }
+        // var rm = new RunManager(options.scopeOptions);
+        // return rm.getRun().then(function (run) {
+        //     return [options.name, 'run', run.id].join('-');
+        // });
     }
     throw new Error('Unknown scope ' + scope);
 }
@@ -46,22 +46,21 @@ function getStore(options, key) {
 
 function doAction(action, merged) {
     var ts = new TimeService(merged);
-    return getAPIKeyName(merged).then(function (key) {
-        return ts.getTime().then(function (t) {
-            var ds = getStore(merged, key);
-            return ds.pushToArray('time/actions', { 
-                type: action, time: t.toISOString()
-            }).catch(function (res) {
-                if (res.status === 404) {
-                    var errorMsg = 'Timer: Collection ' + key + ' not found. Did you create it?';
-                    console.error(errorMsg);
-                    throw new Error(errorMsg);
-                }
-                throw res;
-            });
-        }, function (err) {
-            console.error('Timermanager start: Timer error', err);
+    var key = getAPIKeyName(merged);
+    return ts.getTime().then(function (t) {
+        var ds = getStore(merged, key);
+        return ds.pushToArray('time/actions', { 
+            type: action, time: t.toISOString()
+        }).catch(function (res) {
+            if (res.status === 404) {
+                var errorMsg = 'Timer: Collection ' + key + ' not found. Did you create it?';
+                console.error(errorMsg);
+                throw new Error(errorMsg);
+            }
+            throw res;
         });
+    }, function (err) {
+        console.error('Timermanager start: Timer error', err);
     });
 }
 
@@ -124,17 +123,15 @@ module.exports = classFrom(Base, {
         if (!merged.time || isNaN(+merged.time)) {
             throw new Error('Timer Manager: expected number time, received ' + merged.time);
         }
-        return getAPIKeyName(merged).then(function (key) {
-            var ds = getStore(merged, key);
-            return ds.saveAs('time', { actions: [{ type: STATES.CREATED, timeLimit: merged.time }] });
-        });
+        var key = getAPIKeyName(merged);
+        var ds = getStore(merged, key);
+        return ds.saveAs('time', { actions: [{ type: STATES.CREATED, timeLimit: merged.time }] });
     },
     cancel: function (opts) {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return getAPIKeyName(merged).then(function (key) {
-            var ds = getStore(merged, key);
-            return ds.remove();
-        });
+        var key = getAPIKeyName(merged);
+        var ds = getStore(merged, key);
+        return ds.remove();
     },
 
     start: function (opts) {
@@ -153,27 +150,25 @@ module.exports = classFrom(Base, {
     getTime: function (opts) {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
         var ts = new TimeService(merged);
-        return getAPIKeyName(merged).then(function (key) {
-            return ts.getTime().then(function (currentTime) {
-                var ds = getStore(merged, key);
-                return ds.load().then(function calculateTimeLeft(doc) {
-                    if (!doc || !doc[0]) {
-                        throw new Error('Timer has not been started yet');
-                    }
-                    var actions = doc[0].actions;
-                    var reduced = reduceActions(actions, currentTime);
-                    return $.extend(true, {}, doc[0], reduced);
-                });
+        var key = getAPIKeyName(merged);
+        return ts.getTime().then(function (currentTime) {
+            var ds = getStore(merged, key);
+            return ds.load().then(function calculateTimeLeft(doc) {
+                if (!doc || !doc[0]) {
+                    throw new Error('Timer has not been started yet');
+                }
+                var actions = doc[0].actions;
+                var reduced = reduceActions(actions, currentTime);
+                return $.extend(true, {}, doc[0], reduced);
             });
         });
     },
 
     getChannel: function (opts) {
         var merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return getAPIKeyName(merged).then(function (key) {
-            var ds = getStore(merged, key);
-            return ds.getChannel();
-        });
+        var key = getAPIKeyName(merged);
+        var ds = getStore(merged, key);
+        return ds.getChannel();
     },
 
 });
