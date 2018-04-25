@@ -182,16 +182,16 @@ module.exports = classFrom(Base, {
                 currentTime = currentTime + merged.tickInterval;
                 var reduced = reduceActions(actions, currentTime);
                 if (reduced.remaining.time === 0) {
-                    me.channel.publish({ complete: reduced });
+                    me.channel.publish('complete', reduced);
                     clearInterval(me.interval);
                     ///TODO: Unsubscribe from data channel
                     me.interval = null;
                 }
-                me.channel.publish({ tick: reduced });
+                me.channel.publish('tick', reduced);
             }, merged.tickInterval);
 
             var reduced = reduceActions(actions, currentTime);
-            me.channel.publish({ tick: reduced });
+            me.channel.publish('tick', reduced);
         }
 
         me.subsid = dataChannel.subscribe('', function (res, meta) {
@@ -199,17 +199,17 @@ module.exports = classFrom(Base, {
                 var ts = new TimeService(merged);
                 return ts.getTime().then(function (currentTime) {
                     var reduced = reduceActions(res.actions, currentTime);
-                    me.channel.publish({ create: reduced });
+                    me.channel.publish('create', reduced);
                     createTimer(res.actions, +currentTime);
                 });
             } else if (meta.subType === 'delete') {
                 clearInterval(me.interval);
+                me.channel.publish('reset');
+
             } else {
                 var actions = res; //you only get the array back
                 var lastAction = actions[actions.length - 1];
-                var params = {};
-                params[lastAction.type] = lastAction.time;
-                me.channel.publish(params);
+                me.channel.publish(lastAction.type, lastAction);
             }
         });
 
