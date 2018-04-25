@@ -53,7 +53,7 @@
 
 'use strict';
 
-var ConfigService = require('./configuration-service');
+var ConfigService = require('./configuration-service').default;
 var qutil = require('../util/query-util');
 var rutil = require('../util/run-util');
 var _pick = require('../util/object-util')._pick;

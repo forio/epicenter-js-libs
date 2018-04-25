@@ -17,7 +17,7 @@
  *
  */
 
-var ConfigService = require('./configuration-service');
+var ConfigService = require('./configuration-service').default;
 var TransportFactory = require('../transport/http-transport-factory');
 var _pick = require('../util/object-util')._pick;
 var SessionManager = require('../store/session-manager');

@@ -1,10 +1,7 @@
-import classFrom from 'util/inherit';
 import Dataservice from 'service/data-api-service';
 import TimeService from 'service/time-api-service';
 import SessionManager from 'store/session-manager';
 import Channel from 'util/channel';
-
-const Base = {};
 
 const SCOPES = {
     GROUP: 'GROUP',

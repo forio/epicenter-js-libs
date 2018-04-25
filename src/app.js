@@ -26,7 +26,7 @@ F.factory.Transport = require('./transport/http-transport-factory');
 F.transport.Ajax = require('./transport/ajax-http-transport');
 
 F.service.URL = require('./service/url-config-service');
-F.service.Config = require('./service/configuration-service');
+F.service.Config = require('./service/configuration-service').default;
 F.service.Run = require('./service/run-api-service');
 F.service.File = require('./service/admin-file-service');
 F.service.Variables = require('./service/variables-api-service');
@@ -40,7 +40,7 @@ F.service.Asset = require('./service/asset-api-adapter');
 F.service.Group = require('./service/group-api-service');
 F.service.Introspect = require('./service/introspection-api-service');
 F.service.Presence = require('./service/presence-api-service');
-F.service.Time = require('./service/time-api-service');
+F.service.Time = require('./service/time-api-service').default;
 F.store.Cookie = require('./store/cookie-store');
 
 F.factory.Store = require('./store/store-factory');

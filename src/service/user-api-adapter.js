@@ -18,7 +18,7 @@
 * The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
-var ConfigService = require('./configuration-service');
+var ConfigService = require('./configuration-service').default;
 var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
 var qutil = require('../util/query-util');

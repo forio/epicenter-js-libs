@@ -1,6 +1,6 @@
 'use strict';
 
-var ConfigService = require('./configuration-service');
+var ConfigService = require('./configuration-service').default;
 var SessionManager = require('../store/session-manager');
 var objectAssign = require('object-assign');
 

@@ -67,7 +67,7 @@
  */
 
 var ChannelManager = require('./channel-manager');
-var ConfigService = require('../service/configuration-service');
+var ConfigService = require('../service/configuration-service').default;
 var classFrom = require('../util/inherit');
 var SessionManager = require('../store/session-manager');
 

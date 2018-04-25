@@ -12,7 +12,7 @@
  *      pr.getStatus();
  */
 
-var ConfigService = require('./configuration-service');
+var ConfigService = require('./configuration-service').default;
 var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
 var apiEndpoint = 'presence';

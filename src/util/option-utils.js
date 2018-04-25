@@ -1,6 +1,6 @@
 'use strict';
 
-var ConfigService = require('../service/configuration-service');
+var ConfigService = require('../service/configuration-service').default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
