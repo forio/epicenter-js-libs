@@ -55,7 +55,7 @@
 'use strict';
 
 var ConfigService = require('./configuration-service').default;
-var TransportFactory = require('../transport/http-transport-factory');
+var TransportFactory = require('../transport/http-transport-factory').default;
 var _pick = require('../util/object-util')._pick;
 var SessionManager = require('../store/session-manager');
 

@@ -114,6 +114,9 @@ class Timermanager {
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new SessionManager(this.options);
         this.channel = new Channel();
+
+        this.interval = null;
+        this.subsid = null;
     }
 
     create(opts) {
@@ -129,7 +132,7 @@ class Timermanager {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
-        return ds.remove();
+        return ds.remove('time');
     }
 
     start(opts) {
@@ -151,11 +154,11 @@ class Timermanager {
         const key = getAPIKeyName(merged);
         return ts.getTime().then(function (currentTime) {
             const ds = getStore(merged, key);
-            return ds.load().then(function calculateTimeLeft(doc) {
-                if (!doc || !doc[0]) {
+            return ds.load('time').then(function calculateTimeLeft(doc) {
+                if (!doc) {
                     throw new Error('Timer has not been started yet');
                 }
-                const actions = doc[0].actions;
+                const actions = doc.actions;
                 const reduced = reduceActions(actions, currentTime);
                 return $.extend(true, {}, doc[0], reduced);
             });

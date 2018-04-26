@@ -22,7 +22,7 @@ F.util.run = require('./util/run-util');
 F.util.classFrom = require('./util/inherit');
 F._private.strategyutils = require('./managers/strategy-utils');
 
-F.factory.Transport = require('./transport/http-transport-factory');
+F.factory.Transport = require('./transport/http-transport-factory').default;
 F.transport.Ajax = require('./transport/ajax-http-transport');
 
 F.service.URL = require('./service/url-config-service');

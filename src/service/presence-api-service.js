@@ -13,7 +13,7 @@
  */
 
 var ConfigService = require('./configuration-service').default;
-var TransportFactory = require('../transport/http-transport-factory');
+var TransportFactory = require('../transport/http-transport-factory').default;
 var SessionManager = require('../store/session-manager');
 var apiEndpoint = 'presence';
 

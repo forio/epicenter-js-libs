@@ -1,5 +1,3 @@
-'use strict';
-
 var qutils = require('../util/query-util');
 
 module.exports = function (config) {
@@ -15,7 +13,7 @@ module.exports = function (config) {
 
         /**
          * ONLY for strings in the url. All GET & DELETE params are run through this
-         * @type {[type] }
+         * @type {Function}
          */
         parameterParser: qutils.toQueryFormat,
 

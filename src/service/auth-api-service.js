@@ -16,7 +16,7 @@
 'use strict';
 
 var ConfigService = require('./configuration-service').default;
-var TransportFactory = require('../transport/http-transport-factory');
+var TransportFactory = require('../transport/http-transport-factory').default;
 
 module.exports = function (config) {
     var defaults = {
