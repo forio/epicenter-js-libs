@@ -29,37 +29,37 @@
 
 import urlService from './url-config-service';
 
-export default function (config) {
-    //TODO: Environments
-    const defaults = {
-        logLevel: 'NONE'
-    };
-    const serviceOptions = $.extend({}, defaults, config);
-    serviceOptions.server = urlService(serviceOptions.server);
-    return {
-        data: serviceOptions,
-        /**
-         * Set the environment key to get configuration options from
-         * @param { string} env
-         */
-        setEnv: function (env) {
-        },
+export default class ConfigService {
+    constructor(config) {
+        const defaults = {
+            logLevel: 'NONE'
+        };
+        const serviceOptions = $.extend({}, defaults, config);
+        serviceOptions.server = urlService(serviceOptions.server);
+
+        this.serviceOptions = this.data = serviceOptions;
+    }
+
+     /**
+     * Set the environment key to get configuration options from
+     * @param { string} env
+     */
+    setEnv(env) {}
         /**
          * Get configuration.
          * @param  { string} property optional
          * @return {*}          Value of property if specified, the entire config object otherwise
          */
-        get: function (property) {
-            return serviceOptions[property];
-        },
+    get(property) {
+        return this.serviceOptions[property];
+    }
         /**
          * Set configuration.
          * @param  { string|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
          * @param  {*} value  value for provided key
          */
-        set: function (key, value) {
-            serviceOptions[key] = value;
-        }
-    };
+    set(key, value) {
+        this.serviceOptions[key] = value;
+    }
 }
 
