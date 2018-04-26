@@ -102,7 +102,7 @@ function reduceActions(actions, currentTime) {
 }
 // Interface that all strategies need to implement
 class Timermanager {
-    constructo(options) {
+    constructor(options) {
         const defaults = {
             account: undefined,
             project: undefined,
@@ -160,7 +160,7 @@ class Timermanager {
                 }
                 const actions = doc.actions;
                 const reduced = reduceActions(actions, currentTime);
-                return $.extend(true, {}, doc[0], reduced);
+                return $.extend(true, {}, doc, reduced);
             });
         });
     }

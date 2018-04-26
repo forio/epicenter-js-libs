@@ -1,10 +1,61 @@
-function pick(obj, keys) {
-    return Object.keys(obj).reduce(function (accum, k) {
-        if (keys.indexOf(k) !== -1) {
-            accum[k] = obj[k];
-        }
+import $ from 'jquery';
+
+/**
+ * 
+ * @param {object} obj
+ * @return {Publishable[]}
+ */
+export function objectToPublishable(obj) {
+    var mapped = Object.keys(obj || {}).map(function (t) {
+        return { name: t, value: obj[t] };
+    });
+    return mapped;
+}
+
+/**
+ * Converts arrays of the form [{ name: '', value: ''}] to {[name]: value}
+ * @param {Publishable[]} arr
+ * @param {object} [mergeWith]
+ * @returns {object}
+ */
+export function publishableToObject(arr, mergeWith) {
+    var result = (arr || []).reduce(function (accum, topic) {
+        accum[topic.name] = topic.value;
         return accum;
-    }, {});
+    }, $.extend(true, {}, mergeWith));
+    return result;
+}
+
+/**
+ * @typedef NormalizedParam
+ * @property {Publishable[]} params
+ * @property {Object} options
+ */
+
+/**
+ *
+ * @param {String|Object|array} topic 
+ * @param {*} publishValue 
+ * @param {Object} [options]
+ * @return {NormalizedParam}
+ */
+export function normalizeParamOptions(topic, publishValue, options) {
+    if (!topic) {
+        return { params: [], options: {} };
+    }
+    if ($.isPlainObject(topic)) {
+        return { params: objectToPublishable(topic), options: publishValue };
+    }
+    if (Array.isArray(topic)) {
+        return { params: topic, options: publishValue };
+    }
+    return { params: [{ name: topic, value: publishValue }], options: options };
+}
+
+let i = 0;
+function uniqueId(prefix) {
+    i++;
+    return `${prefix || ''}${i}`;
 }
 
 function intersection(a, b) {
@@ -19,41 +70,119 @@ function intersection(a, b) {
     });
 }
 
-module.exports = function createChannel(options) {
-    var i = 0;
-    var subsMap = {};
+/**
+ * 
+ * @param {String[]|String} topics 
+ * @param {Function} callback 
+ * @param {Object} options
+ * @return {Subscription}
+ */
+function makeSubs(topics, callback, options) {
+    var id = uniqueId('subs-');
+    var defaults = {
+        batch: false,
+    };
+    var opts = $.extend({}, defaults, options);
+    if (!callback) {
+        throw new Error('subscribe callback should be a function');
+    }
+    return $.extend(true, {
+        id: id,
+        topics: [].concat(topics),
+        callback: callback,
+    }, opts);
+}
 
-    function notifySubs(subs, key, data) {
-        var knownKeys = Object.keys(data);
-        var isWildCardMatch = subs.topics.indexOf('') !== -1;
-        if (isWildCardMatch) {
-            subs.callback(data);
-        }
-        var isTopicsMatch = subs.topics.indexOf(key) !== -1;
-        if (isTopicsMatch) {
-            var dataToSend = pick(data, subs.topics);
-            subs.callback(dataToSend);
+/**
+* @param {Publishable[]} topics
+* @param {Subscription} subscription 
+*/
+function checkAndNotifyBatch(topics, subscription) {
+    var merged = $.extend(true, {}, publishableToObject(topics));
+    var matchingTopics = intersection(Object.keys(merged), subscription.topics);
+    if (matchingTopics.length > 0) {
+        var toSend = subscription.topics.reduce(function (accum, topic) {
+            accum[topic] = merged[topic];
+            return accum;
+        }, {});
+
+        if (matchingTopics.length === subscription.topics.length) {
+            subscription.callback(toSend);
         }
     }
-    return {
-        publish: function (key, data) {
-            Object.keys(subsMap).forEach(function (id) {
-                var subs = subsMap[id];
-                notifySubs(subs, key, data);
-            });
-            return $.Deferred().resolve(data).promise();
-        },
-        subscribe: function (topic, callback) {
-            var subsid = 'subsid' + (i++);
-            var subs = {
-                topics: [].concat(topic),
-                callback: callback,
-            };
-            subsMap[subsid] = subs;
-            return subsid;
-        },
-        unsubscribe: function (subsid) {
-            delete subsMap[subsid];
+}
+
+
+/**
+ * @param {Publishable[]} topics
+ * @param {Subscription} subscription 
+ */
+function checkAndNotify(topics, subscription) {
+    topics.forEach(function (topic) {
+        if (subscription.topics.indexOf(topic.name) || subscription.topics.indexOf('*')) { 
+            subscription.callback(topic.value);
         }
-    };
-};
+    });
+}
+
+
+/**
+ * @implements {ChannelManager}
+ */
+class ChannelManager {
+    constructor(options) {
+        this.subscriptions = [];
+    }
+
+    /**
+     * @param {String | Publishable } topic
+     * @param {any} [value] item to publish
+     * @param {Object} [options]
+     * @return {Promise}
+     */
+    publish(topic, value, options) {
+        var normalized = normalizeParamOptions(topic, value, options);
+        // console.log('notify', normalized.params);
+        return this.subscriptions.forEach(function (subs) {
+            var fn = subs.batch ? checkAndNotifyBatch : checkAndNotify;
+            fn(normalized.params, subs);
+        });
+    }
+
+    /**
+     * @param {String[] | String} topics
+     * @param {Function} cb
+     * @param {Object} [options]
+     * @return {String}
+     */
+    subscribe(topics, cb, options) {
+        var subs = makeSubs(topics, cb, options);
+        this.subscriptions = this.subscriptions.concat(subs);
+        return subs.id;
+    }
+        
+
+    /**
+     * @param {String} token
+     */
+    unsubscribe(token) {
+        var olderLength = this.subscriptions.length;
+        if (!olderLength) {
+            throw new Error('No subscriptions found to unsubscribe from');
+        }
+    
+        var remaining = this.subscriptions.filter(function (subs) {
+            return subs.id !== token;
+        });
+        if (!remaining.length === olderLength) {
+            throw new Error('No subscription found for token ' + token);
+        }
+        this.subscriptions = remaining;
+    }
+    unsubscribeAll() {
+        this.subscriptions = [];
+    }
+}
+
+export default ChannelManager;
+

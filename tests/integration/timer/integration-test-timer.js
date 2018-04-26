@@ -23,9 +23,9 @@ channel.subscribe('', function (d) {
     console.log('global listener', d);
 });
 channel.subscribe('tick', function (d) {
-    $('#mins').html(d.tick.remaining.minutes);
-    $('#seconds').html(d.tick.remaining.seconds);
-    console.log('tick listener', d.tick.remaining);
+    $('#mins').html(d.remaining.minutes);
+    $('#seconds').html(d.remaining.seconds);
+    console.log('tick listener', d.remaining);
 });
 // channel.subscribe('tick', function (d) {
 //     console.log('tick', d);
