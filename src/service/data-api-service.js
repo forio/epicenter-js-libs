@@ -175,7 +175,7 @@ export default class DataService {
         httpOptions.url = this.getURL('', httpOptions.root);
         return this.http.post(attrs, httpOptions);
     }
-
+    
     pushToArray(key, val, options) {
         var httpOptions = $.extend(true, {}, this.serviceOptions, options);
         httpOptions.url = this.getURL('', httpOptions.root + '/' + key);

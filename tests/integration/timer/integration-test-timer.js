@@ -19,10 +19,10 @@ var tm = new F.manager.TimerManager({
 });
 var channel = tm.getChannel();
 
-channel.subscribe('', function (d) {
+channel.subscribe('*', function (d) {
     console.log('global listener', d);
 });
-channel.subscribe('tick', function (d) {
+channel.subscribe(tm.ACTIONS.TICK, function (d) {
     $('#mins').html(d.remaining.minutes);
     $('#seconds').html(d.remaining.seconds);
     console.log('tick listener', d.remaining);

@@ -3,24 +3,16 @@ import TimeService from 'service/time-api-service';
 import SessionManager from 'store/session-manager';
 import Channel from 'util/channel';
 
-const SCOPES = {
-    GROUP: 'GROUP',
-    RUN: 'RUN',
-    USER: 'USER'
-};
-const STATES = {
-    CREATED: 'CREATED',
-    STARTED: 'STARTED',
-    PAUSED: 'PAUSED',
-    RESUMED: 'RESUMED',
-};
+import reduceActions from './timer-actions-reducer';
+import { SCOPES, ACTIONS } from './timer-constants';
 
 function getAPIKeyName(options) {
     const scope = options.scope.toUpperCase();
+    const prefix = 'timer';
     if (scope === SCOPES.GROUP) {
-        return [options.name, options.groupName].join('-');
+        return [prefix, options.groupName].join('-');
     } else if (scope === SCOPES.USER) {
-        return [options.name, options.userName].join('-');
+        return [prefix, options.groupName, options.userName].join('-');
     } else if (scope === SCOPES.RUN) {
         // if (!options.scopeOptions) {
         //     throw new Error('Run Scope requires passing in run options' + scope);
@@ -45,11 +37,13 @@ function doAction(action, merged) {
     const key = getAPIKeyName(merged);
     return ts.getTime().then(function (t) {
         const ds = getStore(merged, key);
-        return ds.pushToArray('time/actions', { 
-            type: action, time: t.toISOString()
+        return ds.pushToArray(`${merged.name}/actions`, { 
+            type: action, 
+            time: t.toISOString(),
+            user: merged.user,
         }).catch(function (res) {
             if (res.status === 404) {
-                const errorMsg = 'Timer: Collection ' + key + ' not found. Did you create it?';
+                const errorMsg = 'Timer: ' + key + ' not found. Did you call Timer.create yet?';
                 console.error(errorMsg);
                 throw new Error(errorMsg);
             }
@@ -60,46 +54,7 @@ function doAction(action, merged) {
     });
 }
 
-function reduceActions(actions, currentTime) {
-    const reduced = actions.reduce(function (accum, action) {
-        const ts = +(new Date(action.time));
-        if (action.type === STATES.CREATED) {
-            accum.timeLimit = action.timeLimit;
-        } else if (action.type === STATES.STARTED && !accum.startTime) {
-            accum.startTime = ts;
-        } else if (action.type === STATES.PAUSED && !accum.lastPausedTime) {
-            accum.lastPausedTime = ts;
-            accum.elapsedTime = ts - accum.startTime;
-        } else if (action.type === STATES.RESUMED && accum.lastPausedTime) {
-            const pausedTime = ts - accum.lastPausedTime;
-            accum.totalPauseTime += pausedTime;
-            accum.lastPausedTime = 0;
-            accum.elapsedTime = 0;
-        }
-        return accum;
-    }, { startTime: 0, lastPausedTime: 0, totalPauseTime: 0, elapsedTime: 0, timeLimit: 0 });
 
-    const lastAction = actions[actions.length - 1];
-    const isPaused = !!(lastAction && lastAction.type === STATES.PAUSED);
-
-    const current = +currentTime;
-    const elapsed = isPaused ? reduced.elapsedTime : (current - (reduced.startTime || current) + reduced.totalPauseTime);
-    const remaining = Math.max(0, reduced.timeLimit - elapsed);
-
-    const secs = Math.floor(remaining / 1000);
-    const minutesRemaining = Math.floor(secs / 60);
-    const secondsRemaining = Math.floor(secs % 60);
-    return {
-        elapsed: elapsed,
-        isPaused: isPaused,
-        currentTime: current,
-        remaining: {
-            time: remaining,
-            minutes: minutesRemaining,
-            seconds: secondsRemaining,
-        },
-    };
-}
 // Interface that all strategies need to implement
 class Timermanager {
     constructor(options) {
@@ -111,12 +66,14 @@ class Timermanager {
             scope: 'run',
         };
 
+        this.ACTIONS = ACTIONS;
+
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new SessionManager(this.options);
         this.channel = new Channel();
 
         this.interval = null;
-        this.subsid = null;
+        this.dataChannelSubid = null;
     }
 
     create(opts) {
@@ -126,26 +83,26 @@ class Timermanager {
         }
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
-        return ds.saveAs('time', { actions: [{ type: STATES.CREATED, timeLimit: merged.time }] });
+        return ds.saveAs(merged.name, { actions: [{ type: ACTIONS.CREATE, timeLimit: merged.time, user: merged.user }] });
     }
     cancel(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
-        return ds.remove('time');
+        return ds.remove(merged.name);
     }
 
     start(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction(STATES.STARTED, merged);
+        return doAction(ACTIONS.START, merged);
     }
     pause(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction(STATES.PAUSED, merged);
+        return doAction(ACTIONS.PAUSE, merged);
     }
     resume(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return doAction(STATES.RESUMED, merged);
+        return doAction(ACTIONS.RESUME, merged);
     }
 
     getTime(opts) {
@@ -154,7 +111,7 @@ class Timermanager {
         const key = getAPIKeyName(merged);
         return ts.getTime().then(function (currentTime) {
             const ds = getStore(merged, key);
-            return ds.load('time').then(function calculateTimeLeft(doc) {
+            return ds.load(merged.name).then(function calculateTimeLeft(doc) {
                 if (!doc) {
                     throw new Error('Timer has not been started yet');
                 }
@@ -180,43 +137,55 @@ class Timermanager {
                 currentTime = currentTime + merged.tickInterval;
                 const reduced = reduceActions(actions, currentTime);
                 if (reduced.remaining.time === 0) {
-                    me.channel.publish('complete', reduced);
+                    me.channel.publish(ACTIONS.COMPLETE, reduced);
+
+                    dataChannel.unsubscribe(me.dataChannelSubid);
                     clearInterval(me.interval);
-                    ///TODO: Unsubscribe from data channel
                     me.interval = null;
                 }
-                me.channel.publish('tick', reduced);
+                me.channel.publish(ACTIONS.TICK, reduced);
             }, merged.tickInterval);
 
             const reduced = reduceActions(actions, currentTime);
-            me.channel.publish('tick', reduced);
+            me.channel.publish(ACTIONS.TICK, reduced);
         }
 
-        me.subsid = dataChannel.subscribe('', function (res, meta) {
+        me.dataChannelSubid = dataChannel.subscribe('', function (res, meta) {
             if (meta.dataPath.indexOf('/actions') === -1) { //create
-                const ts = new TimeService(merged);
-                return ts.getTime().then(function (currentTime) {
-                    const reduced = reduceActions(res.actions, currentTime);
-                    me.channel.publish('create', reduced);
-                    createTimer(res.actions, +currentTime);
-                });
+                const createAction = res.actions[0];
+                me.channel.publish(ACTIONS.CREATE, createAction);
             } else if (meta.subType === 'delete') {
                 clearInterval(me.interval);
-                me.channel.publish('reset');
-
+                me.interval = null;
+                me.channel.publish(ACTIONS.RESET);
             } else {
                 const actions = res; //you only get the array back
                 const lastAction = actions[actions.length - 1];
+
                 me.channel.publish(lastAction.type, lastAction);
+                if (lastAction.type === ACTIONS.START || lastAction.type === ACTIONS.RESUME) {
+                    const ts = new TimeService(merged);
+                    return ts.getTime().then(function (currentTime) {
+                        createTimer(actions, +currentTime);
+                    });
+                } else if (lastAction.type === ACTIONS.PAUSE) {
+                    clearInterval(me.interval);
+                    me.interval = null;
+                }
             }
         });
 
         me.getTime(merged).then(function (res) {
-            createTimer(res.actions, res.currentTime); //failure means timer hasn't been created, in which case the datachannel subscription should handle 
+            //failure means timer hasn't been created, in which case the datachannel subscription should handle 
+            const reduced = reduceActions(res.actions, res.currentTime);
+            if (reduced.isStarted && !reduced.isPaused) {
+                createTimer(res.actions, res.currentTime); 
+            }
         });
 
         return this.channel;
     }
 }
+
 
 export default Timermanager;

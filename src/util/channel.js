@@ -119,7 +119,7 @@ function checkAndNotifyBatch(topics, subscription) {
  */
 function checkAndNotify(topics, subscription) {
     topics.forEach(function (topic) {
-        if (subscription.topics.indexOf(topic.name) || subscription.topics.indexOf('*')) { 
+        if (subscription.topics.indexOf(topic.name) !== -1 || subscription.topics.indexOf('*') !== -1) { 
             subscription.callback(topic.value);
         }
     });
