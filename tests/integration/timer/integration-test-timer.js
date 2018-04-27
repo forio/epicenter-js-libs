@@ -8,6 +8,9 @@ function getTm(evt, options) {
         scope: scope,
         time: timeLimit,
         tickInterval: 1000,
+        scopeOptions: {
+            runid: 'myrunid'
+        }
     }, options));
     return tm;
 }
@@ -16,6 +19,9 @@ function getTm(evt, options) {
 function tick(scope) {
     var tm = new F.service.Timer({
         scope: scope,
+        scopeOptions: {
+            runid: 'myrunid'
+        },
         tickInterval: 1000,
     });
     var groupTimerChannnel = tm.getChannel();
@@ -31,6 +37,7 @@ function tick(scope) {
 
 tick('user');
 tick('group');
+tick('run');
 
 $('.btn-create').click(function (evt) {
     var tm = getTm(evt);

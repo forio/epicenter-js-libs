@@ -14,13 +14,10 @@ function getAPIKeyName(options) {
     } else if (scope === SCOPES.USER) {
         return [prefix, options.groupName, options.userName].join('-');
     } else if (scope === SCOPES.RUN) {
-        // if (!options.scopeOptions) {
-        //     throw new Error('Run Scope requires passing in run options' + scope);
-        // }
-        // const rm = new RunManager(options.scopeOptions);
-        // return rm.getRun().then(function (run) {
-        //     return [options.name, 'run', run.id].join('-');
-        // });
+        if (!options.scopeOptions || !options.scopeOptions.runid) {
+            throw new Error('Run Scope requires passing in run options with scope: { runid: <id> }' + scope);
+        }
+        return [prefix, options.groupName, options.scopeOptions.runid].join('-');
     }
     throw new Error('Unknown scope ' + scope);
 }
@@ -40,7 +37,8 @@ class TimerService {
             project: undefined,
 
             name: 'timer',
-            scope: 'run',
+            scope: SCOPES.RUN,
+            scopeOptions: {},
         };
 
         this.ACTIONS = ACTIONS;
@@ -66,6 +64,13 @@ class TimerService {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
+
+        clearInterval(this.interval);
+        this.interval = null;
+        if (this.dataChannelSubid) {
+            const channel = ds.getChannel();
+            channel.unsubscribe(this.dataChannelSubid);
+        }
         return ds.remove(merged.name);
     }
     

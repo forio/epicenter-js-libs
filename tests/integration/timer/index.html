@@ -19,6 +19,16 @@
         .instructions {
             color: blue;
         }
+        
+        .timer {
+            display: flex;
+            align-items: center;
+        }
+        
+        .timer,
+        .timer h5 {
+            font-size: 1.3em;
+        }
     </style>
 </head>
 
@@ -74,8 +84,10 @@
             </div>
             <div class="col-xs-8">
                 <strong>Time left</strong>
-                <h5 class="mins"></h5>:
-                <h5 class="seconds"></h5>
+                <div class="timer">
+                    <h5 class="mins"></h5>:
+                    <h5 class="seconds"></h5>
+                </div>
                 <div>
                     <button class="btnstart">Start</button>
                     <button class="btnpause">Pause</button>
@@ -86,7 +98,7 @@
         </div>
     </section>
     <section data-scope="user">
-        <h3>USER Scope</h3>
+        <h3>User Scope</h3>
         <div class="row">
             <div class="col-xs-4">
                 <div class="form">
@@ -100,8 +112,38 @@
             </div>
             <div class="col-xs-8">
                 <strong>Time left</strong>
-                <h5 class="mins"></h5>:
-                <h5 class="seconds"></h5>
+                <div class="timer">
+                    <h5 class="mins"></h5>:
+                    <h5 class="seconds"></h5>
+                </div>
+                <div>
+                    <button class="btnstart">Start</button>
+                    <button class="btnpause">Pause</button>
+                    <button class="btnresume">Resume</button>
+                    <button class="btnUpdateTime">Update</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section data-scope="run">
+        <h3>Run Scope</h3>
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="form">
+                    <div class="form-group">
+                        <label for="txtTimeLimit">Time limit (minutes)</label>
+                        <input type="text" class="form-control time-limit" value="2" />
+                    </div>
+                    <button class="btn btn-primary btn-create">Create timer</button>
+                    <button class="btn btn-delete">Delete</button>
+                </div>
+            </div>
+            <div class="col-xs-8">
+                <strong>Time left</strong>
+                <div class="timer">
+                    <h5 class="mins"></h5>:
+                    <h5 class="seconds"></h5>
+                </div>
                 <div>
                     <button class="btnstart">Start</button>
                     <button class="btnpause">Pause</button>
