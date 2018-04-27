@@ -41,6 +41,8 @@ F.service.Group = require('./service/group-api-service');
 F.service.Introspect = require('./service/introspection-api-service');
 F.service.Presence = require('./service/presence-api-service');
 F.service.Time = require('./service/time-api-service').default;
+F.service.Timer = require('./service/timer-service').default;
+
 F.store.Cookie = require('./store/cookie-store');
 
 F.factory.Store = require('./store/store-factory');
@@ -50,7 +52,6 @@ F.manager.RunManager = require('./managers/run-manager');
 F.manager.AuthManager = require('./managers/auth-manager');
 F.manager.WorldManager = require('./managers/world-manager');
 F.manager.SavedRunsManager = require('./managers/saved-runs-manager');
-F.manager.TimerManager = require('./managers/timer-manager').default;
 
 var strategies = require('./managers/run-strategies');
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better

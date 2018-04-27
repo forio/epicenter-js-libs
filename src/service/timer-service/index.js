@@ -43,20 +43,20 @@ function doAction(action, merged) {
             user: merged.user,
         }).catch(function (res) {
             if (res.status === 404) {
-                const errorMsg = 'Timer: ' + key + ' not found. Did you call Timer.create yet?';
+                const errorMsg = 'TimerService: ' + key + ' not found. Did you call Timer.create yet?';
                 console.error(errorMsg);
                 throw new Error(errorMsg);
             }
             throw res;
         });
     }, function (err) {
-        console.error('Timermanager start: Timer error', err);
+        console.error('TimerService: Timer error', err);
     });
 }
 
 
 // Interface that all strategies need to implement
-class Timermanager {
+class TimerService {
     constructor(options) {
         const defaults = {
             account: undefined,
@@ -79,7 +79,7 @@ class Timermanager {
     create(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         if (!merged.time || isNaN(+merged.time)) {
-            throw new Error('Timer Manager: expected number time, received ' + merged.time);
+            throw new Error('Timer: expected number time, received ' + merged.time);
         }
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
@@ -187,5 +187,7 @@ class Timermanager {
     }
 }
 
-
-export default Timermanager;
+TimerService._private = {
+    reduceActions: reduceActions
+};
+export default TimerService;

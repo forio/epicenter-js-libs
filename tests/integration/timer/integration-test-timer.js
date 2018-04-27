@@ -4,7 +4,7 @@ function getTm(evt, options) {
     var scope = $section.data('scope');
     var timeLimit = +$section.find('.time-limit').val() * 60 * 1000;
 
-    var tm = new F.manager.TimerManager($.extend({
+    var tm = new F.service.Timer($.extend({
         scope: scope,
         time: timeLimit,
         tickInterval: 1000,
@@ -13,7 +13,7 @@ function getTm(evt, options) {
 }
 
 
-var tm = new F.manager.TimerManager({
+var tm = new F.service.Timer({
     scope: 'group',
     tickInterval: 1000,
 });
