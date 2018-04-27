@@ -152,12 +152,14 @@ class TimerService {
 
         me.dataChannelSubid = dataChannel.subscribe('', function (res, meta) {
             if (meta.dataPath.indexOf('/actions') === -1) { //create
-                const createAction = res.actions[0];
-                me.channel.publish(ACTIONS.CREATE, createAction);
-            } else if (meta.subType === 'delete') {
-                clearInterval(me.interval);
-                me.interval = null;
-                me.channel.publish(ACTIONS.RESET);
+                if (meta.subType === 'delete') {
+                    clearInterval(me.interval);
+                    me.interval = null;
+                    me.channel.publish(ACTIONS.RESET);
+                } else {
+                    const createAction = res.actions[0];
+                    me.channel.publish(ACTIONS.CREATE, createAction);
+                }
             } else {
                 const actions = res; //you only get the array back
                 const lastAction = actions[actions.length - 1];
@@ -178,8 +180,13 @@ class TimerService {
         me.getTime(merged).then(function (res) {
             //failure means timer hasn't been created, in which case the datachannel subscription should handle 
             const reduced = reduceActions(res.actions, res.currentTime);
-            if (reduced.isStarted && !reduced.isPaused) {
-                createTimer(res.actions, res.currentTime); 
+            if (reduced.isStarted) {
+                if (reduced.isPaused) {
+                    const reduced = reduceActions(res.actions, res.currentTime);
+                    me.channel.publish(ACTIONS.TICK, reduced);
+                } else {
+                    createTimer(res.actions, res.currentTime); 
+                }
             }
         });
 
@@ -187,6 +194,7 @@ class TimerService {
     }
 }
 
+TimerService.ACTIONS = ACTIONS;
 TimerService._private = {
     reduceActions: reduceActions
 };

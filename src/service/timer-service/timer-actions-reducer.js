@@ -1,6 +1,9 @@
 import { ACTIONS } from './timer-constants';
 
 export default function reduceActions(actions, currentTime) {
+    if (!actions || !actions.length) {
+        return {};
+    }
     const initialState = {
         startTime: 0, 
         lastPausedTime: 0, 
@@ -32,17 +35,23 @@ export default function reduceActions(actions, currentTime) {
     }, initialState);
 
     const current = +currentTime;
-    const elapsed = reduced.isPaused ? reduced.elapsedTime : (current - (reduced.startTime || current) + reduced.totalPauseTime);
+    let elapsed = 0;
+    if (reduced.isPaused) {
+        elapsed = reduced.elapsedTime;
+    } else if (reduced.isStarted) {
+        elapsed = current - reduced.startTime - reduced.totalPauseTime;
+    } 
+
     const remaining = Math.max(0, reduced.timeLimit - elapsed);
 
     const secs = Math.floor(remaining / 1000);
     const minutesRemaining = Math.floor(secs / 60);
     const secondsRemaining = Math.floor(secs % 60);
     return {
-        elapsed: elapsed,
         isPaused: reduced.isPaused,
         isStarted: reduced.isStarted,
         currentTime: current,
+        elapsed: elapsed,
         remaining: {
             time: remaining,
             minutes: minutesRemaining,
