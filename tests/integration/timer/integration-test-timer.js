@@ -13,38 +13,30 @@ function getTm(evt, options) {
 }
 
 
-var tm = new F.service.Timer({
-    scope: 'group',
-    tickInterval: 1000,
-});
-var channel = tm.getChannel();
+function tick(scope) {
+    var tm = new F.service.Timer({
+        scope: scope,
+        tickInterval: 1000,
+    });
+    var groupTimerChannnel = tm.getChannel();
+    groupTimerChannnel.subscribe('*', function (d) {
+        console.log('global listener', d);
+    });
+    groupTimerChannnel.subscribe(tm.ACTIONS.TICK, function (d) {
+        $(`[data-scope="${scope}"] .mins`).html(d.remaining.minutes);
+        $(`[data-scope="${scope}"] .seconds`).html(d.remaining.seconds);
+        console.log('tick listener', d.remaining);
+    });
+}
 
-channel.subscribe('*', function (d) {
-    console.log('global listener', d);
-});
-channel.subscribe(tm.ACTIONS.TICK, function (d) {
-    $('#mins').html(d.remaining.minutes);
-    $('#seconds').html(d.remaining.seconds);
-    console.log('tick listener', d.remaining);
-});
-// channel.subscribe('tick', function (d) {
-//     console.log('tick', d);
-// });
-// channel.subscribe('actions', function (d) {
-//     console.log('actions', d);
-// });
-// channel.subscribe('complete', function (d) {
-//     console.log('actions', d);
-// });
-
+tick('user');
+tick('group');
 
 $('.btn-create').click(function (evt) {
     var tm = getTm(evt);
     tm.create().then(function () {
         window.alert('Timer created');
     });
-
-    
 });
 
 
