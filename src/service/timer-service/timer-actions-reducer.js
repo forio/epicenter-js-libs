@@ -1,5 +1,18 @@
 import { ACTIONS } from './timer-constants';
 
+function toDetailedTime(ts) {
+    const time = Math.max(0, ts);
+
+    const secs = Math.floor(time / 1000);
+    const minutesRemaining = Math.floor(secs / 60);
+    const secondsRemaining = Math.floor(secs % 60);
+    return {
+        time: ts,
+        minutes: minutesRemaining,
+        seconds: secondsRemaining,
+    };
+}
+
 export default function reduceActions(actions, currentTime) {
     if (!actions || !actions.length) {
         return {};
@@ -44,18 +57,11 @@ export default function reduceActions(actions, currentTime) {
 
     const remaining = Math.max(0, reduced.timeLimit - elapsed);
 
-    const secs = Math.floor(remaining / 1000);
-    const minutesRemaining = Math.floor(secs / 60);
-    const secondsRemaining = Math.floor(secs % 60);
     return {
         isPaused: reduced.isPaused,
         isStarted: reduced.isStarted,
         currentTime: current,
-        elapsed: elapsed,
-        remaining: {
-            time: remaining,
-            minutes: minutesRemaining,
-            seconds: secondsRemaining,
-        },
+        elapsed: toDetailedTime(elapsed),
+        remaining: toDetailedTime(remaining),
     };
 }

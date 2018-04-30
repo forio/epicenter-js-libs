@@ -44,7 +44,7 @@
                     createAction(Timer.ACTIONS.CREATE, 100),
                 ];
                 var op = reduceActions(actions, currentTime);
-                expect(op.elapsed).to.equal(0);
+                expect(op.elapsed.time).to.equal(0);
             });
             it('should return time from start if not paused', function () {
                 var currentTime = 120;
@@ -54,7 +54,7 @@
                     createAction(Timer.ACTIONS.START, startTime),
                 ];
                 var op = reduceActions(actions, currentTime);
-                expect(op.elapsed).to.equal(currentTime - startTime);
+                expect(op.elapsed.time).to.equal(currentTime - startTime);
             });
             it('should return time elapsed until pause if paused', function () {
                 var startTime = 50;
@@ -64,7 +64,7 @@
                     createAction(Timer.ACTIONS.PAUSE, startTime + 100),
                 ];
                 var op = reduceActions(actions, startTime + 500);
-                expect(op.elapsed).to.equal(100);
+                expect(op.elapsed.time).to.equal(100);
             });
             it('should return time elapsed until first pause if multiple conseq pauses', function () {
                 var startTime = 50;
@@ -75,7 +75,7 @@
                     createAction(Timer.ACTIONS.PAUSE, startTime + 800),
                 ];
                 var op = reduceActions(actions, startTime + 500);
-                expect(op.elapsed).to.equal(100);
+                expect(op.elapsed.time).to.equal(100);
             });
             describe('#resume', function () {
                 it('should start counting time after resume', function () {
@@ -92,7 +92,7 @@
                     
                     var currentTime = 650;
                     var op = reduceActions(actions, currentTime);
-                    expect(op.elapsed).to.equal((currentTime - startTime) + (firstPauseTime - firstResumeTime));
+                    expect(op.elapsed.time).to.equal((currentTime - startTime) + (firstPauseTime - firstResumeTime));
                 });
                 it('should count multiple pause times', function () {
                     var startTime = 50;
@@ -113,7 +113,7 @@
                     //50 - start to first pause +
                     //200 - time between pause +
                     //350 - current - last pause +
-                    expect(op.elapsed).to.equal(600);
+                    expect(op.elapsed.time).to.equal(600);
                 });
             });
         });
