@@ -2,11 +2,9 @@ function getTm(evt, options) {
     evt.preventDefault();
     var $section = $(evt.target).closest('section');
     var scope = $section.data('scope');
-    var timeLimit = +$section.find('.time-limit').val() * 60 * 1000;
 
     var tm = new F.service.Timer($.extend({
         scope: scope,
-        time: timeLimit,
         tickInterval: 1000,
         scopeOptions: {
             runid: 'myrunid'
@@ -25,13 +23,13 @@ function tick(scope) {
         tickInterval: 1000,
     });
     var groupTimerChannnel = tm.getChannel();
-    groupTimerChannnel.subscribe('*', function (d) {
-        console.log('global listener', d);
-    });
+    // groupTimerChannnel.subscribe('*', function (d) {
+    //     console.log('global listener', d);
+    // });
     groupTimerChannnel.subscribe(tm.ACTIONS.TICK, function (d) {
         $(`[data-scope="${scope}"] .mins`).html(d.remaining.minutes);
         $(`[data-scope="${scope}"] .seconds`).html(d.remaining.seconds);
-        console.log('tick listener', d.remaining);
+        console.log('tick happened', d.remaining);
     });
 }
 
@@ -41,11 +39,12 @@ tick('run');
 
 $('.btn-create').click(function (evt) {
     var tm = getTm(evt);
-    tm.create().then(function () {
+    var $section = $(evt.target).closest('section');
+    var timeLimit = +$section.find('.time-limit').val() * 60 * 1000;
+    tm.create({ timeLimit: timeLimit }).then(function () {
         window.alert('Timer created');
     });
 });
-
 
 $('.btn-delete').click(function (evt) {
     getTm(evt).cancel().then(function () {

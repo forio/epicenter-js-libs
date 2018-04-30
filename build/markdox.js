@@ -24,6 +24,17 @@ module.exports = function (grunt) {
                 ],
             }
         },
+        es6Docs: {
+            options: {
+                template: 'documentation/documentation-es6-template.ejs',
+            },
+            files: [
+                {
+                    src: 'src/service/timer-service/index.js',
+                    dest: 'documentation/generated/timer-service.md'
+                },
+            ]
+        },
         target: {
             files: [
                 // {

@@ -29,13 +29,28 @@ function getStore(options, key) {
     return ds;
 }
 
-// Interface that all strategies need to implement
+/**
+ * @typedef {object} TimerOptions
+ * @name TimerOptions
+ * @property {string} [account] The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
+ * @property {string} [project] The project id. Defaults to empty string. If left undefined, taken from the URL.
+ * @property {string} [token] For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
+ * @property {object} [transport] Options to pass on to the underlying transport layer
+ * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
+ * @property {GROUP|USER|RUN} [scope] Determines the specificity of the timer, or at what level the timer applies to.
+ * @property {object} [scopeOptions] Use to pass runid for RUN scope, ignored otherwise
+ */
+
 class TimerService {
+    /**
+     * @param {TimerOptions} options 
+     */
     constructor(options) {
         const defaults = {
             account: undefined,
             project: undefined,
-
+            token: undefined,
+            transport: {},
             name: 'timer',
             scope: SCOPES.RUN,
             scopeOptions: {},
@@ -43,7 +58,8 @@ class TimerService {
 
         this.ACTIONS = ACTIONS;
 
-        this.options = $.extend(true, {}, defaults, options);
+        /** @type {TimerOptions} */
+        this.options = $.extend(true, {}, defaults, options); 
         this.sessionManager = new SessionManager(this.options);
         this.channel = new Channel();
 
@@ -51,15 +67,25 @@ class TimerService {
         this.dataChannelSubid = null;
     }
 
-    create(opts) {
+    /**
+     * @param {{timeLimit: number}} createParams Timer limit, in milliseconds
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Promise
+     */
+    create(createParams, opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        if (!merged.time || isNaN(+merged.time)) {
-            throw new Error('Timer: expected number time, received ' + merged.time);
+        if (!createParams || isNaN(+createParams.timeLimit)) {
+            throw new Error('Timer: expected integer timeLimit, received ' + createParams.timeLimit);
         }
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
-        return ds.saveAs(merged.name, { actions: [{ type: ACTIONS.CREATE, timeLimit: merged.time, user: merged.user }] });
+        return ds.saveAs(merged.name, { actions: [{ type: ACTIONS.CREATE, timeLimit: createParams.timeLimit, user: merged.user }] });
     }
+
+    /**
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Promise
+     */
     cancel(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
@@ -74,9 +100,15 @@ class TimerService {
         return ds.remove(merged.name);
     }
     
-    addTimerAction(action, merged) {
+    /**
+     * @param {string} action
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Promise
+     */
+    addTimerAction(action, opts) {
+        const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
-        return this.getCurrentTime().then(function (t) {
+        return this.getCurrentTime(opts).then(function (t) {
             const ds = getStore(merged, key);
             return ds.pushToArray(`${merged.name}/actions`, { 
                 type: action, 
@@ -90,28 +122,57 @@ class TimerService {
                 }
                 throw res;
             });
-        }, function (err) {
-            console.error('TimerService: Timer error', err);
         });
     }
+
+    /**
+     * Start the timer
+     * 
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Promise
+     */
     start(opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return this.addTimerAction(ACTIONS.START, merged);
-    }
-    pause(opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return this.addTimerAction(ACTIONS.PAUSE, merged);
-    }
-    resume(opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        return this.addTimerAction(ACTIONS.RESUME, merged);
+        return this.addTimerAction(ACTIONS.START, opts);
     }
 
+    /**
+     * Pause the timer
+     * 
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Promise
+     */
+    pause(opts) {
+        return this.addTimerAction(ACTIONS.PAUSE, opts);
+    }
+
+     /**
+     * Resumes a paused timer
+     * 
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Promise
+     */
+    resume(opts) {
+        return this.addTimerAction(ACTIONS.RESUME, opts);
+    }
+
+     /**
+     * Helper method to return current server time
+     * 
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Promise<Date>
+     */
     getCurrentTime(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const ts = new TimeService(merged);
         return ts.getTime();
     }
+
+     /**
+     * Resumes current state of the timer, including time elapsed and remaining
+     * 
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Promise
+     */
     getState(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
@@ -128,6 +189,12 @@ class TimerService {
         });
     }
 
+    /**
+     * Resumes a channel to hook into for timer notifications.
+     * 
+     * @param {TimerOptions} [opts] overrides for service options
+     * @returns Channel
+     */
     getChannel(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
@@ -184,6 +251,7 @@ class TimerService {
             }
         });
 
+        //TODO: Don't do the ajax request till someone calls subscribe
         me.getState(merged).then(function (state) {
             //failure means timer hasn't been created, in which case the datachannel subscription should handle 
             if (state.isStarted) {
