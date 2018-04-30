@@ -3,8 +3,10 @@ import TimeService from 'service/time-api-service';
 import SessionManager from 'store/session-manager';
 import Channel from 'util/channel';
 
+import getStrategy from './start-time-strategies';
+
 import reduceActions from './timer-actions-reducer';
-import { SCOPES, ACTIONS } from './timer-constants';
+import { SCOPES, ACTIONS, STRATEGY } from './timer-constants';
 
 function getAPIKeyName(options) {
     const scope = options.scope.toUpperCase();
@@ -39,8 +41,8 @@ function getStore(options, key) {
  * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
  * @property {GROUP|USER|RUN} [scope] Determines the specificity of the timer, or at what level the timer applies to.
  * @property {object} [scopeOptions] Use to pass runid for RUN scope, ignored otherwise
+ * @property {string|function} [strategy] strategy to use to resolve start time. Available strategies are 'first-user' (default) or 'last-user'. Can also take in a function to return a custom start time.
  */
-
 class TimerService {
     /**
      * @param {TimerOptions} options 
@@ -54,6 +56,7 @@ class TimerService {
             name: 'timer',
             scope: SCOPES.RUN,
             scopeOptions: {},
+            strategy: STRATEGY.START_BY_FIRST_USER
         };
 
         this.ACTIONS = ACTIONS;
@@ -62,6 +65,8 @@ class TimerService {
         this.options = $.extend(true, {}, defaults, options); 
         this.sessionManager = new SessionManager(this.options);
         this.channel = new Channel();
+
+        this.strategy = getStrategy(this.options.strategy);
 
         this.interval = null;
         this.dataChannelSubid = null;
@@ -176,6 +181,7 @@ class TimerService {
     getState(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
         const key = getAPIKeyName(merged);
+        const strategy = this.strategy;
         return this.getCurrentTime(opts).then(function (currentTime) {
             const ds = getStore(merged, key);
             return ds.load(merged.name).then(function calculateTimeLeft(doc) {
@@ -183,7 +189,7 @@ class TimerService {
                     throw new Error('Timer has not been created yet');
                 }
                 const actions = doc.actions;
-                const state = reduceActions(actions, currentTime);
+                const state = reduceActions(actions, strategy, currentTime);
                 return $.extend(true, {}, doc, state);
             });
         });
@@ -202,6 +208,8 @@ class TimerService {
         const dataChannel = ds.getChannel();
         const me = this;
 
+        const strategy = this.strategy;
+        
         function cancelTimer() {
             clearInterval(me.interval);
             me.interval = null;
@@ -212,7 +220,7 @@ class TimerService {
             }
             me.interval = setInterval(function () {
                 currentTime = currentTime + merged.tickInterval;
-                const state = reduceActions(actions, currentTime);
+                const state = reduceActions(actions, strategy, currentTime);
                 if (state.remaining.time === 0) {
                     me.channel.publish(ACTIONS.COMPLETE, state);
 
@@ -222,7 +230,7 @@ class TimerService {
                 me.channel.publish(ACTIONS.TICK, state);
             }, merged.tickInterval);
 
-            const state = reduceActions(actions, currentTime);
+            const state = reduceActions(actions, strategy, currentTime);
             me.channel.publish(ACTIONS.TICK, state);
         }
 
@@ -269,6 +277,7 @@ class TimerService {
 
 TimerService.ACTIONS = ACTIONS;
 TimerService.SCOPES = SCOPES;
+TimerService.STRATEGY = STRATEGY;
 TimerService._private = {
     reduceActions: reduceActions
 };

@@ -3,7 +3,17 @@
         return { type: type, time: time, user: {} };
     }
     var Timer = F.service.Timer;
-    describe('Timer Service #reduceActions', function () {
+    var defaultStartReducer = function (time) {
+        return function (actions) {
+            return time ? {
+                startTime: time,
+                isStarted: true
+            } : {
+                isStarted: false,   
+            };
+        };
+    };
+    describe.only('Timer Service #reduceActions', function () {
         var reduceActions = Timer._private.reduceActions;
 
         it('should return empty object if nothing passed in', function () {
@@ -43,7 +53,7 @@
                 var actions = [
                     createAction(Timer.ACTIONS.CREATE, 100),
                 ];
-                var op = reduceActions(actions, currentTime);
+                var op = reduceActions(actions, defaultStartReducer(false), currentTime);
                 expect(op.elapsed.time).to.equal(0);
             });
             it('should return time from start if not paused', function () {
@@ -53,7 +63,7 @@
                     createAction(Timer.ACTIONS.CREATE, 0),
                     createAction(Timer.ACTIONS.START, startTime),
                 ];
-                var op = reduceActions(actions, currentTime);
+                var op = reduceActions(actions, defaultStartReducer(startTime), currentTime);
                 expect(op.elapsed.time).to.equal(currentTime - startTime);
             });
             it('should return time elapsed until pause if paused', function () {
@@ -63,7 +73,7 @@
                     createAction(Timer.ACTIONS.START, startTime),
                     createAction(Timer.ACTIONS.PAUSE, startTime + 100),
                 ];
-                var op = reduceActions(actions, startTime + 500);
+                var op = reduceActions(actions, defaultStartReducer(startTime), startTime + 500);
                 expect(op.elapsed.time).to.equal(100);
             });
             it('should return time elapsed until first pause if multiple conseq pauses', function () {
@@ -74,7 +84,7 @@
                     createAction(Timer.ACTIONS.PAUSE, startTime + 100),
                     createAction(Timer.ACTIONS.PAUSE, startTime + 800),
                 ];
-                var op = reduceActions(actions, startTime + 500);
+                var op = reduceActions(actions, defaultStartReducer(startTime), startTime + 500);
                 expect(op.elapsed.time).to.equal(100);
             });
             describe('#resume', function () {
@@ -91,7 +101,7 @@
                     ];
                     
                     var currentTime = 650;
-                    var op = reduceActions(actions, currentTime);
+                    var op = reduceActions(actions, defaultStartReducer(startTime), currentTime);
                     expect(op.elapsed.time).to.equal((currentTime - startTime) + (firstPauseTime - firstResumeTime));
                 });
                 it('should count multiple pause times', function () {
@@ -109,7 +119,7 @@
                     ];
                     
                     var currentTime = 1000;
-                    var op = reduceActions(actions, currentTime);
+                    var op = reduceActions(actions, defaultStartReducer(startTime), currentTime);
                     //50 - start to first pause +
                     //200 - time between pause +
                     //350 - current - last pause +

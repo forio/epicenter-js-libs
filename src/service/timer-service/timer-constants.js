@@ -12,3 +12,8 @@ export const ACTIONS = {
     RESET: 'RESET',
     TICK: 'TICK',
 };
+
+export const STRATEGY = {
+    START_BY_FIRST_USER: 'first-user',
+    START_BY_LAST_USER: 'last-user',
+};

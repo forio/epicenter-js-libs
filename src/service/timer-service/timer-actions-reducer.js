@@ -13,26 +13,27 @@ function toDetailedTime(ts) {
     };
 }
 
-export default function reduceActions(actions, currentTime) {
+/**
+ * @param {object[]} actions 
+ * @param {function} startTimeReducer
+ * @param {string} currentTime 
+ */
+export default function reduceActions(actions, startTimeReducer, currentTime) {
     if (!actions || !actions.length) {
         return {};
     }
-    const initialState = {
-        startTime: 0, 
+    const start = startTimeReducer(actions);
+    const initialState = $.extend({}, {
         lastPausedTime: 0, 
         totalPauseTime: 0, 
         elapsedTime: 0, 
         timeLimit: 0,
-        isStarted: false,
         isPaused: false,
-    };
+    }, start);
     const reduced = actions.reduce(function (accum, action) {
         const ts = +(new Date(action.time));
         if (action.type === ACTIONS.CREATE) {
             accum.timeLimit = action.timeLimit;
-        } else if (action.type === ACTIONS.START && !accum.startTime) {
-            accum.startTime = ts;
-            accum.isStarted = true;
         } else if (action.type === ACTIONS.PAUSE && !accum.lastPausedTime) {
             accum.lastPausedTime = ts;
             accum.elapsedTime = ts - accum.startTime;
