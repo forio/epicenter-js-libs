@@ -29,6 +29,7 @@ export default function reduceActions(actions, startTimeReducer, currentTime) {
         elapsedTime: 0, 
         timeLimit: 0,
         isPaused: false,
+        isStarted: !!start.startTime,
     }, start);
     const reduced = actions.reduce(function (accum, action) {
         const ts = +(new Date(action.time));

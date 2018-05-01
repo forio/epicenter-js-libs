@@ -5,11 +5,8 @@
     var Timer = F.service.Timer;
     var defaultStartReducer = function (time) {
         return function (actions) {
-            return time ? {
+            return {
                 startTime: time,
-                isStarted: true
-            } : {
-                isStarted: false,   
             };
         };
     };

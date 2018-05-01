@@ -3,8 +3,6 @@ import { ACTIONS } from '../timer-constants';
 export default function reduceActions(actions) {
     const initialState = {
         startTime: 0, 
-        isStarted: false,
-
         startedUsers: {},
     };
     const reduced = actions.reduce(function (accum, action) {
@@ -17,7 +15,6 @@ export default function reduceActions(actions) {
             accum.startTime = ts;
             accum.startUser[user.userName] = ts;
         }
-        accum.isStarted = true;
         return accum;
     }, initialState);
 
