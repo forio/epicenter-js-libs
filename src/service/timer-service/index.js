@@ -73,26 +73,28 @@ class TimerService {
     }
 
     /**
-     * @param {{timeLimit: number}} createParams Timer limit, in milliseconds
-     * @param {TimerOptions} [opts] overrides for service options
+     * Creates a new Timer
+     * 
+     * @param {{timeLimit: number}} opts Timer limit, in milliseconds
      * @returns Promise
      */
-    create(createParams, opts) {
+    create(opts) {
         const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        if (!createParams || isNaN(+createParams.timeLimit)) {
-            throw new Error('Timer: expected integer timeLimit, received ' + createParams.timeLimit);
+        if (!opts || isNaN(+opts.timeLimit)) {
+            throw new Error('Timer: expected integer timeLimit, received ' + opts.timeLimit);
         }
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
-        return ds.saveAs(merged.name, { actions: [{ type: ACTIONS.CREATE, timeLimit: createParams.timeLimit, user: merged.user }] });
+        return ds.saveAs(merged.name, { actions: [{ type: ACTIONS.CREATE, timeLimit: opts.timeLimit, user: merged.user }] });
     }
 
     /**
-     * @param {TimerOptions} [opts] overrides for service options
+     * Cancels current timer. 
+     * 
      * @returns Promise
      */
-    cancel(opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
+    cancel() {
+        const merged = this.sessionManager.getMergedOptions(this.options);
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
 
@@ -106,14 +108,15 @@ class TimerService {
     }
     
     /**
+     * Adds a custom action to the timer state. Only relevant if you're implementing a custom strategy.
+     * 
      * @param {string} action
-     * @param {TimerOptions} [opts] overrides for service options
      * @returns Promise
      */
-    addTimerAction(action, opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
+    addTimerAction(action) {
+        const merged = this.sessionManager.getMergedOptions(this.options);
         const key = getAPIKeyName(merged);
-        return this.getCurrentTime(opts).then(function (t) {
+        return this.getCurrentTime().then(function (t) {
             const ds = getStore(merged, key);
             return ds.pushToArray(`${merged.name}/actions`, { 
                 type: action, 
@@ -133,41 +136,37 @@ class TimerService {
     /**
      * Start the timer
      * 
-     * @param {TimerOptions} [opts] overrides for service options
      * @returns Promise
      */
-    start(opts) {
-        return this.addTimerAction(ACTIONS.START, opts);
+    start() {
+        return this.addTimerAction(ACTIONS.START);
     }
 
     /**
      * Pause the timer
      * 
-     * @param {TimerOptions} [opts] overrides for service options
      * @returns Promise
      */
-    pause(opts) {
-        return this.addTimerAction(ACTIONS.PAUSE, opts);
+    pause() {
+        return this.addTimerAction(ACTIONS.PAUSE);
     }
 
      /**
      * Resumes a paused timer
      * 
-     * @param {TimerOptions} [opts] overrides for service options
      * @returns Promise
      */
-    resume(opts) {
-        return this.addTimerAction(ACTIONS.RESUME, opts);
+    resume() {
+        return this.addTimerAction(ACTIONS.RESUME);
     }
 
      /**
      * Helper method to return current server time
      * 
-     * @param {TimerOptions} [opts] overrides for service options
      * @returns Promise<Date>
      */
-    getCurrentTime(opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
+    getCurrentTime() {
+        const merged = this.sessionManager.getMergedOptions(this.options);
         const ts = new TimeService(merged);
         return ts.getTime();
     }
@@ -175,14 +174,13 @@ class TimerService {
      /**
      * Resumes current state of the timer, including time elapsed and remaining
      * 
-     * @param {TimerOptions} [opts] overrides for service options
      * @returns Promise
      */
-    getState(opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
+    getState() {
+        const merged = this.sessionManager.getMergedOptions(this.options);
         const key = getAPIKeyName(merged);
         const strategy = this.strategy;
-        return this.getCurrentTime(opts).then(function (currentTime) {
+        return this.getCurrentTime().then(function (currentTime) {
             const ds = getStore(merged, key);
             return ds.load(merged.name).then(function calculateTimeLeft(doc) {
                 if (!doc) {
@@ -198,11 +196,10 @@ class TimerService {
     /**
      * Resumes a channel to hook into for timer notifications.
      * 
-     * @param {TimerOptions} [opts] overrides for service options
      * @returns Channel
      */
-    getChannel(opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
+    getChannel() {
+        const merged = this.sessionManager.getMergedOptions(this.options);
         const key = getAPIKeyName(merged);
         const ds = getStore(merged, key);
         const dataChannel = ds.getChannel();
@@ -250,7 +247,7 @@ class TimerService {
                 me.channel.publish(lastAction.type, lastAction);
                 
                 if (lastAction.type === ACTIONS.START || lastAction.type === ACTIONS.RESUME) {
-                    return me.getCurrentTime(opts).then(function (currentTime) {
+                    return me.getCurrentTime().then(function (currentTime) {
                         createTimer(actions, +currentTime);
                     });
                 } else if (lastAction.type === ACTIONS.PAUSE) {
@@ -260,7 +257,7 @@ class TimerService {
         });
 
         //TODO: Don't do the ajax request till someone calls subscribe
-        me.getState(merged).then(function (state) {
+        me.getState().then(function (state) {
             //failure means timer hasn't been created, in which case the datachannel subscription should handle 
             if (state.isStarted) {
                 if (state.isPaused || state.remaining.time <= 0) {

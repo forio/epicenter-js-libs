@@ -19,17 +19,6 @@
             expect(reduceActions(null)).to.eql({});
         });
         
-        describe('#isStarted', function () {
-            it('should return false if not started', function () {
-                
-            });
-            it('should return true if  started', function () {
-                
-            });
-            it('should return true if started multiple times', function () {
-                
-            });
-        });
         describe('#isPaused', function () {
             it('should return false if not paused', function () {
                 
