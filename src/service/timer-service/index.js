@@ -206,7 +206,7 @@ class TimerService {
         return this.addTimerAction(ACTIONS.PAUSE);
     }
 
-     /**
+    /**
      * Resumes a paused timer
      * 
      * @returns Promise
@@ -215,7 +215,7 @@ class TimerService {
         return this.addTimerAction(ACTIONS.RESUME);
     }
 
-     /**
+    /**
      * Helper method to return current server time
      * 
      * @returns Promise<Date>
@@ -226,7 +226,7 @@ class TimerService {
         return ts.getTime();
     }
 
-     /**
+    /**
      * Resumes current state of the timer, including time elapsed and remaining
      * 
      * @returns Promise

@@ -1,5 +1,10 @@
 module.exports = function (grunt) {
-    'use strict';
+
+    require('jit-grunt')(grunt, {
+        'bump-only': 'grunt-bump',
+        'bump-commit': 'grunt-bump',
+        changelog: 'grunt-conventional-changelog',
+    });
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json')
@@ -9,7 +14,8 @@ module.exports = function (grunt) {
         require('./' + task)(grunt);
     });
 
-    grunt.registerTask('test', ['templates', 'webpack:edge', 'webpack:components', 'mocha']);
+    grunt.registerTask('test-dev', ['webpack:edge', 'karma:testList']);
+    grunt.registerTask('test', ['templates', 'webpack:edge', 'webpack:components', 'karma:testWithCoverage']);
     grunt.registerTask('documentation', ['eslint', 'markdox']);
     grunt.registerTask('validate', ['eslint', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);

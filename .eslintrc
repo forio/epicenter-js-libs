@@ -243,7 +243,7 @@
         "prefer-template": 0
     },
     "overrides": [{
-        "files": ["**/tests/*.js", "./tests/spec/**/*js"],
+        "files": ["**/tests/*.js", "./tests/specs/**/*js"],
         "env": {
             "mocha": true
         },

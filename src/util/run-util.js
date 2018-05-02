@@ -10,7 +10,7 @@ module.exports = (function () {
         /**
          * normalizes different types of operation inputs
          * @param  {Object|Array|String} operations operations to perform
-         * @param  {Array} args arguments for operation
+         * @param  {Array} [args] arguments for operation
          * @return {String} operations of the form `{ ops: [], args: [] }`
          */
         normalizeOperations: function (operations, args) {

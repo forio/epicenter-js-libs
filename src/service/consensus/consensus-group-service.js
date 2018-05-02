@@ -1,7 +1,7 @@
 'use strict';
 
-var ConfigService = require('../configuration-service').default;
-var SessionManager = require('../../store/session-manager');
+var ConfigService = require('service/configuration-service').default;
+var SessionManager = require('store/session-manager');
 var ConsensusService = require('./consensus-service.js');
 
 var apiEndpoint = 'multiplayer/consensus';

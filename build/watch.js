@@ -7,10 +7,10 @@ module.exports = function (grunt) {
             files: ['src/**/*.js'],
             tasks: ['test']
         },
-        tests: {
-            files: ['tests/spec/**/*.js'],
-            tasks: ['mocha']
-        },
+        // tests: {
+        //     files: ['tests/spec/**/*.js'],
+        //     tasks: ['mocha']
+        // },
         components: {
             files: ['src/components/**/*', '!src/components/**/*.js'],
             tasks: ['copy:components']

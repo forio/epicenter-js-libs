@@ -1,8 +1,8 @@
 'use strict';
 
-var ConfigService = require('../configuration-service').default;
-var TransportFactory = require('../../transport/http-transport-factory').default;
-var SessionManager = require('../../store/session-manager');
+var ConfigService = require('service/configuration-service').default;
+var TransportFactory = require('transport/http-transport-factory').default;
+var SessionManager = require('store/session-manager');
 
 var API_ENDPOINT = 'multiplayer/consensus';
 
@@ -180,7 +180,7 @@ module.exports = function (config) {
             }));
         },
 
-         /**
+        /**
          * Reverts submission. Note if `executeActionsImmediately` was set to `true` while creating the consensus point the action will have already been passed on to the model.
          * 
          * @param {object} options Overrides for service options
