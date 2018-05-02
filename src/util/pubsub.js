@@ -109,7 +109,8 @@ function makeSubs(topics, callback, options) {
 */
 function checkAndNotifyBatch(topics, subscription) {
     var merged = $.extend(true, {}, publishableToObject(topics));
-    var matchingTopics = intersection(Object.keys(merged), subscription.topics);
+    var keys = Object.keys(merged).map((k)=> k.toLowerCase());
+    var matchingTopics = intersection(keys, subscription.topics);
     if (matchingTopics.length > 0) {
         var toSend = subscription.topics.reduce(function (accum, topic) {
             accum[topic] = merged[topic];
@@ -129,7 +130,7 @@ function checkAndNotifyBatch(topics, subscription) {
  */
 function checkAndNotify(topics, subscription) {
     topics.forEach(function (topic) {
-        if (subscription.topics.indexOf(topic.name) !== -1 || subscription.topics.indexOf('*') !== -1) { 
+        if (subscription.topics.indexOf(topic.name.toLowerCase()) !== -1 || subscription.topics.indexOf('*') !== -1) { 
             subscription.callback(topic.value);
         }
     });
@@ -181,7 +182,7 @@ class PubSub {
         var remaining = this.subscriptions.filter(function (subs) {
             return subs.id !== token;
         });
-        if (!remaining.length === olderLength) {
+        if (remaining.length === olderLength) {
             throw new Error('No subscription found for token ' + token);
         }
         this.subscriptions = remaining;
