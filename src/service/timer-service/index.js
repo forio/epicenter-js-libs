@@ -17,9 +17,14 @@ function getAPIKeyName(options) {
         return [prefix, options.groupName, options.userName].join('-');
     } else if (scope === SCOPES.RUN) {
         if (!options.scopeOptions || !options.scopeOptions.runid) {
-            throw new Error('Run Scope requires passing in run options with scope: { runid: <id> }' + scope);
+            throw new Error('Run Scope requires passing in run options with scopeOptions: { runid: <id> }');
         }
         return [prefix, options.groupName, options.scopeOptions.runid].join('-');
+    } else if (scope === SCOPES.CUSTOM) {
+        if (!options.scopeOptions || !options.scopeOptions.customName) {
+            throw new Error('Custom Scope requires passing in scopeOptions: { customName: <id> }');
+        }
+        return options.scopeOptions.customName;
     }
     throw new Error('Unknown scope ' + scope);
 }
@@ -41,7 +46,7 @@ function getStore(options) {
  * @property {object} [transport] Options to pass on to the underlying transport layer
  * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
  * @property {GROUP|USER|RUN} [scope] Determines the specificity of the timer, or at what level the timer applies to.
- * @property {object} [scopeOptions] Use to pass runid for RUN scope, ignored otherwise
+ * @property {object} [scopeOptions] Use to pass `runid` for RUN scope, or `customName` for CUSTOM scope ignored otherwise
  * @property {string|function} [strategy] strategy to use to resolve start time. Available strategies are 'first-user' (default) or 'last-user'. Can also take in a function to return a custom start time.
  */
 class TimerService {
@@ -102,8 +107,6 @@ class TimerService {
         return prom.then((actions)=> {
             return ds.saveAs(options.name, {
                 actions: [createAction].concat(actions) 
-            }).catch((t)=> {
-                throw new Error('Timer already exists. Call cancel to remove it');
             });
         }).then((doc)=> {
             const actions = doc.actions;
@@ -169,15 +172,18 @@ class TimerService {
         const merged = this.sessionManager.getMergedOptions(this.options);
         const ds = getStore(merged);
 
-        return this.makeAction(action).then(function (action) {
-            return ds.pushToArray(`${merged.name}/actions`, action).catch(function (res) {
-                if (res.status === 404) {
-                    const errorMsg = 'Timer not found. Did you create it yet?';
-                    console.error(errorMsg);
-                    throw new Error(errorMsg);
-                }
-                throw res;
-            });
+        return this.makeAction(action).then((action)=> {
+            return ds.pushToArray(`${merged.name}/actions`, action)
+                .then((actions)=> {
+                    return reduceActions(actions, this.strategy, action.time);
+                }, (res)=> {
+                    if (res.status === 404) {
+                        const errorMsg = 'Timer not found. Did you create it yet?';
+                        console.error(errorMsg);
+                        throw new Error(errorMsg);
+                    }
+                    throw res;
+                });
         });
     }
 

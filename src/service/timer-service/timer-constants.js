@@ -1,7 +1,8 @@
 export const SCOPES = {
     GROUP: 'GROUP',
     RUN: 'RUN',
-    USER: 'USER'
+    USER: 'USER',
+    CUSTOM: 'CUSTOM',
 };
 export const ACTIONS = {
     CREATE: 'CREATE',

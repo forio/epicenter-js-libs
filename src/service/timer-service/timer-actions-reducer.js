@@ -54,7 +54,7 @@ export default function reduceActions(actions, startTimeReducer, currentTime) {
     const base = {};
 
     if (currentTime) {
-        const current = +currentTime;
+        const current = +(new Date(currentTime));
         base.currentTime = current;
 
         if (reduced.isPaused) {
