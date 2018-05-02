@@ -1,6 +1,5 @@
-'use strict';
 
-var URLConfigService = require('./service/url-config-service');
+var URLConfigService = require('./index');
 
 var envLoad = function (callback) {
     var urlService = new URLConfigService();
