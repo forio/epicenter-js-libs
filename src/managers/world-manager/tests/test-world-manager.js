@@ -4,6 +4,8 @@ import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));
 
+const { expect } = chai;
+
 var cookieContents = {
     auth_token: '',
     account: 'forio',

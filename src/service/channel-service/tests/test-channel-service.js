@@ -1,7 +1,4 @@
-
 import Channel from '../index';
-import URLService from 'service/url-config-service';
-
 import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));

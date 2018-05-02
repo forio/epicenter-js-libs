@@ -7,6 +7,8 @@ import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));
 
+const { expect } = chai;
+
 var runOptions = {
     account: 'forio-dev',
     project: 'js-libs',

@@ -20,42 +20,42 @@
  */
 
 
- 'use strict';
+'use strict';
 
- var TransportFactory = require('transport/http-transport-factory').default;
- var rutil = require('util/run-util');
+var TransportFactory = require('transport/http-transport-factory').default;
+var rutil = require('util/run-util');
 
- module.exports = function (config) {
-     var defaults = {
+module.exports = function (config) {
+    var defaults = {
         /**
          * The runs object to which the variable filters apply. Defaults to null.
          * @type {runService}
          */
-         runService: null
-     };
-     var serviceOptions = $.extend({}, defaults, config);
+        runService: null
+    };
+    var serviceOptions = $.extend({}, defaults, config);
 
-     var getURL = function () {
+    var getURL = function () {
         //TODO: Replace with getCurrentconfig instead?
-         return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
-     };
+        return serviceOptions.runService.urlConfig.getFilterURL() + 'variables/';
+    };
 
-     var addAutoRestoreHeader = function (options) {
-         return serviceOptions.runService.urlConfig.addAutoRestoreHeader(options);
-     };
+    var addAutoRestoreHeader = function (options) {
+        return serviceOptions.runService.urlConfig.addAutoRestoreHeader(options);
+    };
 
-     var httpOptions = {
-         url: getURL
-     };
-     if (serviceOptions.token) {
-         httpOptions.headers = {
-             Authorization: 'Bearer ' + serviceOptions.token
-         };
-     }
-     var http = new TransportFactory(httpOptions);
-     http.splitGet = rutil.splitGetFactory(httpOptions);
+    var httpOptions = {
+        url: getURL
+    };
+    if (serviceOptions.token) {
+        httpOptions.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+    var http = new TransportFactory(httpOptions);
+    http.splitGet = rutil.splitGetFactory(httpOptions);
 
-     var publicAPI = {
+    var publicAPI = {
 
         /**
          * Get values for a variable.
@@ -73,13 +73,13 @@
          * @param {Object} options (Optional) Overrides for configuration options.
          * @return {Promise}
          */
-         load: function (variable, outputModifier, options) {
-             var httpOptions = $.extend(true, {}, serviceOptions, options);
-             httpOptions = addAutoRestoreHeader(httpOptions);
-             return http.get(outputModifier, $.extend({}, httpOptions, {
-                 url: getURL() + variable + '/'
-             }));
-         },
+        load: function (variable, outputModifier, options) {
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            httpOptions = addAutoRestoreHeader(httpOptions);
+            return http.get(outputModifier, $.extend({}, httpOptions, {
+                url: getURL() + variable + '/'
+            }));
+        },
 
         /**
          * Returns particular variables, based on conditions specified in the `query` object.
@@ -99,17 +99,17 @@
          * @param {Object} options (Optional) Overrides for configuration options.
          * @return {Promise}
          */
-         query: function (query, outputModifier, options) {
+        query: function (query, outputModifier, options) {
             //Query and outputModifier are both querystrings in the url; only calling them out separately here to be consistent with the other calls
-             var httpOptions = $.extend(true, {}, serviceOptions, options);
-             httpOptions = addAutoRestoreHeader(httpOptions);
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            httpOptions = addAutoRestoreHeader(httpOptions);
 
-             if ($.isArray(query)) {
-                 query = { include: query };
-             }
-             $.extend(query, outputModifier);
-             return http.splitGet(query, httpOptions);
-         },
+            if ($.isArray(query)) {
+                query = { include: query };
+            }
+            $.extend(query, outputModifier);
+            return http.splitGet(query, httpOptions);
+        },
 
         /**
          * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](../run-api-service/) for calling methods from the model.)
@@ -125,18 +125,18 @@
          * @param {Object} options (Optional) Overrides for configuration options.
          * @return {Promise}
          */
-         save: function (variable, val, options) {
-             var attrs;
-             if (typeof variable === 'object') {
-                 attrs = variable;
-                 options = val;
-             } else {
-                 (attrs = {})[variable] = val;
-             }
-             var httpOptions = $.extend(true, {}, serviceOptions, options);
+        save: function (variable, val, options) {
+            var attrs;
+            if (typeof variable === 'object') {
+                attrs = variable;
+                options = val;
+            } else {
+                (attrs = {})[variable] = val;
+            }
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
 
-             return http.patch.call(this, attrs, httpOptions);
-         }
+            return http.patch.call(this, attrs, httpOptions);
+        }
 
         // Not Available until underlying API supports PUT. Otherwise save would be PUT and merge would be PATCH
         // *
@@ -161,6 +161,6 @@
 
         //     return http.patch.call(this, attrs, httpOptions);
         // }
-     };
-     $.extend(this, publicAPI);
- };
+    };
+    $.extend(this, publicAPI);
+};

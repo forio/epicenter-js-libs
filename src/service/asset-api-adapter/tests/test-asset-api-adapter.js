@@ -37,7 +37,7 @@ describe('Asset API Adapter', function () {
     });
 
     it('should pass through string tokens', function () {
-        var as = new AssetService(_.extend({}, defaults, { token: 'abc' }));
+        var as = new AssetService(Object.assign({}, defaults, { token: 'abc' }));
         as.create('file.txt');
 
         var req = server.requests.pop();
@@ -45,18 +45,18 @@ describe('Asset API Adapter', function () {
     });
 
     it('should allow to set the scope on service level', function () {
-        var as = new AssetService(_.extend({}, defaults, { scope: 'user' }));
+        var as = new AssetService(Object.assign({}, defaults, { scope: 'user' }));
         as.list();
 
         var req = server.requests.pop();
         req.url.should.equal(baseURL + 'user/forio/js-libs/asset-group/myUserId');
 
-        as = new AssetService(_.extend({}, defaults, { scope: 'group' }));
+        as = new AssetService(Object.assign({}, defaults, { scope: 'group' }));
         as.list();
         req = server.requests.pop();
         req.url.should.equal(baseURL + 'group/forio/js-libs/asset-group');
 
-        as = new AssetService(_.extend({}, defaults, { scope: 'project' }));
+        as = new AssetService(Object.assign({}, defaults, { scope: 'project' }));
         as.list();
         req = server.requests.pop();
         req.url.should.equal(baseURL + 'project/forio/js-libs');

@@ -1,6 +1,5 @@
 
 import qutils from '../query-util';
-import chai from 'chai';
 
 describe('Query Util', function () {
     describe('#toMatrixFormat()', function () {

@@ -8,6 +8,8 @@ import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));
 
+const { expect } = chai;
+
 var account = 'forio';
 var project = 'js-libs';
 
@@ -170,7 +172,7 @@ describe('Run API Service', function () {
         rs2.create('model.jl');
 
         req = server.requests.pop();
-        should.not.exist(req.requestHeaders.Authorization);
+        expect(req.requestHeaders.Authorization).to.not.exist;
     });
 
     it('should allow specifying `id` instead of filter', function () {

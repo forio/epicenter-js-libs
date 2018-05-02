@@ -1,6 +1,5 @@
 
 import rutil from '../run-util';
-import chai from 'chai';
 
 describe('Run Utilities', function () {
     describe('#normalizeOperations()', function () {

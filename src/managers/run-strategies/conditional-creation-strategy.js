@@ -32,11 +32,11 @@ var Strategy = classFrom(Base, {
         }, runService.getCurrentConfig());
 
         return runService
-                .create(opt, options)
-                .then(function (run) {
-                    run.freshlyCreated = true;
-                    return run;
-                });
+            .create(opt, options)
+            .then(function (run) {
+                run.freshlyCreated = true;
+                return run;
+            });
     },
 
     /**

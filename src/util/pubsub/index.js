@@ -4,7 +4,7 @@
  * @property {*} value
  */
 
- /**
+/**
   * @typedef Subscription
   * @prop {string} id
   * @prop {Function} callback

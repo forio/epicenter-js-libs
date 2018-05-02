@@ -11,7 +11,7 @@ import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));
 
-
+const { expect } = chai;
 var baseStateURL = (new URLService()).getAPIPath('model/state');
 
 var runOptions = {
