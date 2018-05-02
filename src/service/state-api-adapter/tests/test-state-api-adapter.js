@@ -1,7 +1,11 @@
-'use strict';
+import StateService from '../index';
+import URLService from 'service/url-config-service';
 
-var StateService = F.service.State;
-var baseURL = (new F.service.URL()).getAPIPath('model/state');
+import sinon from 'sinon';
+import chai from 'chai';
+chai.use(require('sinon-chai'));
+
+var baseURL = (new URLService()).getAPIPath('model/state');
 
 describe('State API Adapter', function () {
     var server;
