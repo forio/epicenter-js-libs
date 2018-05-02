@@ -14,10 +14,7 @@ To run locally
 ```
 npm install
 
-cd tests
-npm install
-
-grunt test  or grunt documentation
+grunt
 ```
 This will create an ```epicenter-edge.js``` file in ```dist/```. When you're happy with your changes do ```grunt production``` and make a pull-request to `master`.
 

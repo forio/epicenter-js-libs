@@ -11,7 +11,7 @@ var F = {
 
 };
 
-F.load = require('./env-load');
+F.load = require('./service/url-config-service/env-load');
 
 if (!window.SKIP_ENV_LOAD) {
     F.load();

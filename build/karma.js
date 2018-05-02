@@ -100,7 +100,7 @@ module.exports = function (grunt) {
         },
         testWithCoverage: {
             files: fileDeps.concat([
-                { src: 'tests/specs/**/*.js', watched: false, included: true, served: true },
+                // { src: 'tests/specs/**/*.js', watched: false, included: true, served: true },
                 { src: 'src/**/*.js', watched: false, included: true, served: true },
             ]),
             options: {
@@ -108,12 +108,12 @@ module.exports = function (grunt) {
                 logLevel: 'error',
                 preprocessors: {
                     'src/**/*.js': ['webpack'],
-                    'tests/specs/**/*.js': ['webpack'],
+                    // 'tests/specs/**/*.js': ['webpack'],
                 },
                 exclude: [
-                    'tests/specs/test-flow.js',
-                    'src/flow.js',
-                    'src/add-ons/**/*',
+                    // 'tests/specs/test-flow.js',
+                    'src/app.js',
+                    'src/components/**/*',
                 ],
                 coverageReporter: {
                     reporters: [

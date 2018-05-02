@@ -14,7 +14,8 @@ module.exports = function (grunt) {
         require('./' + task)(grunt);
     });
 
-    grunt.registerTask('test', ['templates', 'webpack:edge', 'webpack:components', 'mocha']);
+    grunt.registerTask('test-dev', ['webpack:edge', 'karma:testList']);
+    grunt.registerTask('test', ['templates', 'webpack:edge', 'webpack:components', 'karma:testWithCoverage']);
     grunt.registerTask('documentation', ['eslint', 'markdox']);
     grunt.registerTask('validate', ['eslint', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
