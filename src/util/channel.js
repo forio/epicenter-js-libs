@@ -1,7 +1,17 @@
-import $ from 'jquery';
+/**
+ * @typedef Publishable
+ * @property {string} name
+ * @property {*} value
+ */
+
+ /**
+  * @typedef Subscription
+  * @prop {string} id
+  * @prop {Function} callback
+  * @prop {string[]} topics
+  */
 
 /**
- * 
  * @param {object} obj
  * @return {Publishable[]}
  */
@@ -88,7 +98,7 @@ function makeSubs(topics, callback, options) {
     }
     return $.extend(true, {
         id: id,
-        topics: [].concat(topics),
+        topics: [].concat(topics).map((t)=> t.toLowerCase()),
         callback: callback,
     }, opts);
 }

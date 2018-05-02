@@ -24,7 +24,8 @@ function getAPIKeyName(options) {
     throw new Error('Unknown scope ' + scope);
 }
 
-function getStore(options, key) {
+function getStore(options) {
+    const key = getAPIKeyName(options);
     const ds = new Dataservice($.extend(true, {}, options, {
         root: key
     }));
@@ -73,7 +74,7 @@ class TimerService {
     }
 
     /**
-     * Creates a new Timer
+     * Creates a new Timer. Call `start` to start ticking.
      * 
      * @param {{timeLimit: number}} opts Timer limit, in milliseconds
      * @returns Promise
@@ -83,20 +84,22 @@ class TimerService {
         if (!opts || isNaN(+opts.timeLimit)) {
             throw new Error('Timer: expected integer timeLimit, received ' + opts.timeLimit);
         }
-        const key = getAPIKeyName(merged);
-        const ds = getStore(merged, key);
-        return ds.saveAs(merged.name, { actions: [{ type: ACTIONS.CREATE, timeLimit: opts.timeLimit, user: merged.user }] });
+        const ds = getStore(merged);
+        return ds.saveAs(merged.name, { actions: [{ 
+            type: ACTIONS.CREATE, 
+            timeLimit: opts.timeLimit, 
+            user: merged.user }
+        ] });
     }
 
     /**
-     * Cancels current timer. 
+     * Cancels current timer. Need to call `create` to restart.
      * 
      * @returns Promise
      */
     cancel() {
         const merged = this.sessionManager.getMergedOptions(this.options);
-        const key = getAPIKeyName(merged);
-        const ds = getStore(merged, key);
+        const ds = getStore(merged);
 
         clearInterval(this.interval);
         this.interval = null;
@@ -115,16 +118,15 @@ class TimerService {
      */
     addTimerAction(action) {
         const merged = this.sessionManager.getMergedOptions(this.options);
-        const key = getAPIKeyName(merged);
+        const ds = getStore(merged);
         return this.getCurrentTime().then(function (t) {
-            const ds = getStore(merged, key);
             return ds.pushToArray(`${merged.name}/actions`, { 
                 type: action, 
                 time: t.toISOString(),
                 user: merged.user,
             }).catch(function (res) {
                 if (res.status === 404) {
-                    const errorMsg = 'TimerService: ' + key + ' not found. Did you call Timer.create yet?';
+                    const errorMsg = 'Timer not found. Did you call Timer.create yet?';
                     console.error(errorMsg);
                     throw new Error(errorMsg);
                 }
@@ -132,6 +134,7 @@ class TimerService {
             });
         });
     }
+
 
     /**
      * Start the timer
@@ -178,18 +181,16 @@ class TimerService {
      */
     getState() {
         const merged = this.sessionManager.getMergedOptions(this.options);
-        const key = getAPIKeyName(merged);
         const strategy = this.strategy;
-        return this.getCurrentTime().then(function (currentTime) {
-            const ds = getStore(merged, key);
-            return ds.load(merged.name).then(function calculateTimeLeft(doc) {
-                if (!doc) {
-                    throw new Error('Timer has not been created yet');
-                }
+        const ds = getStore(merged);
+        return ds.load(merged.name).then(function calculateTimeLeft(doc) {
+            return this.getCurrentTime().then(function (currentTime) {
                 const actions = doc.actions;
                 const state = reduceActions(actions, strategy, currentTime);
                 return $.extend(true, {}, doc, state);
             });
+        }, ()=> {
+            throw new Error('Timer has not been created yet');
         });
     }
 
@@ -200,8 +201,7 @@ class TimerService {
      */
     getChannel() {
         const merged = this.sessionManager.getMergedOptions(this.options);
-        const key = getAPIKeyName(merged);
-        const ds = getStore(merged, key);
+        const ds = getStore(merged);
         const dataChannel = ds.getChannel();
         const me = this;
 

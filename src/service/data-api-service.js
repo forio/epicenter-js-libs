@@ -178,9 +178,10 @@ export default class DataService {
     
     pushToArray(key, val, options) {
         var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-        httpOptions.url = this.getURL('', httpOptions.root + '/' + key);
+        httpOptions.url = this.getURL(key, httpOptions.root);
         return this.http.post(val, httpOptions);
     }
+
     /**
      * Save (create or replace) data in a named document or element within the collection.
      *
