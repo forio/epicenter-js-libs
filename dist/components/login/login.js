@@ -79,27 +79,27 @@ $(function () {
             project: project,
             groupId: groupId
         })
-        .fail(function (error) {
-            if (error.status === 401) {
-                showError('Invalid user name or password.', error.status);
-            } else if (error.status === 403) {
-                if (error.type === 'MULTIPLE_GROUPS') {
-                    selectGroup(userName, password, account, project, error.userGroups, action);
-                } else if (error.type === 'NO_GROUPS') {
-                    showError('The user has no groups associated in this account');
+            .fail(function (error) {
+                if (error.status === 401) {
+                    showError('Invalid user name or password.', error.status);
+                } else if (error.status === 403) {
+                    if (error.type === 'MULTIPLE_GROUPS') {
+                        selectGroup(userName, password, account, project, error.userGroups, action);
+                    } else if (error.type === 'NO_GROUPS') {
+                        showError('The user has no groups associated in this account');
+                    } else {
+                        showError(error.statusText || ('Unknown Error' + error.status));
+                    }
                 } else {
-                    showError(error.statusText || ('Unknown Error' + error.status));
+                    showError('Unknown error occured. Please try again. (' + error.status + ')');
                 }
-            } else {
-                showError('Unknown error occured. Please try again. (' + error.status + ')');
-            }
 
-            $('button', form).attr('disabled', null).removeClass('disabled');
-        })
-        .then(function () {
-            window.location = action;
-            $('.group-selection-dialog').hide();
-        });
+                $('button', form).attr('disabled', null).removeClass('disabled');
+            })
+            .then(function () {
+                window.location = action;
+                $('.group-selection-dialog').hide();
+            });
     });
 
     groupSelectionTemplate = window.groupSelectionTemplate = '<form>\
