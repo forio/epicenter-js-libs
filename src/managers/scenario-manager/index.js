@@ -72,15 +72,16 @@
 'use strict';
 
 // See integration-test-scenario-manager for usage examples
-var RunManager = require('./run-manager');
+var RunManager = require('managers/run-manager');
 var SavedRunsManager = require('./saved-runs-manager');
-var strategyUtils = require('./strategy-utils');
-var rutil = require('../util/run-util');
 
-var NoneStrategy = require('./run-strategies/none-strategy');
+var strategyUtils = require('managers/run-strategies/strategy-utils');
+var rutil = require('util/run-util');
 
-var StateService = require('../service/state-api-adapter');
-var RunService = require('../service/run-api-service');
+var NoneStrategy = require('managers/run-strategies/none-strategy');
+
+var StateService = require('service/state-api-adapter');
+var RunService = require('service/run-api-service');
 
 var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
 var LastUnsavedStrategy = require('./scenario-strategies/reuse-last-unsaved');
@@ -224,10 +225,10 @@ function ScenarioManager(config) {
             });
         }
         return me.current
-                .getRun()
-                .then(clone)
-                .then(advance)
-                .then(markSaved);
+            .getRun()
+            .then(clone)
+            .then(advance)
+            .then(markSaved);
     };
 }
 

@@ -35,8 +35,8 @@
  *
  */
 
-var Channel = require('../service/channel-service');
-var SessionManager = require('../store/session-manager');
+var Channel = require('service/channel-service');
+var SessionManager = require('store/session-manager');
 
 var ChannelManager = function (options) {
     if (!$.cometd) {

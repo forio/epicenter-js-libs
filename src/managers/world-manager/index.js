@@ -35,9 +35,9 @@
 
 'use strict';
 
-var WorldApi = require('../service/world-api-adapter');
-var RunManager = require('./run-manager');
-var AuthManager = require('./auth-manager');
+var WorldApi = require('service/world-api-adapter');
+var RunManager = require('managers/run-manager');
+var AuthManager = require('managers/auth-manager');
 var worldApi;
 
 function buildStrategy(worldId) {

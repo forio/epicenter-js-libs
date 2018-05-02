@@ -58,14 +58,14 @@
 */
 
 'use strict';
-var strategies = require('./run-strategies');
+var strategies = require('managers/run-strategies');
 var specialOperations = require('./special-operations');
 
-var RunService = require('../service/run-api-service');
-var SessionManager = require('../store/session-manager');
+var RunService = require('service/run-api-service');
+var SessionManager = require('store/session-manager');
 
-var util = require('../util/object-util');
-var keyNames = require('./key-names');
+var util = require('util/object-util');
+var keyNames = require('managers/key-names');
 
 function patchRunService(service, manager) {
     if (service.patched) {
@@ -174,25 +174,25 @@ RunManager.prototype = {
             return $.Deferred().reject('No user-session available').promise();
         }
         return this.strategy
-                .getRun(this.run, authSession, runSession, options).then(function (run) {
-                    if (run && run.id) {
-                        me.run.updateConfig({ filter: run.id });
-                        var sessionKey = sessionKeyFromOptions(me.options, me.run);
-                        setRunInSession(sessionKey, run, me.sessionManager);
+            .getRun(this.run, authSession, runSession, options).then(function (run) {
+                if (run && run.id) {
+                    me.run.updateConfig({ filter: run.id });
+                    var sessionKey = sessionKeyFromOptions(me.options, me.run);
+                    setRunInSession(sessionKey, run, me.sessionManager);
 
-                        if (variables && variables.length) {
-                            return me.run.variables().query(variables).then(function (results) {
-                                run.variables = results;
-                                return run;
-                            }).catch(function (err) {
-                                run.variables = {};
-                                console.error(err);
-                                return run;
-                            });
-                        }
+                    if (variables && variables.length) {
+                        return me.run.variables().query(variables).then(function (results) {
+                            run.variables = results;
+                            return run;
+                        }).catch(function (err) {
+                            run.variables = {};
+                            console.error(err);
+                            return run;
+                        });
                     }
-                    return run;
-                });
+                }
+                return run;
+            });
     },
 
     /**

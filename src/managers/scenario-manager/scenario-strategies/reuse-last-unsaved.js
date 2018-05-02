@@ -19,9 +19,9 @@
  */
 
 'use strict';
-var classFrom = require('../../util/inherit');
-var injectFiltersFromSession = require('../strategy-utils').injectFiltersFromSession;
-var injectScopeFromSession = require('../strategy-utils').injectScopeFromSession;
+var classFrom = require('util/inherit');
+var injectFiltersFromSession = require('managers/run-strategies/strategy-utils').injectFiltersFromSession;
+var injectScopeFromSession = require('managers/run-strategies/strategy-utils').injectScopeFromSession;
 
 var Base = {};
 

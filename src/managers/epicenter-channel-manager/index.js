@@ -67,12 +67,12 @@
  */
 
 var ChannelManager = require('./channel-manager');
-var ConfigService = require('../service/configuration-service').default;
-var classFrom = require('../util/inherit');
-var SessionManager = require('../store/session-manager');
+var ConfigService = require('service/configuration-service').default;
+var classFrom = require('util/inherit');
+var SessionManager = require('store/session-manager');
 
-var WorldService = require('../service/world-api-adapter');
-var PresenceService = require('../service/presence-api-service');
+var WorldService = require('service/world-api-adapter');
+var PresenceService = require('service/presence-api-service');
 
 var validTypes = {
     project: true,

@@ -15,7 +15,7 @@
 
 'use strict';
 
-var ReuseinitStrategy = require('../run-strategies/reuse-last-initialized');
+var ReuseinitStrategy = require('managers/run-strategies/reuse-last-initialized');
 
 module.exports = function (options) {
     var defaults = {

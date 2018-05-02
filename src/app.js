@@ -20,7 +20,6 @@ if (!window.SKIP_ENV_LOAD) {
 F.util.query = require('./util/query-util');
 F.util.run = require('./util/run-util');
 F.util.classFrom = require('./util/inherit');
-F._private.strategyutils = require('./managers/strategy-utils');
 
 F.factory.Transport = require('./transport/http-transport-factory').default;
 F.transport.Ajax = require('./transport/ajax-http-transport');
@@ -51,7 +50,7 @@ F.manager.ScenarioManager = require('./managers/scenario-manager');
 F.manager.RunManager = require('./managers/run-manager');
 F.manager.AuthManager = require('./managers/auth-manager');
 F.manager.WorldManager = require('./managers/world-manager');
-F.manager.SavedRunsManager = require('./managers/saved-runs-manager');
+F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-manager');
 
 var strategies = require('./managers/run-strategies');
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
