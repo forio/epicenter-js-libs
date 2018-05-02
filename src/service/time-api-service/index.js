@@ -3,8 +3,8 @@
  *
  */
 
-import ConfigService from './configuration-service';
-import TransportFactory from '../transport/http-transport-factory';
+import ConfigService from 'service/configuration-service';
+import TransportFactory from 'transport/http-transport-factory';
 const apiEndpoint = 'time';
 
 export default class TimeAPIService {

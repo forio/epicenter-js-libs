@@ -12,8 +12,8 @@
 
 'use strict';
 
-var serviceUtils = require('./service-utils');
-var TransportFactory = require('../transport/http-transport-factory').default;
+var serviceUtils = require('service/service-utils');
+var TransportFactory = require('transport/http-transport-factory').default;
 var objectAssign = require('object-assign');
 
 var apiEndpoint = 'group/local';

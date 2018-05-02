@@ -27,7 +27,7 @@
  *
  */
 
-import urlService from './url-config-service';
+import urlService from 'service/url-config-service';
 
 export default class ConfigService {
     constructor(config) {
@@ -40,12 +40,12 @@ export default class ConfigService {
         this.serviceOptions = this.data = serviceOptions;
     }
 
-     /**
+    /**
      * Set the environment key to get configuration options from
      * @param { string} env
      */
     setEnv(env) {}
-        /**
+    /**
          * Get configuration.
          * @param  { string} property optional
          * @return {*}          Value of property if specified, the entire config object otherwise
@@ -53,7 +53,7 @@ export default class ConfigService {
     get(property) {
         return this.serviceOptions[property];
     }
-        /**
+    /**
          * Set configuration.
          * @param  { string|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
          * @param  {*} value  value for provided key

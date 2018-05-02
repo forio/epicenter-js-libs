@@ -12,9 +12,9 @@
  *      pr.getStatus();
  */
 
-var ConfigService = require('./configuration-service').default;
-var TransportFactory = require('../transport/http-transport-factory').default;
-var SessionManager = require('../store/session-manager');
+var ConfigService = require('service/configuration-service').default;
+var TransportFactory = require('transport/http-transport-factory').default;
+var SessionManager = require('store/session-manager');
 var apiEndpoint = 'presence';
 
 module.exports = function (config) {
@@ -203,7 +203,7 @@ module.exports = function (config) {
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
-            var ChannelManager = require('../managers/epicenter-channel-manager');
+            var ChannelManager = require('managers/epicenter-channel-manager');
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);

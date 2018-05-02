@@ -22,8 +22,8 @@
 
  'use strict';
 
- var TransportFactory = require('../transport/http-transport-factory').default;
- var rutil = require('../util/run-util');
+ var TransportFactory = require('transport/http-transport-factory').default;
+ var rutil = require('util/run-util');
 
  module.exports = function (config) {
      var defaults = {
