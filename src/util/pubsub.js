@@ -136,10 +136,7 @@ function checkAndNotify(topics, subscription) {
 }
 
 
-/**
- * @implements {ChannelManager}
- */
-class ChannelManager {
+class PubSub {
     constructor(options) {
         this.subscriptions = [];
     }
@@ -194,5 +191,5 @@ class ChannelManager {
     }
 }
 
-export default ChannelManager;
+export default PubSub;
 

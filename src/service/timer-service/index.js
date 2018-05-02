@@ -1,7 +1,7 @@
 import Dataservice from 'service/data-api-service';
 import TimeService from 'service/time-api-service';
 import SessionManager from 'store/session-manager';
-import Channel from 'util/channel';
+import PubSub from 'util/pubsub';
 
 import getStrategy from './start-time-strategies';
 
@@ -70,7 +70,7 @@ class TimerService {
         /** @type {TimerOptions} */
         this.options = $.extend(true, {}, defaults, options); 
         this.sessionManager = new SessionManager(this.options);
-        this.channel = new Channel();
+        this.channel = new PubSub();
 
         this.strategy = getStrategy(this.options.strategy);
 
