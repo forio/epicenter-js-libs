@@ -14,9 +14,9 @@ To run locally
 ```
 npm install
 
-grunt
+npm start
 ```
-This will create an ```epicenter-edge.js``` file in ```dist/```. When you're happy with your changes do ```grunt production``` and make a pull-request to `master`.
+This will create an ```epicenter-edge.js``` file in ```dist/```. When you're happy with your changes do ```npm run build``` and make a pull-request to `master`.
 
 ## Development guide
 Current code might not be aligned with the guide since is hard to do a library-wide refactor but we should be refactoring current code when is possible.
@@ -60,6 +60,6 @@ import { AuthManager } from 'epicenter-js';
 ```
 - Try not to break documented service or manager methods
 
-&copy; Forio Corporation, 2014-2016.  All rights reserved.
+&copy; Forio Corporation, 2014-2018.  All rights reserved.
 
 
