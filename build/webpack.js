@@ -16,7 +16,11 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-webpack');
 
     var version = grunt.file.readJSON('package.json').version;
-    var banner = '';
+    var banner = `
+        Epicenter Javascript libraries
+        v${version}
+        https://github.com/forio/epicenter-js-libs
+    `;
 
     var babelloader = { 
         test: /\.js$/, 
@@ -60,7 +64,7 @@ module.exports = function (grunt) {
                 libraryTarget: 'var'
             },
             module: {
-                rules: [babelloader]
+                rules: [] //will be tested in browser so doesn't matter
             },
             plugins: [],
             devtool: 'cheap-module-source-map',
