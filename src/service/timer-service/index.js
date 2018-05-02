@@ -76,54 +76,62 @@ class TimerService {
     /**
      * Creates a new Timer. Call `start` to start ticking.
      * 
-     * @param {{timeLimit: number, autoStart: boolean }} opts Timer limit, in milliseconds
+     * @param {object} createOptions
+     * @param {number} createOptions.timeLimit Limit for the timer, in milliseconds
+     * @param {boolean} createOptions.startImmediately Determines if the timer should start ticking immediately. If set to false (default) call timer.start to start ticking.
+     * 
      * @returns Promise
      */
-    create(opts) {
-        const merged = this.sessionManager.getMergedOptions(this.options, opts);
-        if (!opts || isNaN(+opts.timeLimit)) {
-            throw new Error('Timer: expected integer timeLimit, received ' + opts.timeLimit);
+    create(createOptions) {
+        const options = this.sessionManager.getMergedOptions(this.options, createOptions);
+        if (!options || isNaN(+options.timeLimit)) {
+            throw new Error('Timer: expected integer timeLimit, received ' + options.timeLimit);
         }
-        const ds = getStore(merged);
+        const ds = getStore(options);
         const createAction = {
             type: ACTIONS.CREATE,
-            timeLimit: opts.timeLimit,
-            user: merged.user
+            timeLimit: options.timeLimit,
+            user: options.user
         };
 
-        if (!this.options.autoStart) {
-            return ds.saveAs(merged.name, { actions: [
-                createAction
-            ] }).then((doc)=> {
-                const actions = doc.actions;
-                const state = reduceActions(actions, this.strategy);
-                return $.extend(true, {}, doc, state);
-            });
+        let prom = $.Deferred().resolve([]).promise();
+        if (options.startImmediately) {
+            prom = this.makeAction(ACTIONS.START);
         }
-        
-        return this.makeAction(ACTIONS.START).then((startAction)=> {
-            return ds.saveAs(merged.name, { actions: [
-                createAction,
-                startAction,
-            ] }).then((doc)=> {
-                const actions = doc.actions;
-                const currentTime = startAction.time;
-                const state = reduceActions(actions, this.strategy, currentTime);
-                return $.extend(true, {}, doc, state);
+
+        return prom.then((actions)=> {
+            return ds.saveAs(options.name, {
+                actions: [createAction].concat(actions) 
+            }).catch((t)=> {
+                throw new Error('Timer already exists. Call cancel to remove it');
             });
-        }); 
+        }).then((doc)=> {
+            const actions = doc.actions;
+            const lastAction = actions[actions.length - 1];
+            const currentTime = lastAction.time; //Created won't have a time but that's okay, reduceActions handles it
+            const state = reduceActions(actions, this.strategy, currentTime);
+            return state;
+        });
     }
 
-    autoStart(opts) {
+    /**
+     * Get the current timer, or create a new one and immediately start it
+     * 
+     * @param {object} options
+     * @param {number} options.timeLimit Limit for the timer, in milliseconds
+     * 
+     * @returns Promise
+     */
+    autoStart(options) {
         return this.getState().catch(()=> {
-            const createOpts = $.extend(true, {}, opts, { autoStart: true });
+            const createOpts = $.extend(true, {}, options, { startImmediately: true });
             return this.create(createOpts);
         });
     }
     
 
     /**
-     * Cancels current timer. Need to call `create` to restart.
+     * Cancels current timer. Need to call `create` again to restart.
      * 
      * @returns Promise
      */
