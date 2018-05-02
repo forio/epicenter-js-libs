@@ -1,5 +1,10 @@
 module.exports = function (grunt) {
-    'use strict';
+
+    require('jit-grunt')(grunt, {
+        'bump-only': 'grunt-bump',
+        'bump-commit': 'grunt-bump',
+        changelog: 'grunt-conventional-changelog',
+    });
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json')
