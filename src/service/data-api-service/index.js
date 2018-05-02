@@ -26,12 +26,12 @@
  * Note that in addition to the `account`, `project`, and `root`, the Data Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
  */
 
-import ConfigService from './configuration-service';
-import qutil from '../util/query-util';
-import TransportFactory from '../transport/http-transport-factory';
-import SessionManager from '../store/session-manager';
+import ConfigService from 'service/configuration-service';
+import qutil from 'util/query-util';
+import TransportFactory from 'transport/http-transport-factory';
+import SessionManager from 'store/session-manager';
 
-import ChannelManager from '../managers/epicenter-channel-manager';
+import ChannelManager from 'managers/epicenter-channel-manager';
 
 export default class DataService {
     constructor(config) {

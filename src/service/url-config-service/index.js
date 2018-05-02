@@ -1,6 +1,6 @@
 'use strict';
 
-var epiVersion = require('../api-version.json');
+var epiVersion = require('../../api-version.json');
 
 //TODO: urlutils to get host, since no window on node
 var defaults = {
