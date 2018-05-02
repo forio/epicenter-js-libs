@@ -16,7 +16,7 @@ function toDetailedTime(ts) {
 /**
  * @param {object[]} actions 
  * @param {function} startTimeReducer
- * @param {string} currentTime 
+ * @param {string} [currentTime] 
  */
 export default function reduceActions(actions, startTimeReducer, currentTime) {
     if (!actions || !actions.length) {
@@ -49,20 +49,26 @@ export default function reduceActions(actions, startTimeReducer, currentTime) {
         return accum;
     }, initialState);
 
-    const current = +currentTime;
     let elapsed = 0;
-    if (reduced.isPaused) {
-        elapsed = reduced.elapsedTime;
-    } else if (reduced.isStarted) {
-        elapsed = current - reduced.startTime - reduced.totalPauseTime;
-    } 
+
+    const base = {};
+
+    if (currentTime) {
+        const current = +currentTime;
+        base.currentTime = current;
+
+        if (reduced.isPaused) {
+            elapsed = reduced.elapsedTime;
+        } else if (reduced.isStarted) {
+            elapsed = current - reduced.startTime - reduced.totalPauseTime;
+        } 
+    }
 
     const remaining = Math.max(0, reduced.timeLimit - elapsed);
 
     return {
         isPaused: reduced.isPaused,
         isStarted: reduced.isStarted,
-        currentTime: current,
         elapsed: toDetailedTime(elapsed),
         remaining: toDetailedTime(remaining),
     };

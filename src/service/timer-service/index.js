@@ -76,7 +76,7 @@ class TimerService {
     /**
      * Creates a new Timer. Call `start` to start ticking.
      * 
-     * @param {{timeLimit: number}} opts Timer limit, in milliseconds
+     * @param {{timeLimit: number, autoStart: boolean }} opts Timer limit, in milliseconds
      * @returns Promise
      */
     create(opts) {
@@ -85,12 +85,42 @@ class TimerService {
             throw new Error('Timer: expected integer timeLimit, received ' + opts.timeLimit);
         }
         const ds = getStore(merged);
-        return ds.saveAs(merged.name, { actions: [{ 
-            type: ACTIONS.CREATE, 
-            timeLimit: opts.timeLimit, 
-            user: merged.user }
-        ] });
+        const createAction = {
+            type: ACTIONS.CREATE,
+            timeLimit: opts.timeLimit,
+            user: merged.user
+        };
+
+        if (!this.options.autoStart) {
+            return ds.saveAs(merged.name, { actions: [
+                createAction
+            ] }).then((doc)=> {
+                const actions = doc.actions;
+                const state = reduceActions(actions, this.strategy);
+                return $.extend(true, {}, doc, state);
+            });
+        }
+        
+        return this.makeAction(ACTIONS.START).then((startAction)=> {
+            return ds.saveAs(merged.name, { actions: [
+                createAction,
+                startAction,
+            ] }).then((doc)=> {
+                const actions = doc.actions;
+                const currentTime = startAction.time;
+                const state = reduceActions(actions, this.strategy, currentTime);
+                return $.extend(true, {}, doc, state);
+            });
+        }); 
     }
+
+    autoStart(opts) {
+        return this.getState().catch(()=> {
+            const createOpts = $.extend(true, {}, opts, { autoStart: true });
+            return this.create(createOpts);
+        });
+    }
+    
 
     /**
      * Cancels current timer. Need to call `create` to restart.
@@ -110,6 +140,17 @@ class TimerService {
         return ds.remove(merged.name);
     }
     
+    makeAction(action) {
+        const merged = this.sessionManager.getMergedOptions(this.options);
+        return this.getCurrentTime().then(function (t) {
+            return { 
+                type: action, 
+                time: t.toISOString(),
+                user: merged.user,
+            };
+        });
+    }
+
     /**
      * Adds a custom action to the timer state. Only relevant if you're implementing a custom strategy.
      * 
@@ -119,14 +160,11 @@ class TimerService {
     addTimerAction(action) {
         const merged = this.sessionManager.getMergedOptions(this.options);
         const ds = getStore(merged);
-        return this.getCurrentTime().then(function (t) {
-            return ds.pushToArray(`${merged.name}/actions`, { 
-                type: action, 
-                time: t.toISOString(),
-                user: merged.user,
-            }).catch(function (res) {
+
+        return this.makeAction(action).then(function (action) {
+            return ds.pushToArray(`${merged.name}/actions`, action).catch(function (res) {
                 if (res.status === 404) {
-                    const errorMsg = 'Timer not found. Did you call Timer.create yet?';
+                    const errorMsg = 'Timer not found. Did you create it yet?';
                     console.error(errorMsg);
                     throw new Error(errorMsg);
                 }
