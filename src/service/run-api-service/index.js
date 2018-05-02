@@ -58,7 +58,7 @@ var qutil = require('util/query-util');
 var rutil = require('util/run-util');
 var _pick = require('util/object-util')._pick;
 var TransportFactory = require('transport/http-transport-factory').default;
-var VariablesService = require('service/variables-api-service');
+var VariablesService = require('./variables-api-service');
 var IntrospectionService = require('service/introspection-api-service');
 var SessionManager = require('store/session-manager');
 
@@ -155,7 +155,7 @@ module.exports = function (config) {
                 // https://forio.com/epicenter/docs/public/rest_apis/aggregate_run_api/#retrieving
                 var autorestoreOpts = {
                     headers: {
-                        'X-AutoRestore': true
+                        'X-AutoRestore': 'true'
                     }
                 };
                 return $.extend(true, autorestoreOpts, options);
