@@ -28,6 +28,7 @@ module.exports = function (grunt) {
     var webpackLoaders = [];
     var fileDeps = [
         { src: 'node_modules/jquery/dist/jquery.js', watched: false, included: true, served: true },
+        { src: 'dist/epicenter-multiplayer-dependencies.js', watched: false, included: true, served: true },
     ];
     grunt.config.set('karma', {
         options: {
