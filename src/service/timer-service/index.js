@@ -62,7 +62,8 @@ class TimerService {
             name: 'timer',
             scope: SCOPES.RUN,
             scopeOptions: {},
-            strategy: STRATEGY.START_BY_FIRST_USER
+            strategy: STRATEGY.START_BY_FIRST_USER,
+            strategyOptions: {},
         };
 
         this.ACTIONS = ACTIONS;

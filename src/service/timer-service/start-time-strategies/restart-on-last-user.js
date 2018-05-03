@@ -1,6 +1,6 @@
 import { ACTIONS } from '../timer-constants';
 
-export default function reduceActions(actions) {
+export default function reduceActions(actions, options) {
     const initialState = {
         startTime: 0, 
         startedUsers: {},

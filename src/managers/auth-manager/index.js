@@ -34,7 +34,7 @@ var AuthAdapter = require('service/auth-api-service');
 var MemberAdapter = require('service/member-api-adapter');
 var GroupService = require('service/group-api-service');
 var SessionManager = require('store/session-manager');
-var _pick = require('util/object-util')._pick;
+var _pick = require('util/object-util').pick;
 var objectAssign = require('object-assign');
 
 var atob = window.atob || require('Base64').atob;

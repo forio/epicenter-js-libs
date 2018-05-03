@@ -16,7 +16,7 @@
 var ConfigService = require('service/configuration-service').default;
 var TransportFactory = require('transport/http-transport-factory').default;
 var SessionManager = require('store/session-manager');
-var _pick = require('util/object-util')._pick;
+var _pick = require('util/object-util').pick;
 var apiEndpoint = 'member/local';
 
 module.exports = function (config) {

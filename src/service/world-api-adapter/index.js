@@ -28,7 +28,7 @@ var SessionManager = require('store/session-manager');
 
 var ConsensusService = require('service/consensus/consensus-service');
 
-var _pick = require('util/object-util')._pick;
+var _pick = require('util/object-util').pick;
 
 var apiBase = 'multiplayer/';
 var assignmentEndpoint = apiBase + 'assign';
