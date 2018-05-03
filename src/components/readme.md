@@ -6,9 +6,12 @@ In addition to the epicenter.js library itself, the Epicenter JS Libs project al
 
 Provides a login form for team members and end users of your project. Includes a group selector for end users that are members of multiple groups.
 
-* `index.html`: The login form.
-* `login.css`: Provides styling for the group selector pop over dialog.
+* `login.html`: The login form.
+* `index.html`: The main page of the simulation.
+* `facilitator.html`: A page in the simulation for end users who are facilitators.
 * `login.js`: Uses the [Authorization Manager](./generated/auth-manager/) to log in users.
+* `auth.js`: Checks whether visitors to each page are logged in or not, and whether they are standard end users or facilitators. Anyone not logged in is redirected to the login form.
+* `login.css`: Provides styling.
 
 
 **Assignment Component**
