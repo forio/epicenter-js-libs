@@ -13,7 +13,7 @@ export default function reduceActions(actions) {
         const user = action.user;
         if (Object.keys(accum.startedUsers).indexOf(user.userName) === -1) {
             accum.startTime = ts;
-            accum.startUser[user.userName] = ts;
+            accum.startedUsers[user.userName] = ts;
         }
         return accum;
     }, initialState);

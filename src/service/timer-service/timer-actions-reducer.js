@@ -17,6 +17,7 @@ function toDetailedTime(ts) {
  * @param {object[]} actions 
  * @param {function} startTimeReducer
  * @param {string} [currentTime] 
+ * @returns {object}
  */
 export default function reduceActions(actions, startTimeReducer, currentTime) {
     if (!actions || !actions.length) {
