@@ -18,7 +18,7 @@ describe('Start on first user timer strategy', ()=> {
             makeStartAction(100, 'a1')
         ];
         const op = startReduce(actions, { requiredUsernames: ['a1', 'a2'] });
-        expect(op.startTime).to.equal(0);
+        expect(op).to.equal(0);
     });
     it('should return 0 if same user joined multiple times', ()=> {
         const actions = [
@@ -26,7 +26,7 @@ describe('Start on first user timer strategy', ()=> {
             makeStartAction(200, 'a1'),
         ];
         const op = startReduce(actions, { requiredUsernames: ['a1', 'a2'] });
-        expect(op.startTime).to.equal(0);
+        expect(op).to.equal(0);
     });
     it('should return start time if all required users join', ()=> {
         const actions = [
@@ -34,7 +34,7 @@ describe('Start on first user timer strategy', ()=> {
             makeStartAction(200, 'a2')
         ];
         const op = startReduce(actions, { requiredUsernames: ['a1', 'a2'] });
-        expect(op.startTime).to.equal(actions[1].time);
+        expect(op).to.equal(actions[1].time);
     });
     it('should return first start time after condition is met', ()=> {
         const actions = [
@@ -43,7 +43,7 @@ describe('Start on first user timer strategy', ()=> {
             makeStartAction(300, 'a2'),
         ];
         const op = startReduce(actions, { requiredUsernames: ['a1', 'a2'] });
-        expect(op.startTime).to.equal(actions[1].time);
+        expect(op).to.equal(actions[1].time);
     });
     it('should ignore users not matching condition', ()=> {
         const actions = [
@@ -51,6 +51,6 @@ describe('Start on first user timer strategy', ()=> {
             makeStartAction(300, 'a3'),
         ];
         const op = startReduce(actions, { requiredUsernames: ['a1', 'a2'] });
-        expect(op.startTime).to.equal(0);
+        expect(op).to.equal(0);
     });
 });

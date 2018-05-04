@@ -18,7 +18,7 @@ describe('Start on first user timer strategy', ()=> {
             makeStartAction(100, 'a1')
         ];
         const op = startReduce(actions);
-        expect(op.startTime).to.equal(actions[0].time);
+        expect(op).to.equal(actions[0].time);
     });
     it('should return first start time if single user started it multiple times', ()=> {
         const actions = [
@@ -26,7 +26,7 @@ describe('Start on first user timer strategy', ()=> {
             makeStartAction(200, 'a1')
         ];
         const op = startReduce(actions);
-        expect(op.startTime).to.equal(actions[0].time);
+        expect(op).to.equal(actions[0].time);
     });
     it('should return first start time if second user joins', ()=> {
         const actions = [
@@ -36,6 +36,6 @@ describe('Start on first user timer strategy', ()=> {
             makeStartAction(400, 'a2'),
         ];
         const op = startReduce(actions);
-        expect(op.startTime).to.equal(actions[0].time);
+        expect(op).to.equal(actions[0].time);
     });
 });

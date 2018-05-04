@@ -37,6 +37,13 @@ function getStore(options) {
     return ds;
 }
 
+function getStateFromActions(actions, currentTime, options) {
+    const getStartTime = getStrategy(options.strategy);
+    const startTime = getStartTime(actions, options.strategyOptions);
+    const state = reduceActions(actions, startTime, currentTime);
+    return state;
+}
+
 /**
  * @typedef {object} TimerOptions
  * @name TimerOptions
@@ -72,8 +79,6 @@ class TimerService {
         this.options = $.extend(true, {}, defaults, options); 
         this.sessionManager = new SessionManager(this.options);
         this.channel = new PubSub();
-
-        this.strategy = getStrategy(this.options.strategy);
 
         this.interval = null;
         this.dataChannelSubid = null;
@@ -113,7 +118,7 @@ class TimerService {
             const actions = doc.actions;
             const lastAction = actions[actions.length - 1];
             const currentTime = lastAction.time; //Created won't have a time but that's okay, reduceActions handles it
-            const state = reduceActions(actions, this.strategy, currentTime);
+            const state = getStateFromActions(actions, currentTime, this.options);
             return state;
         });
     }
@@ -176,7 +181,8 @@ class TimerService {
         return this.makeAction(action).then((action)=> {
             return ds.pushToArray(`${merged.name}/actions`, action)
                 .then((actions)=> {
-                    return reduceActions(actions, this.strategy, action.time);
+                    const state = getStateFromActions(actions, action.time, this.options);
+                    return state;
                 }, (res)=> {
                     if (res.status === 404) {
                         const errorMsg = 'Timer not found. Did you create it yet?';
@@ -234,12 +240,11 @@ class TimerService {
      */
     getState() {
         const merged = this.sessionManager.getMergedOptions(this.options);
-        const strategy = this.strategy;
         const ds = getStore(merged);
         return ds.load(merged.name).then(function calculateTimeLeft(doc) {
             return this.getCurrentTime().then(function (currentTime) {
                 const actions = doc.actions;
-                const state = reduceActions(actions, strategy, currentTime);
+                const state = getStateFromActions(actions, currentTime, this.options);
                 return $.extend(true, {}, doc, state);
             });
         }, ()=> {
@@ -258,7 +263,6 @@ class TimerService {
         const dataChannel = ds.getChannel();
         const me = this;
 
-        const strategy = this.strategy;
         
         function cancelTimer() {
             clearInterval(me.interval);
@@ -270,7 +274,7 @@ class TimerService {
             }
             me.interval = setInterval(function () {
                 currentTime = currentTime + merged.tickInterval;
-                const state = reduceActions(actions, strategy, currentTime);
+                const state = getStateFromActions(actions, currentTime, this.options);
                 if (state.remaining.time === 0) {
                     me.channel.publish(ACTIONS.COMPLETE, state);
 
@@ -280,7 +284,7 @@ class TimerService {
                 me.channel.publish(ACTIONS.TICK, state);
             }, merged.tickInterval);
 
-            const state = reduceActions(actions, strategy, currentTime);
+            const state = getStateFromActions(actions, currentTime, this.options);
             me.channel.publish(ACTIONS.TICK, state);
         }
 
@@ -328,7 +332,5 @@ class TimerService {
 TimerService.ACTIONS = ACTIONS;
 TimerService.SCOPES = SCOPES;
 TimerService.STRATEGY = STRATEGY;
-TimerService._private = {
-    reduceActions: reduceActions
-};
+
 export default TimerService;

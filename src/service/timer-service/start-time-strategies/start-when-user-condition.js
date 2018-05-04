@@ -26,5 +26,5 @@ export default function reduceActions(actions, options) {
         return accum;
     }, initialState);
 
-    return reduced;
+    return reduced.startTime;
 }

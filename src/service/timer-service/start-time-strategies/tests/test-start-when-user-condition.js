@@ -29,7 +29,7 @@ describe('Start when user condition strategy', ()=> {
     it('should return 0 if not started', ()=> {
         const actions = [];
         const op = reducer(actions, options);
-        expect(op.startTime).to.equal(0);
+        expect(op).to.equal(0);
     });
     
     it('should call condition with joined users', ()=> {
@@ -56,7 +56,7 @@ describe('Start when user condition strategy', ()=> {
             makeStartAction(100, 'a2'),
         ];
         const op = reducer(actions, options);
-        expect(op.startTime).to.equal(0);
+        expect(op).to.equal(0);
     });
     it('should return matching startTime if condition satisfied', ()=> {
         const actions = [
@@ -65,7 +65,7 @@ describe('Start when user condition strategy', ()=> {
             makeStartAction(1500, 'a3'),
         ];
         const op = reducer(actions, options);
-        expect(op.startTime).to.equal(actions[2].time);
+        expect(op).to.equal(actions[2].time);
     });
     it('should not update startTime after condition initially satisfied', ()=> {
         const actions = [
@@ -76,6 +76,6 @@ describe('Start when user condition strategy', ()=> {
             makeStartAction(2500, 'a4'),
         ];
         const op = reducer(actions, options);
-        expect(op.startTime).to.equal(actions[2].time);
+        expect(op).to.equal(actions[2].time);
     });
 });
