@@ -4,14 +4,7 @@ import SessionManager from 'store/session-manager';
 
 const API_ENDPOINT = 'multiplayer/consensus';
 
-function makeURL(baseURL, action, serviceOptions) {
-    const urlSegment = [].concat(action || [], [serviceOptions.worldId, serviceOptions.consensusGroup, serviceOptions.name]).join('/');
-    return baseURL + urlSegment;
-}
 function normalizeActions(actions) {
-    if (!actions) {
-        return [];
-    }
     return [].concat(actions).map(function (action) {
         if (action.arguments) {
             return { execute: action };
@@ -44,9 +37,22 @@ export default function (config) {
         };
     }
     const http = new TransportFactory(transportOptions);
-    const urlSegment = [serviceOptions.worldId, serviceOptions.consensusGroup, serviceOptions.name].join('/');
 
- 
+    function getHTTPOptions(action, options) {
+        const mergedOptions = $.extend(true, {}, serviceOptions, options);
+        const consensusGroup = mergedOptions.consensusGroup || 'default';
+        
+        if (!mergedOptions.worldId || !mergedOptions.name) {
+            throw new Error('Consensus Service: worldId and name are required');
+        }
+        const urlSegment = [].concat(action || [], [mergedOptions.worldId, consensusGroup, mergedOptions.name]).join('/');
+        const baseURL = urlConfig.getAPIPath(API_ENDPOINT);
+        const url = baseURL + urlSegment;
+
+        const httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+        return httpOptions;
+    }
+
     const publicAPI = {
         /**
          * Creates a new consensus point
@@ -59,9 +65,7 @@ export default function (config) {
          * @return {Promise}
          */
         create: function (params, options) {
-            const mergedOptions = $.extend(true, {}, serviceOptions, options);
-            const url = makeURL(urlConfig.getAPIPath(API_ENDPOINT), '', mergedOptions);
-            const httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+            const httpOptions = getHTTPOptions('', options);
             
             if (!params || !params.roles) {
                 throw new Error('Consensus Service: no roles passed to create');
@@ -82,21 +86,19 @@ export default function (config) {
                     accum[field] = fieldVal;
                 }
                 return accum;
-            }, {});
+            }, { roles: {} });
             return http.post(postParams, httpOptions);
         },
 
         updateDefaults: function (params, options) {
-            const httpOptions = $.extend(true, {}, serviceOptions, options);
-            const url = transportOptions.url + ['actions', urlSegment].join('/');
-            if (!params.actions) {
-                throw new Error('updateDefaults: Need to pass in actions to update');
+            if (!params || !params.defaultActions) {
+                throw new Error('updateDefaults: Need to pass in parameters to update');
             }
+            
+            const httpOptions = getHTTPOptions('actions', options);
             return http.patch({
-                actions: normalizeActions(params.actions)
-            }, $.extend(true, {}, httpOptions, {
-                url: url
-            }));
+                actions: normalizeActions(params.defaultActions)
+            }, httpOptions);
         },
         /**
          * Returns current consensus point
@@ -105,9 +107,7 @@ export default function (config) {
          * @returns {Promise}
          */
         load: function (options) {
-            const mergedOptions = $.extend(true, {}, serviceOptions, options);
-            const url = makeURL(urlConfig.getAPIPath(API_ENDPOINT), '', mergedOptions);
-            const httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+            const httpOptions = getHTTPOptions('', options);
             return http.get({}, httpOptions);
         },
         /**
@@ -117,9 +117,7 @@ export default function (config) {
          * @returns {Promise}
          */
         delete: function (options) {
-            const mergedOptions = $.extend(true, {}, serviceOptions, options);
-            const url = makeURL(urlConfig.getAPIPath(API_ENDPOINT), '', mergedOptions);
-            const httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+            const httpOptions = getHTTPOptions('', options);
             return http.delete({}, httpOptions);
         },
         /**
@@ -129,9 +127,7 @@ export default function (config) {
          * @returns {Promise}
          */
         forceClose: function (options) {
-            const mergedOptions = $.extend(true, {}, serviceOptions, options);
-            const url = makeURL(urlConfig.getAPIPath(API_ENDPOINT), 'close', mergedOptions);
-            const httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+            const httpOptions = getHTTPOptions('close', options);
             return http.post({}, httpOptions);
         },
         /**
@@ -142,13 +138,10 @@ export default function (config) {
          * @returns {Promise}
          */
         submitActions: function (actions, options) {
-            const mergedOptions = $.extend(true, {}, serviceOptions, options);
-            const url = makeURL(urlConfig.getAPIPath(API_ENDPOINT), 'actions', mergedOptions);
-            const httpOptions = $.extend(true, {}, mergedOptions, { url: url });
-
             if (!actions || !actions.length) {
                 throw new Error('submitActions: No actions provided to submit');
             }
+            const httpOptions = getHTTPOptions('actions', options);
             return http.post({
                 actions: normalizeActions(actions)
             }, httpOptions);
@@ -160,9 +153,7 @@ export default function (config) {
          * @returns {Promise}
          */
         undoSubmit: function (options) {
-            const mergedOptions = $.extend(true, {}, serviceOptions, options);
-            const url = makeURL(urlConfig.getAPIPath(API_ENDPOINT), 'actions', mergedOptions);
-            const httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+            const httpOptions = getHTTPOptions('actions', options);
             return http.delete({}, httpOptions);
         },
     };

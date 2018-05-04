@@ -225,16 +225,6 @@ describe('Run API Service', function () {
             complete.should.have.been.called;
         });
 
-        it('should allow over-riding transport options', function () {
-            var originalComplete = sinon.spy();
-            var complete = sinon.spy();
-            var rs = new RunService({ account: account, project: 'js-libs', transport: { complete: originalComplete } });
-            rs.create('model.jl', { complete: complete });
-
-            originalComplete.should.not.have.been.called;
-            complete.should.have.been.called;
-        });
-
         it('should respect sequence of success handlers', function () {
             var originalSuccess = sinon.spy();
             var transportSuccess = sinon.spy();

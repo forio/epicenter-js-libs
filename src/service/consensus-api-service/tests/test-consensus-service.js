@@ -32,6 +32,31 @@ describe('Consensus Service', ()=> {
     after(function () {
         server.restore();
     });
+
+    it('should pass through string tokens', function () {
+        const cs1 = new ConsensusService(Object.assign({}, defaultParams, { token: 'abc' }));
+        cs1.create({ roles: ['a1'] });
+
+        const req = server.requests.pop();
+        expect(req.requestHeaders.Authorization).to.equal('Bearer abc');
+
+        const cs2 = new ConsensusService(Object.assign({}, defaultParams, { token: '' }));
+        cs2.create({ roles: ['a1'] });
+
+        const req2 = server.requests.pop();
+        expect(req2.requestHeaders.Authorization).to.not.exist;
+    });
+    it('should pass in transport options to the underlying ajax handler', function () {
+        var beforeSend = sinon.spy();
+        var complete = sinon.spy();
+        var cs1 = new ConsensusService(Object.assign({}, defaultParams, { transport: { beforeSend: beforeSend, complete: complete } }));
+        cs1.create({ roles: ['a1'] });
+
+        expect(beforeSend).to.have.been.called;
+        expect(complete).to.have.been.called;
+    });
+
+
     describe('#create', ()=> {
         describe('roles', ()=> {
             it('should throw an error if no roles passed in', ()=> {
@@ -68,8 +93,15 @@ describe('Consensus Service', ()=> {
             });
         });
        
-        it('should throw an error if required serviceOptions are not provided', ()=> {
-            
+        it('should throw an error if world or name are not provided', ()=> {
+            const cs = new ConsensusService({ account: account, project: project });
+            expect(()=> cs.create({
+                roles: ['a', 'b']
+            }, { worldId: 'w1' })).to.throw(Error);
+
+            expect(()=> cs.create({
+                roles: ['a', 'b']
+            }, { name: 'w1' })).to.throw(Error);
         });
         it('should do a POST to the right url', ()=> {
             const cs = new ConsensusService(defaultParams);
@@ -182,6 +214,46 @@ describe('Consensus Service', ()=> {
 
             var req = server.requests.pop();
             expect(req.requestBody).to.equal(JSON.stringify({}));
+        });
+    });
+    describe('#updateDefaults', ()=> {
+        it('should throw an error if no actions passed in', ()=> {
+            const cs = new ConsensusService(defaultParams);
+            expect(()=> cs.updateDefaults()).to.throw(Error);
+        });
+        it('should do a PATCH to the right url', ()=> {
+            const cs = new ConsensusService(defaultParams);
+            const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
+            
+            cs.updateDefaults({ defaultActions: opns });
+
+            var req = server.requests.pop();
+            expect(req.method.toUpperCase()).to.equal('PATCH');
+            expect(req.url).to.equal(`${baseURL}actions/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
+        });
+        it('should allow overriding serviceoptions', ()=> {
+            const cs = new ConsensusService();
+            const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
+            
+            cs.updateDefaults({ defaultActions: opns }, defaultParams);
+
+            var req = server.requests.pop();
+            expect(req.method.toUpperCase()).to.equal('PATCH');
+            expect(req.url).to.equal(`${baseURL}actions/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
+        });
+        it('should translate actions before passing in', ()=> {
+            const cs = new ConsensusService(defaultParams);
+            const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
+            
+            cs.updateDefaults({ defaultActions: opns });
+
+            var req = server.requests.pop();
+            expect(req.requestBody).to.equal(JSON.stringify({
+                actions: [
+                    { execute: opns[0] },
+                    { execute: opns[1] },
+                ] }));
+            
         });
     });
     describe('#submitActions', ()=> {
