@@ -773,26 +773,27 @@ module.exports = function (config) {
             if (!opts.id) {
                 throw new Error('No world id provided; use consensus(name, { id: worldid})');
             }
+            if (!conOpts) {
+                throw new Error('No consensus name provided; use consensus(name, { id: worldid})');
+            }
 
-            var DEFAULT_GROUP_NAME = 'default';
             function extractNamesFromOpts(nameOpts) {
                 if (typeof nameOpts === 'string') {
                     return {
-                        consensusGroup: DEFAULT_GROUP_NAME,
                         name: nameOpts
                     };
                 }
                 if ($.isPlainObject(nameOpts)) {
                     return {
-                        consensusGroup: nameOpts.consensusGroup || DEFAULT_GROUP_NAME,
+                        consensusGroup: nameOpts.consensusGroup,
                         name: nameOpts.name
                     };
                 }
             }
 
-            var con = new ConsensusService($.extend(true, {}, serviceOptions, {
+            var con = new ConsensusService($.extend(true, {
                 worldId: opts.id,
-            }, extractNamesFromOpts(conOpts)));
+            }, opts, extractNamesFromOpts(conOpts)));
             return con;
         }
 

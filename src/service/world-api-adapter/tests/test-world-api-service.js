@@ -1,5 +1,6 @@
 import WorldService from '../index';
 import URLService from 'service/url-config-service';
+import ConsensusService from 'service/consensus-api-service/consensus-service';
 
 import sinon from 'sinon';
 import chai from 'chai';
@@ -411,17 +412,44 @@ describe('World API Service', function () {
             var body = JSON.parse(req.requestBody);
             expect(body.userIds).to.eql(['a', 'b', 'c', 'd', 'e']);
         });
+    });
+    describe('getProjectSettings', function () {
+        it('should GET to multiplayer/project API with correct settings', function () {
+            createWorldAdapter().getProjectSettings();
 
-        describe('getProjectSettings', function () {
-            it('should GET to multiplayer/project API with correct settings', function () {
-                createWorldAdapter().getProjectSettings();
-
-                var req = server.requests.pop();
-                req.method.toUpperCase().should.equal('GET');
-                req.url.should.match(/\/project\/forio\/js-libs/);
-            });
+            var req = server.requests.pop();
+            req.method.toUpperCase().should.equal('GET');
+            req.url.should.match(/\/project\/forio\/js-libs/);
         });
-
+    });
+    describe('#consensus', function () {
+        it('should throw an error if no id provided', function () {
+            expect(()=> createWorldAdapter().consensus('foo')).to.throw(Error);
+        });
+        it('should throw an error if no name provided', function () {
+            expect(()=> createWorldAdapter({ id: 'worldid' }).consensus()).to.throw(Error);
+        });
+        it('should return a consensus service', function () {
+            const consensus = createWorldAdapter({ id: 'worldid' }).consensus('foo');
+            expect(consensus.create).to.exist; //not a proper instance so can't test that
+        });
+        it('should allow string names', ()=> {
+            const consensus = createWorldAdapter({ id: 'worldid' }).consensus('foo');
+            const config = consensus.getCurrentConfig();
+            expect(config.name).to.equal('foo');
+            expect(config.consensusGroup).to.equal('');
+        });
+        it('should allow object names', ()=> {
+            const consensus = createWorldAdapter({ id: 'worldid' }).consensus({ name: 'foo', consensusGroup: 'bar' });
+            const config = consensus.getCurrentConfig();
+            expect(config.name).to.equal('foo');
+            expect(config.consensusGroup).to.equal('bar');
+        });
+        it('should pass in worldid', ()=> {
+            const consensus = createWorldAdapter({ id: 'worldid' }).consensus({ name: 'foo', consensusGroup: 'bar' });
+            const config = consensus.getCurrentConfig();
+            expect(config.worldId).to.equal('worldid');
+        });
     });
 
 });

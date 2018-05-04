@@ -157,6 +157,14 @@ export default function (config) {
             const httpOptions = getHTTPOptions('actions', options);
             return http.delete({}, httpOptions);
         },
+
+        /**
+         * Returns current configuration
+         * @returns {object}
+         */
+        getCurrentConfig: function () {
+            return serviceOptions;
+        },
     };
     return publicAPI;
 }
