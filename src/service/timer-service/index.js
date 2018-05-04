@@ -91,7 +91,7 @@ class TimerService {
      * @param {number} createOptions.timeLimit Limit for the timer, in milliseconds
      * @param {boolean} createOptions.startImmediately Determines if the timer should start ticking immediately. If set to false (default) call timer.start to start ticking.
      * 
-     * @returns Promise
+     * @returns {Promise}
      */
     create(createOptions) {
         const options = this.sessionManager.getMergedOptions(this.options, createOptions);
@@ -105,14 +105,11 @@ class TimerService {
             user: options.user
         };
 
-        let prom = $.Deferred().resolve([]).promise();
-        if (options.startImmediately) {
-            prom = this.makeAction(ACTIONS.START);
-        }
+        const prom = options.startImmediately ? this.makeAction(ACTIONS.START) : $.Deferred().resolve([]).promise();
 
         return prom.then((actions)=> {
             return ds.saveAs(options.name, {
-                actions: [createAction].concat(actions) 
+                actions: [].concat(createAction, actions) 
             });
         }).then((doc)=> {
             const actions = doc.actions;
@@ -129,7 +126,7 @@ class TimerService {
      * @param {object} options
      * @param {number} options.timeLimit Limit for the timer, in milliseconds
      * 
-     * @returns Promise
+     * @returns {Promise}
      */
     autoStart(options) {
         return this.getState().catch(()=> {
@@ -142,7 +139,7 @@ class TimerService {
     /**
      * Cancels current timer. Need to call `create` again to restart.
      * 
-     * @returns Promise
+     * @returns {Promise}
      */
     cancel() {
         const merged = this.sessionManager.getMergedOptions(this.options);
@@ -172,7 +169,7 @@ class TimerService {
      * Adds a custom action to the timer state. Only relevant if you're implementing a custom strategy.
      * 
      * @param {string} action
-     * @returns Promise
+     * @returns {Promise}
      */
     addTimerAction(action) {
         const merged = this.sessionManager.getMergedOptions(this.options);
@@ -198,7 +195,7 @@ class TimerService {
     /**
      * Start the timer
      * 
-     * @returns Promise
+     * @returns {Promise}
      */
     start() {
         return this.addTimerAction(ACTIONS.START);
@@ -207,7 +204,7 @@ class TimerService {
     /**
      * Pause the timer
      * 
-     * @returns Promise
+     * @returns {Promise}
      */
     pause() {
         return this.addTimerAction(ACTIONS.PAUSE);
@@ -216,7 +213,7 @@ class TimerService {
     /**
      * Resumes a paused timer
      * 
-     * @returns Promise
+     * @returns {Promise}
      */
     resume() {
         return this.addTimerAction(ACTIONS.RESUME);
@@ -225,7 +222,7 @@ class TimerService {
     /**
      * Helper method to return current server time
      * 
-     * @returns Promise<Date>
+     * @returns {Promise<Date>}
      */
     getCurrentTime() {
         const merged = this.sessionManager.getMergedOptions(this.options);
@@ -236,7 +233,7 @@ class TimerService {
     /**
      * Resumes current state of the timer, including time elapsed and remaining
      * 
-     * @returns Promise
+     * @returns {Promise}
      */
     getState() {
         const merged = this.sessionManager.getMergedOptions(this.options);
@@ -255,7 +252,7 @@ class TimerService {
     /**
      * Resumes a channel to hook into for timer notifications.
      * 
-     * @returns Channel
+     * @returns {object}
      */
     getChannel() {
         const merged = this.sessionManager.getMergedOptions(this.options);
