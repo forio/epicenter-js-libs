@@ -26,7 +26,7 @@ var ConfigService = require('service/configuration-service').default;
 var TransportFactory = require('transport/http-transport-factory').default;
 var SessionManager = require('store/session-manager');
 
-var ConsensusService = require('service/consensus/consensus-service');
+var ConsensusService = require('service/consensus-api-service/consensus-service').default;
 
 var _pick = require('util/object-util').pick;
 
