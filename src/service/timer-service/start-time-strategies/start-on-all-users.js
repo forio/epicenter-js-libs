@@ -6,8 +6,9 @@ export default function reduceActions(actions, options) {
         requiredUsernames: []
     }, options);
     return startWhenCondition(actions, {
-        condition: function (joinedUsernames) {
-            const requiredUsersJoined = intersection(opts.requiredUsernames, joinedUsernames);
+        condition: function (joinedUsers) {
+            const joinedNames = joinedUsers.map((u)=> u.userName);
+            const requiredUsersJoined = intersection(opts.requiredUsernames, joinedNames);
             return requiredUsersJoined.length >= opts.requiredUsernames.length;
         }
     });

@@ -7,21 +7,21 @@ export default function reduceActions(actions, options) {
 
     const initialState = {
         startTime: 0, 
-        startedUsers: {},
+        startedUsers: [],
     };
     const reduced = actions.reduce(function (accum, action) {
-        if (action.type !== ACTIONS.START) {
+        if (action.type !== ACTIONS.START || accum.startTime) {
             return accum;
         }
         const ts = +(new Date(action.time));
         const user = action.user;
-        if (!accum.startedUsers[user.userName] && !accum.ts) {
-            accum.startedUsers[user.userName] = ts;
-
-            const areUserRequirementsMet = defaults.condition(Object.keys(accum.startedUsers));
-            if (areUserRequirementsMet) {
-                accum.startTime = ts;
-            }
+        const isUserAlreadyCounted = !!(accum.startedUsers.find((u)=> u.userName === user.userName));
+        if (!isUserAlreadyCounted) {
+            accum.startedUsers.push(user);
+        }
+        const areUserRequirementsMet = defaults.condition([].concat(accum.startedUsers));
+        if (areUserRequirementsMet) {
+            accum.startTime = ts;
         }
         return accum;
     }, initialState);

@@ -13,11 +13,6 @@ function makeStartAction(time, user) {
     };
 }
 describe('Start on first user timer strategy', ()=> {
-    it('should return 0 if not started', ()=> {
-        const actions = [];
-        const op = startReduce(actions);
-        expect(op.startTime).to.equal(0);
-    });
     it('should return start time of first user, if single user', ()=> {
         const actions = [
             makeStartAction(100, 'a1')
@@ -33,7 +28,7 @@ describe('Start on first user timer strategy', ()=> {
         const op = startReduce(actions);
         expect(op.startTime).to.equal(actions[0].time);
     });
-    it('should return firs start time if second user joins', ()=> {
+    it('should return first start time if second user joins', ()=> {
         const actions = [
             makeStartAction(100, 'a1'),
             makeStartAction(200, 'a1'),
