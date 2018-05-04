@@ -20,6 +20,10 @@ describe('Consensus Service', ()=> {
         name: 'con',
     };
 
+    function createConsensusService(params) {
+        const so = params === null ? undefined : Object.assign({}, defaultParams, params);
+        return new ConsensusService(so);
+    }
     var server;
     before(function () {
         server = sinon.fakeServer.create();
@@ -34,13 +38,13 @@ describe('Consensus Service', ()=> {
     });
 
     it('should pass through string tokens', function () {
-        const cs1 = new ConsensusService(Object.assign({}, defaultParams, { token: 'abc' }));
+        const cs1 = createConsensusService({ token: 'abc' });
         cs1.create({ roles: ['a1'] });
 
         const req = server.requests.pop();
         expect(req.requestHeaders.Authorization).to.equal('Bearer abc');
 
-        const cs2 = new ConsensusService(Object.assign({}, defaultParams, { token: '' }));
+        const cs2 = createConsensusService({ token: '' });
         cs2.create({ roles: ['a1'] });
 
         const req2 = server.requests.pop();
@@ -49,7 +53,7 @@ describe('Consensus Service', ()=> {
     it('should pass in transport options to the underlying ajax handler', function () {
         var beforeSend = sinon.spy();
         var complete = sinon.spy();
-        var cs1 = new ConsensusService(Object.assign({}, defaultParams, { transport: { beforeSend: beforeSend, complete: complete } }));
+        var cs1 = createConsensusService({ transport: { beforeSend: beforeSend, complete: complete } });
         cs1.create({ roles: ['a1'] });
 
         expect(beforeSend).to.have.been.called;
@@ -60,11 +64,11 @@ describe('Consensus Service', ()=> {
     describe('#create', ()=> {
         describe('roles', ()=> {
             it('should throw an error if no roles passed in', ()=> {
-                const cs = new ConsensusService(defaultParams);
+                const cs = createConsensusService();
                 expect(()=> cs.create()).to.throw(Error);
             });
             it('should take in object with roles', ()=> {
-                const cs = new ConsensusService(defaultParams);
+                const cs = createConsensusService();
                 const params = {
                     roles: {
                         a: 1,
@@ -77,7 +81,7 @@ describe('Consensus Service', ()=> {
                 expect(req.requestBody).to.equal(JSON.stringify(params));
             });
             it('should take in a roles array and convert it', ()=> {
-                const cs = new ConsensusService(defaultParams);
+                const cs = createConsensusService();
                 const params = {
                     roles: ['a', 'b']
                 };
@@ -104,7 +108,7 @@ describe('Consensus Service', ()=> {
             }, { name: 'w1' })).to.throw(Error);
         });
         it('should do a POST to the right url', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             cs.create({
                 roles: ['a', 'b']
             });
@@ -114,7 +118,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should convert defaultActions to actions', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
             const opns2 = [{ name: 'foo3', arguments: ['bar3'] }, { name: 'foo4', arguments: ['bar4'] }];
             cs.create({
@@ -138,7 +142,7 @@ describe('Consensus Service', ()=> {
             }));
         });
         it('should pass in other fields as-is', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             const params = {
                 roles: {
                     a: 1,
@@ -157,7 +161,7 @@ describe('Consensus Service', ()=> {
     });
     describe('#load', ()=> {
         it('should do a GET to the right url', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             cs.load();
 
             var req = server.requests.pop();
@@ -165,7 +169,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should allow overriding serviceoptions', ()=> {
-            const cs = new ConsensusService();
+            const cs = createConsensusService(null);
             cs.load(defaultParams);
 
             var req = server.requests.pop();
@@ -175,7 +179,7 @@ describe('Consensus Service', ()=> {
     });
     describe('#delete', ()=> {
         it('should do a GET to the right url', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             cs.delete();
 
             var req = server.requests.pop();
@@ -183,7 +187,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should allow overriding serviceoptions', ()=> {
-            const cs = new ConsensusService();
+            const cs = createConsensusService(null);
             cs.delete(defaultParams);
 
             var req = server.requests.pop();
@@ -193,7 +197,7 @@ describe('Consensus Service', ()=> {
     });
     describe('#forceClose', ()=> {
         it('should do a POST to the right url', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             cs.forceClose();
 
             var req = server.requests.pop();
@@ -201,7 +205,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}close/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should allow overriding serviceoptions', ()=> {
-            const cs = new ConsensusService();
+            const cs = createConsensusService(null);
             cs.forceClose(defaultParams);
 
             var req = server.requests.pop();
@@ -209,7 +213,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}close/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should send in a blank body', ()=> {
-            const cs = new ConsensusService();
+            const cs = createConsensusService(null);
             cs.forceClose(defaultParams);
 
             var req = server.requests.pop();
@@ -218,11 +222,11 @@ describe('Consensus Service', ()=> {
     });
     describe('#updateDefaults', ()=> {
         it('should throw an error if no actions passed in', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             expect(()=> cs.updateDefaults()).to.throw(Error);
         });
         it('should do a PATCH to the right url', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
             
             cs.updateDefaults({ defaultActions: opns });
@@ -232,7 +236,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}actions/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should allow overriding serviceoptions', ()=> {
-            const cs = new ConsensusService();
+            const cs = createConsensusService(null);
             const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
             
             cs.updateDefaults({ defaultActions: opns }, defaultParams);
@@ -242,7 +246,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}actions/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should translate actions before passing in', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
             
             cs.updateDefaults({ defaultActions: opns });
@@ -258,11 +262,11 @@ describe('Consensus Service', ()=> {
     });
     describe('#submitActions', ()=> {
         it('should throw an error if no roles passed in', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             expect(()=> cs.submitActions()).to.throw(Error);
         });
         it('should do a POST to the right url', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
             
             cs.submitActions(opns);
@@ -272,7 +276,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}actions/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should allow overriding serviceoptions', ()=> {
-            const cs = new ConsensusService();
+            const cs = createConsensusService(null);
             const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
             
             cs.submitActions(opns, defaultParams);
@@ -282,7 +286,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}actions/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should translate actions before passing in', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
             
             cs.submitActions(opns);
@@ -298,7 +302,7 @@ describe('Consensus Service', ()=> {
     });
     describe('#undoSubmit', ()=> {
         it('should do a DELETE to the right url', ()=> {
-            const cs = new ConsensusService(defaultParams);
+            const cs = createConsensusService();
             cs.undoSubmit();
 
             var req = server.requests.pop();
@@ -306,7 +310,7 @@ describe('Consensus Service', ()=> {
             expect(req.url).to.equal(`${baseURL}actions/${defaultParams.worldId}/${defaultParams.consensusGroup}/${defaultParams.name}`);
         });
         it('should allow overriding serviceoptions', ()=> {
-            const cs = new ConsensusService();
+            const cs = createConsensusService(null);
             cs.undoSubmit(defaultParams);
 
             var req = server.requests.pop();
