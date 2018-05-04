@@ -1,3 +1,4 @@
+import { intersection } from 'util/array-utils';
 /**
  * @typedef Publishable
  * @property {string} name
@@ -68,17 +69,6 @@ function uniqueId(prefix) {
     return `${prefix || ''}${i}`;
 }
 
-function intersection(a, b) {
-    var t;
-    if (b.length > a.length) {
-        t = b;
-        b = a;
-        a = t; 
-    }// indexOf to loop over shorter
-    return a.filter(function (e) {
-        return b.indexOf(e) > -1;
-    });
-}
 
 /**
  * 

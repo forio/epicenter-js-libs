@@ -1,6 +1,10 @@
 import { ACTIONS } from '../timer-constants';
 
 export default function reduceActions(actions, options) {
+    const defaults = $.extend({
+        condition: ()=> true
+    }, options);
+
     const initialState = {
         startTime: 0, 
         startedUsers: {},
@@ -11,9 +15,13 @@ export default function reduceActions(actions, options) {
         }
         const ts = +(new Date(action.time));
         const user = action.user;
-        if (Object.keys(accum.startedUsers).indexOf(user.userName) === -1) {
-            accum.startTime = ts;
+        if (!accum.startedUsers[user.userName] && !accum.ts) {
             accum.startedUsers[user.userName] = ts;
+
+            const areUserRequirementsMet = defaults.condition(Object.keys(accum.startedUsers));
+            if (areUserRequirementsMet) {
+                accum.startTime = ts;
+            }
         }
         return accum;
     }, initialState);
