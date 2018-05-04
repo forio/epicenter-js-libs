@@ -1,6 +1,6 @@
 import ConfigService from 'service/configuration-service';
 import TransportFactory from 'transport/http-transport-factory';
-import SessionManager from 'store/session-manager';
+import { getDefaultOptions } from 'service/service-utils';
 
 const API_ENDPOINT = 'multiplayer/consensus';
 
@@ -21,8 +21,8 @@ export default function (config) {
         consensusGroup: '',
         name: '',
     };
-    const sessionManager = new SessionManager();
-    const serviceOptions = sessionManager.getMergedOptions(defaults, config);
+    const serviceOptions = getDefaultOptions(defaults, config);
+
     const urlConfig = new ConfigService(serviceOptions).get('server');
     if (serviceOptions.account) {
         urlConfig.accountPath = serviceOptions.account;
@@ -30,13 +30,7 @@ export default function (config) {
     if (serviceOptions.project) {
         urlConfig.projectPath = serviceOptions.project;
     }
-    const transportOptions = $.extend(true, {}, serviceOptions.transport);
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    const http = new TransportFactory(transportOptions);
+    const http = new TransportFactory(serviceOptions.transport);
 
     function getHTTPOptions(action, options) {
         const mergedOptions = $.extend(true, {}, serviceOptions, options);
@@ -58,9 +52,9 @@ export default function (config) {
          * Creates a new consensus point
          * @param  {object} params  creation options
          * @param  {string[]|{string: number}} params.roles
+         * @param  {{string:object[]}} [params.defaultActions] Actions to take if the role specified in the key does not submit
          * @param  {number} [params.ttlSeconds] How long the consensus point lasts for - note you'll still have to explicitly call `forceClose` yourself after timer runs out
          * @param  {boolean} [params.executeActionsImmediately] Determines if actions are immediately sent to the server. If set to false, only the *last* action which completes the consensus will be passed on
-         * @param  {{string:object[]}} [params.defaultActions] Actions to take if the role specified in the key does not submit
          * @param  {object} [options] Overrides for service options
          * @return {Promise}
          */
@@ -90,6 +84,13 @@ export default function (config) {
             return http.post(postParams, httpOptions);
         },
 
+        /**
+         * Update defaults set during create. Currently only updating defaultActions is supported.
+         *
+         * @param {{defaultActions: []}} params Consensus defaults to override
+         * @param {object} [options] Overrides for service options
+         * @returns {Promise}
+         */
         updateDefaults: function (params, options) {
             if (!params || !params.defaultActions) {
                 throw new Error('updateDefaults: Need to pass in parameters to update');
@@ -103,7 +104,7 @@ export default function (config) {
         /**
          * Returns current consensus point
          *
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         load: function (options) {
@@ -113,7 +114,7 @@ export default function (config) {
         /**
          * Deletes current consensus point
          *
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         delete: function (options) {
@@ -123,7 +124,7 @@ export default function (config) {
         /**
          * Marks current consensus point as complete. Default actions, if specified, will be sent for defaulting roles.
          *
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         forceClose: function (options) {
@@ -134,7 +135,7 @@ export default function (config) {
          * Submits actions for your turn and marks you as having `submitted`. If `executeActionsImmediately` was set to `true` while creating the consensus point, the actions will be immediately sent to the model.
          *
          * @param {object[]} actions Actions to send
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         submitActions: function (actions, options) {
@@ -149,7 +150,7 @@ export default function (config) {
         /**
          * Reverts submission. Note if `executeActionsImmediately` was set to `true` while creating the consensus point the action will have already been passed on to the model.
          *
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         undoSubmit: function (options) {
