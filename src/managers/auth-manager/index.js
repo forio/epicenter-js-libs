@@ -32,7 +32,7 @@
 
 var AuthAdapter = require('service/auth-api-service');
 var MemberAdapter = require('service/member-api-adapter');
-var GroupService = require('service/group-api-service');
+var GroupService = require('service/group-api-service').default;
 var SessionManager = require('store/session-manager');
 var _pick = require('util/object-util').pick;
 var objectAssign = require('object-assign');

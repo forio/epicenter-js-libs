@@ -10,11 +10,9 @@
  *      ma.getGroupsForProject({ account: 'acme', project: 'sample' });
  */
 
-'use strict';
-
-var serviceUtils = require('service/service-utils');
-var TransportFactory = require('transport/http-transport-factory').default;
-var objectAssign = require('object-assign');
+import { getDefaultOptions, getApiUrl } from 'service/service-utils';
+import TransportFactory from 'transport/http-transport-factory';
+import objectAssign from 'object-assign';
 
 var apiEndpoint = 'group/local';
 
@@ -38,7 +36,7 @@ var GroupService = function (config) {
          */
         transport: {}
     };
-    var serviceOptions = serviceUtils.getDefaultOptions(defaults, config, { apiEndpoint: apiEndpoint });
+    var serviceOptions = getDefaultOptions(defaults, config, { apiEndpoint: apiEndpoint });
     var transportOptions = serviceOptions.transport;
     delete serviceOptions.transport;
     var http = new TransportFactory(transportOptions, serviceOptions);
@@ -59,7 +57,7 @@ var GroupService = function (config) {
             var finalOpts = objectAssign({}, serviceOptions, options);
             var finalParams;
             if (typeof params === 'string') {
-                finalOpts.url = serviceUtils.getApiUrl(apiEndpoint + '/' + params, finalOpts);
+                finalOpts.url = getApiUrl(apiEndpoint + '/' + params, finalOpts);
             } else {
                 finalParams = params;
             }
@@ -69,4 +67,4 @@ var GroupService = function (config) {
     objectAssign(this, publicAPI);
 };
 
-module.exports = GroupService;
+export default GroupService;
