@@ -68,19 +68,113 @@ var F =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 36);
+/******/ 	return __webpack_require__(__webpack_require__.s = 38);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @class ConfigurationService
+ *
+ * All services take in a configuration settings object to configure themselves. A JS hash {} is a valid configuration object, but optionally you can use the configuration service to toggle configs based on the environment
+ *
+ * @example
+ *     const cs = require('configuration-service')({
+ *          dev: { //environment
+                port: 3000,
+                host: 'localhost',
+            },
+            prod: {
+                port: 8080,
+                host: 'api.forio.com',
+                logLevel: 'none'
+            },
+            logLevel: 'DEBUG' //global
+ *     });
+ *
+ *      cs.get('logLevel'); //returns 'DEBUG'
+ *
+ *      cs.setEnv('dev');
+ *      cs.get('logLevel'); //returns 'DEBUG'
+ *
+ *      cs.setEnv('prod');
+ *      cs.get('logLevel'); //returns 'none'
+ *
+ */
+
+
+
+var ConfigService = function () {
+    function ConfigService(config) {
+        _classCallCheck(this, ConfigService);
+
+        var defaults = {
+            logLevel: 'NONE'
+        };
+        var serviceOptions = $.extend({}, defaults, config);
+        serviceOptions.server = __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default()(serviceOptions.server);
+
+        this.serviceOptions = this.data = serviceOptions;
+    }
+
+    /**
+     * Set the environment key to get configuration options from
+     * @param { string} env
+     */
+
+
+    _createClass(ConfigService, [{
+        key: 'setEnv',
+        value: function setEnv(env) {}
+        /**
+             * Get configuration.
+             * @param  { string} property optional
+             * @return {*}          Value of property if specified, the entire config object otherwise
+             */
+
+    }, {
+        key: 'get',
+        value: function get(property) {
+            return this.serviceOptions[property];
+        }
+        /**
+             * Set configuration.
+             * @param  { string|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
+             * @param  {*} value  value for provided key
+             */
+
+    }, {
+        key: 'set',
+        value: function set(key, value) {
+            this.serviceOptions[key] = value;
+        }
+    }]);
+
+    return ConfigService;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (ConfigService);
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keyNames = __webpack_require__(14);
+var keyNames = __webpack_require__(12);
 var StorageFactory = __webpack_require__(22);
-var optionUtils = __webpack_require__(38);
+var optionUtils = __webpack_require__(40);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var EPI_MANAGER_KEY = 'epicenter.token'; //can't be under key-names, or logout will clear this too
@@ -209,100 +303,6 @@ var SessionManager = function (managerOptions) {
 module.exports = SessionManager;
 
 /***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * @class ConfigurationService
- *
- * All services take in a configuration settings object to configure themselves. A JS hash {} is a valid configuration object, but optionally you can use the configuration service to toggle configs based on the environment
- *
- * @example
- *     const cs = require('configuration-service')({
- *          dev: { //environment
-                port: 3000,
-                host: 'localhost',
-            },
-            prod: {
-                port: 8080,
-                host: 'api.forio.com',
-                logLevel: 'none'
-            },
-            logLevel: 'DEBUG' //global
- *     });
- *
- *      cs.get('logLevel'); //returns 'DEBUG'
- *
- *      cs.setEnv('dev');
- *      cs.get('logLevel'); //returns 'DEBUG'
- *
- *      cs.setEnv('prod');
- *      cs.get('logLevel'); //returns 'none'
- *
- */
-
-
-
-var ConfigService = function () {
-    function ConfigService(config) {
-        _classCallCheck(this, ConfigService);
-
-        var defaults = {
-            logLevel: 'NONE'
-        };
-        var serviceOptions = $.extend({}, defaults, config);
-        serviceOptions.server = __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default()(serviceOptions.server);
-
-        this.serviceOptions = this.data = serviceOptions;
-    }
-
-    /**
-     * Set the environment key to get configuration options from
-     * @param { string} env
-     */
-
-
-    _createClass(ConfigService, [{
-        key: 'setEnv',
-        value: function setEnv(env) {}
-        /**
-             * Get configuration.
-             * @param  { string} property optional
-             * @return {*}          Value of property if specified, the entire config object otherwise
-             */
-
-    }, {
-        key: 'get',
-        value: function get(property) {
-            return this.serviceOptions[property];
-        }
-        /**
-             * Set configuration.
-             * @param  { string|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
-             * @param  {*} value  value for provided key
-             */
-
-    }, {
-        key: 'set',
-        value: function set(key, value) {
-            this.serviceOptions[key] = value;
-        }
-    }]);
-
-    return ConfigService;
-}();
-
-/* harmony default export */ __webpack_exports__["default"] = (ConfigService);
-
-/***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -382,26 +382,24 @@ module.exports = function (base, props, staticProps) {
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-module.exports = {
-    _pick: function (obj, props) {
-        var res = {};
-        for (var p in obj) {
-            if (props.indexOf(p) !== -1) {
-                res[p] = obj[p];
-            }
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
+/* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
+function pick(obj, props) {
+    var res = {};
+    for (var p in obj) {
+        if (props.indexOf(p) !== -1) {
+            res[p] = obj[p];
         }
-
-        return res;
-    },
-    isEmpty: function isEmpty(value) {
-        return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
     }
-};
+    return res;
+}
+function isEmpty(value) {
+    return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
+}
 
 /***/ }),
 /* 5 */
@@ -625,14 +623,14 @@ module.exports = {
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 var qutil = __webpack_require__(5);
-var rutil = __webpack_require__(11);
-var _pick = __webpack_require__(4)._pick;
+var rutil = __webpack_require__(10);
+var _pick = __webpack_require__(4).pick;
 var TransportFactory = __webpack_require__(2).default;
 var VariablesService = __webpack_require__(20);
 var IntrospectionService = __webpack_require__(21);
-var SessionManager = __webpack_require__(0);
+var SessionManager = __webpack_require__(1);
 
 module.exports = function (config) {
     var defaults = {
@@ -1176,41 +1174,12 @@ module.exports = function (config) {
 
 /***/ }),
 /* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SCOPES; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ACTIONS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return STRATEGY; });
-var SCOPES = {
-    GROUP: 'GROUP',
-    RUN: 'RUN',
-    USER: 'USER',
-    CUSTOM: 'CUSTOM'
-};
-var ACTIONS = {
-    CREATE: 'CREATE',
-    START: 'START',
-    PAUSE: 'PAUSE',
-    RESUME: 'RESUME',
-    COMPLETE: 'COMPLETE',
-    RESET: 'RESET',
-    TICK: 'TICK'
-};
-
-var STRATEGY = {
-    START_BY_FIRST_USER: 'first-user',
-    START_BY_LAST_USER: 'last-user'
-};
-
-/***/ }),
-/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Base = __webpack_require__(10);
+var Base = __webpack_require__(9);
 var classFrom = __webpack_require__(3);
 
 /**
@@ -1289,7 +1258,7 @@ var Strategy = classFrom(Base, {
 module.exports = Strategy;
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1320,7 +1289,7 @@ module.exports = classFrom(Base, {
 });
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1550,7 +1519,593 @@ module.exports = function () {
 }();
 
 /***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var epiVersion = __webpack_require__(18);
+
+//TODO: urlutils to get host, since no window on node
+var defaults = {
+    host: window.location.host,
+    pathname: window.location.pathname
+};
+
+function getLocalHost(existingFn, host) {
+    var localHostFn;
+    if (existingFn !== undefined) {
+        if (!$.isFunction(existingFn)) {
+            localHostFn = function () {
+                return existingFn;
+            };
+        } else {
+            localHostFn = existingFn;
+        }
+    } else {
+        localHostFn = function () {
+            var isLocal = !host || //phantomjs
+            host === '127.0.0.1' || host.indexOf('local.') === 0 || host.indexOf('ngrok') !== -1 || host.indexOf('localhost') === 0;
+            return isLocal;
+        };
+    }
+    return localHostFn;
+}
+
+var UrlConfigService = function (config) {
+    var envConf = UrlConfigService.defaults;
+
+    if (!config) {
+        config = {};
+    }
+    // console.log(this.defaults);
+    var overrides = $.extend({}, envConf, config);
+    var options = $.extend({}, defaults, overrides);
+
+    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
+
+    // console.log(isLocalhost(), '___________');
+    var actingHost = config && config.host;
+    if (!actingHost && options.isLocalhost()) {
+        actingHost = 'forio.com';
+    } else {
+        actingHost = options.host;
+    }
+
+    var API_PROTOCOL = 'https';
+    var HOST_API_MAPPING = {
+        'forio.com': 'api.forio.com',
+        'foriodev.com': 'api.epicenter.foriodev.com'
+    };
+
+    var publicExports = {
+        protocol: API_PROTOCOL,
+
+        api: '',
+
+        //TODO: this should really be called 'apihost', but can't because that would break too many things
+        host: function () {
+            var apiHost = HOST_API_MAPPING[actingHost] ? HOST_API_MAPPING[actingHost] : actingHost;
+            // console.log(actingHost, config, apiHost);
+            return apiHost;
+        }(),
+
+        isCustomDomain: function () {
+            var path = options.pathname.split('/');
+            var pathHasApp = path && path[1] === 'app';
+            return !options.isLocalhost() && !pathHasApp;
+        }(),
+
+        appPath: function () {
+            var path = options.pathname.split('/');
+
+            return path && path[1] || '';
+        }(),
+
+        accountPath: function () {
+            var accnt = '';
+            var path = options.pathname.split('/');
+            if (path && path[1] === 'app') {
+                accnt = path[2];
+            }
+            return accnt;
+        }(),
+
+        projectPath: function () {
+            var prj = '';
+            var path = options.pathname.split('/');
+            if (path && path[1] === 'app') {
+                prj = path[3]; //eslint-disable-line no-magic-numbers
+            }
+            return prj;
+        }(),
+
+        versionPath: function () {
+            var version = epiVersion.version ? epiVersion.version + '/' : '';
+            return version;
+        }(),
+
+        getAPIPath: function (api) {
+            var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
+            var apiMapping = {
+                channel: 'channel/subscribe'
+            };
+            var apiEndpoint = apiMapping[api] || api;
+
+            if (apiEndpoint === 'config') {
+                var actualProtocol = window.location.protocol.replace(':', '');
+                var configProtocol = options.isLocalhost() ? this.protocol : actualProtocol;
+                return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
+            }
+            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
+
+            if ($.inArray(apiEndpoint, PROJECT_APIS) !== -1) {
+                apiPath += this.accountPath + '/' + this.projectPath + '/';
+            }
+            return apiPath;
+        }
+    };
+
+    $.extend(publicExports, overrides);
+    return publicExports;
+};
+// This data can be set by external scripts, for loading from an env server for eg;
+UrlConfigService.defaults = {};
+
+module.exports = UrlConfigService;
+
+/***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    EPI_SESSION_KEY: 'epicenterjs.session',
+    STRATEGY_SESSION_KEY: 'epicenter-scenario'
+};
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__channel_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
+
+
+/**
+ * ## Epicenter Channel Manager
+ *
+ * The Epicenter platform provides a push channel, which allows you to publish and subscribe to messages within a [project](../../../glossary/#projects), [group](../../../glossary/#groups), or [multiplayer world](../../../glossary/#world).
+ *
+ * <a name="background"></a>
+ * ### Channel Background
+ *
+ * Channel notifications are only available for [team projects](../../../glossary/#team). There are two main use cases for the push channel: event notifications and chat messages.
+ *
+ * #### Event Notifications
+ *
+ * Within a [multiplayer simulation or world](../../../glossary/#world), it is often useful for your project's [model](../../../writing_your_model/) to alert the [user interface (browser)](../../../creating_your_interface/) that something new has happened.
+ *
+ * Usually, this "something new" is an event within the project, group, or world, such as:
+ *
+ * * An end user comes online (logs in) or goes offline. (This is especially interesting in a multiplayer world; only available if you have [enabled authorization](../../../updating_your_settings/#general-settings) for the channel.)
+ * * An end user is assigned to a world.
+ * * An end user updates a variable / makes a decision.
+ * * An end user creates or updates data stored in the [Data API](../data-api-service/).
+ * * An operation (method) is called. (This is especially interesting if the model is advanced, for instance, the Vensim `step` operation is called.)
+ *
+ * When these events occur, you often want to have the user interface for one or more end users automatically update with new information.
+ *
+ * #### Chat Messages
+ *
+ * Another reason to use the push channel is to allow players (end users) to send chat messages to other players, and to have those messages appear immediately.
+ *
+ * #### Getting Started
+ *
+ * For both the event notification and chat message use cases:
+ *
+ * * First, enable channel notifications for your project.
+ *      * Channel notifications are only available for [team projects](../../../glossary/#team). To enable notifications for your project, [update your project settings](../../../updating_your_settings/#general-settings) to turn on the **Push Channel** setting, and optionally require authorization for the channel.
+ * * Then, instantiate an Epicenter Channel Manager.
+ * * Next, get the channel with the scope you want (user, world, group, data).
+ * * Finally, use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
+ *
+ * Here's an example of those last three steps (instantiate, get channel, subscribe):
+ *
+ *     var cm = new F.manager.ChannelManager();
+ *     var gc = cm.getGroupChannel();
+ *     gc.subscribe('', function(data) { console.log(data); });
+ *     gc.publish('', { message: 'a new message to the group' });
+ *
+ * For a more detailed example, see a [complete publish and subscribe example](../../../rest_apis/multiplayer/channel/#epijs-example).
+ *
+ * For details on what data is published automatically to which channels, see [Automatic Publishing of Events](../../../rest_apis/multiplayer/channel/#publish-message-auto).
+ *
+ * #### Creating an Epicenter Channel Manager
+ *
+ * The Epicenter Channel Manager is a wrapper around the (more generic) [Channel Manager](../channel-manager/), to instantiate it with Epicenter-specific defaults. If you are interested in including a notification or chat feature in your project, using an Epicenter Channel Manager is the easiest way to get started.
+ *
+ * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Epicenter Channel Manager. See [Including Epicenter.js](../../#include).
+ *
+ * The parameters for instantiating an Epicenter Channel Manager include:
+ *
+ * * `options` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
+ * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
+ * * `options.project` Epicenter project id.
+ * * `options.userName` Epicenter userName used for authentication.
+ * * `options.userId` Epicenter user id used for authentication. Optional; `options.userName` is preferred.
+ * * `options.token` Epicenter token used for authentication. (You can retrieve this using `authManager.getToken()` from the [Authorization Manager](../auth-manager/).)
+ * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
+ */
+
+
+
+
+
+
+var validTypes = {
+    project: true,
+    group: true,
+    world: true,
+    user: true,
+    data: true,
+    general: true,
+    chat: true
+};
+var getFromSessionOrError = function (value, sessionKeyName, settings) {
+    if (!value) {
+        if (settings && settings[sessionKeyName]) {
+            value = settings[sessionKeyName];
+        } else {
+            throw new Error(sessionKeyName + ' not found. Please log-in again, or specify ' + sessionKeyName + ' explicitly');
+        }
+    }
+    return value;
+};
+
+var isPresenceData = function (payload) {
+    return payload.data && payload.data.type === 'user' && payload.data.user;
+};
+
+var __super = __WEBPACK_IMPORTED_MODULE_0__channel_manager___default.a.prototype;
+var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default()(__WEBPACK_IMPORTED_MODULE_0__channel_manager___default.a, {
+    constructor: function (options) {
+        this.sessionManager = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(options);
+        var defaultCometOptions = this.sessionManager.getMergedOptions(options);
+
+        var urlConfig = new __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__["default"](defaultCometOptions).get('server');
+        if (!defaultCometOptions.url) {
+            defaultCometOptions.url = urlConfig.getAPIPath('channel');
+        }
+
+        if (defaultCometOptions.handshake === undefined) {
+            var userName = defaultCometOptions.userName;
+            var userId = defaultCometOptions.userId;
+            var token = defaultCometOptions.token;
+            if ((userName || userId) && token) {
+                var userProp = userName ? 'userName' : 'userId';
+                var ext = {
+                    authorization: 'Bearer ' + token
+                };
+                ext[userProp] = userName ? userName : userId;
+
+                defaultCometOptions.handshake = {
+                    ext: ext
+                };
+            }
+        }
+
+        this.options = defaultCometOptions;
+        return __super.constructor.call(this, defaultCometOptions);
+    },
+
+    /**
+     * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
+     *
+     * This method enforces Epicenter-specific channel naming: all channels requested must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`.
+     *
+     * **Example**
+     *
+     *      var cm = new F.manager.EpicenterChannelManager();
+     *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
+     *
+     *      channel.subscribe('topic', callback);
+     *      channel.publish('topic', { myData: 100 });
+     *
+     * **Parameters**
+     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * @return {Channel} Channel instance
+     */
+    getChannel: function (options) {
+        if (options && typeof options !== 'object') {
+            options = {
+                base: options
+            };
+        }
+        var channelOpts = $.extend({}, this.options, options);
+        var base = channelOpts.base;
+        if (!base) {
+            throw new Error('No base topic was provided');
+        }
+
+        if (!channelOpts.allowAllChannels) {
+            var baseParts = base.split('/');
+            var channelType = baseParts[1];
+            if (baseParts.length < 4) {
+                //eslint-disable-line
+                throw new Error('Invalid channel base name, it must be in the form /{type}/{account id}/{project id}/{...}');
+            }
+            if (!validTypes[channelType]) {
+                throw new Error('Invalid channel type');
+            }
+        }
+        return __super.getChannel.apply(this, arguments);
+    },
+
+    /**
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [group](../../../glossary/#groups). The group must exist in the account (team) and project provided.
+     *
+     * There are no notifications from Epicenter on this channel; all messages are user-originated.
+     *
+     * **Example**
+     *
+     *     var cm = new F.manager.ChannelManager();
+     *     var gc = cm.getGroupChannel();
+     *     gc.subscribe('broadcasts', callback);
+     *
+     * **Return Value**
+     *
+     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
+     *
+     * **Parameters**
+     *
+     * @param  {String} groupName (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
+     * @return {Channel} Channel instance
+     */
+    getGroupChannel: function (groupName) {
+        var session = this.sessionManager.getMergedOptions(this.options);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
+
+        var baseTopic = ['/group', account, project, groupName].join('/');
+        var channel = __super.getChannel.call(this, { base: baseTopic });
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            var callbackWithoutPresenceData = function (payload) {
+                if (!isPresenceData(payload)) {
+                    callback.call(context, payload);
+                }
+            };
+            return oldsubs.call(channel, topic, callbackWithoutPresenceData, context, options);
+        };
+        return channel;
+    },
+
+    /**
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [world](../../../glossary/#world).
+     *
+     * This is typically used together with the [World Manager](../world-manager).
+     *
+     * **Example**
+     *
+     *     var cm = new F.manager.ChannelManager();
+     *     var worldManager = new F.manager.WorldManager({
+     *         account: 'acme-simulations',
+     *         project: 'supply-chain-game',
+     *         group: 'team1',
+     *         run: { model: 'model.eqn' }
+     *     });
+     *     worldManager.getCurrentWorld().then(function (worldObject, worldAdapter) {
+     *         var worldChannel = cm.getWorldChannel(worldObject);
+     *         worldChannel.subscribe('', function (data) {
+     *             console.log(data);
+     *         });
+     *      });
+     *
+     * **Return Value**
+     *
+     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
+     *
+     * **Parameters**
+     *
+     * @param  {String|Object} world The world object or id.
+     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @return {Channel} Channel instance
+     */
+    getWorldChannel: function (world, groupName) {
+        var worldid = $.isPlainObject(world) && world.id ? world.id : world;
+        if (!worldid) {
+            throw new Error('Please specify a world id');
+        }
+        var session = this.sessionManager.getMergedOptions(this.options);
+
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
+
+        var baseTopic = ['/world', account, project, groupName, worldid].join('/');
+        return __super.getChannel.call(this, { base: baseTopic });
+    },
+
+    /**
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the current [end user](../../../glossary/#users) in that user's current [world](../../../glossary/#world).
+     *
+     * This is typically used together with the [World Manager](../world-manager). Note that this channel only gets notifications for worlds currently in memory. (See more background on [persistence](../../../run_persistence).)
+     *
+     * **Example**
+     *
+     *     var cm = new F.manager.ChannelManager();
+     *     var worldManager = new F.manager.WorldManager({
+     *         account: 'acme-simulations',
+     *         project: 'supply-chain-game',
+     *         group: 'team1',
+     *         run: { model: 'model.eqn' }
+     *     });
+     *     worldManager.getCurrentWorld().then(function (worldObject, worldAdapter) {
+     *         var userChannel = cm.getUserChannel(worldObject);
+     *         userChannel.subscribe('', function (data) {
+     *             console.log(data);
+     *         });
+     *      });
+     *
+     *
+     * **Return Value**
+     *
+     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
+     *
+     * **Parameters**
+     *
+     * @param  {String|Object} world World object or id.
+     * @param  {String|Object} user (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
+     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @return {Channel} Channel instance
+     */
+    getUserChannel: function (world, user, groupName) {
+        var worldid = $.isPlainObject(world) && world.id ? world.id : world;
+        if (!worldid) {
+            throw new Error('Please specify a world id');
+        }
+        var session = this.sessionManager.getMergedOptions(this.options);
+
+        var userid = $.isPlainObject(user) && user.id ? user.id : user;
+        userid = getFromSessionOrError(userid, 'userId', session);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
+
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
+
+        var baseTopic = ['/user', account, project, groupName, worldid, userid].join('/');
+        return __super.getChannel.call(this, { base: baseTopic });
+    },
+
+    /**
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) that automatically tracks the presence of an [end user](../../../glossary/#users), that is, whether the end user is currently online in this group. Notifications are automatically sent when the end user comes online, and when the end user goes offline (not present for more than 2 minutes). Useful in multiplayer games for letting each end user know whether other users in their group are also online.
+     *
+     * Note that the presence channel is tracking all end users in a group. In particular, if the project additionally splits each group into [worlds](../world-manager/), this channel continues to show notifications for all end users in the group (not restricted by worlds).
+     *
+     * **Example**
+     *
+     *     var cm = new F.manager.ChannelManager();
+     *     var pc = cm.getPresenceChannel();
+     *     pc.subscribe('', function (data) {
+     *          // 'data' is the entire message object to the channel;
+     *          // parse for information of interest
+     *          if (data.data.subType === 'disconnect') {
+     *               console.log('user ', data.data.user.userName, 'disconnected at ', data.data.date);
+     *          }
+     *          if (data.data.subType === 'connect') {
+     *               console.log('user ', data.data.user.userName, 'connected at ', data.data.date);
+     *          }
+     *     });
+     *
+     *
+     * **Return Value**
+     *
+     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
+     *
+     * **Parameters**
+     *
+     * @param  {String} groupName (Optional) Group the end user is in. If not provided, picks up group from current session if end user is logged in.
+     * @return {Channel} Channel instance
+     */
+    getPresenceChannel: function (groupName) {
+        var session = this.sessionManager.getMergedOptions(this.options);
+        groupName = getFromSessionOrError(groupName, 'groupName', session);
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
+
+        var baseTopic = ['/group', account, project, groupName].join('/');
+        var channel = __super.getChannel.call(this, { base: baseTopic });
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            var callbackWithOnlyPresenceData = function (payload) {
+                if (isPresenceData(payload)) {
+                    callback.call(context, payload);
+                }
+            };
+            return oldsubs.call(channel, topic, callbackWithOnlyPresenceData, context, options);
+        };
+        return channel;
+    },
+
+    /**
+     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given collection. (The collection name is specified in the `root` argument when the [Data Service](../data-api-service/) is instantiated.) Must be one of the collections in this account (team) and project.
+     *
+     * There are automatic notifications from Epicenter on this channel when data is created, updated, or deleted in this collection. See more on [automatic messages to the data channel](../../../rest_apis/multiplayer/channel/#data-messages).
+     *
+     * **Example**
+     *
+     *     var cm = new F.manager.ChannelManager();
+     *     var dc = cm.getDataChannel('survey-responses');
+     *     dc.subscribe('', function(data, meta) {
+     *          console.log(data);
+     *
+     *          // meta.date is time of change,
+     *          // meta.subType is the kind of change: new, update, or delete
+     *          // meta.path is the full path to the changed data
+     *          console.log(meta);
+     *     });
+     *
+     * **Return Value**
+     *
+     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
+     *
+     * **Parameters**
+     *
+     * @param  {String} collection Name of collection whose automatic notifications you want to receive.
+     * @return {Channel} Channel instance
+     */
+    getDataChannel: function (collection) {
+        if (!collection) {
+            throw new Error('Please specify a collection to listen on.');
+        }
+
+        var session = this.sessionManager.getMergedOptions(this.options);
+        var account = getFromSessionOrError('', 'account', session);
+        var project = getFromSessionOrError('', 'project', session);
+        var baseTopic = ['/data', account, project, collection].join('/');
+        var channel = __super.getChannel.call(this, { base: baseTopic });
+
+        //TODO: Fix after Epicenter bug is resolved
+        var oldsubs = channel.subscribe;
+        channel.subscribe = function (topic, callback, context, options) {
+            var callbackWithCleanData = function (payload) {
+                var meta = {
+                    path: payload.channel,
+                    subType: payload.data.subType,
+                    date: payload.data.date,
+                    dataPath: payload.data.data.path
+                };
+                var actualData = payload.data.data;
+                if (actualData.data !== undefined) {
+                    //Delete notifications are one data-level behind of course
+                    actualData = actualData.data;
+                }
+
+                callback.call(context, actualData, meta);
+            };
+            return oldsubs.call(channel, topic, callbackWithCleanData, context, options);
+        };
+
+        return channel;
+    }
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (EpicenterChannelManager);
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1577,14 +2132,14 @@ module.exports = function () {
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 // var qutil = require('util/query-util');
 var TransportFactory = __webpack_require__(2).default;
-var SessionManager = __webpack_require__(0);
+var SessionManager = __webpack_require__(1);
 
-var ConsensusService = __webpack_require__(41);
+var ConsensusService = __webpack_require__(43).default;
 
-var _pick = __webpack_require__(4)._pick;
+var _pick = __webpack_require__(4).pick;
 
 var apiBase = 'multiplayer/';
 var assignmentEndpoint = apiBase + 'assign';
@@ -2277,26 +2832,27 @@ module.exports = function (config) {
             if (!opts.id) {
                 throw new Error('No world id provided; use consensus(name, { id: worldid})');
             }
+            if (!conOpts) {
+                throw new Error('No consensus name provided; use consensus(name, { id: worldid})');
+            }
 
-            var DEFAULT_GROUP_NAME = 'default';
             function extractNamesFromOpts(nameOpts) {
                 if (typeof nameOpts === 'string') {
                     return {
-                        consensusGroup: DEFAULT_GROUP_NAME,
                         name: nameOpts
                     };
                 }
                 if ($.isPlainObject(nameOpts)) {
                     return {
-                        consensusGroup: nameOpts.consensusGroup || DEFAULT_GROUP_NAME,
+                        consensusGroup: nameOpts.consensusGroup,
                         name: nameOpts.name
                     };
                 }
             }
 
-            var con = new ConsensusService($.extend(true, {}, serviceOptions, {
+            var con = new ConsensusService($.extend(true, {
                 worldId: opts.id
-            }, extractNamesFromOpts(conOpts)));
+            }, opts, extractNamesFromOpts(conOpts)));
             return con;
         }
 
@@ -2306,685 +2862,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var epiVersion = __webpack_require__(18);
-
-//TODO: urlutils to get host, since no window on node
-var defaults = {
-    host: window.location.host,
-    pathname: window.location.pathname
-};
-
-function getLocalHost(existingFn, host) {
-    var localHostFn;
-    if (existingFn !== undefined) {
-        if (!$.isFunction(existingFn)) {
-            localHostFn = function () {
-                return existingFn;
-            };
-        } else {
-            localHostFn = existingFn;
-        }
-    } else {
-        localHostFn = function () {
-            var isLocal = !host || //phantomjs
-            host === '127.0.0.1' || host.indexOf('local.') === 0 || host.indexOf('ngrok') !== -1 || host.indexOf('localhost') === 0;
-            return isLocal;
-        };
-    }
-    return localHostFn;
-}
-
-var UrlConfigService = function (config) {
-    var envConf = UrlConfigService.defaults;
-
-    if (!config) {
-        config = {};
-    }
-    // console.log(this.defaults);
-    var overrides = $.extend({}, envConf, config);
-    var options = $.extend({}, defaults, overrides);
-
-    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
-
-    // console.log(isLocalhost(), '___________');
-    var actingHost = config && config.host;
-    if (!actingHost && options.isLocalhost()) {
-        actingHost = 'forio.com';
-    } else {
-        actingHost = options.host;
-    }
-
-    var API_PROTOCOL = 'https';
-    var HOST_API_MAPPING = {
-        'forio.com': 'api.forio.com',
-        'foriodev.com': 'api.epicenter.foriodev.com'
-    };
-
-    var publicExports = {
-        protocol: API_PROTOCOL,
-
-        api: '',
-
-        //TODO: this should really be called 'apihost', but can't because that would break too many things
-        host: function () {
-            var apiHost = HOST_API_MAPPING[actingHost] ? HOST_API_MAPPING[actingHost] : actingHost;
-            // console.log(actingHost, config, apiHost);
-            return apiHost;
-        }(),
-
-        isCustomDomain: function () {
-            var path = options.pathname.split('/');
-            var pathHasApp = path && path[1] === 'app';
-            return !options.isLocalhost() && !pathHasApp;
-        }(),
-
-        appPath: function () {
-            var path = options.pathname.split('/');
-
-            return path && path[1] || '';
-        }(),
-
-        accountPath: function () {
-            var accnt = '';
-            var path = options.pathname.split('/');
-            if (path && path[1] === 'app') {
-                accnt = path[2];
-            }
-            return accnt;
-        }(),
-
-        projectPath: function () {
-            var prj = '';
-            var path = options.pathname.split('/');
-            if (path && path[1] === 'app') {
-                prj = path[3]; //eslint-disable-line no-magic-numbers
-            }
-            return prj;
-        }(),
-
-        versionPath: function () {
-            var version = epiVersion.version ? epiVersion.version + '/' : '';
-            return version;
-        }(),
-
-        getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
-            var apiMapping = {
-                channel: 'channel/subscribe'
-            };
-            var apiEndpoint = apiMapping[api] || api;
-
-            if (apiEndpoint === 'config') {
-                var actualProtocol = window.location.protocol.replace(':', '');
-                var configProtocol = options.isLocalhost() ? this.protocol : actualProtocol;
-                return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
-            }
-            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
-
-            if ($.inArray(apiEndpoint, PROJECT_APIS) !== -1) {
-                apiPath += this.accountPath + '/' + this.projectPath + '/';
-            }
-            return apiPath;
-        }
-    };
-
-    $.extend(publicExports, overrides);
-    return publicExports;
-};
-// This data can be set by external scripts, for loading from an env server for eg;
-UrlConfigService.defaults = {};
-
-module.exports = UrlConfigService;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    EPI_SESSION_KEY: 'epicenterjs.session',
-    STRATEGY_SESSION_KEY: 'epicenter-scenario'
-};
-
-/***/ }),
 /* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * ## Epicenter Channel Manager
- *
- * The Epicenter platform provides a push channel, which allows you to publish and subscribe to messages within a [project](../../../glossary/#projects), [group](../../../glossary/#groups), or [multiplayer world](../../../glossary/#world).
- *
- * <a name="background"></a>
- * ### Channel Background
- *
- * Channel notifications are only available for [team projects](../../../glossary/#team). There are two main use cases for the push channel: event notifications and chat messages.
- *
- * #### Event Notifications
- *
- * Within a [multiplayer simulation or world](../../../glossary/#world), it is often useful for your project's [model](../../../writing_your_model/) to alert the [user interface (browser)](../../../creating_your_interface/) that something new has happened.
- *
- * Usually, this "something new" is an event within the project, group, or world, such as:
- *
- * * An end user comes online (logs in) or goes offline. (This is especially interesting in a multiplayer world; only available if you have [enabled authorization](../../../updating_your_settings/#general-settings) for the channel.)
- * * An end user is assigned to a world.
- * * An end user updates a variable / makes a decision.
- * * An end user creates or updates data stored in the [Data API](../data-api-service/).
- * * An operation (method) is called. (This is especially interesting if the model is advanced, for instance, the Vensim `step` operation is called.)
- *
- * When these events occur, you often want to have the user interface for one or more end users automatically update with new information.
- *
- * #### Chat Messages
- *
- * Another reason to use the push channel is to allow players (end users) to send chat messages to other players, and to have those messages appear immediately.
- *
- * #### Getting Started
- *
- * For both the event notification and chat message use cases:
- *
- * * First, enable channel notifications for your project.
- *      * Channel notifications are only available for [team projects](../../../glossary/#team). To enable notifications for your project, [update your project settings](../../../updating_your_settings/#general-settings) to turn on the **Push Channel** setting, and optionally require authorization for the channel.
- * * Then, instantiate an Epicenter Channel Manager.
- * * Next, get the channel with the scope you want (user, world, group, data).
- * * Finally, use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
- *
- * Here's an example of those last three steps (instantiate, get channel, subscribe):
- *
- *     var cm = new F.manager.ChannelManager();
- *     var gc = cm.getGroupChannel();
- *     gc.subscribe('', function(data) { console.log(data); });
- *     gc.publish('', { message: 'a new message to the group' });
- *
- * For a more detailed example, see a [complete publish and subscribe example](../../../rest_apis/multiplayer/channel/#epijs-example).
- *
- * For details on what data is published automatically to which channels, see [Automatic Publishing of Events](../../../rest_apis/multiplayer/channel/#publish-message-auto).
- *
- * #### Creating an Epicenter Channel Manager
- *
- * The Epicenter Channel Manager is a wrapper around the (more generic) [Channel Manager](../channel-manager/), to instantiate it with Epicenter-specific defaults. If you are interested in including a notification or chat feature in your project, using an Epicenter Channel Manager is the easiest way to get started.
- *
- * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Epicenter Channel Manager. See [Including Epicenter.js](../../#include).
- *
- * The parameters for instantiating an Epicenter Channel Manager include:
- *
- * * `options` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
- * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `options.project` Epicenter project id.
- * * `options.userName` Epicenter userName used for authentication.
- * * `options.userId` Epicenter user id used for authentication. Optional; `options.userName` is preferred.
- * * `options.token` Epicenter token used for authentication. (You can retrieve this using `authManager.getToken()` from the [Authorization Manager](../auth-manager/).)
- * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
- */
-
-var ChannelManager = __webpack_require__(40);
-var ConfigService = __webpack_require__(1).default;
-var classFrom = __webpack_require__(3);
-var SessionManager = __webpack_require__(0);
-
-var WorldService = __webpack_require__(12);
-var PresenceService = __webpack_require__(26);
-
-var validTypes = {
-    project: true,
-    group: true,
-    world: true,
-    user: true,
-    data: true,
-    general: true,
-    chat: true
-};
-var getFromSessionOrError = function (value, sessionKeyName, settings) {
-    if (!value) {
-        if (settings && settings[sessionKeyName]) {
-            value = settings[sessionKeyName];
-        } else {
-            throw new Error(sessionKeyName + ' not found. Please log-in again, or specify ' + sessionKeyName + ' explicitly');
-        }
-    }
-    return value;
-};
-
-var isPresenceData = function (payload) {
-    return payload.data && payload.data.type === 'user' && payload.data.user;
-};
-
-var __super = ChannelManager.prototype;
-var EpicenterChannelManager = classFrom(ChannelManager, {
-    constructor: function (options) {
-        this.sessionManager = new SessionManager(options);
-        var defaultCometOptions = this.sessionManager.getMergedOptions(options);
-
-        var urlConfig = new ConfigService(defaultCometOptions).get('server');
-        if (!defaultCometOptions.url) {
-            defaultCometOptions.url = urlConfig.getAPIPath('channel');
-        }
-
-        if (defaultCometOptions.handshake === undefined) {
-            var userName = defaultCometOptions.userName;
-            var userId = defaultCometOptions.userId;
-            var token = defaultCometOptions.token;
-            if ((userName || userId) && token) {
-                var userProp = userName ? 'userName' : 'userId';
-                var ext = {
-                    authorization: 'Bearer ' + token
-                };
-                ext[userProp] = userName ? userName : userId;
-
-                defaultCometOptions.handshake = {
-                    ext: ext
-                };
-            }
-        }
-
-        this.options = defaultCometOptions;
-        return __super.constructor.call(this, defaultCometOptions);
-    },
-
-    /**
-     * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
-     *
-     * This method enforces Epicenter-specific channel naming: all channels requested must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`.
-     *
-     * **Example**
-     *
-     *      var cm = new F.manager.EpicenterChannelManager();
-     *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
-     *
-     *      channel.subscribe('topic', callback);
-     *      channel.publish('topic', { myData: 100 });
-     *
-     * **Parameters**
-     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
-     * @return {Channel} Channel instance
-     */
-    getChannel: function (options) {
-        if (options && typeof options !== 'object') {
-            options = {
-                base: options
-            };
-        }
-        var channelOpts = $.extend({}, this.options, options);
-        var base = channelOpts.base;
-        if (!base) {
-            throw new Error('No base topic was provided');
-        }
-
-        if (!channelOpts.allowAllChannels) {
-            var baseParts = base.split('/');
-            var channelType = baseParts[1];
-            if (baseParts.length < 4) {
-                //eslint-disable-line
-                throw new Error('Invalid channel base name, it must be in the form /{type}/{account id}/{project id}/{...}');
-            }
-            if (!validTypes[channelType]) {
-                throw new Error('Invalid channel type');
-            }
-        }
-        return __super.getChannel.apply(this, arguments);
-    },
-
-    /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [group](../../../glossary/#groups). The group must exist in the account (team) and project provided.
-     *
-     * There are no notifications from Epicenter on this channel; all messages are user-originated.
-     *
-     * **Example**
-     *
-     *     var cm = new F.manager.ChannelManager();
-     *     var gc = cm.getGroupChannel();
-     *     gc.subscribe('broadcasts', callback);
-     *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String} groupName (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
-     * @return {Channel} Channel instance
-     */
-    getGroupChannel: function (groupName) {
-        var session = this.sessionManager.getMergedOptions(this.options);
-        groupName = getFromSessionOrError(groupName, 'groupName', session);
-        var account = getFromSessionOrError('', 'account', session);
-        var project = getFromSessionOrError('', 'project', session);
-
-        var baseTopic = ['/group', account, project, groupName].join('/');
-        var channel = __super.getChannel.call(this, { base: baseTopic });
-        var oldsubs = channel.subscribe;
-        channel.subscribe = function (topic, callback, context, options) {
-            var callbackWithoutPresenceData = function (payload) {
-                if (!isPresenceData(payload)) {
-                    callback.call(context, payload);
-                }
-            };
-            return oldsubs.call(channel, topic, callbackWithoutPresenceData, context, options);
-        };
-        return channel;
-    },
-
-    /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [world](../../../glossary/#world).
-     *
-     * This is typically used together with the [World Manager](../world-manager).
-     *
-     * **Example**
-     *
-     *     var cm = new F.manager.ChannelManager();
-     *     var worldManager = new F.manager.WorldManager({
-     *         account: 'acme-simulations',
-     *         project: 'supply-chain-game',
-     *         group: 'team1',
-     *         run: { model: 'model.eqn' }
-     *     });
-     *     worldManager.getCurrentWorld().then(function (worldObject, worldAdapter) {
-     *         var worldChannel = cm.getWorldChannel(worldObject);
-     *         worldChannel.subscribe('', function (data) {
-     *             console.log(data);
-     *         });
-     *      });
-     *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String|Object} world The world object or id.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
-     * @return {Channel} Channel instance
-     */
-    getWorldChannel: function (world, groupName) {
-        var worldid = $.isPlainObject(world) && world.id ? world.id : world;
-        if (!worldid) {
-            throw new Error('Please specify a world id');
-        }
-        var session = this.sessionManager.getMergedOptions(this.options);
-
-        groupName = getFromSessionOrError(groupName, 'groupName', session);
-        var account = getFromSessionOrError('', 'account', session);
-        var project = getFromSessionOrError('', 'project', session);
-
-        var baseTopic = ['/world', account, project, groupName, worldid].join('/');
-        var channel = __super.getChannel.call(this, { base: baseTopic });
-        var oldsubs = channel.subscribe;
-        channel.subscribe = function (topic, callback, context, options) {
-            if (!topic) {
-                return oldsubs.call(channel, topic, callback, context, options);
-            }
-
-            var defaults = {
-                includeMine: true
-            };
-            var opts = $.extend({}, defaults, options);
-            var topicAliases = {
-                reset: ['new'],
-                roles: ['assign', 'unassign', 'assignchange'],
-                operations: ['operation'],
-                presence: ['connect', 'disconnect']
-            };
-            if (topic === 'presence') {
-                var wm = new WorldService({
-                    account: account,
-                    project: project,
-                    filter: worldid
-                });
-                var pres = new PresenceService({
-                    account: account,
-                    project: project
-                });
-                var worldLoadPromise = wm.load();
-                var presenceLoadPromise = pres.getStatus();
-                //FIXME: Cache promise
-                $.when(worldLoadPromise, presenceLoadPromise).then(function (worldRes, presenceRes) {
-                    var world = worldRes[0];
-                    var presenceList = presenceRes[0];
-
-                    world.users.forEach(function (user) {
-                        var id = user.userId;
-                        var matchingStatus = $.grep(presenceList || [], function (status) {
-                            return status.userId === id;
-                        });
-                        if (matchingStatus[0]) {
-                            var fakeMeta = {
-                                date: Date.now(),
-                                channel: baseTopic,
-                                type: 'presence',
-                                subType: 'connect',
-                                source: 'presenceAPI'
-                            };
-                            var fakeUser = {
-                                account: account,
-                                id: id,
-                                isOnline: true,
-                                lastName: user.lastName,
-                                userName: user.userName
-                            };
-                            callback(fakeUser, fakeMeta); //eslint-disable-line callback-return
-                        }
-                    });
-                });
-            }
-            var filterByType = function (res) {
-                var subType = res.data.subType;
-                var topicMatch = subType === topic || topicAliases[topic] && topicAliases[topic].indexOf(subType) !== -1;
-                var notificationFrom = res.data.user || {};
-                var payload = res.data.data;
-                if (topic === 'reset') {
-                    notificationFrom = payload.run.user; //reset doesn't give back user info otherwise
-                }
-
-                var isMine = session.userId === notificationFrom.id;
-                var initiatorMatch = isMine && opts.includeMine || !isMine;
-                if (topicMatch && initiatorMatch) {
-                    var meta = {
-                        user: res.data.user,
-                        date: res.data.date,
-                        channel: res.channel,
-                        type: topic,
-                        subType: subType
-                    };
-                    if (topic === 'variables' || topic === 'operation') {
-                        return callback(payload[topic], meta);
-                    } else if (subType === 'new') {
-                        return callback(payload.run, meta);
-                    } else if (topic === 'roles') {
-                        //FIXME: this doesn't work
-                        return callback(payload.user, meta);
-                    } else if (topic === 'presence') {
-                        var user = res.data.user;
-                        user.isOnline = subType === 'connect';
-                        return callback(user, meta);
-                    } else if (topic === 'reset') {
-                        return callback(payload, meta);
-                    }
-                    return callback.call(context, res);
-                }
-            };
-            return oldsubs.call(channel, '', filterByType, context, options);
-        };
-        return channel;
-    },
-
-    /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the current [end user](../../../glossary/#users) in that user's current [world](../../../glossary/#world).
-     *
-     * This is typically used together with the [World Manager](../world-manager). Note that this channel only gets notifications for worlds currently in memory. (See more background on [persistence](../../../run_persistence).)
-     *
-     * **Example**
-     *
-     *     var cm = new F.manager.ChannelManager();
-     *     var worldManager = new F.manager.WorldManager({
-     *         account: 'acme-simulations',
-     *         project: 'supply-chain-game',
-     *         group: 'team1',
-     *         run: { model: 'model.eqn' }
-     *     });
-     *     worldManager.getCurrentWorld().then(function (worldObject, worldAdapter) {
-     *         var userChannel = cm.getUserChannel(worldObject);
-     *         userChannel.subscribe('', function (data) {
-     *             console.log(data);
-     *         });
-     *      });
-     *
-     *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String|Object} world World object or id.
-     * @param  {String|Object} user (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
-     * @return {Channel} Channel instance
-     */
-    getUserChannel: function (world, user, groupName) {
-        var worldid = $.isPlainObject(world) && world.id ? world.id : world;
-        if (!worldid) {
-            throw new Error('Please specify a world id');
-        }
-        var session = this.sessionManager.getMergedOptions(this.options);
-
-        var userid = $.isPlainObject(user) && user.id ? user.id : user;
-        userid = getFromSessionOrError(userid, 'userId', session);
-        groupName = getFromSessionOrError(groupName, 'groupName', session);
-
-        var account = getFromSessionOrError('', 'account', session);
-        var project = getFromSessionOrError('', 'project', session);
-
-        var baseTopic = ['/user', account, project, groupName, worldid, userid].join('/');
-        return __super.getChannel.call(this, { base: baseTopic });
-    },
-
-    /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) that automatically tracks the presence of an [end user](../../../glossary/#users), that is, whether the end user is currently online in this group. Notifications are automatically sent when the end user comes online, and when the end user goes offline (not present for more than 2 minutes). Useful in multiplayer games for letting each end user know whether other users in their group are also online.
-     *
-     * Note that the presence channel is tracking all end users in a group. In particular, if the project additionally splits each group into [worlds](../world-manager/), this channel continues to show notifications for all end users in the group (not restricted by worlds).
-     *
-     * **Example**
-     *
-     *     var cm = new F.manager.ChannelManager();
-     *     var pc = cm.getPresenceChannel();
-     *     pc.subscribe('', function (data) {
-     *          // 'data' is the entire message object to the channel;
-     *          // parse for information of interest
-     *          if (data.data.subType === 'disconnect') {
-     *               console.log('user ', data.data.user.userName, 'disconnected at ', data.data.date);
-     *          }
-     *          if (data.data.subType === 'connect') {
-     *               console.log('user ', data.data.user.userName, 'connected at ', data.data.date);
-     *          }
-     *     });
-     *
-     *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String} groupName (Optional) Group the end user is in. If not provided, picks up group from current session if end user is logged in.
-     * @return {Channel} Channel instance
-     */
-    getPresenceChannel: function (groupName) {
-        var session = this.sessionManager.getMergedOptions(this.options);
-        groupName = getFromSessionOrError(groupName, 'groupName', session);
-        var account = getFromSessionOrError('', 'account', session);
-        var project = getFromSessionOrError('', 'project', session);
-
-        var baseTopic = ['/group', account, project, groupName].join('/');
-        var channel = __super.getChannel.call(this, { base: baseTopic });
-        var oldsubs = channel.subscribe;
-        channel.subscribe = function (topic, callback, context, options) {
-            var callbackWithOnlyPresenceData = function (payload) {
-                if (isPresenceData(payload)) {
-                    callback.call(context, payload);
-                }
-            };
-            return oldsubs.call(channel, topic, callbackWithOnlyPresenceData, context, options);
-        };
-        return channel;
-    },
-
-    /**
-     * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given collection. (The collection name is specified in the `root` argument when the [Data Service](../data-api-service/) is instantiated.) Must be one of the collections in this account (team) and project.
-     *
-     * There are automatic notifications from Epicenter on this channel when data is created, updated, or deleted in this collection. See more on [automatic messages to the data channel](../../../rest_apis/multiplayer/channel/#data-messages).
-     *
-     * **Example**
-     *
-     *     var cm = new F.manager.ChannelManager();
-     *     var dc = cm.getDataChannel('survey-responses');
-     *     dc.subscribe('', function(data, meta) {
-     *          console.log(data);
-     *
-     *          // meta.date is time of change,
-     *          // meta.subType is the kind of change: new, update, or delete
-     *          // meta.path is the full path to the changed data
-     *          console.log(meta);
-     *     });
-     *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String} collection Name of collection whose automatic notifications you want to receive.
-     * @return {Channel} Channel instance
-     */
-    getDataChannel: function (collection) {
-        if (!collection) {
-            throw new Error('Please specify a collection to listen on.');
-        }
-
-        var session = this.sessionManager.getMergedOptions(this.options);
-        var account = getFromSessionOrError('', 'account', session);
-        var project = getFromSessionOrError('', 'project', session);
-        var baseTopic = ['/data', account, project, collection].join('/');
-        var channel = __super.getChannel.call(this, { base: baseTopic });
-
-        //TODO: Fix after Epicenter bug is resolved
-        var oldsubs = channel.subscribe;
-        channel.subscribe = function (topic, callback, context, options) {
-            var callbackWithCleanData = function (payload) {
-                var meta = {
-                    path: payload.channel,
-                    subType: payload.data.subType,
-                    date: payload.data.date,
-                    dataPath: payload.data.data.path
-                };
-                var actualData = payload.data.data;
-                if (actualData.data !== undefined) {
-                    //Delete notifications are one data-level behind of course
-                    actualData = actualData.data;
-                }
-
-                callback.call(context, actualData, meta);
-            };
-            return oldsubs.call(channel, topic, callbackWithCleanData, context, options);
-        };
-
-        return channel;
-    }
-});
-
-module.exports = EpicenterChannelManager;
-
-/***/ }),
-/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3081,6 +2959,35 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SCOPES; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ACTIONS; });
+/* unused harmony export STRATEGY */
+var SCOPES = {
+    GROUP: 'GROUP',
+    RUN: 'RUN',
+    USER: 'USER',
+    CUSTOM: 'CUSTOM'
+};
+var ACTIONS = {
+    CREATE: 'CREATE',
+    START: 'START',
+    PAUSE: 'PAUSE',
+    RESUME: 'RESUME',
+    COMPLETE: 'COMPLETE',
+    RESET: 'RESET',
+    TICK: 'TICK'
+};
+
+var STRATEGY = {
+    START_BY_FIRST_USER: 'first-user',
+    START_WHEN_ALL_USERS: 'all-users'
+};
+
+/***/ }),
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3146,14 +3053,14 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 
-var strategies = __webpack_require__(32);
-var specialOperations = __webpack_require__(58);
+var strategies = __webpack_require__(34);
+var specialOperations = __webpack_require__(60);
 
 var RunService = __webpack_require__(7);
-var SessionManager = __webpack_require__(0);
+var SessionManager = __webpack_require__(1);
 
 var util = __webpack_require__(4);
-var keyNames = __webpack_require__(14);
+var keyNames = __webpack_require__(12);
 
 function patchRunService(service, manager) {
     if (service.patched) {
@@ -3463,7 +3370,7 @@ module.exports = function (config) {
 
 
 var TransportFactory = __webpack_require__(2).default;
-var rutil = __webpack_require__(11);
+var rutil = __webpack_require__(10);
 
 module.exports = function (config) {
     var defaults = {
@@ -3629,9 +3536,9 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 var TransportFactory = __webpack_require__(2).default;
-var SessionManager = __webpack_require__(0);
+var SessionManager = __webpack_require__(1);
 
 var apiEndpoint = 'model/introspect';
 
@@ -3908,14 +3815,13 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_util_query_util__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager__ = __webpack_require__(13);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4217,7 +4123,7 @@ var DataService = function () {
         key: 'getChannel',
         value: function getChannel(options) {
             var opts = $.extend(true, {}, this.serviceOptions, options);
-            var cm = new __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager___default.a(opts);
+            var cm = new __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager__["default"](opts);
             return cm.getDataChannel(opts.root);
         }
         // Epicenter doesn't allow nuking collections
@@ -4486,224 +4392,6 @@ module.exports = Channel;
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- *
- * ## Presence API Service
- *
- * The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use [channels](../epicenter-channel-manager/), the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. 
- *
- * The Presence API Service is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). It is typically used only in multiplayer projects, to facilitate end users communicating with each other. It is based on the query capabilities of the underlying RESTful [Presence API](../../../rest_apis/multiplayer/presence/).
- *
- *      var pr = new F.service.Presence();
- *      pr.markOnline('example-userId');
- *      pr.markOffline('example-userId');
- *      pr.getStatus();
- */
-
-var ConfigService = __webpack_require__(1).default;
-var TransportFactory = __webpack_require__(2).default;
-var SessionManager = __webpack_require__(0);
-var apiEndpoint = 'presence';
-
-module.exports = function (config) {
-    var defaults = {
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL or session manager.
-         * @type {String}
-         */
-        account: undefined,
-
-        /**
-         * The project id. Defaults to undefined. If left undefined, taken from the URL or session manager.
-         * @type {String}
-         */
-        project: undefined,
-
-        /**
-         * Epicenter group name. Defaults to undefined. Note that this is the group *name*, not the group *id*. If left blank, taken from the session manager.
-         * @type {string}
-         */
-        groupName: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
-         */
-        transport: {}
-    };
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
-    });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    var http = new TransportFactory(transportOptions, serviceOptions);
-
-    var getFinalParams = function (params) {
-        if (typeof params === 'object') {
-            return $.extend(true, {}, serviceOptions, params);
-        }
-        return serviceOptions;
-    };
-
-    var publicAPI = {
-        /**
-         * Marks an end user as online.
-         *
-         *
-         * **Example**
-         *
-         *     var pr = new F.service.Presence();
-         *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74')
-         *          .then(function(presenceObj) {
-         *               console.log('user ', presenceObj.userId, 
-         *                    ' now online, as of ', presenceObj.lastModified);
-         *          });
-         *
-         * **Return Value**
-         *
-         * Promise with presence information for user marked online.
-         *
-         * **Parameters**
-         *
-         * @param  {String} userId (optional) If not provided, taken from session cookie.
-         * @param  {Object} options Additional options to change the presence service defaults.
-         * @return {Promise} promise
-         */
-        markOnline: function (userId, options) {
-            options = options || {};
-            var isString = typeof userId === 'string';
-            var objParams = getFinalParams(userId);
-            if (!objParams.groupName && !options.groupName) {
-                throw new Error('No groupName specified.');
-            }
-            userId = isString ? userId : objParams.userId;
-            var groupName = options.groupName || objParams.groupName;
-            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId });
-            return http.post({ message: 'online' }, httpOptions);
-        },
-
-        /**
-         * Marks an end user as offline.
-         *
-         *
-         * **Example**
-         *
-         *     var pr = new F.service.Presence();
-         *     pr.markOffline('0000015a68d806bc09cd0a7d207f44ba5f74');
-         *
-         * **Return Value**
-         *
-         * Promise to remove presence record for end user.
-         *
-         * **Parameters**
-         *
-         * @param  {String} userId (optional) If not provided, taken from session cookie.
-         * @param  {Object} options Additional options to change the presence service defaults.
-         * @return {Promise} promise
-         */
-        markOffline: function (userId, options) {
-            options = options || {};
-            var isString = typeof userId === 'string';
-            var objParams = getFinalParams(userId);
-            if (!objParams.groupName && !options.groupName) {
-                throw new Error('No groupName specified.');
-            }
-            userId = isString ? userId : objParams.userId;
-            var groupName = options.groupName || objParams.groupName;
-            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId });
-            return http.delete({}, httpOptions);
-        },
-
-        /**
-         * Returns a list of all end users in this group that are currently online.
-         *
-         *
-         * **Example**
-         *
-         *     var pr = new F.service.Presence();
-         *     pr.getStatus('groupName').then(function(onlineUsers) {
-         *          for (var i=0; i < onlineUsers.length; i++) {
-         *               console.log('user ', onlineUsers[i].userId, 
-         *                    ' is online as of ', onlineUsers[i].lastModified);
-         *          }
-         *     });
-         *
-         * **Return Value**
-         *
-         * Promise with response of online users
-         *
-         * **Parameters**
-         *
-         * @param  {String} groupName (optional) If not provided, taken from session cookie.
-         * @param  {Object} options Additional options to change the presence service defaults.
-         * @return {Promise} promise
-         */
-        getStatus: function (groupName, options) {
-            options = options || {};
-            var objParams = getFinalParams(groupName);
-            if (!groupName && !objParams.groupName) {
-                throw new Error('No groupName specified.');
-            }
-            groupName = groupName || objParams.groupName;
-            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupName });
-            return http.get({}, httpOptions);
-        },
-
-        /**
-         * End users are automatically marked online and offline in a "presence" channel that is specific to each group. Gets this channel (an instance of the [Channel Service](../channel-service/)) for the given group. (Note that this Channel Service instance is also available from the [Epicenter Channel Manager getPresenceChannel()](../epicenter-channel-manager/#getPresenceChannel).)
-         *
-         *
-         * **Example**
-         *
-         *     var pr = new F.service.Presence();
-         *     var cm = pr.getChannel('group1');
-         *     cm.publish('', 'a message to presence channel');
-         *
-         * **Return Value**
-         *
-         * Channel instance for Presence channel
-         *
-         * **Parameters**
-         *
-         * @param  {String} groupName (optional) If not provided, taken from session cookie.
-         * @param  {Object} options Additional options to change the presence service defaults
-         * @return {Channel} Channel instance
-         */
-        getChannel: function (groupName, options) {
-            var ChannelManager = __webpack_require__(15);
-            options = options || {};
-            var isString = typeof groupName === 'string';
-            var objParams = getFinalParams(groupName);
-            if (!isString && !objParams.groupName) {
-                throw new Error('No groupName specified.');
-            }
-            groupName = isString ? groupName : objParams.groupName;
-            var cm = new ChannelManager(options);
-            return cm.getPresenceChannel(groupName);
-        }
-    };
-
-    $.extend(this, publicAPI);
-};
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 /**
  *
@@ -4722,7 +4410,7 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 var TransportFactory = __webpack_require__(2).default;
 
 module.exports = function (config) {
@@ -4827,6 +4515,53 @@ module.exports = function (config) {
 };
 
 /***/ }),
+/* 27 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
+
+
+
+
+function getApiUrl(apiEndpoint, serviceOptions) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
+    return urlConfig.getAPIPath(apiEndpoint);
+}
+
+/*
+* Gets the default options for a api service.
+* It will merge:
+* - The Session options (Using the Session Manager)
+* - The Authorization Header from the token option
+* - The full url from the endpoint option
+* With the supplied overrides and defaults
+*
+*/
+function getDefaultOptions(defaults) {
+    var rest = Array.prototype.slice.call(arguments, 1);
+    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
+    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
+
+    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
+        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
+    });
+
+    if (serviceOptions.token) {
+        serviceOptions.transport.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+    return serviceOptions;
+}
+
+/***/ }),
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4850,10 +4585,10 @@ module.exports = function (config) {
  *
  */
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 var TransportFactory = __webpack_require__(2).default;
-var _pick = __webpack_require__(4)._pick;
-var SessionManager = __webpack_require__(0);
+var _pick = __webpack_require__(4).pick;
+var SessionManager = __webpack_require__(1);
 var apiEndpoint = 'model/state';
 
 module.exports = function (config) {
@@ -4989,10 +4724,10 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 var TransportFactory = __webpack_require__(2).default;
-var SessionManager = __webpack_require__(0);
-var _pick = __webpack_require__(4)._pick;
+var SessionManager = __webpack_require__(1);
+var _pick = __webpack_require__(4).pick;
 var apiEndpoint = 'member/local';
 
 module.exports = function (config) {
@@ -5162,9 +4897,14 @@ module.exports = function (config) {
 
 /***/ }),
 /* 30 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
 /**
  *
  * ## Group API Adapter
@@ -5179,9 +4919,7 @@ module.exports = function (config) {
 
 
 
-var serviceUtils = __webpack_require__(44);
-var TransportFactory = __webpack_require__(2).default;
-var objectAssign = __webpack_require__(16);
+
 
 var apiEndpoint = 'group/local';
 
@@ -5205,10 +4943,10 @@ var GroupService = function (config) {
          */
         transport: {}
     };
-    var serviceOptions = serviceUtils.getDefaultOptions(defaults, config, { apiEndpoint: apiEndpoint });
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: apiEndpoint });
     var transportOptions = serviceOptions.transport;
     delete serviceOptions.transport;
-    var http = new TransportFactory(transportOptions, serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](transportOptions, serviceOptions);
     var publicAPI = {
         /**
         * Gets information for a group or multiple groups.
@@ -5223,20 +4961,20 @@ var GroupService = function (config) {
         getGroups: function (params, options) {
             //groupID is part of the URL
             //q, account and project are part of the query string
-            var finalOpts = objectAssign({}, serviceOptions, options);
+            var finalOpts = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions, options);
             var finalParams;
             if (typeof params === 'string') {
-                finalOpts.url = serviceUtils.getApiUrl(apiEndpoint + '/' + params, finalOpts);
+                finalOpts.url = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["a" /* getApiUrl */])(apiEndpoint + '/' + params, finalOpts);
             } else {
                 finalParams = params;
             }
             return http.get(finalParams, finalOpts);
         }
     };
-    objectAssign(this, publicAPI);
+    __WEBPACK_IMPORTED_MODULE_2_object_assign___default()(this, publicAPI);
 };
 
-module.exports = GroupService;
+/* harmony default export */ __webpack_exports__["default"] = (GroupService);
 
 /***/ }),
 /* 31 */
@@ -5244,7 +4982,7 @@ module.exports = GroupService;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(2);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -5293,6 +5031,72 @@ var TimeAPIService = function () {
 
 /***/ }),
 /* 32 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = intersection;
+/**
+ * 
+ * @param {array} a 
+ * @param {array} b 
+ * @returns {array}
+ */
+function intersection(a, b) {
+    var t;
+    if (b.length > a.length) {
+        t = b;
+        b = a;
+        a = t;
+    } // indexOf to loop over shorter
+    return a.filter(function (e) {
+        return b.indexOf(e) > -1;
+    });
+}
+
+/***/ }),
+/* 33 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(16);
+
+
+function reduceActions(actions, options) {
+    var defaults = $.extend({
+        condition: function () {
+            return true;
+        }
+    }, options);
+
+    var initialState = {
+        startTime: 0,
+        startedUsers: []
+    };
+    var reduced = actions.reduce(function (accum, action) {
+        if (action.type !== __WEBPACK_IMPORTED_MODULE_0__timer_constants__["a" /* ACTIONS */].START || accum.startTime) {
+            return accum;
+        }
+        var ts = +new Date(action.time);
+        var user = action.user;
+        var isUserAlreadyCounted = !!accum.startedUsers.find(function (u) {
+            return u.userName === user.userName;
+        });
+        if (!isUserAlreadyCounted) {
+            accum.startedUsers.push(user);
+        }
+        var areUserRequirementsMet = defaults.condition([].concat(accum.startedUsers));
+        if (areUserRequirementsMet) {
+            accum.startTime = ts;
+        }
+        return accum;
+    }, initialState);
+
+    return reduced.startTime;
+}
+
+/***/ }),
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -5308,17 +5112,17 @@ var TimeAPIService = function () {
  */
 
 var list = {
-    'conditional-creation': __webpack_require__(9),
-    'new-if-initialized': __webpack_require__(52), //deprecated
-    'new-if-persisted': __webpack_require__(53), //deprecated
+    'conditional-creation': __webpack_require__(8),
+    'new-if-initialized': __webpack_require__(54), //deprecated
+    'new-if-persisted': __webpack_require__(55), //deprecated
 
-    none: __webpack_require__(10),
+    none: __webpack_require__(9),
 
-    multiplayer: __webpack_require__(54),
-    'reuse-never': __webpack_require__(55),
-    'reuse-per-session': __webpack_require__(56),
-    'reuse-across-sessions': __webpack_require__(57),
-    'reuse-last-initialized': __webpack_require__(33)
+    multiplayer: __webpack_require__(56),
+    'reuse-never': __webpack_require__(57),
+    'reuse-per-session': __webpack_require__(58),
+    'reuse-across-sessions': __webpack_require__(59),
+    'reuse-last-initialized': __webpack_require__(35)
 };
 
 //Add back older aliases
@@ -5411,7 +5215,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5509,7 +5313,7 @@ module.exports = classFrom(Base, {
 });
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5524,7 +5328,7 @@ module.exports = classFrom(Base, {
 
 
 var RunService = __webpack_require__(7);
-var SessionManager = __webpack_require__(0);
+var SessionManager = __webpack_require__(1);
 
 var injectFiltersFromSession = __webpack_require__(6).injectFiltersFromSession;
 
@@ -5668,7 +5472,7 @@ SavedRunsManager.prototype = {
 module.exports = SavedRunsManager;
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -5703,14 +5507,14 @@ module.exports = SavedRunsManager;
 * If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
 */
 
-var AuthAdapter = __webpack_require__(27);
+var AuthAdapter = __webpack_require__(26);
 var MemberAdapter = __webpack_require__(29);
-var GroupService = __webpack_require__(30);
-var SessionManager = __webpack_require__(0);
-var _pick = __webpack_require__(4)._pick;
-var objectAssign = __webpack_require__(16);
+var GroupService = __webpack_require__(30).default;
+var SessionManager = __webpack_require__(1);
+var _pick = __webpack_require__(4).pick;
+var objectAssign = __webpack_require__(15);
 
-var atob = window.atob || __webpack_require__(61).atob;
+var atob = window.atob || __webpack_require__(63).atob;
 
 var defaults = {
     requiresGroup: true
@@ -6083,7 +5887,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 module.exports = AuthManager;
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var F = {
@@ -6099,66 +5903,66 @@ var F = {
 
 };
 
-F.load = __webpack_require__(37);
+F.load = __webpack_require__(39);
 
 if (!window.SKIP_ENV_LOAD) {
     F.load();
 }
 
 F.util.query = __webpack_require__(5);
-F.util.run = __webpack_require__(11);
+F.util.run = __webpack_require__(10);
 F.util.classFrom = __webpack_require__(3);
 
 F.factory.Transport = __webpack_require__(2).default;
 F.transport.Ajax = __webpack_require__(19);
 
-F.service.URL = __webpack_require__(13);
-F.service.Config = __webpack_require__(1).default;
+F.service.URL = __webpack_require__(11);
+F.service.Config = __webpack_require__(0).default;
 F.service.Run = __webpack_require__(7);
-F.service.File = __webpack_require__(39);
+F.service.File = __webpack_require__(41);
 F.service.Variables = __webpack_require__(20);
 F.service.Data = __webpack_require__(24).default;
-F.service.Auth = __webpack_require__(27);
-F.service.World = __webpack_require__(12);
+F.service.Auth = __webpack_require__(26);
+F.service.World = __webpack_require__(14);
 F.service.State = __webpack_require__(28);
-F.service.User = __webpack_require__(42);
+F.service.User = __webpack_require__(44);
 F.service.Member = __webpack_require__(29);
-F.service.Asset = __webpack_require__(43);
-F.service.Group = __webpack_require__(30);
+F.service.Asset = __webpack_require__(45);
+F.service.Group = __webpack_require__(30).default;
 F.service.Introspect = __webpack_require__(21);
-F.service.Presence = __webpack_require__(26);
+F.service.Presence = __webpack_require__(46);
 F.service.Time = __webpack_require__(31).default;
-F.service.Timer = __webpack_require__(45).default;
+F.service.Timer = __webpack_require__(47).default;
 
 F.store.Cookie = __webpack_require__(23);
 
 F.factory.Store = __webpack_require__(22);
 
-F.manager.ScenarioManager = __webpack_require__(51);
+F.manager.ScenarioManager = __webpack_require__(53);
 F.manager.RunManager = __webpack_require__(17);
-F.manager.AuthManager = __webpack_require__(35);
-F.manager.WorldManager = __webpack_require__(62);
-F.manager.SavedRunsManager = __webpack_require__(34);
+F.manager.AuthManager = __webpack_require__(37);
+F.manager.WorldManager = __webpack_require__(64);
+F.manager.SavedRunsManager = __webpack_require__(36);
 
-var strategies = __webpack_require__(32);
+var strategies = __webpack_require__(34);
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.ChannelManager = __webpack_require__(15);
+F.manager.ChannelManager = __webpack_require__(13).default;
 F.service.Channel = __webpack_require__(25);
 
 if (true) F.version = "2.5.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(18);
 
-F.constants = __webpack_require__(14);
+F.constants = __webpack_require__(12);
 
 module.exports = F;
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var URLConfigService = __webpack_require__(13);
+var URLConfigService = __webpack_require__(11);
 
 var envLoad = function (callback) {
     var urlService = new URLConfigService();
@@ -6174,13 +5978,13 @@ var envLoad = function (callback) {
 module.exports = envLoad;
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
@@ -6221,7 +6025,7 @@ var optionUtils = {
 module.exports = optionUtils;
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6249,9 +6053,9 @@ module.exports = optionUtils;
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 var TransportFactory = __webpack_require__(2).default;
-var SessionManager = __webpack_require__(0);
+var SessionManager = __webpack_require__(1);
 
 module.exports = function (config) {
     var defaults = {
@@ -6427,7 +6231,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6469,7 +6273,7 @@ module.exports = function (config) {
  */
 
 var Channel = __webpack_require__(25);
-var SessionManager = __webpack_require__(0);
+var SessionManager = __webpack_require__(1);
 
 var ChannelManager = function (options) {
     if (!$.cometd) {
@@ -6687,19 +6491,29 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 module.exports = ChannelManager;
 
 /***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(27);
 
 
-var ConfigService = __webpack_require__(1).default;
-var TransportFactory = __webpack_require__(2).default;
-var SessionManager = __webpack_require__(0);
+
 
 var API_ENDPOINT = 'multiplayer/consensus';
 
-module.exports = function (config) {
+function normalizeActions(actions) {
+    return [].concat(actions).map(function (action) {
+        if (action.arguments) {
+            return { execute: action };
+        }
+        return action;
+    });
+}
+/* harmony default export */ __webpack_exports__["default"] = (function (config) {
     var defaults = {
         token: undefined,
         account: undefined,
@@ -6708,40 +6522,30 @@ module.exports = function (config) {
         consensusGroup: '',
         name: ''
     };
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["b" /* getDefaultOptions */])(defaults, config);
 
-    var sessionManager = new SessionManager();
-    var serviceOptions = sessionManager.getMergedOptions(defaults, config);
-
-    var urlConfig = new ConfigService(serviceOptions).get('server');
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](serviceOptions).get('server');
     if (serviceOptions.account) {
         urlConfig.accountPath = serviceOptions.account;
     }
     if (serviceOptions.project) {
         urlConfig.projectPath = serviceOptions.project;
     }
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
 
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(API_ENDPOINT)
-    });
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    var http = new TransportFactory(transportOptions);
+    function getHTTPOptions(action, options) {
+        var mergedOptions = $.extend(true, {}, serviceOptions, options);
+        var consensusGroup = mergedOptions.consensusGroup || 'default';
 
-    var urlSegment = [serviceOptions.worldId, serviceOptions.consensusGroup, serviceOptions.name].join('/');
-
-    function normalizeActions(actions) {
-        if (!actions) {
-            return [];
+        if (!mergedOptions.worldId || !mergedOptions.name) {
+            throw new Error('Consensus Service: worldId and name are required');
         }
-        return [].concat(actions).map(function (action) {
-            if (action.arguments) {
-                return { execute: action };
-            }
-            return action;
-        });
+        var urlSegment = [].concat(action || [], [mergedOptions.worldId, consensusGroup, mergedOptions.name]).join('/');
+        var baseURL = urlConfig.getAPIPath(API_ENDPOINT);
+        var url = baseURL + urlSegment;
+
+        var httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+        return httpOptions;
     }
 
     var publicAPI = {
@@ -6749,30 +6553,26 @@ module.exports = function (config) {
          * Creates a new consensus point
          * @param  {object} params  creation options
          * @param  {string[]|{string: number}} params.roles
-         * @param  {number} params.ttlSeconds How long the consensus point lasts for - note you'll still have to explicitly call `forceClose` yourself after timer runs out
-         * @param  {boolean} params.executeActionsImmediately Determines if actions are immediately sent to the server. If set to false, only the *last* action which completes the consensus will be passed on
-         * @param  {{string:object[]}} params.defaultActions Actions to take if the role specified in the key does not submit
-         * @param  {object} options Overrides for service options
+         * @param  {{string:object[]}} [params.defaultActions] Actions to take if the role specified in the key does not submit
+         * @param  {number} [params.ttlSeconds] How long the consensus point lasts for - note you'll still have to explicitly call `forceClose` yourself after timer runs out
+         * @param  {boolean} [params.executeActionsImmediately] Determines if actions are immediately sent to the server. If set to false, only the *last* action which completes the consensus will be passed on
+         * @param  {object} [options] Overrides for service options
          * @return {Promise}
          */
         create: function (params, options) {
-            var opts = $.extend(true, {}, params);
-            var url = transportOptions.url + urlSegment;
-            var httpOptions = $.extend(true, {}, serviceOptions, { url: url }, options);
+            var httpOptions = getHTTPOptions('', options);
 
-            var postParams = Object.keys(opts).reduce(function (accum, field) {
-                var fieldVal = opts[field];
-                if (field === 'roles') {
-                    if (Array.isArray(fieldVal)) {
-                        accum.roles = fieldVal.reduce(function (accum, role) {
-                            accum[role] = 1;
-                            return accum;
-                        }, {});
-                    } else {
-                        accum.roles = fieldVal;
-                    }
+            if (!params || !params.roles) {
+                throw new Error('Consensus Service: no roles passed to create');
+            }
+            var postParams = Object.keys(params).reduce(function (accum, field) {
+                var fieldVal = params[field];
+                if (field === 'roles' && Array.isArray(fieldVal)) {
+                    accum.roles = fieldVal.reduce(function (accum, role) {
+                        accum[role] = 1;
+                        return accum;
+                    }, {});
                 } else if (field === 'defaultActions') {
-                    //FIXME: rename in epicenter
                     accum.actions = Object.keys(fieldVal).reduce(function (rolesAccum, roleName) {
                         rolesAccum[roleName] = normalizeActions(fieldVal[roleName]);
                         return rolesAccum;
@@ -6781,119 +6581,97 @@ module.exports = function (config) {
                     accum[field] = fieldVal;
                 }
                 return accum;
-            }, {});
-
-            // if (postParams.transparent === undefined) {
-            //     //pick best value based on options provided
-            //     var areAllActionsSame = true;
-            //     postParams.actions.forEach(function (action, index) {
-            //         var lastAction = postParams.actions[index - 1];
-            //         if (lastAction && lastAction.proc.name !== action.proc.name) {
-            //             areAllActionsSame = false;
-            //         }
-            //     });
-            //     postParams.transparent = !areAllActionsSame;
-            // }
-
+            }, { roles: {} });
             return http.post(postParams, httpOptions);
         },
 
+        /**
+         * Update defaults set during create. Currently only updating defaultActions is supported.
+         *
+         * @param {{defaultActions: []}} params Consensus defaults to override
+         * @param {object} [options] Overrides for service options
+         * @returns {Promise}
+         */
         updateDefaults: function (params, options) {
-            var opts = $.extend(true, {}, params);
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-            var url = transportOptions.url + ['actions', urlSegment].join('/');
-
-            if (!opts.actions) {
-                throw new Error('updateDefaults: Need to pass in actions to update');
+            if (!params || !params.defaultActions) {
+                throw new Error('updateDefaults: Need to pass in parameters to update');
             }
-            return http.patch({
-                actions: normalizeActions(opts.actions)
-            }, $.extend(true, {}, httpOptions, {
-                url: url
-            }));
-        },
 
+            var httpOptions = getHTTPOptions('actions', options);
+            return http.patch({
+                actions: normalizeActions(params.defaultActions)
+            }, httpOptions);
+        },
         /**
          * Returns current consensus point
-         * 
-         * @param {object} options Overrides for service options
+         *
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         load: function (options) {
-            var url = transportOptions.url + [urlSegment].join('/');
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-            return http.get({}, $.extend(true, {}, httpOptions, {
-                url: url
-            }));
+            var httpOptions = getHTTPOptions('', options);
+            return http.get({}, httpOptions);
         },
-
         /**
          * Deletes current consensus point
-         * 
-         * @param {object} options Overrides for service options
+         *
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         delete: function (options) {
-            var url = transportOptions.url + [urlSegment].join('/');
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-
-            return http.delete({}, $.extend(true, {}, httpOptions, {
-                url: url
-            }));
+            var httpOptions = getHTTPOptions('', options);
+            return http.delete({}, httpOptions);
         },
-
         /**
          * Marks current consensus point as complete. Default actions, if specified, will be sent for defaulting roles.
-         * 
-         * @param {object} options Overrides for service options
+         *
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         forceClose: function (options) {
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-            var url = transportOptions.url + ['close', urlSegment].join('/');
-            return http.post({}, $.extend(true, {}, httpOptions, {
-                url: url
-            }));
+            var httpOptions = getHTTPOptions('close', options);
+            return http.post({}, httpOptions);
         },
-
         /**
          * Submits actions for your turn and marks you as having `submitted`. If `executeActionsImmediately` was set to `true` while creating the consensus point, the actions will be immediately sent to the model.
-         * 
+         *
          * @param {object[]} actions Actions to send
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         submitActions: function (actions, options) {
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-            var url = transportOptions.url + ['actions', urlSegment].join('/');
-
+            if (!actions || !actions.length) {
+                throw new Error('submitActions: No actions provided to submit');
+            }
+            var httpOptions = getHTTPOptions('actions', options);
             return http.post({
                 actions: normalizeActions(actions)
-            }, $.extend(true, {}, httpOptions, {
-                url: url
-            }));
+            }, httpOptions);
         },
-
         /**
          * Reverts submission. Note if `executeActionsImmediately` was set to `true` while creating the consensus point the action will have already been passed on to the model.
-         * 
-         * @param {object} options Overrides for service options
+         *
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         undoSubmit: function (options) {
-            var url = transportOptions.url + ['actions', urlSegment].join('/');
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var httpOptions = getHTTPOptions('actions', options);
+            return http.delete({}, httpOptions);
+        },
 
-            return http.delete({}, $.extend(true, {}, httpOptions, {
-                url: url
-            }));
+        /**
+         * Returns current configuration
+         * @returns {object}
+         */
+        getCurrentConfig: function () {
+            return serviceOptions;
         }
     };
     return publicAPI;
-};
+});
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6917,9 +6695,9 @@ module.exports = function (config) {
 * The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 var TransportFactory = __webpack_require__(2).default;
-var SessionManager = __webpack_require__(0);
+var SessionManager = __webpack_require__(1);
 var qutil = __webpack_require__(5);
 
 module.exports = function (config) {
@@ -7045,7 +6823,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7105,10 +6883,10 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(0).default;
 var TransportFactory = __webpack_require__(2).default;
-var _pick = __webpack_require__(4)._pick;
-var SessionManager = __webpack_require__(0);
+var _pick = __webpack_require__(4).pick;
+var SessionManager = __webpack_require__(1);
 
 var apiEndpoint = 'asset';
 
@@ -7428,65 +7206,237 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+/**
+ *
+ * ## Presence API Service
+ *
+ * The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use [channels](../epicenter-channel-manager/), the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. 
+ *
+ * The Presence API Service is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). It is typically used only in multiplayer projects, to facilitate end users communicating with each other. It is based on the query capabilities of the underlying RESTful [Presence API](../../../rest_apis/multiplayer/presence/).
+ *
+ *      var pr = new F.service.Presence();
+ *      pr.markOnline('example-userId');
+ *      pr.markOffline('example-userId');
+ *      pr.getStatus();
+ */
 
+var ConfigService = __webpack_require__(0).default;
+var TransportFactory = __webpack_require__(2).default;
+var SessionManager = __webpack_require__(1);
+var apiEndpoint = 'presence';
 
-var ConfigService = __webpack_require__(1).default;
-var SessionManager = __webpack_require__(0);
-var objectAssign = __webpack_require__(16);
+module.exports = function (config) {
+    var defaults = {
+        /**
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL or session manager.
+         * @type {String}
+         */
+        account: undefined,
 
-var serviceUtils = {
-    /*
-    * Gets the default options for a api service.
-    * It will merge:
-    * - The Session options (Using the Session Manager)
-    * - The Authorization Header from the token option
-    * - The full url from the endpoint option
-    * With the supplied overrides and defaults
-    *
-    */
-    getDefaultOptions: function (defaults) {
-        var rest = Array.prototype.slice.call(arguments, 1);
-        var sessionManager = new SessionManager();
-        var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
+        /**
+         * The project id. Defaults to undefined. If left undefined, taken from the URL or session manager.
+         * @type {String}
+         */
+        project: undefined,
 
-        serviceOptions.transport = objectAssign({}, serviceOptions.transport, {
-            url: this.getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
-        });
+        /**
+         * Epicenter group name. Defaults to undefined. Note that this is the group *name*, not the group *id*. If left blank, taken from the session manager.
+         * @type {string}
+         */
+        groupName: undefined,
 
-        if (serviceOptions.token) {
-            serviceOptions.transport.headers = {
-                Authorization: 'Bearer ' + serviceOptions.token
-            };
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {object}
+         */
+        transport: {}
+    };
+    this.sessionManager = new SessionManager();
+    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
+    var urlConfig = new ConfigService(serviceOptions).get('server');
+    if (serviceOptions.account) {
+        urlConfig.accountPath = serviceOptions.account;
+    }
+    if (serviceOptions.project) {
+        urlConfig.projectPath = serviceOptions.project;
+    }
+
+    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
+        url: urlConfig.getAPIPath(apiEndpoint)
+    });
+
+    if (serviceOptions.token) {
+        transportOptions.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+    var http = new TransportFactory(transportOptions, serviceOptions);
+
+    var getFinalParams = function (params) {
+        if (typeof params === 'object') {
+            return $.extend(true, {}, serviceOptions, params);
         }
         return serviceOptions;
-    },
+    };
 
-    getApiUrl: function (apiEndpoint, serviceOptions) {
-        var urlConfig = new ConfigService(serviceOptions).get('server');
-        return urlConfig.getAPIPath(apiEndpoint);
-    }
+    var publicAPI = {
+        /**
+         * Marks an end user as online.
+         *
+         *
+         * **Example**
+         *
+         *     var pr = new F.service.Presence();
+         *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74')
+         *          .then(function(presenceObj) {
+         *               console.log('user ', presenceObj.userId, 
+         *                    ' now online, as of ', presenceObj.lastModified);
+         *          });
+         *
+         * **Return Value**
+         *
+         * Promise with presence information for user marked online.
+         *
+         * **Parameters**
+         *
+         * @param  {String} userId (optional) If not provided, taken from session cookie.
+         * @param  {Object} options Additional options to change the presence service defaults.
+         * @return {Promise} promise
+         */
+        markOnline: function (userId, options) {
+            options = options || {};
+            var isString = typeof userId === 'string';
+            var objParams = getFinalParams(userId);
+            if (!objParams.groupName && !options.groupName) {
+                throw new Error('No groupName specified.');
+            }
+            userId = isString ? userId : objParams.userId;
+            var groupName = options.groupName || objParams.groupName;
+            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId });
+            return http.post({ message: 'online' }, httpOptions);
+        },
+
+        /**
+         * Marks an end user as offline.
+         *
+         *
+         * **Example**
+         *
+         *     var pr = new F.service.Presence();
+         *     pr.markOffline('0000015a68d806bc09cd0a7d207f44ba5f74');
+         *
+         * **Return Value**
+         *
+         * Promise to remove presence record for end user.
+         *
+         * **Parameters**
+         *
+         * @param  {String} userId (optional) If not provided, taken from session cookie.
+         * @param  {Object} options Additional options to change the presence service defaults.
+         * @return {Promise} promise
+         */
+        markOffline: function (userId, options) {
+            options = options || {};
+            var isString = typeof userId === 'string';
+            var objParams = getFinalParams(userId);
+            if (!objParams.groupName && !options.groupName) {
+                throw new Error('No groupName specified.');
+            }
+            userId = isString ? userId : objParams.userId;
+            var groupName = options.groupName || objParams.groupName;
+            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId });
+            return http.delete({}, httpOptions);
+        },
+
+        /**
+         * Returns a list of all end users in this group that are currently online.
+         *
+         *
+         * **Example**
+         *
+         *     var pr = new F.service.Presence();
+         *     pr.getStatus('groupName').then(function(onlineUsers) {
+         *          for (var i=0; i < onlineUsers.length; i++) {
+         *               console.log('user ', onlineUsers[i].userId, 
+         *                    ' is online as of ', onlineUsers[i].lastModified);
+         *          }
+         *     });
+         *
+         * **Return Value**
+         *
+         * Promise with response of online users
+         *
+         * **Parameters**
+         *
+         * @param  {String} groupName (optional) If not provided, taken from session cookie.
+         * @param  {Object} options Additional options to change the presence service defaults.
+         * @return {Promise} promise
+         */
+        getStatus: function (groupName, options) {
+            options = options || {};
+            var objParams = getFinalParams(groupName);
+            if (!groupName && !objParams.groupName) {
+                throw new Error('No groupName specified.');
+            }
+            groupName = groupName || objParams.groupName;
+            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupName });
+            return http.get({}, httpOptions);
+        },
+
+        /**
+         * End users are automatically marked online and offline in a "presence" channel that is specific to each group. Gets this channel (an instance of the [Channel Service](../channel-service/)) for the given group. (Note that this Channel Service instance is also available from the [Epicenter Channel Manager getPresenceChannel()](../epicenter-channel-manager/#getPresenceChannel).)
+         *
+         *
+         * **Example**
+         *
+         *     var pr = new F.service.Presence();
+         *     var cm = pr.getChannel('group1');
+         *     cm.publish('', 'a message to presence channel');
+         *
+         * **Return Value**
+         *
+         * Channel instance for Presence channel
+         *
+         * **Parameters**
+         *
+         * @param  {String} groupName (optional) If not provided, taken from session cookie.
+         * @param  {Object} options Additional options to change the presence service defaults
+         * @return {Channel} Channel instance
+         */
+        getChannel: function (groupName, options) {
+            var ChannelManager = __webpack_require__(13).default;
+            options = options || {};
+            var isString = typeof groupName === 'string';
+            var objParams = getFinalParams(groupName);
+            if (!isString && !objParams.groupName) {
+                throw new Error('No groupName specified.');
+            }
+            groupName = isString ? groupName : objParams.groupName;
+            var cm = new ChannelManager(options);
+            return cm.getPresenceChannel(groupName);
+        }
+    };
+
+    $.extend(this, publicAPI);
 };
 
-module.exports = serviceUtils;
-
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(16);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7530,6 +7480,13 @@ function getStore(options) {
     return ds;
 }
 
+function getStateFromActions(actions, currentTime, options) {
+    var getStartTime = Object(__WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["b" /* default */])(options.strategy);
+    var startTime = getStartTime(actions, options.strategyOptions);
+    var state = Object(__WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__["a" /* default */])(actions, startTime, currentTime);
+    return state;
+}
+
 /**
  * @typedef {object} TimerOptions
  * @name TimerOptions
@@ -7558,7 +7515,8 @@ var TimerService = function () {
             name: 'timer',
             scope: __WEBPACK_IMPORTED_MODULE_6__timer_constants__["b" /* SCOPES */].RUN,
             scopeOptions: {},
-            strategy: __WEBPACK_IMPORTED_MODULE_6__timer_constants__["c" /* STRATEGY */].START_BY_FIRST_USER
+            strategy: __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a" /* STRATEGIES */].START_BY_FIRST_USER,
+            strategyOptions: {}
         };
 
         this.ACTIONS = __WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */];
@@ -7567,8 +7525,6 @@ var TimerService = function () {
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default.a(this.options);
         this.channel = new __WEBPACK_IMPORTED_MODULE_3_util_pubsub__["a" /* default */]();
-
-        this.strategy = Object(__WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a" /* default */])(this.options.strategy);
 
         this.interval = null;
         this.dataChannelSubid = null;
@@ -7581,7 +7537,7 @@ var TimerService = function () {
      * @param {number} createOptions.timeLimit Limit for the timer, in milliseconds
      * @param {boolean} createOptions.startImmediately Determines if the timer should start ticking immediately. If set to false (default) call timer.start to start ticking.
      * 
-     * @returns Promise
+     * @returns {Promise}
      */
 
 
@@ -7601,20 +7557,17 @@ var TimerService = function () {
                 user: options.user
             };
 
-            var prom = $.Deferred().resolve([]).promise();
-            if (options.startImmediately) {
-                prom = this.makeAction(__WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */].START);
-            }
+            var prom = options.startImmediately ? this.makeAction(__WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */].START) : $.Deferred().resolve([]).promise();
 
             return prom.then(function (actions) {
                 return ds.saveAs(options.name, {
-                    actions: [createAction].concat(actions)
+                    actions: [].concat(createAction, actions)
                 });
             }).then(function (doc) {
                 var actions = doc.actions;
                 var lastAction = actions[actions.length - 1];
                 var currentTime = lastAction.time; //Created won't have a time but that's okay, reduceActions handles it
-                var state = Object(__WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__["a" /* default */])(actions, _this.strategy, currentTime);
+                var state = getStateFromActions(actions, currentTime, _this.options);
                 return state;
             });
         }
@@ -7625,7 +7578,7 @@ var TimerService = function () {
          * @param {object} options
          * @param {number} options.timeLimit Limit for the timer, in milliseconds
          * 
-         * @returns Promise
+         * @returns {Promise}
          */
 
     }, {
@@ -7642,7 +7595,7 @@ var TimerService = function () {
         /**
          * Cancels current timer. Need to call `create` again to restart.
          * 
-         * @returns Promise
+         * @returns {Promise}
          */
 
     }, {
@@ -7676,7 +7629,7 @@ var TimerService = function () {
          * Adds a custom action to the timer state. Only relevant if you're implementing a custom strategy.
          * 
          * @param {string} action
-         * @returns Promise
+         * @returns {Promise}
          */
 
     }, {
@@ -7689,7 +7642,8 @@ var TimerService = function () {
 
             return this.makeAction(action).then(function (action) {
                 return ds.pushToArray(merged.name + '/actions', action).then(function (actions) {
-                    return Object(__WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__["a" /* default */])(actions, _this3.strategy, action.time);
+                    var state = getStateFromActions(actions, action.time, _this3.options);
+                    return state;
                 }, function (res) {
                     if (res.status === 404) {
                         var errorMsg = 'Timer not found. Did you create it yet?';
@@ -7704,7 +7658,7 @@ var TimerService = function () {
         /**
          * Start the timer
          * 
-         * @returns Promise
+         * @returns {Promise}
          */
 
     }, {
@@ -7716,7 +7670,7 @@ var TimerService = function () {
         /**
          * Pause the timer
          * 
-         * @returns Promise
+         * @returns {Promise}
          */
 
     }, {
@@ -7728,7 +7682,7 @@ var TimerService = function () {
         /**
          * Resumes a paused timer
          * 
-         * @returns Promise
+         * @returns {Promise}
          */
 
     }, {
@@ -7740,7 +7694,7 @@ var TimerService = function () {
         /**
          * Helper method to return current server time
          * 
-         * @returns Promise<Date>
+         * @returns {Promise<Date>}
          */
 
     }, {
@@ -7754,19 +7708,18 @@ var TimerService = function () {
         /**
          * Resumes current state of the timer, including time elapsed and remaining
          * 
-         * @returns Promise
+         * @returns {Promise}
          */
 
     }, {
         key: 'getState',
         value: function getState() {
             var merged = this.sessionManager.getMergedOptions(this.options);
-            var strategy = this.strategy;
             var ds = getStore(merged);
             return ds.load(merged.name).then(function calculateTimeLeft(doc) {
                 return this.getCurrentTime().then(function (currentTime) {
                     var actions = doc.actions;
-                    var state = Object(__WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__["a" /* default */])(actions, strategy, currentTime);
+                    var state = getStateFromActions(actions, currentTime, this.options);
                     return $.extend(true, {}, doc, state);
                 });
             }, function () {
@@ -7777,7 +7730,7 @@ var TimerService = function () {
         /**
          * Resumes a channel to hook into for timer notifications.
          * 
-         * @returns Channel
+         * @returns {object}
          */
 
     }, {
@@ -7787,8 +7740,6 @@ var TimerService = function () {
             var ds = getStore(merged);
             var dataChannel = ds.getChannel();
             var me = this;
-
-            var strategy = this.strategy;
 
             function cancelTimer() {
                 clearInterval(me.interval);
@@ -7800,7 +7751,7 @@ var TimerService = function () {
                 }
                 me.interval = setInterval(function () {
                     currentTime = currentTime + merged.tickInterval;
-                    var state = Object(__WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__["a" /* default */])(actions, strategy, currentTime);
+                    var state = getStateFromActions(actions, currentTime, this.options);
                     if (state.remaining.time === 0) {
                         me.channel.publish(__WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */].COMPLETE, state);
 
@@ -7810,7 +7761,7 @@ var TimerService = function () {
                     me.channel.publish(__WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */].TICK, state);
                 }, merged.tickInterval);
 
-                var state = Object(__WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__["a" /* default */])(actions, strategy, currentTime);
+                var state = getStateFromActions(actions, currentTime, this.options);
                 me.channel.publish(__WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */].TICK, state);
             }
 
@@ -7861,23 +7812,23 @@ var TimerService = function () {
 
 TimerService.ACTIONS = __WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */];
 TimerService.SCOPES = __WEBPACK_IMPORTED_MODULE_6__timer_constants__["b" /* SCOPES */];
-TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_6__timer_constants__["c" /* STRATEGY */];
-TimerService._private = {
-    reduceActions: __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__["a" /* default */]
-};
+TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a" /* STRATEGIES */];
+
 /* harmony default export */ __webpack_exports__["default"] = (TimerService);
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* unused harmony export objectToPublishable */
 /* unused harmony export publishableToObject */
 /* unused harmony export normalizeParamOptions */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_array_utils__ = __webpack_require__(32);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 
 /**
  * @typedef Publishable
@@ -7949,18 +7900,6 @@ function uniqueId(prefix) {
     return '' + (prefix || '') + i;
 }
 
-function intersection(a, b) {
-    var t;
-    if (b.length > a.length) {
-        t = b;
-        b = a;
-        a = t;
-    } // indexOf to loop over shorter
-    return a.filter(function (e) {
-        return b.indexOf(e) > -1;
-    });
-}
-
 /**
  * 
  * @param {String[]|String} topics 
@@ -7995,7 +7934,7 @@ function checkAndNotifyBatch(topics, subscription) {
     var keys = Object.keys(merged).map(function (k) {
         return k.toLowerCase();
     });
-    var matchingTopics = intersection(keys, subscription.topics);
+    var matchingTopics = Object(__WEBPACK_IMPORTED_MODULE_0_util_array_utils__["a" /* intersection */])(keys, subscription.topics);
     if (matchingTopics.length > 0) {
         var toSend = subscription.topics.reduce(function (accum, topic) {
             accum[topic] = merged[topic];
@@ -8094,85 +8033,35 @@ var PubSub = function () {
 /* harmony default export */ __webpack_exports__["a"] = (PubSub);
 
 /***/ }),
-/* 47 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__restart_on_last_user__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__timer_constants__ = __webpack_require__(8);
-
-
-
-
-
-function getStrategy(strategy) {
-    if (strategy === __WEBPACK_IMPORTED_MODULE_2__timer_constants__["c" /* STRATEGY */].START_BY_FIRST_USER) {
-        return __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__["a" /* default */];
-    } else if (strategy === __WEBPACK_IMPORTED_MODULE_2__timer_constants__["c" /* STRATEGY */].START_BY_LAST_USER) {
-        return __WEBPACK_IMPORTED_MODULE_1__restart_on_last_user__["a" /* default */];
-    } else if (typeof strategy === 'function') {
-        return strategy;
-    }
-
-    throw new Error('Invalid timer strategy ' + strategy);
-}
-
-/***/ }),
-/* 48 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(8);
-
-
-function reduceActions(actions) {
-    var initialState = {
-        startTime: 0
-    };
-    var reduced = actions.reduce(function (accum, action) {
-        if (action.type !== __WEBPACK_IMPORTED_MODULE_0__timer_constants__["a" /* ACTIONS */].START) {
-            return accum;
-        }
-        var ts = +new Date(action.time);
-        if (!accum.startTime) {
-            accum.startTime = ts;
-        }
-        return accum;
-    }, initialState);
-    return reduced;
-}
-
-/***/ }),
 /* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(8);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return STRATEGIES; });
+/* harmony export (immutable) */ __webpack_exports__["b"] = getStrategy;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(51);
+var _list;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
-function reduceActions(actions) {
-    var initialState = {
-        startTime: 0,
-        startedUsers: {}
-    };
-    var reduced = actions.reduce(function (accum, action) {
-        if (action.type !== __WEBPACK_IMPORTED_MODULE_0__timer_constants__["a" /* ACTIONS */].START) {
-            return accum;
-        }
-        var ts = +new Date(action.time);
-        var user = action.user;
-        if (Object.keys(accum.startedUsers).indexOf(user.userName) === -1) {
-            accum.startTime = ts;
-            accum.startUser[user.userName] = ts;
-        }
-        return accum;
-    }, initialState);
 
-    return reduced;
+
+var STRATEGIES = {
+    START_BY_FIRST_USER: 'first-user',
+    START_WHEN_ALL_USERS: 'all-users'
+};
+
+var list = (_list = {}, _defineProperty(_list, STRATEGIES.START_BY_FIRST_USER, __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__["a" /* default */]), _defineProperty(_list, STRATEGIES.START_WHEN_ALL_USERS, __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__["a" /* default */]), _list);
+
+function getStrategy(strategy) {
+    if (typeof strategy === 'function') {
+        return strategy;
+    } else if (list[strategy]) {
+        return list[strategy];
+    }
+    throw new Error('Invalid timer strategy ' + strategy);
 }
 
 /***/ }),
@@ -8181,7 +8070,54 @@ function reduceActions(actions) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(33);
+
+
+function reduceActions(actions) {
+    return Object(__WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__["a" /* default */])(actions, {
+        condition: function (users) {
+            return users.length > 0;
+        }
+    });
+}
+
+/***/ }),
+/* 51 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(32);
+
+
+
+function reduceActions(actions, options) {
+    var opts = $.extend({
+        requiredUsernames: []
+    }, options);
+
+    if (!opts.requiredUsernames.length) {
+        throw new Error('This strategy requires passing in requiredUsernames under strategyOptions');
+    }
+    return Object(__WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__["a" /* default */])(actions, {
+        condition: function (joinedUsers) {
+            var joinedNames = joinedUsers.map(function (u) {
+                return u.userName;
+            });
+            var requiredUsersJoined = Object(__WEBPACK_IMPORTED_MODULE_1_util_array_utils__["a" /* intersection */])(opts.requiredUsernames, joinedNames);
+            return requiredUsersJoined.length >= opts.requiredUsernames.length;
+        }
+    });
+}
+
+/***/ }),
+/* 52 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(16);
 
 
 function toDetailedTime(ts) {
@@ -8199,29 +8135,29 @@ function toDetailedTime(ts) {
 
 /**
  * @param {object[]} actions 
- * @param {function} startTimeReducer
- * @param {string} [currentTime] 
+ * @param {number} startTime
+ * @param {number} [currentTime] 
+ * @returns {object}
  */
-function reduceActions(actions, startTimeReducer, currentTime) {
+function reduceActions(actions, startTime, currentTime) {
     if (!actions || !actions.length) {
         return {};
     }
-    var start = startTimeReducer(actions);
-    var initialState = $.extend({}, {
+    var initialState = {
         lastPausedTime: 0,
         totalPauseTime: 0,
         elapsedTime: 0,
         timeLimit: 0,
         isPaused: false,
-        isStarted: !!start.startTime
-    }, start);
+        isStarted: !!startTime
+    };
     var reduced = actions.reduce(function (accum, action) {
         var ts = +new Date(action.time);
         if (action.type === __WEBPACK_IMPORTED_MODULE_0__timer_constants__["a" /* ACTIONS */].CREATE) {
             accum.timeLimit = action.timeLimit;
         } else if (action.type === __WEBPACK_IMPORTED_MODULE_0__timer_constants__["a" /* ACTIONS */].PAUSE && !accum.lastPausedTime) {
             accum.lastPausedTime = ts;
-            accum.elapsedTime = ts - accum.startTime;
+            accum.elapsedTime = ts - startTime;
             accum.isPaused = true;
         } else if (action.type === __WEBPACK_IMPORTED_MODULE_0__timer_constants__["a" /* ACTIONS */].RESUME && accum.lastPausedTime) {
             var pausedTime = ts - accum.lastPausedTime;
@@ -8244,7 +8180,7 @@ function reduceActions(actions, startTimeReducer, currentTime) {
         if (reduced.isPaused) {
             elapsed = reduced.elapsedTime;
         } else if (reduced.isStarted) {
-            elapsed = current - reduced.startTime - reduced.totalPauseTime;
+            elapsed = current - startTime - reduced.totalPauseTime;
         }
     }
 
@@ -8259,7 +8195,7 @@ function reduceActions(actions, startTimeReducer, currentTime) {
 }
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8339,18 +8275,18 @@ function reduceActions(actions, startTimeReducer, currentTime) {
 // See integration-test-scenario-manager for usage examples
 
 var RunManager = __webpack_require__(17);
-var SavedRunsManager = __webpack_require__(34);
+var SavedRunsManager = __webpack_require__(36);
 
 var strategyUtils = __webpack_require__(6);
-var rutil = __webpack_require__(11);
+var rutil = __webpack_require__(10);
 
-var NoneStrategy = __webpack_require__(10);
+var NoneStrategy = __webpack_require__(9);
 
 var StateService = __webpack_require__(28);
 var RunService = __webpack_require__(7);
 
-var BaselineStrategy = __webpack_require__(59);
-var LastUnsavedStrategy = __webpack_require__(60);
+var BaselineStrategy = __webpack_require__(61);
+var LastUnsavedStrategy = __webpack_require__(62);
 
 var defaults = {
     /**
@@ -8497,7 +8433,7 @@ function ScenarioManager(config) {
 module.exports = ScenarioManager;
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8522,7 +8458,7 @@ module.exports = ScenarioManager;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(9);
+var ConditionalStrategy = __webpack_require__(8);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8540,7 +8476,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8568,7 +8504,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(9);
+var ConditionalStrategy = __webpack_require__(8);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8586,7 +8522,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8599,8 +8535,8 @@ module.exports = Strategy;
 
 var classFrom = __webpack_require__(3);
 
-var IdentityStrategy = __webpack_require__(10);
-var WorldApiAdapter = __webpack_require__(12);
+var IdentityStrategy = __webpack_require__(9);
+var WorldApiAdapter = __webpack_require__(14);
 
 var defaults = {};
 
@@ -8667,7 +8603,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8684,7 +8620,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(9);
+var ConditionalStrategy = __webpack_require__(8);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8702,7 +8638,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8726,7 +8662,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(9);
+var ConditionalStrategy = __webpack_require__(8);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8748,7 +8684,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8769,7 +8705,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var IdentityStrategy = __webpack_require__(10);
+var IdentityStrategy = __webpack_require__(9);
 
 var _require = __webpack_require__(6),
     injectFiltersFromSession = _require.injectFiltersFromSession,
@@ -8817,7 +8753,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -8827,7 +8763,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8848,7 +8784,7 @@ module.exports = {
 
 
 
-var ReuseinitStrategy = __webpack_require__(33);
+var ReuseinitStrategy = __webpack_require__(35);
 
 module.exports = function (options) {
     var defaults = {
@@ -8870,7 +8806,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8940,7 +8876,7 @@ module.exports = classFrom(Base, {
 }, { requiresAuth: false });
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -9011,7 +8947,7 @@ module.exports = classFrom(Base, {
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9052,9 +8988,9 @@ module.exports = classFrom(Base, {
 
 
 
-var WorldApi = __webpack_require__(12);
+var WorldApi = __webpack_require__(14);
 var RunManager = __webpack_require__(17);
-var AuthManager = __webpack_require__(35);
+var AuthManager = __webpack_require__(37);
 var worldApi;
 
 function buildStrategy(worldId) {

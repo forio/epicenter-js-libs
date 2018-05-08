@@ -13,14 +13,14 @@ module.exports = function (grunt) {
             },
             files: {
                 'documentation/generated/strategies/index.html.md': [
-                    'src/managers/run-manager/run-strategies/reuse-never.js', 
-                    'src/managers/run-manager/run-strategies/reuse-per-session.js',
-                    'src/managers/run-manager/run-strategies/reuse-across-sessions.js',
-                    'src/managers/run-manager/run-strategies/multiplayer-strategy.js',
-                    'src/managers/run-manager/run-strategies/none-strategy.js',
-                    'src/managers/run-manager/run-strategies/deprecated/new-if-initialized-strategy.js',
-                    'src/managers/run-manager/run-strategies/deprecated/new-if-persisted-strategy.js',
-                    'src/managers/run-manager/run-strategies/index.js' // must go at the end! we are special-casing the processing of this file
+                    'src/managers/run-strategies/reuse-never.js', 
+                    'src/managers/run-strategies/reuse-per-session.js',
+                    'src/managers/run-strategies/reuse-across-sessions.js',
+                    'src/managers/run-strategies/multiplayer-strategy.js',
+                    'src/managers/run-strategies/none-strategy.js',
+                    'src/managers/run-strategies/deprecated/new-if-initialized-strategy.js',
+                    'src/managers/run-strategies/deprecated/new-if-persisted-strategy.js',
+                    'src/managers/run-strategies/index.js' // must go at the end! we are special-casing the processing of this file
                 ],
             }
         },
