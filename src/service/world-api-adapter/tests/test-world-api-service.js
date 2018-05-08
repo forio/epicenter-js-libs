@@ -1,6 +1,5 @@
 import WorldService from '../index';
 import URLService from 'service/url-config-service';
-import ConsensusService from 'service/consensus-api-service/consensus-service';
 
 import sinon from 'sinon';
 import chai from 'chai';

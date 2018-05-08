@@ -203,7 +203,7 @@ module.exports = function (config) {
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
-            var ChannelManager = require('managers/epicenter-channel-manager');
+            var ChannelManager = require('managers/epicenter-channel-manager').default;
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);

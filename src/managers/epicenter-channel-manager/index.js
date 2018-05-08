@@ -66,13 +66,10 @@
  * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
  */
 
-var ChannelManager = require('./channel-manager');
-var ConfigService = require('service/configuration-service').default;
-var classFrom = require('util/inherit');
-var SessionManager = require('store/session-manager');
-
-var WorldService = require('service/world-api-adapter');
-var PresenceService = require('service/presence-api-service');
+import ChannelManager from './channel-manager';
+import ConfigService from 'service/configuration-service';
+import classFrom from 'util/inherit';
+import SessionManager from 'store/session-manager';
 
 var validTypes = {
     project: true,
@@ -255,105 +252,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var project = getFromSessionOrError('', 'project', session);
 
         var baseTopic = ['/world', account, project, groupName, worldid].join('/');
-        var channel = __super.getChannel.call(this, { base: baseTopic });
-        var oldsubs = channel.subscribe;
-        channel.subscribe = function (topic, callback, context, options) {
-            if (!topic) {
-                return oldsubs.call(channel, topic, callback, context, options);
-            }
-
-            var defaults = {
-                includeMine: true
-            };
-            var opts = $.extend({}, defaults, options);
-            var topicAliases = {
-                reset: ['new'],
-                roles: ['assign', 'unassign', 'assignchange'],
-                operations: ['operation'],
-                presence: ['connect', 'disconnect'],
-            };
-            if (topic === 'presence') {
-                var wm = new WorldService({ 
-                    account: account,
-                    project: project,
-                    filter: worldid
-                });
-                var pres = new PresenceService({
-                    account: account,
-                    project: project,
-                });
-                var worldLoadPromise = wm.load();
-                var presenceLoadPromise = pres.getStatus();
-                //FIXME: Cache promise
-                $.when(worldLoadPromise, presenceLoadPromise).then(function (worldRes, presenceRes) {
-                    var world = worldRes[0];
-                    var presenceList = presenceRes[0];
-
-                    world.users.forEach(function (user) {
-                        var id = user.userId;
-                        var matchingStatus = $.grep(presenceList || [], function (status) {
-                            return status.userId === id;
-                        });
-                        if (matchingStatus[0]) {
-                            var fakeMeta = {
-                                date: Date.now(),
-                                channel: baseTopic,
-                                type: 'presence',
-                                subType: 'connect',
-                                source: 'presenceAPI',
-                            };
-                            var fakeUser = {
-                                account: account,
-                                id: id,
-                                isOnline: true,
-                                lastName: user.lastName,
-                                userName: user.userName,
-                            };
-                            callback(fakeUser, fakeMeta); //eslint-disable-line callback-return
-                        }
-                    });
-                });
-            }
-            var filterByType = function (res) {
-                var subType = res.data.subType;
-                var topicMatch = subType === topic || (topicAliases[topic] && topicAliases[topic].indexOf(subType) !== -1);
-                var notificationFrom = res.data.user || {};
-                var payload = res.data.data;
-                if (topic === 'reset') {
-                    notificationFrom = payload.run.user; //reset doesn't give back user info otherwise
-                }
-
-                var isMine = session.userId === notificationFrom.id;
-                var initiatorMatch = isMine && opts.includeMine || !isMine;
-                if (topicMatch && initiatorMatch) {
-                    var meta = {
-                        user: res.data.user,
-                        date: res.data.date,
-                        channel: res.channel,
-                        type: topic,
-                        subType: subType,
-                    };
-                    if (topic === 'variables' || topic === 'operation') {
-                        return callback(payload[topic], meta);
-                    } else if (subType === 'new') {
-                        return callback(payload.run, meta);
-                    } else if (topic === 'roles') {
-                        //FIXME: this doesn't work
-                        return callback(payload.user, meta);
-                    } else if (topic === 'presence') {
-                        var user = res.data.user;
-                        user.isOnline = subType === 'connect';
-                        return callback(user, meta);
-                    } else if (topic === 'reset') {
-                        return callback(payload, meta);
-                    }
-                    return callback.call(context, res);
-                }
-            };
-            return oldsubs.call(channel, '', filterByType, context, options);
-
-        };
-        return channel;
+        return __super.getChannel.call(this, { base: baseTopic });
     },
 
     /**
@@ -519,4 +418,4 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
     }
 });
 
-module.exports = EpicenterChannelManager;
+export default EpicenterChannelManager;
