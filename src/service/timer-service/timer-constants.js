@@ -16,5 +16,5 @@ export const ACTIONS = {
 
 export const STRATEGY = {
     START_BY_FIRST_USER: 'first-user',
-    START_BY_LAST_USER: 'last-user',
+    START_WHEN_ALL_USERS: 'all-users',
 };

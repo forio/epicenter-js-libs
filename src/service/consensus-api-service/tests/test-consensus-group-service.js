@@ -1,5 +1,4 @@
 import ConsensusGroupService from '../consensus-group-service';
-import ConsensusService from '../consensus-service';
 import URLService from 'service/url-config-service';
 
 import sinon from 'sinon';

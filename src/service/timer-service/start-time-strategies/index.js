@@ -1,12 +1,16 @@
 import startOnFirstUser from './start-on-first-user';
-import startOnAllUsers from './start-on-all-users';
+import startWhenAllUsers from './start-when-all-users';
 
-import { STRATEGY } from '../timer-constants';
+export const STRATEGIES = {
+    START_BY_FIRST_USER: 'first-user',
+    START_WHEN_ALL_USERS: 'all-users',
+};
 
 const list = {
-    [STRATEGY.START_BY_FIRST_USER]: startOnFirstUser,
-    [STRATEGY.START_BY_LAST_USER]: startOnAllUsers,
+    [STRATEGIES.START_BY_FIRST_USER]: startOnFirstUser,
+    [STRATEGIES.START_WHEN_ALL_USERS]: startWhenAllUsers,
 };
+
 export default function getStrategy(strategy) {
     if (typeof strategy === 'function') {
         return strategy;

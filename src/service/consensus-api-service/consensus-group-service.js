@@ -38,15 +38,35 @@ export default function ConsensusGroupService(config) {
         return httpOptions;
     }
     const publicAPI = {
+        /**
+         * Deletes consensus group
+         * 
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {Promise}
+         */
         delete: function (options) {
             const httpOptions = getHTTPOptions(options);
             return http.delete({}, httpOptions);        
         },
+        /**
+         * List all created consensus points within this group
+         * 
+         * @param {object} outputModifier Currently unused, may be used for paging etc later
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {Promise}
+         */
         list: function (outputModifier, options) {
             const httpOptions = getHTTPOptions(options);
             return http.get(outputModifier, httpOptions);         
         },
 
+        /**
+         * List all created consensus points within this group
+         * 
+         * @param {string} [name] Returns a new instance of a consensus service. Note it is not created until you call `create` on the returned service.
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {Promise}
+         */
         consensus: function (name, options) {
             const opts = $.extend({}, true, serviceOptions, options);
             const bp = new ConsensusService($.extend(true, opts, {

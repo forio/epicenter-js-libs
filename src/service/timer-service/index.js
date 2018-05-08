@@ -3,10 +3,10 @@ import TimeService from 'service/time-api-service';
 import SessionManager from 'store/session-manager';
 import PubSub from 'util/pubsub';
 
-import getStrategy from './start-time-strategies';
+import { default as getStrategy, STRATEGIES } from './start-time-strategies';
 
 import reduceActions from './timer-actions-reducer';
-import { SCOPES, ACTIONS, STRATEGY } from './timer-constants';
+import { SCOPES, ACTIONS } from './timer-constants';
 
 function getAPIKeyName(options) {
     const scope = options.scope.toUpperCase();
@@ -69,7 +69,7 @@ class TimerService {
             name: 'timer',
             scope: SCOPES.RUN,
             scopeOptions: {},
-            strategy: STRATEGY.START_BY_FIRST_USER,
+            strategy: STRATEGIES.START_BY_FIRST_USER,
             strategyOptions: {},
         };
 
@@ -328,6 +328,6 @@ class TimerService {
 
 TimerService.ACTIONS = ACTIONS;
 TimerService.SCOPES = SCOPES;
-TimerService.STRATEGY = STRATEGY;
+TimerService.STRATEGY = STRATEGIES;
 
 export default TimerService;

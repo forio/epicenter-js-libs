@@ -1,4 +1,4 @@
-import startReduce from '../start-on-all-users';
+import startReduce from '../start-when-all-users';
 import { ACTIONS } from '../../timer-constants';
 
 import { expect } from 'chai';
