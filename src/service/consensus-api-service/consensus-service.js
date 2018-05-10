@@ -134,12 +134,12 @@ export default function (config) {
         /**
          * Submits actions for your turn and marks you as having `submitted`. If `executeActionsImmediately` was set to `true` while creating the consensus point, the actions will be immediately sent to the model.
          *
-         * @param {object[]} actions Actions to send
+         * @param {object[]|{name: string, arguments: any[]}} actions Actions to send
          * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         submitActions: function (actions, options) {
-            if (!actions || !actions.length) {
+            if (!actions || !([].concat(actions)).length) {
                 throw new Error('submitActions: No actions provided to submit');
             }
             const httpOptions = getHTTPOptions('actions', options);

@@ -265,6 +265,7 @@ describe('Consensus Service', ()=> {
             const cs = createConsensusService();
             expect(()=> cs.submitActions()).to.throw(Error);
         });
+      
         it('should do a POST to the right url', ()=> {
             const cs = createConsensusService();
             const opns = [{ name: 'foo', arguments: ['bar'] }, { name: 'foo2', arguments: ['bar2'] }];
@@ -298,6 +299,17 @@ describe('Consensus Service', ()=> {
                     { execute: opns[1] },
                 ] }));
             
+        });
+        it('should allow single action', ()=> {
+            const cs = createConsensusService();
+            const action = { name: 'foo', arguments: ['bar'] };
+            cs.submitActions(action);
+
+            var req = server.requests.pop();
+            expect(req.requestBody).to.equal(JSON.stringify({
+                actions: [
+                    { execute: action }
+                ] }));
         });
     });
     describe('#undoSubmit', ()=> {
