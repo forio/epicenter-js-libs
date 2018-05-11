@@ -1,15 +1,28 @@
 {
-    "parserOptions": {},
+
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 6,
+        "ecmaFeatures": {
+            "jsx": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
+
     "env": {
         "browser": true,
+        "es6": true,
+
         "commonjs": true,
         "node": true
     },
     "globals": {
-        "$": false,
-        "_": false
+        "$": false
+
     },
     "rules": {
+        "array-callback-return": 2,
+        "no-useless-escape": 2,
         "comma-dangle": [0, "always-multiline"],
         "no-cond-assign": [2, "always"],
         "no-console": 0,
@@ -77,6 +90,7 @@
         "no-loop-func": 2,
         "no-magic-numbers": [2, {
             "ignore": [-1, 0, 1, 2, 10, 100, 60, 1000, 401, 403, 404, 500]
+
         }],
         "no-multi-spaces": 2,
         "no-multi-str": 0,
@@ -92,12 +106,12 @@
         "no-process-env": 0,
         "no-proto": 2,
         "no-redeclare": 2,
-        "no-return-assign": 2,
+        "no-return-assign": [2, "except-parens"],
         "no-script-url": 2,
         "no-self-compare": 2,
         "no-sequences": 2,
         "no-throw-literal": 2,
-        "no-unused-expressions": 1,
+        "no-unused-expressions": [1, { "allowShortCircuit": true, "allowTernary": true }],
         "no-useless-call": 2,
         "no-useless-concat": 2,
         "no-void": 2,
@@ -117,7 +131,8 @@
         "no-undef": 2,
         "no-undefined": 0,
         "no-unused-vars": [1, {
-            "args": "none"
+            "args": "none",
+            "ignoreRestSiblings": true
         }],
         "no-use-before-define": 1,
         "callback-return": 2,
@@ -148,6 +163,7 @@
         "eol-last": 0,
         "func-names": 0,
         "indent": [2, 4, { "SwitchCase": 1 }],
+
         "key-spacing": [2, {
             "beforeColon": false,
             "afterColon": true
@@ -186,14 +202,14 @@
         }],
         "padded-blocks": [0, "never"],
         "quote-props": [2, "as-needed"],
-        "quotes": [2, "single"],
+        "quotes": [2, "single", { "avoidEscape": true }],
         "semi-spacing": [2, {
             "before": false,
             "after": true
         }],
         "semi": [2, "always"],
         "sort-vars": 0,
-        "keyword-spacing": ["error", {"before": true, "after": true, "overrides": {}}],
+        "keyword-spacing": ["error", { "before": true, "after": true, "overrides": {} }],
         "space-before-blocks": 2,
         "space-before-function-paren": [2, {
             "anonymous": "always",
@@ -204,6 +220,39 @@
             "int32Hint": false
         }],
         "space-unary-ops": 2,
-        "wrap-regex": 2
-    }
+        "wrap-regex": 2,
+        "arrow-parens": [2, "always"],
+        "arrow-spacing": [2, {
+            "before": false,
+            "after": true
+        }],
+        "constructor-super": 2,
+        "generator-star-spacing": [2, {
+            "before": true,
+            "after": false
+        }],
+        "no-confusing-arrow": 0,
+        "no-class-assign": 2,
+        "no-const-assign": 2,
+        "no-dupe-class-members": 2,
+        "no-var": 0,
+        "object-shorthand": 0,
+        "prefer-arrow-callback": 0,
+        "prefer-const": 1,
+        "prefer-spread": 0,
+        "prefer-template": 0
+    },
+    "overrides": [{
+        "files": ["**/tests/*.js", "./tests/specs/**/*js"],
+        "env": {
+            "mocha": true
+        },
+
+        "rules": {
+            "quote-props": 0,
+            "no-magic-numbers": 0,
+            "one-var": 0,
+            "no-unused-expressions": 0
+        }
+    }]
 }

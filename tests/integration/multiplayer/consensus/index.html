@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Multiplayer test </title>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/epicenter-multiplayer-dependencies.min.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        section {
+            padding: 30px 0;
+            border-top: 1px dotted silver;
+        }
+        
+        .instructions {
+            color: blue;
+        }
+    </style>
+</head>
+
+<body class="container">
+    <section class="jumbotron">
+        <div class="row">
+            <div class="col-xs-6">
+                <form action="">
+                    <label for="">Account</label>
+                    <input type="text" id="txtAccount" value="team-naren">
+                    <br/>
+
+                    <label for="">Project</label>
+                    <input type="text" id="txtProject" value="multiplayer-test">
+                    <br/>
+
+                    <label for="">Username</label>
+                    <input type="text" id="txtUsername" value="n1">
+                    <br/>
+
+                    <label for="">Password</label>
+                    <input type="text" id="txtPassword" value="password1">
+                    <br/>
+
+                    <label for="">Model</label>
+                    <input type="text" id="txtModel" value="bikes-multiplayer.xlsx">
+                    <br/>
+
+                    <label for="">Server</label>
+                    <input type="text" id="txtServer" value="" />
+
+                    <button id="btnLogin"> Login </button>
+                    <a href="#" id='logout'> Logout</a>
+                </form>
+            </div>
+            <div class="col-xs-6">
+                Make sure you enter info for a multiplayer project with push channel turned on.
+            </div>
+        </div>
+    </section>
+    <div class="row">
+        <div class="col-xs-6">
+            <section>
+                <label for="">Consensus Group Name</label>
+                <input type="text" id="txtConsensusGroup" value="foo" />
+                <label for="">Consensus Name</label>
+                <input type="text" id="txtConsensus" value="bar" />
+
+                <button id="btnConsensusCreate">Create Consensus Point</button>
+                <button id="btnConsensusDelete">Delete Consensus Point</button>
+            </section>
+
+            <section>
+                <button id="btnUpdateDefaults">Update defaults</button>
+            </section>
+            <section>
+                <button id="btnConsensusOperationSubmit">Submit for operation step</button>
+                <button id="btnConsensusOperationRevoke">Revoke operation step</button>
+            </section>
+            <section>
+                <button id="btnReset">Reset</button>
+                <button id="btnForceClose">Force Close</button>
+            </section>
+        </div>
+        <div class="col-xs-6">
+            <h6>World channel notifications</h6>
+            <ul id="generalWorldNotifications"></ul>
+        </div>
+    </div>
+
+
+
+    <script src="../../common.js"></script>
+    <script src="./integration-test-consensus.js"></script>
+</body>
+
+</html>

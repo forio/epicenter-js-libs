@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./src/",
+        "noEmit": true,
+        "allowJs": true,
+        "target": "es2016",
+        "allowSyntheticDefaultImports": true,
+        "checkJs": true,
+        "suppressExcessPropertyErrors": true,
+        "moduleResolution": "node"
+    },
+    "typeAcquisition": {
+        "enable": true
+    },
+    "include": [
+        "src/**/*",
+    ],
+    "exclude": [
+        "node_modules",
+        "coverage",
+        "documentation",
+        "vendor",
+        "dist"
+    ]
+}

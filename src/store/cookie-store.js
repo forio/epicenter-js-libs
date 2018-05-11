@@ -95,7 +95,7 @@ module.exports = function (config) {
          */
         get: function (key) {
             var cookie = this.serviceOptions.cookie;
-            var cookieReg = new RegExp('(?:^|;)\\s*' + encodeURIComponent(key).replace(/[\-\.\+\*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$');
+            var cookieReg = new RegExp('(?:^|;)\\s*' + encodeURIComponent(key).replace(/[-.+*]/g, '\\$&') + '\\s*\\=\\s*([^;]*).*$');
             var res = cookieReg.exec(cookie.get());
             var val = res ? decodeURIComponent(res[1]) : null;
             return val;
@@ -131,7 +131,7 @@ module.exports = function (config) {
          */
         destroy: function () {
             var cookie = this.serviceOptions.cookie;
-            var aKeys = cookie.get().replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:\=[^;]*)?;\s*/);
+            var aKeys = cookie.get().replace(/((?:^|\s*;)[^=]+)(?=;|$)|^\s*|\s*(?:=[^;]*)?(?:\1|$)/g, '').split(/\s*(?:=[^;]*)?;\s*/);
             for (var nIdx = 0; nIdx < aKeys.length; nIdx++) {
                 var cookieKey = decodeURIComponent(aKeys[nIdx]);
                 this.remove(cookieKey);

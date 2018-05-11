@@ -12,7 +12,7 @@ $('#btnLogin').click(function (evt) {
     if ($('#txtServer').val()) {
         amParams.server = {
             host: $('#txtServer').val(),
-            protocol: 'http',
+            protocol: 'https',
         };
     }
     window.am = new F.manager.AuthManager(amParams);

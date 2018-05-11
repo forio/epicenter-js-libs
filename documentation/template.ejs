@@ -1,90 +1,96 @@
 <? docfiles.forEach(function (doc) { ?>
 
     <? var moduleName = doc.filename.split('/').pop().split('.')[0] ?>
-    ---
-    title: <?= moduleName.split('-').join(' ') ?>
-    layout: "default"
-    isPage: true
-    ---
+        --- title:
+        <?= moduleName.split('-').join(' ') ?>
+            layout: "default" isPage: true ---
 
-    <!-- module desc -->
-    <? var moduleDoc = doc.javadoc.shift() ?>
-    <?= moduleDoc.description ?>
+            <!-- module desc -->
+            <? var moduleDoc = doc.javadoc.shift() ?>
+                <?= moduleDoc.description ?>
 
-    <? var firstTag = moduleDoc.raw.tags[0] ?>
+                    <? var firstTag = moduleDoc.raw.tags[0] ?>
 
 
-    <? var configStart = 0 ?>
-    <? doc.javadoc.forEach(function (block) { ?>
-        <? if (!block.paramStr && (block.returnTags.length == 0)) { ?>
-            <? if (configStart === 0) { ?>
-                ## Configuration Options
+                        <? var configStart = 0 ?>
+                            <? doc.javadoc.forEach(function (block) { ?>
+                                <? if (!block.paramStr && (block.returnTags.length == 0)) { ?>
+                                    <? if (configStart === 0) { ?>
+                                        ## Configuration Options
 
-                <? configStart = 1 ?>
-            <? } ?>
-            <? var configOption =  block.raw.code.split(':')[0] ?>
+                                        <? configStart = 1 ?>
+                                            <? } ?>
+                                                <? var configOption =  block.raw.code.split(':')[0] ?>
 
-            ### <?= configOption ?>
+                                                    ###
+                                                    <?= configOption ?>
 
-            <? block.raw.tags.forEach(function (tag) { ?>
-                <? if (tag.type === 'type') { ?>
-                    - *<?= tag.types[0] ?>* 
-                <? } ?>
-                <? if (tag.type === 'see') { ?>
-                    - See: <?= tag.local ?>
-                <? } ?>
-            <? }) ?>
+                                                        <? block.raw.tags.forEach(function (tag) { ?>
+                                                            <? if (tag.type === 'type') { ?>
+                                                                - *
+                                                                <?= tag.types[0] ?>*
+                                                                    <? } ?>
+                                                                        <? if (tag.type === 'see') { ?>
+                                                                            - See:
+                                                                            <?= tag.local ?>
+                                                                                <? } ?>
+                                                                                    <? }) ?>
 
-            <?= block.description ?>
-            
-        <? } ?>
-    <? }) ?>
+                                                                                        <?= block.description ?>
 
-    <? var propertyStart = 0 ?>
-    <? doc.javadoc.forEach(function (block){ ?>
-        <? if ((block.returnTags.length == 1) && (block.paramStr.length == 0)) { ?>
-            <? if (propertyStart === 0) { ?>
-                ## Properties
-                <? propertyStart = 1 ?>
-            <? } ?>
-            <? var propertyName = block.raw.code.split('this.')[1] ?>
-            <? propertyName = propertyName.split(' = ')[0] ?>
+                                                                                            <? } ?>
+                                                                                                <? }) ?>
 
-            ### <?= propertyName ?>
-            <?= block.description ?>
-        <? } ?>
-    <? }) ?>
+                                                                                                    <? var propertyStart = 0 ?>
+                                                                                                        <? doc.javadoc.forEach(function (block){ ?>
+                                                                                                            <? if ((block.returnTags.length == 1) && (block.paramStr.length == 0)) { ?>
+                                                                                                                <? if (propertyStart === 0) { ?>
+                                                                                                                    ## Properties
+                                                                                                                    <? propertyStart = 1 ?>
+                                                                                                                        <? } ?>
+                                                                                                                            <? var propertyName = block.raw.code.split('this.')[1] ?>
+                                                                                                                                <? propertyName = propertyName.split(' = ')[0] ?>
 
-    <? var methodStart = 0 ?>
-    <? doc.javadoc.forEach(function (block) { ?>
-        <? if (block.paramStr) { ?>
-            <? if (methodStart === 0) { ?>
-                ## Methods
+                                                                                                                                    ###
+                                                                                                                                    <?= propertyName ?>
+                                                                                                                                        <?= block.description ?>
+                                                                                                                                            <? } ?>
+                                                                                                                                                <? }) ?>
 
-                <? methodStart = 1 ?>
-            <? } ?>
+                                                                                                                                                    <? var methodStart = 0 ?>
+                                                                                                                                                        <? doc.javadoc.forEach(function (block) { ?>
+                                                                                                                                                            <? if (block.paramStr) { ?>
+                                                                                                                                                                <? if (methodStart === 0) { ?>
+                                                                                                                                                                    ## Methods
 
-            <? var methodName = block.raw.code.split(':')[0] ?>
-            <? methodName = methodName.split(' =')[0] ?>
+                                                                                                                                                                    <? methodStart = 1 ?>
+                                                                                                                                                                        <? } ?>
 
-            ### <?= methodName ?>
-            <?= block.description ?>
+                                                                                                                                                                            <? var methodName = block.raw.code.split(':')[0] ?>
+                                                                                                                                                                                <? methodName = methodName.split(' =')[0] ?>
 
-            <? block.paramTags.forEach(function (tag) { ?>
-                - `<?= tag.name ?>`: *<?= tag.joinedTypes ?>* <?= tag.description ?>
-            <? }) ?>
+                                                                                                                                                                                    ###
+                                                                                                                                                                                    <?= methodName ?>
+                                                                                                                                                                                        <?= block.description ?>
 
-            <? var isExample = false ?>
-            <!-- ```` -->
-                <? block.raw.tags.forEach(function (tag) { ?>
-                  <? if (tag.type === 'example') { ?>
-                        <?  isExample = true ?>
-                  <? } ?>
-                  <? if (isExample) { ?>
-                        <?= tag.string ?>
-                  <? } ?>
-                <? }) ?>
-            <!-- ```` -->
-        <? } ?>
-    <? }) ?>
-<? }) ?>
+                                                                                                                                                                                            <? block.paramTags.forEach(function (tag) { ?>
+                                                                                                                                                                                                - `
+                                                                                                                                                                                                <?= tag.name ?>`: *
+                                                                                                                                                                                                    <?= tag.joinedTypes ?>*
+                                                                                                                                                                                                        <?= tag.description ?>
+                                                                                                                                                                                                            <? }) ?>
+
+                                                                                                                                                                                                                <? var isExample = false ?>
+                                                                                                                                                                                                                    <!-- ```` -->
+                                                                                                                                                                                                                    <? block.raw.tags.forEach(function (tag) { ?>
+                                                                                                                                                                                                                        <? if (tag.type === 'example') { ?>
+                                                                                                                                                                                                                            <?  isExample = true ?>
+                                                                                                                                                                                                                                <? } ?>
+                                                                                                                                                                                                                                    <? if (isExample) { ?>
+                                                                                                                                                                                                                                        <?= tag.string ?>
+                                                                                                                                                                                                                                            <? } ?>
+                                                                                                                                                                                                                                                <? }) ?>
+                                                                                                                                                                                                                                                    <!-- ```` -->
+                                                                                                                                                                                                                                                    <? } ?>
+                                                                                                                                                                                                                                                        <? }) ?>
+                                                                                                                                                                                                                                                            <? }) ?>

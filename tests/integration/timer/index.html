@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Timer test </title>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/epicenter-multiplayer-dependencies.min.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        section {
+            padding: 30px 0;
+            border-top: 1px dotted silver;
+        }
+        
+        .instructions {
+            color: blue;
+        }
+        
+        .timer {
+            display: flex;
+            align-items: center;
+        }
+        
+        .timer,
+        .timer h5 {
+            font-size: 1.3em;
+        }
+    </style>
+</head>
+
+<body class="container">
+    <section class="jumbotron">
+        <div class="row">
+            <div class="col-xs-6">
+                <form action="">
+                    <label for="">Account</label>
+                    <input type="text" id="txtAccount" value="team-naren">
+                    <br/>
+
+                    <label for="">Project</label>
+                    <input type="text" id="txtProject" value="multiplayer-test">
+                    <br/>
+
+                    <label for="">Username</label>
+                    <input type="text" id="txtUsername" value="n1">
+                    <br/>
+
+                    <label for="">Password</label>
+                    <input type="text" id="txtPassword" value="password1">
+                    <br/>
+
+                    <label for="">Model</label>
+                    <input type="text" id="txtModel" value="bikes-multiplayer.xlsx">
+                    <br/>
+
+                    <label for="">Server</label>
+                    <input type="text" id="txtServer" value="" />
+
+                    <button id="btnLogin"> Login </button>
+                    <a href="#" id='logout'> Logout</a>
+                </form>
+            </div>
+            <div class="col-xs-6">
+                Instructions here
+            </div>
+        </div>
+    </section>
+    <section data-scope="Custom">
+        <h3>Custom Auto-created timer</h3>
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="form">
+                    <div class="form-group">
+                        <label for="txtTimeLimit">Time limit (minutes)</label>
+                        <input type="text" class="form-control time-limit" value="2" />
+                    </div>
+                    <button class="btn btn-primary btn-create">Create timer</button>
+                    <button class="btn btn-delete">Delete</button>
+                </div>
+            </div>
+            <div class="col-xs-8">
+                <strong>Time left</strong>
+                <div class="timer">
+                    <h5 class="mins"></h5>:
+                    <h5 class="seconds"></h5>
+                </div>
+                <div>
+                    <button class="btnstart">Start</button>
+                    <button class="btnpause">Pause</button>
+                    <button class="btnresume">Resume</button>
+                    <button class="btnUpdateTime">Update</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section data-scope="group">
+        <h3>Group Scope</h3>
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="form">
+                    <div class="form-group">
+                        <label for="txtTimeLimit">Time limit (minutes)</label>
+                        <input type="text" class="form-control time-limit" value="2" />
+                    </div>
+                    <button class="btn btn-primary btn-create">Create timer</button>
+                    <button class="btn btn-delete">Delete</button>
+                </div>
+            </div>
+            <div class="col-xs-8">
+                <strong>Time left</strong>
+                <div class="timer">
+                    <h5 class="mins"></h5>:
+                    <h5 class="seconds"></h5>
+                </div>
+                <div>
+                    <button class="btnstart">Start</button>
+                    <button class="btnpause">Pause</button>
+                    <button class="btnresume">Resume</button>
+                    <button class="btnUpdateTime">Update</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section data-scope="user">
+        <h3>User Scope</h3>
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="form">
+                    <div class="form-group">
+                        <label for="txtTimeLimit">Time limit (minutes)</label>
+                        <input type="text" class="form-control time-limit" value="2" />
+                    </div>
+                    <button class="btn btn-primary btn-create">Create timer</button>
+                    <button class="btn btn-delete">Delete</button>
+                </div>
+            </div>
+            <div class="col-xs-8">
+                <strong>Time left</strong>
+                <div class="timer">
+                    <h5 class="mins"></h5>:
+                    <h5 class="seconds"></h5>
+                </div>
+                <div>
+                    <button class="btnstart">Start</button>
+                    <button class="btnpause">Pause</button>
+                    <button class="btnresume">Resume</button>
+                    <button class="btnUpdateTime">Update</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section data-scope="run">
+        <h3>Run Scope</h3>
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="form">
+                    <div class="form-group">
+                        <label for="txtTimeLimit">Time limit (minutes)</label>
+                        <input type="text" class="form-control time-limit" value="2" />
+                    </div>
+                    <button class="btn btn-primary btn-create">Create timer</button>
+                    <button class="btn btn-delete">Delete</button>
+                </div>
+            </div>
+            <div class="col-xs-8">
+                <strong>Time left</strong>
+                <div class="timer">
+                    <h5 class="mins"></h5>:
+                    <h5 class="seconds"></h5>
+                </div>
+                <div>
+                    <button class="btnstart">Start</button>
+                    <button class="btnpause">Pause</button>
+                    <button class="btnresume">Resume</button>
+                    <button class="btnUpdateTime">Update</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="../common.js"></script>
+    <script src="./integration-test-timer.js"></script>
+</body>
+
+</html>
