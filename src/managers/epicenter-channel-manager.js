@@ -280,7 +280,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @param  {String|Object} `userid` (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
      * @param  {String} `groupName` (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      */
-    getPresenceChannel: function (world, userid, groupName) {
+    getPresenceChannel: function (world, userid, groupName, options) {
         var worldid = ($.isPlainObject(world) && world.id) ? world.id : world;
         if (!worldid) {
             throw new Error('Please specify a world id');
@@ -295,8 +295,9 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         var channel = __super.getChannel.call(this, { base: baseTopic });
 
         var lastPingTime = { };
-
-        var PING_INTERVAL = 6000;
+        var defaults = $.extend(true, {}, {
+            pingInterval: 6000
+        }, options);
         channel.subscribe('internal-ping-channel', function (notification) {
             var incomingUserId = notification.data.user;
             if (!lastPingTime[incomingUserId] && incomingUserId !== userid) {
@@ -310,12 +311,12 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
 
             $.each(lastPingTime, function (key, value) {
                 var now = (new Date()).valueOf();
-                if (value && value + (PING_INTERVAL * 2) < now) {
+                if (value && value + (defaults.pingInterval * 2) < now) {
                     lastPingTime[key] = null;
                     channel.trigger.call(channel, 'presence', { userId: key, online: false });
                 }
             });
-        }, PING_INTERVAL);
+        }, defaults.pingInterval);
 
         return channel;
     },
