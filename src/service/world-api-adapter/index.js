@@ -27,6 +27,7 @@ var TransportFactory = require('transport/http-transport-factory').default;
 var SessionManager = require('store/session-manager');
 
 var ConsensusService = require('service/consensus-api-service/consensus-service').default;
+var rutil = require('util/run-util');
 
 var _pick = require('util/object-util').pick;
 
@@ -556,14 +557,15 @@ module.exports = function (config) {
 
             setIdFilterOrThrowError(options);
 
-            var getOptions = $.extend(true, {},
+            var postParams = $.extend(true, {},
                 serviceOptions,
                 options,
                 { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/run' }
             );
 
-            validateModelOrThrowError(getOptions);
-            return http.post(_pick(getOptions, 'model'), getOptions);
+            validateModelOrThrowError(postParams);
+            const validRunParams = rutil.extractValidRunParams(postParams);
+            return http.post(validRunParams, postParams);
         },
 
         /**

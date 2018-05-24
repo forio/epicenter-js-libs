@@ -56,7 +56,6 @@
 var ConfigService = require('service/configuration-service').default;
 var qutil = require('util/query-util');
 var rutil = require('util/run-util');
-var _pick = require('util/object-util').pick;
 var TransportFactory = require('transport/http-transport-factory').default;
 var VariablesService = require('./variables-api-service');
 var IntrospectionService = require('service/introspection-api-service');
@@ -217,13 +216,10 @@ module.exports = function (config) {
          */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath('run') });
-            var runApiParams = ['model', 'scope', 'files', 'ephemeral', 'cinFiles'];
             if (typeof params === 'string') {
-                // this is just the model name
                 params = { model: params };
             } else {
-                // whitelist the fields that we actually can send to the api
-                params = _pick(params, runApiParams);
+                params = rutil.extractValidRunParams(params);
             }
 
             var oldSuccess = createOptions.success;

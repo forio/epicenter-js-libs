@@ -346,6 +346,26 @@ describe('World API Service', function () {
 
             operation.should.throw(Error);
         });
+        it('should allow passing in whitelisted variables', ()=> {
+            const postParams = {
+                model: 'model_file',
+                files: { test: 'file.xlsx' }
+            };
+            createWorldAdapter({ filter: 'worldid1' }).getCurrentRunId(postParams);
+
+            var req = server.requests.pop();
+            req.requestBody.should.equal(JSON.stringify(postParams));
+        });
+        it('should ignore non-whitelisted variables', ()=> {
+            const postParams = {
+                model: 'model_file',
+                files: { test: 'file.xlsx' }
+            };
+            createWorldAdapter({ filter: 'worldid1' }).getCurrentRunId(Object.assign({}, postParams, { foo: 'bar' }));
+
+            var req = server.requests.pop();
+            req.requestBody.should.equal(JSON.stringify(postParams));
+        });
     });
 
     describe('deleteRun', function () {

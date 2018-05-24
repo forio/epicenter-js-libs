@@ -1,5 +1,5 @@
 
-import rutil from '../run-util';
+import * as rutil from '../run-util';
 
 describe('Run Utilities', function () {
     describe('#normalizeOperations()', function () {
