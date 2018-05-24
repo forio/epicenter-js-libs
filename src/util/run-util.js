@@ -3,10 +3,16 @@
 */
 'use strict';
 var qutil = require('./query-util');
+var _pick = require('../util/object-util')._pick;
 var MAX_URL_LENGTH = 2048;
 
 module.exports = (function () {
     return {
+        extractValidRunParams: function (params) {
+            var validParams = ['model', 'scope', 'files', 'ephemeral'];
+            return _pick(params, validParams);
+        },
+
         /**
          * returns operations of the form `[[op1,op2], [arg1, arg2]]`
          * @param  {Object|Array|String} operations operations to perform

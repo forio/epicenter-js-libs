@@ -26,6 +26,7 @@ var ConfigService = require('./configuration-service');
 var TransportFactory = require('../transport/http-transport-factory');
 var SessionManager = require('../store/session-manager');
 var _pick = require('../util/object-util')._pick;
+var rutil = require('../util/run-util');
 
 var apiBase = 'multiplayer/';
 var assignmentEndpoint = apiBase + 'assign';
@@ -553,14 +554,15 @@ module.exports = function (config) {
 
             setIdFilterOrThrowError(options);
 
-            var getOptions = $.extend(true, {},
+            var postParams = $.extend(true, {},
                 serviceOptions,
                 options,
                 { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/run' }
             );
 
-            validateModelOrThrowError(getOptions);
-            return http.post(_pick(getOptions, 'model'), getOptions);
+            validateModelOrThrowError(postParams);
+            var validRunParams = rutil.extractValidRunParams(postParams);
+            return http.post(validRunParams, postParams);
         },
 
         /**
@@ -662,7 +664,6 @@ module.exports = function (config) {
         */
         newRunForWorld: function (worldId, options) {
             var currentRunOptions = $.extend(true, {},
-                serviceOptions,
                 options,
                 { filter: worldId || serviceOptions.filter }
             );

@@ -217,13 +217,12 @@ module.exports = function (config) {
          */
         create: function (params, options) {
             var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath('run') });
-            var runApiParams = ['model', 'scope', 'files', 'ephemeral'];
             if (typeof params === 'string') {
                 // this is just the model name
                 params = { model: params };
             } else {
                 // whitelist the fields that we actually can send to the api
-                params = _pick(params, runApiParams);
+                params = rutil.extractValidRunParams(params);
             }
 
             var oldSuccess = createOptions.success;
