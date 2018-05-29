@@ -1,9 +1,11 @@
 import URLService from '../index';
 import apiversion from '../../../api-version.json';
 
+import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));
 
+const { expect } = chai;
 
 var version = apiversion.version ? apiversion.version + '/' : '';
 
@@ -71,6 +73,15 @@ describe('URL Service', function () {
             URLService.defaults = { protocol: 'htttps', host: 'funky.forio.com' };
             var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
             url.getAPIPath('data').should.equal('htttps://funky.forio.com/data/forioAccount/forioProj/');
+
+            URLService.defaults = oldDefaults;
+        });
+        it('should allow overloading with a function', ()=> {
+            var oldDefaults = $.extend({}, URLService.defaults);
+
+            URLService.defaults = { getAPIPath: sinon.spy((api)=> `foobar/${api}/`) };
+            var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
+            url.getAPIPath('data').should.equal('foobar/data/');
 
             URLService.defaults = oldDefaults;
         });

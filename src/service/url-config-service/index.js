@@ -116,7 +116,7 @@ var UrlConfigService = function (config) {
             }
             var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
 
-            if ($.inArray(apiEndpoint, PROJECT_APIS) !== -1) {
+            if (PROJECT_APIS.indexOf(apiEndpoint) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath + '/';
             }
             return apiPath;
