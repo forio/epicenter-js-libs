@@ -13,9 +13,9 @@ function getAPIKeyName(options) {
     const delimiter = '_';
     const prefix = 'timer';
     if (scope === SCOPES.GROUP) {
-        return [prefix, 'group', options.groupName].join(delimiter);
+        return [prefix, 'group', options.groupId].join(delimiter);
     } else if (scope === SCOPES.USER) {
-        return [prefix, 'user', options.userName, 'group', options.groupName].join(delimiter);
+        return [prefix, 'user', options.userId, 'group', options.groupId].join(delimiter);
     } else if (scope === SCOPES.RUN) {
         if (!options.scopeOptions || !options.scopeOptions.runid) {
             throw new Error('Run Scope requires passing in run options with scopeOptions: { runid: <id> }');
