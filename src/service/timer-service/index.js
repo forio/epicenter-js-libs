@@ -10,16 +10,17 @@ import { SCOPES, ACTIONS } from './timer-constants';
 
 function getAPIKeyName(options) {
     const scope = options.scope.toUpperCase();
+    const delimiter = '_';
     const prefix = 'timer';
     if (scope === SCOPES.GROUP) {
-        return [prefix, options.groupName].join('-');
+        return [prefix, 'group', options.groupName].join(delimiter);
     } else if (scope === SCOPES.USER) {
-        return [prefix, options.groupName, options.userName].join('-');
+        return [prefix, 'user', options.userName, 'group', options.groupName].join(delimiter);
     } else if (scope === SCOPES.RUN) {
         if (!options.scopeOptions || !options.scopeOptions.runid) {
             throw new Error('Run Scope requires passing in run options with scopeOptions: { runid: <id> }');
         }
-        return [prefix, options.groupName, options.scopeOptions.runid].join('-');
+        return [prefix, 'run', options.scopeOptions.runid].join(delimiter);
     } else if (scope === SCOPES.CUSTOM) {
         if (!options.scopeOptions || !options.scopeOptions.customName) {
             throw new Error('Custom Scope requires passing in scopeOptions: { customName: <id> }');
@@ -238,8 +239,8 @@ class TimerService {
     getState() {
         const merged = this.sessionManager.getMergedOptions(this.options);
         const ds = getStore(merged);
-        return ds.load(merged.name).then(function calculateTimeLeft(doc) {
-            return this.getCurrentTime().then(function (currentTime) {
+        return ds.load(merged.name).then((doc)=> {
+            return this.getCurrentTime().then((currentTime)=> {
                 const actions = doc.actions;
                 const state = getStateFromActions(actions, currentTime, this.options);
                 return $.extend(true, {}, doc, state);
@@ -271,7 +272,7 @@ class TimerService {
             }
             me.interval = setInterval(function () {
                 currentTime = currentTime + merged.tickInterval;
-                const state = getStateFromActions(actions, currentTime, this.options);
+                const state = getStateFromActions(actions, currentTime, me.options);
                 if (state.remaining.time === 0) {
                     me.channel.publish(ACTIONS.COMPLETE, state);
 
@@ -281,7 +282,7 @@ class TimerService {
                 me.channel.publish(ACTIONS.TICK, state);
             }, merged.tickInterval);
 
-            const state = getStateFromActions(actions, currentTime, this.options);
+            const state = getStateFromActions(actions, currentTime, me.options);
             me.channel.publish(ACTIONS.TICK, state);
         }
 

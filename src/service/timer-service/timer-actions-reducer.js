@@ -66,10 +66,10 @@ export default function reduceActions(actions, startTime, currentTime) {
 
     const remaining = Math.max(0, reduced.timeLimit - elapsed);
 
-    return {
+    return $.extend(true, {}, base, {
         isPaused: reduced.isPaused,
         isStarted: reduced.isStarted,
         elapsed: toDetailedTime(elapsed),
         remaining: toDetailedTime(remaining),
-    };
+    });
 }

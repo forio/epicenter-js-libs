@@ -62,7 +62,7 @@ $('.btnresume').click(function (evt) {
 });
 
 $('.btnUpdateTime').click(function (evt) {
-    getTm(evt).getTime().then(function (time) {
+    getTm(evt).getCurrentTime().then(function (time) {
         console.log(time);
     }, function (e) {
         console.error('btnUpdateTime error', e);
