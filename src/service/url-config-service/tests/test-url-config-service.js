@@ -7,12 +7,18 @@ chai.use(require('sinon-chai'));
 
 const { expect } = chai;
 
-var version = apiversion.version ? apiversion.version + '/' : '';
+describe.only('URL Service', function () {
+    function getHost() {
+        return window.location.host || ''; //for phantomjs
+    }
 
-function getHost() {
-    return window.location.host || ''; //for phantomjs
-}
-describe('URL Service', function () {
+    var version = apiversion.version ? apiversion.version + '/' : '';
+    const oldDefaults = Object.assign({}, URLService.defaults);
+
+    afterEach(()=> {
+        URLService.defaults = Object.assign({}, oldDefaults);
+    });
+
     describe('#isLocalhost', function () {
         it('should be overridable with literal value', function () {
             var url = new URLService({ isLocalhost: false });
@@ -30,6 +36,23 @@ describe('URL Service', function () {
         });
     });
     describe('#baseURL', ()=> {
+        it('should allow overriding as a string', ()=> {
+            var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
+            url.baseURL = 'proxy/';
+            url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
+        });
+        it('should allow overriding as a function', ()=> {
+            var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
+            url.baseURL = ()=> 'proxy/';
+            url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
+        });
+        it('should allow over-riding from the defaults', function () {
+            console.log(oldDefaults);
+            URLService.defaults.baseURL = 'proxy/';
+            console.log(oldDefaults);
+            var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
+            url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
+        });
     });
 
     describe('#url', function () {
