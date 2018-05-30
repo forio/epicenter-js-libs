@@ -176,6 +176,13 @@ export default class DataService {
         return this.http.post(attrs, httpOptions);
     }
     
+    /**
+     * Append value to key
+     * @param  {string} key     path to array item
+     * @param  {any} val     value to append to array
+     * @param  {object} [options] Overrides for configuration options
+     * @return {Promise}
+     */
     pushToArray(key, val, options) {
         var httpOptions = $.extend(true, {}, this.serviceOptions, options);
         httpOptions.url = this.getURL(key, httpOptions.root);

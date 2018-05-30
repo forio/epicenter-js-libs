@@ -1,3 +1,25 @@
+<a name="2.6.0"></a>
+#### Bug Fixes:
+- World Service: `getCurrentRunId` and `newRunForWorld` calls were ignoring any `files` or `cinFiles` parameters passed in; they now correctly pass it through to the APIs, facilitating building multiplayer Vensim models relying on external files.
+
+### Improvements:
+- If you're using `ngrok` for testing your simulation locally, it is now identified as "local" (and defaults to using api.forio.com)
+
+#### Features:
+
+####New DataService methods:
+- `getChannel`: returns a subscribable hook to the push channel. This is a convenience wrapper around the `getDataChannel` method of the `ChannelManager`
+- `pushToArray`: Adds items to an underlying array structure on a document. See [REST API docs](https://forio.com/epicenter/docs/public/rest_apis/data_api/#adding-data-to-an-existing-array-variable-within-a-collection) for details.
+
+### New Consensus Services
+Two new (related) services have been added: `F.service.Consensus` and `F.service.ConsensusGroup`, as well as a helper `worldservice.consensus()` method. 
+
+Consensus services are useful for turn-by-turn multiplayer simulations when you want to:
+a. Delay execution of an operation until all members within a world have 'submitted'
+b. Provide the model with default values for users who haven't submitted
+
+See *TBD* for more details.
+
 <a name="2.5.0"></a>
 #### Bug Fixes:
 - `reuse-last-initialized` strategy used to select the last initialized run even if it was trashed; now it ignores trashed runs.

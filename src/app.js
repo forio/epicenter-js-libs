@@ -42,6 +42,9 @@ F.service.Presence = require('./service/presence-api-service');
 F.service.Time = require('./service/time-api-service').default;
 F.service.Timer = require('./service/timer-service').default;
 
+F.service.Consensus = require('./service/consensus-api-service/consensus-service');
+F.service.ConsensusGroup = require('./service/consensus-api-service/consensus-group-service');
+
 F.store.Cookie = require('./store/cookie-store');
 
 F.factory.Store = require('./store/store-factory');

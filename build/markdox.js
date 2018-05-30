@@ -106,7 +106,14 @@ module.exports = function (grunt) {
                     src: 'src/managers/scenario-manager/saved-runs-manager/index.js',
                     dest: 'documentation/generated/scenario-manager/saved/index.html.md'
                 }, 
-
+                {
+                    src: 'src/services/consensus-api-service/consensus-service.js',
+                    dest: 'documentation/generated/consensus/consensus-service/index.html.md'
+                },
+                {
+                    src: 'src/services/consensus-api-service/consensus-group-service.js',
+                    dest: 'documentation/generated/consensus/consensus-group-service/index.html.md'
+                }
             ]
         }
     });
