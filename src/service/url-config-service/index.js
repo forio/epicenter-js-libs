@@ -102,6 +102,11 @@ var UrlConfigService = function (config) {
             return version;
         }()),
 
+        baseURL: function () {
+            var baseURL = this.protocol + '://' + this.host + '/' + this.versionPath;
+            return baseURL;
+        },
+
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
             var apiMapping = {
@@ -114,7 +119,8 @@ var UrlConfigService = function (config) {
                 var configProtocol = (options.isLocalhost()) ? this.protocol : actualProtocol;
                 return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
             }
-            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
+            var baseURL = (typeof this.baseURL === 'function') ? this.baseURL() : this.baseURL;
+            var apiPath = baseURL + apiEndpoint + '/';
 
             if (PROJECT_APIS.indexOf(apiEndpoint) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath + '/';

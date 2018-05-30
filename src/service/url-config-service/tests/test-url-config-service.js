@@ -29,6 +29,9 @@ describe('URL Service', function () {
             url2.isLocalhost().should.equal(true);
         });
     });
+    describe('#baseURL', ()=> {
+    });
+
     describe('#url', function () {
         it('should default to current hostname if not localhost', function () {
             var url = new URLService({ isLocalhost: false });
