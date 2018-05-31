@@ -1,16 +1,24 @@
 import URLService from '../index';
 import apiversion from '../../../api-version.json';
 
+import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));
 
+const { expect } = chai;
 
-var version = apiversion.version ? apiversion.version + '/' : '';
+describe.only('URL Service', function () {
+    function getHost() {
+        return window.location.host || ''; //for phantomjs
+    }
 
-function getHost() {
-    return window.location.host || ''; //for phantomjs
-}
-describe('URL Service', function () {
+    var version = apiversion.version ? apiversion.version + '/' : '';
+    const oldDefaults = Object.assign({}, URLService.defaults);
+
+    afterEach(()=> {
+        URLService.defaults = Object.assign({}, oldDefaults);
+    });
+
     describe('#isLocalhost', function () {
         it('should be overridable with literal value', function () {
             var url = new URLService({ isLocalhost: false });
@@ -27,6 +35,26 @@ describe('URL Service', function () {
             url2.isLocalhost().should.equal(true);
         });
     });
+    describe('#baseURL', ()=> {
+        it('should allow overriding as a string', ()=> {
+            var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
+            url.baseURL = 'proxy/';
+            url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
+        });
+        it('should allow overriding as a function', ()=> {
+            var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj' });
+            url.baseURL = ()=> 'proxy/';
+            url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
+        });
+        it('should allow over-riding from the defaults', function () {
+            console.log(oldDefaults);
+            URLService.defaults.baseURL = 'proxy/';
+            console.log(oldDefaults);
+            var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
+            url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
+        });
+    });
+
     describe('#url', function () {
         it('should default to current hostname if not localhost', function () {
             var url = new URLService({ isLocalhost: false });
@@ -71,6 +99,15 @@ describe('URL Service', function () {
             URLService.defaults = { protocol: 'htttps', host: 'funky.forio.com' };
             var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
             url.getAPIPath('data').should.equal('htttps://funky.forio.com/data/forioAccount/forioProj/');
+
+            URLService.defaults = oldDefaults;
+        });
+        it('should allow overloading with a function', ()=> {
+            var oldDefaults = $.extend({}, URLService.defaults);
+
+            URLService.defaults = { getAPIPath: sinon.spy((api)=> `foobar/${api}/`) };
+            var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
+            url.getAPIPath('data').should.equal('foobar/data/');
 
             URLService.defaults = oldDefaults;
         });
