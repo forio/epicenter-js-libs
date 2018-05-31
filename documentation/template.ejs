@@ -39,6 +39,7 @@
         <? } ?>
     <? }) ?>
 
+
     <? var propertyStart = 0 ?>
     <? doc.javadoc.forEach(function (block){ ?>
         <? if ((block.returnTags.length == 1) && (block.paramStr.length == 0)) { ?>
@@ -70,20 +71,18 @@
             <?= block.description ?>
 
             <? block.paramTags.forEach(function (tag) { ?>
-                - `<?= tag.name ?>`: *<?= tag.joinedTypes ?>* <?= tag.description ?>
+                - `<?= tag.name ?>`: *<?= tag.joinedTypes ?>* <?= tag.optional ? '(Optional)' : '' ?> <?= tag.description ?>
             <? }) ?>
 
             <? var isExample = false ?>
-            <!-- ```` -->
-                <? block.raw.tags.forEach(function (tag) { ?>
-                  <? if (tag.type === 'example') { ?>
-                        <?  isExample = true ?>
-                  <? } ?>
-                  <? if (isExample) { ?>
-                        <?= tag.string ?>
-                  <? } ?>
-                <? }) ?>
-            <!-- ```` -->
+            <? block.raw.tags.forEach(function (tag) { ?>
+              <? if (tag.type === 'example') { ?>
+                    <?  isExample = true ?>
+              <? } ?>
+              <? if (isExample) { ?>
+                    <?= tag.string ?>
+              <? } ?>
+            <? }) ?>
         <? } ?>
     <? }) ?>
 <? }) ?>
