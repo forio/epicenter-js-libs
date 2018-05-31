@@ -1,3 +1,6 @@
+/**
+ * Consensus Group Service
+ */
 import ConfigService from 'service/configuration-service';
 import ConsensusService from './consensus-service.js';
 import TransportFactory from 'transport/http-transport-factory';

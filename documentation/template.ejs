@@ -43,7 +43,7 @@
                 <? propertyStart = 1 ?>
             <? } ?>
             <? var propertyName = block.raw.code.split('this.')[1] ?>
-            <? propertyName = propertyName.split(' = ')[0] ?>
+            <? propertyName = (propertyName || '').split(' = ')[0] ?>
 
             ### <?= propertyName ?>
             <?= block.description ?>

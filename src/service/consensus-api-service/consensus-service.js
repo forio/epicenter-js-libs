@@ -1,3 +1,7 @@
+/**
+ * Consensus Service
+ */
+
 import ConfigService from 'service/configuration-service';
 import TransportFactory from 'transport/http-transport-factory';
 import { getDefaultOptions } from 'service/service-utils';
@@ -87,7 +91,7 @@ export default function (config) {
         /**
          * Update defaults set during create. Currently only updating defaultActions is supported.
          *
-         * @param {{defaultActions: []}} params Consensus defaults to override
+         * @param {{defaultActions: actions[]}} params Consensus defaults to override
          * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
@@ -160,6 +164,7 @@ export default function (config) {
 
         /**
          * Returns current configuration
+         *
          * @returns {object}
          */
         getCurrentConfig: function () {

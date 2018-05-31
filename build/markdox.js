@@ -107,11 +107,11 @@ module.exports = function (grunt) {
                     dest: 'documentation/generated/scenario-manager/saved/index.html.md'
                 }, 
                 {
-                    src: 'src/services/consensus-api-service/consensus-service.js',
+                    src: 'src/service/consensus-api-service/consensus-service.js',
                     dest: 'documentation/generated/consensus/consensus-service/index.html.md'
                 },
                 {
-                    src: 'src/services/consensus-api-service/consensus-group-service.js',
+                    src: 'src/service/consensus-api-service/consensus-group-service.js',
                     dest: 'documentation/generated/consensus/consensus-group-service/index.html.md'
                 }
             ]
