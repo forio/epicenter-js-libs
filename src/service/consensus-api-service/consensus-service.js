@@ -1,5 +1,34 @@
 /**
- * Consensus Service
+ * 
+ * ## Consensus Service
+ *
+ * The Consensus Service allows you to build common features in multiplayer games like:
+ *
+    - Delaying execution of an operation until all users within a world have 'submitted'
+    - Enforcing timed 'rounds' within the game
+    - Providing the model with default values for users who haven't submitted
+
+    The consensus endpoint is scoped by world, and acts upon the current run in the world. 
+
+        var wm = new F.manager.WorldManager({ model: 'mymodel.vmf' });
+        wm.getCurrentWorld().then(function (world) {
+            var cs = new F.service.Consensus({ 
+                name: 'round-1',
+                worldId: world.id
+            });
+            return cs;
+        });
+    
+    You can optionally provide a `consensusGroup` parameter to group related consensus steps. For example:
+
+        new F.service.Consensus({ 
+            consensusGroup: 'round'
+            name: '1',
+            worldId: world.id
+        });
+
+    This allows you to use `F.service.ConsensusGroup` to list out/ delete all consensus points within that group for reporting.
+ * 
  */
 
 import ConfigService from 'service/configuration-service';
@@ -54,6 +83,18 @@ export default function (config) {
     const publicAPI = {
         /**
          * Creates a new consensus point
+         * 
+         * **Example**
+         *
+         *      cs.create({
+                    roles: ['P1', 'P2'],
+                    defaultActions: {
+                        P1: [{ name: 'submitPlayer1', arguments: [1] }],
+                        P2: [{ name: 'submitPlayer2', arguments: [2] }],
+                    },
+                    ttlSeconds: 10
+                }
+         * 
          * @param  {object} params  creation options
          * @param  {string[]|{string: number}} params.roles
          * @param  {{string:object[]}} [params.defaultActions] Actions to take if the role specified in the key does not submit
@@ -137,7 +178,12 @@ export default function (config) {
         },
         /**
          * Submits actions for your turn and marks you as having `submitted`. If `executeActionsImmediately` was set to `true` while creating the consensus point, the actions will be immediately sent to the model.
+         * Note that you can still call operations from the RunService directly, but will bypass the consensus requirements.
          *
+         * ** Example **
+         *
+                bp.submitActions([{ name: 'step', arguments: [] }]);
+         *  
          * @param {object[]|{name: string, arguments: any[]}} actions Actions to send
          * @param {object} [options] Overrides for service options
          * @returns {Promise}

@@ -1,12 +1,12 @@
 <a name="2.6.0"></a>
 #### Bug Fixes:
 - World Service: `getCurrentRunId` and `newRunForWorld` calls were ignoring any `files` or `cinFiles` parameters passed in; they now correctly pass it through to the APIs, facilitating building multiplayer Vensim models relying on external files.
+- Fixed bug where the muliplayer strategy was prematurely returning a success before a run was actually created. 
 
 ### Improvements:
 - If you're using `ngrok` for testing your simulation locally, it is now identified as "local" (and defaults to using api.forio.com)
 
 #### Features:
-
 ####New DataService methods:
 - `getChannel`: returns a subscribable hook to the push channel. This is a convenience wrapper around the `getDataChannel` method of the `ChannelManager`
 - `pushToArray`: Adds items to an underlying array structure on a document. See [REST API docs](https://forio.com/epicenter/docs/public/rest_apis/data_api/#adding-data-to-an-existing-array-variable-within-a-collection) for details.
@@ -14,11 +14,16 @@
 ### New Consensus Services
 Two new (related) services have been added: `F.service.Consensus` and `F.service.ConsensusGroup`, as well as a helper `worldservice.consensus()` method. 
 
-Consensus services are useful for turn-by-turn multiplayer simulations when you want to:
-a. Delay execution of an operation until all members within a world have 'submitted'
-b. Provide the model with default values for users who haven't submitted
+The Consensus Service allows you to build common features in multiplayer games like:
+   - Delaying execution of an operation until all users within a world have 'submitted'
+   - Enforcing timed 'rounds' within the game
+   - Providing the model with default values for users who haven't submitted
 
-See *TBD* for more details.
+See documentation for [Consensus Service](http://forio.com/epicenter/docs/public/api_adapters/generated/consensus/consensus-service/index.html.md) and [Consensus Group](http://forio.com/epicenter/docs/public/api_adapters/generated/consensus/consensus-group-service/index.html.md) for more details.
+
+### Chores:
+- The build process has been switched from browserify to webpack. This should have no visible difference except a slightly smaller bundle size.
+- Now that ES6 usage is more common, parts of the codebase has been converted to ES6 and transpiled with Babel.
 
 <a name="2.5.0"></a>
 #### Bug Fixes:

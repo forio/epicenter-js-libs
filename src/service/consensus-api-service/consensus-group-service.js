@@ -1,6 +1,19 @@
 /**
- * Consensus Group Service
+ * 
+ * ## Consensus Group Service
+ *
+ * The Consensus Group Service provides a way to group different consensus points within your world. This is typically used in faculty pages to report progression throw different Consensus Points.
+ * 
+ *      var cg = new F.service.ConsensusGroup({
+ *          worldId: world.id,
+ *          name: 'rounds'
+ *      });
+ *      cg.consensus('round1').create(..);
+ *
+ * You can use the Consensus Service (`F.service.Consensus`) without using the ConsensusGroup (`F.service.ConsensusGroup`) - the Consensus Service uses a group called "default" by default.
+ * 
  */
+
 import ConfigService from 'service/configuration-service';
 import ConsensusService from './consensus-service.js';
 import TransportFactory from 'transport/http-transport-factory';
@@ -42,17 +55,7 @@ export default function ConsensusGroupService(config) {
     }
     const publicAPI = {
         /**
-         * Deletes consensus group
-         * 
-         * @param {object} [options] Overrides for serviceoptions
-         * @returns {Promise}
-         */
-        delete: function (options) {
-            const httpOptions = getHTTPOptions(options);
-            return http.delete({}, httpOptions);        
-        },
-        /**
-         * List all created consensus points within this group
+         * List all consensus points within this group
          * 
          * @param {object} outputModifier Currently unused, may be used for paging etc later
          * @param {object} [options] Overrides for serviceoptions
@@ -64,19 +67,30 @@ export default function ConsensusGroupService(config) {
         },
 
         /**
-         * List all created consensus points within this group
+         * Deletes all consensus points within this group
          * 
-         * @param {string} [name] Returns a new instance of a consensus service. Note it is not created until you call `create` on the returned service.
          * @param {object} [options] Overrides for serviceoptions
          * @returns {Promise}
          */
+        delete: function (options) {
+            const httpOptions = getHTTPOptions(options);
+            return http.delete({}, httpOptions);        
+        },
+
+        /**
+         * Helper to return a Consensus instance 
+         * 
+         * @param {string} [name] Returns a new instance of a consensus service. Note it is not created until you call `create` on the returned service.
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {ConsensusService}
+         */
         consensus: function (name, options) {
             const opts = $.extend({}, true, serviceOptions, options);
-            const bp = new ConsensusService($.extend(true, opts, {
+            const cs = new ConsensusService($.extend(true, opts, {
                 consensusGroup: opts.name,
                 name: name,
             }));
-            return bp;
+            return cs;
         }
     };
     return publicAPI;
