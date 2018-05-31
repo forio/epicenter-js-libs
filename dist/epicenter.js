@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.5.0
+ *         v2.6.0
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -6200,7 +6200,7 @@ F.manager.strategy = strategies.list; //TODO: this is not really a manager so na
 F.manager.ChannelManager = __webpack_require__(13).default;
 F.service.Channel = __webpack_require__(27);
 
-if (true) F.version = "2.5.0"; //eslint-disable-line no-undef
+if (true) F.version = "2.6.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(20);
 
 F.constants = __webpack_require__(12);
