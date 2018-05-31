@@ -1,18 +1,13 @@
 <? docfiles.forEach(function (doc) { ?>
-
     <? var moduleName = doc.filename.split('/').pop().split('.')[0] ?>
     ---
     title: <?= moduleName.split('-').join(' ') ?>
     layout: "default"
     isPage: true
     ---
-
     <? var moduleDoc = doc.javadoc.shift() ?>
     <?= moduleDoc.description ?>
-
     <? var firstTag = moduleDoc.raw.tags[0] ?>
-
-
     <? var configStart = 0 ?>
     <? doc.javadoc.forEach(function (block) { ?>
         <? if (!block.paramStr && (block.returnTags.length == 0)) { ?>
@@ -71,9 +66,7 @@
             <?= block.description ?>
 
             <? block.paramTags.forEach(function (tag) { ?>
-                - `<?= tag.name ?>`: *<?= tag.joinedTypes ?>* <?= tag.optional ? '(Optional)' : '' ?> <?= tag.description ?>
-            <? }) ?>
-
+                - `<?= tag.name ?>`: *<?= tag.joinedTypes ?>* <?= tag.optional ? '(Optional)' : '' ?> <?= tag.description ?><? }) ?>
             <? var isExample = false ?>
             <? block.raw.tags.forEach(function (tag) { ?>
               <? if (tag.type === 'example') { ?>
