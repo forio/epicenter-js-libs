@@ -82,7 +82,7 @@ export default class PasswordService {
         const isRelativeURL = (postParams.redirectURL.indexOf('http') !== 0);
         if (isRelativeURL) {
             const { protocol, actingHost, accountPath, projectPath } = urlConfig;
-            const absURL = [actingHost, accountPath, projectPath, postParams.redirectURL].join('/');
+            const absURL = [actingHost, accountPath, projectPath, postParams.redirectURL.replace(/^\//, '')].join('/');
             postParams.redirectURL = `${protocol}://${absURL}`;
         }
         return http.post(postParams);

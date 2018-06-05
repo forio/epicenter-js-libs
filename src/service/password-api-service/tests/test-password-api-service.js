@@ -58,22 +58,33 @@ describe('Password API API', function () {
             const params = JSON.parse(req.requestBody);
             expect(params.account).to.equal(account);
         });
-        it('should accept relative redirect urls', ()=> {
-            const ps = createPasswordService();
-            ps.resetPassword('myUserName', { redirectURL: 'login.html' });
-
-            const req = server.requests.pop();
-            const params = JSON.parse(req.requestBody);
-            expect(params.redirectURL).to.equal(`https://forio.com/${account}/${project}/login.html`);
+        describe('redirectURL', ()=> {
+            it('should accept relative redirect urls', ()=> {
+                const ps = createPasswordService();
+                ps.resetPassword('myUserName', { redirectURL: 'login.html' });
+    
+                const req = server.requests.pop();
+                const params = JSON.parse(req.requestBody);
+                expect(params.redirectURL).to.equal(`https://forio.com/${account}/${project}/login.html`);
+            });
+            it('should allow leading slash in relative url', ()=> {
+                const ps = createPasswordService();
+                ps.resetPassword('myUserName', { redirectURL: '/bar/login.html' });
+    
+                const req = server.requests.pop();
+                const params = JSON.parse(req.requestBody);
+                expect(params.redirectURL).to.equal(`https://forio.com/${account}/${project}/bar/login.html`);
+            });
+            it('should accept absolute redirect urls', ()=> {
+                const ps = createPasswordService();
+                ps.resetPassword('myUserName', { redirectURL: 'http://bar.com' });
+    
+                const req = server.requests.pop();
+                const params = JSON.parse(req.requestBody);
+                expect(params.redirectURL).to.equal('http://bar.com');
+            });
         });
-        it('should accept relative redirect urls', ()=> {
-            const ps = createPasswordService();
-            ps.resetPassword('myUserName', { redirectURL: 'http://bar.com' });
-
-            const req = server.requests.pop();
-            const params = JSON.parse(req.requestBody);
-            expect(params.redirectURL).to.equal('http://bar.com');
-        });
+       
         it('should POST required parameters', ()=> {
             const ps = createPasswordService();
             ps.resetPassword('myUserName', { redirectURL: 'http://bar.com', subject: 'foo', projectFullName: 'bar', something: 'ignored' });
