@@ -47,9 +47,7 @@ describe.only('URL Service', function () {
             url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
         });
         it('should allow over-riding from the defaults', function () {
-            console.log(oldDefaults);
             URLService.defaults.baseURL = 'proxy/';
-            console.log(oldDefaults);
             var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
             url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
         });

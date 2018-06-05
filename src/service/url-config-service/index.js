@@ -125,7 +125,8 @@ var UrlConfigService = function (config) {
             if (PROJECT_APIS.indexOf(apiEndpoint) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath + '/';
             }
-            return apiPath;
+            var multiSlashReplaced = apiPath.replace(/[^:]\/{2,3}/g, '/');
+            return multiSlashReplaced;
         }
     };
 

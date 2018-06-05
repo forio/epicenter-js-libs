@@ -2,6 +2,8 @@ import ConfigService from './configuration-service';
 import SessionManager from '../store/session-manager';
 import objectAssign from 'object-assign';
 
+import TransportFactory from 'transport/http-transport-factory';
+
 export function getApiUrl(apiEndpoint, serviceOptions) {
     var urlConfig = new ConfigService(serviceOptions).get('server');
     return urlConfig.getAPIPath(apiEndpoint);
@@ -33,3 +35,18 @@ export function getDefaultOptions(defaults) {
     return serviceOptions;
 }
 
+export function getURLConfig(options) {
+    var urlConfig = new ConfigService(options).get('server');
+    if (options.account) {
+        urlConfig.accountPath = options.account;
+    }
+    if (options.project) {
+        urlConfig.projectPath = options.project;
+    }
+    return urlConfig;
+}
+export function getHTTPTransport(serviceOptions, overrides) {
+    const mergedOptions = $.extend(true, {}, serviceOptions, overrides);
+    const http = new TransportFactory(mergedOptions);
+    return http;
+}

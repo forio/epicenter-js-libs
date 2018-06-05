@@ -40,7 +40,7 @@ module.exports = function (grunt) {
             reporters: ['mocha'],
             singleRun: true,
             browserConsoleLogOptions: {
-                terminal: false
+                terminal: true
             },
             // logLevel: 'debug',
             mochaReporter: {
