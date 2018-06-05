@@ -77,7 +77,20 @@ var F =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__);
+// var isNode = false; FIXME: Browserify/minifyify has issues with the next link
+// var transport = (isNode) ? require('./node-http-transport') : require('./ajax-http-transport');
+
+/* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default.a);
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -166,26 +179,13 @@ var ConfigService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ConfigService);
 
 /***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__);
-// var isNode = false; FIXME: Browserify/minifyify has issues with the next link
-// var transport = (isNode) ? require('./node-http-transport') : require('./ajax-http-transport');
-
-/* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default.a);
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keyNames = __webpack_require__(12);
+var keyNames = __webpack_require__(13);
 var StorageFactory = __webpack_require__(24);
 var optionUtils = __webpack_require__(41);
 
@@ -388,10 +388,18 @@ module.exports = function (base, props, staticProps) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
 /* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
-function pick(obj, props) {
+/* harmony export (immutable) */ __webpack_exports__["ensureKeysPresent"] = ensureKeysPresent;
+/**
+ * Return selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+function pick(obj, keys) {
     var res = {};
     for (var p in obj) {
-        if (props.indexOf(p) !== -1) {
+        if (keys.indexOf(p) !== -1) {
             res[p] = obj[p];
         }
     }
@@ -399,6 +407,24 @@ function pick(obj, props) {
 }
 function isEmpty(value) {
     return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
+}
+
+/**
+ * Confirms presence of keys or throws error
+ * 
+ * @param {Object} obj
+ * @param {string[]} keysList
+ * @param {string} [context] Prefix to add to error message
+ * @throws {Error}
+ * @return {boolean}
+ */
+function ensureKeysPresent(obj, keysList, context) {
+    keysList.forEach(function (key) {
+        if (obj[key] === null || obj[key] === undefined) {
+            throw new Error((context || '') + ' Missing required parameter \'' + key + '\'\' in ' + JSON.stringify(obj) + ' ');
+        }
+    });
+    return true;
 }
 
 /***/ }),
@@ -862,10 +888,10 @@ function splitGetFactory(httpOptions) {
 
 
 
-var ConfigService = __webpack_require__(0).default;
+var ConfigService = __webpack_require__(1).default;
 var qutil = __webpack_require__(5);
 var rutil = __webpack_require__(7);
-var TransportFactory = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var VariablesService = __webpack_require__(22);
 var IntrospectionService = __webpack_require__(23);
 var SessionManager = __webpack_require__(2);
@@ -1525,6 +1551,74 @@ module.exports = classFrom(Base, {
 
 /***/ }),
 /* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
+/* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
+
+
+
+
+
+
+function getApiUrl(apiEndpoint, serviceOptions) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
+    return urlConfig.getAPIPath(apiEndpoint);
+}
+
+/*
+* Gets the default options for a api service.
+* It will merge:
+* - The Session options (Using the Session Manager)
+* - The Authorization Header from the token option
+* - The full url from the endpoint option
+* With the supplied overrides and defaults
+*
+*/
+function getDefaultOptions(defaults) {
+    var rest = Array.prototype.slice.call(arguments, 1);
+    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
+    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
+
+    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
+        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
+    });
+
+    if (serviceOptions.token) {
+        serviceOptions.transport.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+    return serviceOptions;
+}
+
+function getURLConfig(options) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](options).get('server');
+    if (options.account) {
+        urlConfig.accountPath = options.account;
+    }
+    if (options.project) {
+        urlConfig.projectPath = options.project;
+    }
+    return urlConfig;
+}
+function getHTTPTransport(serviceOptions, overrides) {
+    var mergedOptions = $.extend(true, {}, serviceOptions, overrides);
+    var http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](mergedOptions);
+    return http;
+}
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1564,13 +1658,11 @@ var UrlConfigService = function (config) {
     if (!config) {
         config = {};
     }
-    // console.log(this.defaults);
     var overrides = $.extend({}, envConf, config);
     var options = $.extend({}, defaults, overrides);
 
     overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
 
-    // console.log(isLocalhost(), '___________');
     var actingHost = config && config.host;
     if (!actingHost && options.isLocalhost()) {
         actingHost = 'forio.com';
@@ -1589,10 +1681,11 @@ var UrlConfigService = function (config) {
 
         api: '',
 
+        actingHost: actingHost,
+
         //TODO: this should really be called 'apihost', but can't because that would break too many things
         host: function () {
             var apiHost = HOST_API_MAPPING[actingHost] ? HOST_API_MAPPING[actingHost] : actingHost;
-            // console.log(actingHost, config, apiHost);
             return apiHost;
         }(),
 
@@ -1631,6 +1724,11 @@ var UrlConfigService = function (config) {
             return version;
         }(),
 
+        baseURL: function () {
+            var baseURL = this.protocol + '://' + this.host + '/' + this.versionPath;
+            return baseURL;
+        },
+
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
             var apiMapping = {
@@ -1643,9 +1741,10 @@ var UrlConfigService = function (config) {
                 var configProtocol = options.isLocalhost() ? this.protocol : actualProtocol;
                 return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
             }
-            var apiPath = this.protocol + '://' + this.host + '/' + this.versionPath + apiEndpoint + '/';
+            var baseURL = typeof this.baseURL === 'function' ? this.baseURL() : this.baseURL;
+            var apiPath = baseURL + apiEndpoint + '/';
 
-            if ($.inArray(apiEndpoint, PROJECT_APIS) !== -1) {
+            if (PROJECT_APIS.indexOf(apiEndpoint) !== -1) {
                 apiPath += this.accountPath + '/' + this.projectPath + '/';
             }
             return apiPath;
@@ -1661,7 +1760,7 @@ UrlConfigService.defaults = {};
 module.exports = UrlConfigService;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1673,14 +1772,14 @@ module.exports = {
 };
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__channel_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(2);
@@ -2110,7 +2209,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 /* harmony default export */ __webpack_exports__["default"] = (EpicenterChannelManager);
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2137,12 +2236,12 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 
 
 
-var ConfigService = __webpack_require__(0).default;
+var ConfigService = __webpack_require__(1).default;
 // var qutil = require('util/query-util');
-var TransportFactory = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(2);
 
-var ConsensusService = __webpack_require__(15).default;
+var ConsensusService = __webpack_require__(16).default;
 var rutil = __webpack_require__(7);
 
 var _pick = __webpack_require__(4).pick;
@@ -2869,14 +2968,14 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(11);
 /**
  * 
  * ## Consensus Service
@@ -3100,53 +3199,6 @@ function normalizeActions(actions) {
 });
 
 /***/ }),
-/* 16 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
-
-
-
-
-function getApiUrl(apiEndpoint, serviceOptions) {
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
-    return urlConfig.getAPIPath(apiEndpoint);
-}
-
-/*
-* Gets the default options for a api service.
-* It will merge:
-* - The Session options (Using the Session Manager)
-* - The Authorization Header from the token option
-* - The full url from the endpoint option
-* With the supplied overrides and defaults
-*
-*/
-function getDefaultOptions(defaults) {
-    var rest = Array.prototype.slice.call(arguments, 1);
-    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
-    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
-
-    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
-        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
-    });
-
-    if (serviceOptions.token) {
-        serviceOptions.transport.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    return serviceOptions;
-}
-
-/***/ }),
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3339,13 +3391,13 @@ var STRATEGY = {
 
 
 var strategies = __webpack_require__(35);
-var specialOperations = __webpack_require__(61);
+var specialOperations = __webpack_require__(62);
 
 var RunService = __webpack_require__(8);
 var SessionManager = __webpack_require__(2);
 
 var util = __webpack_require__(4);
-var keyNames = __webpack_require__(12);
+var keyNames = __webpack_require__(13);
 
 function patchRunService(service, manager) {
     if (service.patched) {
@@ -3654,7 +3706,7 @@ module.exports = function (config) {
 
 
 
-var TransportFactory = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var rutil = __webpack_require__(7);
 
 module.exports = function (config) {
@@ -3821,8 +3873,8 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(0).default;
-var TransportFactory = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(2);
 
 var apiEndpoint = 'model/introspect';
@@ -4100,13 +4152,13 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_util_query_util__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager__ = __webpack_require__(14);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4704,8 +4756,8 @@ module.exports = Channel;
 
 
 
-var ConfigService = __webpack_require__(0).default;
-var TransportFactory = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 
 module.exports = function (config) {
     var defaults = {
@@ -4832,8 +4884,8 @@ module.exports = function (config) {
  *
  */
 
-var ConfigService = __webpack_require__(0).default;
-var TransportFactory = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var _pick = __webpack_require__(4).pick;
 var SessionManager = __webpack_require__(2);
 var apiEndpoint = 'model/state';
@@ -4971,8 +5023,8 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(0).default;
-var TransportFactory = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(2);
 var _pick = __webpack_require__(4).pick;
 var apiEndpoint = 'member/local';
@@ -5148,8 +5200,8 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
 /**
@@ -5229,8 +5281,8 @@ var GroupService = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5360,15 +5412,15 @@ function reduceActions(actions, options) {
 
 var list = {
     'conditional-creation': __webpack_require__(9),
-    'new-if-initialized': __webpack_require__(55), //deprecated
-    'new-if-persisted': __webpack_require__(56), //deprecated
+    'new-if-initialized': __webpack_require__(56), //deprecated
+    'new-if-persisted': __webpack_require__(57), //deprecated
 
     none: __webpack_require__(10),
 
-    multiplayer: __webpack_require__(57),
-    'reuse-never': __webpack_require__(58),
-    'reuse-per-session': __webpack_require__(59),
-    'reuse-across-sessions': __webpack_require__(60),
+    multiplayer: __webpack_require__(58),
+    'reuse-never': __webpack_require__(59),
+    'reuse-per-session': __webpack_require__(60),
+    'reuse-across-sessions': __webpack_require__(61),
     'reuse-last-initialized': __webpack_require__(36)
 };
 
@@ -5761,7 +5813,7 @@ var SessionManager = __webpack_require__(2);
 var _pick = __webpack_require__(4).pick;
 var objectAssign = __webpack_require__(17);
 
-var atob = window.atob || __webpack_require__(64).atob;
+var atob = window.atob || __webpack_require__(65).atob;
 
 var defaults = {
     requiresGroup: true
@@ -6147,7 +6199,6 @@ var F = {
     manager: {
         strategy: {}
     }
-
 };
 
 F.load = __webpack_require__(40);
@@ -6160,17 +6211,17 @@ F.util.query = __webpack_require__(5);
 F.util.run = __webpack_require__(7);
 F.util.classFrom = __webpack_require__(3);
 
-F.factory.Transport = __webpack_require__(1).default;
+F.factory.Transport = __webpack_require__(0).default;
 F.transport.Ajax = __webpack_require__(21);
 
-F.service.URL = __webpack_require__(11);
-F.service.Config = __webpack_require__(0).default;
+F.service.URL = __webpack_require__(12);
+F.service.Config = __webpack_require__(1).default;
 F.service.Run = __webpack_require__(8);
 F.service.File = __webpack_require__(42);
 F.service.Variables = __webpack_require__(22);
 F.service.Data = __webpack_require__(26).default;
 F.service.Auth = __webpack_require__(28);
-F.service.World = __webpack_require__(14);
+F.service.World = __webpack_require__(15);
 F.service.State = __webpack_require__(29);
 F.service.User = __webpack_require__(44);
 F.service.Member = __webpack_require__(30);
@@ -6180,30 +6231,31 @@ F.service.Introspect = __webpack_require__(23);
 F.service.Presence = __webpack_require__(46);
 F.service.Time = __webpack_require__(32).default;
 F.service.Timer = __webpack_require__(47).default;
+F.service.Password = __webpack_require__(53).default;
 
-F.service.Consensus = __webpack_require__(15);
-F.service.ConsensusGroup = __webpack_require__(53);
+F.service.Consensus = __webpack_require__(16);
+F.service.ConsensusGroup = __webpack_require__(54);
 
 F.store.Cookie = __webpack_require__(25);
 
 F.factory.Store = __webpack_require__(24);
 
-F.manager.ScenarioManager = __webpack_require__(54);
+F.manager.ScenarioManager = __webpack_require__(55);
 F.manager.RunManager = __webpack_require__(19);
 F.manager.AuthManager = __webpack_require__(38);
-F.manager.WorldManager = __webpack_require__(65);
+F.manager.WorldManager = __webpack_require__(66);
 F.manager.SavedRunsManager = __webpack_require__(37);
 
 var strategies = __webpack_require__(35);
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.ChannelManager = __webpack_require__(13).default;
+F.manager.ChannelManager = __webpack_require__(14).default;
 F.service.Channel = __webpack_require__(27);
 
 if (true) F.version = "2.6.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(20);
 
-F.constants = __webpack_require__(12);
+F.constants = __webpack_require__(13);
 
 module.exports = F;
 
@@ -6212,7 +6264,7 @@ module.exports = F;
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var URLConfigService = __webpack_require__(11);
+var URLConfigService = __webpack_require__(12);
 
 var envLoad = function (callback) {
     var urlService = new URLConfigService();
@@ -6234,7 +6286,7 @@ module.exports = envLoad;
 "use strict";
 
 
-var ConfigService = __webpack_require__(0).default;
+var ConfigService = __webpack_require__(1).default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
@@ -6303,8 +6355,8 @@ module.exports = optionUtils;
 
 
 
-var ConfigService = __webpack_require__(0).default;
-var TransportFactory = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(2);
 
 module.exports = function (config) {
@@ -6765,8 +6817,8 @@ module.exports = ChannelManager;
 * The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
-var ConfigService = __webpack_require__(0).default;
-var TransportFactory = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(2);
 var qutil = __webpack_require__(5);
 
@@ -6953,8 +7005,8 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(0).default;
-var TransportFactory = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var _pick = __webpack_require__(4).pick;
 var SessionManager = __webpack_require__(2);
 
@@ -7293,8 +7345,8 @@ module.exports = function (config) {
  *      pr.getStatus();
  */
 
-var ConfigService = __webpack_require__(0).default;
-var TransportFactory = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(1).default;
+var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(2);
 var apiEndpoint = 'presence';
 
@@ -7477,7 +7529,7 @@ module.exports = function (config) {
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
-            var ChannelManager = __webpack_require__(13).default;
+            var ChannelManager = __webpack_require__(14).default;
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);
@@ -8273,11 +8325,129 @@ function reduceActions(actions, startTime, currentTime) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(11);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * 
+ * ## Password Service
+ *
+ * The primary use-case for the Password Service is to allow end-users to reset their passwords. 
+ * 
+ */
+
+
+
+
+
+var API_ENDPOINT = 'password';
+
+var PasswordService = function () {
+    function PasswordService(config) {
+        _classCallCheck(this, PasswordService);
+
+        var defaults = {
+            /**
+             * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
+             * @type {string}
+             */
+            account: undefined,
+            /**
+             * The project id. Defaults to empty string. If left undefined, taken from the URL.
+             * @type {string}
+             */
+            project: undefined,
+
+            //Options to pass on to the underlying transport layer
+            transport: {}
+        };
+        this.sessionManager = new __WEBPACK_IMPORTED_MODULE_0_store_session_manager___default.a();
+        var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
+        this.serviceOptions = serviceOptions;
+    }
+
+    /**
+     * Send a password reset email for the provided userName.
+     * 
+     * **Example**
+            var ps = new F.service.Password();
+            ps.resetPassword('myuserName@gmail.com', {
+                redirectURL: 'login.html',
+                subject: 'Please reset your password',
+                projectFullName: 'My Awesome Project'
+            });
+      * This will send the following email
+     * 
+     * Subject: Please reset your password
+     * To: myuserName@gmail.com
+     * From: support@forio.com
+     * Body:
+     * You have requested a password reset for the user endUser@acmesimulations.com in My Awesome Project. 
+     * 
+     * If you did not initiate this request, please ignore this email.
+     * 
+     * To reset your password, please click the following link: https://forio.com/epicenter/recover/<password recovery token>
+      * @param {string} userName user to reset password for 
+     * @param {object} resetParams 
+     * @param {string} resetParams.redirectURL URL to redirect to after password is reset. If relative url, it's treated as being relative to project
+     * @param {string} [resetParams.subject] Subject for reset password email
+     * @param {string} [resetParams.projectFullName] Text to use within body. Text will be of the form `You have requested a password reset for the user {userName} in {projectFullName}.
+     * @param {object} [options] overrides for service options
+     * @returns {Promise}
+     */
+
+
+    _createClass(PasswordService, [{
+        key: 'resetPassword',
+        value: function resetPassword(userName, resetParams, options) {
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["d" /* getURLConfig */])(mergedOptions);
+            var http = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["c" /* getHTTPTransport */])(mergedOptions.transport, {
+                url: urlConfig.getAPIPath(API_ENDPOINT + '/recovery')
+            });
+
+            var defaults = Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(resetParams, ['projectFullName', 'subject', 'redirectURL']);
+            var postParams = $.extend({}, {
+                userName: userName,
+                account: urlConfig.accountPath
+            }, defaults);
+            Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["ensureKeysPresent"])(postParams, ['redirectURL', 'userName'], 'resetPassword:');
+
+            var isRelativeURL = postParams.redirectURL.indexOf('http') !== 0;
+            if (isRelativeURL) {
+                var protocol = urlConfig.protocol,
+                    actingHost = urlConfig.actingHost,
+                    accountPath = urlConfig.accountPath,
+                    projectPath = urlConfig.projectPath;
+
+                var absURL = [actingHost, accountPath, projectPath, postParams.redirectURL.replace(/^\//, '')].join('/');
+                postParams.redirectURL = protocol + '://' + absURL;
+            }
+            return http.post(postParams);
+        }
+    }]);
+
+    return PasswordService;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (PasswordService);
+
+/***/ }),
+/* 54 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__consensus_service_js__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__consensus_service_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils_js__ = __webpack_require__(11);
 /**
  * 
  * ## Consensus Group Service
@@ -8377,7 +8547,7 @@ function ConsensusGroupService(config) {
 }
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8467,8 +8637,8 @@ var NoneStrategy = __webpack_require__(10);
 var StateService = __webpack_require__(29);
 var RunService = __webpack_require__(8);
 
-var BaselineStrategy = __webpack_require__(62);
-var LastUnsavedStrategy = __webpack_require__(63);
+var BaselineStrategy = __webpack_require__(63);
+var LastUnsavedStrategy = __webpack_require__(64);
 
 var defaults = {
     /**
@@ -8615,7 +8785,7 @@ function ScenarioManager(config) {
 module.exports = ScenarioManager;
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8658,7 +8828,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8704,7 +8874,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8718,7 +8888,7 @@ module.exports = Strategy;
 var classFrom = __webpack_require__(3);
 
 var IdentityStrategy = __webpack_require__(10);
-var WorldApiAdapter = __webpack_require__(14);
+var WorldApiAdapter = __webpack_require__(15);
 
 var defaults = {};
 
@@ -8785,7 +8955,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8820,7 +8990,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8866,7 +9036,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8935,7 +9105,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -8945,7 +9115,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8988,7 +9158,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9058,7 +9228,7 @@ module.exports = classFrom(Base, {
 }, { requiresAuth: false });
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -9129,7 +9299,7 @@ module.exports = classFrom(Base, {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9170,7 +9340,7 @@ module.exports = classFrom(Base, {
 
 
 
-var WorldApi = __webpack_require__(14);
+var WorldApi = __webpack_require__(15);
 var RunManager = __webpack_require__(19);
 var AuthManager = __webpack_require__(38);
 var worldApi;

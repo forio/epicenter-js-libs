@@ -10,7 +10,7 @@ describe('Presence API Service', function () {
     var server;
     before(function () {
         server = sinon.fakeServer.create();
-        server.respondWith('POST', /(.*)\/game/, function (xhr, id) {
+        server.respondWith('POST', /(.*)\/presence/, function (xhr, id) {
             xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ }));
         });
 

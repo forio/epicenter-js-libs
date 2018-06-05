@@ -5,9 +5,7 @@ import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));
 
-const { expect } = chai;
-
-describe.only('URL Service', function () {
+describe('URL Service', function () {
     function getHost() {
         return window.location.host || ''; //for phantomjs
     }
@@ -47,9 +45,7 @@ describe.only('URL Service', function () {
             url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
         });
         it('should allow over-riding from the defaults', function () {
-            console.log(oldDefaults);
             URLService.defaults.baseURL = 'proxy/';
-            console.log(oldDefaults);
             var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
             url.getAPIPath('run').should.equal('proxy/run/forioAccount/forioProj/');
         });

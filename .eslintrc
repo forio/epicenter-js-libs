@@ -3,10 +3,7 @@
     "parserOptions": {
         "sourceType": "module",
         "ecmaVersion": 6,
-        "ecmaFeatures": {
-            "jsx": true,
-            "experimentalObjectRestSpread": true
-        }
+        "ecmaFeatures": {}
     },
 
     "env": {
@@ -14,11 +11,10 @@
         "es6": true,
 
         "commonjs": true,
-        "node": true
+        "node": false
     },
     "globals": {
         "$": false
-
     },
     "rules": {
         "array-callback-return": 2,

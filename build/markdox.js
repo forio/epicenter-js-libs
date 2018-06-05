@@ -31,8 +31,12 @@ module.exports = function (grunt) {
             files: [
                 {
                     src: 'src/service/timer-service/index.js',
-                    dest: 'documentation/generated/timer-service.md'
+                    dest: 'documentation/generated/timer-service/timer-service.md'
                 },
+                {
+                    src: 'src/service/password-api-service/index.js',
+                    dest: 'documentation/generated/password-api-service/index.html.md'
+                }
             ]
         },
         target: {
@@ -113,7 +117,7 @@ module.exports = function (grunt) {
                 {
                     src: 'src/service/consensus-api-service/consensus-group-service.js',
                     dest: 'documentation/generated/consensus/consensus-group-service/index.html.md'
-                }
+                }, 
             ]
         }
     });
