@@ -35,13 +35,12 @@ var UrlConfigService = function (config) {
     if (!config) {
         config = {};
     }
-    // console.log(this.defaults);
+    var configOverrides = $.extend({}, defaults, config);
     var overrides = $.extend({}, envConf, config);
     var options = $.extend({}, defaults, overrides);
 
-    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
+    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, configOverrides.host);
     
-    // console.log(isLocalhost(), '___________');
     var actingHost = config && config.host;
     if (!actingHost && options.isLocalhost()) {
         actingHost = 'forio.com';
@@ -60,10 +59,11 @@ var UrlConfigService = function (config) {
 
         api: '',
 
+        actingHost: actingHost,
+
         //TODO: this should really be called 'apihost', but can't because that would break too many things
         host: (function () {
             var apiHost = (HOST_API_MAPPING[actingHost]) ? HOST_API_MAPPING[actingHost] : actingHost;
-            // console.log(actingHost, config, apiHost);
             return apiHost;
         }()),
 
