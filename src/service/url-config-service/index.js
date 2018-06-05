@@ -35,10 +35,11 @@ var UrlConfigService = function (config) {
     if (!config) {
         config = {};
     }
+    var configOverrides = $.extend({}, defaults, config);
     var overrides = $.extend({}, envConf, config);
     var options = $.extend({}, defaults, overrides);
 
-    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
+    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, configOverrides.host);
     
     var actingHost = config && config.host;
     if (!actingHost && options.isLocalhost()) {
