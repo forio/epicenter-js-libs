@@ -31,6 +31,8 @@ import qutil from 'util/query-util';
 import TransportFactory from 'transport/http-transport-factory';
 import SessionManager from 'store/session-manager';
 
+import { SCOPES, getCollectionName } from './data-service-scope-utils';
+
 import ChannelManager from 'managers/epicenter-channel-manager';
 
 export default class DataService {
@@ -57,6 +59,9 @@ export default class DataService {
              * @type {String}
              */
             token: undefined,
+
+            scope: SCOPES.CUSTOM,
+
             //Options to pass on to the underlying transport layer
             transport: {}
         };
@@ -74,7 +79,11 @@ export default class DataService {
             if (!root) {
                 root = serviceOptions.root;
             }
-            var url = urlConfig.getAPIPath('data') + qutil.addTrailingSlash(root);
+            const split = root.split('/');
+            const baseKey = split[0];
+            split[0] = getCollectionName(baseKey, serviceOptions.scope, serviceOptions);
+            const newURL = split.join('/');
+            var url = urlConfig.getAPIPath('data') + qutil.addTrailingSlash(newURL);
             if (key) {
                 url += qutil.addTrailingSlash(key);
             }
