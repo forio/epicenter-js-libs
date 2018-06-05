@@ -40,7 +40,7 @@ export default class PasswordService {
      * **Example**
             var ps = new F.service.Password();
             ps.resetPassword('myuserName@gmail.com', {
-                redirectURL: 'login.html',
+                redirectUrl: 'login.html',
                 subject: 'Please reset your password',
                 projectFullName: 'My Awesome Project'
             });
@@ -59,7 +59,7 @@ export default class PasswordService {
 
      * @param {string} userName user to reset password for 
      * @param {object} resetParams 
-     * @param {string} resetParams.redirectURL URL to redirect to after password is reset. If relative url, it's treated as being relative to project
+     * @param {string} resetParams.redirectUrl URL to redirect to after password is reset. If relative url, it's treated as being relative to project
      * @param {string} [resetParams.subject] Subject for reset password email
      * @param {string} [resetParams.projectFullName] Text to use within body. Text will be of the form `You have requested a password reset for the user {userName} in {projectFullName}.
      * @param {object} [options] overrides for service options
@@ -72,18 +72,18 @@ export default class PasswordService {
             url: urlConfig.getAPIPath(`${API_ENDPOINT}/recovery`)
         });
         
-        const defaults = pick(resetParams, ['projectFullName', 'subject', 'redirectURL']);
+        const defaults = pick(resetParams, ['projectFullName', 'subject', 'redirectUrl']);
         const postParams = $.extend({}, {
             userName: userName,
             account: urlConfig.accountPath,
         }, defaults);
-        ensureKeysPresent(postParams, ['redirectURL', 'userName'], 'resetPassword:');
+        ensureKeysPresent(postParams, ['redirectUrl', 'userName'], 'resetPassword:');
 
-        const isRelativeURL = (postParams.redirectURL.indexOf('http') !== 0);
+        const isRelativeURL = (postParams.redirectUrl.indexOf('http') !== 0);
         if (isRelativeURL) {
             const { protocol, actingHost, accountPath, projectPath } = urlConfig;
-            const absURL = [actingHost, accountPath, projectPath, postParams.redirectURL.replace(/^\//, '')].join('/');
-            postParams.redirectURL = `${protocol}://${absURL}`;
+            const absURL = [actingHost, accountPath, projectPath, postParams.redirectUrl.replace(/^\//, '')].join('/');
+            postParams.redirectUrl = `${protocol}://${absURL}`;
         }
         return http.post(postParams);
     }
