@@ -7,7 +7,7 @@
  */
 
 import SessionManager from 'store/session-manager';
-import { pick, ensureKeysPresent } from 'util/object-util';
+import { pick } from 'util/object-util';
 import { getURLConfig, getHTTPTransport } from 'service/service-utils';
 
 const API_ENDPOINT = 'password';
@@ -58,8 +58,8 @@ export default class PasswordService {
      * To reset your password, please click the following link: https://forio.com/epicenter/recover/<password recovery token>
 
      * @param {string} userName user to reset password for 
-     * @param {object} resetParams 
-     * @param {string} resetParams.redirectUrl URL to redirect to after password is reset. If relative url, it's treated as being relative to project
+     * @param {object} [resetParams] 
+     * @param {string} [resetParams.redirectUrl] URL to redirect to after password is reset. Defaults to project root. If relative, it's treated as being relative to project
      * @param {string} [resetParams.subject] Subject for reset password email
      * @param {string} [resetParams.projectFullName] Text to use within body. Text will be of the form `You have requested a password reset for the user {userName} in {projectFullName}.
      * @param {object} [options] overrides for service options
@@ -71,13 +71,17 @@ export default class PasswordService {
         const http = getHTTPTransport(mergedOptions.transport, {
             url: urlConfig.getAPIPath(`${API_ENDPOINT}/recovery`)
         });
+
+        if (!userName) {
+            throw new Error('resetPassword: missing userName');
+        }
         
         const defaults = pick(resetParams, ['projectFullName', 'subject', 'redirectUrl']);
         const postParams = $.extend({}, {
             userName: userName,
+            redirectUrl: '',
             account: urlConfig.accountPath,
         }, defaults);
-        ensureKeysPresent(postParams, ['redirectUrl', 'userName'], 'resetPassword:');
 
         const isRelativeURL = (postParams.redirectUrl.indexOf('http') !== 0);
         if (isRelativeURL) {

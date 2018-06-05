@@ -36,11 +36,10 @@ describe('Password API API', function () {
 
 
     describe('#resetPassword', function () {
-        it('should throw an error if required fields are  not specified', function () {
+        it('should throw an error if userName specified', function () {
             const ps = createPasswordService();
-            expect(()=> ps.resetPassword()).to.throw(/Missing required/);
-            expect(()=> ps.resetPassword('myUserName')).to.throw(/Missing required/);
-            expect(()=> ps.resetPassword('myUserName', { redirectUrl: 'login.html' })).to.not.throw;
+            expect(()=> ps.resetPassword()).to.throw(/userName/);
+            expect(()=> ps.resetPassword('myUserName')).to.not.throw;
         });
         it('should do a POST', function () {
             const ps = createPasswordService();
@@ -59,6 +58,15 @@ describe('Password API API', function () {
             expect(params.account).to.equal(account);
         });
         describe('redirectUrl', ()=> {
+            it('should redirect to project root by default', ()=> {
+                const ps = createPasswordService();
+                ps.resetPassword('myUserName');
+    
+                const req = server.requests.pop();
+                const params = JSON.parse(req.requestBody);
+                expect(params.redirectUrl).to.equal(`https://forio.com/${account}/${project}/`);
+            });
+
             it('should accept relative redirect urls', ()=> {
                 const ps = createPasswordService();
                 ps.resetPassword('myUserName', { redirectUrl: 'login.html' });
@@ -67,6 +75,7 @@ describe('Password API API', function () {
                 const params = JSON.parse(req.requestBody);
                 expect(params.redirectUrl).to.equal(`https://forio.com/${account}/${project}/login.html`);
             });
+       
             it('should allow leading slash in relative url', ()=> {
                 const ps = createPasswordService();
                 ps.resetPassword('myUserName', { redirectUrl: '/bar/login.html' });
