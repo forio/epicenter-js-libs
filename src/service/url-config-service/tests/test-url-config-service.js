@@ -5,8 +5,6 @@ import sinon from 'sinon';
 import chai from 'chai';
 chai.use(require('sinon-chai'));
 
-const { expect } = chai;
-
 describe('URL Service', function () {
     function getHost() {
         return window.location.host || ''; //for phantomjs
