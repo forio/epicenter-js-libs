@@ -3,7 +3,6 @@ import URLService from 'service/url-config-service';
 
 import sinon from 'sinon';
 import chai from 'chai';
-import { EDESTADDRREQ } from 'constants';
 chai.use(require('sinon-chai'));
 
 const { expect } = chai;
@@ -75,11 +74,19 @@ describe('Password API API', function () {
             const params = JSON.parse(req.requestBody);
             expect(params.redirectURL).to.equal('http://bar.com');
         });
-        // it('should hit the right url', function () {
-        //     const ps = new PasswordService({ account: 'X', project: 'Y' });
-        //     ds.byModel('abc.vmf');
-        //     var req = server.requests.pop();
-        //     req.url.should.equal(baseURL + 'X/Y/abc.vmf');
-        // });
+        it('should POST required parameters', ()=> {
+            const ps = createPasswordService();
+            ps.resetPassword('myUserName', { redirectURL: 'http://bar.com', subject: 'foo', projectFullName: 'bar', something: 'ignored' });
+
+            const req = server.requests.pop();
+            const params = JSON.parse(req.requestBody);
+            expect(params).to.eql({
+                account: 'forio',
+                userName: 'myUserName',
+                redirectURL: 'http://bar.com',
+                subject: 'foo',
+                projectFullName: 'bar',
+            });
+        });
     });
 });

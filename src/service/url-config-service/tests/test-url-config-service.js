@@ -7,7 +7,7 @@ chai.use(require('sinon-chai'));
 
 const { expect } = chai;
 
-describe.only('URL Service', function () {
+describe('URL Service', function () {
     function getHost() {
         return window.location.host || ''; //for phantomjs
     }

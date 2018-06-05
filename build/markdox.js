@@ -31,7 +31,7 @@ module.exports = function (grunt) {
             files: [
                 {
                     src: 'src/service/timer-service/index.js',
-                    dest: 'documentation/generated/timer-service.md'
+                    dest: 'documentation/generated/timer-service/timer-service.md'
                 },
                 {
                     src: 'src/service/password-api-service/index.js',
