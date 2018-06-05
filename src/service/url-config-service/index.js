@@ -35,13 +35,11 @@ var UrlConfigService = function (config) {
     if (!config) {
         config = {};
     }
-    // console.log(this.defaults);
     var overrides = $.extend({}, envConf, config);
     var options = $.extend({}, defaults, overrides);
 
     overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
     
-    // console.log(isLocalhost(), '___________');
     var actingHost = config && config.host;
     if (!actingHost && options.isLocalhost()) {
         actingHost = 'forio.com';

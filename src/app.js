@@ -8,7 +8,6 @@ var F = {
     manager: {
         strategy: {}
     },
-
 };
 
 F.load = require('./service/url-config-service/env-load');
@@ -41,6 +40,7 @@ F.service.Introspect = require('./service/introspection-api-service');
 F.service.Presence = require('./service/presence-api-service');
 F.service.Time = require('./service/time-api-service').default;
 F.service.Timer = require('./service/timer-service').default;
+F.service.Password = require('./service/password-api-service').default;
 
 F.service.Consensus = require('./service/consensus-api-service/consensus-service');
 F.service.ConsensusGroup = require('./service/consensus-api-service/consensus-group-service');
