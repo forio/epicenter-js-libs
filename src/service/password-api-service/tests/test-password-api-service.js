@@ -40,12 +40,12 @@ describe('Password API API', function () {
         it('should throw an error if required fields are  not specified', function () {
             const ps = createPasswordService();
             expect(()=> ps.resetPassword()).to.throw(/Missing required/);
-            expect(()=> ps.resetPassword({ userName: 'foo' })).to.throw(/Missing required/);
-            expect(()=> ps.resetPassword({ userName: 'foo', redirectURL: 'login.html' })).to.not.throw;
+            expect(()=> ps.resetPassword('myUserName')).to.throw(/Missing required/);
+            expect(()=> ps.resetPassword('myUserName', { redirectURL: 'login.html' })).to.not.throw;
         });
         it('should do a POST', function () {
             const ps = createPasswordService();
-            ps.resetPassword({ userName: 'foo', redirectURL: 'login.html' });
+            ps.resetPassword('myUserName', { redirectURL: 'login.html' });
 
             const req = server.requests.pop();
             expect(req.method.toUpperCase()).to.equal('POST');
@@ -53,7 +53,7 @@ describe('Password API API', function () {
         });
         it('should pass account from original options if not specified in POST', ()=> {
             const ps = createPasswordService();
-            ps.resetPassword({ userName: 'foo', redirectURL: 'login.html' });
+            ps.resetPassword('myUserName', { redirectURL: 'login.html' });
 
             const req = server.requests.pop();
             const params = JSON.parse(req.requestBody);
@@ -61,7 +61,7 @@ describe('Password API API', function () {
         });
         it('should accept relative redirect urls', ()=> {
             const ps = createPasswordService();
-            ps.resetPassword({ userName: 'foo', redirectURL: 'login.html' });
+            ps.resetPassword('myUserName', { redirectURL: 'login.html' });
 
             const req = server.requests.pop();
             const params = JSON.parse(req.requestBody);
@@ -69,7 +69,7 @@ describe('Password API API', function () {
         });
         it('should accept relative redirect urls', ()=> {
             const ps = createPasswordService();
-            ps.resetPassword({ userName: 'foo', redirectURL: 'http://bar.com' });
+            ps.resetPassword('myUserName', { redirectURL: 'http://bar.com' });
 
             const req = server.requests.pop();
             const params = JSON.parse(req.requestBody);

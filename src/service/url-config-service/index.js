@@ -63,7 +63,6 @@ var UrlConfigService = function (config) {
         //TODO: this should really be called 'apihost', but can't because that would break too many things
         host: (function () {
             var apiHost = (HOST_API_MAPPING[actingHost]) ? HOST_API_MAPPING[actingHost] : actingHost;
-            // console.log(actingHost, config, apiHost);
             return apiHost;
         }()),
 

@@ -23,7 +23,7 @@ export function isEmpty(value) {
  * 
  * @param {Object} obj
  * @param {string[]} keysList
- * @param {string} [context]
+ * @param {string} [context] Prefix to add to error message
  * @throws {Error}
  * @return {boolean}
  */
