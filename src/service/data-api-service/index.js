@@ -31,7 +31,7 @@ import qutil from 'util/query-util';
 import TransportFactory from 'transport/http-transport-factory';
 import SessionManager from 'store/session-manager';
 
-import { SCOPES, getCollectionName } from './data-service-scope-utils';
+import { SCOPES, getScopedName } from './data-service-scope-utils';
 
 import ChannelManager from 'managers/epicenter-channel-manager';
 
@@ -76,14 +76,8 @@ export default class DataService {
         }
 
         function getURL(key, root) {
-            if (!root) {
-                root = serviceOptions.root;
-            }
-            const split = root.split('/');
-            const baseKey = split[0];
-            split[0] = getCollectionName(baseKey, serviceOptions.scope, serviceOptions);
-            const newURL = split.join('/');
-            var url = urlConfig.getAPIPath('data') + qutil.addTrailingSlash(newURL);
+            const rootPath = getScopedName(root || serviceOptions.root, serviceOptions);
+            var url = urlConfig.getAPIPath('data') + qutil.addTrailingSlash(rootPath);
             if (key) {
                 url += qutil.addTrailingSlash(key);
             }
