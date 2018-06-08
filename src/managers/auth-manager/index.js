@@ -245,7 +245,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *
     * **Parameters**
     *
-    * @param {Object} options (Optional) Overrides for configuration options.
+    * @param {Object} [options] Overrides for configuration options.
     * @return {Promise}
     */
     logout: function (options) {
