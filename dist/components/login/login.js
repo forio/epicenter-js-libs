@@ -97,7 +97,15 @@ $(function () {
                 $('button', form).attr('disabled', null).removeClass('disabled');
             })
             .then(function () {
-                window.location = action;
+                // var pageToRedirectTo = action;
+                // fac-redirect-page
+                var session = auth.getCurrentUserSessionInfo();
+                var newPage = action;
+                var facPage = $('#fac-redirect-page').val();
+                if ((session.isFac || session.isTeamMember) && facPage) {
+                    newPage = facPage;
+                }
+                window.location = newPage;
                 $('.group-selection-dialog').hide();
             });
     });
