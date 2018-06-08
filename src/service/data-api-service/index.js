@@ -26,14 +26,15 @@
  * Note that in addition to the `account`, `project`, and `root`, the Data Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
  */
 
-import ConfigService from 'service/configuration-service';
-import qutil from 'util/query-util';
 import TransportFactory from 'transport/http-transport-factory';
-import SessionManager from 'store/session-manager';
 
-import { SCOPES, getScopedName } from './data-service-scope-utils';
+import { getDefaultOptions } from 'service/service-utils';
+import { SCOPES, getURL } from './data-service-scope-utils';
 
 import ChannelManager from 'managers/epicenter-channel-manager';
+
+const API_ENDPOINT = 'data';
+const getAPIURL = getURL.bind(null, API_ENDPOINT);
 
 export default class DataService {
     constructor(config) {
@@ -65,37 +66,11 @@ export default class DataService {
             //Options to pass on to the underlying transport layer
             transport: {}
         };
-        this.sessionManager = new SessionManager();
-        var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-        var urlConfig = new ConfigService(serviceOptions).get('server');
-        if (serviceOptions.account) {
-            urlConfig.accountPath = serviceOptions.account;
-        }
-        if (serviceOptions.project) {
-            urlConfig.projectPath = serviceOptions.project;
-        }
+        const serviceOptions = getDefaultOptions(defaults, config, { apiEndpont: API_ENDPOINT });
 
-        function getURL(key, root) {
-            const rootPath = getScopedName(root || serviceOptions.root, serviceOptions);
-            var url = urlConfig.getAPIPath('data') + qutil.addTrailingSlash(rootPath);
-            if (key) {
-                url += qutil.addTrailingSlash(key);
-            }
-            return url;
-        }
 
-        var httpOptions = $.extend(true, {}, serviceOptions.transport, {
-            url: getURL
-        });
-        if (serviceOptions.token) {
-            httpOptions.headers = {
-                Authorization: 'Bearer ' + serviceOptions.token
-            };
-        }
         this.serviceOptions = serviceOptions;
-        this.http = new TransportFactory(httpOptions);
-
-        this.getURL = getURL;
+        this.http = new TransportFactory(serviceOptions.transport);
     }
 
 
@@ -137,9 +112,9 @@ export default class DataService {
      */
     query(key, query, outputModifier, options) {
         var params = $.extend(true, { q: query }, outputModifier);
-        var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-        httpOptions.url = this.getURL(key, httpOptions.root);
-        return this.http.get(params, httpOptions);
+        var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+        mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+        return this.http.get(params, mergedOptions);
     }
     /**
      * Save data in an anonymous document within the collection.
@@ -174,9 +149,10 @@ export default class DataService {
         } else {
             (attrs = {})[key] = value;
         }
-        var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-        httpOptions.url = this.getURL('', httpOptions.root);
-        return this.http.post(attrs, httpOptions);
+
+        var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+        mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+        return this.http.post(attrs, mergedOptions);
     }
     
     /**
@@ -187,9 +163,9 @@ export default class DataService {
      * @return {Promise}
      */
     pushToArray(key, val, options) {
-        var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-        httpOptions.url = this.getURL(key, httpOptions.root);
-        return this.http.post(val, httpOptions);
+        var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+        mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+        return this.http.post(val, mergedOptions);
     }
 
     /**
@@ -235,9 +211,9 @@ export default class DataService {
      * @return {Promise}
      */
     saveAs(key, value, options) {
-        var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-        httpOptions.url = this.getURL(key, httpOptions.root);
-        return this.http.put(value, httpOptions);
+        var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+        mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+        return this.http.put(value, mergedOptions);
     }
     /**
      * Get data for a specific document or field.
@@ -254,9 +230,9 @@ export default class DataService {
      * @return {Promise}
      */
     load(key, outputModifier, options) {
-        var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-        httpOptions.url = this.getURL(key, httpOptions.root);
-        return this.http.get(outputModifier, httpOptions);
+        var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+        mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+        return this.http.get(outputModifier, mergedOptions);
     }
     /**
      * Removes data from collection. Only documents (top-level elements in each collection) can be deleted.
@@ -273,15 +249,16 @@ export default class DataService {
      * @return {Promise}
      */
     remove(keys, options) {
-        var httpOptions = $.extend(true, {}, this.serviceOptions, options);
+        var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
         var params;
         if (Array.isArray(keys)) {
             params = { id: keys };
+            mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
         } else {
             params = '';
-            httpOptions.url = this.getURL(keys, httpOptions.root);
+            mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
         }
-        return this.http.delete(params, httpOptions);
+        return this.http.delete(params, mergedOptions);
     }
 
     getChannel(options) {
