@@ -1,5 +1,5 @@
 import AuthManager from 'managers/auth-manager';
-import qutil from 'util/query-util';
+import { normalizeSlashes } from 'util/query-util';
 import { getURLConfig } from 'service/service-utils';
 
 export const SCOPES = {
@@ -40,11 +40,13 @@ export function getScopedName(name, scope) {
 }
 
 export function getURL(API_ENDPOINT, collection, doc, options) {
+    const scopedCollection = getScopedName(collection || options.root, options.scope);
+
     const urlConfig = getURLConfig(options);
-    const rootPath = getScopedName(collection || options.root, options.scope);
-    var url = urlConfig.getAPIPath(API_ENDPOINT) + qutil.addTrailingSlash(rootPath);
-    if (doc) {
-        url += qutil.addTrailingSlash(doc);
-    }
-    return url;
+    const baseURL = urlConfig.getAPIPath(API_ENDPOINT);
+
+    const normalized = normalizeSlashes(`${scopedCollection}${doc || ''}`, { leading: true, trailing: true });
+    const fullURL = `${baseURL}/${normalized}`;
+
+    return fullURL;
 }

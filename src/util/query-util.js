@@ -99,6 +99,16 @@ module.exports = (function () {
             return $.extend(true, {}, obj1, obj2);
         },
 
+        normalizeSlashes: function (url, options) {
+            let cleaned = url.replace(/\/{2,}/g, '/');
+            if (options && options.leading && cleaned.charAt(0) !== '/') {
+                cleaned = `/${cleaned}`;
+            } 
+            if (options && options.trailing && cleaned.charAt(cleaned.length - 1) !== '/') {
+                cleaned = `${cleaned}/`;
+            }
+            return cleaned;
+        },
         addTrailingSlash: function (url) {
             if (!url) {
                 return '';
