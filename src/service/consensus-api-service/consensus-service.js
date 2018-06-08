@@ -31,9 +31,8 @@
  * 
  */
 
-import ConfigService from 'service/configuration-service';
 import TransportFactory from 'transport/http-transport-factory';
-import { getDefaultOptions } from 'service/service-utils';
+import { getDefaultOptions, getURLConfig } from 'service/service-utils';
 
 const API_ENDPOINT = 'multiplayer/consensus';
 
@@ -55,14 +54,8 @@ export default function (config) {
         name: '',
     };
     const serviceOptions = getDefaultOptions(defaults, config);
+    const urlConfig = getURLConfig(serviceOptions);
 
-    const urlConfig = new ConfigService(serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
     const http = new TransportFactory(serviceOptions.transport);
 
     function getHTTPOptions(action, options) {

@@ -14,11 +14,10 @@
  * 
  */
 
-import ConfigService from 'service/configuration-service';
 import ConsensusService from './consensus-service.js';
 import TransportFactory from 'transport/http-transport-factory';
 
-import { getDefaultOptions } from 'service/service-utils.js';
+import { getDefaultOptions, getURLConfig } from 'service/service-utils.js';
 
 const API_ENDPOINT = 'multiplayer/consensus';
 
@@ -32,14 +31,8 @@ export default function ConsensusGroupService(config) {
     };
 
     const serviceOptions = getDefaultOptions(defaults, config);
+    const urlConfig = getURLConfig(serviceOptions);
 
-    const urlConfig = new ConfigService(serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
     const http = new TransportFactory(serviceOptions.transport);
 
     function getHTTPOptions(options) {
