@@ -116,12 +116,26 @@ module.exports = function (grunt) {
             ],
             devtool: 'source-map',
         },
-        components: {
+        assignment: {
             entry: path.resolve('./src/components/assignment/js/index.js'),
             devtool: 'source-map',
             output: {
                 path: path.resolve('./dist/components/assignment'),
                 filename: 'assignment.min.js'
+            },
+            plugins: [
+                new webpack.DefinePlugin({
+                    RELEASE_VERSION: JSON.stringify(version)
+                }),
+                new webpack.optimize.UglifyJsPlugin(uglifyOptions)
+            ]
+        },
+        login: {
+            entry: path.resolve('./src/components/login/login.js'),
+            devtool: 'source-map',
+            output: {
+                path: path.resolve('./dist/components/login'),
+                filename: 'login.js'
             },
             plugins: [
                 new webpack.DefinePlugin({
