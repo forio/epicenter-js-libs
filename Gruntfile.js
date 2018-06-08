@@ -14,12 +14,13 @@ module.exports = function (grunt) {
         require('./' + task)(grunt);
     });
 
+
     grunt.registerTask('test-dev', ['webpack:edge', 'karma:testList']);
-    grunt.registerTask('test', ['templates', 'webpack:edge', 'webpack:components', 'karma:testWithCoverage']);
+    grunt.registerTask('test', ['webpack:edge', 'karma:testWithCoverage']);
     grunt.registerTask('documentation', ['eslint', 'markdox']);
     grunt.registerTask('validate', ['eslint', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
-    grunt.registerTask('components', ['templates', 'webpack:components', 'copy:components']);
+    grunt.registerTask('components', ['templates', 'webpack:assignment', 'webpack:login', 'copy:components']);
     grunt.registerTask('production', ['concatCometd', 'validate', 'webpack:mapped', 'webpack:min', 'components', 'documentation']);
 
     grunt.registerTask('release', function (type) {
