@@ -97,8 +97,6 @@ $(function () {
                 $('button', form).attr('disabled', null).removeClass('disabled');
             })
             .then(function () {
-                // var pageToRedirectTo = action;
-                // fac-redirect-page
                 var session = auth.getCurrentUserSessionInfo();
                 var newPage = action;
                 var facPage = $('#fac-redirect-page').val();

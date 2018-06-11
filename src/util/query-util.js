@@ -37,13 +37,13 @@ export function toQueryFormat(qs) {
     if (qs === null || qs === undefined) {
         return '';
     }
-    if (typeof qs === 'string' || qs instanceof String) {
+    if (typeof qs === 'string') {
         return qs;
     }
 
     var returnArray = [];
     $.each(qs, function (key, value) {
-        if ($.isArray(value)) {
+        if (Array.isArray(value)) {
             value = value.join(',');
         }
         if ($.isPlainObject(value)) {
@@ -69,7 +69,7 @@ export function qsToObject(qs) {
 
     var qsArray = qs.split('&');
     var returnObj = {};
-    $.each(qsArray, function (index, value) {
+    qsArray.forEach(function (value, index) {
         var qKey = value.split('=')[0];
         var qVal = value.split('=')[1];
 

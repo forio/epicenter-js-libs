@@ -82,7 +82,7 @@ export function normalizeOperations(operations, args) {
 
     if ($.isPlainObject(operations)) {
         _normalizeObject(operations, returnList);
-    } else if ($.isArray(operations)) {
+    } else if (Array.isArray(operations)) {
         _normalizeArrays(operations, args, returnList);
     } else {
         _normalizeLiterals(operations, args, returnList);
@@ -185,7 +185,7 @@ export function splitGetFactory(httpOptions) {
                         var aggregatedRuns = {};
                         $.each(arguments, function (idx, args) {
                             var runs = args[0];
-                            if (!$.isArray(runs)) {
+                            if (!Array.isArray(runs)) {
                                 return;
                             }
                             $.each(runs, function (idxRun, run) {

@@ -104,7 +104,7 @@ module.exports = function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions = addAutoRestoreHeader(httpOptions);
 
-            if ($.isArray(query)) {
+            if (Array.isArray(query)) {
                 query = { include: query };
             }
             $.extend(query, outputModifier);
