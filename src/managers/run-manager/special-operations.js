@@ -1,5 +1,3 @@
-module.exports = {
-    reset: function (params, options, manager) {
-        return manager.reset(options);
-    }
-};
+export function reset(params, options, manager) {
+    return manager.reset(options);
+}

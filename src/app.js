@@ -50,7 +50,7 @@ F.store.Cookie = require('./store/cookie-store');
 F.factory.Store = require('./store/store-factory');
 
 F.manager.ScenarioManager = require('./managers/scenario-manager');
-F.manager.RunManager = require('./managers/run-manager');
+F.manager.RunManager = require('./managers/run-manager').default;
 F.manager.AuthManager = require('./managers/auth-manager');
 F.manager.WorldManager = require('./managers/world-manager');
 F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-manager');

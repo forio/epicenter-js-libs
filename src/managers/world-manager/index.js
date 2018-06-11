@@ -36,7 +36,7 @@
 'use strict';
 
 var WorldApi = require('service/world-api-adapter');
-var RunManager = require('managers/run-manager');
+var RunManager = require('managers/run-manager').default;
 var AuthManager = require('managers/auth-manager');
 var worldApi;
 
