@@ -102,7 +102,7 @@ SavedRunsManager.prototype = {
             rs = run;
         } else if (run && (typeof run === 'string')) {
             rs = new RunService($.extend(true, {}, existingOptions, { id: run, autoRestore: false }));
-        } else if ($.isArray(run)) {
+        } else if (Array.isArray(run)) {
             var me = this;
             var proms = run.map(function (r) {
                 return me.mark(r, toMark);

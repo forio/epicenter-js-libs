@@ -47,7 +47,7 @@ module.exports = (function () {
 
             var returnArray = [];
             $.each(qs, function (key, value) {
-                if ($.isArray(value)) {
+                if (Array.isArray(value)) {
                     value = value.join(',');
                 }
                 if ($.isPlainObject(value)) {

@@ -106,7 +106,7 @@ module.exports = function (config) {
                     return '';
                 }
 
-                id = $.isArray(id) ? id : [id];
+                id = Array.isArray(id) ? id : [id];
                 return 'id=' + id.join('&id=');
             };
 
@@ -119,7 +119,7 @@ module.exports = function (config) {
             // special case for queries with large number of ids
             // make it as a post with GET semantics
             var threshold = 30;
-            if (filter.id && $.isArray(filter.id) && filter.id.length >= threshold) {
+            if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
                 getOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
                 return http.post({ id: filter.id }, getOptions);
             } else {

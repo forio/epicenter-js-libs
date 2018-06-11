@@ -32,7 +32,7 @@ module.exports = function (config) {
 
     var connect = function (method, params, connectOptions) {
         params = result(params);
-        params = ($.isPlainObject(params) || $.isArray(params)) ? JSON.stringify(params) : params;
+        params = ($.isPlainObject(params) || Array.isArray(params)) ? JSON.stringify(params) : params;
 
         var options = $.extend(true, {}, transportOptions, connectOptions, {
             type: method,
