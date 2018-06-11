@@ -72,7 +72,7 @@ $(function () {
                         var filename = url.substring(url.lastIndexOf('/') + 1);
                         var extension = filename.substring(filename.lastIndexOf('.') + 1);
                         var item = $('<div class="file col-sm-2"></div>');
-                        if ($.inArray(extension, imageExtensions) > -1) {
+                        if (imageExtensions.indexOf(extension) > -1) {
                             item.append('<img class="thumb" src="' + url + '" alt="Asset">');
                         } else {
                             item.append('<i class="thumb fa fa-file-o"></i>');
