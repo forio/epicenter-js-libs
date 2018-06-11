@@ -72,7 +72,7 @@
 'use strict';
 
 // See integration-test-scenario-manager for usage examples
-var RunManager = require('managers/run-manager');
+var RunManager = require('managers/run-manager').default;
 var SavedRunsManager = require('./saved-runs-manager');
 
 var strategyUtils = require('managers/run-strategies/strategy-utils');

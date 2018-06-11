@@ -29,7 +29,7 @@
 *
 * **Example**
 *
-*       var rm = new F.manager.RunManager({
+*       const rm = new F.manager.RunManager({
 *           run: {
 *               account: 'acme-simulations',
 *               project: 'supply-chain-game',
@@ -42,7 +42,7 @@
 *       rm.getRun()
 *           .then(function(run) {
 *               // the return value of getRun() is a run object
-*               var thisRunId = run.id;
+*               const thisRunId = run.id;
 *               // the RunManager.run also contains the instantiated Run Service,
 *               // so any Run Service method is valid here
 *               rm.run.do('runModel');
@@ -58,23 +58,23 @@
 */
 
 'use strict';
-var strategies = require('managers/run-strategies');
-var specialOperations = require('./special-operations');
+import strategies, { getBestStrategy } from 'managers/run-strategies';
+import * as specialOperations from './special-operations';
 
-var RunService = require('service/run-api-service');
-var SessionManager = require('store/session-manager');
+import RunService from 'service/run-api-service';
+import SessionManager from 'store/session-manager';
 
-var util = require('util/object-util');
-var keyNames = require('managers/key-names');
+import { isEmpty } from 'util/object-util';
+import { STRATEGY_SESSION_KEY } from 'managers/key-names';
 
 function patchRunService(service, manager) {
     if (service.patched) {
         return service;
     }
 
-    var orig = service.do;
+    const orig = service.do;
     service.do = function (operation, params, options) {
-        var reservedOps = Object.keys(specialOperations);
+        const reservedOps = Object.keys(specialOperations);
         if (reservedOps.indexOf(operation) === -1) {
             return orig.apply(service, arguments);
         } else {
@@ -88,8 +88,8 @@ function patchRunService(service, manager) {
 }
 
 function sessionKeyFromOptions(options, runService) {
-    var config = runService.getCurrentConfig();
-    var sessionKey = $.isFunction(options.sessionKey) ? options.sessionKey(config) : options.sessionKey;
+    const config = runService.getCurrentConfig();
+    const sessionKey = $.isFunction(options.sessionKey) ? options.sessionKey(config) : options.sessionKey;
     return sessionKey;
 }
 
@@ -100,33 +100,33 @@ function setRunInSession(sessionKey, run, sessionManager) {
     }
 }
 
-var defaults = {
-    sessionKey: function (config) { 
-        var baseKey = keyNames.STRATEGY_SESSION_KEY;
-        var key = ['account', 'project', 'model'].reduce(function (accum, key) {
-            return config[key] ? accum + '-' + config[key] : accum; 
-        }, baseKey);
-        return key;
+class RunManager {
+    constructor(options) {
+        const defaults = {
+            sessionKey: function (config) { 
+                const baseKey = STRATEGY_SESSION_KEY;
+                const key = ['account', 'project', 'model'].reduce(function (accum, key) {
+                    return config[key] ? accum + '-' + config[key] : accum; 
+                }, baseKey);
+                return key;
+            }
+        };
+        
+        this.options = $.extend(true, {}, defaults, options);
+
+        if (this.options.run instanceof RunService) {
+            this.run = this.options.run;
+        } else if (!isEmpty(this.options.run)) {
+            this.run = new RunService(this.options.run);
+        } else {
+            throw new Error('No run options passed to RunManager');
+        }
+        patchRunService(this.run, this);
+    
+        this.strategy = getBestStrategy(this.options);
+        this.sessionManager = new SessionManager(this.options);
     }
-};
 
-function RunManager(options) {
-    this.options = $.extend(true, {}, defaults, options);
-
-    if (this.options.run instanceof RunService) {
-        this.run = this.options.run;
-    } else if (!util.isEmpty(this.options.run)) {
-        this.run = new RunService(this.options.run);
-    } else {
-        throw new Error('No run options passed to RunManager');
-    }
-    patchRunService(this.run, this);
-
-    this.strategy = strategies.getBestStrategy(this.options);
-    this.sessionManager = new SessionManager(this.options);
-}
-
-RunManager.prototype = {
     /**
      * Returns the run object for the 'correct' run. The correct run is defined by the strategy. 
      *
@@ -139,7 +139,7 @@ RunManager.prototype = {
      *
      *      rm.getRun().then(function (run) {
      *          // use the run object
-     *          var thisRunId = run.id;
+     *          const thisRunId = run.id;
      *
      *          // use the Run Service object
      *          rm.run.do('runModel');
@@ -152,24 +152,24 @@ RunManager.prototype = {
      *         console.log(run.variables.sample_int); 
      *      });
      *
-     * @param {Array} variables (Optional) The run object is populated with the provided model variables, if provided. Note: `getRun()` does not throw an error if you try to get a variable which doesn't exist. Instead, the variables list is empty, and any errors are logged to the console.
+     * @param {string[]} variables (Optional) The run object is populated with the provided model variables, if provided. Note: `getRun()` does not throw an error if you try to get a variable which doesn't exist. Instead, the variables list is empty, and any errors are logged to the console.
      * @param {Object} options (Optional) Configuration options; passed on to [RunService#create](../run-api-service/#create) if the strategy does create a new run.
-     * @return {$promise} Promise to complete the call.
+     * @return {Promise} Promise to complete the call.
      */
-    getRun: function (variables, options) {
-        var me = this;
-        var sessionStore = this.sessionManager.getStore();
+    getRun(variables, options) {
+        const me = this;
+        const sessionStore = this.sessionManager.getStore();
 
-        var sessionContents = sessionStore.get(sessionKeyFromOptions(this.options, me.run));
-        var runSession = JSON.parse(sessionContents || '{}');
+        const sessionContents = sessionStore.get(sessionKeyFromOptions(this.options, me.run));
+        const runSession = JSON.parse(sessionContents || '{}');
         
         if (runSession.runId) {
-            //EpiJS < 2.2 used runId as key, so maintain comptaibility. Remove at some future date (Summer `17?)
+            //Legacy: EpiJS < 2.2 used runId as key, so maintain comptaibility. Remove at some future date (Summer `17?)
             runSession.id = runSession.runId;
         }
 
-        var authSession = this.sessionManager.getSession();
-        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
+        const authSession = this.sessionManager.getSession();
+        if (this.strategy.requiresAuth && isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject('No user-session available').promise();
         }
@@ -177,7 +177,7 @@ RunManager.prototype = {
             .getRun(this.run, authSession, runSession, options).then(function (run) {
                 if (run && run.id) {
                     me.run.updateConfig({ filter: run.id });
-                    var sessionKey = sessionKeyFromOptions(me.options, me.run);
+                    const sessionKey = sessionKeyFromOptions(me.options, me.run);
                     setRunInSession(sessionKey, run, me.sessionManager);
 
                     if (variables && variables.length) {
@@ -193,7 +193,7 @@ RunManager.prototype = {
                 }
                 return run;
             });
-    },
+    }
 
     /**
      * Returns the run object for a 'reset' run. The definition of a reset is defined by the strategy, but typically means forcing the creation of a new run. For example, `reset()` for the default strategies `reuse-per-session` and `reuse-last-initialized` both create new runs.
@@ -202,7 +202,7 @@ RunManager.prototype = {
      *
      *      rm.reset().then(function (run) {
      *          // use the (new) run object
-     *          var thisRunId = run.id;
+     *          const thisRunId = run.id;
      *
      *          // use the Run Service object
      *          rm.run.do('runModel');
@@ -212,23 +212,23 @@ RunManager.prototype = {
      * @param {Object} options (Optional) Configuration options; passed on to [RunService#create](../run-api-service/#create).
      * @return {Promise}
      */
-    reset: function (options) {
-        var me = this;
-        var authSession = this.sessionManager.getSession();
-        if (this.strategy.requiresAuth && util.isEmpty(authSession)) {
+    reset(options) {
+        const me = this;
+        const authSession = this.sessionManager.getSession();
+        if (this.strategy.requiresAuth && isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject('No user-session available').promise();
         }
         return this.strategy.reset(this.run, authSession, options).then(function (run) {
             if (run && run.id) {
                 me.run.updateConfig({ filter: run.id });
-                var sessionKey = sessionKeyFromOptions(me.options, me.run);
+                const sessionKey = sessionKeyFromOptions(me.options, me.run);
                 setRunInSession(sessionKey, run.id, me.sessionManager);
             }
             return run;
         });
     }
-};
+}
 
 RunManager.strategies = strategies;
-module.exports = RunManager;
+export default RunManager;

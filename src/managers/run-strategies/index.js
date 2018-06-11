@@ -31,7 +31,7 @@ list['new-if-missing'] = list['reuse-per-session'];
 list['persistent-single-player'] = list['reuse-across-sessions'];
 
 
-module.exports = {
+const strategyManager = {
     /**
      * List of available strategies. Within this object, each key is the strategy name and the associated value is the strategy constructor.
      * @type {Object} 
@@ -70,7 +70,7 @@ module.exports = {
         if (strategy.getRun) {
             return strategy;
         }
-        var StrategyCtor = typeof strategy === 'function' ? strategy : this.byName(strategy);
+        var StrategyCtor = typeof strategy === 'function' ? strategy : strategyManager.byName(strategy);
         if (!StrategyCtor) {
             throw new Error('Specified run creation strategy was invalid:' + strategy);
         }
@@ -114,3 +114,5 @@ module.exports = {
         list[name] = strategy;
     }
 };
+
+module.exports = strategyManager;
