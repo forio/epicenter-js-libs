@@ -22,7 +22,7 @@ module.exports = (function () {
             var returnArray = [];
             var OPERATORS = ['<', '>', '!'];
             $.each(qs, function (key, value) {
-                if (typeof value !== 'string' || $.inArray($.trim(value).charAt(0), OPERATORS) === -1) {
+                if (typeof value !== 'string' || OPERATORS.indexOf(value.trim().charAt(0)) === -1) {
                     value = '=' + value;
                 }
                 returnArray.push(key + value);

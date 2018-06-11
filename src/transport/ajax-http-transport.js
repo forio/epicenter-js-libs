@@ -40,7 +40,7 @@ module.exports = function (config) {
         });
         var ALLOWED_TO_BE_FUNCTIONS = ['data', 'url'];
         $.each(options, function (key, value) {
-            if ($.isFunction(value) && $.inArray(key, ALLOWED_TO_BE_FUNCTIONS) !== -1) {
+            if ($.isFunction(value) && ALLOWED_TO_BE_FUNCTIONS.indexOf(key) !== -1) {
                 options[key] = value();
             }
         });
