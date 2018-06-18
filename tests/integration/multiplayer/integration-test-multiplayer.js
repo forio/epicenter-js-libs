@@ -29,6 +29,25 @@ $(function () {
         });
     });
 
+    $('#getUserPresence').on('click', function () {
+        var worldManager = new F.manager.WorldManager({
+            run: $.extend({}, {
+                account: $('#txtAccount').val(),
+                model: $('#txtModel').val(),
+                project: $('#txtProject').val(),
+            }, server)
+        });
+        worldManager.getCurrentWorld().then(function (worldObject, worldService) {
+            var worldService = new F.service.World($.extend({}, {
+                account: $('#txtAccount').val(),
+                model: $('#txtModel').val(),
+                project: $('#txtProject').val(),
+            }, server));
+            worldService.getPresenceForUsers(worldObject.id).then((pres)=> {
+                console.log(pres);
+            });
+        });
+    }); 
     $('#btnBindToWorld').on('click', function () {
         var worldManager = new F.manager.WorldManager({
             run: $.extend({}, {
