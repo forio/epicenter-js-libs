@@ -152,8 +152,8 @@ class RunManager {
      *         console.log(run.variables.sample_int); 
      *      });
      *
-     * @param {string[]} variables (Optional) The run object is populated with the provided model variables, if provided. Note: `getRun()` does not throw an error if you try to get a variable which doesn't exist. Instead, the variables list is empty, and any errors are logged to the console.
-     * @param {Object} options (Optional) Configuration options; passed on to [RunService#create](../run-api-service/#create) if the strategy does create a new run.
+     * @param {string[]} [variables] The run object is populated with the provided model variables, if provided. Note: `getRun()` does not throw an error if you try to get a variable which doesn't exist. Instead, the variables list is empty, and any errors are logged to the console.
+     * @param {Object} [options] Configuration options; passed on to [RunService#create](../run-api-service/#create) if the strategy does create a new run.
      * @return {Promise} Promise to complete the call.
      */
     getRun(variables, options) {
@@ -209,7 +209,7 @@ class RunManager {
      *      });
      *
      * **Parameters**
-     * @param {Object} options (Optional) Configuration options; passed on to [RunService#create](../run-api-service/#create).
+     * @param {Object} [options] Configuration options; passed on to [RunService#create](../run-api-service/#create).
      * @return {Promise}
      */
     reset(options) {

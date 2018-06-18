@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title> Multiplayer test </title>
-    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../../../dist/epicenter-multiplayer-dependencies.min.js"></script>
-    <script src="../../../dist/epicenter-edge.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/epicenter-multiplayer-dependencies.min.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <style>
@@ -33,15 +33,15 @@
                 <br/>
 
                 <label for="">Username</label>
-                <input type="text" id="txtUsername" value="a1" >
+                <input type="text" id="txtUsername" value="n1" >
                 <br/>
 
                 <label for="">Password</label>
-                <input type="text" id="txtPassword" value="a1a1a1a1" >
+                <input type="text" id="txtPassword" value="password1" >
                 <br/>
 
                 <label for="">Model</label>
-                <input type="text" id="txtModel" value="model.vmf" >
+                <input type="text" id="txtModel" value="gglasses.vmf" >
                 <br/>
                 <button id="btnLogin"> Login </button>
                 <a href="#" id='logout'> Logout</a>
@@ -153,6 +153,16 @@
                 <li> Click on the bind button</li>
                 <li> Do the same in another window and see presence notifications</li>
             </ol>
+        </div>
+    </section>
+
+    <h4>World User presence list</h4>
+    <section class="row">
+        <div class="col-xs-6">
+            <button id="getUserPresence">Bind to WorldAPI</button>
+            <ul class="user-list">
+
+            </ul>
         </div>
     </section>
 

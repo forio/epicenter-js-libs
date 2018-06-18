@@ -165,9 +165,9 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param  {String} groupName (optional) If not provided, taken from session cookie.
-         * @param  {Object} options Additional options to change the presence service defaults.
-         * @return {Promise} promise
+         * @param  {String} [groupName] If not provided, taken from session cookie.
+         * @param  {Object} [options] Additional options to change the presence service defaults.
+         * @return {Promise}
          */
         getStatus: function (groupName, options) {
             options = options || {};

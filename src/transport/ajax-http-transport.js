@@ -62,6 +62,7 @@ module.exports = function (config) {
             }
         };
 
+        //Legacy: jquery .then resolves with 3 different response values, which makes $.when return an array.  remove in 3.0
         return $.ajax(options);
     };
 
