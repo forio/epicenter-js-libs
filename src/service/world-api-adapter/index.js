@@ -21,10 +21,7 @@
 
 'use strict';
 
-import ConfigService from 'service/configuration-service';
-// var qutil = require('util/query-util');
 import TransportFactory from 'transport/http-transport-factory';
-import SessionManager from 'store/session-manager';
 
 import ConsensusService from 'service/consensus-api-service/consensus-service';
 import PresenceService from 'service/presence-api-service';
@@ -89,18 +86,6 @@ export default function WorldAPIAdapter(config) {
          * @type {Object}
          */
         transport: {},
-
-        /**
-         * Called when the call completes successfully. Defaults to `$.noop`.
-         * @type {function}
-         */
-        success: $.noop,
-
-        /**
-         * Called when the call fails. Defaults to `$.noop`.
-         * @type {function}
-         */
-        error: $.noop
     };
 
     const serviceOptions = getDefaultOptions(defaults, config, {
