@@ -67,6 +67,8 @@ module.exports = function (config) {
         //FIXME: Do not merge with service options and we won't have this problem
         const paramsToIgnore = ['password', 'username', 'isLocal', 'type']; 
         const cleaned = omit(options, paramsToIgnore);
+       
+        //Legacy: jquery .then resolves with 3 different response values, which makes $.when return an array.  remove in 3.0
         return $.ajax(cleaned);
     };
 

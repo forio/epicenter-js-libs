@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title> Multiplayer test </title>
 
-
     <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//forio.com/tools/js-libs/2.6.0/epicenter-multiplayer-dependencies.js"></script>
     <script src="//forio.com/tools/js-libs/2.6.0/epicenter.js"></script> -->
@@ -39,11 +38,11 @@
                 <br/>
 
                 <label for="">Username</label>
-                <input type="text" id="txtUsername" value="a1" >
+                <input type="text" id="txtUsername" value="n1" >
                 <br/>
 
                 <label for="">Password</label>
-                <input type="text" id="txtPassword" value="a1a1a1a1" >
+                <input type="text" id="txtPassword" value="password1" >
                 <br/>
 
                 <label for="">API Server (leave blank to use default)</label>
@@ -173,6 +172,16 @@
                 <li> Click on the bind button</li>
                 <li> Do the same in another window and see presence notifications</li>
             </ol>
+        </div>
+    </section>
+
+    <h4>World User presence list</h4>
+    <section class="row">
+        <div class="col-xs-6">
+            <button id="getUserPresence">Bind to WorldAPI</button>
+            <ul class="user-list">
+
+            </ul>
         </div>
     </section>
 
