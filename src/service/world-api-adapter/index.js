@@ -26,6 +26,8 @@ var TransportFactory = require('transport/http-transport-factory').default;
 var SessionManager = require('store/session-manager');
 
 var ConsensusService = require('service/consensus-api-service/consensus-service').default;
+var PresenceService = require('service/presence-api-service');
+
 var rutil = require('util/run-util');
 
 var _pick = require('util/object-util').pick;
@@ -35,7 +37,7 @@ var assignmentEndpoint = apiBase + 'assign';
 var apiEndpoint = apiBase + 'world';
 var projectEndpoint = apiBase + 'project';
 
-module.exports = function (config) {
+module.exports = function WorldAPIAdapter(config) {
     var defaults = {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
@@ -318,6 +320,25 @@ module.exports = function (config) {
         },
 
         /**
+         * Load information for a specific world. All further calls to the world service will use the id provided.
+         *
+         * **Parameters**
+         * @param {string} worldId The id of the world to load.
+         * @param {Object} [options] (Optional) Options object to override global options.
+         * @return {Promise}
+         */
+        load: function (worldId, options) {
+            if (worldId) {
+                serviceOptions.filter = worldId;
+            }
+            if (!serviceOptions.filter) {
+                throw new Error('Please provide a worldid to load');
+            }
+            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/' });
+            return http.get('', httpOptions);
+        },
+
+        /**
         * Gets all worlds that an end user belongs to for a given account (team), project, and group.
         *
         *  **Example**
@@ -351,25 +372,6 @@ module.exports = function (config) {
             );
 
             return http.get(filters, getOptions);
-        },
-
-        /**
-         * Load information for a specific world. All further calls to the world service will use the id provided.
-         *
-         * **Parameters**
-         * @param {String} worldId The id of the world to load.
-         * @param {Object} options (Optional) Options object to override global options.
-         * @return {Promise}
-         */
-        load: function (worldId, options) {
-            if (worldId) {
-                serviceOptions.filter = worldId;
-            }
-            if (!serviceOptions.filter) {
-                throw new Error('Please provide a worldid to load');
-            }
-            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/' });
-            return http.get('', httpOptions);
         },
 
         /**
@@ -592,7 +594,7 @@ module.exports = function (config) {
             this.getWorldsForUser(userId, { group: groupName })
                 .then(function (worlds) {
                     // assume the most recent world as the 'active' world
-                    worlds.sort(function (a, b) { return new Date(b.lastModified) - new Date(a.lastModified); });
+                    worlds.sort(function (a, b) { return +(new Date(b.lastModified)) - +(new Date(a.lastModified)); });
                     var currentWorld = worlds[0];
 
                     if (currentWorld) {
@@ -601,7 +603,7 @@ module.exports = function (config) {
 
                     dtd.resolveWith(me, [currentWorld]);
                 })
-                .fail(dtd.reject);
+                .catch(dtd.reject);
 
             return dtd.promise();
         },
@@ -771,7 +773,8 @@ module.exports = function (config) {
          */
         consensus: function (conOpts, options) {
             var opts = $.extend(true, {}, serviceOptions, options);
-            if (!opts.id) {
+            const worldId = opts.filter || opts.id;
+            if (!worldId) {
                 throw new Error('No world id provided; use consensus(name, { id: worldid})');
             }
             if (!conOpts) {
@@ -791,13 +794,40 @@ module.exports = function (config) {
                     };
                 }
             }
-
             var con = new ConsensusService($.extend(true, {
-                worldId: opts.id,
+                worldId: worldId,
             }, opts, extractNamesFromOpts(conOpts)));
             return con;
-        }
+        },
 
+        /**
+         * @param {string|{users: object} } world
+         * @param {object} options
+         * @returns {Promise}
+         */
+        getPresenceForUsers: function (world, options) {
+            const opts = $.extend(true, {}, serviceOptions, options);
+            const getUsersForWorld = (world, opts)=> {
+                if (world && world.users) {
+                    return $.Deferred().resolve(world).promise();
+                }
+                const worldid = world || opts.filter || opts.id;
+                return this.load(worldid).then((w)=> w);
+            };
+
+            const ps = new PresenceService(opts);
+            const worldLoadPromise = getUsersForWorld(world, opts);
+            const presenceLoadPromise = ps.getStatus();
+            return $.when(worldLoadPromise, presenceLoadPromise).then((worldRes, presenceRes)=> {
+                const world = worldRes[0];
+                const presenceList = presenceRes[0];
+                return world.users.map((user)=> {
+                    const isOnline = presenceList.find((status)=> status.userId === user.userId);
+                    user.isOnline = !!isOnline;
+                    return user;
+                });
+            });
+        }
     };
 
     $.extend(this, publicAPI);
