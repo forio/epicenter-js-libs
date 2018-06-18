@@ -21,24 +21,22 @@
 
 'use strict';
 
-var ConfigService = require('service/configuration-service').default;
-// var qutil = require('util/query-util');
-var TransportFactory = require('transport/http-transport-factory').default;
-var SessionManager = require('store/session-manager');
+import TransportFactory from 'transport/http-transport-factory';
 
-var ConsensusService = require('service/consensus-api-service/consensus-service').default;
-var PresenceService = require('service/presence-api-service');
+import ConsensusService from 'service/consensus-api-service/consensus-service';
+import PresenceService from 'service/presence-api-service';
 
-var rutil = require('util/run-util');
+import { extractValidRunParams } from 'util/run-util';
 
-var _pick = require('util/object-util').pick;
+import { pick as _pick } from 'util/object-util';
+import { getDefaultOptions, getURLConfig } from 'service/service-utils';
 
 var apiBase = 'multiplayer/';
 var assignmentEndpoint = apiBase + 'assign';
 var apiEndpoint = apiBase + 'world';
 var projectEndpoint = apiBase + 'project';
 
-module.exports = function WorldAPIAdapter(config) {
+export default function WorldAPIAdapter(config) {
     var defaults = {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
@@ -88,49 +86,19 @@ module.exports = function WorldAPIAdapter(config) {
          * @type {Object}
          */
         transport: {},
-
-        /**
-         * Called when the call completes successfully. Defaults to `$.noop`.
-         * @type {function}
-         */
-        success: $.noop,
-
-        /**
-         * Called when the call fails. Defaults to `$.noop`.
-         * @type {function}
-         */
-        error: $.noop
     };
 
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
+    const serviceOptions = getDefaultOptions(defaults, config, {
+        apiEndpoint: apiEndpoint
+    });
     if (serviceOptions.id) {
         serviceOptions.filter = serviceOptions.id;
     }
-
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-
-    if (!serviceOptions.account) {
-        serviceOptions.account = urlConfig.accountPath;
-    }
-
-    if (!serviceOptions.project) {
-        serviceOptions.project = urlConfig.projectPath;
-    }
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
-    });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-
-    var http = new TransportFactory(transportOptions);
+    const urlConfig = getURLConfig(serviceOptions);
+    const http = new TransportFactory(serviceOptions.transport);
 
     var setIdFilterOrThrowError = function (options) {
+        if (!options) options = {};
         if (options.id) {
             serviceOptions.filter = options.id;
         }
@@ -143,7 +111,7 @@ module.exports = function WorldAPIAdapter(config) {
     };
 
     var validateModelOrThrowError = function (options) {
-        if (!options.model) {
+        if (!options || !options.model) {
             throw new Error('No model specified to get the current run');
         }
     };
@@ -175,7 +143,7 @@ module.exports = function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         create: function (params, options) {
-            var createOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) });
+            var createOptions = $.extend(true, {}, serviceOptions, options);
             var worldApiParams = ['scope', 'files', 'roles', 'optionalRoles', 'minUsers', 'group', 'name'];
             var validParams = _pick(serviceOptions, ['account', 'project', 'group']);
             // whitelist the fields that we actually can send to the api
@@ -251,7 +219,7 @@ module.exports = function WorldAPIAdapter(config) {
         *           });
         *
         *  **Parameters**
-        * @param {String|Object} options (Optional) The id of the world to delete, or options object to override global options.
+        * @param {string|Object} options (Optional) The id of the world to delete, or options object to override global options.
         * @return {Promise}
         */
         delete: function (options) {
@@ -280,7 +248,6 @@ module.exports = function WorldAPIAdapter(config) {
         */
         updateConfig: function (config) {
             $.extend(serviceOptions, config);
-
             return this;
         },
 
@@ -307,8 +274,6 @@ module.exports = function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         list: function (options) {
-            options = options || {};
-
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
@@ -359,8 +324,6 @@ module.exports = function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         getWorldsForUser: function (userId, options) {
-            options = options || {};
-
             var getOptions = $.extend(true, {},
                 serviceOptions,
                 options,
@@ -412,19 +375,16 @@ module.exports = function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         addUsers: function (users, worldId, options) {
-
             if (!users) {
                 throw new Error('Please provide a list of users to add to the world');
             }
 
             // normalize the list of users to an array of user objects
-            users = $.map([].concat(users), function (u) {
+            users = ([].concat(users)).map(function (u) {
                 var isObject = $.isPlainObject(u);
-
                 if (typeof u !== 'string' && !isObject) {
                     throw new Error('Some of the users in the list are not in the valid format: ' + u);
                 }
-
                 return isObject ? u : { userId: u };
             });
 
@@ -468,26 +428,24 @@ module.exports = function WorldAPIAdapter(config) {
         *      });
         *
         * **Parameters**
-        * @param {object} user User object with `userId` and the new `role`.
+        * @param {{userId: string, role: string}} user User object with `userId` and the new `role`.
         * @param {object} options (Optional) Options object to override global options.
         * @return {Promise}
         */
         updateUser: function (user, options) {
-            options = options || {};
-
             if (!user || !user.userId) {
                 throw new Error('You need to pass a userId to update from the world');
             }
 
             setIdFilterOrThrowError(options);
-
+            const validFields = ['role'];
             var patchOptions = $.extend(true, {},
                 serviceOptions,
                 options,
                 { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId }
             );
 
-            return http.patch(_pick(user, 'role'), patchOptions);
+            return http.patch(_pick(user, validFields), patchOptions);
         },
 
         /**
@@ -512,8 +470,6 @@ module.exports = function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         removeUser: function (user, options) {
-            options = options || {};
-
             if (typeof user === 'string') {
                 user = { userId: user };
             }
@@ -555,8 +511,6 @@ module.exports = function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         getCurrentRunId: function (options) {
-            options = options || {};
-
             setIdFilterOrThrowError(options);
 
             var postParams = $.extend(true, {},
@@ -566,7 +520,7 @@ module.exports = function WorldAPIAdapter(config) {
             );
 
             validateModelOrThrowError(postParams);
-            const validRunParams = rutil.extractValidRunParams(postParams);
+            const validRunParams = extractValidRunParams(postParams);
             return http.post(validRunParams, postParams);
         },
 
@@ -630,7 +584,6 @@ module.exports = function WorldAPIAdapter(config) {
         */
         deleteRun: function (worldId, options) {
             options = options || {};
-
             if (worldId) {
                 options.filter = worldId;
             }
@@ -703,8 +656,6 @@ module.exports = function WorldAPIAdapter(config) {
         *
         */
         autoAssign: function (options) {
-            options = options || {};
-
             var opt = $.extend(true, {},
                 serviceOptions,
                 options,
@@ -753,8 +704,6 @@ module.exports = function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         getProjectSettings: function (options) {
-            options = options || {};
-
             var opt = $.extend(true, {},
                 serviceOptions,
                 options,
@@ -832,4 +781,4 @@ module.exports = function WorldAPIAdapter(config) {
     };
 
     $.extend(this, publicAPI);
-};
+}

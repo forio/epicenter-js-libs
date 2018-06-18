@@ -8,7 +8,7 @@
 var classFrom = require('../../util/inherit');
 
 var IdentityStrategy = require('./none-strategy');
-var WorldApiAdapter = require('../../service/world-api-adapter');
+var WorldApiAdapter = require('../../service/world-api-adapter').default;
 
 var defaults = {};
 
