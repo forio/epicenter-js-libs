@@ -12,12 +12,11 @@
  *      pr.getStatus();
  */
 
-var ConfigService = require('service/configuration-service').default;
-var TransportFactory = require('transport/http-transport-factory').default;
-var SessionManager = require('store/session-manager');
+import { getDefaultOptions, getURLConfig } from 'service/service-utils';
+import TransportFactory from 'transport/http-transport-factory';
 var apiEndpoint = 'presence';
 
-module.exports = function (config) {
+export default function (config) {
     var defaults = {
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL or session manager.
@@ -43,27 +42,11 @@ module.exports = function (config) {
          */
         transport: {},
     };
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
+    const serviceOptions = getDefaultOptions(defaults, config, {
+        apiEndpoint: apiEndpoint
     });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    var http = new TransportFactory(transportOptions, serviceOptions);
-
+    const urlConfig = getURLConfig(serviceOptions);
+    var http = new TransportFactory(serviceOptions.transport);
 
     var getFinalParams = function (params) {
         if (typeof params === 'object') {
@@ -92,7 +75,7 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param  {String} userId (optional) If not provided, taken from session cookie.
+         * @param  {string} [userId] optional If not provided, taken from session cookie.
          * @param  {Object} options Additional options to change the presence service defaults.
          * @return {Promise} promise
          */
@@ -126,8 +109,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param  {String} userId (optional) If not provided, taken from session cookie.
-         * @param  {Object} options Additional options to change the presence service defaults.
+         * @param  {string} [userId] If not provided, taken from session cookie.
+         * @param  {Object} [options] Additional options to change the presence service defaults.
          * @return {Promise} promise
          */
         markOffline: function (userId, options) {
@@ -165,8 +148,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param  {String} [groupName] If not provided, taken from session cookie.
-         * @param  {Object} [options] Additional options to change the presence service defaults.
+         * @param  {string} [groupName] If not provided, taken from session cookie.
+         * @param  {object} [options] Additional options to change the presence service defaults.
          * @return {Promise}
          */
         getStatus: function (groupName, options) {
@@ -198,8 +181,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          *
-         * @param  {String} groupName (optional) If not provided, taken from session cookie.
-         * @param  {Object} options Additional options to change the presence service defaults
+         * @param  {string} [groupName] If not provided, taken from session cookie.
+         * @param  {Object} [options] Additional options to change the presence service defaults
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
@@ -217,4 +200,4 @@ module.exports = function (config) {
     };
 
     $.extend(this, publicAPI);
-};
+}

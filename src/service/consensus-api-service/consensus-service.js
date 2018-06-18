@@ -30,7 +30,6 @@
     This allows you to use `F.service.ConsensusGroup` to list out/ delete all consensus points within that group for reporting.
  * 
  */
-
 import TransportFactory from 'transport/http-transport-factory';
 import { getDefaultOptions, getURLConfig } from 'service/service-utils';
 
@@ -55,7 +54,6 @@ export default function (config) {
     };
     const serviceOptions = getDefaultOptions(defaults, config);
     const urlConfig = getURLConfig(serviceOptions);
-
     const http = new TransportFactory(serviceOptions.transport);
 
     function getHTTPOptions(action, options) {
