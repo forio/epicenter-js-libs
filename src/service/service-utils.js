@@ -45,8 +45,8 @@ export function getURLConfig(options) {
     }
     return urlConfig;
 }
-export function getHTTPTransport(serviceOptions, overrides) {
-    const mergedOptions = $.extend(true, {}, serviceOptions, overrides);
+export function getHTTPTransport(transportOptions, overrides) {
+    const mergedOptions = $.extend(true, {}, transportOptions, overrides);
     const http = new TransportFactory(mergedOptions);
     return http;
 }
