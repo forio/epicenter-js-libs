@@ -88,7 +88,7 @@ $(function () {
                     } else if (error.type === 'NO_GROUPS') {
                         showError('The user has no groups associated in this account');
                     } else {
-                        showError(error.statusText || ('Unknown Error' + error.status));
+                        showError(error.statusText || error.message || ('Unknown Error' + error.status));
                     }
                 } else {
                     showError('Unknown error occured. Please try again. (' + error.status + ')');

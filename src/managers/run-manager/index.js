@@ -171,7 +171,7 @@ class RunManager {
         const authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
-            return $.Deferred().reject('No user-session available').promise();
+            return $.Deferred().reject({ type: 'UN_AUTHORIZED', message: 'No user-session available' }).promise();
         }
         return this.strategy
             .getRun(this.run, authSession, runSession, options).then(function (run) {
@@ -217,7 +217,7 @@ class RunManager {
         const authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
-            return $.Deferred().reject('No user-session available').promise();
+            return $.Deferred().reject({ type: 'UN_AUTHORIZED', message: 'No user-session available' }).promise();
         }
         return this.strategy.reset(this.run, authSession, options).then(function (run) {
             if (run && run.id) {
