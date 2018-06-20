@@ -767,15 +767,8 @@ export default function WorldAPIAdapter(config) {
 
             const ps = new PresenceService(opts);
             const worldLoadPromise = getUsersForWorld(world, opts);
-            const presenceLoadPromise = ps.getStatus();
-            return $.when(worldLoadPromise, presenceLoadPromise).then((worldRes, presenceRes)=> {
-                const world = worldRes[0];
-                const presenceList = presenceRes[0];
-                return world.users.map((user)=> {
-                    const isOnline = presenceList.find((status)=> status.userId === user.userId);
-                    user.isOnline = !!isOnline;
-                    return user;
-                });
+            return worldLoadPromise.then((world)=> {
+                return ps.getStatusForUsers(world.users);
             });
         }
     };
