@@ -13,6 +13,12 @@ describe('Presence API Service', function () {
         server.respondWith('POST', /(.*)\/presence/, function (xhr, id) {
             xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({ }));
         });
+        server.respondWith('GET', /(.*)\/presence/, function (xhr, id) {
+            xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify([
+                { userId: 'a' },
+                { userId: 'b' },
+            ]));
+        });
 
         server.respondImmediately = true;
     });
@@ -99,10 +105,31 @@ describe('Presence API Service', function () {
         });
 
         it('should throw error when no groupName is specified', function () {
-            var markOnline = function () {
+            var getStatus = function () {
                 createPresenceAdapter({ token: '123' }).getStatus();
             };
-            expect(markOnline).to.throw(Error);
+            expect(getStatus).to.throw(Error);
+        });
+    });
+    describe('getStatusForUsers', function () {
+        it('should throw error when no userList is specified', function () {
+            var getStatus = function () {
+                createPresenceAdapter({ token: '123' }).getStatusForUsers();
+            };
+            expect(getStatus).to.throw(Error);
+        });
+        it('should return userlist with online/offline status', ()=> {
+            return createPresenceAdapter({ token: '123' }).getStatusForUsers([
+                { userId: 'a' },
+                { userId: 'b' },
+                { userId: 'c' },
+            ], 'foobar').then((r)=> {
+                expect(r).to.eql([
+                    { userId: 'a', isOnline: true },
+                    { userId: 'b', isOnline: true },
+                    { userId: 'c', isOnline: false },
+                ]);
+            });
         });
     });
 });

@@ -166,6 +166,35 @@ export default function (config) {
         },
 
         /**
+         * Appends a boolean 'isOnline' field to provided list of users
+         *
+         * **Example**
+         *
+         *     var pr = new F.service.Presence();
+         *     pr.getStatusForUsers([{ userId: 'a', userId: 'b'}]).then(function(onlineUsers) {
+         *          console.log(onlineUsers[a].isOnline);
+         *     });
+         *
+         * @param { {userId: string}[] } userList Users to get status for
+         * @param  {string} [groupName] If not provided, taken from session cookie.
+         * @param  {object} [options] Additional options to change the presence service defaults.
+         * 
+         * @return {Promise}
+         */
+        getStatusForUsers: function (userList, groupName, options) {
+            if (!userList || !Array.isArray(userList)) {
+                throw new Error('getStatusForUsers: No userList provided.');
+            }
+            return this.getStatus(groupName, options).then((presenceList)=> {
+                return userList.map((user)=> {
+                    const isOnline = presenceList.find((status)=> status.userId === user.userId);
+                    user.isOnline = !!isOnline;
+                    return user;
+                });
+            });
+        },
+
+        /**
          * End users are automatically marked online and offline in a "presence" channel that is specific to each group. Gets this channel (an instance of the [Channel Service](../channel-service/)) for the given group. (Note that this Channel Service instance is also available from the [Epicenter Channel Manager getPresenceChannel()](../epicenter-channel-manager/#getPresenceChannel).)
          *
          *
