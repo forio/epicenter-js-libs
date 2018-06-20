@@ -47,12 +47,12 @@ var Strategy = classFrom(IdentityStrategy, {
         var dtd = $.Deferred();
 
         if (!curUserId) {
-            return dtd.reject({ statusCode: 400, error: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
+            return dtd.reject({ statusCode: 401, type: 'UN_AUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
         }
 
         var loadRunFromWorld = function (world) {
             if (!world) {
-                return dtd.reject({ statusCode: 404, error: 'The user is not in any world.' }, { options: me.options, session: session });
+                return dtd.reject({ statusCode: 404, type: 'NO_WORLD_FOR_USER', message: 'The user is not in any world.' }, { options: me.options, session: session });
             }
             return worldApi.getCurrentRunId({ model: model, filter: world.id })
                 .then(function (id) {
@@ -63,7 +63,7 @@ var Strategy = classFrom(IdentityStrategy, {
                     return run;
                 })
                 .then(dtd.resolve)
-                .fail(dtd.reject);
+                .catch(dtd.reject);
         };
 
         var serverError = function (error) {
