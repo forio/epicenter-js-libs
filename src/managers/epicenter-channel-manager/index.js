@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * ## Epicenter Channel Manager
  *
@@ -70,8 +68,8 @@ import ChannelManager from './channel-manager';
 import ConfigService from 'service/configuration-service';
 import classFrom from 'util/inherit';
 import SessionManager from 'store/session-manager';
-import WorldService from 'service/world-api-adapter';
-import { pick } from 'util/object-util';
+
+import subscribeToWorldChannel from './world-channel/subscribe-world-channel';
 
 var validTypes = {
     project: true,
@@ -255,129 +253,12 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
     
         var baseTopic = ['/world', account, project, groupName, worldid].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
-        var oldsubs = channel.subscribe;
-        channel.subscribe = function (fullTopic, callback, context, options) {
-            if (!fullTopic) {
-                return oldsubs.call(channel, fullTopic, callback, context, options);
-            }
-    
-            // run
-            //     new --> reset
-            //     update
-            //     variables
-            //     operation --> operations
-            //     delete
 
-            // user --> presence
-            //     connect --> online
-            //     disconnect --> offline
-
-            // world --> roles
-            //     assign
-            //     unassign
-            //     assignchange
-
-            const [topic, subTopic] = fullTopic.split('/');
-            var defaults = {
-                includeMine: true
-            };
-
-            const typeAliases = {
-                user: 'presence',
-                world: 'roles'
-            };
-            const subTypeAliases = {
-                run: {
-                    new: 'reset',
-                    operation: 'operations'
-                },
-                user: {
-                    connect: 'online',
-                    disconnect: 'offline'
-                },
-            };
-            
-            var opts = $.extend({}, defaults, options);
-            if (topic === 'presence') { //fake-send initial online status
-                var wm = new WorldService({ 
-                    account: account,
-                    project: project,
-                    filter: worldid
-                });
-                wm.getPresenceForUsers(worldid).then((users)=> {
-                    users.filter((u)=> u.isOnline).forEach(function (user) {
-                        var fakeMeta = {
-                            date: Date.now(),
-                            channel: baseTopic,
-                            type: 'presence',
-                            subType: 'connect',
-                            source: 'presenceAPI',
-                        };
-                        const normalizedUser = pick(user, ['userName', 'lastName', 'isOnline', 'account']);
-                        normalizedUser.id = user.userId; //regular presence notification has id, not userid
-                        callback(normalizedUser, fakeMeta); //eslint-disable-line callback-return
-                    });
-                });
-            }
-            /* eslint-disable complexity */
-            var filterByType = function (res) {
-                const { type, subType } = res.data;
-
-                const aliasedType = typeAliases[type] ? typeAliases[type] : type;
-                const aliasedSubType = (subTypeAliases[type] && subTypeAliases[type][subType]) || subType;
-
-                const isTopicMatch = topic === type || topic === aliasedType;
-                const isSubTopicMatch = !subTopic || subTopic === subType || subTopic === aliasedSubType;
-
-                let notificationFrom = res.data.user || {};
-                const payload = res.data.data;
-                if (aliasedType === 'run' && aliasedSubType === 'reset') {
-                    notificationFrom = payload.run.user; //reset doesn't give back user info otherwise
-                } else if (aliasedSubType === 'roles' && !notificationFrom.id) {
-                    notificationFrom.id = session.userid; //unassign doesn't provide an user
-                }
-                
-                const isMine = session.userId === notificationFrom.id;
-                const isInitiatorMatch = isMine && opts.includeMine || !isMine;
-
-                const shouldPassOn = isTopicMatch && isSubTopicMatch && isInitiatorMatch;
-                if (!shouldPassOn) {
-                    return;
-                }
-
-                const meta = {
-                    user: notificationFrom,
-                    date: res.data.date,
-                    channel: res.channel,
-                    type: topic,
-                    subType: subTopic || subType,
-                };
-
-                if (aliasedType === 'run') {
-                    if (aliasedSubType === 'variables' || aliasedSubType === 'operations') {
-                        return callback(payload[subType], meta);
-                    } else if (aliasedSubType === 'reset') {
-                        return callback(payload.run, meta);
-                    }
-                } else if (aliasedType === 'roles') {
-                    if (aliasedSubType === 'unassign') {
-                        payload.users = payload.users.map((u)=> {
-                            u.oldRole = u.role;
-                            u.role = null;
-                            return u;
-                        });
-                    }
-                    return callback(payload.users, meta);
-                } if (aliasedType === 'presence') {
-                    const user = res.data.user;
-                    user.isOnline = subType === 'connect';
-                    return callback(user, meta);
-                }
-                return callback.call(context, res);
-            };
-            return oldsubs.call(channel, '', filterByType, context, options);
-        };
-        return channel;
+        return subscribeToWorldChannel(worldid, channel, session, {
+            baseTopic: baseTopic,
+            account: account,
+            project: project,
+        });
     },
     
     /**
