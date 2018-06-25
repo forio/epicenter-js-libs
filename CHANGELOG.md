@@ -1,3 +1,94 @@
+<a name="2.7.0"></a>
+
+### Features
+
+#### Epicenter Channel Manager (F.manager.ChannelManager)
+
+##### getWorldChannel: World Channel allows you to choose topics to subscribe to
+
+You can now subscribe for specific "topics" on the World Channel. For e.g.
+
+```js
+const cm = new F.manager.ChannelManager();
+const worldChannel = cm.getWorldChannel();
+cm.subscribe(worldChannel.TOPICS.RUN, (data, meta)=> {
+    //Gets all operations/variables/run reset notifications
+});
+```
+
+The list of available topics are:
+
+| Topic | Description |
+| ------------- | ------------- |
+| ALL | All events |
+| RUN | All Run events |
+| RUN_VARIABLES | Variable sets only |
+| RUN_OPERATIONS | Operation executions only |
+| RUN_RESET | New run attached to the world |
+| PRESENCE | All Presence events |
+| PRESENCE_ONLINE | Online notifications only |
+| PRESENCE_OFFLINE | Offline notifications only |
+| ROLES | All role events |
+| ROLES_ASSIGN | Role assignments only |
+| ROLES_UNASSIGN | Role unassignments |
+
+##### getWorldChannel: Subscribing to the `PRESENCE` topic bootstraps info
+
+Earlier the presence channel used to notify you of presence changes but you still needed to 'bootstrap' initial data for your current users in advance. Now the channel automatically queries for the status of the current users in the world and send it over. For e.g.
+
+Example: Your world has users A,B, and C, out of who A&B are currently online.
+
+```js
+const worldChannel = cm.getWorldChannel();
+cm.subscribe(worldChannel.TOPICS.PRESENCE, (data, meta)=> {
+    //Will be called once for A, and once for B, as well as once for every future change to status of A,B, or C
+});
+```
+
+#### Data API Scoping
+
+```js  
+const DataService = F.service.Data;    
+const groupScopeDataService = new DataService({    
+    name: 'some-name', 
+    scope: DataService.SCOPES.GROUP,   
+});    
+const userScopeDataService = new DataService({     
+    name: 'some-name', 
+    scope: DataService.SCOPES.USER,    
+});    
+```
+Available scopes are:
+
+| Scope | Readable By | Writable By
+| ------------- | ------------- | ------------- |
+| GROUP | Facilitators & Users in that group | Faciliators in that group|
+| USER | Faciliator in that group. User who created the collection | Faciliator in that group. User who created the collection |
+| RUN | Faciliator in that group. Users who belong to that run | Faciliator in that group. Users who belong to that run |
+| FACILITATOR | Faciliators in that group | Faciliators in that group |
+| PROJECT (default, for legacy reasons) | Any user in the project | Any user in the project |
+| CUSTOM (to opt out of naming conventions) | customize with Epicenter-api-proxy | customize with Epicenter-api-proxy |
+
+#### Presence API: New method getStatusForUsers
+
+This is similar to `getStatus`, except it takes in a whitelist of users to get presence for.
+```js
+var pr = new F.service.Presence();
+pr.getStatusForUsers([{ userId: 'a', userId: 'b'}]).then(function(onlineUsers) {
+     console.log(onlineUsers[a].isOnline);
+});
+```
+
+#### PasswordService
+
+The new password service allows you to reset user passwords.
+```js
+var ps = new F.service.Password();
+ps.resetPassword('myuserName@gmail.com', {
+    subject: 'Please reset your password'
+});
+```
+
 <a name="2.6.0"></a>
 #### Bug Fixes:
 - World Service: `getCurrentRunId` and `newRunForWorld` calls were ignoring any `files` or `cinFiles` parameters passed in; they now correctly pass it through to the APIs, facilitating building multiplayer Vensim models relying on external files.
@@ -35,7 +126,7 @@ See documentation for [Consensus Service](http://forio.com/epicenter/docs/public
 #### Features:
 - For Vensim models you can now pass in `cinFiles` as an option while creating a run. e.g.
 
-```
+```js
     var rs = new F.service.Run();
     rs.create({
         model: 'hello_world.jl',

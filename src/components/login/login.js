@@ -81,7 +81,7 @@ $(function () {
         })
             .fail(function (error) {
                 if (error.status === 401) {
-                    showError('Invalid user name or password.', error.status);
+                    showError('Invalid user name or password.');
                 } else if (error.status === 403) {
                     if (error.type === 'MULTIPLE_GROUPS') {
                         selectGroup(userName, password, account, project, error.userGroups, action);
