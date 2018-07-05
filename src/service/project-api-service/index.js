@@ -1,16 +1,14 @@
 /**
  *
- * ## Group API Adapter
+ * ## Project API Adapter
  *
- * The Group API Adapter provides methods to look up, create, change or remove information about groups in a project. It is based on query capabilities of the underlying RESTful [Group API](../../../rest_apis/user_management/group/).
+ * The Project API allows reading/writing project settings. An author/admin project token is required for most operations.
  *
- * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/).
- *
- *      var ma = new F.service.Group({ token: 'user-or-project-access-token' });
- *      ma.getGroupsForProject({ account: 'acme', project: 'sample' });
+ *      var ps = new F.service.Project({  account: 'acme', project: 'sample', token: 'author-or-project-access-token' });
+ *      ps.getProjectSettings();
  */
 
-import { getDefaultOptions, getApiUrl, getURLConfig } from 'service/service-utils';
+import { getDefaultOptions } from 'service/service-utils';
 import TransportFactory from 'transport/http-transport-factory';
 
 const API_ENDPOINT = 'project';

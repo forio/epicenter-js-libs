@@ -33,6 +33,19 @@ describe.only('Project API Service', function () {
         server.restore();
     });
 
+    it('should pass through string tokens', function () {
+        const ps = createProjectService({ token: 'abc' });
+        ps.getProjectSettings();
+
+        var req = server.requests.pop();
+        expect(req.requestHeaders.Authorization).to.equal('Bearer abc');
+
+        const ps2 = createProjectService();
+        ps2.getProjectSettings();
+
+        req = server.requests.pop();
+        expect(req.requestHeaders.Authorization).to.not.exist;
+    });
 
     describe('#getProjectSettings', function () {
         it('should do a GET', function () {
