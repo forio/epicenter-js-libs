@@ -20,8 +20,6 @@
  *       });
  */
 
-'use strict';
-
 var ConfigService = require('service/configuration-service').default;
 var TransportFactory = require('transport/http-transport-factory').default;
 var SessionManager = require('store/session-manager');

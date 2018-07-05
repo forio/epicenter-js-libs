@@ -45,8 +45,9 @@ F.service.Password = require('./service/password-api-service').default;
 F.service.Consensus = require('./service/consensus-api-service/consensus-service');
 F.service.ConsensusGroup = require('./service/consensus-api-service/consensus-group-service');
 
-F.store.Cookie = require('./store/cookie-store');
+F.service.Project = require('./service/project-api-service').default;
 
+F.store.Cookie = require('./store/cookie-store');
 F.factory.Store = require('./store/store-factory');
 
 F.manager.ScenarioManager = require('./managers/scenario-manager');
