@@ -108,7 +108,7 @@ var UrlConfigService = function (config) {
         },
 
         getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
+            var PROJECT_APIS = ['run', 'data', 'file', 'presence', 'project'];
             var apiMapping = {
                 channel: 'channel/subscribe'
             };

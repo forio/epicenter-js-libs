@@ -6,6 +6,12 @@ import TransportFactory from 'transport/http-transport-factory';
 
 export function getApiUrl(apiEndpoint, serviceOptions) {
     var urlConfig = new ConfigService(serviceOptions).get('server');
+    if (serviceOptions.account) {
+        urlConfig.accountPath = serviceOptions.account;
+    }
+    if (serviceOptions.project) {
+        urlConfig.projectPath = serviceOptions.project;
+    }
     return urlConfig.getAPIPath(apiEndpoint);
 }
 
