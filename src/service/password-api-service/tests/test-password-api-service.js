@@ -7,7 +7,7 @@ chai.use(require('sinon-chai'));
 
 const { expect } = chai;
 
-describe('Password API API', function () {
+describe('Password API', function () {
     const account = 'forio';
     const project = 'js-libs';
     const baseURL = (new URLService({ accountPath: account, projectPath: project })).getAPIPath('password');
