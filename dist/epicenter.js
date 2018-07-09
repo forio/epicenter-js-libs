@@ -2461,10 +2461,10 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
             if ((userName || userId) && token) {
                 var userProp = userName ? 'userName' : 'userId';
                 var ext = {
-                    authorization: 'Bearer ' + token
+                    authorization: 'Bearer ' + token,
+                    groupName: defaultCometOptions.groupName
                 };
                 ext[userProp] = userName ? userName : userId;
-
                 defaultCometOptions.handshake = {
                     ext: ext
                 };
@@ -4064,7 +4064,7 @@ module.exports = function (config) {
         params = $.isPlainObject(params) || $.isArray(params) ? JSON.stringify(params) : params;
 
         var options = $.extend(true, {}, transportOptions, connectOptions, {
-            type: method,
+            method: method,
             data: params
         });
         var ALLOWED_TO_BE_FUNCTIONS = ['data', 'url'];
@@ -4091,7 +4091,10 @@ module.exports = function (config) {
             }
         };
 
-        var cleaned = omit(options, ['password', 'username']);
+        //These params mean affect jQuery behavior, and may be passed in inadvertently since all the different options are merged together
+        //FIXME: Do not merge with service options and we won't have this problem
+        var paramsToIgnore = ['password', 'username', 'isLocal', 'type'];
+        var cleaned = omit(options, paramsToIgnore);
         return $.ajax(cleaned);
     };
 
@@ -4650,7 +4653,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 var API_ENDPOINT = 'data';
-var getAPIURL = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["b" /* getURL */].bind(null, API_ENDPOINT);
+var getAPIURL = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["c" /* getURL */].bind(null, API_ENDPOINT);
 
 var DataService = function () {
     function DataService(config) {
@@ -4722,8 +4725,8 @@ var DataService = function () {
      * **Parameters**
      * @param {String} key The name of the document to search. Pass the empty string ('') to search the entire collection.
      * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
-     * @param {Object} [outputModifier] (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-     * @param {Object} [options] (Optional) Overrides for configuration options.
+     * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+     * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
      */
 
@@ -4757,8 +4760,8 @@ var DataService = function () {
          * **Parameters**
          *
          * @param {String|Object} key If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
-         * @param {Object} [value] (Optional) The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
-         * @param {Object} [options] (Optional) Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
+         * @param {Object} [value] The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
+         * @param {Object} [options] Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
          * @return {Promise}
          */
 
@@ -4832,8 +4835,8 @@ var DataService = function () {
          * **Parameters**
          *
          * @param {String} key Id of the document.
-         * @param {Object} [value] (Optional) The data to save, in key:value pairs.
-         * @param {Object} [options] (Optional) Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
+         * @param {Object} [value] The data to save, in key:value pairs.
+         * @param {Object} [options] Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
          * @return {Promise}
          */
 
@@ -4854,7 +4857,7 @@ var DataService = function () {
          *
          * **Parameters**
          * @param  {String|Object} key The id of the data to return. Can be the id of a document, or a path to data within that document.
-         * @param {Object} [outputModifier] (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
@@ -4877,7 +4880,7 @@ var DataService = function () {
          * **Parameters**
          *
          * @param {String|Array} keys The id of the document to remove from this collection, or an array of such ids.
-         * @param {Object} [options] (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
 
@@ -4895,12 +4898,38 @@ var DataService = function () {
             }
             return this.http.delete(params, mergedOptions);
         }
+
+        /**
+         * Returns the internal collection name (with scope)
+         *
+         * @param {object} session Group/User info to add to scope. Gets it from current session otherwise
+         * @param {Object} [options] Overrides for configuration options.
+         * @return {string} Scoped collection name
+         */
+
+    }, {
+        key: 'getScopedName',
+        value: function getScopedName(session, options) {
+            var opts = $.extend(true, {}, this.serviceOptions, options);
+            var collName = opts.root.split('/')[0];
+            var scopedCollName = Object(__WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["b" /* getScopedName */])(collName, opts.scope, session);
+            return scopedCollName;
+        }
+
+        /**
+         * Gets a channel to listen to notifications on for this collection
+         * 
+         * @param {Object} [options] Overrides for configuration options.
+         * @return {Channnel} channel to subscribe on
+         */
+
     }, {
         key: 'getChannel',
         value: function getChannel(options) {
             var opts = $.extend(true, {}, this.serviceOptions, options);
+            var scopedCollName = this.getScopedName(opts);
             var cm = new __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__["default"](opts);
-            return cm.getDataChannel(opts.root);
+            return cm.getDataChannel(scopedCollName);
         }
         // Epicenter doesn't allow nuking collections
         //     /**
@@ -6556,8 +6585,8 @@ module.exports = function (config) {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SCOPES; });
 /* unused harmony export addScopeToCollection */
-/* unused harmony export getScopedName */
-/* harmony export (immutable) */ __webpack_exports__["b"] = getURL;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getScopedName;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getURL;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(5);
@@ -6614,10 +6643,14 @@ function addScopeToCollection(key, scope, session) {
  * 
  * @param {string} name 
  * @param {string} scope 
- * @param {object} session 
+ * @param {object} [session] 
  * @returns {string}
  */
 function getScopedName(name, scope, session) {
+    if (!session) {
+        var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default.a();
+        session = am.getCurrentUserSessionInfo();
+    }
     var split = name.split('/');
     var collection = split[0];
 
@@ -6628,10 +6661,7 @@ function getScopedName(name, scope, session) {
 }
 
 function getURL(API_ENDPOINT, collection, doc, options) {
-    var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default.a();
-    var session = am.getCurrentUserSessionInfo();
-
-    var scopedCollection = getScopedName(collection || options.root, options.scope, session);
+    var scopedCollection = getScopedName(collection || options.root, options.scope);
 
     var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["d" /* getURLConfig */])(options);
     var baseURL = urlConfig.getAPIPath(API_ENDPOINT);

@@ -31,11 +31,16 @@ function tick(scope) {
         $(`[data-scope="${scope}"] .seconds`).html(d.remaining.seconds);
         console.log('tick happened', d.remaining);
     });
+    groupTimerChannnel.subscribe(tm.ACTIONS.RESET, function (d) {
+        $(`[data-scope="${scope}"] .mins`).html('-');
+        $(`[data-scope="${scope}"] .seconds`).html('-');
+        console.log('timer deleted');
+    });
 }
 
 tick('user');
 tick('group');
-tick('run');
+// tick('run'); Runscope not implemented in data api yet
 
 $('.btn-create').click(function (evt) {
     var tm = getTm(evt);
