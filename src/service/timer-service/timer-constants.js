@@ -1,9 +1,3 @@
-export const SCOPES = {
-    GROUP: 'GROUP',
-    RUN: 'RUN',
-    USER: 'USER',
-    CUSTOM: 'CUSTOM',
-};
 export const ACTIONS = {
     CREATE: 'CREATE',
     START: 'START',

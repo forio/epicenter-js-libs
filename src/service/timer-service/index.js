@@ -6,34 +6,13 @@ import PubSub from 'util/pubsub';
 import { default as getStrategy, STRATEGIES } from './start-time-strategies';
 
 import reduceActions from './timer-actions-reducer';
-import { SCOPES, ACTIONS } from './timer-constants';
+import { ACTIONS } from './timer-constants';
 
-function getAPIKeyName(options) {
-    const scope = options.scope.toUpperCase();
-    const delimiter = '_';
-    const prefix = 'timer';
-    if (scope === SCOPES.GROUP) {
-        return [prefix, 'group', options.groupId].join(delimiter);
-    } else if (scope === SCOPES.USER) {
-        return [prefix, 'user', options.userId, 'group', options.groupId].join(delimiter);
-    } else if (scope === SCOPES.RUN) {
-        if (!options.scopeOptions || !options.scopeOptions.runid) {
-            throw new Error('Run Scope requires passing in run options with scopeOptions: { runid: <id> }');
-        }
-        return [prefix, 'run', options.scopeOptions.runid].join(delimiter);
-    } else if (scope === SCOPES.CUSTOM) {
-        if (!options.scopeOptions || !options.scopeOptions.customName) {
-            throw new Error('Custom Scope requires passing in scopeOptions: { customName: <id> }');
-        }
-        return options.scopeOptions.customName;
-    }
-    throw new Error('Unknown scope ' + scope);
-}
 
 function getStore(options) {
-    const key = getAPIKeyName(options);
     const ds = new Dataservice($.extend(true, {}, options, {
-        root: key
+        root: 'timer',
+        scope: options.scope
     }));
     return ds;
 }
@@ -53,8 +32,7 @@ function getStateFromActions(actions, currentTime, options) {
  * @property {string} [token] For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
  * @property {object} [transport] Options to pass on to the underlying transport layer
  * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
- * @property {GROUP|USER|RUN} [scope] Determines the specificity of the timer, or at what level the timer applies to.
- * @property {object} [scopeOptions] Use to pass `runid` for RUN scope, or `customName` for CUSTOM scope ignored otherwise
+ * @property {string} [scope] Determines the specificity of the timer, see DataService for available scopes
  * @property {string|function} [strategy] strategy to use to resolve start time. Available strategies are 'first-user' (default) or 'last-user'. Can also take in a function to return a custom start time.
  */
 class TimerService {
@@ -68,8 +46,6 @@ class TimerService {
             token: undefined,
             transport: {},
             name: 'timer',
-            scope: SCOPES.RUN,
-            scopeOptions: {},
             strategy: STRATEGIES.START_BY_FIRST_USER,
             strategyOptions: {},
         };
@@ -328,7 +304,7 @@ class TimerService {
 }
 
 TimerService.ACTIONS = ACTIONS;
-TimerService.SCOPES = SCOPES;
+TimerService.SCOPES = Dataservice.SCOPES;
 TimerService.STRATEGY = STRATEGIES;
 
 export default TimerService;
