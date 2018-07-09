@@ -1,4 +1,4 @@
-var qutils = require('../util/query-util');
+var { toQueryFormat } = require('../util/query-util');
 
 module.exports = function (config) {
 
@@ -15,7 +15,7 @@ module.exports = function (config) {
          * ONLY for strings in the url. All GET & DELETE params are run through this
          * @type {Function}
          */
-        parameterParser: qutils.toQueryFormat,
+        parameterParser: toQueryFormat,
 
         // To allow epicenter.token and other session cookies to be passed
         // with the requests

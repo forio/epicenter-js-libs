@@ -54,7 +54,7 @@
 'use strict';
 
 var ConfigService = require('service/configuration-service').default;
-var qutil = require('util/query-util');
+var { toMatrixFormat } = require('util/query-util');
 var rutil = require('util/run-util');
 var TransportFactory = require('transport/http-transport-factory').default;
 var VariablesService = require('./variables-api-service');
@@ -137,7 +137,7 @@ module.exports = function (config) {
         urlConfig.filter = ';';
         urlConfig.getFilterURL = function (filter) {
             var url = urlConfig.getAPIPath('run');
-            var filterMatrix = qutil.toMatrixFormat(filter || opts.filter);
+            var filterMatrix = toMatrixFormat(filter || opts.filter);
 
             if (filterMatrix) {
                 url += filterMatrix + '/';

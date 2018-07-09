@@ -21,7 +21,7 @@
 var ConfigService = require('service/configuration-service').default;
 var TransportFactory = require('transport/http-transport-factory').default;
 var SessionManager = require('store/session-manager');
-var qutil = require('util/query-util');
+var { toQueryFormat } = require('util/query-util');
 
 module.exports = function (config) {
     var defaults = {
@@ -113,7 +113,7 @@ module.exports = function (config) {
             var getFilters = [
                 'account=' + getOptions.account,
                 toIdFilters(filter.id),
-                qutil.toQueryFormat(toQFilter(filter))
+                toQueryFormat(toQFilter(filter))
             ].join('&');
 
             // special case for queries with large number of ids

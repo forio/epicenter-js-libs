@@ -2,7 +2,7 @@
  * Utilities for working with the run service
  */
 
-import qutil from './query-util';
+import { toQueryFormat } from './query-util';
 import { pick } from 'util/object-util';
 
 var MAX_URL_LENGTH = 2048;
@@ -109,7 +109,7 @@ export function splitGetFactory(httpOptions) {
             // 1. Remove hash
             url = url.replace(/#.*$/, '');
             // 1. Append query string
-            var queryParams = qutil.toQueryFormat(data);
+            var queryParams = toQueryFormat(data);
             var questionIdx = url.indexOf('?');
             if (queryParams && questionIdx > -1) {
                 return url + '&' + queryParams;

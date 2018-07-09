@@ -22,7 +22,6 @@
 'use strict';
 
 var ConfigService = require('service/configuration-service').default;
-// var qutil = require('util/query-util');
 var TransportFactory = require('transport/http-transport-factory').default;
 var SessionManager = require('store/session-manager');
 
