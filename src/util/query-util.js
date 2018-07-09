@@ -127,11 +127,3 @@ export function normalizeSlashes(url, options) {
     return `${protocol}${cleaned}`;
 }
 
-export function addTrailingSlash(url) {
-    if (!url) {
-        return '';
-    }
-    return (url.charAt(url.length - 1) === '/') ? url : (url + '/');
-}
-
-

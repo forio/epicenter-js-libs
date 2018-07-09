@@ -64,8 +64,6 @@ export function getURL(API_ENDPOINT, collection, doc, options) {
     const urlConfig = getURLConfig(options);
     const baseURL = urlConfig.getAPIPath(API_ENDPOINT);
 
-    const normalized = normalizeSlashes(`${scopedCollection}${doc || ''}`, { leading: true, trailing: true });
-    const fullURL = `${baseURL}/${normalized}`;
-
-    return fullURL;
+    const fullURL = `${baseURL}/${scopedCollection}/${doc || ''}`;
+    return normalizeSlashes(fullURL, { leading: true, trailing: true });
 }

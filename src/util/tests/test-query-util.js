@@ -80,18 +80,6 @@ describe('Query Util', function () {
         });
     });
 
-    describe('#addTrailingSlash', function () {
-        it('should add slashes to urls without it', function () {
-            addTrailingSlash('forio.com').should.equal('forio.com/');
-        });
-        it('should accept existing slashes', function () {
-            addTrailingSlash('forio.com/').should.equal('forio.com/');
-        });
-        it('should no nothing for empty strings', function () {
-            addTrailingSlash('').should.equal('');
-        });
-    });
-
     describe('#normalizeSlashes', ()=> {
         it('should no nothing for empty strings', function () {
             normalizeSlashes('').should.equal('');
