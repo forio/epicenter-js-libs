@@ -29,14 +29,14 @@
 import TransportFactory from 'transport/http-transport-factory';
 
 import { getDefaultOptions } from 'service/service-utils';
-import { SCOPES, getURL } from './data-service-scope-utils';
+import { SCOPES, getURL, getScopedName } from './data-service-scope-utils';
 
 import ChannelManager from 'managers/epicenter-channel-manager';
 
 const API_ENDPOINT = 'data';
 const getAPIURL = getURL.bind(null, API_ENDPOINT);
 
-export default class DataService {
+class DataService {
     constructor(config) {
         var defaults = {
             /**
@@ -262,9 +262,11 @@ export default class DataService {
     }
 
     getChannel(options) {
-        var opts = $.extend(true, {}, this.serviceOptions, options);
-        var cm = new ChannelManager(opts);
-        return cm.getDataChannel(opts.root);
+        const opts = $.extend(true, {}, this.serviceOptions, options);
+        const cm = new ChannelManager(opts);
+        const collName = opts.root.split('/')[0];
+        const scopedCollName = getScopedName(collName, opts.scope);
+        return cm.getDataChannel(scopedCollName);
     }
     // Epicenter doesn't allow nuking collections
     //     /**
@@ -275,3 +277,7 @@ export default class DataService {
     //         return this.remove('', options);
     //     }
 }
+
+DataService.SCOPES = SCOPES;
+
+export default DataService;
