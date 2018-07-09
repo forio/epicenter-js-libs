@@ -1,6 +1,5 @@
-import * as sutils from '../data-service-scope-utils';
+import { SCOPES, addScopeToCollection, getScopedName } from '../data-service-scope-utils';
 import { expect } from 'chai';
-const { SCOPES, addScopeToCollection, getScopedName } = sutils;
 
 describe('Data API Scope utils test', ()=> {
     describe('#addScopeToCollection', ()=> {
@@ -8,10 +7,17 @@ describe('Data API Scope utils test', ()=> {
             const fn = ()=> addScopeToCollection('foobar', SCOPES.GROUP, {});
             const fn1 = ()=> addScopeToCollection('foobar', SCOPES.USER, {});
             const fn2 = ()=> addScopeToCollection('foobar', SCOPES.PROJECT, {});
-            // const fn3 = ()=> addScopeToCollection('foobar', SCOPES.PROJECT, {});
+            const fn3 = ()=> addScopeToCollection('foobar', SCOPES.FACILITATOR, {});
             expect(fn).to.throw(/Authorization/i);
             expect(fn1).to.throw(/Authorization/i);
             expect(fn2).to.throw(/Authorization/i);
+            expect(fn3).to.throw(/Authorization/i);
+        });
+        it('should require facilitator access for facilitator scope', ()=> {
+            const fn = ()=> addScopeToCollection('foobar', SCOPES.FACILITATOR, { groupId: 'myGroupId' });
+            const fn2 = ()=> addScopeToCollection('foobar', SCOPES.FACILITATOR, { isFac: true, groupId: 'myGroupId' });
+            expect(fn).to.throw(/Authorization/i);
+            expect(fn2).to.not.throw(/Authorization/i);
         });
         it('should allow access to custom collections without a session', ()=> {
             const fn = ()=> addScopeToCollection('foobar', SCOPES.CUSTOM, {});
@@ -23,6 +29,13 @@ describe('Data API Scope utils test', ()=> {
                 groupId: 'mygrpid'
             });
             expect(scoped).to.equal('foobar_group_mygrpid');
+        });
+        it('should add groupid for fac scope', ()=> {
+            const scoped = addScopeToCollection('foobar', SCOPES.FACILITATOR, {
+                groupId: 'mygrpid',
+                isFac: true,
+            });
+            expect(scoped).to.equal('foobar_fac_group_mygrpid');
         });
         it('should add groupid and userid for group scope', ()=> {
             const scoped = addScopeToCollection('foobar', SCOPES.USER, {

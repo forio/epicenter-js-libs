@@ -7,6 +7,7 @@ export const SCOPES = {
     RUN: 'RUN',
     USER: 'USER',
     PROJECT: 'PROJECT',
+    FACILITATOR: 'FACILITATOR',
     CUSTOM: 'CUSTOM',
 };
 
@@ -22,13 +23,19 @@ export function addScopeToCollection(key, scope, session) {
     const publicAccessScopes = [SCOPES.CUSTOM];
     const allowPublicAccess = publicAccessScopes.indexOf(scope) !== -1;
     if (!Object.keys(session || {}).length && !allowPublicAccess) {
-        throw new Error(`DataService Authorization error - ${scope} requires an authenticated user`);
+        throw new Error(`DataService Authorization error: ${scope} for ${key} requires an authenticated user`);
     }
     const delimiter = '_';
     if (scope === SCOPES.GROUP) {
         return [key, 'group', session.groupId].join(delimiter);
     } else if (scope === SCOPES.USER) {
         return [key, 'user', session.userId, 'group', session.groupId].join(delimiter);
+    } else if (scope === SCOPES.FACILITATOR) {
+        const isFac = session.isTeamMember || session.isFac;
+        if (!isFac) {
+            throw new Error(`DataService Authorization error: ${scope} for ${key} requires a Facilitator user`);
+        }
+        return [key, 'fac', 'group', session.groupId].join(delimiter);
     } else if (scope === SCOPES.PROJECT) {
         return [key, 'project', 'scope'].join(delimiter);
     } else if (scope === SCOPES.CUSTOM) {

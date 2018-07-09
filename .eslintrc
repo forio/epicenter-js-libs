@@ -55,7 +55,7 @@
 
         "accessor-pairs": 2,
         "block-scoped-var": 1,
-        "complexity": [1, 10],
+        "complexity": [1, 12],
         "consistent-return": 0,
         "curly": [2, "multi-line"],
         "default-case": 2,
