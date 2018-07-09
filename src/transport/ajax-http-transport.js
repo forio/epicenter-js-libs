@@ -1,4 +1,5 @@
-var { toQueryFormat } = require('../util/query-util');
+var { omit } = require('util/object-util');
+var { toQueryFormat } = require('util/query-util');
 
 module.exports = function (config) {
 
@@ -25,7 +26,7 @@ module.exports = function (config) {
     };
 
     var transportOptions = $.extend({}, defaults, config);
-
+    
     var result = function (d) {
         return ($.isFunction(d)) ? d() : d;
     };
@@ -35,7 +36,7 @@ module.exports = function (config) {
         params = ($.isPlainObject(params) || $.isArray(params)) ? JSON.stringify(params) : params;
 
         var options = $.extend(true, {}, transportOptions, connectOptions, {
-            type: method,
+            method: method,
             data: params
         });
         var ALLOWED_TO_BE_FUNCTIONS = ['data', 'url'];
@@ -62,7 +63,11 @@ module.exports = function (config) {
             }
         };
 
-        return $.ajax(options);
+        //These params mean affect jQuery behavior, and may be passed in inadvertently since all the different options are merged together
+        //FIXME: Do not merge with service options and we won't have this problem
+        const paramsToIgnore = ['password', 'username', 'isLocal', 'type']; 
+        const cleaned = omit(options, paramsToIgnore);
+        return $.ajax(cleaned);
     };
 
     var publicAPI = {

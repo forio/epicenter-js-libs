@@ -14,6 +14,21 @@ export function pick(obj, keys) {
     }
     return res;
 }
+
+/**
+ * Omits selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+export function omit(obj, keys) {
+    keys.forEach((key)=> {
+        delete obj[key];
+    });
+    return obj;
+}
+
 export function isEmpty(value) {
     return (!value || ($.isPlainObject(value) && Object.keys(value).length === 0));
 }
