@@ -77,7 +77,7 @@ var F =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__);
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var transport = (isNode) ? require('./node-http-transport') : require('./ajax-http-transport');
@@ -86,107 +86,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * @class ConfigurationService
- *
- * All services take in a configuration settings object to configure themselves. A JS hash {} is a valid configuration object, but optionally you can use the configuration service to toggle configs based on the environment
- *
- * @example
- *     const cs = require('configuration-service')({
- *          dev: { //environment
-                port: 3000,
-                host: 'localhost',
-            },
-            prod: {
-                port: 8080,
-                host: 'api.forio.com',
-                logLevel: 'none'
-            },
-            logLevel: 'DEBUG' //global
- *     });
- *
- *      cs.get('logLevel'); //returns 'DEBUG'
- *
- *      cs.setEnv('dev');
- *      cs.get('logLevel'); //returns 'DEBUG'
- *
- *      cs.setEnv('prod');
- *      cs.get('logLevel'); //returns 'none'
- *
- */
-
-
-
-var ConfigService = function () {
-    function ConfigService(config) {
-        _classCallCheck(this, ConfigService);
-
-        var defaults = {
-            logLevel: 'NONE'
-        };
-        var serviceOptions = $.extend({}, defaults, config);
-        serviceOptions.server = __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default()(serviceOptions.server);
-
-        this.serviceOptions = this.data = serviceOptions;
-    }
-
-    /**
-     * Set the environment key to get configuration options from
-     * @param { string} env
-     */
-
-
-    _createClass(ConfigService, [{
-        key: 'setEnv',
-        value: function setEnv(env) {}
-        /**
-             * Get configuration.
-             * @param  { string} property optional
-             * @return {*}          Value of property if specified, the entire config object otherwise
-             */
-
-    }, {
-        key: 'get',
-        value: function get(property) {
-            return this.serviceOptions[property];
-        }
-        /**
-             * Set configuration.
-             * @param  { string|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
-             * @param  {*} value  value for provided key
-             */
-
-    }, {
-        key: 'set',
-        value: function set(key, value) {
-            this.serviceOptions[key] = value;
-        }
-    }]);
-
-    return ConfigService;
-}();
-
-/* harmony default export */ __webpack_exports__["default"] = (ConfigService);
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var keyNames = __webpack_require__(13);
-var StorageFactory = __webpack_require__(24);
+var StorageFactory = __webpack_require__(25);
 var optionUtils = __webpack_require__(41);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
@@ -316,6 +222,100 @@ var SessionManager = function (managerOptions) {
 module.exports = SessionManager;
 
 /***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @class ConfigurationService
+ *
+ * All services take in a configuration settings object to configure themselves. A JS hash {} is a valid configuration object, but optionally you can use the configuration service to toggle configs based on the environment
+ *
+ * @example
+ *     const cs = require('configuration-service')({
+ *          dev: { //environment
+                port: 3000,
+                host: 'localhost',
+            },
+            prod: {
+                port: 8080,
+                host: 'api.forio.com',
+                logLevel: 'none'
+            },
+            logLevel: 'DEBUG' //global
+ *     });
+ *
+ *      cs.get('logLevel'); //returns 'DEBUG'
+ *
+ *      cs.setEnv('dev');
+ *      cs.get('logLevel'); //returns 'DEBUG'
+ *
+ *      cs.setEnv('prod');
+ *      cs.get('logLevel'); //returns 'none'
+ *
+ */
+
+
+
+var ConfigService = function () {
+    function ConfigService(config) {
+        _classCallCheck(this, ConfigService);
+
+        var defaults = {
+            logLevel: 'NONE'
+        };
+        var serviceOptions = $.extend({}, defaults, config);
+        serviceOptions.server = __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default()(serviceOptions.server);
+
+        this.serviceOptions = this.data = serviceOptions;
+    }
+
+    /**
+     * Set the environment key to get configuration options from
+     * @param { string} env
+     */
+
+
+    _createClass(ConfigService, [{
+        key: 'setEnv',
+        value: function setEnv(env) {}
+        /**
+             * Get configuration.
+             * @param  { string} property optional
+             * @return {*}          Value of property if specified, the entire config object otherwise
+             */
+
+    }, {
+        key: 'get',
+        value: function get(property) {
+            return this.serviceOptions[property];
+        }
+        /**
+             * Set configuration.
+             * @param  { string|Object} key if a key is provided, set a key to that value. Otherwise merge object with current config
+             * @param  {*} value  value for provided key
+             */
+
+    }, {
+        key: 'set',
+        value: function set(key, value) {
+            this.serviceOptions[key] = value;
+        }
+    }]);
+
+    return ConfigService;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (ConfigService);
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -387,6 +387,7 @@ module.exports = function (base, props, staticProps) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
+/* harmony export (immutable) */ __webpack_exports__["omit"] = omit;
 /* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
 /* harmony export (immutable) */ __webpack_exports__["ensureKeysPresent"] = ensureKeysPresent;
 /**
@@ -405,6 +406,21 @@ function pick(obj, keys) {
     }
     return res;
 }
+
+/**
+ * Omits selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+function omit(obj, keys) {
+    keys.forEach(function (key) {
+        delete obj[key];
+    });
+    return obj;
+}
+
 function isEmpty(value) {
     return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
 }
@@ -429,127 +445,226 @@ function ensureKeysPresent(obj, keysList, context) {
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["toMatrixFormat"] = toMatrixFormat;
+/* harmony export (immutable) */ __webpack_exports__["toQueryFormat"] = toQueryFormat;
+/* harmony export (immutable) */ __webpack_exports__["qsToObject"] = qsToObject;
+/* harmony export (immutable) */ __webpack_exports__["mergeQS"] = mergeQS;
+/* harmony export (immutable) */ __webpack_exports__["normalizeSlashes"] = normalizeSlashes;
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 /**
  * Utilities for working with query strings
 */
 
+/**
+ * Converts to matrix format
+ * @param  {object} qs Object to convert to query string
+ * @return {string}    Matrix-format query parameters
+ */
+function toMatrixFormat(qs) {
+    if (qs === null || qs === undefined || qs === '') {
+        return ';';
+    }
+    if (typeof qs === 'string') {
+        return qs;
+    }
 
-module.exports = function () {
-
-    return {
-        /**
-         * Converts to matrix format
-         * @param  {Object} qs Object to convert to query string
-         * @return { string}    Matrix-format query parameters
-         */
-        toMatrixFormat: function (qs) {
-            if (qs === null || qs === undefined || qs === '') {
-                return ';';
-            }
-            if (typeof qs === 'string' || qs instanceof String) {
-                return qs;
-            }
-
-            var returnArray = [];
-            var OPERATORS = ['<', '>', '!'];
-            $.each(qs, function (key, value) {
-                if (typeof value !== 'string' || $.inArray($.trim(value).charAt(0), OPERATORS) === -1) {
-                    value = '=' + value;
-                }
-                returnArray.push(key + value);
-            });
-
-            var mtrx = ';' + returnArray.join(';');
-            return mtrx;
-        },
-
-        /**
-         * Converts strings/arrays/objects to type 'a=b&b=c'
-         * @param  { string|Array|Object} qs
-         * @return { string}
-         */
-        toQueryFormat: function (qs) {
-            if (qs === null || qs === undefined) {
-                return '';
-            }
-            if (typeof qs === 'string' || qs instanceof String) {
-                return qs;
-            }
-
-            var returnArray = [];
-            $.each(qs, function (key, value) {
-                if ($.isArray(value)) {
-                    value = value.join(',');
-                }
-                if ($.isPlainObject(value)) {
-                    //Mostly for data api
-                    value = JSON.stringify(value);
-                }
-                returnArray.push(key + '=' + value);
-            });
-
-            var result = returnArray.join('&');
-            return result;
-        },
-
-        /**
-         * Converts strings of type 'a=b&b=c' to { a:b, b:c}
-         * @param  { string} qs
-         * @return {object}
-         */
-        qsToObject: function (qs) {
-            if (qs === null || qs === undefined || qs === '') {
-                return {};
-            }
-
-            var qsArray = qs.split('&');
-            var returnObj = {};
-            $.each(qsArray, function (index, value) {
-                var qKey = value.split('=')[0];
-                var qVal = value.split('=')[1];
-
-                if (qVal.indexOf(',') !== -1) {
-                    qVal = qVal.split(',');
-                }
-
-                returnObj[qKey] = qVal;
-            });
-
-            return returnObj;
-        },
-
-        /**
-         * Normalizes and merges strings of type 'a=b', { b:c} to { a:b, b:c}
-         * @param  { string|Array|Object} qs1
-         * @param  { string|Array|Object} qs2
-         * @return {Object}
-         */
-        mergeQS: function (qs1, qs2) {
-            var obj1 = this.qsToObject(this.toQueryFormat(qs1));
-            var obj2 = this.qsToObject(this.toQueryFormat(qs2));
-            return $.extend(true, {}, obj1, obj2);
-        },
-
-        addTrailingSlash: function (url) {
-            if (!url) {
-                return '';
-            }
-            return url.charAt(url.length - 1) === '/' ? url : url + '/';
+    var returnArray = [];
+    var OPERATORS = ['<', '>', '!'];
+    $.each(qs, function (key, value) {
+        if (typeof value !== 'string' || $.inArray($.trim(value).charAt(0), OPERATORS) === -1) {
+            value = '=' + value;
         }
-    };
-}();
+        returnArray.push(key + value);
+    });
+
+    var mtrx = ';' + returnArray.join(';');
+    return mtrx;
+}
+
+/**
+ * Converts strings/arrays/objects to type 'a=b&b=c'
+ * @param  { string|Array|Object} qs
+ * @return { string}
+ */
+function toQueryFormat(qs) {
+    if (qs === null || qs === undefined) {
+        return '';
+    }
+    if (typeof qs === 'string' || qs instanceof String) {
+        return qs;
+    }
+
+    var returnArray = [];
+    $.each(qs, function (key, value) {
+        if ($.isArray(value)) {
+            value = value.join(',');
+        }
+        if ($.isPlainObject(value)) {
+            //Mostly for data api
+            value = JSON.stringify(value);
+        }
+        returnArray.push(key + '=' + value);
+    });
+
+    var result = returnArray.join('&');
+    return result;
+}
+
+/**
+ * Converts strings of type 'a=b&b=c' to { a:b, b:c}
+ * @param  { string} qs
+ * @return {object}
+ */
+function qsToObject(qs) {
+    if (qs === null || qs === undefined || qs === '') {
+        return {};
+    }
+
+    var qsArray = qs.split('&');
+    var returnObj = {};
+    $.each(qsArray, function (index, value) {
+        var qKey = value.split('=')[0];
+        var qVal = value.split('=')[1];
+
+        if (qVal.indexOf(',') !== -1) {
+            qVal = qVal.split(',');
+        }
+
+        returnObj[qKey] = qVal;
+    });
+
+    return returnObj;
+}
+
+/**
+ * Normalizes and merges strings of type 'a=b', { b:c} to { a:b, b:c}
+ * @param  { string|Array|Object} qs1
+ * @param  { string|Array|Object} qs2
+ * @return {Object}
+ */
+function mergeQS(qs1, qs2) {
+    var obj1 = qsToObject(toQueryFormat(qs1));
+    var obj2 = qsToObject(toQueryFormat(qs2));
+    return $.extend(true, {}, obj1, obj2);
+}
+
+/**
+ * 
+ * @param {string} url url to sanitize
+ * @param {object} [options] determines if leading/trailing slashes are expected
+ * @param {boolean} [options.leading]
+ * @param {boolean} [options.trailing]
+ * 
+ * @returns {string}
+ */
+function normalizeSlashes(url, options) {
+    if (!url) {
+        if (url === '') return '';
+        throw new Error('normalizeSlashes: Unknown url ' + url);
+    }
+    var opts = $.extend({}, {
+        leading: false,
+        trailing: false
+    }, options);
+
+    var protocolMatch = url.match(/^(https?:\/\/)(.*)/);
+
+    var _ref = protocolMatch ? [protocolMatch[1], protocolMatch[2]] : ['', url],
+        _ref2 = _slicedToArray(_ref, 2),
+        protocol = _ref2[0],
+        rest = _ref2[1];
+
+    var cleaned = rest.replace(/\/{2,}/g, '/');
+    if (opts.leading && cleaned.charAt(0) !== '/' && !protocol) {
+        cleaned = '/' + cleaned;
+    }
+    if (opts.trailing && cleaned.charAt(cleaned.length - 1) !== '/') {
+        cleaned = cleaned + '/';
+    }
+    return '' + protocol + cleaned;
+}
 
 /***/ }),
 /* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
+/* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
+
+
+
+
+
+
+function getApiUrl(apiEndpoint, serviceOptions) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
+    return urlConfig.getAPIPath(apiEndpoint);
+}
+
+/*
+* Gets the default options for a api service.
+* It will merge:
+* - The Session options (Using the Session Manager)
+* - The Authorization Header from the token option
+* - The full url from the endpoint option
+* With the supplied overrides and defaults
+*
+*/
+function getDefaultOptions(defaults) {
+    var rest = Array.prototype.slice.call(arguments, 1);
+    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
+    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
+
+    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
+        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
+    });
+
+    if (serviceOptions.token) {
+        serviceOptions.transport.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+    return serviceOptions;
+}
+
+function getURLConfig(options) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](options).get('server');
+    if (options.account) {
+        urlConfig.accountPath = options.account;
+    }
+    if (options.project) {
+        urlConfig.projectPath = options.project;
+    }
+    return urlConfig;
+}
+function getHTTPTransport(transportOptions, overrides) {
+    var mergedOptions = $.extend(true, {}, transportOptions, overrides);
+    var http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](mergedOptions);
+    return http;
+}
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var RunService = __webpack_require__(8);
+var RunService = __webpack_require__(9);
 
 module.exports = {
     mergeRunOptions: function (run, options) {
@@ -590,7 +705,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -599,7 +714,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["normalizeOperations"] = normalizeOperations;
 /* harmony export (immutable) */ __webpack_exports__["splitGetFactory"] = splitGetFactory;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__query_util__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__query_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__query_util__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(4);
 /**
  * Utilities for working with the run service
@@ -711,7 +825,7 @@ function splitGetFactory(httpOptions) {
             // 1. Remove hash
             url = url.replace(/#.*$/, '');
             // 1. Append query string
-            var queryParams = __WEBPACK_IMPORTED_MODULE_0__query_util___default.a.toQueryFormat(data);
+            var queryParams = Object(__WEBPACK_IMPORTED_MODULE_0__query_util__["toQueryFormat"])(data);
             var questionIdx = url.indexOf('?');
             if (queryParams && questionIdx > -1) {
                 return url + '&' + queryParams;
@@ -829,7 +943,7 @@ function splitGetFactory(httpOptions) {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -888,13 +1002,16 @@ function splitGetFactory(httpOptions) {
 
 
 
-var ConfigService = __webpack_require__(1).default;
-var qutil = __webpack_require__(5);
-var rutil = __webpack_require__(7);
+var ConfigService = __webpack_require__(2).default;
+
+var _require = __webpack_require__(5),
+    toMatrixFormat = _require.toMatrixFormat;
+
+var rutil = __webpack_require__(8);
 var TransportFactory = __webpack_require__(0).default;
-var VariablesService = __webpack_require__(22);
-var IntrospectionService = __webpack_require__(23);
-var SessionManager = __webpack_require__(2);
+var VariablesService = __webpack_require__(23);
+var IntrospectionService = __webpack_require__(24);
+var SessionManager = __webpack_require__(1);
 
 module.exports = function (config) {
     var defaults = {
@@ -972,7 +1089,7 @@ module.exports = function (config) {
         urlConfig.filter = ';';
         urlConfig.getFilterURL = function (filter) {
             var url = urlConfig.getAPIPath('run');
-            var filterMatrix = qutil.toMatrixFormat(filter || opts.filter);
+            var filterMatrix = toMatrixFormat(filter || opts.filter);
 
             if (filterMatrix) {
                 url += filterMatrix + '/';
@@ -1434,13 +1551,13 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Base = __webpack_require__(10);
+var Base = __webpack_require__(11);
 var classFrom = __webpack_require__(3);
 
 /**
@@ -1519,7 +1636,7 @@ var Strategy = classFrom(Base, {
 module.exports = Strategy;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1550,81 +1667,13 @@ module.exports = classFrom(Base, {
 });
 
 /***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
-/* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
-/* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
-
-
-
-
-
-
-function getApiUrl(apiEndpoint, serviceOptions) {
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
-    return urlConfig.getAPIPath(apiEndpoint);
-}
-
-/*
-* Gets the default options for a api service.
-* It will merge:
-* - The Session options (Using the Session Manager)
-* - The Authorization Header from the token option
-* - The full url from the endpoint option
-* With the supplied overrides and defaults
-*
-*/
-function getDefaultOptions(defaults) {
-    var rest = Array.prototype.slice.call(arguments, 1);
-    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
-    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
-
-    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
-        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
-    });
-
-    if (serviceOptions.token) {
-        serviceOptions.transport.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    return serviceOptions;
-}
-
-function getURLConfig(options) {
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](options).get('server');
-    if (options.account) {
-        urlConfig.accountPath = options.account;
-    }
-    if (options.project) {
-        urlConfig.projectPath = options.project;
-    }
-    return urlConfig;
-}
-function getHTTPTransport(serviceOptions, overrides) {
-    var mergedOptions = $.extend(true, {}, serviceOptions, overrides);
-    var http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](mergedOptions);
-    return http;
-}
-
-/***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var epiVersion = __webpack_require__(20);
+var epiVersion = __webpack_require__(21);
 
 //TODO: urlutils to get host, since no window on node
 var defaults = {
@@ -1658,10 +1707,11 @@ var UrlConfigService = function (config) {
     if (!config) {
         config = {};
     }
+    var configOverrides = $.extend({}, defaults, config);
     var overrides = $.extend({}, envConf, config);
     var options = $.extend({}, defaults, overrides);
 
-    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, options.host);
+    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, configOverrides.host);
 
     var actingHost = config && config.host;
     if (!actingHost && options.isLocalhost()) {
@@ -1773,16 +1823,528 @@ module.exports = {
 
 /***/ }),
 /* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+* ## Authorization Manager
+*
+* The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
+*
+* The Authorization Manager is most useful for [team projects](../../../glossary/#team) with an access level of [Authenticated](../../../glossary/#access). These projects are accessed by [end users](../../../glossary/#users) who are members of one or more [groups](../../../glossary/#groups).
+*
+* #### Using the Authorization Manager
+*
+* To use the Authorization Manager, instantiate it. Then, make calls to any of the methods you need:
+*
+*       var authMgr = new F.manager.AuthManager({
+*           account: 'acme-simulations',
+*           userName: 'enduser1',
+*           password: 'passw0rd'
+*       });
+*       authMgr.login().then(function () {
+*           authMgr.getCurrentUserSessionInfo();
+*       });
+*
+*
+* The `options` object passed to the `F.manager.AuthManager()` call can include:
+*
+*   * `account`: The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
+*   * `userName`: Email or username to use for logging in.
+*   * `password`: Password for specified `userName`.
+*   * `project`: The **Project ID** for the project to log this user into. Optional.
+*   * `groupId`: Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
+*
+* If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
+*/
+
+var AuthAdapter = __webpack_require__(28);
+var MemberAdapter = __webpack_require__(29);
+var GroupService = __webpack_require__(30).default;
+var SessionManager = __webpack_require__(1);
+var _pick = __webpack_require__(4).pick;
+var objectAssign = __webpack_require__(14);
+
+var atob = window.atob || __webpack_require__(44).atob;
+
+var defaults = {
+    requiresGroup: true
+};
+
+function AuthManager(options) {
+    options = $.extend(true, {}, defaults, options);
+    this.sessionManager = new SessionManager(options);
+    this.options = this.sessionManager.getMergedOptions();
+
+    this.authAdapter = new AuthAdapter(this.options);
+}
+
+var _findUserInGroup = function (members, id) {
+    for (var j = 0; j < members.length; j++) {
+        if (members[j].userId === id) {
+            return members[j];
+        }
+    }
+    return null;
+};
+
+AuthManager.prototype = $.extend(AuthManager.prototype, {
+
+    /**
+    * Logs user in.
+    *
+    * **Example**
+    *
+    *       authMgr.login({
+    *           account: 'acme-simulations',
+    *           project: 'supply-chain-game',
+    *           userName: 'enduser1',
+    *           password: 'passw0rd'
+    *       })
+    *           .then(function(statusObj) {
+    *               // if enduser1 belongs to exactly one group
+    *               // (or if the login() call is modified to include the group id)
+    *               // continue here
+    *           })
+    *           .fail(function(statusObj) {
+    *               // if enduser1 belongs to multiple groups,
+    *               // the login() call fails
+    *               // and returns all groups of which the user is a member
+    *               for (var i=0; i < statusObj.userGroups.length; i++) {
+    *                   console.log(statusObj.userGroups[i].name, statusObj.userGroups[i].groupId);
+    *               }
+    *           });
+    *
+    * **Parameters**
+    *
+    * @param {Object} options (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
+    * @param {string} options.account The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
+    * @param {string} options.userName Email or username to use for logging in.
+    * @param {string} options.password Password for specified `userName`.
+    * @param {string} options.project (Optional) The **Project ID** for the project to log this user into.
+    * @param {string} options.groupId The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
+    * @return {Promise}
+    */
+    login: function (options) {
+        var me = this;
+        var $d = $.Deferred();
+        var sessionManager = this.sessionManager;
+        var adapterOptions = sessionManager.getMergedOptions({ success: $.noop, error: $.noop }, options);
+        var outSuccess = adapterOptions.success;
+        var outError = adapterOptions.error;
+        var groupId = adapterOptions.groupId;
+
+        var decodeToken = function (token) {
+            var encoded = token.split('.')[1];
+            while (encoded.length % 4 !== 0) {
+                //eslint-disable-line
+                encoded += '=';
+            }
+            return JSON.parse(atob(encoded));
+        };
+
+        var handleGroupError = function (message, statusCode, data, type) {
+            // logout the user since it's in an invalid state with no group selected
+            me.logout().then(function () {
+                var error = $.extend(true, {}, data, { statusText: message, status: statusCode, type: type });
+                $d.reject(error);
+            });
+        };
+
+        var handleSuccess = function (response) {
+            var token = response.access_token;
+            var userInfo = decodeToken(token);
+            var oldGroups = sessionManager.getSession(adapterOptions).groups || {};
+            var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
+            var data = { auth: response, user: userInfo };
+            var project = adapterOptions.project;
+            var isTeamMember = userInfo.parent_account_id === null;
+            var requiresGroup = adapterOptions.requiresGroup && project;
+
+            var userName = (userInfo.user_name || '').split('/')[0]; //of form <user>/<team>
+            var sessionInfo = {
+                auth_token: token,
+                account: adapterOptions.account,
+                project: project,
+                userId: userInfo.user_id,
+                groups: oldGroups,
+                isTeamMember: isTeamMember,
+                userName: userName
+            };
+            // The group is not required if the user is not logging into a project
+            if (!requiresGroup) {
+                sessionManager.saveSession(sessionInfo);
+                outSuccess.apply(this, [data]);
+                $d.resolve(data);
+                return;
+            }
+
+            var handleGroupList = function (groupList) {
+                data.userGroups = groupList;
+
+                var group = null;
+                if (groupList.length === 0) {
+                    handleGroupError('The user has no groups associated in this account', 403, data, 'NO_GROUPS');
+                    return;
+                } else if (groupList.length === 1) {
+                    // Select the only group
+                    group = groupList[0];
+                } else if (groupList.length > 1) {
+                    if (groupId) {
+                        var filteredGroups = $.grep(groupList, function (resGroup) {
+                            return resGroup.groupId === groupId;
+                        });
+                        group = filteredGroups.length === 1 ? filteredGroups[0] : null;
+                    }
+                }
+
+                if (group) {
+                    // A team member does not get the group members because is calling the Group API
+                    // but it's automatically a fac user
+                    var isFac = isTeamMember ? true : _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator';
+                    var groupData = {
+                        groupId: group.groupId,
+                        groupName: group.name,
+                        isFac: isFac
+                    };
+                    var sessionInfoWithGroup = objectAssign({}, sessionInfo, groupData);
+                    sessionInfo.groups[project] = groupData;
+                    me.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
+                    outSuccess.apply(this, [data]);
+                    $d.resolve(data);
+                } else {
+                    handleGroupError('This user is associated with more than one group. Please specify a group id to log into and try again', 403, data, 'MULTIPLE_GROUPS');
+                }
+            };
+
+            if (!isTeamMember) {
+                me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).then(handleGroupList, $d.reject);
+            } else {
+                var opts = objectAssign({}, userGroupOpts, { token: token });
+                var groupService = new GroupService(opts);
+                groupService.getGroups({ account: adapterOptions.account, project: project }).then(function (groups) {
+                    // Group API returns id instead of groupId
+                    groups.forEach(function (group) {
+                        group.groupId = group.id;
+                    });
+
+                    if (groups.length) {
+                        handleGroupList(groups);
+                    } else {
+                        //either it's a private project or there are no groups
+                        sessionManager.saveSession(sessionInfo);
+                        outSuccess.apply(this, [data]);
+                        $d.resolve(data);
+                        return;
+                    }
+                }, $d.reject);
+            }
+        };
+
+        adapterOptions.success = handleSuccess;
+        adapterOptions.error = function (response) {
+            if (adapterOptions.account) {
+                // Try to login as a system user
+                adapterOptions.account = null;
+                adapterOptions.error = function () {
+                    outError.apply(this, arguments);
+                    $d.reject(response);
+                };
+
+                me.authAdapter.login(adapterOptions);
+                return;
+            }
+
+            outError.apply(this, arguments);
+            $d.reject(response);
+        };
+
+        this.authAdapter.login(adapterOptions);
+        return $d.promise();
+    },
+
+    /**
+    * Logs user out by clearing all session information.
+    *
+    * **Example**
+    *
+    *       authMgr.logout();
+    *
+    * **Parameters**
+    *
+    * @param {Object} options (Optional) Overrides for configuration options.
+    * @return {Promise}
+    */
+    logout: function (options) {
+        var me = this;
+        var adapterOptions = this.sessionManager.getMergedOptions(options);
+
+        var removeCookieFn = function (response) {
+            me.sessionManager.removeSession();
+        };
+
+        return this.authAdapter.logout(adapterOptions).then(removeCookieFn);
+    },
+
+    /**
+     * Returns the existing user access token if the user is already logged in. Otherwise, logs the user in, creating a new user access token, and returns the new token. (See [more background on access tokens](../../../project_access/)).
+     *
+     * **Example**
+     *
+     *      authMgr.getToken()
+     *          .then(function (token) {
+     *              console.log('My token is ', token);
+     *          });
+     *
+     * **Parameters**
+     * @param {Object} options (Optional) Overrides for configuration options.
+     * @return {Promise}
+     */
+    getToken: function (options) {
+        var httpOptions = this.sessionManager.getMergedOptions(options);
+
+        var session = this.sessionManager.getSession(httpOptions);
+        var $d = $.Deferred();
+        if (session.auth_token) {
+            $d.resolve(session.auth_token);
+        } else {
+            this.login(httpOptions).then($d.resolve);
+        }
+        return $d.promise();
+    },
+
+    /**
+     * Returns an array of group records, one for each group of which the current user is a member. Each group record includes the group `name`, `account`, `project`, and `groupId`.
+     *
+     * If some end users in your project are members of multiple groups, this is a useful method to call on your project's login page. When the user attempts to log in, you can use this to display the groups of which the user is member, and have the user select the correct group to log in to for this session.
+     *
+     * **Example**
+     *
+     *      // get groups for current user
+     *      var sessionObj = authMgr.getCurrentUserSessionInfo();
+     *      authMgr.getUserGroups({ userId: sessionObj.userId, token: sessionObj.auth_token })
+     *          .then(function (groups) {
+     *              for (var i=0; i < groups.length; i++)
+     *                  { console.log(groups[i].name); }
+     *          });
+     *
+     *      // get groups for particular user
+     *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
+     *
+     * **Parameters**
+     * @param {Object} params Object with a userId and token properties.
+     * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
+     * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
+     * @param {Object} options (Optional) Overrides for configuration options.
+     * @return {Promise}
+     */
+    getUserGroups: function (params, options) {
+        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
+        var $d = $.Deferred();
+        var outSuccess = adapterOptions.success;
+
+        adapterOptions.success = function (memberInfo) {
+            // The member API is at the account scope, we filter by project
+            if (adapterOptions.project) {
+                memberInfo = $.grep(memberInfo, function (group) {
+                    return group.project === adapterOptions.project;
+                });
+            }
+
+            outSuccess.apply(this, [memberInfo]);
+            $d.resolve(memberInfo);
+        };
+
+        var memberAdapter = new MemberAdapter({ token: params.token, server: adapterOptions.server });
+        memberAdapter.getGroupsForUser(params, adapterOptions).fail($d.reject);
+        return $d.promise();
+    },
+
+    /**
+     * Helper method to check if you're currently logged in
+     *
+     *  **Example**
+     *  
+     *      var amILoggedIn = authMgr.isLoggedIn();
+     *
+     * **Parameters**
+     * @param {none} none
+     * @return {Boolean} true if you're logged in
+     */
+    isLoggedIn: function () {
+        var session = this.getCurrentUserSessionInfo();
+        return !!(session && session.userId);
+    },
+
+    /**
+     * Returns session information for the current user, including the `userId`, `account`, `project`, `groupId`, `groupName`, `isFac` (whether the end user is a facilitator of this group), and `auth_token` (user access token).
+     *
+     * *Important*: This method is synchronous. The session information is returned immediately in an object; no callbacks or promises are needed.
+     *
+     * Session information is stored in a cookie in the browser.
+     *
+     * **Example**
+     *
+     *      var sessionObj = authMgr.getCurrentUserSessionInfo();
+     *
+     * **Parameters**
+     * @param {Object} options (Optional) Overrides for configuration options.
+     * @return {Object} session information
+     */
+    getCurrentUserSessionInfo: function (options) {
+        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
+        return this.sessionManager.getSession(adapterOptions);
+    },
+
+    /*
+     * Adds one or more groups to the current session. 
+     *
+     * This method assumes that the project and group exist and the user specified in the session is part of this project and group.
+     *
+     * Returns the new session object.
+     *
+     * **Example**
+     *
+     *      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
+     *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
+     *
+     * **Parameters**
+     * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
+     * @param {string} group.isFac (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
+     * @param {string} group.groupId (optional) Defaults to undefined. Needed mostly for the Members API.
+     * @return {Object} session information
+    */
+    addGroups: function (groups) {
+        var session = this.getCurrentUserSessionInfo();
+        var isArray = Array.isArray(groups);
+        groups = isArray ? groups : [groups];
+
+        $.each(groups, function (index, group) {
+            var extendedGroup = $.extend({}, { isFac: false }, group);
+            var project = extendedGroup.project;
+            var validProps = ['groupName', 'groupId', 'isFac'];
+            if (!project || !extendedGroup.groupName) {
+                throw new Error('No project or groupName specified.');
+            }
+            // filter object
+            extendedGroup = _pick(extendedGroup, validProps);
+            session.groups[project] = extendedGroup;
+        });
+        this.sessionManager.saveSession(session);
+        return session;
+    }
+});
+
+module.exports = AuthManager;
+
+/***/ }),
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__channel_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 
 
@@ -2209,7 +2771,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 /* harmony default export */ __webpack_exports__["default"] = (EpicenterChannelManager);
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2236,13 +2798,12 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 
 
 
-var ConfigService = __webpack_require__(1).default;
-// var qutil = require('util/query-util');
+var ConfigService = __webpack_require__(2).default;
 var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(2);
+var SessionManager = __webpack_require__(1);
 
-var ConsensusService = __webpack_require__(16).default;
-var rutil = __webpack_require__(7);
+var ConsensusService = __webpack_require__(18).default;
+var rutil = __webpack_require__(8);
 
 var _pick = __webpack_require__(4).pick;
 
@@ -2968,14 +3529,13 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(6);
 /**
  * 
  * ## Consensus Service
@@ -3012,7 +3572,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-
 var API_ENDPOINT = 'multiplayer/consensus';
 
 function normalizeActions(actions) {
@@ -3032,16 +3591,10 @@ function normalizeActions(actions) {
         consensusGroup: '',
         name: ''
     };
-    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["b" /* getDefaultOptions */])(defaults, config);
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config);
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["d" /* getURLConfig */])(serviceOptions);
 
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
-    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+    var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
 
     function getHTTPOptions(action, options) {
         var mergedOptions = $.extend(true, {}, serviceOptions, options);
@@ -3199,116 +3752,12 @@ function normalizeActions(actions) {
 });
 
 /***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
-};
-
-
-/***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SCOPES; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ACTIONS; });
 /* unused harmony export STRATEGY */
-var SCOPES = {
-    GROUP: 'GROUP',
-    RUN: 'RUN',
-    USER: 'USER',
-    CUSTOM: 'CUSTOM'
-};
 var ACTIONS = {
     CREATE: 'CREATE',
     START: 'START',
@@ -3325,7 +3774,7 @@ var STRATEGY = {
 };
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3390,11 +3839,11 @@ var STRATEGY = {
 
 
 
-var strategies = __webpack_require__(35);
-var specialOperations = __webpack_require__(62);
+var strategies = __webpack_require__(36);
+var specialOperations = __webpack_require__(64);
 
-var RunService = __webpack_require__(8);
-var SessionManager = __webpack_require__(2);
+var RunService = __webpack_require__(9);
+var SessionManager = __webpack_require__(1);
 
 var util = __webpack_require__(4);
 var keyNames = __webpack_require__(13);
@@ -3565,16 +4014,20 @@ RunManager.strategies = strategies;
 module.exports = RunManager;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 module.exports = {"version":"v2"}
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var qutils = __webpack_require__(5);
+var _require = __webpack_require__(4),
+    omit = _require.omit;
+
+var _require2 = __webpack_require__(5),
+    toQueryFormat = _require2.toQueryFormat;
 
 module.exports = function (config) {
 
@@ -3591,7 +4044,7 @@ module.exports = function (config) {
          * ONLY for strings in the url. All GET & DELETE params are run through this
          * @type {Function}
          */
-        parameterParser: qutils.toQueryFormat,
+        parameterParser: toQueryFormat,
 
         // To allow epicenter.token and other session cookies to be passed
         // with the requests
@@ -3638,7 +4091,8 @@ module.exports = function (config) {
             }
         };
 
-        return $.ajax(options);
+        var cleaned = omit(options, ['password', 'username']);
+        return $.ajax(cleaned);
     };
 
     var publicAPI = {
@@ -3679,7 +4133,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3707,7 +4161,7 @@ module.exports = function (config) {
 
 
 var TransportFactory = __webpack_require__(0).default;
-var rutil = __webpack_require__(7);
+var rutil = __webpack_require__(8);
 
 module.exports = function (config) {
     var defaults = {
@@ -3850,7 +4304,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3873,9 +4327,9 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(2).default;
 var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(2);
+var SessionManager = __webpack_require__(1);
 
 var apiEndpoint = 'model/introspect';
 
@@ -3988,7 +4442,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4000,12 +4454,12 @@ module.exports = function (config) {
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var store = (isNode) ? require('./session-store') : require('./cookie-store');
 
-var store = __webpack_require__(25);
+var store = __webpack_require__(26);
 
 module.exports = store;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4147,18 +4601,15 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_util_query_util__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(16);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4198,6 +4649,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
+var API_ENDPOINT = 'data';
+var getAPIURL = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["b" /* getURL */].bind(null, API_ENDPOINT);
+
 var DataService = function () {
     function DataService(config) {
         _classCallCheck(this, DataService);
@@ -4224,42 +4678,16 @@ var DataService = function () {
              * @type {String}
              */
             token: undefined,
+
+            scope: __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a" /* SCOPES */].CUSTOM,
+
             //Options to pass on to the underlying transport layer
             transport: {}
         };
-        this.sessionManager = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a();
-        var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-        var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](serviceOptions).get('server');
-        if (serviceOptions.account) {
-            urlConfig.accountPath = serviceOptions.account;
-        }
-        if (serviceOptions.project) {
-            urlConfig.projectPath = serviceOptions.project;
-        }
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpont: API_ENDPOINT });
 
-        function getURL(key, root) {
-            if (!root) {
-                root = serviceOptions.root;
-            }
-            var url = urlConfig.getAPIPath('data') + __WEBPACK_IMPORTED_MODULE_1_util_query_util___default.a.addTrailingSlash(root);
-            if (key) {
-                url += __WEBPACK_IMPORTED_MODULE_1_util_query_util___default.a.addTrailingSlash(key);
-            }
-            return url;
-        }
-
-        var httpOptions = $.extend(true, {}, serviceOptions.transport, {
-            url: getURL
-        });
-        if (serviceOptions.token) {
-            httpOptions.headers = {
-                Authorization: 'Bearer ' + serviceOptions.token
-            };
-        }
         this.serviceOptions = serviceOptions;
-        this.http = new __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__["default"](httpOptions);
-
-        this.getURL = getURL;
+        this.http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
     }
 
     /**
@@ -4304,9 +4732,9 @@ var DataService = function () {
         key: 'query',
         value: function query(key, _query, outputModifier, options) {
             var params = $.extend(true, { q: _query }, outputModifier);
-            var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-            httpOptions.url = this.getURL(key, httpOptions.root);
-            return this.http.get(params, httpOptions);
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+            return this.http.get(params, mergedOptions);
         }
         /**
          * Save data in an anonymous document within the collection.
@@ -4344,9 +4772,10 @@ var DataService = function () {
             } else {
                 (attrs = {})[key] = value;
             }
-            var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-            httpOptions.url = this.getURL('', httpOptions.root);
-            return this.http.post(attrs, httpOptions);
+
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+            return this.http.post(attrs, mergedOptions);
         }
 
         /**
@@ -4360,9 +4789,9 @@ var DataService = function () {
     }, {
         key: 'pushToArray',
         value: function pushToArray(key, val, options) {
-            var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-            httpOptions.url = this.getURL(key, httpOptions.root);
-            return this.http.post(val, httpOptions);
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+            return this.http.post(val, mergedOptions);
         }
 
         /**
@@ -4411,9 +4840,9 @@ var DataService = function () {
     }, {
         key: 'saveAs',
         value: function saveAs(key, value, options) {
-            var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-            httpOptions.url = this.getURL(key, httpOptions.root);
-            return this.http.put(value, httpOptions);
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+            return this.http.put(value, mergedOptions);
         }
         /**
          * Get data for a specific document or field.
@@ -4433,9 +4862,9 @@ var DataService = function () {
     }, {
         key: 'load',
         value: function load(key, outputModifier, options) {
-            var httpOptions = $.extend(true, {}, this.serviceOptions, options);
-            httpOptions.url = this.getURL(key, httpOptions.root);
-            return this.http.get(outputModifier, httpOptions);
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+            return this.http.get(outputModifier, mergedOptions);
         }
         /**
          * Removes data from collection. Only documents (top-level elements in each collection) can be deleted.
@@ -4455,21 +4884,22 @@ var DataService = function () {
     }, {
         key: 'remove',
         value: function remove(keys, options) {
-            var httpOptions = $.extend(true, {}, this.serviceOptions, options);
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
             var params;
             if (Array.isArray(keys)) {
                 params = { id: keys };
+                mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
             } else {
                 params = '';
-                httpOptions.url = this.getURL(keys, httpOptions.root);
+                mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
             }
-            return this.http.delete(params, httpOptions);
+            return this.http.delete(params, mergedOptions);
         }
     }, {
         key: 'getChannel',
         value: function getChannel(options) {
             var opts = $.extend(true, {}, this.serviceOptions, options);
-            var cm = new __WEBPACK_IMPORTED_MODULE_4_managers_epicenter_channel_manager__["default"](opts);
+            var cm = new __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__["default"](opts);
             return cm.getDataChannel(opts.root);
         }
         // Epicenter doesn't allow nuking collections
@@ -4486,10 +4916,410 @@ var DataService = function () {
     return DataService;
 }();
 
+DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a" /* SCOPES */];
+
 /* harmony default export */ __webpack_exports__["default"] = (DataService);
 
 /***/ }),
-/* 27 */
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ *
+ * ## Authentication API Service
+ *
+ * The Authentication API Service provides a method for logging in, which creates and returns a user access token.
+ *
+ * User access tokens are required for each call to Epicenter. (See [Project Access](../../../project_access/) for more information.)
+ *
+ * If you need additional functionality -- such as tracking session information, easily retrieving the user token, or getting the groups to which an end user belongs -- consider using the [Authorization Manager](../auth-manager/) instead.
+ *
+ *      var auth = new F.service.Auth();
+ *      auth.login({ userName: 'jsmith@acmesimulations.com',
+ *                  password: 'passw0rd' });
+ */
+
+
+
+var ConfigService = __webpack_require__(2).default;
+var TransportFactory = __webpack_require__(0).default;
+
+module.exports = function (config) {
+    var defaults = {
+        /**
+         * Email or username to use for logging in. Defaults to empty string.
+         * @type {String}
+         */
+        userName: '',
+
+        /**
+         * Password for specified `userName`. Defaults to empty string.
+         * @type {String}
+         */
+        password: '',
+
+        /**
+         * The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects). Required if the `userName` is for an [end user](../../../glossary/#users). Defaults to empty string.
+         * @type {String}
+         */
+        account: '',
+
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {Object}
+         */
+        transport: {}
+    };
+    var serviceOptions = $.extend({}, defaults, config);
+    var urlConfig = new ConfigService(serviceOptions).get('server');
+
+    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
+        url: urlConfig.getAPIPath('authentication')
+    });
+    var http = new TransportFactory(transportOptions);
+
+    var publicAPI = {
+
+        /**
+         * Logs user in, returning the user access token.
+         *
+         * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
+         *
+         * **Example**
+         *
+         *      auth.login({
+         *          userName: 'jsmith',
+         *          password: 'passw0rd',
+         *          account: 'acme-simulations' })
+         *      .then(function (token) {
+         *          console.log("user access token is: ", token.access_token);
+         *      });
+         *
+         * **Parameters**
+         * @param {Object} options (Optional) Overrides for configuration options.
+         * @return {Promise}
+         */
+        login: function (options) {
+            var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
+            if (!httpOptions.userName || !httpOptions.password) {
+                var resp = { status: 401, statusMessage: 'No username or password specified.' };
+                if (options.error) {
+                    options.error.call(this, resp);
+                }
+
+                return $.Deferred().reject(resp).promise();
+            }
+
+            var postParams = {
+                userName: httpOptions.userName,
+                password: httpOptions.password
+            };
+            if (httpOptions.account) {
+                //pass in null for account under options if you don't want it to be sent
+                postParams.account = httpOptions.account;
+            }
+
+            return http.post(postParams, httpOptions);
+        },
+
+        // (replace with /* */ comment block, to make visible in docs, once this is more than a noop)
+        //
+        // Logs user out from specified accounts.
+        //
+        // Epicenter logout is not implemented yet, so for now this is a dummy promise that gets automatically resolved.
+        //
+        // **Example**
+        //
+        //      auth.logout();
+        //
+        // **Parameters**
+        // @param {Object} `options` (Optional) Overrides for configuration options.
+        //
+        logout: function (options) {
+            var dtd = $.Deferred();
+            dtd.resolve();
+            return dtd.promise();
+        }
+    };
+
+    $.extend(this, publicAPI);
+};
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ *
+ * ## Member API Adapter
+ *
+ * The Member API Adapter provides methods to look up information about end users for your project and how they are divided across groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
+ *
+ * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
+ *
+ *      var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+ *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
+ *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
+ */
+
+
+
+var ConfigService = __webpack_require__(2).default;
+var TransportFactory = __webpack_require__(0).default;
+var SessionManager = __webpack_require__(1);
+var _pick = __webpack_require__(4).pick;
+var apiEndpoint = 'member/local';
+
+module.exports = function (config) {
+    var defaults = {
+        /**
+         * Epicenter user id. Defaults to a blank string.
+         * @type {string}
+         */
+        userId: undefined,
+
+        /**
+         * Epicenter group id. Defaults to a blank string. Note that this is the group *id*, not the group *name*.
+         * @type {string}
+         */
+        groupId: undefined,
+
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {object}
+         */
+        transport: {}
+    };
+    this.sessionManager = new SessionManager();
+    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
+    var urlConfig = new ConfigService(serviceOptions).get('server');
+
+    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
+        url: urlConfig.getAPIPath(apiEndpoint)
+    });
+
+    if (serviceOptions.token) {
+        transportOptions.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+    var http = new TransportFactory(transportOptions, serviceOptions);
+
+    var getFinalParams = function (params) {
+        if (typeof params === 'object') {
+            return $.extend(true, serviceOptions, params);
+        }
+        return serviceOptions;
+    };
+
+    var patchUserActiveField = function (params, active, options) {
+        var httpOptions = $.extend(true, serviceOptions, options, {
+            url: urlConfig.getAPIPath(apiEndpoint) + params.groupId + '/' + params.userId
+        });
+
+        return http.patch({ active: active }, httpOptions);
+    };
+
+    var publicAPI = {
+
+        /**
+        * Retrieve details about all of the group memberships for one end user. The membership details are returned in an array, with one element (group record) for each group to which the end user belongs.
+        *
+        * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
+        *
+        * **Example**
+        *
+        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
+        *           .then(function(memberships){
+        *               for (var i=0; i<memberships.length; i++) {
+        *                   console.log(memberships[i].groupId);
+        *               }
+        *           });
+        *
+        *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
+        *
+        * **Parameters**
+        * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
+        * @param {object} options (Optional) Overrides for configuration options.
+        */
+
+        getGroupsForUser: function (params, options) {
+            options = options || {};
+            var httpOptions = $.extend(true, serviceOptions, options);
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.userId) {
+                throw new Error('No userId specified.');
+            }
+
+            var getParms = isString ? { userId: params } : _pick(objParams, 'userId');
+            return http.get(getParms, httpOptions);
+        },
+
+        /**
+        * Retrieve details about one group, including an array of all its members.
+        *
+        * **Example**
+        *
+        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
+        *           .then(function(group){
+        *               for (var i=0; i<group.members.length; i++) {
+        *                   console.log(group.members[i].userName);
+        *               }
+        *           });
+        *
+        *       ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * **Parameters**
+        * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
+        */
+        getGroupDetails: function (params, options) {
+            options = options || {};
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.groupId) {
+                throw new Error('No groupId specified.');
+            }
+
+            var groupId = isString ? params : objParams.groupId;
+            var httpOptions = $.extend(true, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupId });
+
+            return http.get({}, httpOptions);
+        },
+
+        /**
+        * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
+        *
+        * **Example**
+        *
+        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * **Parameters**
+        * @param {object} params The end user and group information.
+        * @param {string} params.userId The id of the end user to make active.
+        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
+        */
+        makeUserActive: function (params, options) {
+            return patchUserActiveField(params, true, options);
+        },
+
+        /**
+        * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
+        *
+        * **Example**
+        *
+        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * **Parameters**
+        * @param {object} params The end user and group information.
+        * @param {string} params.userId The id of the end user to make inactive.
+        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
+        * @param {object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
+        */
+        makeUserInactive: function (params, options) {
+            return patchUserActiveField(params, false, options);
+        }
+    };
+
+    $.extend(this, publicAPI);
+};
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
+/**
+ *
+ * ## Group API Adapter
+ *
+ * The Group API Adapter provides methods to look up, create, change or remove information about groups in a project. It is based on query capabilities of the underlying RESTful [Group API](../../../rest_apis/user_management/group/).
+ *
+ * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/).
+ *
+ *      var ma = new F.service.Group({ token: 'user-or-project-access-token' });
+ *      ma.getGroupsForProject({ account: 'acme', project: 'sample' });
+ */
+
+
+
+
+
+var apiEndpoint = 'group/local';
+
+var GroupService = function (config) {
+    var defaults = {
+        /**
+         * Epicenter account name. Defaults to undefined.
+         * @type {string}
+         */
+        account: undefined,
+
+        /**
+         * Epicenter project name. Defaults to undefined.
+         * @type {string}
+         */
+        project: undefined,
+
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {object}
+         */
+        transport: {}
+    };
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: apiEndpoint });
+    var transportOptions = serviceOptions.transport;
+    delete serviceOptions.transport;
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](transportOptions, serviceOptions);
+    var publicAPI = {
+        /**
+        * Gets information for a group or multiple groups.
+        * @param {Object} params object with query parameters
+        * @patam {string} params.q partial match for name, organization or event.
+        * @patam {string} params.account Epicenter's Team ID
+        * @patam {string} params.project Epicenter's Project ID
+        * @patam {string} params.name Epicenter's Group Name
+        * @param {Object} options (Optional) Overrides for configuration options.
+        * @return {Promise}
+        */
+        getGroups: function (params, options) {
+            //groupID is part of the URL
+            //q, account and project are part of the query string
+            var finalOpts = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions, options);
+            var finalParams;
+            if (typeof params === 'string') {
+                finalOpts.url = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["a" /* getApiUrl */])(apiEndpoint + '/' + params, finalOpts);
+            } else {
+                finalParams = params;
+            }
+            return http.get(finalParams, finalOpts);
+        }
+    };
+    __WEBPACK_IMPORTED_MODULE_2_object_assign___default()(this, publicAPI);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (GroupService);
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4735,133 +5565,7 @@ Channel.prototype = $.extend(Channel.prototype, {
 module.exports = Channel;
 
 /***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- *
- * ## Authentication API Service
- *
- * The Authentication API Service provides a method for logging in, which creates and returns a user access token.
- *
- * User access tokens are required for each call to Epicenter. (See [Project Access](../../../project_access/) for more information.)
- *
- * If you need additional functionality -- such as tracking session information, easily retrieving the user token, or getting the groups to which an end user belongs -- consider using the [Authorization Manager](../auth-manager/) instead.
- *
- *      var auth = new F.service.Auth();
- *      auth.login({ userName: 'jsmith@acmesimulations.com',
- *                  password: 'passw0rd' });
- */
-
-
-
-var ConfigService = __webpack_require__(1).default;
-var TransportFactory = __webpack_require__(0).default;
-
-module.exports = function (config) {
-    var defaults = {
-        /**
-         * Email or username to use for logging in. Defaults to empty string.
-         * @type {String}
-         */
-        userName: '',
-
-        /**
-         * Password for specified `userName`. Defaults to empty string.
-         * @type {String}
-         */
-        password: '',
-
-        /**
-         * The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects). Required if the `userName` is for an [end user](../../../glossary/#users). Defaults to empty string.
-         * @type {String}
-         */
-        account: '',
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
-        transport: {}
-    };
-    var serviceOptions = $.extend({}, defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath('authentication')
-    });
-    var http = new TransportFactory(transportOptions);
-
-    var publicAPI = {
-
-        /**
-         * Logs user in, returning the user access token.
-         *
-         * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
-         *
-         * **Example**
-         *
-         *      auth.login({
-         *          userName: 'jsmith',
-         *          password: 'passw0rd',
-         *          account: 'acme-simulations' })
-         *      .then(function (token) {
-         *          console.log("user access token is: ", token.access_token);
-         *      });
-         *
-         * **Parameters**
-         * @param {Object} options (Optional) Overrides for configuration options.
-         * @return {Promise}
-         */
-        login: function (options) {
-            var httpOptions = $.extend(true, { success: $.noop }, serviceOptions, options);
-            if (!httpOptions.userName || !httpOptions.password) {
-                var resp = { status: 401, statusMessage: 'No username or password specified.' };
-                if (options.error) {
-                    options.error.call(this, resp);
-                }
-
-                return $.Deferred().reject(resp).promise();
-            }
-
-            var postParams = {
-                userName: httpOptions.userName,
-                password: httpOptions.password
-            };
-            if (httpOptions.account) {
-                //pass in null for account under options if you don't want it to be sent
-                postParams.account = httpOptions.account;
-            }
-
-            return http.post(postParams, httpOptions);
-        },
-
-        // (replace with /* */ comment block, to make visible in docs, once this is more than a noop)
-        //
-        // Logs user out from specified accounts.
-        //
-        // Epicenter logout is not implemented yet, so for now this is a dummy promise that gets automatically resolved.
-        //
-        // **Example**
-        //
-        //      auth.logout();
-        //
-        // **Parameters**
-        // @param {Object} `options` (Optional) Overrides for configuration options.
-        //
-        logout: function (options) {
-            var dtd = $.Deferred();
-            dtd.resolve();
-            return dtd.promise();
-        }
-    };
-
-    $.extend(this, publicAPI);
-};
-
-/***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4884,10 +5588,10 @@ module.exports = function (config) {
  *
  */
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(2).default;
 var TransportFactory = __webpack_require__(0).default;
 var _pick = __webpack_require__(4).pick;
-var SessionManager = __webpack_require__(2);
+var SessionManager = __webpack_require__(1);
 var apiEndpoint = 'model/state';
 
 module.exports = function (config) {
@@ -5004,284 +5708,12 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- *
- * ## Member API Adapter
- *
- * The Member API Adapter provides methods to look up information about end users for your project and how they are divided across groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
- *
- * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
- *
- *      var ma = new F.service.Member({ token: 'user-or-project-access-token' });
- *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
- *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
- */
-
-
-
-var ConfigService = __webpack_require__(1).default;
-var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(2);
-var _pick = __webpack_require__(4).pick;
-var apiEndpoint = 'member/local';
-
-module.exports = function (config) {
-    var defaults = {
-        /**
-         * Epicenter user id. Defaults to a blank string.
-         * @type {string}
-         */
-        userId: undefined,
-
-        /**
-         * Epicenter group id. Defaults to a blank string. Note that this is the group *id*, not the group *name*.
-         * @type {string}
-         */
-        groupId: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
-         */
-        transport: {}
-    };
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
-    });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    var http = new TransportFactory(transportOptions, serviceOptions);
-
-    var getFinalParams = function (params) {
-        if (typeof params === 'object') {
-            return $.extend(true, serviceOptions, params);
-        }
-        return serviceOptions;
-    };
-
-    var patchUserActiveField = function (params, active, options) {
-        var httpOptions = $.extend(true, serviceOptions, options, {
-            url: urlConfig.getAPIPath(apiEndpoint) + params.groupId + '/' + params.userId
-        });
-
-        return http.patch({ active: active }, httpOptions);
-    };
-
-    var publicAPI = {
-
-        /**
-        * Retrieve details about all of the group memberships for one end user. The membership details are returned in an array, with one element (group record) for each group to which the end user belongs.
-        *
-        * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
-        *
-        * **Example**
-        *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
-        *           .then(function(memberships){
-        *               for (var i=0; i<memberships.length; i++) {
-        *                   console.log(memberships[i].groupId);
-        *               }
-        *           });
-        *
-        *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
-        *
-        * **Parameters**
-        * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
-        * @param {object} options (Optional) Overrides for configuration options.
-        */
-
-        getGroupsForUser: function (params, options) {
-            options = options || {};
-            var httpOptions = $.extend(true, serviceOptions, options);
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.userId) {
-                throw new Error('No userId specified.');
-            }
-
-            var getParms = isString ? { userId: params } : _pick(objParams, 'userId');
-            return http.get(getParms, httpOptions);
-        },
-
-        /**
-        * Retrieve details about one group, including an array of all its members.
-        *
-        * **Example**
-        *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
-        *           .then(function(group){
-        *               for (var i=0; i<group.members.length; i++) {
-        *                   console.log(group.members[i].userName);
-        *               }
-        *           });
-        *
-        *       ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-        getGroupDetails: function (params, options) {
-            options = options || {};
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.groupId) {
-                throw new Error('No groupId specified.');
-            }
-
-            var groupId = isString ? params : objParams.groupId;
-            var httpOptions = $.extend(true, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupId });
-
-            return http.get({}, httpOptions);
-        },
-
-        /**
-        * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
-        *
-        * **Example**
-        *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make active.
-        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-        makeUserActive: function (params, options) {
-            return patchUserActiveField(params, true, options);
-        },
-
-        /**
-        * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
-        *
-        * **Example**
-        *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make inactive.
-        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-        makeUserInactive: function (params, options) {
-            return patchUserActiveField(params, false, options);
-        }
-    };
-
-    $.extend(this, publicAPI);
-};
-
-/***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
-/**
- *
- * ## Group API Adapter
- *
- * The Group API Adapter provides methods to look up, create, change or remove information about groups in a project. It is based on query capabilities of the underlying RESTful [Group API](../../../rest_apis/user_management/group/).
- *
- * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/).
- *
- *      var ma = new F.service.Group({ token: 'user-or-project-access-token' });
- *      ma.getGroupsForProject({ account: 'acme', project: 'sample' });
- */
-
-
-
-
-
-var apiEndpoint = 'group/local';
-
-var GroupService = function (config) {
-    var defaults = {
-        /**
-         * Epicenter account name. Defaults to undefined.
-         * @type {string}
-         */
-        account: undefined,
-
-        /**
-         * Epicenter project name. Defaults to undefined.
-         * @type {string}
-         */
-        project: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
-         */
-        transport: {}
-    };
-    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: apiEndpoint });
-    var transportOptions = serviceOptions.transport;
-    delete serviceOptions.transport;
-    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](transportOptions, serviceOptions);
-    var publicAPI = {
-        /**
-        * Gets information for a group or multiple groups.
-        * @param {Object} params object with query parameters
-        * @patam {string} params.q partial match for name, organization or event.
-        * @patam {string} params.account Epicenter's Team ID
-        * @patam {string} params.project Epicenter's Project ID
-        * @patam {string} params.name Epicenter's Group Name
-        * @param {Object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-        getGroups: function (params, options) {
-            //groupID is part of the URL
-            //q, account and project are part of the query string
-            var finalOpts = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions, options);
-            var finalParams;
-            if (typeof params === 'string') {
-                finalOpts.url = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["a" /* getApiUrl */])(apiEndpoint + '/' + params, finalOpts);
-            } else {
-                finalParams = params;
-            }
-            return http.get(finalParams, finalOpts);
-        }
-    };
-    __WEBPACK_IMPORTED_MODULE_2_object_assign___default()(this, publicAPI);
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (GroupService);
-
-/***/ }),
-/* 32 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -5329,7 +5761,7 @@ var TimeAPIService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (TimeAPIService);
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5353,12 +5785,12 @@ function intersection(a, b) {
 }
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(19);
 
 
 function reduceActions(actions, options) {
@@ -5395,7 +5827,7 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -5411,17 +5843,17 @@ function reduceActions(actions, options) {
  */
 
 var list = {
-    'conditional-creation': __webpack_require__(9),
-    'new-if-initialized': __webpack_require__(56), //deprecated
-    'new-if-persisted': __webpack_require__(57), //deprecated
+    'conditional-creation': __webpack_require__(10),
+    'new-if-initialized': __webpack_require__(58), //deprecated
+    'new-if-persisted': __webpack_require__(59), //deprecated
 
-    none: __webpack_require__(10),
+    none: __webpack_require__(11),
 
-    multiplayer: __webpack_require__(58),
-    'reuse-never': __webpack_require__(59),
-    'reuse-per-session': __webpack_require__(60),
-    'reuse-across-sessions': __webpack_require__(61),
-    'reuse-last-initialized': __webpack_require__(36)
+    multiplayer: __webpack_require__(60),
+    'reuse-never': __webpack_require__(61),
+    'reuse-per-session': __webpack_require__(62),
+    'reuse-across-sessions': __webpack_require__(63),
+    'reuse-last-initialized': __webpack_require__(37)
 };
 
 //Add back older aliases
@@ -5514,7 +5946,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5545,7 +5977,7 @@ module.exports = {
 
 var classFrom = __webpack_require__(3);
 
-var _require = __webpack_require__(6),
+var _require = __webpack_require__(7),
     injectFiltersFromSession = _require.injectFiltersFromSession,
     injectScopeFromSession = _require.injectScopeFromSession;
 
@@ -5612,7 +6044,7 @@ module.exports = classFrom(Base, {
 });
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5626,10 +6058,10 @@ module.exports = classFrom(Base, {
  */
 
 
-var RunService = __webpack_require__(8);
-var SessionManager = __webpack_require__(2);
+var RunService = __webpack_require__(9);
+var SessionManager = __webpack_require__(1);
 
-var injectFiltersFromSession = __webpack_require__(6).injectFiltersFromSession;
+var injectFiltersFromSession = __webpack_require__(7).injectFiltersFromSession;
 
 var SavedRunsManager = function (config) {
     var defaults = {
@@ -5771,421 +6203,6 @@ SavedRunsManager.prototype = {
 module.exports = SavedRunsManager;
 
 /***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
-* ## Authorization Manager
-*
-* The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
-*
-* The Authorization Manager is most useful for [team projects](../../../glossary/#team) with an access level of [Authenticated](../../../glossary/#access). These projects are accessed by [end users](../../../glossary/#users) who are members of one or more [groups](../../../glossary/#groups).
-*
-* #### Using the Authorization Manager
-*
-* To use the Authorization Manager, instantiate it. Then, make calls to any of the methods you need:
-*
-*       var authMgr = new F.manager.AuthManager({
-*           account: 'acme-simulations',
-*           userName: 'enduser1',
-*           password: 'passw0rd'
-*       });
-*       authMgr.login().then(function () {
-*           authMgr.getCurrentUserSessionInfo();
-*       });
-*
-*
-* The `options` object passed to the `F.manager.AuthManager()` call can include:
-*
-*   * `account`: The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
-*   * `userName`: Email or username to use for logging in.
-*   * `password`: Password for specified `userName`.
-*   * `project`: The **Project ID** for the project to log this user into. Optional.
-*   * `groupId`: Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
-*
-* If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
-*/
-
-var AuthAdapter = __webpack_require__(28);
-var MemberAdapter = __webpack_require__(30);
-var GroupService = __webpack_require__(31).default;
-var SessionManager = __webpack_require__(2);
-var _pick = __webpack_require__(4).pick;
-var objectAssign = __webpack_require__(17);
-
-var atob = window.atob || __webpack_require__(65).atob;
-
-var defaults = {
-    requiresGroup: true
-};
-
-function AuthManager(options) {
-    options = $.extend(true, {}, defaults, options);
-    this.sessionManager = new SessionManager(options);
-    this.options = this.sessionManager.getMergedOptions();
-
-    this.authAdapter = new AuthAdapter(this.options);
-}
-
-var _findUserInGroup = function (members, id) {
-    for (var j = 0; j < members.length; j++) {
-        if (members[j].userId === id) {
-            return members[j];
-        }
-    }
-    return null;
-};
-
-AuthManager.prototype = $.extend(AuthManager.prototype, {
-
-    /**
-    * Logs user in.
-    *
-    * **Example**
-    *
-    *       authMgr.login({
-    *           account: 'acme-simulations',
-    *           project: 'supply-chain-game',
-    *           userName: 'enduser1',
-    *           password: 'passw0rd'
-    *       })
-    *           .then(function(statusObj) {
-    *               // if enduser1 belongs to exactly one group
-    *               // (or if the login() call is modified to include the group id)
-    *               // continue here
-    *           })
-    *           .fail(function(statusObj) {
-    *               // if enduser1 belongs to multiple groups,
-    *               // the login() call fails
-    *               // and returns all groups of which the user is a member
-    *               for (var i=0; i < statusObj.userGroups.length; i++) {
-    *                   console.log(statusObj.userGroups[i].name, statusObj.userGroups[i].groupId);
-    *               }
-    *           });
-    *
-    * **Parameters**
-    *
-    * @param {Object} options (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
-    * @param {string} options.account The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
-    * @param {string} options.userName Email or username to use for logging in.
-    * @param {string} options.password Password for specified `userName`.
-    * @param {string} options.project (Optional) The **Project ID** for the project to log this user into.
-    * @param {string} options.groupId The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
-    * @return {Promise}
-    */
-    login: function (options) {
-        var me = this;
-        var $d = $.Deferred();
-        var sessionManager = this.sessionManager;
-        var adapterOptions = sessionManager.getMergedOptions({ success: $.noop, error: $.noop }, options);
-        var outSuccess = adapterOptions.success;
-        var outError = adapterOptions.error;
-        var groupId = adapterOptions.groupId;
-
-        var decodeToken = function (token) {
-            var encoded = token.split('.')[1];
-            while (encoded.length % 4 !== 0) {
-                //eslint-disable-line
-                encoded += '=';
-            }
-            return JSON.parse(atob(encoded));
-        };
-
-        var handleGroupError = function (message, statusCode, data, type) {
-            // logout the user since it's in an invalid state with no group selected
-            me.logout().then(function () {
-                var error = $.extend(true, {}, data, { statusText: message, status: statusCode, type: type });
-                $d.reject(error);
-            });
-        };
-
-        var handleSuccess = function (response) {
-            var token = response.access_token;
-            var userInfo = decodeToken(token);
-            var oldGroups = sessionManager.getSession(adapterOptions).groups || {};
-            var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
-            var data = { auth: response, user: userInfo };
-            var project = adapterOptions.project;
-            var isTeamMember = userInfo.parent_account_id === null;
-            var requiresGroup = adapterOptions.requiresGroup && project;
-
-            var userName = (userInfo.user_name || '').split('/')[0]; //of form <user>/<team>
-            var sessionInfo = {
-                auth_token: token,
-                account: adapterOptions.account,
-                project: project,
-                userId: userInfo.user_id,
-                groups: oldGroups,
-                isTeamMember: isTeamMember,
-                userName: userName
-            };
-            // The group is not required if the user is not logging into a project
-            if (!requiresGroup) {
-                sessionManager.saveSession(sessionInfo);
-                outSuccess.apply(this, [data]);
-                $d.resolve(data);
-                return;
-            }
-
-            var handleGroupList = function (groupList) {
-                data.userGroups = groupList;
-
-                var group = null;
-                if (groupList.length === 0) {
-                    handleGroupError('The user has no groups associated in this account', 403, data, 'NO_GROUPS');
-                    return;
-                } else if (groupList.length === 1) {
-                    // Select the only group
-                    group = groupList[0];
-                } else if (groupList.length > 1) {
-                    if (groupId) {
-                        var filteredGroups = $.grep(groupList, function (resGroup) {
-                            return resGroup.groupId === groupId;
-                        });
-                        group = filteredGroups.length === 1 ? filteredGroups[0] : null;
-                    }
-                }
-
-                if (group) {
-                    // A team member does not get the group members because is calling the Group API
-                    // but it's automatically a fac user
-                    var isFac = isTeamMember ? true : _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator';
-                    var groupData = {
-                        groupId: group.groupId,
-                        groupName: group.name,
-                        isFac: isFac
-                    };
-                    var sessionInfoWithGroup = objectAssign({}, sessionInfo, groupData);
-                    sessionInfo.groups[project] = groupData;
-                    me.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
-                    outSuccess.apply(this, [data]);
-                    $d.resolve(data);
-                } else {
-                    handleGroupError('This user is associated with more than one group. Please specify a group id to log into and try again', 403, data, 'MULTIPLE_GROUPS');
-                }
-            };
-
-            if (!isTeamMember) {
-                me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).then(handleGroupList, $d.reject);
-            } else {
-                var opts = objectAssign({}, userGroupOpts, { token: token });
-                var groupService = new GroupService(opts);
-                groupService.getGroups({ account: adapterOptions.account, project: project }).then(function (groups) {
-                    // Group API returns id instead of groupId
-                    groups.forEach(function (group) {
-                        group.groupId = group.id;
-                    });
-
-                    if (groups.length) {
-                        handleGroupList(groups);
-                    } else {
-                        //either it's a private project or there are no groups
-                        sessionManager.saveSession(sessionInfo);
-                        outSuccess.apply(this, [data]);
-                        $d.resolve(data);
-                        return;
-                    }
-                }, $d.reject);
-            }
-        };
-
-        adapterOptions.success = handleSuccess;
-        adapterOptions.error = function (response) {
-            if (adapterOptions.account) {
-                // Try to login as a system user
-                adapterOptions.account = null;
-                adapterOptions.error = function () {
-                    outError.apply(this, arguments);
-                    $d.reject(response);
-                };
-
-                me.authAdapter.login(adapterOptions);
-                return;
-            }
-
-            outError.apply(this, arguments);
-            $d.reject(response);
-        };
-
-        this.authAdapter.login(adapterOptions);
-        return $d.promise();
-    },
-
-    /**
-    * Logs user out by clearing all session information.
-    *
-    * **Example**
-    *
-    *       authMgr.logout();
-    *
-    * **Parameters**
-    *
-    * @param {Object} options (Optional) Overrides for configuration options.
-    * @return {Promise}
-    */
-    logout: function (options) {
-        var me = this;
-        var adapterOptions = this.sessionManager.getMergedOptions(options);
-
-        var removeCookieFn = function (response) {
-            me.sessionManager.removeSession();
-        };
-
-        return this.authAdapter.logout(adapterOptions).then(removeCookieFn);
-    },
-
-    /**
-     * Returns the existing user access token if the user is already logged in. Otherwise, logs the user in, creating a new user access token, and returns the new token. (See [more background on access tokens](../../../project_access/)).
-     *
-     * **Example**
-     *
-     *      authMgr.getToken()
-     *          .then(function (token) {
-     *              console.log('My token is ', token);
-     *          });
-     *
-     * **Parameters**
-     * @param {Object} options (Optional) Overrides for configuration options.
-     * @return {Promise}
-     */
-    getToken: function (options) {
-        var httpOptions = this.sessionManager.getMergedOptions(options);
-
-        var session = this.sessionManager.getSession(httpOptions);
-        var $d = $.Deferred();
-        if (session.auth_token) {
-            $d.resolve(session.auth_token);
-        } else {
-            this.login(httpOptions).then($d.resolve);
-        }
-        return $d.promise();
-    },
-
-    /**
-     * Returns an array of group records, one for each group of which the current user is a member. Each group record includes the group `name`, `account`, `project`, and `groupId`.
-     *
-     * If some end users in your project are members of multiple groups, this is a useful method to call on your project's login page. When the user attempts to log in, you can use this to display the groups of which the user is member, and have the user select the correct group to log in to for this session.
-     *
-     * **Example**
-     *
-     *      // get groups for current user
-     *      var sessionObj = authMgr.getCurrentUserSessionInfo();
-     *      authMgr.getUserGroups({ userId: sessionObj.userId, token: sessionObj.auth_token })
-     *          .then(function (groups) {
-     *              for (var i=0; i < groups.length; i++)
-     *                  { console.log(groups[i].name); }
-     *          });
-     *
-     *      // get groups for particular user
-     *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
-     *
-     * **Parameters**
-     * @param {Object} params Object with a userId and token properties.
-     * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
-     * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
-     * @param {Object} options (Optional) Overrides for configuration options.
-     * @return {Promise}
-     */
-    getUserGroups: function (params, options) {
-        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
-        var $d = $.Deferred();
-        var outSuccess = adapterOptions.success;
-
-        adapterOptions.success = function (memberInfo) {
-            // The member API is at the account scope, we filter by project
-            if (adapterOptions.project) {
-                memberInfo = $.grep(memberInfo, function (group) {
-                    return group.project === adapterOptions.project;
-                });
-            }
-
-            outSuccess.apply(this, [memberInfo]);
-            $d.resolve(memberInfo);
-        };
-
-        var memberAdapter = new MemberAdapter({ token: params.token, server: adapterOptions.server });
-        memberAdapter.getGroupsForUser(params, adapterOptions).fail($d.reject);
-        return $d.promise();
-    },
-
-    /**
-     * Helper method to check if you're currently logged in
-     *
-     *  **Example**
-     *  
-     *      var amILoggedIn = authMgr.isLoggedIn();
-     *
-     * **Parameters**
-     * @param {none} none
-     * @return {Boolean} true if you're logged in
-     */
-    isLoggedIn: function () {
-        var session = this.getCurrentUserSessionInfo();
-        return !!(session && session.userId);
-    },
-
-    /**
-     * Returns session information for the current user, including the `userId`, `account`, `project`, `groupId`, `groupName`, `isFac` (whether the end user is a facilitator of this group), and `auth_token` (user access token).
-     *
-     * *Important*: This method is synchronous. The session information is returned immediately in an object; no callbacks or promises are needed.
-     *
-     * Session information is stored in a cookie in the browser.
-     *
-     * **Example**
-     *
-     *      var sessionObj = authMgr.getCurrentUserSessionInfo();
-     *
-     * **Parameters**
-     * @param {Object} options (Optional) Overrides for configuration options.
-     * @return {Object} session information
-     */
-    getCurrentUserSessionInfo: function (options) {
-        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
-        return this.sessionManager.getSession(adapterOptions);
-    },
-
-    /*
-     * Adds one or more groups to the current session. 
-     *
-     * This method assumes that the project and group exist and the user specified in the session is part of this project and group.
-     *
-     * Returns the new session object.
-     *
-     * **Example**
-     *
-     *      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
-     *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
-     *
-     * **Parameters**
-     * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
-     * @param {string} group.isFac (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
-     * @param {string} group.groupId (optional) Defaults to undefined. Needed mostly for the Members API.
-     * @return {Object} session information
-    */
-    addGroups: function (groups) {
-        var session = this.getCurrentUserSessionInfo();
-        var isArray = Array.isArray(groups);
-        groups = isArray ? groups : [groups];
-
-        $.each(groups, function (index, group) {
-            var extendedGroup = $.extend({}, { isFac: false }, group);
-            var project = extendedGroup.project;
-            var validProps = ['groupName', 'groupId', 'isFac'];
-            if (!project || !extendedGroup.groupName) {
-                throw new Error('No project or groupName specified.');
-            }
-            // filter object
-            extendedGroup = _pick(extendedGroup, validProps);
-            session.groups[project] = extendedGroup;
-        });
-        this.sessionManager.saveSession(session);
-        return session;
-    }
-});
-
-module.exports = AuthManager;
-
-/***/ }),
 /* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6208,52 +6225,52 @@ if (!window.SKIP_ENV_LOAD) {
 }
 
 F.util.query = __webpack_require__(5);
-F.util.run = __webpack_require__(7);
+F.util.run = __webpack_require__(8);
 F.util.classFrom = __webpack_require__(3);
 
 F.factory.Transport = __webpack_require__(0).default;
-F.transport.Ajax = __webpack_require__(21);
+F.transport.Ajax = __webpack_require__(22);
 
 F.service.URL = __webpack_require__(12);
-F.service.Config = __webpack_require__(1).default;
-F.service.Run = __webpack_require__(8);
+F.service.Config = __webpack_require__(2).default;
+F.service.Run = __webpack_require__(9);
 F.service.File = __webpack_require__(42);
-F.service.Variables = __webpack_require__(22);
-F.service.Data = __webpack_require__(26).default;
+F.service.Variables = __webpack_require__(23);
+F.service.Data = __webpack_require__(27).default;
 F.service.Auth = __webpack_require__(28);
-F.service.World = __webpack_require__(15);
-F.service.State = __webpack_require__(29);
-F.service.User = __webpack_require__(44);
-F.service.Member = __webpack_require__(30);
-F.service.Asset = __webpack_require__(45);
-F.service.Group = __webpack_require__(31).default;
-F.service.Introspect = __webpack_require__(23);
-F.service.Presence = __webpack_require__(46);
-F.service.Time = __webpack_require__(32).default;
-F.service.Timer = __webpack_require__(47).default;
-F.service.Password = __webpack_require__(53).default;
+F.service.World = __webpack_require__(17);
+F.service.State = __webpack_require__(32);
+F.service.User = __webpack_require__(46);
+F.service.Member = __webpack_require__(29);
+F.service.Asset = __webpack_require__(47);
+F.service.Group = __webpack_require__(30).default;
+F.service.Introspect = __webpack_require__(24);
+F.service.Presence = __webpack_require__(48);
+F.service.Time = __webpack_require__(33).default;
+F.service.Timer = __webpack_require__(49).default;
+F.service.Password = __webpack_require__(55).default;
 
-F.service.Consensus = __webpack_require__(16);
-F.service.ConsensusGroup = __webpack_require__(54);
+F.service.Consensus = __webpack_require__(18);
+F.service.ConsensusGroup = __webpack_require__(56);
 
-F.store.Cookie = __webpack_require__(25);
+F.store.Cookie = __webpack_require__(26);
 
-F.factory.Store = __webpack_require__(24);
+F.factory.Store = __webpack_require__(25);
 
-F.manager.ScenarioManager = __webpack_require__(55);
-F.manager.RunManager = __webpack_require__(19);
-F.manager.AuthManager = __webpack_require__(38);
-F.manager.WorldManager = __webpack_require__(66);
-F.manager.SavedRunsManager = __webpack_require__(37);
+F.manager.ScenarioManager = __webpack_require__(57);
+F.manager.RunManager = __webpack_require__(20);
+F.manager.AuthManager = __webpack_require__(15);
+F.manager.WorldManager = __webpack_require__(67);
+F.manager.SavedRunsManager = __webpack_require__(38);
 
-var strategies = __webpack_require__(35);
+var strategies = __webpack_require__(36);
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.ChannelManager = __webpack_require__(14).default;
-F.service.Channel = __webpack_require__(27);
+F.manager.ChannelManager = __webpack_require__(16).default;
+F.service.Channel = __webpack_require__(31);
 
 if (true) F.version = "2.6.0"; //eslint-disable-line no-undef
-F.api = __webpack_require__(20);
+F.api = __webpack_require__(21);
 
 F.constants = __webpack_require__(13);
 
@@ -6286,7 +6303,7 @@ module.exports = envLoad;
 "use strict";
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(2).default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
@@ -6355,9 +6372,9 @@ module.exports = optionUtils;
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(2).default;
 var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(2);
+var SessionManager = __webpack_require__(1);
 
 module.exports = function (config) {
     var defaults = {
@@ -6534,6 +6551,168 @@ module.exports = function (config) {
 
 /***/ }),
 /* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SCOPES; });
+/* unused harmony export addScopeToCollection */
+/* unused harmony export getScopedName */
+/* harmony export (immutable) */ __webpack_exports__["b"] = getURL;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(6);
+
+
+
+
+var SCOPES = {
+    GROUP: 'GROUP',
+    RUN: 'RUN',
+    USER: 'USER',
+    PROJECT: 'PROJECT',
+    FACILITATOR: 'FACILITATOR',
+    CUSTOM: 'CUSTOM'
+};
+
+/**
+ * 
+ * @param {string} key to prefix
+ * @param {string} scope 
+ * @param {object} session 
+ * 
+ * @returns {string} scoped name
+ */
+function addScopeToCollection(key, scope, session) {
+    var publicAccessScopes = [SCOPES.CUSTOM];
+    var allowPublicAccess = publicAccessScopes.indexOf(scope) !== -1;
+    if (!Object.keys(session || {}).length && !allowPublicAccess) {
+        throw new Error('DataService Authorization error: ' + scope + ' for ' + key + ' requires an authenticated user');
+    }
+    scope = scope.toUpperCase();
+    var delimiter = '_';
+    if (scope === SCOPES.GROUP) {
+        return [key, 'group', session.groupId].join(delimiter);
+    } else if (scope === SCOPES.USER) {
+        return [key, 'user', session.userId, 'group', session.groupId].join(delimiter);
+    } else if (scope === SCOPES.FACILITATOR) {
+        var isFac = session.isTeamMember || session.isFac;
+        if (!isFac) {
+            throw new Error('DataService Authorization error: ' + scope + ' for ' + key + ' requires a Facilitator user');
+        }
+        return [key, 'fac', 'group', session.groupId].join(delimiter);
+    } else if (scope === SCOPES.PROJECT) {
+        return [key, 'project', 'scope'].join(delimiter);
+    } else if (scope === SCOPES.CUSTOM) {
+        return key;
+    }
+    throw new Error('Unknown scope ' + scope);
+}
+
+/**
+ * Takes name for form collection/doc/.. and adds scope to just collection name
+ * 
+ * @param {string} name 
+ * @param {string} scope 
+ * @param {object} session 
+ * @returns {string}
+ */
+function getScopedName(name, scope, session) {
+    var split = name.split('/');
+    var collection = split[0];
+
+    split[0] = addScopeToCollection(collection, scope, session);
+
+    var newURL = split.join('/');
+    return newURL;
+}
+
+function getURL(API_ENDPOINT, collection, doc, options) {
+    var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default.a();
+    var session = am.getCurrentUserSessionInfo();
+
+    var scopedCollection = getScopedName(collection || options.root, options.scope, session);
+
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["d" /* getURLConfig */])(options);
+    var baseURL = urlConfig.getAPIPath(API_ENDPOINT);
+
+    var fullURL = baseURL + '/' + scopedCollection + '/' + (doc || '');
+    return Object(__WEBPACK_IMPORTED_MODULE_1_util_query_util__["normalizeSlashes"])(fullURL, { leading: true, trailing: true });
+}
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function () {
+
+  var object =
+     true ? exports :
+    typeof self != 'undefined' ? self : // #8: web workers
+    $.global; // #31: ExtendScript
+
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+  function InvalidCharacterError(message) {
+    this.message = message;
+  }
+  InvalidCharacterError.prototype = new Error;
+  InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+
+  // encoder
+  // [https://gist.github.com/999166] by [https://github.com/nignag]
+  object.btoa || (
+  object.btoa = function (input) {
+    var str = String(input);
+    for (
+      // initialize result and counter
+      var block, charCode, idx = 0, map = chars, output = '';
+      // if the next str index does not exist:
+      //   change the mapping table to "="
+      //   check if d has no fractional digits
+      str.charAt(idx | 0) || (map = '=', idx % 1);
+      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+      output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+    ) {
+      charCode = str.charCodeAt(idx += 3/4);
+      if (charCode > 0xFF) {
+        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+      }
+      block = block << 8 | charCode;
+    }
+    return output;
+  });
+
+  // decoder
+  // [https://gist.github.com/1020396] by [https://github.com/atk]
+  object.atob || (
+  object.atob = function (input) {
+    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
+    if (str.length % 4 == 1) {
+      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+    }
+    for (
+      // initialize result and counters
+      var bc = 0, bs, buffer, idx = 0, output = '';
+      // get next character
+      buffer = str.charAt(idx++);
+      // character found in table? initialize bit storage and add its ascii value;
+      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+        // and if not first of each 4 characters,
+        // convert the first 8 bits to one ascii character
+        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+    ) {
+      // try to find character in table (0-63, not found => -1)
+      buffer = chars.indexOf(buffer);
+    }
+    return output;
+  });
+
+}());
+
+
+/***/ }),
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6574,8 +6753,8 @@ module.exports = function (config) {
  *
  */
 
-var Channel = __webpack_require__(27);
-var SessionManager = __webpack_require__(2);
+var Channel = __webpack_require__(31);
+var SessionManager = __webpack_require__(1);
 
 var ChannelManager = function (options) {
     if (!$.cometd) {
@@ -6793,7 +6972,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 module.exports = ChannelManager;
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6817,10 +6996,12 @@ module.exports = ChannelManager;
 * The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(2).default;
 var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(2);
-var qutil = __webpack_require__(5);
+var SessionManager = __webpack_require__(1);
+
+var _require = __webpack_require__(5),
+    toQueryFormat = _require.toQueryFormat;
 
 module.exports = function (config) {
     var defaults = {
@@ -6906,7 +7087,7 @@ module.exports = function (config) {
                 return 'id=' + id.join('&id=');
             };
 
-            var getFilters = ['account=' + getOptions.account, toIdFilters(filter.id), qutil.toQueryFormat(toQFilter(filter))].join('&');
+            var getFilters = ['account=' + getOptions.account, toIdFilters(filter.id), toQueryFormat(toQFilter(filter))].join('&');
 
             // special case for queries with large number of ids
             // make it as a post with GET semantics
@@ -6945,7 +7126,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7005,10 +7186,10 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(2).default;
 var TransportFactory = __webpack_require__(0).default;
 var _pick = __webpack_require__(4).pick;
-var SessionManager = __webpack_require__(2);
+var SessionManager = __webpack_require__(1);
 
 var apiEndpoint = 'asset';
 
@@ -7328,7 +7509,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -7345,9 +7526,9 @@ module.exports = function (config) {
  *      pr.getStatus();
  */
 
-var ConfigService = __webpack_require__(1).default;
+var ConfigService = __webpack_require__(2).default;
 var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(2);
+var SessionManager = __webpack_require__(1);
 var apiEndpoint = 'presence';
 
 module.exports = function (config) {
@@ -7529,7 +7710,7 @@ module.exports = function (config) {
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
-            var ChannelManager = __webpack_require__(14).default;
+            var ChannelManager = __webpack_require__(16).default;
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);
@@ -7546,19 +7727,19 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(19);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7573,32 +7754,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-function getAPIKeyName(options) {
-    var scope = options.scope.toUpperCase();
-    var delimiter = '_';
-    var prefix = 'timer';
-    if (scope === __WEBPACK_IMPORTED_MODULE_6__timer_constants__["b" /* SCOPES */].GROUP) {
-        return [prefix, 'group', options.groupId].join(delimiter);
-    } else if (scope === __WEBPACK_IMPORTED_MODULE_6__timer_constants__["b" /* SCOPES */].USER) {
-        return [prefix, 'user', options.userId, 'group', options.groupId].join(delimiter);
-    } else if (scope === __WEBPACK_IMPORTED_MODULE_6__timer_constants__["b" /* SCOPES */].RUN) {
-        if (!options.scopeOptions || !options.scopeOptions.runid) {
-            throw new Error('Run Scope requires passing in run options with scopeOptions: { runid: <id> }');
-        }
-        return [prefix, 'run', options.scopeOptions.runid].join(delimiter);
-    } else if (scope === __WEBPACK_IMPORTED_MODULE_6__timer_constants__["b" /* SCOPES */].CUSTOM) {
-        if (!options.scopeOptions || !options.scopeOptions.customName) {
-            throw new Error('Custom Scope requires passing in scopeOptions: { customName: <id> }');
-        }
-        return options.scopeOptions.customName;
-    }
-    throw new Error('Unknown scope ' + scope);
-}
-
 function getStore(options) {
-    var key = getAPIKeyName(options);
     var ds = new __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__["default"]($.extend(true, {}, options, {
-        root: key
+        root: 'timer',
+        scope: options.scope
     }));
     return ds;
 }
@@ -7618,8 +7777,7 @@ function getStateFromActions(actions, currentTime, options) {
  * @property {string} [token] For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
  * @property {object} [transport] Options to pass on to the underlying transport layer
  * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
- * @property {GROUP|USER|RUN} [scope] Determines the specificity of the timer, or at what level the timer applies to.
- * @property {object} [scopeOptions] Use to pass `runid` for RUN scope, or `customName` for CUSTOM scope ignored otherwise
+ * @property {string} [scope] Determines the specificity of the timer, see DataService for available scopes
  * @property {string|function} [strategy] strategy to use to resolve start time. Available strategies are 'first-user' (default) or 'last-user'. Can also take in a function to return a custom start time.
  */
 
@@ -7636,8 +7794,6 @@ var TimerService = function () {
             token: undefined,
             transport: {},
             name: 'timer',
-            scope: __WEBPACK_IMPORTED_MODULE_6__timer_constants__["b" /* SCOPES */].RUN,
-            scopeOptions: {},
             strategy: __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a" /* STRATEGIES */].START_BY_FIRST_USER,
             strategyOptions: {}
         };
@@ -7936,20 +8092,20 @@ var TimerService = function () {
 }();
 
 TimerService.ACTIONS = __WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */];
-TimerService.SCOPES = __WEBPACK_IMPORTED_MODULE_6__timer_constants__["b" /* SCOPES */];
+TimerService.SCOPES = __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__["default"].SCOPES;
 TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a" /* STRATEGIES */];
 
 /* harmony default export */ __webpack_exports__["default"] = (TimerService);
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* unused harmony export objectToPublishable */
 /* unused harmony export publishableToObject */
 /* unused harmony export normalizeParamOptions */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_array_utils__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_array_utils__ = __webpack_require__(34);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8158,14 +8314,14 @@ var PubSub = function () {
 /* harmony default export */ __webpack_exports__["a"] = (PubSub);
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return STRATEGIES; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(53);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -8190,12 +8346,12 @@ function getStrategy(strategy) {
 }
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(35);
 
 
 function reduceActions(actions) {
@@ -8207,13 +8363,13 @@ function reduceActions(actions) {
 }
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(34);
 
 
 
@@ -8237,12 +8393,12 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(19);
 
 
 function toDetailedTime(ts) {
@@ -8320,15 +8476,15 @@ function reduceActions(actions, startTime, currentTime) {
 }
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(6);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8377,7 +8533,7 @@ var PasswordService = function () {
      * **Example**
             var ps = new F.service.Password();
             ps.resetPassword('myuserName@gmail.com', {
-                redirectURL: 'login.html',
+                redirectUrl: 'login.html',
                 subject: 'Please reset your password',
                 projectFullName: 'My Awesome Project'
             });
@@ -8393,8 +8549,8 @@ var PasswordService = function () {
      * 
      * To reset your password, please click the following link: https://forio.com/epicenter/recover/<password recovery token>
       * @param {string} userName user to reset password for 
-     * @param {object} resetParams 
-     * @param {string} resetParams.redirectURL URL to redirect to after password is reset. If relative url, it's treated as being relative to project
+     * @param {object} [resetParams] 
+     * @param {string} [resetParams.redirectUrl] URL to redirect to after password is reset. Defaults to project root. If relative, it's treated as being relative to project
      * @param {string} [resetParams.subject] Subject for reset password email
      * @param {string} [resetParams.projectFullName] Text to use within body. Text will be of the form `You have requested a password reset for the user {userName} in {projectFullName}.
      * @param {object} [options] overrides for service options
@@ -8411,22 +8567,26 @@ var PasswordService = function () {
                 url: urlConfig.getAPIPath(API_ENDPOINT + '/recovery')
             });
 
-            var defaults = Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(resetParams, ['projectFullName', 'subject', 'redirectURL']);
+            if (!userName) {
+                throw new Error('resetPassword: missing userName');
+            }
+
+            var defaults = Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(resetParams, ['projectFullName', 'subject', 'redirectUrl']);
             var postParams = $.extend({}, {
                 userName: userName,
+                redirectUrl: '',
                 account: urlConfig.accountPath
             }, defaults);
-            Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["ensureKeysPresent"])(postParams, ['redirectURL', 'userName'], 'resetPassword:');
 
-            var isRelativeURL = postParams.redirectURL.indexOf('http') !== 0;
+            var isRelativeURL = postParams.redirectUrl.indexOf('http') !== 0;
             if (isRelativeURL) {
                 var protocol = urlConfig.protocol,
                     actingHost = urlConfig.actingHost,
                     accountPath = urlConfig.accountPath,
                     projectPath = urlConfig.projectPath;
 
-                var absURL = [actingHost, accountPath, projectPath, postParams.redirectURL.replace(/^\//, '')].join('/');
-                postParams.redirectURL = protocol + '://' + absURL;
+                var absURL = [actingHost, accountPath, projectPath, postParams.redirectUrl.replace(/^\//, '')].join('/');
+                postParams.redirectUrl = protocol + '://' + absURL;
             }
             return http.post(postParams);
         }
@@ -8438,16 +8598,15 @@ var PasswordService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (PasswordService);
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__consensus_service_js__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils_js__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(6);
 /**
  * 
  * ## Consensus Group Service
@@ -8469,7 +8628,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-
 var API_ENDPOINT = 'multiplayer/consensus';
 
 function ConsensusGroupService(config) {
@@ -8481,16 +8639,10 @@ function ConsensusGroupService(config) {
         name: 'default'
     };
 
-    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_3_service_service_utils_js__["b" /* getDefaultOptions */])(defaults, config);
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["b" /* getDefaultOptions */])(defaults, config);
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["d" /* getURLConfig */])(serviceOptions);
 
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
-    var http = new __WEBPACK_IMPORTED_MODULE_2_transport_http_transport_factory__["default"](serviceOptions.transport);
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
 
     function getHTTPOptions(options) {
         var mergedOptions = $.extend(true, {}, serviceOptions, options);
@@ -8536,7 +8688,7 @@ function ConsensusGroupService(config) {
          */
         consensus: function (name, options) {
             var opts = $.extend({}, true, serviceOptions, options);
-            var cs = new __WEBPACK_IMPORTED_MODULE_1__consensus_service_js__["default"]($.extend(true, opts, {
+            var cs = new __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__["default"]($.extend(true, opts, {
                 consensusGroup: opts.name,
                 name: name
             }));
@@ -8547,7 +8699,7 @@ function ConsensusGroupService(config) {
 }
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8626,19 +8778,19 @@ function ConsensusGroupService(config) {
 
 // See integration-test-scenario-manager for usage examples
 
-var RunManager = __webpack_require__(19);
-var SavedRunsManager = __webpack_require__(37);
+var RunManager = __webpack_require__(20);
+var SavedRunsManager = __webpack_require__(38);
 
-var strategyUtils = __webpack_require__(6);
-var rutil = __webpack_require__(7);
+var strategyUtils = __webpack_require__(7);
+var rutil = __webpack_require__(8);
 
-var NoneStrategy = __webpack_require__(10);
+var NoneStrategy = __webpack_require__(11);
 
-var StateService = __webpack_require__(29);
-var RunService = __webpack_require__(8);
+var StateService = __webpack_require__(32);
+var RunService = __webpack_require__(9);
 
-var BaselineStrategy = __webpack_require__(63);
-var LastUnsavedStrategy = __webpack_require__(64);
+var BaselineStrategy = __webpack_require__(65);
+var LastUnsavedStrategy = __webpack_require__(66);
 
 var defaults = {
     /**
@@ -8785,7 +8937,7 @@ function ScenarioManager(config) {
 module.exports = ScenarioManager;
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8810,7 +8962,7 @@ module.exports = ScenarioManager;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(9);
+var ConditionalStrategy = __webpack_require__(10);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8828,7 +8980,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8856,7 +9008,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(9);
+var ConditionalStrategy = __webpack_require__(10);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8874,7 +9026,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8887,8 +9039,8 @@ module.exports = Strategy;
 
 var classFrom = __webpack_require__(3);
 
-var IdentityStrategy = __webpack_require__(10);
-var WorldApiAdapter = __webpack_require__(15);
+var IdentityStrategy = __webpack_require__(11);
+var WorldApiAdapter = __webpack_require__(17);
 
 var defaults = {};
 
@@ -8955,7 +9107,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8972,7 +9124,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(9);
+var ConditionalStrategy = __webpack_require__(10);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8990,7 +9142,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9014,7 +9166,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(9);
+var ConditionalStrategy = __webpack_require__(10);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9036,7 +9188,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9057,9 +9209,9 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var IdentityStrategy = __webpack_require__(10);
+var IdentityStrategy = __webpack_require__(11);
 
-var _require = __webpack_require__(6),
+var _require = __webpack_require__(7),
     injectFiltersFromSession = _require.injectFiltersFromSession,
     injectScopeFromSession = _require.injectScopeFromSession;
 
@@ -9105,7 +9257,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -9115,7 +9267,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9136,7 +9288,7 @@ module.exports = {
 
 
 
-var ReuseinitStrategy = __webpack_require__(36);
+var ReuseinitStrategy = __webpack_require__(37);
 
 module.exports = function (options) {
     var defaults = {
@@ -9158,7 +9310,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9185,8 +9337,8 @@ module.exports = function (options) {
 
 
 var classFrom = __webpack_require__(3);
-var injectFiltersFromSession = __webpack_require__(6).injectFiltersFromSession;
-var injectScopeFromSession = __webpack_require__(6).injectScopeFromSession;
+var injectFiltersFromSession = __webpack_require__(7).injectFiltersFromSession;
+var injectScopeFromSession = __webpack_require__(7).injectScopeFromSession;
 
 var Base = {};
 
@@ -9228,78 +9380,7 @@ module.exports = classFrom(Base, {
 }, { requiresAuth: false });
 
 /***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-;(function () {
-
-  var object =
-     true ? exports :
-    typeof self != 'undefined' ? self : // #8: web workers
-    $.global; // #31: ExtendScript
-
-  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-  function InvalidCharacterError(message) {
-    this.message = message;
-  }
-  InvalidCharacterError.prototype = new Error;
-  InvalidCharacterError.prototype.name = 'InvalidCharacterError';
-
-  // encoder
-  // [https://gist.github.com/999166] by [https://github.com/nignag]
-  object.btoa || (
-  object.btoa = function (input) {
-    var str = String(input);
-    for (
-      // initialize result and counter
-      var block, charCode, idx = 0, map = chars, output = '';
-      // if the next str index does not exist:
-      //   change the mapping table to "="
-      //   check if d has no fractional digits
-      str.charAt(idx | 0) || (map = '=', idx % 1);
-      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-      output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-    ) {
-      charCode = str.charCodeAt(idx += 3/4);
-      if (charCode > 0xFF) {
-        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-      }
-      block = block << 8 | charCode;
-    }
-    return output;
-  });
-
-  // decoder
-  // [https://gist.github.com/1020396] by [https://github.com/atk]
-  object.atob || (
-  object.atob = function (input) {
-    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
-    if (str.length % 4 == 1) {
-      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-    }
-    for (
-      // initialize result and counters
-      var bc = 0, bs, buffer, idx = 0, output = '';
-      // get next character
-      buffer = str.charAt(idx++);
-      // character found in table? initialize bit storage and add its ascii value;
-      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-        // and if not first of each 4 characters,
-        // convert the first 8 bits to one ascii character
-        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-    ) {
-      // try to find character in table (0-63, not found => -1)
-      buffer = chars.indexOf(buffer);
-    }
-    return output;
-  });
-
-}());
-
-
-/***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9340,9 +9421,9 @@ module.exports = classFrom(Base, {
 
 
 
-var WorldApi = __webpack_require__(15);
-var RunManager = __webpack_require__(19);
-var AuthManager = __webpack_require__(38);
+var WorldApi = __webpack_require__(17);
+var RunManager = __webpack_require__(20);
+var AuthManager = __webpack_require__(15);
 var worldApi;
 
 function buildStrategy(worldId) {

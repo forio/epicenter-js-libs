@@ -4,9 +4,15 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title> Multiplayer test </title>
-    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../../../dist/epicenter-multiplayer-dependencies.min.js"></script>
-    <script src="../../../dist/epicenter-edge.js"></script>
+
+
+    <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter-multiplayer-dependencies.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter.js"></script> -->
+
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/epicenter-multiplayer-dependencies.min.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <style>
@@ -40,8 +46,12 @@
                 <input type="text" id="txtPassword" value="a1a1a1a1" >
                 <br/>
 
+                <label for="">API Server (leave blank to use default)</label>
+                <input type="text" id="txtServer" value="" >
+                <br/>
+
                 <label for="">Model</label>
-                <input type="text" id="txtModel" value="model.vmf" >
+                <input type="text" id="txtModel" value="gglasses.vmf" >
                 <br/>
                 <button id="btnLogin"> Login </button>
                 <a href="#" id='logout'> Logout</a>
@@ -84,7 +94,7 @@
                         
                     </code>
 
-                    <h5> Output listening on 'sometopic' </h5>
+                    <h5> Output listening on '*' </h5>
                     <code id="txtGroupTextAll-op">
                         
                     </code>
@@ -107,8 +117,18 @@
 
             <label for="txtCollName"> Collection Name </label>
             <input type="text" value="testmay18" id="txtCollName" />
+            <br>
+            <label for="lstDataScope"> Scope </label>
+            <select name="scope" id="lstDataScope">
+                <option value="USER">USER</option>
+                <option value="GROUP">GROUP</option>
+                <option value="FACILITATOR">FACILITATOR</option>
+                <option value="CUSTOM">CUSTOM</option>
+            </select>
+            <br/>
             <button id="btnCreateCollection"> Create & Bind to collection </button>
-
+            
+            <br>
             <br>
             <label for="txtTextForData"> Data to add </label>
             <input type="text" value="asdf" id="txtTextForData" />

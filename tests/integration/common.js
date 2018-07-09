@@ -1,22 +1,31 @@
+function getServiceOptions() {
+    var params = {
+        account: $('#txtAccount').val(),
+        project: $('#txtProject').val(),
+        model: $('#txtModel').val(),
+    };
+    if ($('#txtServer').val()) {
+        params.server = {
+            host: $('#txtServer').val(),
+            protocol: 'http',
+        };
+    }
+    return params;
+}
+
+function getAM() {
+    var am = new F.manager.AuthManager(getServiceOptions());
+    return am;
+}
+
 $('#btnLogin').click(function (evt) {
     evt.preventDefault();
 
+    var am = getAM();
     var params = {
         userName: $('#txtUsername').val(),
         password: $('#txtPassword').val(),
-        account: $('#txtAccount').val(),
-        project: $('#txtProject').val()
     };
-
-    var amParams = {};
-    if ($('#txtServer').val()) {
-        amParams.server = {
-            host: $('#txtServer').val(),
-            protocol: 'https',
-        };
-    }
-    window.am = new F.manager.AuthManager(amParams);
-
     am.login(params).then(function () {
         window.alert('login successful');
     });
@@ -24,6 +33,7 @@ $('#btnLogin').click(function (evt) {
 
 $('#logout').click(function (evt) {
     evt.preventDefault();
+    var am = getAM();
     am.logout().then(function () {
         window.alert('logged out');
     });

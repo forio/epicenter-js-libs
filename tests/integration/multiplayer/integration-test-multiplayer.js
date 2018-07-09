@@ -1,9 +1,12 @@
 'use strict';
 
-$(function () {
-    var server = {};
+function addToLog(parent, d) {
+    const pretty = JSON.stringify(d, null, 2);
+    $(parent).append('<li><code><pre>' + pretty + '</pre></code></li<');
+}
 
-    var cm = new F.manager.ChannelManager(server);
+$(function () {
+    var cm = new F.manager.ChannelManager(getServiceOptions());
     cm.on('connect', function () {
         $('#status').html('connected');
     });
@@ -15,6 +18,7 @@ $(function () {
     $('#btnBindGroupChannel').click(function (evt) {
         evt.preventDefault();
         var gc = cm.getGroupChannel();
+        alert('Bind Succcess');
 
         var topic = 'specificTopic';
         $('#txtGroupTextSpecific').on('change', function (evt) {
@@ -30,25 +34,20 @@ $(function () {
     });
 
     $('#btnBindToWorld').on('click', function () {
-        var worldManager = new F.manager.WorldManager({
-            run: $.extend({}, {
-                account: $('#txtAccount').val(),
-                model: $('#txtModel').val(),
-                project: $('#txtProject').val(),
-            }, server)
-        });
+        var worldManager = new F.manager.WorldManager(getServiceOptions());
         worldManager.getCurrentWorld().then(function (worldObject, worldService) {
+            alert('Bind Succcess');
+
             console.log('wm', arguments);
             window.worldS = worldService;
             var worldChannel = cm.getWorldChannel(worldObject);
             worldChannel.subscribe('', function (data) {
-                $('#generalWorldNotifications').append('<li><code>' + JSON.stringify(data) + '</code></li<');
-                console.log('stuff', arguments);
+                addToLog('#generalWorldNotifications', data);
             });
 
             var presenceChannel = cm.getPresenceChannel(worldObject);
             presenceChannel.on('presence', function (evt, notification) {
-                $('#presencechannelNotifications').append('<li><code>' + JSON.stringify(notification) + '</code></li<');
+                addToLog('#presencechannelNotifications', notification);
                 console.log('online', notification);
             });
 
@@ -60,30 +59,45 @@ $(function () {
             // $('#currentRunId').html(runservice.getCurrentConfig().id);
         });
     });
-    
 
-    window.datachannel = null;
-    window.ds = null;
-    $('#btnCreateCollection').click(function () {
+
+    function getDS() {
         var collName = $('#txtCollName').val().trim();
-        window.ds = new F.service.Data({
+        var scope = $('#lstDataScope').val();
+
+        const ds = new F.service.Data($.extend(true, {}, getServiceOptions(), {
+            scope: scope,
             root: collName,
-            account: 'team-naren',
-            project: 'multiplayer-test',
-            server: server.server,
+        }));
+        return ds;
+    }
+
+    $('#btnCreateCollection').click(function () {
+        var ds = getDS();
+        ds.save({
+            thisExists: true,
+            val: 'Something'
+        }).then(()=> {
+            alert('collection created');
         });
-        window.ds.save({ thisExists: true, val: 'Chinese' });
-        window.datachannel = cm.getDataChannel(collName);
-        window.datachannel.subscribe('', function (data, meta) {
-            $('#data-api-output').append('<li> Data: <code>' + JSON.stringify(data) + '</code> <br/> meta: <code>' + JSON.stringify(meta) + '</code></li>');
+        var datachannel = ds.getChannel();
+        datachannel.subscribe('', function (data, meta) {
+            addToLog('#data-api-output', {
+                data: data,
+                meta: meta
+            });
         });
     });
 
     $('#btnAddToCollection').click(function () {
+        var ds = getDS();
         var key = 'some-key-' + Math.round(Math.random() * 100);
         var params = {};
-        params[key] = { test: true, val: $('#txtTextForData').val() || 'test' };
-        window.ds.save(params);
+        params[key] = {
+            test: true,
+            val: $('#txtTextForData').val() || 'test'
+        };
+        ds.save(params);
     });
     window.cm = cm;
 });

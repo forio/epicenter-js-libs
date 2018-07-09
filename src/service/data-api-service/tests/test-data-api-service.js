@@ -3,7 +3,7 @@ import DataService from '../index';
 import URLService from 'service/url-config-service';
 
 import sinon from 'sinon';
-import chai from 'chai';
+import chai, { expect } from 'chai';
 chai.use(require('sinon-chai'));
 
 var account = 'forio';
@@ -274,6 +274,21 @@ describe('Data API Service', function () {
 
                 server.respond();
                 cb1.called.should.equal(true);
+            });
+        });
+        describe('#getScopedName', ()=> {
+            it('should return scoped name for collections', ()=> {
+                var ds = new DataService({ root: 'person', account: account, scope: DataService.SCOPES.USER, project: 'js-libs' });
+                const name = ds.getScopedName({ userId: 'myuserid', groupId: 'mygrp' });
+                expect(name).to.equal('person_user_myuserid_group_mygrp');
+            });
+            it('should allow passing in name and scope through options', ()=> {
+                var ds = new DataService({ account: account, project: 'js-libs' });
+                const name = ds.getScopedName({ userId: 'myuserid', groupId: 'mygrp' }, {
+                    scope: DataService.SCOPES.USER,
+                    root: 'person',
+                });
+                expect(name).to.equal('person_user_myuserid_group_mygrp');
             });
         });
     });
