@@ -64,7 +64,6 @@ Available scopes are:
 | ------------- | ------------- | ------------- |
 | GROUP | Facilitators & Users in that group | Faciliators in that group|
 | USER | Faciliator in that group. User who created the collection | Faciliator in that group. User who created the collection |
-| RUN | Faciliator in that group. Users who belong to that run | Faciliator in that group. Users who belong to that run |
 | FACILITATOR | Faciliators in that group | Faciliators in that group |
 | PROJECT (default, for legacy reasons) | Any user in the project | Any user in the project |
 | CUSTOM (to opt out of naming conventions) | customize with Epicenter-api-proxy | customize with Epicenter-api-proxy |
@@ -88,6 +87,14 @@ ps.resetPassword('myuserName@gmail.com', {
     subject: 'Please reset your password'
 });
 ```
+
+#### Misc
+- Promise rejection error message formats have been normalized to always have a `type` and `message` where possible.
+- Added `normalizeSlashes` utils to remove invalid slashes in url strings
+
+### Bug Fixes:
+- Ajax Transport: Fixed bug which prepended username to url when logging in over http
+
 
 <a name="2.6.0"></a>
 #### Bug Fixes:
