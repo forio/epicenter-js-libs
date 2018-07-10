@@ -175,7 +175,7 @@ export default function (config) {
          *          console.log(onlineUsers[a].isOnline);
          *     });
          *
-         * @param { {userId: string}[] } userList Users to get status for
+         * @param {{userId: string}[]} userList Users to get status for
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {object} [options] Additional options to change the presence service defaults.
          * 
