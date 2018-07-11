@@ -12,6 +12,7 @@ import { getDefaultOptions } from 'service/service-utils';
 import TransportFactory from 'transport/http-transport-factory';
 
 const API_ENDPOINT = 'project';
+const MULTIPLAYER_ENDPOINT = 'multiplayer/project';
 
 export default function ProjectAPIService(config) {
     const defaults = {
@@ -35,20 +36,62 @@ export default function ProjectAPIService(config) {
     };
    
     function getHTTP(overrides) {
-        const serviceOptions = getDefaultOptions(defaults, config, overrides, {
+        const serviceOptions = getDefaultOptions(defaults, config, {
             apiEndpoint: API_ENDPOINT
-        });
+        }, overrides);
         const http = new TransportFactory(serviceOptions.transport);
         return http;
     }
 
     const publicAPI = {
+        /**
+         * Get current settings for project
+         * 
+         * @param {object} options 
+         * @returns {Promise}
+         */
         getProjectSettings(options) {
             const http = getHTTP(options);
             return http.get();
         },
+        /**
+         * Update settings for project
+         * 
+         * @param {object} settings New settings to apply 
+         * @param {object} options 
+         * @returns {Promise}
+         */
         updateProjectSettings(settings, options) {
             const http = getHTTP(options);
+            return http.patch(settings);
+        },
+
+        /**
+         * Get current multiplayer settings for project
+         * 
+         * @param {object} options 
+         * @returns {Promise}
+         */
+        getMultiplayerSettings(options) {
+            const overrides = $.extend({}, options, {
+                apiEndpoint: MULTIPLAYER_ENDPOINT
+            });
+            const http = getHTTP(overrides);
+            return http.get();
+        },
+
+        /**
+         * Update multiplayer settings for project - usually used to add roles on the fly
+         * 
+         * @param {object} settings 
+         * @param {object} options 
+         * @returns {Promise}
+         */
+        updateMultiplayerSettings(settings, options) {
+            const overrides = $.extend({}, options, {
+                apiEndpoint: MULTIPLAYER_ENDPOINT
+            });
+            const http = getHTTP(overrides);
             return http.patch(settings);
         }
     };

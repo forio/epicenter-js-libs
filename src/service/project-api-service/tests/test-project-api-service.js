@@ -10,7 +10,9 @@ const { expect } = chai;
 describe.only('Project API Service', function () {
     const account = 'myaccount';
     const project = 'myproject';
-    const baseURL = (new URLService({ accountPath: account, projectPath: project })).getAPIPath('project');
+    const urlService = new URLService({ accountPath: account, projectPath: project });
+    const baseURL = urlService.getAPIPath('project');
+    const multiplayerSettingsURL = urlService.getAPIPath('multiplayer/project');
 
     const defaultParams = {
         account: account,
@@ -83,6 +85,49 @@ describe.only('Project API Service', function () {
         it('should pass in params as patch both', ()=> {
             const ps = createProjectService();
             ps.updateProjectSettings({
+                foo: 'bar'
+            }, { account: 'foobar' });
+
+            const req = server.requests.pop();
+            expect(req.requestBody).to.equal(JSON.stringify({ foo: 'bar' }));
+        });
+    });
+    describe('#getMultiplayerSettings', ()=> {
+        it('should do a GET', function () {
+            const ps = createProjectService();
+            ps.getMultiplayerSettings();
+
+            const req = server.requests.pop();
+            expect(req.method.toUpperCase()).to.equal('GET');
+            expect(req.url).to.equal(urlService.getAPIPath('multiplayer/project'));
+        });
+        it('should allow overriding service options', ()=> {
+            const ps = createProjectService();
+            ps.getMultiplayerSettings({ account: 'foobar' });
+
+            const req = server.requests.pop();
+            expect(req.url).to.equal(multiplayerSettingsURL.replace(account, 'foobar'));
+        });
+    });
+    describe('#updateMultiplayerSettings', ()=> {
+        it('should do a PATCH', function () {
+            const ps = createProjectService();
+            ps.updateMultiplayerSettings({});
+
+            const req = server.requests.pop();
+            expect(req.method.toUpperCase()).to.equal('PATCH');
+            expect(req.url).to.equal(multiplayerSettingsURL);
+        });
+        it('should allow overriding service options', ()=> {
+            const ps = createProjectService();
+            ps.updateMultiplayerSettings({}, { account: 'foobar' });
+
+            const req = server.requests.pop();
+            expect(req.url).to.equal(multiplayerSettingsURL.replace(account, 'foobar'));
+        });
+        it('should pass in params as patch both', ()=> {
+            const ps = createProjectService();
+            ps.updateMultiplayerSettings({
                 foo: 'bar'
             }, { account: 'foobar' });
 
