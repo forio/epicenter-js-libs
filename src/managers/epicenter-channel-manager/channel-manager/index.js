@@ -73,10 +73,10 @@ var ChannelManager = function (options) {
         ackEnabled: true,
 
         /**
-         * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true to re-use the same connection across instances.
+         * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true (default) to re-use the same connection across instances.
          * @type {boolean}
          */
-        shareConnection: false,
+        shareConnection: true,
 
         /**
          * Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
