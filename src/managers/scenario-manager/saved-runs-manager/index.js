@@ -91,7 +91,7 @@ SavedRunsManager.prototype = {
      *      sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
      *          { 'myRunName': 'sample policy decisions' });
      *
-     * @param  {String|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+     * @param  {String|string[]|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
      * @param  {Object} toMark Fields to set, as name : value pairs.
      * @return {Promise}
      */
