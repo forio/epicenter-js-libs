@@ -466,6 +466,12 @@ function ensureKeysPresent(obj, keysList, context) {
 
 function getApiUrl(apiEndpoint, serviceOptions) {
     var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
+    if (serviceOptions.account) {
+        urlConfig.accountPath = serviceOptions.account;
+    }
+    if (serviceOptions.project) {
+        urlConfig.projectPath = serviceOptions.project;
+    }
     return urlConfig.getAPIPath(apiEndpoint);
 }
 
@@ -2523,7 +2529,7 @@ var UrlConfigService = function (config) {
         },
 
         getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
+            var PROJECT_APIS = ['run', 'data', 'file', 'presence', 'project', 'multiplayer/project'];
             var apiMapping = {
                 channel: 'channel/subscribe'
             };
@@ -3771,7 +3777,7 @@ var STRATEGY = {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(67);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_service_run_api_service__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
@@ -6129,15 +6135,15 @@ function reduceActions(actions, options) {
 
 var list = {
     'conditional-creation': __webpack_require__(10),
-    'new-if-initialized': __webpack_require__(60), //deprecated
-    'new-if-persisted': __webpack_require__(61), //deprecated
+    'new-if-initialized': __webpack_require__(61), //deprecated
+    'new-if-persisted': __webpack_require__(62), //deprecated
 
     none: __webpack_require__(11),
 
-    multiplayer: __webpack_require__(62),
-    'reuse-never': __webpack_require__(63),
-    'reuse-per-session': __webpack_require__(64),
-    'reuse-across-sessions': __webpack_require__(65),
+    multiplayer: __webpack_require__(63),
+    'reuse-never': __webpack_require__(64),
+    'reuse-per-session': __webpack_require__(65),
+    'reuse-across-sessions': __webpack_require__(66),
     'reuse-last-initialized': __webpack_require__(38)
 };
 
@@ -6427,7 +6433,7 @@ SavedRunsManager.prototype = {
      *      sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
      *          { 'myRunName': 'sample policy decisions' });
      *
-     * @param  {String|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+     * @param  {String|string[]|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
      * @param  {Object} toMark Fields to set, as name : value pairs.
      * @return {Promise}
      */
@@ -6540,14 +6546,15 @@ F.service.Password = __webpack_require__(57).default;
 F.service.Consensus = __webpack_require__(18);
 F.service.ConsensusGroup = __webpack_require__(58);
 
-F.store.Cookie = __webpack_require__(26);
+F.service.Project = __webpack_require__(59).default;
 
+F.store.Cookie = __webpack_require__(26);
 F.factory.Store = __webpack_require__(25);
 
-F.manager.ScenarioManager = __webpack_require__(59);
+F.manager.ScenarioManager = __webpack_require__(60);
 F.manager.RunManager = __webpack_require__(20).default;
 F.manager.AuthManager = __webpack_require__(16);
-F.manager.WorldManager = __webpack_require__(69);
+F.manager.WorldManager = __webpack_require__(70);
 F.manager.SavedRunsManager = __webpack_require__(39);
 
 var strategies = __webpack_require__(37);
@@ -6634,7 +6641,6 @@ module.exports = optionUtils;
 /* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
 /**
  * ## File API Service
  *
@@ -6656,8 +6662,6 @@ module.exports = optionUtils;
  *          fa.create(file.name, data);
  *       });
  */
-
-
 
 var ConfigService = __webpack_require__(2).default;
 var TransportFactory = __webpack_require__(0).default;
@@ -7079,10 +7083,10 @@ var ChannelManager = function (options) {
         ackEnabled: true,
 
         /**
-         * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true to re-use the same connection across instances.
+         * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true (default) to re-use the same connection across instances.
          * @type {boolean}
          */
-        shareConnection: false,
+        shareConnection: true,
 
         /**
          * Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
@@ -8934,6 +8938,115 @@ function ConsensusGroupService(config) {
 
 /***/ }),
 /* 59 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = ProjectAPIService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/**
+ *
+ * ## Project API Adapter
+ *
+ * The Project API allows reading/writing project settings. An author/admin project token is required for most operations.
+ *
+ *      var ps = new F.service.Project({  account: 'acme', project: 'sample', token: 'author-or-project-access-token' });
+ *      ps.getProjectSettings();
+ */
+
+
+
+
+var API_ENDPOINT = 'project';
+var MULTIPLAYER_ENDPOINT = 'multiplayer/project';
+
+function ProjectAPIService(config) {
+    var defaults = {
+        /**
+         * Epicenter account name. Defaults to undefined.
+         * @type {string}
+         */
+        account: undefined,
+
+        /**
+         * Epicenter project name. Defaults to undefined.
+         * @type {string}
+         */
+        project: undefined,
+
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {object}
+         */
+        transport: {}
+    };
+
+    function getHTTP(overrides) {
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, {
+            apiEndpoint: API_ENDPOINT
+        }, overrides);
+        var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+        return http;
+    }
+
+    var publicAPI = {
+        /**
+         * Get current settings for project
+         * 
+         * @param {object} options 
+         * @returns {Promise}
+         */
+        getProjectSettings: function (options) {
+            var http = getHTTP(options);
+            return http.get();
+        },
+        /**
+         * Update settings for project
+         * 
+         * @param {object} settings New settings to apply 
+         * @param {object} options 
+         * @returns {Promise}
+         */
+        updateProjectSettings: function (settings, options) {
+            var http = getHTTP(options);
+            return http.patch(settings);
+        },
+
+        /**
+         * Get current multiplayer settings for project
+         * 
+         * @param {object} options 
+         * @returns {Promise}
+         */
+        getMultiplayerSettings: function (options) {
+            var overrides = $.extend({}, options, {
+                apiEndpoint: MULTIPLAYER_ENDPOINT
+            });
+            var http = getHTTP(overrides);
+            return http.get();
+        },
+
+        /**
+         * Update multiplayer settings for project - usually used to add roles on the fly
+         * 
+         * @param {object} settings 
+         * @param {object} options 
+         * @returns {Promise}
+         */
+        updateMultiplayerSettings: function (settings, options) {
+            var overrides = $.extend({}, options, {
+                apiEndpoint: MULTIPLAYER_ENDPOINT
+            });
+            var http = getHTTP(overrides);
+            return http.patch(settings);
+        }
+    };
+    return publicAPI;
+}
+
+/***/ }),
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9023,8 +9136,8 @@ var NoneStrategy = __webpack_require__(11);
 var StateService = __webpack_require__(33);
 var RunService = __webpack_require__(9);
 
-var BaselineStrategy = __webpack_require__(67);
-var LastUnsavedStrategy = __webpack_require__(68);
+var BaselineStrategy = __webpack_require__(68);
+var LastUnsavedStrategy = __webpack_require__(69);
 
 var defaults = {
     /**
@@ -9171,7 +9284,7 @@ function ScenarioManager(config) {
 module.exports = ScenarioManager;
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9214,7 +9327,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9260,7 +9373,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9341,7 +9454,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9376,7 +9489,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9422,7 +9535,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9491,7 +9604,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9502,7 +9615,7 @@ function reset(params, options, manager) {
 }
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9545,7 +9658,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9615,7 +9728,7 @@ module.exports = classFrom(Base, {
 }, { requiresAuth: false });
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

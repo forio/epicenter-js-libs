@@ -50,7 +50,7 @@ export default function ProjectAPIService(config) {
          * @param {object} options 
          * @returns {Promise}
          */
-        getProjectSettings(options) {
+        getProjectSettings: function (options) {
             const http = getHTTP(options);
             return http.get();
         },
@@ -61,7 +61,7 @@ export default function ProjectAPIService(config) {
          * @param {object} options 
          * @returns {Promise}
          */
-        updateProjectSettings(settings, options) {
+        updateProjectSettings: function (settings, options) {
             const http = getHTTP(options);
             return http.patch(settings);
         },
@@ -72,7 +72,7 @@ export default function ProjectAPIService(config) {
          * @param {object} options 
          * @returns {Promise}
          */
-        getMultiplayerSettings(options) {
+        getMultiplayerSettings: function (options) {
             const overrides = $.extend({}, options, {
                 apiEndpoint: MULTIPLAYER_ENDPOINT
             });
@@ -87,7 +87,7 @@ export default function ProjectAPIService(config) {
          * @param {object} options 
          * @returns {Promise}
          */
-        updateMultiplayerSettings(settings, options) {
+        updateMultiplayerSettings: function (settings, options) {
             const overrides = $.extend({}, options, {
                 apiEndpoint: MULTIPLAYER_ENDPOINT
             });
