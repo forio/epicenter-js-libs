@@ -47,7 +47,7 @@ export default function ProjectAPIService(config) {
         /**
          * Get current settings for project
          * 
-         * @param {object} options 
+         * @param {object} [options] 
          * @returns {Promise}
          */
         getProjectSettings: function (options) {
@@ -58,7 +58,7 @@ export default function ProjectAPIService(config) {
          * Update settings for project
          * 
          * @param {object} settings New settings to apply 
-         * @param {object} options 
+         * @param {object} [options] 
          * @returns {Promise}
          */
         updateProjectSettings: function (settings, options) {
@@ -69,7 +69,7 @@ export default function ProjectAPIService(config) {
         /**
          * Get current multiplayer settings for project
          * 
-         * @param {object} options 
+         * @param {object} [options] 
          * @returns {Promise}
          */
         getMultiplayerSettings: function (options) {
@@ -84,15 +84,20 @@ export default function ProjectAPIService(config) {
          * Update multiplayer settings for project - usually used to add roles on the fly
          * 
          * @param {object} settings 
-         * @param {object} options 
+         * @param {{ autoCreate: boolean}} [options] 
+         * @param {object} [serviceOverrides] 
          * @returns {Promise}
          */
-        updateMultiplayerSettings: function (settings, options) {
-            const overrides = $.extend({}, options, {
+        updateMultiplayerSettings: function (settings, options, serviceOverrides) {
+            const overrides = $.extend({}, serviceOverrides, {
                 apiEndpoint: MULTIPLAYER_ENDPOINT
             });
             const http = getHTTP(overrides);
-            return http.patch(settings);
+            if (options && options.autoCreate) {
+                return http.put(settings);
+            } else {
+                return http.patch(settings);
+            }
         }
     };
     return publicAPI;
