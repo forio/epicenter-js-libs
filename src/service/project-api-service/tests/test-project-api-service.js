@@ -110,7 +110,7 @@ describe('Project API Service', function () {
         });
     });
     describe('#updateMultiplayerSettings', ()=> {
-        it('should do a PATCH', function () {
+        it('should do a PATCH by default', function () {
             const ps = createProjectService();
             ps.updateMultiplayerSettings({});
 
@@ -118,18 +118,26 @@ describe('Project API Service', function () {
             expect(req.method.toUpperCase()).to.equal('PATCH');
             expect(req.url).to.equal(multiplayerSettingsURL);
         });
+        it('should do a PUT if autocreate', function () {
+            const ps = createProjectService();
+            ps.updateMultiplayerSettings({}, { autoCreate: true });
+
+            const req = server.requests.pop();
+            expect(req.method.toUpperCase()).to.equal('PUT');
+            expect(req.url).to.equal(multiplayerSettingsURL);
+        });
         it('should allow overriding service options', ()=> {
             const ps = createProjectService();
-            ps.updateMultiplayerSettings({}, { account: 'foobar' });
+            ps.updateMultiplayerSettings({}, {}, { account: 'foobar' });
 
             const req = server.requests.pop();
             expect(req.url).to.equal(multiplayerSettingsURL.replace(account, 'foobar'));
         });
-        it('should pass in params as patch both', ()=> {
+        it('should pass in params for patch', ()=> {
             const ps = createProjectService();
             ps.updateMultiplayerSettings({
                 foo: 'bar'
-            }, { account: 'foobar' });
+            }, {}, { account: 'foobar' });
 
             const req = server.requests.pop();
             expect(req.requestBody).to.equal(JSON.stringify({ foo: 'bar' }));
