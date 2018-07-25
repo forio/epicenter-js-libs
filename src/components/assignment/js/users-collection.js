@@ -54,10 +54,41 @@ module.exports = classFrom(Base, {
                 return memberApi.getGroupDetails();
             };
 
+            var splitIdChunks = function (userIds) {
+                var idGroupSize = 100;
+                var idGroups = [];
+                while (userIds.length >= idGroupSize) {
+                    idGroups.push(userIds.splice(0, idGroupSize));
+                }
+
+                if (userIds.length) {
+                    idGroups.push(userIds);
+                }
+
+                return idGroups;
+            };
+
             var loadUsersInfo = function (group) {
                 var nonFacAndActive = function (u) { return u.active && u.role !== 'facilitator'; };
                 var users = _.pluck(_.filter(group.members, nonFacAndActive), 'userId');
-                return userApi.get({ id: users });
+                var chunkedUsers = splitIdChunks(users);
+                var chunkedPromises = chunkedUsers.map(function (users) {
+                    return userApi.get({ id: users });
+                });
+                return $.when.apply($, chunkedPromises).then(function (/** [ users[], ajaxStatus, promise ][] */) {
+                    // Converting arguments object to an Array in order to map over them
+                    var argumentsArray = Array.prototype.slice.call(arguments);
+
+                    var userGroups = argumentsArray.map(function (arg) {
+                        return arg[0];
+                    });
+
+                    var totalUsers = userGroups.reduce(function (acc, userGroup) {
+                        return acc.concat(userGroup);
+                    }, []);
+
+                    return totalUsers;
+                });
             };
 
             return loadGroupMembers()
