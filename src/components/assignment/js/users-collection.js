@@ -75,21 +75,19 @@ module.exports = classFrom(Base, {
                 var chunkedPromises = chunkedUsers.map(function (users) {
                     return userApi.get({ id: users });
                 });
-                return $.when.apply($, chunkedPromises).then(function () {
-                    // We do not know how many usergroups were called
-                    // $.when will return each promise as an argument
-                    // We will get these arguments using the `arguments` object
-                    var userGroups = arguments;
-                    var totalGroups = arguments.length;
-                    var totalUsers = [];
-                    for (var i = 0; i < totalGroups; i++) {
-                        // returned value is an Array
-                        // [ (Array of returned users), repsonse status (success / fail), promise object]
-                        // Require the first element from the returnValue
-                        totalUsers = totalUsers.concat(userGroups[i] && userGroups[i][0]);
-                    }
-                    // Need to return as a promise
-                    return $.Deferred().resolve(totalUsers);
+                return $.when.apply($, chunkedPromises).then(function (/** [ users[], ajaxStatus, promise ][] */) {
+                    // Converting arguments object to an Array in order to map over them
+                    var argumentsArray = Array.prototype.slice.call(arguments);
+
+                    var userGroups = argumentsArray.map(function (arg) {
+                        return arg[0];
+                    });
+
+                    var totalUsers = userGroups.reduce(function (acc, userGroup) {
+                        return acc.concat(userGroup);
+                    }, []);
+
+                    return totalUsers;
                 });
             };
 
