@@ -165,8 +165,48 @@ Assignment.prototype = {
 
     render: function () {
         this.$('table tbody').empty();
+        this.sortTable();
         this.renderTable();
         this.toggleControlls();
+    },
+
+    sortTable: function () {
+        // get the sort params and sort if necessary
+        var params = this.getTableParams();
+
+        var mult = params.hasOwnProperty('direction') && params.direction === 'desc' ? -1 : 1;
+        var nameDirection = params.hasOwnProperty('sort') && params.sort === 'name' && mult > 0 ? 'desc' : 'asc';
+        var userNameDirection = params.hasOwnProperty('sort') && params.sort === 'userName' && mult > 0 ? 'desc' : 'asc';
+        this.$('table .header-name a').prop('href', '?sort=name&direction=' + nameDirection);
+        this.$('table .header-username a').prop('href', '?sort=userName&direction=' + userNameDirection);
+
+        if (params.hasOwnProperty('sort')) {
+            this.users.sortFn = function (a, b) {
+                var an = (a.get(params.sort) || '');
+                var bn = (b.get(params.sort) || '');
+                if (params.sort === 'name') {
+                    an = (a.get('firstName') + a.get('lastName'));
+                    bn = (b.get('firstName') + b.get('lastName'));
+                }
+                return mult * an.localeCompare(bn);
+            };
+            this.users.sort();
+
+            var header = params.sort === 'name' ? this.$('table .header-name') : this.$('table .header-username');
+            var arrowDir = mult > 0 ? 'caret-up' : 'caret-down';
+            var arrow = this.$('<span class=' + arrowDir + '></span>');
+            header.append(arrow);
+        }
+    },
+
+    getTableParams: function () {
+        var query = location.search !== '' ? location.search.substr(1).split('&') : [];
+        var params = {};
+        for (var i = 0; i < query.length; i++) {
+            var q = query[i].split('=');
+            params[q[0]] = q[1];
+        }
+        return params;
     },
 
     renderTable: function () {
