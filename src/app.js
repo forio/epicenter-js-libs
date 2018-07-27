@@ -62,6 +62,8 @@ F.manager.strategy = strategies.list; //TODO: this is not really a manager so na
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager').default;
 F.service.Channel = require('./service/channel-service');
 
+F.manager.ConsensusManager = require('./managers/consensus-manager').default;
+
 if (RELEASE_VERSION) F.version = RELEASE_VERSION; //eslint-disable-line no-undef
 F.api = require('./api-version.json');
 
