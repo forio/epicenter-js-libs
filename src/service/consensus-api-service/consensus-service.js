@@ -46,8 +46,6 @@ function normalizeActions(actions) {
 export default function (config) {
     const defaults = {
         token: undefined,
-        account: undefined,
-        project: undefined,
         worldId: '',
         consensusGroup: '',
         name: '',

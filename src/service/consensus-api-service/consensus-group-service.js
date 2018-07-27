@@ -24,8 +24,6 @@ const API_ENDPOINT = 'multiplayer/consensus';
 export default function ConsensusGroupService(config) {
     const defaults = {
         token: undefined,
-        account: undefined,
-        project: undefined,
         worldId: '',
         name: 'default',
     };
