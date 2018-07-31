@@ -42,8 +42,8 @@ F.service.Time = require('./service/time-api-service').default;
 F.service.Timer = require('./service/timer-service').default;
 F.service.Password = require('./service/password-api-service').default;
 
-F.service.Consensus = require('./service/consensus-api-service/consensus-service');
-F.service.ConsensusGroup = require('./service/consensus-api-service/consensus-group-service');
+F.service.Consensus = require('./service/consensus-api-service/consensus-service').default;
+F.service.ConsensusGroup = require('./service/consensus-api-service/consensus-group-service').default;
 
 F.service.Project = require('./service/project-api-service').default;
 

@@ -205,6 +205,10 @@ export default function (config) {
         getCurrentConfig: function () {
             return serviceOptions;
         },
+
+        getChannel: function (options) {
+            
+        }
     };
     return publicAPI;
 }

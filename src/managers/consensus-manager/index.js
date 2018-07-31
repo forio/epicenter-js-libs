@@ -1,34 +1,43 @@
 import WorldManager from 'managers/world-manager';
-import ConsensusGroupService from 'service/consensus-api-service/consensus-group-service';
+import WorldService from 'service/world-api-adapter';
 
+import ConsensusGroupService from 'service/consensus-api-service/consensus-group-service';
 import strategy from './strategies/mandatory-consensus-strategy';
 
-function getCurrentWorld(opts) {
-    const wm = new WorldManager(opts);
-    return wm.getCurrentWorld();
+function getCurrentWorldIdAndRoles(opts) {
+    if (opts.id && opts.roles) {
+        return $.Deferred().resolve({
+            id: opts.id,
+            roles: opts.roles
+        }).promise();
+    } else if (opts.worldId) {
+        const ws = new WorldService();
+        return ws.load(opts.worldId);
+    } else {
+        const wm = new WorldManager(opts);
+        return wm.getCurrentWorld();
+    }
+  
 }
 export default class ConsensusManager {
-    constructor() {
+    constructor(config) {
         const opts = {
-            account: undefined,
-            project: undefined,
-            worldId: '',
             name: 'default',
+            strategy: '',
+            strategyOptions: {
+
+            }
         };
+
+        this.serviceOptions = $.extend(true, {}, opts, config);
     }
 
     getCurrent() {
-        const opts = {
-            account: 'team-naren',
-            project: 'multiplayer-test',
-            model: 'bikes-multiplayer.xlsx',
-        };
-
-        return getCurrentWorld(opts).then((world)=> {
-            const cm = new ConsensusGroupService($.extend({}, opts, {
+        return getCurrentWorldIdAndRoles(this.serviceOptions).then((world)=> {
+            const cg = new ConsensusGroupService($.extend({}, this.serviceOptions, {
                 worldId: world.id
             }));
-            return strategy(cm, {
+            return strategy(cg, {
                 roles: world.roles,
             });
         });

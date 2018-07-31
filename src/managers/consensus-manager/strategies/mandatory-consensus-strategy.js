@@ -7,7 +7,7 @@ export default function mandatoryConsensusStrategy(consensusGroup, strategyOptio
     const options = $.extend({}, {
         maxRounds: 8,
         name: (list)=> {
-            return `Round ${list.length + 1}`;
+            return `round-${list.length + 1}`;
         }
     }, strategyOptions);
     return consensusGroup.list().then((consensusList)=> {
