@@ -68,7 +68,7 @@ var F =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 40);
+/******/ 	return __webpack_require__(__webpack_require__.s = 42);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,7 +93,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 var keyNames = __webpack_require__(14);
 var StorageFactory = __webpack_require__(25);
-var optionUtils = __webpack_require__(42);
+var optionUtils = __webpack_require__(44);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var EPI_MANAGER_KEY = 'epicenter.token'; //can't be under key-names, or logout will clear this too
@@ -1558,122 +1558,6 @@ module.exports = function (config) {
 
 /***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Base = __webpack_require__(11);
-var classFrom = __webpack_require__(3);
-
-/**
-* ## Conditional Creation Strategy
-*
-* This strategy will try to get the run stored in the cookie and
-* evaluate if it needs to create a new run by calling the `condition` function.
-*/
-
-var Strategy = classFrom(Base, {
-    constructor: function Strategy(condition) {
-        if (condition == null) {
-            //eslint-disable-line
-            throw new Error('Conditional strategy needs a condition to create a run');
-        }
-        this.condition = typeof condition !== 'function' ? function () {
-            return condition;
-        } : condition;
-    },
-
-    /**
-     * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
-     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
-     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
-     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
-     * @return {Promise}             
-     */
-    reset: function (runService, userSession, options) {
-        var group = userSession && userSession.groupName;
-        var opt = $.extend({
-            scope: { group: group }
-        }, runService.getCurrentConfig());
-
-        return runService.create(opt, options).then(function (run) {
-            run.freshlyCreated = true;
-            return run;
-        });
-    },
-
-    /**
-     * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation).
-     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
-     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
-     * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
-     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
-     * @return {Promise}             
-     */
-    getRun: function (runService, userSession, runSession, options) {
-        var me = this;
-        if (runSession && runSession.id) {
-            return this.loadAndCheck(runService, userSession, runSession, options).catch(function () {
-                return me.reset(runService, userSession, options); //if it got the wrong cookie for e.g.
-            });
-        } else {
-            return this.reset(runService, userSession, options);
-        }
-    },
-
-    loadAndCheck: function (runService, userSession, runSession, options) {
-        var shouldCreate = false;
-        var me = this;
-
-        return runService.load(runSession.id, null, {
-            success: function (run, msg, headers) {
-                shouldCreate = me.condition(run, headers, userSession, runSession);
-            }
-        }).then(function (run) {
-            if (shouldCreate) {
-                return me.reset(runService, userSession, options);
-            }
-            return run;
-        });
-    }
-});
-
-module.exports = Strategy;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../run-api-service/).
- * 
- * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
- */
-
-
-
-var classFrom = __webpack_require__(3);
-var Base = {};
-
-// Interface that all strategies need to implement
-module.exports = classFrom(Base, {
-    constructor: function (options) {},
-
-    reset: function () {
-        // return a newly created run
-        return $.Deferred().resolve().promise();
-    },
-
-    getRun: function (runService) {
-        // return a usable run
-        return $.Deferred().resolve(runService).promise();
-    }
-});
-
-/***/ }),
-/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2416,6 +2300,122 @@ function WorldAPIAdapter(config) {
 }
 
 /***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Base = __webpack_require__(12);
+var classFrom = __webpack_require__(3);
+
+/**
+* ## Conditional Creation Strategy
+*
+* This strategy will try to get the run stored in the cookie and
+* evaluate if it needs to create a new run by calling the `condition` function.
+*/
+
+var Strategy = classFrom(Base, {
+    constructor: function Strategy(condition) {
+        if (condition == null) {
+            //eslint-disable-line
+            throw new Error('Conditional strategy needs a condition to create a run');
+        }
+        this.condition = typeof condition !== 'function' ? function () {
+            return condition;
+        } : condition;
+    },
+
+    /**
+     * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
+     * @return {Promise}             
+     */
+    reset: function (runService, userSession, options) {
+        var group = userSession && userSession.groupName;
+        var opt = $.extend({
+            scope: { group: group }
+        }, runService.getCurrentConfig());
+
+        return runService.create(opt, options).then(function (run) {
+            run.freshlyCreated = true;
+            return run;
+        });
+    },
+
+    /**
+     * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation).
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
+     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
+     * @return {Promise}             
+     */
+    getRun: function (runService, userSession, runSession, options) {
+        var me = this;
+        if (runSession && runSession.id) {
+            return this.loadAndCheck(runService, userSession, runSession, options).catch(function () {
+                return me.reset(runService, userSession, options); //if it got the wrong cookie for e.g.
+            });
+        } else {
+            return this.reset(runService, userSession, options);
+        }
+    },
+
+    loadAndCheck: function (runService, userSession, runSession, options) {
+        var shouldCreate = false;
+        var me = this;
+
+        return runService.load(runSession.id, null, {
+            success: function (run, msg, headers) {
+                shouldCreate = me.condition(run, headers, userSession, runSession);
+            }
+        }).then(function (run) {
+            if (shouldCreate) {
+                return me.reset(runService, userSession, options);
+            }
+            return run;
+        });
+    }
+});
+
+module.exports = Strategy;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../run-api-service/).
+ * 
+ * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
+ */
+
+
+
+var classFrom = __webpack_require__(3);
+var Base = {};
+
+// Interface that all strategies need to implement
+module.exports = classFrom(Base, {
+    constructor: function (options) {},
+
+    reset: function () {
+        // return a newly created run
+        return $.Deferred().resolve().promise();
+    },
+
+    getRun: function (runService) {
+        // return a usable run
+        return $.Deferred().resolve(runService).promise();
+    }
+});
+
+/***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2710,7 +2710,7 @@ var SessionManager = __webpack_require__(1);
 var _pick = __webpack_require__(4).pick;
 var objectAssign = __webpack_require__(15);
 
-var atob = window.atob || __webpack_require__(45).atob;
+var atob = window.atob || __webpack_require__(47).atob;
 
 var defaults = {
     requiresGroup: true
@@ -3088,14 +3088,14 @@ module.exports = AuthManager;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__channel_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(49);
 /**
  * ## Epicenter Channel Manager
  *
@@ -3582,8 +3582,6 @@ function normalizeActions(actions) {
 /* harmony default export */ __webpack_exports__["default"] = (function (config) {
     var defaults = {
         token: undefined,
-        account: undefined,
-        project: undefined,
         worldId: '',
         consensusGroup: '',
         name: ''
@@ -3742,7 +3740,9 @@ function normalizeActions(actions) {
          */
         getCurrentConfig: function () {
             return serviceOptions;
-        }
+        },
+
+        getChannel: function (options) {}
     };
     return publicAPI;
 });
@@ -3775,9 +3775,9 @@ var STRATEGY = {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_service_run_api_service__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
@@ -3969,7 +3969,7 @@ var RunManager = function () {
             var authSession = this.sessionManager.getSession();
             if (this.strategy.requiresAuth && Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["isEmpty"])(authSession)) {
                 console.error('No user-session available', this.options.strategy, 'requires authentication.');
-                return $.Deferred().reject({ type: 'UN_AUTHORIZED', message: 'No user-session available' }).promise();
+                return $.Deferred().reject({ type: 'UNAUTHORIZED', message: 'No user-session available' }).promise();
             }
             return this.strategy.getRun(this.run, authSession, runSession, options).then(function (run) {
                 if (run && run.id) {
@@ -4017,7 +4017,7 @@ var RunManager = function () {
             var authSession = this.sessionManager.getSession();
             if (this.strategy.requiresAuth && Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["isEmpty"])(authSession)) {
                 console.error('No user-session available', this.options.strategy, 'requires authentication.');
-                return $.Deferred().reject({ type: 'UN_AUTHORIZED', message: 'No user-session available' }).promise();
+                return $.Deferred().reject({ type: 'UNAUTHORIZED', message: 'No user-session available' }).promise();
             }
             return this.strategy.reset(this.run, authSession, options).then(function (run) {
                 if (run && run.id) {
@@ -4636,7 +4636,7 @@ module.exports = function (config) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(17);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -6119,6 +6119,105 @@ function reduceActions(actions, options) {
 
 /***/ }),
 /* 37 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(5);
+/**
+ * 
+ * ## Consensus Group Service
+ *
+ * The Consensus Group Service provides a way to group different consensus points within your world. This is typically used in faculty pages to report progression throw different Consensus Points.
+ * 
+ *      var cg = new F.service.ConsensusGroup({
+ *          worldId: world.id,
+ *          name: 'rounds'
+ *      });
+ *      cg.consensus('round1').create(..);
+ *
+ * You can use the Consensus Service (`F.service.Consensus`) without using the ConsensusGroup (`F.service.ConsensusGroup`) - the Consensus Service uses a group called "default" by default.
+ * 
+ */
+
+
+
+
+
+
+var API_ENDPOINT = 'multiplayer/consensus';
+
+function ConsensusGroupService(config) {
+    var defaults = {
+        token: undefined,
+        worldId: '',
+        name: 'default'
+    };
+
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["b" /* getDefaultOptions */])(defaults, config);
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["d" /* getURLConfig */])(serviceOptions);
+
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+
+    function getHTTPOptions(options) {
+        var mergedOptions = $.extend(true, {}, serviceOptions, options);
+        if (!mergedOptions.worldId) {
+            throw new Error('ConsensusGroup Service: worldId is required');
+        }
+        var baseURL = urlConfig.getAPIPath(API_ENDPOINT);
+        var url = baseURL + [mergedOptions.worldId, mergedOptions.name].join('/');
+
+        var httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+        return httpOptions;
+    }
+    var publicAPI = {
+        /**
+         * List all consensus points within this group
+         * 
+         * @param {object} outputModifier Currently unused, may be used for paging etc later
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {Promise}
+         */
+        list: function (outputModifier, options) {
+            var httpOptions = getHTTPOptions(options);
+            return http.get(outputModifier, httpOptions);
+        },
+
+        /**
+         * Deletes all consensus points within this group
+         * 
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {Promise}
+         */
+        delete: function (options) {
+            var httpOptions = getHTTPOptions(options);
+            return http.delete({}, httpOptions);
+        },
+
+        /**
+         * Helper to return a Consensus instance 
+         * 
+         * @param {string} [name] Returns a new instance of a consensus service. Note it is not created until you call `create` on the returned service.
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {ConsensusService}
+         */
+        consensus: function (name, options) {
+            var opts = $.extend({}, true, serviceOptions, options);
+            var cs = new __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__["default"]($.extend(true, opts, {
+                consensusGroup: opts.name,
+                name: name
+            }));
+            return cs;
+        }
+    };
+    return publicAPI;
+}
+
+/***/ }),
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -6134,17 +6233,17 @@ function reduceActions(actions, options) {
  */
 
 var list = {
-    'conditional-creation': __webpack_require__(10),
-    'new-if-initialized': __webpack_require__(61), //deprecated
-    'new-if-persisted': __webpack_require__(62), //deprecated
+    'conditional-creation': __webpack_require__(11),
+    'new-if-initialized': __webpack_require__(62), //deprecated
+    'new-if-persisted': __webpack_require__(63), //deprecated
 
-    none: __webpack_require__(11),
+    none: __webpack_require__(12),
 
-    multiplayer: __webpack_require__(63),
-    'reuse-never': __webpack_require__(64),
-    'reuse-per-session': __webpack_require__(65),
-    'reuse-across-sessions': __webpack_require__(66),
-    'reuse-last-initialized': __webpack_require__(38)
+    multiplayer: __webpack_require__(64),
+    'reuse-never': __webpack_require__(65),
+    'reuse-per-session': __webpack_require__(66),
+    'reuse-across-sessions': __webpack_require__(67),
+    'reuse-last-initialized': __webpack_require__(39)
 };
 
 //Add back older aliases
@@ -6239,7 +6338,7 @@ var strategyManager = {
 module.exports = strategyManager;
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6337,7 +6436,7 @@ module.exports = classFrom(Base, {
 });
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6496,7 +6595,156 @@ SavedRunsManager.prototype = {
 module.exports = SavedRunsManager;
 
 /***/ }),
-/* 40 */
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+* ## World Manager
+*
+* As discussed under the [World API Adapter](../world-api-adapter/), a [run](../../../glossary/#run) is a collection of end user interactions with a project and its model. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
+*
+* The World Manager provides an easy way to track and access the current world and run for particular end users. It is typically used in pages that end users will interact with. (The related [World API Adapter](../world-api-adapter/) handles creating multiplayer worlds, and adding and removing end users and runs from a world. Because of this, typically the World Adapter is used for facilitator pages in your project.)
+*
+* ### Using the World Manager
+*
+* To use the World Manager, instantiate it. Then, make calls to any of the methods you need.
+*
+* When you instantiate a World Manager, the world's account id, project id, and group are automatically taken from the session (thanks to the [Authentication Service](../auth-api-service)).
+*
+* Note that the World Manager does *not* create worlds automatically. (This is different than the [Run Manager](../run-manager).) However, you can pass in specific options to any runs created by the manager, using a `run` object.
+*
+* The parameters for creating a World Manager are:
+*
+*   * `account`: The **Team ID** in the Epicenter user interface for this project.
+*   * `project`: The **Project ID** for this project.
+*   * `group`: The **Group Name** for this world.
+*   * `run`: Options to use when creating new runs with the manager, e.g. `run: { files: ['data.xls'] }`.
+*   * `run.model`: The name of the primary model file for this project. Required if you have not already passed it in as part of the `options` parameter for an enclosing call.
+*
+* For example:
+*
+*       var wMgr = new F.manager.WorldManager({
+*          account: 'acme-simulations',
+*          project: 'supply-chain-game',
+*          run: { model: 'supply-chain.py' },
+*          group: 'team1'
+*       });
+*
+*       wMgr.getCurrentRun();
+*/
+
+
+
+var WorldApi = __webpack_require__(10).default;
+var RunManager = __webpack_require__(20).default;
+var AuthManager = __webpack_require__(16);
+var worldApi;
+
+function buildStrategy(worldId) {
+
+    return function Ctor(options) {
+        this.options = options;
+
+        $.extend(this, {
+            reset: function () {
+                throw new Error('not implementd. Need api changes');
+            },
+
+            getRun: function (runService) {
+                // Model is required in the options
+                var model = this.options.run.model || this.options.model;
+                return worldApi.getCurrentRunId({ model: model, filter: worldId }).then(function (runId) {
+                    return runService.load(runId);
+                });
+            }
+        });
+    };
+}
+
+module.exports = function (options) {
+    this.options = options || { run: {}, world: {} };
+
+    $.extend(true, this.options, this.options.run);
+    $.extend(true, this.options, this.options.world);
+
+    worldApi = new WorldApi(this.options);
+    this._auth = new AuthManager();
+    var me = this;
+
+    var api = {
+
+        /**
+        * Returns the current world (object) and an instance of the [World API Adapter](../world-api-adapter/).
+        *
+        * **Example**
+        *
+        *       wMgr.getCurrentWorld()
+        *           .then(function(world, worldAdapter) {
+        *               console.log(world.id);
+        *               worldAdapter.getCurrentRunId();
+        *           });
+        *
+        * **Parameters**
+        * @param {string} userId (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
+        * @param {string} groupName (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @return {Promise}
+        */
+        getCurrentWorld: function (userId, groupName) {
+            var session = this._auth.getCurrentUserSessionInfo();
+            if (!userId) {
+                userId = session.userId;
+            }
+            if (!groupName) {
+                groupName = session.groupName;
+            }
+            return worldApi.getCurrentWorldForUser(userId, groupName);
+        },
+
+        /**
+        * Returns the current run (object) and an instance of the [Run API Service](../run-api-service/).
+        *
+        * **Example**
+        *
+        *       wMgr.getCurrentRun('myModel.py')
+        *           .then(function(run, runService) {
+        *               console.log(run.id);
+        *               runService.do('startGame');
+        *           });
+        *
+        * **Parameters**
+        * @param {string} model (Optional) The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
+        * @return {Promise}
+        */
+        getCurrentRun: function (model) {
+            var session = this._auth.getCurrentUserSessionInfo();
+            var curUserId = session.userId;
+            var curGroupName = session.groupName;
+
+            return this.getCurrentWorld(curUserId, curGroupName).then(function getAndRestoreLatestRun(world) {
+                if (!world) {
+                    return $.Deferred().reject({ error: 'The user is not part of any world!' }).promise();
+                }
+                var runOpts = $.extend(true, me.options, { model: model });
+                var strategy = buildStrategy(world.id);
+                var opt = $.extend(true, {}, {
+                    strategy: strategy,
+                    run: runOpts
+                });
+                var rm = new RunManager(opt);
+                return rm.getRun().then(function (run) {
+                    run.world = world;
+                    return run;
+                });
+            });
+        }
+    };
+
+    $.extend(this, api);
+};
+
+/***/ }),
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var F = {
@@ -6511,7 +6759,7 @@ var F = {
     }
 };
 
-F.load = __webpack_require__(41);
+F.load = __webpack_require__(43);
 
 if (!window.SKIP_ENV_LOAD) {
     F.load();
@@ -6527,41 +6775,43 @@ F.transport.Ajax = __webpack_require__(22);
 F.service.URL = __webpack_require__(13);
 F.service.Config = __webpack_require__(2).default;
 F.service.Run = __webpack_require__(9);
-F.service.File = __webpack_require__(43);
+F.service.File = __webpack_require__(45);
 F.service.Variables = __webpack_require__(23);
 F.service.Data = __webpack_require__(27).default;
 F.service.Auth = __webpack_require__(28);
-F.service.World = __webpack_require__(12).default;
+F.service.World = __webpack_require__(10).default;
 F.service.State = __webpack_require__(33);
-F.service.User = __webpack_require__(49);
+F.service.User = __webpack_require__(51);
 F.service.Member = __webpack_require__(29);
-F.service.Asset = __webpack_require__(50);
+F.service.Asset = __webpack_require__(52);
 F.service.Group = __webpack_require__(30).default;
 F.service.Introspect = __webpack_require__(24);
 F.service.Presence = __webpack_require__(32).default;
 F.service.Time = __webpack_require__(34).default;
-F.service.Timer = __webpack_require__(51).default;
-F.service.Password = __webpack_require__(57).default;
+F.service.Timer = __webpack_require__(53).default;
+F.service.Password = __webpack_require__(59).default;
 
-F.service.Consensus = __webpack_require__(18);
-F.service.ConsensusGroup = __webpack_require__(58);
+F.service.Consensus = __webpack_require__(18).default;
+F.service.ConsensusGroup = __webpack_require__(37).default;
 
-F.service.Project = __webpack_require__(59).default;
+F.service.Project = __webpack_require__(60).default;
 
 F.store.Cookie = __webpack_require__(26);
 F.factory.Store = __webpack_require__(25);
 
-F.manager.ScenarioManager = __webpack_require__(60);
+F.manager.ScenarioManager = __webpack_require__(61);
 F.manager.RunManager = __webpack_require__(20).default;
 F.manager.AuthManager = __webpack_require__(16);
-F.manager.WorldManager = __webpack_require__(70);
-F.manager.SavedRunsManager = __webpack_require__(39);
+F.manager.WorldManager = __webpack_require__(41);
+F.manager.SavedRunsManager = __webpack_require__(40);
 
-var strategies = __webpack_require__(37);
+var strategies = __webpack_require__(38);
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
 F.manager.ChannelManager = __webpack_require__(17).default;
 F.service.Channel = __webpack_require__(31);
+
+F.manager.ConsensusManager = __webpack_require__(71).default;
 
 if (true) F.version = "2.7.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(21);
@@ -6571,7 +6821,7 @@ F.constants = __webpack_require__(14);
 module.exports = F;
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -6591,7 +6841,7 @@ var envLoad = function (callback) {
 module.exports = envLoad;
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6638,7 +6888,7 @@ var optionUtils = {
 module.exports = optionUtils;
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -6841,7 +7091,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6933,7 +7183,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 }
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -7004,7 +7254,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7264,13 +7514,13 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 module.exports = ChannelManager;
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(4);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -7292,9 +7542,10 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
         }
 
         var _fullTopic$split = fullTopic.split('/'),
-            _fullTopic$split2 = _slicedToArray(_fullTopic$split, 2),
+            _fullTopic$split2 = _slicedToArray(_fullTopic$split, 3),
             subscribedTopic = _fullTopic$split2[0],
-            subscribedSubTopic = _fullTopic$split2[1];
+            subscribedSubTopic = _fullTopic$split2[1],
+            subTopicFilter = _fullTopic$split2[2];
 
         var defaults = {
             includeMine: true
@@ -7386,6 +7637,11 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
                         user.isOnline = subType === __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__["b" /* TOPIC_SUBTYPES */].ONLINE;
                         return callback(user, meta);
                     }
+                case __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__["a" /* TOPICS */].CONSENSUS:
+                    {
+                        // const { name, stage } = payload;
+                        return callback(payload, meta);
+                    }
                 default:
                     callback.call(context, res);
                     break;
@@ -7397,7 +7653,7 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
 }
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7410,25 +7666,34 @@ var TOPIC_SUBTYPES = {
     ONLINE: 'connect',
     OFFLINE: 'disconnect',
     ASSIGN: 'assign',
-    UNASSIGN: 'unassign'
+    UNASSIGN: 'unassign',
+    CREATE: 'create',
+    UPDATE: 'update'
 };
 
 var TOPICS = {
     ALL: '',
+
     RUN: 'run',
     RUN_VARIABLES: 'run/' + TOPIC_SUBTYPES.VARIABLES,
     RUN_OPERATIONS: 'run/' + TOPIC_SUBTYPES.OPERATIONS,
     RUN_RESET: 'run/' + TOPIC_SUBTYPES.RESET,
+
     PRESENCE: 'user',
     PRESENCE_ONLINE: 'user/' + TOPIC_SUBTYPES.ONLINE,
     PRESENCE_OFFLINE: 'user/' + TOPIC_SUBTYPES.OFFLINE,
+
     ROLES: 'world',
     ROLES_ASSIGN: 'world/' + TOPIC_SUBTYPES.ASSIGN,
-    ROLES_UNASSIGN: 'world/' + TOPIC_SUBTYPES.UNASSIGN
+    ROLES_UNASSIGN: 'world/' + TOPIC_SUBTYPES.UNASSIGN,
+
+    CONSENSUS: 'consensus',
+    CONSENSUS_CREATE: 'consensus/' + TOPIC_SUBTYPES.CREATE,
+    CONSENSUS_UPDATE: 'consensus/' + TOPIC_SUBTYPES.UPDATE
 };
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7582,7 +7847,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7965,7 +8230,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7974,9 +8239,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(19);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -8336,7 +8601,7 @@ TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a"
 /* harmony default export */ __webpack_exports__["default"] = (TimerService);
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8552,14 +8817,14 @@ var PubSub = function () {
 /* harmony default export */ __webpack_exports__["a"] = (PubSub);
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return STRATEGIES; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(57);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -8584,7 +8849,7 @@ function getStrategy(strategy) {
 }
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8601,7 +8866,7 @@ function reduceActions(actions) {
 }
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8631,7 +8896,7 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8714,7 +8979,7 @@ function reduceActions(actions, startTime, currentTime) {
 }
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8836,108 +9101,7 @@ var PasswordService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (PasswordService);
 
 /***/ }),
-/* 58 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(5);
-/**
- * 
- * ## Consensus Group Service
- *
- * The Consensus Group Service provides a way to group different consensus points within your world. This is typically used in faculty pages to report progression throw different Consensus Points.
- * 
- *      var cg = new F.service.ConsensusGroup({
- *          worldId: world.id,
- *          name: 'rounds'
- *      });
- *      cg.consensus('round1').create(..);
- *
- * You can use the Consensus Service (`F.service.Consensus`) without using the ConsensusGroup (`F.service.ConsensusGroup`) - the Consensus Service uses a group called "default" by default.
- * 
- */
-
-
-
-
-
-
-var API_ENDPOINT = 'multiplayer/consensus';
-
-function ConsensusGroupService(config) {
-    var defaults = {
-        token: undefined,
-        account: undefined,
-        project: undefined,
-        worldId: '',
-        name: 'default'
-    };
-
-    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["b" /* getDefaultOptions */])(defaults, config);
-    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["d" /* getURLConfig */])(serviceOptions);
-
-    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
-
-    function getHTTPOptions(options) {
-        var mergedOptions = $.extend(true, {}, serviceOptions, options);
-        if (!mergedOptions.worldId) {
-            throw new Error('ConsensusGroup Service: worldId is required');
-        }
-        var baseURL = urlConfig.getAPIPath(API_ENDPOINT);
-        var url = baseURL + [mergedOptions.worldId, mergedOptions.name].join('/');
-
-        var httpOptions = $.extend(true, {}, mergedOptions, { url: url });
-        return httpOptions;
-    }
-    var publicAPI = {
-        /**
-         * List all consensus points within this group
-         * 
-         * @param {object} outputModifier Currently unused, may be used for paging etc later
-         * @param {object} [options] Overrides for serviceoptions
-         * @returns {Promise}
-         */
-        list: function (outputModifier, options) {
-            var httpOptions = getHTTPOptions(options);
-            return http.get(outputModifier, httpOptions);
-        },
-
-        /**
-         * Deletes all consensus points within this group
-         * 
-         * @param {object} [options] Overrides for serviceoptions
-         * @returns {Promise}
-         */
-        delete: function (options) {
-            var httpOptions = getHTTPOptions(options);
-            return http.delete({}, httpOptions);
-        },
-
-        /**
-         * Helper to return a Consensus instance 
-         * 
-         * @param {string} [name] Returns a new instance of a consensus service. Note it is not created until you call `create` on the returned service.
-         * @param {object} [options] Overrides for serviceoptions
-         * @returns {ConsensusService}
-         */
-        consensus: function (name, options) {
-            var opts = $.extend({}, true, serviceOptions, options);
-            var cs = new __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__["default"]($.extend(true, opts, {
-                consensusGroup: opts.name,
-                name: name
-            }));
-            return cs;
-        }
-    };
-    return publicAPI;
-}
-
-/***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8994,7 +9158,7 @@ function ProjectAPIService(config) {
         /**
          * Get current settings for project
          * 
-         * @param {object} options 
+         * @param {object} [options] 
          * @returns {Promise}
          */
         getProjectSettings: function (options) {
@@ -9005,7 +9169,7 @@ function ProjectAPIService(config) {
          * Update settings for project
          * 
          * @param {object} settings New settings to apply 
-         * @param {object} options 
+         * @param {object} [options] 
          * @returns {Promise}
          */
         updateProjectSettings: function (settings, options) {
@@ -9016,7 +9180,7 @@ function ProjectAPIService(config) {
         /**
          * Get current multiplayer settings for project
          * 
-         * @param {object} options 
+         * @param {object} [options] 
          * @returns {Promise}
          */
         getMultiplayerSettings: function (options) {
@@ -9031,22 +9195,27 @@ function ProjectAPIService(config) {
          * Update multiplayer settings for project - usually used to add roles on the fly
          * 
          * @param {object} settings 
-         * @param {object} options 
+         * @param {{ autoCreate: boolean}} [options] 
+         * @param {object} [serviceOverrides] 
          * @returns {Promise}
          */
-        updateMultiplayerSettings: function (settings, options) {
-            var overrides = $.extend({}, options, {
+        updateMultiplayerSettings: function (settings, options, serviceOverrides) {
+            var overrides = $.extend({}, serviceOverrides, {
                 apiEndpoint: MULTIPLAYER_ENDPOINT
             });
             var http = getHTTP(overrides);
-            return http.patch(settings);
+            if (options && options.autoCreate) {
+                return http.put(settings);
+            } else {
+                return http.patch(settings);
+            }
         }
     };
     return publicAPI;
 }
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9126,18 +9295,18 @@ function ProjectAPIService(config) {
 // See integration-test-scenario-manager for usage examples
 
 var RunManager = __webpack_require__(20).default;
-var SavedRunsManager = __webpack_require__(39);
+var SavedRunsManager = __webpack_require__(40);
 
 var strategyUtils = __webpack_require__(7);
 var rutil = __webpack_require__(8);
 
-var NoneStrategy = __webpack_require__(11);
+var NoneStrategy = __webpack_require__(12);
 
 var StateService = __webpack_require__(33);
 var RunService = __webpack_require__(9);
 
-var BaselineStrategy = __webpack_require__(68);
-var LastUnsavedStrategy = __webpack_require__(69);
+var BaselineStrategy = __webpack_require__(69);
+var LastUnsavedStrategy = __webpack_require__(70);
 
 var defaults = {
     /**
@@ -9284,7 +9453,7 @@ function ScenarioManager(config) {
 module.exports = ScenarioManager;
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9309,7 +9478,7 @@ module.exports = ScenarioManager;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(10);
+var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9327,7 +9496,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9355,7 +9524,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(10);
+var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9373,7 +9542,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9386,8 +9555,8 @@ module.exports = Strategy;
 
 var classFrom = __webpack_require__(3);
 
-var IdentityStrategy = __webpack_require__(11);
-var WorldApiAdapter = __webpack_require__(12).default;
+var IdentityStrategy = __webpack_require__(12);
+var WorldApiAdapter = __webpack_require__(10).default;
 
 var defaults = {};
 
@@ -9424,7 +9593,7 @@ var Strategy = classFrom(IdentityStrategy, {
         var dtd = $.Deferred();
 
         if (!curUserId) {
-            return dtd.reject({ statusCode: 401, type: 'UN_AUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
+            return dtd.reject({ statusCode: 401, type: 'UNAUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
         }
 
         var loadRunFromWorld = function (world) {
@@ -9454,7 +9623,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9471,7 +9640,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(10);
+var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9489,7 +9658,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9513,7 +9682,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(10);
+var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9535,7 +9704,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9556,7 +9725,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(3);
-var IdentityStrategy = __webpack_require__(11);
+var IdentityStrategy = __webpack_require__(12);
 
 var _require = __webpack_require__(7),
     injectFiltersFromSession = _require.injectFiltersFromSession,
@@ -9604,7 +9773,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9615,7 +9784,7 @@ function reset(params, options, manager) {
 }
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9636,7 +9805,7 @@ function reset(params, options, manager) {
 
 
 
-var ReuseinitStrategy = __webpack_require__(38);
+var ReuseinitStrategy = __webpack_require__(39);
 
 module.exports = function (options) {
     var defaults = {
@@ -9658,7 +9827,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9728,153 +9897,112 @@ module.exports = classFrom(Base, {
 }, { requiresAuth: false });
 
 /***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 71 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/**
-* ## World Manager
-*
-* As discussed under the [World API Adapter](../world-api-adapter/), a [run](../../../glossary/#run) is a collection of end user interactions with a project and its model. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
-*
-* The World Manager provides an easy way to track and access the current world and run for particular end users. It is typically used in pages that end users will interact with. (The related [World API Adapter](../world-api-adapter/) handles creating multiplayer worlds, and adding and removing end users and runs from a world. Because of this, typically the World Adapter is used for facilitator pages in your project.)
-*
-* ### Using the World Manager
-*
-* To use the World Manager, instantiate it. Then, make calls to any of the methods you need.
-*
-* When you instantiate a World Manager, the world's account id, project id, and group are automatically taken from the session (thanks to the [Authentication Service](../auth-api-service)).
-*
-* Note that the World Manager does *not* create worlds automatically. (This is different than the [Run Manager](../run-manager).) However, you can pass in specific options to any runs created by the manager, using a `run` object.
-*
-* The parameters for creating a World Manager are:
-*
-*   * `account`: The **Team ID** in the Epicenter user interface for this project.
-*   * `project`: The **Project ID** for this project.
-*   * `group`: The **Group Name** for this world.
-*   * `run`: Options to use when creating new runs with the manager, e.g. `run: { files: ['data.xls'] }`.
-*   * `run.model`: The name of the primary model file for this project. Required if you have not already passed it in as part of the `options` parameter for an enclosing call.
-*
-* For example:
-*
-*       var wMgr = new F.manager.WorldManager({
-*          account: 'acme-simulations',
-*          project: 'supply-chain-game',
-*          run: { model: 'supply-chain.py' },
-*          group: 'team1'
-*       });
-*
-*       wMgr.getCurrentRun();
-*/
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_world_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(72);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
 
-var WorldApi = __webpack_require__(12).default;
-var RunManager = __webpack_require__(20).default;
-var AuthManager = __webpack_require__(16);
-var worldApi;
 
-function buildStrategy(worldId) {
 
-    return function Ctor(options) {
-        this.options = options;
 
-        $.extend(this, {
-            reset: function () {
-                throw new Error('not implementd. Need api changes');
-            },
 
-            getRun: function (runService) {
-                // Model is required in the options
-                var model = this.options.run.model || this.options.model;
-                return worldApi.getCurrentRunId({ model: model, filter: worldId }).then(function (runId) {
-                    return runService.load(runId);
-                });
-            }
-        });
-    };
+function getCurrentWorldIdAndRoles(opts) {
+    if (opts.id && opts.roles) {
+        return $.Deferred().resolve({
+            id: opts.id,
+            roles: opts.roles
+        }).promise();
+    } else if (opts.worldId) {
+        var ws = new __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__["default"]();
+        return ws.load(opts.worldId);
+    } else {
+        var wm = new __WEBPACK_IMPORTED_MODULE_0_managers_world_manager___default.a(opts);
+        return wm.getCurrentWorld();
+    }
 }
 
-module.exports = function (options) {
-    this.options = options || { run: {}, world: {} };
+var ConsensusManager = function () {
+    function ConsensusManager(config) {
+        _classCallCheck(this, ConsensusManager);
 
-    $.extend(true, this.options, this.options.run);
-    $.extend(true, this.options, this.options.world);
+        var opts = {
+            name: 'default',
+            strategy: '',
+            strategyOptions: {}
+        };
 
-    worldApi = new WorldApi(this.options);
-    this._auth = new AuthManager();
-    var me = this;
+        this.serviceOptions = $.extend(true, {}, opts, config);
+    }
 
-    var api = {
+    _createClass(ConsensusManager, [{
+        key: 'getCurrent',
+        value: function getCurrent() {
+            var _this = this;
 
-        /**
-        * Returns the current world (object) and an instance of the [World API Adapter](../world-api-adapter/).
-        *
-        * **Example**
-        *
-        *       wMgr.getCurrentWorld()
-        *           .then(function(world, worldAdapter) {
-        *               console.log(world.id);
-        *               worldAdapter.getCurrentRunId();
-        *           });
-        *
-        * **Parameters**
-        * @param {string} userId (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
-        * @param {string} groupName (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
-        * @return {Promise}
-        */
-        getCurrentWorld: function (userId, groupName) {
-            var session = this._auth.getCurrentUserSessionInfo();
-            if (!userId) {
-                userId = session.userId;
-            }
-            if (!groupName) {
-                groupName = session.groupName;
-            }
-            return worldApi.getCurrentWorldForUser(userId, groupName);
-        },
-
-        /**
-        * Returns the current run (object) and an instance of the [Run API Service](../run-api-service/).
-        *
-        * **Example**
-        *
-        *       wMgr.getCurrentRun('myModel.py')
-        *           .then(function(run, runService) {
-        *               console.log(run.id);
-        *               runService.do('startGame');
-        *           });
-        *
-        * **Parameters**
-        * @param {string} model (Optional) The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
-        * @return {Promise}
-        */
-        getCurrentRun: function (model) {
-            var session = this._auth.getCurrentUserSessionInfo();
-            var curUserId = session.userId;
-            var curGroupName = session.groupName;
-
-            return this.getCurrentWorld(curUserId, curGroupName).then(function getAndRestoreLatestRun(world) {
-                if (!world) {
-                    return $.Deferred().reject({ error: 'The user is not part of any world!' }).promise();
-                }
-                var runOpts = $.extend(true, me.options, { model: model });
-                var strategy = buildStrategy(world.id);
-                var opt = $.extend(true, {}, {
-                    strategy: strategy,
-                    run: runOpts
-                });
-                var rm = new RunManager(opt);
-                return rm.getRun().then(function (run) {
-                    run.world = world;
-                    return run;
+            return getCurrentWorldIdAndRoles(this.serviceOptions).then(function (world) {
+                var cg = new __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__["default"]($.extend({}, _this.serviceOptions, {
+                    worldId: world.id
+                }));
+                return Object(__WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__["a" /* default */])(cg, {
+                    roles: world.roles
                 });
             });
         }
-    };
+    }]);
 
-    $.extend(this, api);
-};
+    return ConsensusManager;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (ConsensusManager);
+
+/***/ }),
+/* 72 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = mandatoryConsensusStrategy;
+
+/**
+ * 
+ */
+
+function mandatoryConsensusStrategy(consensusGroup, strategyOptions) {
+    var options = $.extend({}, {
+        maxRounds: 8,
+        name: function (list) {
+            return 'round-' + (list.length + 1);
+        }
+    }, strategyOptions);
+    return consensusGroup.list().then(function (consensusList) {
+        var lastConsensus = consensusList[consensusList.length - 1];
+        var isLastPending = lastConsensus && !lastConsensus.closed;
+        if (isLastPending) {
+            return lastConsensus;
+        }
+
+        var allowCreateNew = options.maxRounds >= consensusList.length;
+        if (!allowCreateNew) {
+            throw new Error('CONSENSUS_LIMIT_REACHED');
+        }
+        var name = options.name(consensusList);
+        var newConsensusPromise = consensusGroup.consensus(name).create({
+            roles: options.roles,
+            executeActionsImmediately: false
+        });
+        return newConsensusPromise;
+    });
+}
 
 /***/ })
 /******/ ]);
