@@ -9979,7 +9979,7 @@ var ConsensusManager = function () {
 
 function mandatoryConsensusStrategy(consensusGroup, strategyOptions) {
     var options = $.extend({}, {
-        maxRounds: 8,
+        maxRounds: Infinity,
         name: function (list) {
             return 'round-' + (list.length + 1);
         }

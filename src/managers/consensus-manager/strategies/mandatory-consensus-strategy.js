@@ -1,11 +1,6 @@
-
-/**
- * 
- */
-
 export default function mandatoryConsensusStrategy(consensusGroup, strategyOptions) {
     const options = $.extend({}, {
-        maxRounds: 8,
+        maxRounds: Infinity,
         name: (list)=> {
             return `round-${list.length + 1}`;
         }
@@ -13,14 +8,12 @@ export default function mandatoryConsensusStrategy(consensusGroup, strategyOptio
     return consensusGroup.list().then((consensusList)=> {
         const lastConsensus = consensusList[consensusList.length - 1];
         const isLastPending = lastConsensus && !lastConsensus.closed;
-        if (isLastPending) {
+        const allowCreateNew = options.maxRounds >= consensusList.length;
+
+        if (isLastPending || !allowCreateNew) {
             return lastConsensus;
         }
 
-        const allowCreateNew = options.maxRounds >= consensusList.length;
-        if (!allowCreateNew) {
-            throw new Error('CONSENSUS_LIMIT_REACHED');
-        }
         const name = options.name(consensusList);
         const newConsensusPromise = consensusGroup.consensus(name).create({
             roles: options.roles,
