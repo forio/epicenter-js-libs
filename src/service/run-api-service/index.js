@@ -211,7 +211,7 @@ module.exports = function (config) {
          *
          *  **Parameters**
          * @param {String|Object} params If a string, the name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project. If an object, may include `model`, `scope`, and `files`. (See the [Run Manager](../run_manager/) for more information on `scope` and `files`.)
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         create: function (params, options) {
@@ -253,17 +253,15 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         query: function (qs, outputModifier, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, { url: urlConfig.getFilterURL(qs) }, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
 
-            return http.splitGet(outputModifier, httpOptions).then(function (r) {
-                return ($.isPlainObject(r) && Object.keys(r).length === 0) ? [] : r;
-            });
+            return http.splitGet(outputModifier, httpOptions);
         },
 
         /**
@@ -273,8 +271,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Object} filter Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         filter: function (filter, outputModifier, options) {
@@ -285,9 +283,7 @@ module.exports = function (config) {
             }
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
-            return http.splitGet(outputModifier, httpOptions).then(function (r) {
-                return ($.isPlainObject(r) && Object.keys(r).length === 0) ? [] : r;
-            });
+            return http.splitGet(outputModifier, httpOptions);
         },
 
         /**
@@ -301,8 +297,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {String} runID The run id.
-         * @param {Object} filters (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [filters] Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         load: function (runID, filters, options) {
@@ -322,9 +318,9 @@ module.exports = function (config) {
          *     rs.removeFromMemory('bb589677-d476-4971-a68e-0c58d191e450');
          *
          * See [details on run persistence](../../../run_persistence/#runs-in-memory)
-         * @param  {String} [runID]   id of run to remove
-         * @param  {Object} [filters] (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param  {Object} [options] (Optional) Overrides for configuration options.
+         * @param  {String} runID   id of run to remove
+         * @param  {Object} [filters] Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param  {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         removeFromMemory: function (runID, filters, options) {
@@ -352,7 +348,7 @@ module.exports = function (config) {
          * **Parameters**
          * @param {Object} attributes The run data and variables to save.
          * @param {Object} attributes.variables Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         save: function (attributes, options) {
@@ -387,8 +383,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {String} operation Name of operation.
-         * @param {Array} params (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Array} [params] Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         do: function (operation, params, options) {
@@ -435,7 +431,7 @@ module.exports = function (config) {
          * **Parameters**
          * @param {Array} operations If none of the operations take parameters, pass an array of the operation names (strings). If any of the operations do take parameters, pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         serial: function (operations, params, options) {
@@ -493,7 +489,7 @@ module.exports = function (config) {
          * **Parameters**
          * @param {Array|Object} operations If none of the operations take parameters, pass an array of the operation names (as strings). If any of the operations do take parameters, you have two options. You can pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the operation name and a (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         parallel: function (operations, params, options) {
@@ -545,7 +541,7 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`. Note that the `runID` is optional if the Run Service is already associated with a particular run (because `id` was passed in when the Run Service was initialized). If provided, the `runID` overrides the `id` currently associated with the Run Service.
-         * @param  {Object} introspectionConfig (Optional) Service options for Introspection Service
+         * @param  {Object} [introspectionConfig] Service options for Introspection Service
          * @return {Promise}
          */
         introspect: function (options, introspectionConfig) {
@@ -588,7 +584,7 @@ module.exports = function (config) {
           *      vs.save({ sample_int: 4 });
           *
           * **Parameters**
-          * @param {Object} config (Optional) Overrides for configuration options.
+          * @param {Object} [config] Overrides for configuration options.
           * @return {Object} variablesService Instance
           */
         variables: function (config) {
