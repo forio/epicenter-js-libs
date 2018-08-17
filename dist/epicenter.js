@@ -6413,7 +6413,7 @@ module.exports = classFrom(Base, {
     },
 
     getRun: function (runService, userSession, runSession, options) {
-        var sessionFilter = injectFiltersFromSession(this.options.flag, userSession);
+        var sessionFilter = injectFiltersFromSession(this.options.flag, userSession, this.options.scope);
         var runopts = runService.getCurrentConfig();
         var filter = $.extend(true, { trashed: false }, sessionFilter, { model: runopts.model });
         var me = this;
@@ -6578,10 +6578,16 @@ SavedRunsManager.prototype = {
             model: runopts.model
         }, filter), session, this.options);
 
+        Object.keys(filter || {}).forEach(function (key) {
+            if (filter[key] === undefined) {
+                delete scopedFilter[key];
+            }
+        });
         var opModifiers = $.extend(true, {}, {
             sort: 'created',
             direction: 'asc'
         }, modifiers);
+
         if (variables) {
             opModifiers.include = [].concat(variables);
         }
@@ -9376,7 +9382,8 @@ function ScenarioManager(config) {
         run: strategyUtils.mergeRunOptions(opts.run, opts.baseline.run),
         strategyOptions: {
             baselineName: opts.baseline.runName,
-            initOperation: opts.advanceOperation
+            initOperation: opts.advanceOperation,
+            scope: opts.baseline.scope
         }
     });
 
@@ -9817,7 +9824,8 @@ module.exports = function (options) {
                 saved: true,
                 trashed: false,
                 name: opts.baselineName
-            }
+            },
+            scope: opts.scope
         }
     });
 };

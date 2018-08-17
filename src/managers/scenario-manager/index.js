@@ -158,7 +158,8 @@ function ScenarioManager(config) {
         run: strategyUtils.mergeRunOptions(opts.run, opts.baseline.run),
         strategyOptions: {
             baselineName: opts.baseline.runName,
-            initOperation: opts.advanceOperation
+            initOperation: opts.advanceOperation,
+            scope: opts.baseline.scope,
         }
     });
 

@@ -31,7 +31,8 @@ module.exports = function (options) {
                 saved: true,
                 trashed: false,
                 name: opts.baselineName
-            }
+            },
+            scope: opts.scope,
         }
     });
 };

@@ -141,10 +141,16 @@ SavedRunsManager.prototype = {
             model: runopts.model,
         }, filter), session, this.options);
 
+        Object.keys(filter || {}).forEach((key)=> {
+            if (filter[key] === undefined) {
+                delete scopedFilter[key];
+            }
+        });
         var opModifiers = $.extend(true, {}, {
             sort: 'created',
             direction: 'asc',
         }, modifiers);
+
         if (variables) {
             opModifiers.include = [].concat(variables);
         }

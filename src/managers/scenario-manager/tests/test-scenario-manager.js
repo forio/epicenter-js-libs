@@ -182,6 +182,53 @@ describe('Scenario Manager', function () {
                     expect(args[0].saved).to.eql(true);
                 });
             });
+            describe('Scope', ()=> {
+                it('should scope by user by default', ()=> {
+                    var rs = new RunService(runOptions);
+                    const queryStub = sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
+                    var sm = new ScenarioManager({ 
+                        run: rs,
+                        baseline: {
+                            runName: 'batman',
+                        }
+                    });
+                    sinon.stub(sm.baseline.sessionManager, 'getSession').returns(sampleSession);
+
+                    sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                    sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
+                    sinon.stub(sm.baseline.run, 'save').returns($.Deferred().resolve([]).promise());
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(queryStub).to.have.been.calledOnce;
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['user.id']).to.eql(sampleSession.userId);
+                    });
+                });
+
+                it('should allow to not scope by user', ()=> {
+                    var rs = new RunService(runOptions);
+                    const queryStub = sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
+                    var sm = new ScenarioManager({ 
+                        run: rs,
+                        baseline: {
+                            runName: 'batman',
+                            scope: {
+                                scopeByUser: false,
+                            }
+                        }
+                    });
+                    sinon.stub(sm.baseline.sessionManager, 'getSession').returns(sampleSession);
+
+                    sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                    sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
+                    sinon.stub(sm.baseline.run, 'save').returns($.Deferred().resolve([]).promise());
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(queryStub).to.have.been.calledOnce;
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['user.id']).to.not.exist;
+                    });
+                });
+            });
+           
         });
     });
     describe('current run', function () {
