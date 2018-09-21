@@ -66,7 +66,7 @@ export default function UserAPIAdapter(config) {
         *
         * **Parameters**
         * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         get: function (filter, options) {
@@ -111,7 +111,7 @@ export default function UserAPIAdapter(config) {
         *
         * **Parameters**
         * @param {string} userId The user id for the end user in your team.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         getById: function (userId, options) {
@@ -122,7 +122,7 @@ export default function UserAPIAdapter(config) {
         /**
         * Upload list of users to current account
         * @param {object[]} userList Array of user objects to 
-        * @param {object} options
+        * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
         */
         uploadUsers: function (userList, options) {

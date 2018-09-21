@@ -78,7 +78,7 @@ export default function MemberAPIService(config) {
         *
         * **Parameters**
         * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
         */
         getGroupsForUser: function (params, options) {
@@ -94,6 +94,26 @@ export default function MemberAPIService(config) {
             return http.get(getParms, httpOptions);
         },
 
+        /**
+         * @param {string[]} userlist list of users to add to group
+         * @param {string} [groupId] Group to add users to. Pulls current group from session if not provided
+         * @param {object} [options] Overrides for configuration options.
+         * @returns {JQuery.Promise}
+         */
+        addUsersToGroup: function (userlist, groupId, options) {
+            const httpOptions = getDefaultOptions(serviceOptions, options, { groupId: groupId });
+            if (!httpOptions.groupId) {
+                throw new Error('addUsersToGroup: No group provided, and cannot retrieve from session');
+            }
+            if (!userlist || !Array.isArray(userlist)) {
+                throw new Error('addUsersToGroup: No userlist provided. Provide a list of userids to upload');
+            }
+
+            const params = userlist.map((u)=> ($.isPlainObject(u) ? u : { userId: u }));
+            httpOptions.url = `${urlConfig.getAPIPath(API_ENDPOINT)}${httpOptions.groupId}`;
+            return http.post(params, httpOptions);
+        },
+        
         /**
         * Retrieve details about one group, including an array of all its members.
         *
@@ -111,7 +131,7 @@ export default function MemberAPIService(config) {
         *
         * **Parameters**
         * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
         */
         getGroupDetails: function (params, options) {
@@ -144,7 +164,7 @@ export default function MemberAPIService(config) {
         * @param {object} params The end user and group information.
         * @param {string} params.userId The id of the end user to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
         */
         makeUserActive: function (params, options) {
@@ -164,7 +184,7 @@ export default function MemberAPIService(config) {
         * @param {object} params The end user and group information.
         * @param {string} params.userId The id of the end user to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
         */
         makeUserInactive: function (params, options) {
