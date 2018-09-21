@@ -1,4 +1,4 @@
-'use strict';
+
 /**
 * ## User API Adapter
 *
@@ -18,12 +18,13 @@
 * The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
-var ConfigService = require('service/configuration-service').default;
-var TransportFactory = require('transport/http-transport-factory').default;
-var SessionManager = require('store/session-manager');
-var { toQueryFormat } = require('util/query-util');
+import { getDefaultOptions, getURLConfig } from '../service-utils';
+import TransportFactory from 'transport/http-transport-factory';
+import { toQueryFormat } from 'util/query-util';
 
-module.exports = function (config) {
+export default function UserAPIAdapter(config) {
+    const API_ENDPOINT = 'user';
+
     var defaults = {
 
         /**
@@ -45,20 +46,9 @@ module.exports = function (config) {
         transport: {}
     };
 
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath('user')
-    });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-
-    var http = new TransportFactory(transportOptions);
+    const serviceOptions = getDefaultOptions(defaults, config, { apiEndpont: API_ENDPOINT });
+    const urlConfig = getURLConfig(serviceOptions);
+    const http = new TransportFactory(serviceOptions.transport);
 
     var publicAPI = {
 
@@ -80,50 +70,32 @@ module.exports = function (config) {
         * @param {object} options (Optional) Overrides for configuration options.
         * @return {Promise}
         */
-
         get: function (filter, options) {
-            options = options || {};
             filter = filter || {};
 
-            var getOptions = $.extend(true, {},
-                serviceOptions,
-                options
-            );
+            const httpOptions = $.extend(true, {}, serviceOptions, options);
+            function toIdFilters(id) {
+                if (!id) return '';
+                
+                const qs = Array.isArray(id) ? id : [id];
+                return 'id=' + qs.join('&id=');
+            }
 
-            var toQFilter = function (filter) {
-                var res = {};
-
-                // API only supports filtering by username for now
-                if (filter.userName) {
-                    res.q = filter.userName;
-                }
-
-                return res;
-            };
-
-            var toIdFilters = function (id) {
-                if (!id) {
-                    return '';
-                }
-
-                id = Array.isArray(id) ? id : [id];
-                return 'id=' + id.join('&id=');
-            };
-
-            var getFilters = [
-                'account=' + getOptions.account,
+            const query = filter.userName ? { q: filter.userName } : {}; // API only supports filtering by username
+            const params = [
+                'account=' + httpOptions.account,
                 toIdFilters(filter.id),
-                toQueryFormat(toQFilter(filter))
+                toQueryFormat(query)
             ].join('&');
 
             // special case for queries with large number of ids
             // make it as a post with GET semantics
             var threshold = 30;
             if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
-                getOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
-                return http.post({ id: filter.id }, getOptions);
+                httpOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
+                return http.post({ id: filter.id }, httpOptions);
             } else {
-                return http.get(getFilters, getOptions);
+                return http.get(params, httpOptions);
             }
         },
 
@@ -143,13 +115,24 @@ module.exports = function (config) {
         * @param {object} options (Optional) Overrides for configuration options.
         * @return {Promise}
         */
-
         getById: function (userId, options) {
             return publicAPI.get({ id: userId }, options);
+        },
+
+
+        /**
+        * Upload list of users to current account
+        * @param {object[]} userList Array of user objects to 
+        * @param {object} options
+        * @returns {Promise}
+        */
+        uploadUsers: function (userList, options) {
+            const httpOptions = $.extend(true, {}, serviceOptions, options);
+            return http.post(userList, httpOptions);
         }
     };
 
     $.extend(this, publicAPI);
-};
+}
 
 
