@@ -46,11 +46,10 @@ export default function UserAPIAdapter(config) {
         transport: {}
     };
 
-    const serviceOptions = getDefaultOptions(defaults, config, { apiEndpont: API_ENDPOINT });
+    const serviceOptions = getDefaultOptions(defaults, config, { apiEndpoint: API_ENDPOINT });
     const urlConfig = getURLConfig(serviceOptions);
     const http = new TransportFactory(serviceOptions.transport);
-
-    var publicAPI = {
+    const publicAPI = {
 
         /**
         * Retrieve details about particular end users in your team, based on user name or user id.
@@ -124,11 +123,38 @@ export default function UserAPIAdapter(config) {
         * Upload list of users to current account
         * @param {object[]} userList Array of user objects to 
         * @param {object} options
-        * @returns {Promise}
+        * @returns {JQuery.Promise}
         */
         uploadUsers: function (userList, options) {
+            if (!userList || !Array.isArray(userList)) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: userList
+                }).promise();
+            }
+
             const httpOptions = $.extend(true, {}, serviceOptions, options);
-            return http.post(userList, httpOptions);
+            const requiredFields = ['userName', 'password', 'firstName', 'lastName'];
+
+            const sortedUsers = userList.reduce((accum, user)=> {
+                const missingRequiredFields = requiredFields.filter((field)=> user[field] === undefined);
+                if (missingRequiredFields.length) {
+                    accum.invalid.push({ user: user, missingFields: missingRequiredFields });
+                }
+                if (!user.account) {
+                    user.account = httpOptions.account;
+                }
+                accum.valid.push(user);
+                return accum;
+            }, { valid: [], invalid: [] });
+
+            if (sortedUsers.invalid.length) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: sortedUsers.invalid
+                }).promise();
+            }
+            return http.post(sortedUsers.valid, httpOptions);
         }
     };
 
