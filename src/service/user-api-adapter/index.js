@@ -138,6 +138,8 @@ export default function UserAPIAdapter(config) {
 
             const sortedUsers = userList.reduce((accum, user)=> {
                 const missingRequiredFields = requiredFields.filter((field)=> user[field] === undefined);
+                const account = user.account || httpOptions.account;
+                if (!account) missingRequiredFields.push(account);
                 if (missingRequiredFields.length) {
                     accum.invalid.push({ user: user, missingFields: missingRequiredFields });
                 }

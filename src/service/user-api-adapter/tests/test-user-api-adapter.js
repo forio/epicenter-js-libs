@@ -115,12 +115,33 @@ describe('User API Service', function () {
             });
         });
         describe('Valid Users', ()=> {
-            it('should do pass whitelisted POST parameters', ()=> {
-                // return createUserAdapter().uploadUsers([{ userName: 'foo' }]).then(()=> {
-                //     const req = server.requests.pop();
-                //     expect(req.method.toUpperCase()).to.equal('POST');
-                //     expect(req.url).to.equal(baseURL);
-                // });
+            it('should add account from url options if not provided', ()=> {
+                const successSpy = sinon.spy();
+                const failSpy = sinon.spy();
+                const userList = [
+                    { userName: 'a', password: 'a', firstName: 'a', lastName: 'a' },
+                    { userName: 'b', password: 'b', firstName: 'b', lastName: 'b' },
+                ];
+                const userListWithAccount = userList.map((u)=> ($.extend({}, u, { account: account })));
+                return createUserAdapter().uploadUsers(userList).then(successSpy).catch(failSpy).then(()=> {
+                    expect(failSpy).to.not.have.been.called;
+                    expect(successSpy).to.have.been.calledOnce;
+
+                    const req = server.requests.pop();
+                    expect(req.requestBody).to.equal(JSON.stringify(userListWithAccount));
+                });
+            });
+            it('should throw an error if account is not guessable', ()=> {
+                const successSpy = sinon.spy();
+                const failSpy = sinon.spy();
+                const userList = [
+                    { userName: 'a', password: 'a', firstName: 'a', lastName: 'a' },
+                    { userName: 'b', password: 'b', firstName: 'b', lastName: 'b' },
+                ];
+                return createUserAdapter({ account: null }).uploadUsers(userList).then(successSpy).catch(failSpy).then(()=> {
+                    expect(successSpy).to.not.have.been.called;
+                    expect(failSpy).to.have.been.calledOnce;
+                });
             });
         });
     });
