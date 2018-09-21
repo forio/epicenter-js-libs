@@ -67,7 +67,7 @@ describe('User API Service', function () {
             });
         });
     });
-    describe.only('#uploadUsers', ()=> {
+    describe('#uploadUsers', ()=> {
         it('should do a POST to the right URL', ()=> {
             return createUserAdapter().uploadUsers([{ userName: 'foo', password: 'bar', firstName: 'X', lastName: 'Y' }]).then(()=> {
                 const req = server.requests.pop();

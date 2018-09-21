@@ -31,7 +31,7 @@
 */
 
 var AuthAdapter = require('service/auth-api-service');
-var MemberAdapter = require('service/member-api-adapter');
+var MemberAdapter = require('service/member-api-adapter').default;
 var GroupService = require('service/group-api-service').default;
 var SessionManager = require('store/session-manager');
 var _pick = require('util/object-util').pick;

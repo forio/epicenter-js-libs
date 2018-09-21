@@ -6,7 +6,7 @@ chai.use(require('sinon-chai'));
 
 const { expect } = chai;
 
-describe('Member API Service', function () {
+describe.only('Member API Service', function () {
     var server;
     var cookieDummy = {
         get: function () {
