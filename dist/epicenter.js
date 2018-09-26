@@ -223,6 +223,71 @@ module.exports = SessionManager;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+/* Inherit from a class (using prototype borrowing)
+*/
+
+
+function inherit(C, P) {
+    var F = function () {};
+    F.prototype = P.prototype;
+    C.prototype = new F();
+    C.__super = P.prototype;
+    C.prototype.constructor = C;
+}
+
+/**
+* Shallow copy of an object
+* @param {Object} dest object to extend
+* @return {Object} extended object
+*/
+var extend = function (dest /*, var_args*/) {
+    var obj = Array.prototype.slice.call(arguments, 1);
+    var current;
+    for (var j = 0; j < obj.length; j++) {
+        if (!(current = obj[j])) {
+            //eslint-disable-line
+            continue;
+        }
+
+        // do not wrap inner in dest.hasOwnProperty or bad things will happen
+        for (var key in current) {
+            //eslint-disable-line
+            dest[key] = current[key];
+        }
+    }
+
+    return dest;
+};
+
+module.exports = function (base, props, staticProps) {
+    var parent = base;
+    var child;
+
+    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
+        return parent.apply(this, arguments);
+    };
+
+    // add static properties to the child constructor function
+    extend(child, parent, staticProps);
+
+    // associate prototype chain
+    inherit(child, parent);
+
+    // add instance properties
+    if (props) {
+        extend(child.prototype, props);
+    }
+
+    // done
+    return child;
+};
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -316,135 +381,7 @@ var ConfigService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ConfigService);
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
-/* Inherit from a class (using prototype borrowing)
-*/
-
-
-function inherit(C, P) {
-    var F = function () {};
-    F.prototype = P.prototype;
-    C.prototype = new F();
-    C.__super = P.prototype;
-    C.prototype.constructor = C;
-}
-
-/**
-* Shallow copy of an object
-* @param {Object} dest object to extend
-* @return {Object} extended object
-*/
-var extend = function (dest /*, var_args*/) {
-    var obj = Array.prototype.slice.call(arguments, 1);
-    var current;
-    for (var j = 0; j < obj.length; j++) {
-        if (!(current = obj[j])) {
-            //eslint-disable-line
-            continue;
-        }
-
-        // do not wrap inner in dest.hasOwnProperty or bad things will happen
-        for (var key in current) {
-            //eslint-disable-line
-            dest[key] = current[key];
-        }
-    }
-
-    return dest;
-};
-
-module.exports = function (base, props, staticProps) {
-    var parent = base;
-    var child;
-
-    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
-        return parent.apply(this, arguments);
-    };
-
-    // add static properties to the child constructor function
-    extend(child, parent, staticProps);
-
-    // associate prototype chain
-    inherit(child, parent);
-
-    // add instance properties
-    if (props) {
-        extend(child.prototype, props);
-    }
-
-    // done
-    return child;
-};
-
-/***/ }),
 /* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
-/* harmony export (immutable) */ __webpack_exports__["omit"] = omit;
-/* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
-/* harmony export (immutable) */ __webpack_exports__["ensureKeysPresent"] = ensureKeysPresent;
-/**
- * Return selected keys from obj
- * 
- * @param {object} obj
- * @param {string[]} keys
- * @return {object}
- */
-function pick(obj, keys) {
-    var res = {};
-    for (var p in obj) {
-        if (keys.indexOf(p) !== -1) {
-            res[p] = obj[p];
-        }
-    }
-    return res;
-}
-
-/**
- * Omits selected keys from obj
- * 
- * @param {object} obj
- * @param {string[]} keys
- * @return {object}
- */
-function omit(obj, keys) {
-    keys.forEach(function (key) {
-        delete obj[key];
-    });
-    return obj;
-}
-
-function isEmpty(value) {
-    return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
-}
-
-/**
- * Confirms presence of keys or throws error
- * 
- * @param {Object} obj
- * @param {string[]} keysList
- * @param {string} [context] Prefix to add to error message
- * @throws {Error}
- * @return {boolean}
- */
-function ensureKeysPresent(obj, keysList, context) {
-    keysList.forEach(function (key) {
-        if (obj[key] === null || obj[key] === undefined) {
-            throw new Error((context || '') + ' Missing required parameter \'' + key + '\'\' in ' + JSON.stringify(obj) + ' ');
-        }
-    });
-    return true;
-}
-
-/***/ }),
-/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -452,7 +389,7 @@ function ensureKeysPresent(obj, keysList, context) {
 /* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
 /* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(15);
@@ -515,6 +452,69 @@ function getHTTPTransport(transportOptions, overrides) {
     var mergedOptions = $.extend(true, {}, transportOptions, overrides);
     var http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](mergedOptions);
     return http;
+}
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
+/* harmony export (immutable) */ __webpack_exports__["omit"] = omit;
+/* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
+/* harmony export (immutable) */ __webpack_exports__["ensureKeysPresent"] = ensureKeysPresent;
+/**
+ * Return selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+function pick(obj, keys) {
+    var res = {};
+    for (var p in obj) {
+        if (keys.indexOf(p) !== -1) {
+            res[p] = obj[p];
+        }
+    }
+    return res;
+}
+
+/**
+ * Omits selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+function omit(obj, keys) {
+    keys.forEach(function (key) {
+        delete obj[key];
+    });
+    return obj;
+}
+
+function isEmpty(value) {
+    return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
+}
+
+/**
+ * Confirms presence of keys or throws error
+ * 
+ * @param {Object} obj
+ * @param {string[]} keysList
+ * @param {string} [context] Prefix to add to error message
+ * @throws {Error}
+ * @return {boolean}
+ */
+function ensureKeysPresent(obj, keysList, context) {
+    keysList.forEach(function (key) {
+        if (obj[key] === null || obj[key] === undefined) {
+            throw new Error((context || '') + ' Missing required parameter \'' + key + '\'\' in ' + JSON.stringify(obj) + ' ');
+        }
+    });
+    return true;
 }
 
 /***/ }),
@@ -720,7 +720,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["normalizeOperations"] = normalizeOperations;
 /* harmony export (immutable) */ __webpack_exports__["splitGetFactory"] = splitGetFactory;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__query_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(5);
 /**
  * Utilities for working with the run service
  */
@@ -731,7 +731,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 var MAX_URL_LENGTH = 2048;
 
 function extractValidRunParams(params) {
-    var validParams = ['model', 'scope', 'files', 'ephemeral', 'cinFiles'];
+    var validParams = ['model', 'sensitivityMode', 'scope', 'files', 'ephemeral', 'cinFiles'];
     return Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(params, validParams);
 }
 
@@ -1008,7 +1008,7 @@ function splitGetFactory(httpOptions) {
 
 
 
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(3).default;
 
 var _require = __webpack_require__(6),
     toMatrixFormat = _require.toMatrixFormat;
@@ -1563,8 +1563,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(4);
 /**
  * ## World API Adapter
  *
@@ -2303,7 +2303,7 @@ function WorldAPIAdapter(config) {
 
 
 var Base = __webpack_require__(12);
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 
 /**
 * ## Conditional Creation Strategy
@@ -2393,7 +2393,7 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 var Base = {};
 
 // Interface that all strategies need to implement
@@ -2700,10 +2700,10 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 */
 
 var AuthAdapter = __webpack_require__(28);
-var MemberAdapter = __webpack_require__(29);
+var MemberAdapter = __webpack_require__(29).default;
 var GroupService = __webpack_require__(30).default;
 var SessionManager = __webpack_require__(1);
-var _pick = __webpack_require__(4).pick;
+var _pick = __webpack_require__(5).pick;
 var objectAssign = __webpack_require__(15);
 
 var atob = window.atob || __webpack_require__(47).atob;
@@ -3086,8 +3086,8 @@ module.exports = AuthManager;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__channel_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
@@ -3529,7 +3529,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(4);
 /**
  * 
  * ## Consensus Service
@@ -3778,7 +3778,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_service_run_api_service__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_managers_key_names__);
 /**
@@ -4042,7 +4042,7 @@ module.exports = {"version":"v2"}
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _require = __webpack_require__(4),
+var _require = __webpack_require__(5),
     omit = _require.omit;
 
 var _require2 = __webpack_require__(6),
@@ -4351,7 +4351,7 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(3).default;
 var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(1);
 
@@ -4631,7 +4631,7 @@ module.exports = function (config) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(17);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4992,7 +4992,7 @@ DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a"
 
 
 
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(3).default;
 var TransportFactory = __webpack_require__(0).default;
 
 module.exports = function (config) {
@@ -5098,9 +5098,14 @@ module.exports = function (config) {
 
 /***/ }),
 /* 29 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = MemberAPIService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__service_utils__ = __webpack_require__(4);
 /**
  *
  * ## Member API Adapter
@@ -5109,20 +5114,18 @@ module.exports = function (config) {
  *
  * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
  *
- *      var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+ *      const ma = new F.service.Member({ token: 'user-or-project-access-token' });
  *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
  *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
  */
 
 
 
-var ConfigService = __webpack_require__(2).default;
-var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(1);
-var _pick = __webpack_require__(4).pick;
-var apiEndpoint = 'member/local';
 
-module.exports = function (config) {
+
+var API_ENDPOINT = 'member/local';
+
+function MemberAPIService(config) {
     var defaults = {
         /**
          * Epicenter user id. Defaults to a blank string.
@@ -5142,20 +5145,10 @@ module.exports = function (config) {
          */
         transport: {}
     };
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
 
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
-    });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    var http = new TransportFactory(transportOptions, serviceOptions);
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
 
     var getFinalParams = function (params) {
         if (typeof params === 'object') {
@@ -5166,7 +5159,7 @@ module.exports = function (config) {
 
     var patchUserActiveField = function (params, active, options) {
         var httpOptions = $.extend(true, serviceOptions, options, {
-            url: urlConfig.getAPIPath(apiEndpoint) + params.groupId + '/' + params.userId
+            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + '/' + params.userId
         });
 
         return http.patch({ active: active }, httpOptions);
@@ -5181,10 +5174,10 @@ module.exports = function (config) {
         *
         * **Example**
         *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
         *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
         *           .then(function(memberships){
-        *               for (var i=0; i<memberships.length; i++) {
+        *               for (const i=0; i<memberships.length; i++) {
         *                   console.log(memberships[i].groupId);
         *               }
         *           });
@@ -5193,9 +5186,9 @@ module.exports = function (config) {
         *
         * **Parameters**
         * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
         */
-
         getGroupsForUser: function (params, options) {
             options = options || {};
             var httpOptions = $.extend(true, serviceOptions, options);
@@ -5205,8 +5198,30 @@ module.exports = function (config) {
                 throw new Error('No userId specified.');
             }
 
-            var getParms = isString ? { userId: params } : _pick(objParams, 'userId');
+            var getParms = isString ? { userId: params } : Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(objParams, ['userId']);
             return http.get(getParms, httpOptions);
+        },
+
+        /**
+         * @param {string[]} userlist list of users to add to group
+         * @param {string} [groupId] Group to add users to. Pulls current group from session if not provided
+         * @param {object} [options] Overrides for configuration options.
+         * @returns {JQuery.Promise}
+         */
+        addUsersToGroup: function (userlist, groupId, options) {
+            var httpOptions = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["b" /* getDefaultOptions */])(serviceOptions, options, { groupId: groupId });
+            if (!httpOptions.groupId) {
+                throw new Error('addUsersToGroup: No group provided, and cannot retrieve from session');
+            }
+            if (!userlist || !Array.isArray(userlist)) {
+                throw new Error('addUsersToGroup: No userlist provided. Provide a list of userids to upload');
+            }
+
+            var params = userlist.map(function (u) {
+                return $.isPlainObject(u) ? u : { userId: u };
+            });
+            httpOptions.url = '' + urlConfig.getAPIPath(API_ENDPOINT) + httpOptions.groupId;
+            return http.post(params, httpOptions);
         },
 
         /**
@@ -5214,10 +5229,10 @@ module.exports = function (config) {
         *
         * **Example**
         *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
         *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
         *           .then(function(group){
-        *               for (var i=0; i<group.members.length; i++) {
+        *               for (const i=0; i<group.members.length; i++) {
         *                   console.log(group.members[i].userName);
         *               }
         *           });
@@ -5226,8 +5241,8 @@ module.exports = function (config) {
         *
         * **Parameters**
         * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
         */
         getGroupDetails: function (params, options) {
             options = options || {};
@@ -5238,7 +5253,7 @@ module.exports = function (config) {
             }
 
             var groupId = isString ? params : objParams.groupId;
-            var httpOptions = $.extend(true, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupId });
+            var httpOptions = $.extend(true, serviceOptions, options, { url: urlConfig.getAPIPath(API_ENDPOINT) + groupId });
 
             return http.get({}, httpOptions);
         },
@@ -5248,7 +5263,7 @@ module.exports = function (config) {
         *
         * **Example**
         *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
         *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
@@ -5256,8 +5271,8 @@ module.exports = function (config) {
         * @param {object} params The end user and group information.
         * @param {string} params.userId The id of the end user to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
         */
         makeUserActive: function (params, options) {
             return patchUserActiveField(params, true, options);
@@ -5268,7 +5283,7 @@ module.exports = function (config) {
         *
         * **Example**
         *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
         *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
@@ -5276,8 +5291,8 @@ module.exports = function (config) {
         * @param {object} params The end user and group information.
         * @param {string} params.userId The id of the end user to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
         */
         makeUserInactive: function (params, options) {
             return patchUserActiveField(params, false, options);
@@ -5285,7 +5300,7 @@ module.exports = function (config) {
     };
 
     $.extend(this, publicAPI);
-};
+}
 
 /***/ }),
 /* 30 */
@@ -5293,7 +5308,7 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
@@ -5620,7 +5635,7 @@ module.exports = Channel;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /**
  *
@@ -5875,9 +5890,9 @@ var apiEndpoint = 'presence';
  *
  */
 
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(3).default;
 var TransportFactory = __webpack_require__(0).default;
-var _pick = __webpack_require__(4).pick;
+var _pick = __webpack_require__(5).pick;
 var SessionManager = __webpack_require__(1);
 var apiEndpoint = 'model/state';
 
@@ -6000,7 +6015,7 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -6122,7 +6137,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(4);
 /**
  * 
  * ## Consensus Group Service
@@ -6363,7 +6378,7 @@ module.exports = strategyManager;
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 
 var _require = __webpack_require__(7),
     injectFiltersFromSession = _require.injectFiltersFromSession,
@@ -6769,13 +6784,13 @@ if (!window.SKIP_ENV_LOAD) {
 
 F.util.query = __webpack_require__(6);
 F.util.run = __webpack_require__(8);
-F.util.classFrom = __webpack_require__(3);
+F.util.classFrom = __webpack_require__(2);
 
 F.factory.Transport = __webpack_require__(0).default;
 F.transport.Ajax = __webpack_require__(22);
 
 F.service.URL = __webpack_require__(13);
-F.service.Config = __webpack_require__(2).default;
+F.service.Config = __webpack_require__(3).default;
 F.service.Run = __webpack_require__(9);
 F.service.File = __webpack_require__(45);
 F.service.Variables = __webpack_require__(23);
@@ -6783,8 +6798,8 @@ F.service.Data = __webpack_require__(27).default;
 F.service.Auth = __webpack_require__(28);
 F.service.World = __webpack_require__(10).default;
 F.service.State = __webpack_require__(33);
-F.service.User = __webpack_require__(51);
-F.service.Member = __webpack_require__(29);
+F.service.User = __webpack_require__(51).default;
+F.service.Member = __webpack_require__(29).default;
 F.service.Asset = __webpack_require__(52);
 F.service.Group = __webpack_require__(30).default;
 F.service.Introspect = __webpack_require__(24);
@@ -6849,7 +6864,7 @@ module.exports = envLoad;
 "use strict";
 
 
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(3).default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
@@ -6915,7 +6930,7 @@ module.exports = optionUtils;
  *       });
  */
 
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(3).default;
 var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(1);
 
@@ -7104,7 +7119,7 @@ module.exports = function (config) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(4);
 
 
 
@@ -7523,7 +7538,7 @@ module.exports = ChannelManager;
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(5);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 
@@ -7696,9 +7711,14 @@ var TOPICS = {
 
 /***/ }),
 /* 51 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = UserAPIAdapter;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(6);
 
 /**
 * ## User API Adapter
@@ -7719,14 +7739,13 @@ var TOPICS = {
 * The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
 */
 
-var ConfigService = __webpack_require__(2).default;
-var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(1);
 
-var _require = __webpack_require__(6),
-    toQueryFormat = _require.toQueryFormat;
 
-module.exports = function (config) {
+
+
+function UserAPIAdapter(config) {
+    var API_ENDPOINT = 'user';
+
     var defaults = {
 
         /**
@@ -7748,21 +7767,9 @@ module.exports = function (config) {
         transport: {}
     };
 
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath('user')
-    });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-
-    var http = new TransportFactory(transportOptions);
-
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
     var publicAPI = {
 
         /**
@@ -7780,46 +7787,31 @@ module.exports = function (config) {
         *
         * **Parameters**
         * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
-
         get: function (filter, options) {
-            options = options || {};
             filter = filter || {};
 
-            var getOptions = $.extend(true, {}, serviceOptions, options);
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            function toIdFilters(id) {
+                if (!id) return '';
 
-            var toQFilter = function (filter) {
-                var res = {};
+                var qs = Array.isArray(id) ? id : [id];
+                return 'id=' + qs.join('&id=');
+            }
 
-                // API only supports filtering by username for now
-                if (filter.userName) {
-                    res.q = filter.userName;
-                }
-
-                return res;
-            };
-
-            var toIdFilters = function (id) {
-                if (!id) {
-                    return '';
-                }
-
-                id = Array.isArray(id) ? id : [id];
-                return 'id=' + id.join('&id=');
-            };
-
-            var getFilters = ['account=' + getOptions.account, toIdFilters(filter.id), toQueryFormat(toQFilter(filter))].join('&');
+            var query = filter.userName ? { q: filter.userName } : {}; // API only supports filtering by username
+            var params = ['account=' + httpOptions.account, toIdFilters(filter.id), Object(__WEBPACK_IMPORTED_MODULE_2_util_query_util__["toQueryFormat"])(query)].join('&');
 
             // special case for queries with large number of ids
             // make it as a post with GET semantics
             var threshold = 30;
             if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
-                getOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
-                return http.post({ id: filter.id }, getOptions);
+                httpOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
+                return http.post({ id: filter.id }, httpOptions);
             } else {
-                return http.get(getFilters, getOptions);
+                return http.get(params, httpOptions);
             }
         },
 
@@ -7836,17 +7828,58 @@ module.exports = function (config) {
         *
         * **Parameters**
         * @param {string} userId The user id for the end user in your team.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
-
         getById: function (userId, options) {
             return publicAPI.get({ id: userId }, options);
+        },
+
+        /**
+        * Upload list of users to current account
+        * @param {object[]} userList Array of user objects to 
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        uploadUsers: function (userList, options) {
+            if (!userList || !Array.isArray(userList)) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: userList
+                }).promise();
+            }
+
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var requiredFields = ['userName', 'password', 'firstName', 'lastName'];
+
+            var sortedUsers = userList.reduce(function (accum, user) {
+                var missingRequiredFields = requiredFields.filter(function (field) {
+                    return user[field] === undefined;
+                });
+                var account = user.account || httpOptions.account;
+                if (!account) missingRequiredFields.push(account);
+                if (missingRequiredFields.length) {
+                    accum.invalid.push({ user: user, missingFields: missingRequiredFields });
+                }
+                if (!user.account) {
+                    user.account = httpOptions.account;
+                }
+                accum.valid.push(user);
+                return accum;
+            }, { valid: [], invalid: [] });
+
+            if (sortedUsers.invalid.length) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: sortedUsers.invalid
+                }).promise();
+            }
+            return http.post(sortedUsers.valid, httpOptions);
         }
     };
 
     $.extend(this, publicAPI);
-};
+}
 
 /***/ }),
 /* 52 */
@@ -7909,9 +7942,9 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(3).default;
 var TransportFactory = __webpack_require__(0).default;
-var _pick = __webpack_require__(4).pick;
+var _pick = __webpack_require__(5).pick;
 var SessionManager = __webpack_require__(1);
 
 var apiEndpoint = 'asset';
@@ -8988,8 +9021,8 @@ function reduceActions(actions, startTime, currentTime) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(4);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9109,7 +9142,7 @@ var PasswordService = function () {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = ProjectAPIService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /**
  *
@@ -9480,7 +9513,7 @@ module.exports = ScenarioManager;
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
@@ -9526,7 +9559,7 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
@@ -9556,7 +9589,7 @@ module.exports = Strategy;
  */
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 
 var IdentityStrategy = __webpack_require__(12);
 var WorldApiAdapter = __webpack_require__(10).default;
@@ -9642,7 +9675,7 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
@@ -9684,7 +9717,7 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
@@ -9727,7 +9760,7 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 var IdentityStrategy = __webpack_require__(12);
 
 var _require = __webpack_require__(7),
@@ -9857,7 +9890,7 @@ module.exports = function (options) {
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 var injectFiltersFromSession = __webpack_require__(7).injectFiltersFromSession;
 var injectScopeFromSession = __webpack_require__(7).injectScopeFromSession;
 

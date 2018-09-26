@@ -10,7 +10,7 @@ var account = 'forio';
 var project = 'js-libs';
 var baseURL = (new URLService({ accountPath: account, projectPath: project })).getAPIPath('member/local');
 
-describe.only('Member API Service', function () {
+describe('Member API Service', function () {
     var server;
     var cookieDummy = {
         get: function () {
@@ -118,7 +118,7 @@ describe.only('Member API Service', function () {
         });
     });
 
-    describe.only('#addUsersToGroup', ()=> {
+    describe('#addUsersToGroup', ()=> {
         it('should throw an error if no userid provided', ()=> {
             const fn = ()=> createMemberAdapter().addUsersToGroup();
             expect(fn).to.throw(/addUsersToGroup/);
