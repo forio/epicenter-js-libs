@@ -121,7 +121,8 @@ export default function UserAPIAdapter(config) {
 
         /**
         * Upload list of users to current account
-        * @param {object[]} userList Array of user objects to 
+        * 
+        * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
         */

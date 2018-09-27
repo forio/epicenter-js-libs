@@ -4,10 +4,11 @@ chai.use(require('sinon-chai'));
 
 import UserManager, { parseUsers } from '../index';
 
+const account = 'myaccount';
 describe('User Manager', ()=> {
     function makeManager() {
         const um = new UserManager({
-            account: 'myaccount',
+            account: account,
             project: 'myproject'
         });
         return um;
@@ -17,7 +18,7 @@ describe('User Manager', ()=> {
     before(function () {
         server = sinon.fakeServer.create();
         server.respondWith('POST', /(.*)\/user\/(.*)/, function (xhr) {
-            const buckets = [[], [], [], []];
+            const buckets = [[], [], []];
             const body = JSON.parse(xhr.requestBody);
             body.map((u)=> (Object.assign(u, { id: u.userName }))).forEach((user, index)=> {
                 const bucket = index % buckets.length;
@@ -27,7 +28,7 @@ describe('User Manager', ()=> {
                 saved: buckets[0],
                 duplicate: buckets[1],
                 errors: buckets[2],
-                updated: buckets[3],
+                updated: [],
             }));
         });
         server.respondWith('POST', /(.*)\/member\/local\/somegroup/, function (xhr, id) {
@@ -151,15 +152,52 @@ describe('User Manager', ()=> {
         });
         it('should call member api with saved users', ()=> {
             const users = [
-                ['jmith', 'john', 'smith', 'a'].join(','),
-                ['jmith2', 'john2', 'smith2', 'a2'].join(','),
-                ['jmith3', 'john3', 'smith3', 'a3'].join(','),
-                ['jmith4', 'john4', 'smith4', 'a4'].join(','),
+                ['jmith', 'john', 'smith', 'a'].join(','), //saved
+                ['jmith2', 'john2', 'smith2', 'a2'].join(','), //duplicate
+                ['jmith3', 'john3', 'smith3', 'a3'].join(','), //errors
+                ['jmith4', 'john4', 'smith4', 'a4'].join(','), //saved
             ].join('\n');
             const um = makeManager();
             return um.uploadUsersToGroup(users, 'somegroup').then((r)=> {
                 const memberReq = server.requests[1];
                 expect(memberReq.requestBody).to.equal(JSON.stringify([{ userId: 'jmith' }, { userId: 'jmith4' }, { userId: 'jmith2' }]));
+            });
+        });
+        it('should return the users as promise response', ()=> {
+            function toOP(userStr, account) {
+                const lines = userStr.split('\n');
+                return lines.map((line)=> {
+                    const items = line.split(',');
+                    const obj = ['userName', 'firstName', 'lastName', 'password'].reduce((accum, field, index)=> {
+                        accum[field] = items[index];
+                        return accum;
+                    }, { id: null, account: null, userName: null });
+                    obj.id = obj.userName;
+                    obj.account = account;
+                    return obj;
+                });
+            }
+            const users = [
+                ['jmith', 'john', 'smith', 'a'].join(','), //saved
+                ['jmith2', 'john2', 'smith2', 'a2'].join(','), //dupe
+                ['jmith3', 'john3', 'smith3', 'a3'].join(','), //error
+                ['jmith4', 'john4', 'smith4', 'a4'].join(','), //saved
+            ].join('\n');
+            const um = makeManager();
+            return um.uploadUsersToGroup(users, 'somegroup').then((r)=> {
+                const opFormat = toOP(users, account);
+                expect(r).to.eql({
+                    created: [
+                        opFormat[0],
+                        opFormat[3],
+                    ],
+                    duplicates: [
+                        opFormat[1],
+                    ],
+                    errors: [
+                        Object.assign(opFormat[2], { reason: 'API_REJECT' })
+                    ],
+                });
             });
         });
         it('should handle group expiry messages', ()=> {

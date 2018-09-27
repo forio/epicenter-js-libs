@@ -70,7 +70,7 @@ export default class UserManager {
     }
 
     /**
-     *  Bulk creates user accounts and adds them to a group. Input is typically the contents of a textarea with user data.
+     *  Bulk creates user accounts and adds them to a group. Input userlist is typically the string contents of a textarea with user data.
      * 
      * @param {string} userList list of users seperated by newlines, with each line containing email, firstname, lastname, password separated by tabs/commas
      * @param {string} [groupId] id of group to upload to. Defaults to getting current group from session
@@ -114,7 +114,7 @@ export default class UserManager {
                 });
             });
             userRes.errors = [].concat(userWithErrors, usersToAdd.invalid);
-            return memberService.addUsersToGroup(validIds, groupId).catch(function handleMemberError(memberXHR) {
+            return memberService.addUsersToGroup(validIds, groupId).then(()=> userRes, function handleMemberError(memberXHR) {
                 const memberErr = memberXHR.responseJSON;
                 const isGroupLimitErr = memberErr && memberErr.message && memberErr.message.match(/exceeded your group limit\(([0-9]+)\)/i);
                 if (!isGroupLimitErr) {
