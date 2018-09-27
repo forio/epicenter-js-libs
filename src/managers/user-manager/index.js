@@ -1,5 +1,6 @@
 import UserService from 'service/user-api-adapter';
 import MemberService from 'service/member-api-adapter';
+import AuthManager from 'managers/auth-manager';
 
 import { getDefaultOptions } from 'service/service-utils';
 
@@ -76,11 +77,21 @@ export default class UserManager {
      * @param {object} [options]  overrides for service options
      * @returns {JQuery.Promise}
      */
-    uploadUsers(userList, groupId, options) {
+    uploadUsersToGroup(userList, groupId, options) {
         if (!userList || !userList.trim()) {
-            return $.Deferred().reject({ error: 'No users specified to upload' }).promise();
+            return $.Deferred().reject({ error: 'uploadUsersToGroup: No users specified to upload.' }).promise();
         }
         const serviceOptions = getDefaultOptions(this.serviceOptions, options);
+        if (!groupId) {
+            const am = new AuthManager(serviceOptions);
+            const session = am.getCurrentUserSessionInfo();
+            groupId = session.groupId;
+
+            if (!groupId) {
+                return $.Deferred().reject({ error: 'uploadUsersToGroup: No group specified, and no session available to pick from.' }).promise();
+            }
+        }
+
         const usersToAdd = parseUsers(userList.trim());
         if (!usersToAdd.valid.length) {
             return $.Deferred().resolve({
@@ -90,6 +101,7 @@ export default class UserManager {
                 saved: []
             }).promise();
         }
+
         const userService = new UserService(serviceOptions);
         const memberService = new MemberService(serviceOptions);
         return userService.uploadUsers(usersToAdd.valid).then((userRes)=> {

@@ -111,12 +111,28 @@ describe('User Manager', ()=> {
             const sucessSpy = sinon.spy();
             const failSpy = sinon.spy((e)=> e);
             const um = makeManager();
-            return um.uploadUsers().then(sucessSpy, failSpy).then((r)=> {
+            return um.uploadUsersToGroup().then(sucessSpy, failSpy).then((r)=> {
                 expect(sucessSpy).to.not.have.been.called;
                 expect(failSpy).to.have.been.calledOnce;
 
                 const args = failSpy.getCall(0).args[0];
                 expect(args.error).to.match(/no users/i);
+            });
+        });
+        it('should reject if called without a group id', ()=> {
+            const sucessSpy = sinon.spy();
+            const failSpy = sinon.spy((e)=> e);
+            const um = makeManager();
+            const users = [
+                ['jmith', 'john', 'smith', 'a'].join(','),
+                ['jmith2', 'john2', 'smith2', 'a2'].join(','),
+            ].join('\n');
+            return um.uploadUsersToGroup(users).then(sucessSpy, failSpy).then((r)=> {
+                expect(sucessSpy).to.not.have.been.called;
+                expect(failSpy).to.have.been.calledOnce;
+
+                const args = failSpy.getCall(0).args[0];
+                expect(args.error).to.match(/no group/i);
             });
         });
         it('should call user api with valid users', ()=> {
@@ -125,7 +141,7 @@ describe('User Manager', ()=> {
                 ['jmith2', 'john2', 'smith2', 'a2'].join(','),
             ].join('\n');
             const um = makeManager();
-            return um.uploadUsers(users, 'somegroup').then((r)=> {
+            return um.uploadUsersToGroup(users, 'somegroup').then((r)=> {
                 const userReq = server.requests[0];
                 expect(userReq.requestBody).to.equal(JSON.stringify([
                     { userName: 'jmith', firstName: 'john', lastName: 'smith', password: 'a', account: 'myaccount' },
@@ -141,7 +157,7 @@ describe('User Manager', ()=> {
                 ['jmith4', 'john4', 'smith4', 'a4'].join(','),
             ].join('\n');
             const um = makeManager();
-            return um.uploadUsers(users, 'somegroup').then((r)=> {
+            return um.uploadUsersToGroup(users, 'somegroup').then((r)=> {
                 const memberReq = server.requests[1];
                 expect(memberReq.requestBody).to.equal(JSON.stringify([{ userId: 'jmith' }, { userId: 'jmith4' }, { userId: 'jmith2' }]));
             });
@@ -154,7 +170,7 @@ describe('User Manager', ()=> {
                 ['jmith4', 'john4', 'smith4', 'a4'].join(','), //error
             ].join('\n');
             const um = makeManager();
-            return um.uploadUsers(users, 'groupWithLimit').then((r)=> {
+            return um.uploadUsersToGroup(users, 'groupWithLimit').then((r)=> {
                 expect(r.created.length).to.equal(2);
                 expect(r.errors.length).to.equal(2);
                 expect(r.errors[0].reason).to.equal('API_REJECT');
