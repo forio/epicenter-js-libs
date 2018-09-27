@@ -68,7 +68,7 @@ var F =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 42);
+/******/ 	return __webpack_require__(__webpack_require__.s = 43);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,7 +77,7 @@ var F =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__);
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var transport = (isNode) ? require('./node-http-transport') : require('./ajax-http-transport');
@@ -91,9 +91,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 
 
-var keyNames = __webpack_require__(14);
-var StorageFactory = __webpack_require__(25);
-var optionUtils = __webpack_require__(44);
+var keyNames = __webpack_require__(15);
+var StorageFactory = __webpack_require__(26);
+var optionUtils = __webpack_require__(45);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var EPI_MANAGER_KEY = 'epicenter.token'; //can't be under key-names, or logout will clear this too
@@ -291,8 +291,82 @@ module.exports = function (base, props, staticProps) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
+/* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
+
+
+
+
+
+
+function getApiUrl(apiEndpoint, serviceOptions) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
+    if (serviceOptions.account) {
+        urlConfig.accountPath = serviceOptions.account;
+    }
+    if (serviceOptions.project) {
+        urlConfig.projectPath = serviceOptions.project;
+    }
+    return urlConfig.getAPIPath(apiEndpoint);
+}
+
+/*
+* Gets the default options for a api service.
+* It will merge:
+* - The Session options (Using the Session Manager)
+* - The Authorization Header from the token option
+* - The full url from the endpoint option
+* With the supplied overrides and defaults
+*
+*/
+function getDefaultOptions(defaults) {
+    var rest = Array.prototype.slice.call(arguments, 1);
+    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
+    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
+
+    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
+        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
+    });
+
+    if (serviceOptions.token) {
+        serviceOptions.transport.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+    return serviceOptions;
+}
+
+function getURLConfig(options) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](options).get('server');
+    if (options.account) {
+        urlConfig.accountPath = options.account;
+    }
+    if (options.project) {
+        urlConfig.projectPath = options.project;
+    }
+    return urlConfig;
+}
+function getHTTPTransport(transportOptions, overrides) {
+    var mergedOptions = $.extend(true, {}, transportOptions, overrides);
+    var http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](mergedOptions);
+    return http;
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -379,80 +453,6 @@ var ConfigService = function () {
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (ConfigService);
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
-/* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
-/* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
-
-
-
-
-
-
-function getApiUrl(apiEndpoint, serviceOptions) {
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
-    return urlConfig.getAPIPath(apiEndpoint);
-}
-
-/*
-* Gets the default options for a api service.
-* It will merge:
-* - The Session options (Using the Session Manager)
-* - The Authorization Header from the token option
-* - The full url from the endpoint option
-* With the supplied overrides and defaults
-*
-*/
-function getDefaultOptions(defaults) {
-    var rest = Array.prototype.slice.call(arguments, 1);
-    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
-    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
-
-    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
-        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
-    });
-
-    if (serviceOptions.token) {
-        serviceOptions.transport.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    return serviceOptions;
-}
-
-function getURLConfig(options) {
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](options).get('server');
-    if (options.account) {
-        urlConfig.accountPath = options.account;
-    }
-    if (options.project) {
-        urlConfig.projectPath = options.project;
-    }
-    return urlConfig;
-}
-function getHTTPTransport(transportOptions, overrides) {
-    var mergedOptions = $.extend(true, {}, transportOptions, overrides);
-    var http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](mergedOptions);
-    return http;
-}
 
 /***/ }),
 /* 5 */
@@ -1008,15 +1008,15 @@ function splitGetFactory(httpOptions) {
 
 
 
-var ConfigService = __webpack_require__(3).default;
+var ConfigService = __webpack_require__(4).default;
 
 var _require = __webpack_require__(6),
     toMatrixFormat = _require.toMatrixFormat;
 
 var rutil = __webpack_require__(8);
 var TransportFactory = __webpack_require__(0).default;
-var VariablesService = __webpack_require__(23);
-var IntrospectionService = __webpack_require__(24);
+var VariablesService = __webpack_require__(24);
+var IntrospectionService = __webpack_require__(25);
 var SessionManager = __webpack_require__(1);
 
 module.exports = function (config) {
@@ -1560,11 +1560,11 @@ module.exports = function (config) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldAPIAdapter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(3);
 /**
  * ## World API Adapter
  *
@@ -2415,258 +2415,6 @@ module.exports = classFrom(Base, {
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
-var epiVersion = __webpack_require__(21);
-
-//TODO: urlutils to get host, since no window on node
-var defaults = {
-    host: window.location.host,
-    pathname: window.location.pathname
-};
-
-function getLocalHost(existingFn, host) {
-    var localHostFn;
-    if (existingFn !== undefined) {
-        if (!$.isFunction(existingFn)) {
-            localHostFn = function () {
-                return existingFn;
-            };
-        } else {
-            localHostFn = existingFn;
-        }
-    } else {
-        localHostFn = function () {
-            var isLocal = !host || //phantomjs
-            host === '127.0.0.1' || host.indexOf('local.') === 0 || host.indexOf('ngrok') !== -1 || host.indexOf('localhost') === 0;
-            return isLocal;
-        };
-    }
-    return localHostFn;
-}
-
-var UrlConfigService = function (config) {
-    var envConf = UrlConfigService.defaults;
-
-    if (!config) {
-        config = {};
-    }
-    var configOverrides = $.extend({}, defaults, config);
-    var overrides = $.extend({}, envConf, config);
-    var options = $.extend({}, defaults, overrides);
-
-    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, configOverrides.host);
-
-    var actingHost = config && config.host;
-    if (!actingHost && options.isLocalhost()) {
-        actingHost = 'forio.com';
-    } else {
-        actingHost = options.host;
-    }
-
-    var API_PROTOCOL = 'https';
-    var HOST_API_MAPPING = {
-        'forio.com': 'api.forio.com',
-        'foriodev.com': 'api.epicenter.foriodev.com'
-    };
-
-    var publicExports = {
-        protocol: API_PROTOCOL,
-
-        api: '',
-
-        actingHost: actingHost,
-
-        //TODO: this should really be called 'apihost', but can't because that would break too many things
-        host: function () {
-            var apiHost = HOST_API_MAPPING[actingHost] ? HOST_API_MAPPING[actingHost] : actingHost;
-            return apiHost;
-        }(),
-
-        isCustomDomain: function () {
-            var path = options.pathname.split('/');
-            var pathHasApp = path && path[1] === 'app';
-            return !options.isLocalhost() && !pathHasApp;
-        }(),
-
-        appPath: function () {
-            var path = options.pathname.split('/');
-
-            return path && path[1] || '';
-        }(),
-
-        accountPath: function () {
-            var accnt = '';
-            var path = options.pathname.split('/');
-            if (path && path[1] === 'app') {
-                accnt = path[2];
-            }
-            return accnt;
-        }(),
-
-        projectPath: function () {
-            var prj = '';
-            var path = options.pathname.split('/');
-            if (path && path[1] === 'app') {
-                prj = path[3]; //eslint-disable-line no-magic-numbers
-            }
-            return prj;
-        }(),
-
-        versionPath: function () {
-            var version = epiVersion.version ? epiVersion.version + '/' : '';
-            return version;
-        }(),
-
-        baseURL: function () {
-            var baseURL = this.protocol + '://' + this.host + '/' + this.versionPath;
-            return baseURL;
-        },
-
-        getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data', 'file', 'presence', 'project', 'multiplayer/project'];
-            var apiMapping = {
-                channel: 'channel/subscribe'
-            };
-            var apiEndpoint = apiMapping[api] || api;
-
-            if (apiEndpoint === 'config') {
-                var actualProtocol = window.location.protocol.replace(':', '');
-                var configProtocol = options.isLocalhost() ? this.protocol : actualProtocol;
-                return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
-            }
-            var baseURL = typeof this.baseURL === 'function' ? this.baseURL() : this.baseURL;
-            var apiPath = baseURL + apiEndpoint + '/';
-
-            if (PROJECT_APIS.indexOf(apiEndpoint) !== -1) {
-                apiPath += this.accountPath + '/' + this.projectPath + '/';
-            }
-            return apiPath;
-        }
-    };
-
-    $.extend(publicExports, overrides);
-    return publicExports;
-};
-// This data can be set by external scripts, for loading from an env server for eg;
-UrlConfigService.defaults = {};
-
-module.exports = UrlConfigService;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    EPI_SESSION_KEY: 'epicenterjs.session',
-    STRATEGY_SESSION_KEY: 'epicenter-scenario'
-};
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
-};
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
 /**
 * ## Authorization Manager
 *
@@ -2699,14 +2447,14 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 * If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
 */
 
-var AuthAdapter = __webpack_require__(28);
-var MemberAdapter = __webpack_require__(29).default;
+var AuthAdapter = __webpack_require__(29);
+var MemberAdapter = __webpack_require__(17).default;
 var GroupService = __webpack_require__(30).default;
 var SessionManager = __webpack_require__(1);
 var _pick = __webpack_require__(5).pick;
-var objectAssign = __webpack_require__(15);
+var objectAssign = __webpack_require__(16);
 
-var atob = window.atob || __webpack_require__(47).atob;
+var atob = window.atob || __webpack_require__(48).atob;
 
 var defaults = {
     requiresGroup: true
@@ -3079,19 +2827,477 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 module.exports = AuthManager;
 
 /***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var epiVersion = __webpack_require__(22);
+
+//TODO: urlutils to get host, since no window on node
+var defaults = {
+    host: window.location.host,
+    pathname: window.location.pathname
+};
+
+function getLocalHost(existingFn, host) {
+    var localHostFn;
+    if (existingFn !== undefined) {
+        if (!$.isFunction(existingFn)) {
+            localHostFn = function () {
+                return existingFn;
+            };
+        } else {
+            localHostFn = existingFn;
+        }
+    } else {
+        localHostFn = function () {
+            var isLocal = !host || //phantomjs
+            host === '127.0.0.1' || host.indexOf('local.') === 0 || host.indexOf('ngrok') !== -1 || host.indexOf('localhost') === 0;
+            return isLocal;
+        };
+    }
+    return localHostFn;
+}
+
+var UrlConfigService = function (config) {
+    var envConf = UrlConfigService.defaults;
+
+    if (!config) {
+        config = {};
+    }
+    var configOverrides = $.extend({}, defaults, config);
+    var overrides = $.extend({}, envConf, config);
+    var options = $.extend({}, defaults, overrides);
+
+    overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, configOverrides.host);
+
+    var actingHost = config && config.host;
+    if (!actingHost && options.isLocalhost()) {
+        actingHost = 'forio.com';
+    } else {
+        actingHost = options.host;
+    }
+
+    var API_PROTOCOL = 'https';
+    var HOST_API_MAPPING = {
+        'forio.com': 'api.forio.com',
+        'foriodev.com': 'api.epicenter.foriodev.com'
+    };
+
+    var publicExports = {
+        protocol: API_PROTOCOL,
+
+        api: '',
+
+        actingHost: actingHost,
+
+        //TODO: this should really be called 'apihost', but can't because that would break too many things
+        host: function () {
+            var apiHost = HOST_API_MAPPING[actingHost] ? HOST_API_MAPPING[actingHost] : actingHost;
+            return apiHost;
+        }(),
+
+        isCustomDomain: function () {
+            var path = options.pathname.split('/');
+            var pathHasApp = path && path[1] === 'app';
+            return !options.isLocalhost() && !pathHasApp;
+        }(),
+
+        appPath: function () {
+            var path = options.pathname.split('/');
+
+            return path && path[1] || '';
+        }(),
+
+        accountPath: function () {
+            var accnt = '';
+            var path = options.pathname.split('/');
+            if (path && path[1] === 'app') {
+                accnt = path[2];
+            }
+            return accnt;
+        }(),
+
+        projectPath: function () {
+            var prj = '';
+            var path = options.pathname.split('/');
+            if (path && path[1] === 'app') {
+                prj = path[3]; //eslint-disable-line no-magic-numbers
+            }
+            return prj;
+        }(),
+
+        versionPath: function () {
+            var version = epiVersion.version ? epiVersion.version + '/' : '';
+            return version;
+        }(),
+
+        baseURL: function () {
+            var baseURL = this.protocol + '://' + this.host + '/' + this.versionPath;
+            return baseURL;
+        },
+
+        getAPIPath: function (api) {
+            var PROJECT_APIS = ['run', 'data', 'file', 'presence', 'project', 'multiplayer/project'];
+            var apiMapping = {
+                channel: 'channel/subscribe'
+            };
+            var apiEndpoint = apiMapping[api] || api;
+
+            if (apiEndpoint === 'config') {
+                var actualProtocol = window.location.protocol.replace(':', '');
+                var configProtocol = options.isLocalhost() ? this.protocol : actualProtocol;
+                return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
+            }
+            var baseURL = typeof this.baseURL === 'function' ? this.baseURL() : this.baseURL;
+            var apiPath = baseURL + apiEndpoint + '/';
+
+            if (PROJECT_APIS.indexOf(apiEndpoint) !== -1) {
+                apiPath += this.accountPath + '/' + this.projectPath + '/';
+            }
+            return apiPath;
+        }
+    };
+
+    $.extend(publicExports, overrides);
+    return publicExports;
+};
+// This data can be set by external scripts, for loading from an env server for eg;
+UrlConfigService.defaults = {};
+
+module.exports = UrlConfigService;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    EPI_SESSION_KEY: 'epicenterjs.session',
+    STRATEGY_SESSION_KEY: 'epicenter-scenario'
+};
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+
+/***/ }),
 /* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(48);
+/* harmony export (immutable) */ __webpack_exports__["default"] = MemberAPIService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__service_utils__ = __webpack_require__(3);
+/**
+ *
+ * ## Member API Adapter
+ *
+ * The Member API Adapter provides methods to look up information about end users for your project and how they are divided across groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
+ *
+ * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
+ *
+ *      const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+ *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
+ *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
+ */
+
+
+
+
+
+var API_ENDPOINT = 'member/local';
+
+function MemberAPIService(config) {
+    var defaults = {
+        /**
+         * Epicenter user id. Defaults to a blank string.
+         * @type {string}
+         */
+        userId: undefined,
+
+        /**
+         * Epicenter group id. Defaults to a blank string. Note that this is the group *id*, not the group *name*.
+         * @type {string}
+         */
+        groupId: undefined,
+
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {object}
+         */
+        transport: {}
+    };
+
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
+
+    var getFinalParams = function (params) {
+        if (typeof params === 'object') {
+            return $.extend(true, serviceOptions, params);
+        }
+        return serviceOptions;
+    };
+
+    var patchUserActiveField = function (params, active, options) {
+        var httpOptions = $.extend(true, serviceOptions, options, {
+            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + '/' + params.userId
+        });
+
+        return http.patch({ active: active }, httpOptions);
+    };
+
+    var publicAPI = {
+
+        /**
+        * Retrieve details about all of the group memberships for one end user. The membership details are returned in an array, with one element (group record) for each group to which the end user belongs.
+        *
+        * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
+        *
+        * **Example**
+        *
+        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
+        *           .then(function(memberships){
+        *               for (const i=0; i<memberships.length; i++) {
+        *                   console.log(memberships[i].groupId);
+        *               }
+        *           });
+        *
+        *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
+        *
+        * **Parameters**
+        * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        getGroupsForUser: function (params, options) {
+            options = options || {};
+            var httpOptions = $.extend(true, serviceOptions, options);
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.userId) {
+                throw new Error('No userId specified.');
+            }
+
+            var getParms = isString ? { userId: params } : Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(objParams, ['userId']);
+            return http.get(getParms, httpOptions);
+        },
+
+        /**
+         * @param {string[] | {userId:string}[]} userlist list of users to add to group. [userId1,userId2..] or [{userid: userId},{userId: userId2}...]
+         * @param {string} [groupId] Group to add users to. Pulls current group from session if not provided
+         * @param {object} [options] Overrides for configuration options.
+         * @returns {JQuery.Promise}
+         */
+        addUsersToGroup: function (userlist, groupId, options) {
+            var httpOptions = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["b" /* getDefaultOptions */])(serviceOptions, options, { groupId: groupId });
+            if (!httpOptions.groupId) {
+                throw new Error('addUsersToGroup: No group provided, and cannot retrieve from session');
+            }
+            if (!userlist || !Array.isArray(userlist)) {
+                throw new Error('addUsersToGroup: No userlist provided. Provide a list of userids to upload');
+            }
+
+            var params = userlist.map(function (u) {
+                return $.isPlainObject(u) ? u : { userId: u };
+            });
+            httpOptions.url = '' + urlConfig.getAPIPath(API_ENDPOINT) + httpOptions.groupId;
+            return http.post(params, httpOptions);
+        },
+
+        /**
+        * Retrieve details about one group, including an array of all its members.
+        *
+        * **Example**
+        *
+        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
+        *           .then(function(group){
+        *               for (const i=0; i<group.members.length; i++) {
+        *                   console.log(group.members[i].userName);
+        *               }
+        *           });
+        *
+        *       ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * **Parameters**
+        * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        getGroupDetails: function (params, options) {
+            options = options || {};
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.groupId) {
+                throw new Error('No groupId specified.');
+            }
+
+            var groupId = isString ? params : objParams.groupId;
+            var httpOptions = $.extend(true, serviceOptions, options, { url: urlConfig.getAPIPath(API_ENDPOINT) + groupId });
+
+            return http.get({}, httpOptions);
+        },
+
+        /**
+        * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
+        *
+        * **Example**
+        *
+        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * **Parameters**
+        * @param {object} params The end user and group information.
+        * @param {string} params.userId The id of the end user to make active.
+        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        makeUserActive: function (params, options) {
+            return patchUserActiveField(params, true, options);
+        },
+
+        /**
+        * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
+        *
+        * **Example**
+        *
+        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * **Parameters**
+        * @param {object} params The end user and group information.
+        * @param {string} params.userId The id of the end user to make inactive.
+        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        makeUserInactive: function (params, options) {
+            return patchUserActiveField(params, false, options);
+        }
+    };
+
+    $.extend(this, publicAPI);
+}
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__channel_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(50);
 /**
  * ## Epicenter Channel Manager
  *
@@ -3523,13 +3729,13 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 /* harmony default export */ __webpack_exports__["default"] = (EpicenterChannelManager);
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(3);
 /**
  * 
  * ## Consensus Service
@@ -3744,7 +3950,7 @@ function normalizeActions(actions) {
 });
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3766,12 +3972,12 @@ var STRATEGY = {
 };
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
@@ -3779,7 +3985,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_managers_key_names__);
 /**
 * ## Run Manager
@@ -4033,13 +4239,13 @@ RunManager.strategies = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___de
 /* harmony default export */ __webpack_exports__["default"] = (RunManager);
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = {"version":"v2"}
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _require = __webpack_require__(5),
@@ -4157,7 +4363,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4328,7 +4534,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4351,7 +4557,7 @@ module.exports = function (config) {
 
 
 
-var ConfigService = __webpack_require__(3).default;
+var ConfigService = __webpack_require__(4).default;
 var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(1);
 
@@ -4466,7 +4672,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4478,12 +4684,12 @@ module.exports = function (config) {
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var store = (isNode) ? require('./session-store') : require('./cookie-store');
 
-var store = __webpack_require__(26);
+var store = __webpack_require__(27);
 
 module.exports = store;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4625,15 +4831,15 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(18);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4971,7 +5177,7 @@ DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a"
 /* harmony default export */ __webpack_exports__["default"] = (DataService);
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4992,7 +5198,7 @@ DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a"
 
 
 
-var ConfigService = __webpack_require__(3).default;
+var ConfigService = __webpack_require__(4).default;
 var TransportFactory = __webpack_require__(0).default;
 
 module.exports = function (config) {
@@ -5097,220 +5303,14 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 29 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["default"] = MemberAPIService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__service_utils__ = __webpack_require__(4);
-/**
- *
- * ## Member API Adapter
- *
- * The Member API Adapter provides methods to look up information about end users for your project and how they are divided across groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
- *
- * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
- *
- *      const ma = new F.service.Member({ token: 'user-or-project-access-token' });
- *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
- *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
- */
-
-
-
-
-
-var API_ENDPOINT = 'member/local';
-
-function MemberAPIService(config) {
-    var defaults = {
-        /**
-         * Epicenter user id. Defaults to a blank string.
-         * @type {string}
-         */
-        userId: undefined,
-
-        /**
-         * Epicenter group id. Defaults to a blank string. Note that this is the group *id*, not the group *name*.
-         * @type {string}
-         */
-        groupId: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
-         */
-        transport: {}
-    };
-
-    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
-    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["d" /* getURLConfig */])(serviceOptions);
-    var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
-
-    var getFinalParams = function (params) {
-        if (typeof params === 'object') {
-            return $.extend(true, serviceOptions, params);
-        }
-        return serviceOptions;
-    };
-
-    var patchUserActiveField = function (params, active, options) {
-        var httpOptions = $.extend(true, serviceOptions, options, {
-            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + '/' + params.userId
-        });
-
-        return http.patch({ active: active }, httpOptions);
-    };
-
-    var publicAPI = {
-
-        /**
-        * Retrieve details about all of the group memberships for one end user. The membership details are returned in an array, with one element (group record) for each group to which the end user belongs.
-        *
-        * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
-        *
-        * **Example**
-        *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
-        *           .then(function(memberships){
-        *               for (const i=0; i<memberships.length; i++) {
-        *                   console.log(memberships[i].groupId);
-        *               }
-        *           });
-        *
-        *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
-        *
-        * **Parameters**
-        * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
-        * @param {object} [options] Overrides for configuration options.
-        * @returns {JQuery.Promise}
-        */
-        getGroupsForUser: function (params, options) {
-            options = options || {};
-            var httpOptions = $.extend(true, serviceOptions, options);
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.userId) {
-                throw new Error('No userId specified.');
-            }
-
-            var getParms = isString ? { userId: params } : Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(objParams, ['userId']);
-            return http.get(getParms, httpOptions);
-        },
-
-        /**
-         * @param {string[]} userlist list of users to add to group
-         * @param {string} [groupId] Group to add users to. Pulls current group from session if not provided
-         * @param {object} [options] Overrides for configuration options.
-         * @returns {JQuery.Promise}
-         */
-        addUsersToGroup: function (userlist, groupId, options) {
-            var httpOptions = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["b" /* getDefaultOptions */])(serviceOptions, options, { groupId: groupId });
-            if (!httpOptions.groupId) {
-                throw new Error('addUsersToGroup: No group provided, and cannot retrieve from session');
-            }
-            if (!userlist || !Array.isArray(userlist)) {
-                throw new Error('addUsersToGroup: No userlist provided. Provide a list of userids to upload');
-            }
-
-            var params = userlist.map(function (u) {
-                return $.isPlainObject(u) ? u : { userId: u };
-            });
-            httpOptions.url = '' + urlConfig.getAPIPath(API_ENDPOINT) + httpOptions.groupId;
-            return http.post(params, httpOptions);
-        },
-
-        /**
-        * Retrieve details about one group, including an array of all its members.
-        *
-        * **Example**
-        *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
-        *           .then(function(group){
-        *               for (const i=0; i<group.members.length; i++) {
-        *                   console.log(group.members[i].userName);
-        *               }
-        *           });
-        *
-        *       ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
-        * @param {object} [options] Overrides for configuration options.
-        * @returns {JQuery.Promise}
-        */
-        getGroupDetails: function (params, options) {
-            options = options || {};
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.groupId) {
-                throw new Error('No groupId specified.');
-            }
-
-            var groupId = isString ? params : objParams.groupId;
-            var httpOptions = $.extend(true, serviceOptions, options, { url: urlConfig.getAPIPath(API_ENDPOINT) + groupId });
-
-            return http.get({}, httpOptions);
-        },
-
-        /**
-        * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
-        *
-        * **Example**
-        *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make active.
-        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
-        * @param {object} [options] Overrides for configuration options.
-        * @returns {JQuery.Promise}
-        */
-        makeUserActive: function (params, options) {
-            return patchUserActiveField(params, true, options);
-        },
-
-        /**
-        * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
-        *
-        * **Example**
-        *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make inactive.
-        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
-        * @param {object} [options] Overrides for configuration options.
-        * @returns {JQuery.Promise}
-        */
-        makeUserInactive: function (params, options) {
-            return patchUserActiveField(params, false, options);
-        }
-    };
-
-    $.extend(this, publicAPI);
-}
-
-/***/ }),
 /* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
 /**
  *
@@ -5635,7 +5635,7 @@ module.exports = Channel;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /**
  *
@@ -5850,7 +5850,7 @@ var apiEndpoint = 'presence';
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
-            var ChannelManager = __webpack_require__(17).default;
+            var ChannelManager = __webpack_require__(18).default;
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);
@@ -5890,7 +5890,7 @@ var apiEndpoint = 'presence';
  *
  */
 
-var ConfigService = __webpack_require__(3).default;
+var ConfigService = __webpack_require__(4).default;
 var TransportFactory = __webpack_require__(0).default;
 var _pick = __webpack_require__(5).pick;
 var SessionManager = __webpack_require__(1);
@@ -6015,7 +6015,180 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(3);
+/* harmony export (immutable) */ __webpack_exports__["default"] = UserAPIAdapter;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(6);
+
+/**
+* ## User API Adapter
+*
+* The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
+*
+* To use the User API Adapter, instantiate it and then call its methods.
+*
+*       var ua = new F.service.User({
+*           account: 'acme-simulations',
+*           token: 'user-or-project-access-token'
+*       });
+*       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+*       ua.get({ userName: 'jsmith' });
+*       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+*                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+*
+* The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
+*/
+
+
+
+
+
+function UserAPIAdapter(config) {
+    var API_ENDPOINT = 'user';
+
+    var defaults = {
+
+        /**
+         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
+         * @type {String}
+         */
+        account: undefined,
+
+        /**
+         * The access token to use when searching for end users. (See [more background on access tokens](../../../project_access/)).
+         * @type {String}
+         */
+        token: undefined,
+
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {Object}
+         */
+        transport: {}
+    };
+
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+    var publicAPI = {
+
+        /**
+        * Retrieve details about particular end users in your team, based on user name or user id.
+        *
+        * **Example**
+        *
+        *       var ua = new F.service.User({
+        *           account: 'acme-simulations',
+        *           token: 'user-or-project-access-token'
+        *       });
+        *       ua.get({ userName: 'jsmith' });
+        *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+        *
+        * **Parameters**
+        * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
+        * @param {object} [options] Overrides for configuration options.
+        * @return {Promise}
+        */
+        get: function (filter, options) {
+            filter = filter || {};
+
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            function toIdFilters(id) {
+                if (!id) return '';
+
+                var qs = Array.isArray(id) ? id : [id];
+                return 'id=' + qs.join('&id=');
+            }
+
+            var query = filter.userName ? { q: filter.userName } : {}; // API only supports filtering by username
+            var params = ['account=' + httpOptions.account, toIdFilters(filter.id), Object(__WEBPACK_IMPORTED_MODULE_2_util_query_util__["toQueryFormat"])(query)].join('&');
+
+            // special case for queries with large number of ids
+            // make it as a post with GET semantics
+            var threshold = 30;
+            if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
+                httpOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
+                return http.post({ id: filter.id }, httpOptions);
+            } else {
+                return http.get(params, httpOptions);
+            }
+        },
+
+        /**
+        * Retrieve details about a single end user in your team, based on user id.
+        *
+        * **Example**
+        *
+        *       var ua = new F.service.User({
+        *           account: 'acme-simulations',
+        *           token: 'user-or-project-access-token'
+        *       });
+        *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+        *
+        * **Parameters**
+        * @param {string} userId The user id for the end user in your team.
+        * @param {object} [options] Overrides for configuration options.
+        * @return {Promise}
+        */
+        getById: function (userId, options) {
+            return publicAPI.get({ id: userId }, options);
+        },
+
+        /**
+        * Upload list of users to current account
+        * 
+        * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        uploadUsers: function (userList, options) {
+            if (!userList || !Array.isArray(userList)) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: userList
+                }).promise();
+            }
+
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var requiredFields = ['userName', 'password', 'firstName', 'lastName'];
+
+            var sortedUsers = userList.reduce(function (accum, user) {
+                var missingRequiredFields = requiredFields.filter(function (field) {
+                    return user[field] === undefined;
+                });
+                var account = user.account || httpOptions.account;
+                if (!account) missingRequiredFields.push(account);
+                if (missingRequiredFields.length) {
+                    accum.invalid.push({ user: user, missingFields: missingRequiredFields });
+                }
+                if (!user.account) {
+                    user.account = httpOptions.account;
+                }
+                accum.valid.push(user);
+                return accum;
+            }, { valid: [], invalid: [] });
+
+            if (sortedUsers.invalid.length) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: sortedUsers.invalid
+                }).promise();
+            }
+            return http.post(sortedUsers.valid, httpOptions);
+        }
+    };
+
+    $.extend(this, publicAPI);
+}
+
+/***/ }),
+/* 35 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -6063,7 +6236,7 @@ var TimeAPIService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (TimeAPIService);
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6087,12 +6260,12 @@ function intersection(a, b) {
 }
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(20);
 
 
 function reduceActions(actions, options) {
@@ -6129,15 +6302,15 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(3);
 /**
  * 
  * ## Consensus Group Service
@@ -6228,7 +6401,7 @@ function ConsensusGroupService(config) {
 }
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -6254,7 +6427,7 @@ var list = {
     'reuse-never': __webpack_require__(65),
     'reuse-per-session': __webpack_require__(66),
     'reuse-across-sessions': __webpack_require__(67),
-    'reuse-last-initialized': __webpack_require__(39)
+    'reuse-last-initialized': __webpack_require__(40)
 };
 
 //Add back older aliases
@@ -6349,7 +6522,7 @@ var strategyManager = {
 module.exports = strategyManager;
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6447,7 +6620,7 @@ module.exports = classFrom(Base, {
 });
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6612,7 +6785,7 @@ SavedRunsManager.prototype = {
 module.exports = SavedRunsManager;
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6654,8 +6827,8 @@ module.exports = SavedRunsManager;
 
 
 var WorldApi = __webpack_require__(10).default;
-var RunManager = __webpack_require__(20).default;
-var AuthManager = __webpack_require__(16);
+var RunManager = __webpack_require__(21).default;
+var AuthManager = __webpack_require__(13);
 var worldApi;
 
 function buildStrategy(worldId) {
@@ -6761,7 +6934,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var F = {
@@ -6776,7 +6949,7 @@ var F = {
     }
 };
 
-F.load = __webpack_require__(43);
+F.load = __webpack_require__(44);
 
 if (!window.SKIP_ENV_LOAD) {
     F.load();
@@ -6787,62 +6960,63 @@ F.util.run = __webpack_require__(8);
 F.util.classFrom = __webpack_require__(2);
 
 F.factory.Transport = __webpack_require__(0).default;
-F.transport.Ajax = __webpack_require__(22);
+F.transport.Ajax = __webpack_require__(23);
 
-F.service.URL = __webpack_require__(13);
-F.service.Config = __webpack_require__(3).default;
+F.service.URL = __webpack_require__(14);
+F.service.Config = __webpack_require__(4).default;
 F.service.Run = __webpack_require__(9);
-F.service.File = __webpack_require__(45);
-F.service.Variables = __webpack_require__(23);
-F.service.Data = __webpack_require__(27).default;
-F.service.Auth = __webpack_require__(28);
+F.service.File = __webpack_require__(46);
+F.service.Variables = __webpack_require__(24);
+F.service.Data = __webpack_require__(28).default;
+F.service.Auth = __webpack_require__(29);
 F.service.World = __webpack_require__(10).default;
 F.service.State = __webpack_require__(33);
-F.service.User = __webpack_require__(51).default;
-F.service.Member = __webpack_require__(29).default;
+F.service.User = __webpack_require__(34).default;
+F.service.Member = __webpack_require__(17).default;
 F.service.Asset = __webpack_require__(52);
 F.service.Group = __webpack_require__(30).default;
-F.service.Introspect = __webpack_require__(24);
+F.service.Introspect = __webpack_require__(25);
 F.service.Presence = __webpack_require__(32).default;
-F.service.Time = __webpack_require__(34).default;
+F.service.Time = __webpack_require__(35).default;
 F.service.Timer = __webpack_require__(53).default;
 F.service.Password = __webpack_require__(59).default;
 
-F.service.Consensus = __webpack_require__(18).default;
-F.service.ConsensusGroup = __webpack_require__(37).default;
+F.service.Consensus = __webpack_require__(19).default;
+F.service.ConsensusGroup = __webpack_require__(38).default;
 
 F.service.Project = __webpack_require__(60).default;
 
-F.store.Cookie = __webpack_require__(26);
-F.factory.Store = __webpack_require__(25);
+F.store.Cookie = __webpack_require__(27);
+F.factory.Store = __webpack_require__(26);
 
 F.manager.ScenarioManager = __webpack_require__(61);
-F.manager.RunManager = __webpack_require__(20).default;
-F.manager.AuthManager = __webpack_require__(16);
-F.manager.WorldManager = __webpack_require__(41);
-F.manager.SavedRunsManager = __webpack_require__(40);
+F.manager.RunManager = __webpack_require__(21).default;
+F.manager.User = __webpack_require__(71).default;
+F.manager.AuthManager = __webpack_require__(13);
+F.manager.WorldManager = __webpack_require__(42);
+F.manager.SavedRunsManager = __webpack_require__(41);
 
-var strategies = __webpack_require__(38);
+var strategies = __webpack_require__(39);
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.ChannelManager = __webpack_require__(17).default;
+F.manager.ChannelManager = __webpack_require__(18).default;
 F.service.Channel = __webpack_require__(31);
 
-F.manager.ConsensusManager = __webpack_require__(71).default;
+F.manager.ConsensusManager = __webpack_require__(72).default;
 
 if (true) F.version = "2.7.0"; //eslint-disable-line no-undef
-F.api = __webpack_require__(21);
+F.api = __webpack_require__(22);
 
-F.constants = __webpack_require__(14);
+F.constants = __webpack_require__(15);
 
 module.exports = F;
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var URLConfigService = __webpack_require__(13);
+var URLConfigService = __webpack_require__(14);
 
 var envLoad = function (callback) {
     var urlService = new URLConfigService();
@@ -6858,13 +7032,13 @@ var envLoad = function (callback) {
 module.exports = envLoad;
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfigService = __webpack_require__(3).default;
+var ConfigService = __webpack_require__(4).default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
@@ -6905,7 +7079,7 @@ var optionUtils = {
 module.exports = optionUtils;
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -6930,7 +7104,7 @@ module.exports = optionUtils;
  *       });
  */
 
-var ConfigService = __webpack_require__(3).default;
+var ConfigService = __webpack_require__(4).default;
 var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(1);
 
@@ -7108,7 +7282,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7116,10 +7290,10 @@ module.exports = function (config) {
 /* unused harmony export addScopeToCollection */
 /* harmony export (immutable) */ __webpack_exports__["b"] = getScopedName;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getURL;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(3);
 
 
 
@@ -7200,7 +7374,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 }
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -7271,7 +7445,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7531,13 +7705,13 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 module.exports = ChannelManager;
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(5);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -7670,7 +7844,7 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
 }
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7708,178 +7882,6 @@ var TOPICS = {
     CONSENSUS_CREATE: 'consensus/' + TOPIC_SUBTYPES.CREATE,
     CONSENSUS_UPDATE: 'consensus/' + TOPIC_SUBTYPES.UPDATE
 };
-
-/***/ }),
-/* 51 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["default"] = UserAPIAdapter;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(6);
-
-/**
-* ## User API Adapter
-*
-* The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
-*
-* To use the User API Adapter, instantiate it and then call its methods.
-*
-*       var ua = new F.service.User({
-*           account: 'acme-simulations',
-*           token: 'user-or-project-access-token'
-*       });
-*       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
-*       ua.get({ userName: 'jsmith' });
-*       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-*                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
-*
-* The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
-*/
-
-
-
-
-
-function UserAPIAdapter(config) {
-    var API_ENDPOINT = 'user';
-
-    var defaults = {
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
-         * @type {String}
-         */
-        account: undefined,
-
-        /**
-         * The access token to use when searching for end users. (See [more background on access tokens](../../../project_access/)).
-         * @type {String}
-         */
-        token: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
-        transport: {}
-    };
-
-    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
-    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["d" /* getURLConfig */])(serviceOptions);
-    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
-    var publicAPI = {
-
-        /**
-        * Retrieve details about particular end users in your team, based on user name or user id.
-        *
-        * **Example**
-        *
-        *       var ua = new F.service.User({
-        *           account: 'acme-simulations',
-        *           token: 'user-or-project-access-token'
-        *       });
-        *       ua.get({ userName: 'jsmith' });
-        *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
-        *
-        * **Parameters**
-        * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
-        * @param {object} [options] Overrides for configuration options.
-        * @return {Promise}
-        */
-        get: function (filter, options) {
-            filter = filter || {};
-
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-            function toIdFilters(id) {
-                if (!id) return '';
-
-                var qs = Array.isArray(id) ? id : [id];
-                return 'id=' + qs.join('&id=');
-            }
-
-            var query = filter.userName ? { q: filter.userName } : {}; // API only supports filtering by username
-            var params = ['account=' + httpOptions.account, toIdFilters(filter.id), Object(__WEBPACK_IMPORTED_MODULE_2_util_query_util__["toQueryFormat"])(query)].join('&');
-
-            // special case for queries with large number of ids
-            // make it as a post with GET semantics
-            var threshold = 30;
-            if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
-                httpOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
-                return http.post({ id: filter.id }, httpOptions);
-            } else {
-                return http.get(params, httpOptions);
-            }
-        },
-
-        /**
-        * Retrieve details about a single end user in your team, based on user id.
-        *
-        * **Example**
-        *
-        *       var ua = new F.service.User({
-        *           account: 'acme-simulations',
-        *           token: 'user-or-project-access-token'
-        *       });
-        *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
-        *
-        * **Parameters**
-        * @param {string} userId The user id for the end user in your team.
-        * @param {object} [options] Overrides for configuration options.
-        * @return {Promise}
-        */
-        getById: function (userId, options) {
-            return publicAPI.get({ id: userId }, options);
-        },
-
-        /**
-        * Upload list of users to current account
-        * @param {object[]} userList Array of user objects to 
-        * @param {object} [options] Overrides for configuration options.
-        * @returns {JQuery.Promise}
-        */
-        uploadUsers: function (userList, options) {
-            if (!userList || !Array.isArray(userList)) {
-                return $.Deferred().reject({
-                    type: 'INVALID_USERS',
-                    payload: userList
-                }).promise();
-            }
-
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-            var requiredFields = ['userName', 'password', 'firstName', 'lastName'];
-
-            var sortedUsers = userList.reduce(function (accum, user) {
-                var missingRequiredFields = requiredFields.filter(function (field) {
-                    return user[field] === undefined;
-                });
-                var account = user.account || httpOptions.account;
-                if (!account) missingRequiredFields.push(account);
-                if (missingRequiredFields.length) {
-                    accum.invalid.push({ user: user, missingFields: missingRequiredFields });
-                }
-                if (!user.account) {
-                    user.account = httpOptions.account;
-                }
-                accum.valid.push(user);
-                return accum;
-            }, { valid: [], invalid: [] });
-
-            if (sortedUsers.invalid.length) {
-                return $.Deferred().reject({
-                    type: 'INVALID_USERS',
-                    payload: sortedUsers.invalid
-                }).promise();
-            }
-            return http.post(sortedUsers.valid, httpOptions);
-        }
-    };
-
-    $.extend(this, publicAPI);
-}
 
 /***/ }),
 /* 52 */
@@ -7942,7 +7944,7 @@ function UserAPIAdapter(config) {
 
 
 
-var ConfigService = __webpack_require__(3).default;
+var ConfigService = __webpack_require__(4).default;
 var TransportFactory = __webpack_require__(0).default;
 var _pick = __webpack_require__(5).pick;
 var SessionManager = __webpack_require__(1);
@@ -8270,14 +8272,14 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(20);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8643,7 +8645,7 @@ TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a"
 /* unused harmony export objectToPublishable */
 /* unused harmony export publishableToObject */
 /* unused harmony export normalizeParamOptions */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_array_utils__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_array_utils__ = __webpack_require__(36);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8889,7 +8891,7 @@ function getStrategy(strategy) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(37);
 
 
 function reduceActions(actions) {
@@ -8906,8 +8908,8 @@ function reduceActions(actions) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(36);
 
 
 
@@ -8936,7 +8938,7 @@ function reduceActions(actions, options) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(20);
 
 
 function toDetailedTime(ts) {
@@ -9022,7 +9024,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(3);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9142,7 +9144,7 @@ var PasswordService = function () {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = ProjectAPIService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /**
  *
@@ -9329,8 +9331,8 @@ function ProjectAPIService(config) {
 
 // See integration-test-scenario-manager for usage examples
 
-var RunManager = __webpack_require__(20).default;
-var SavedRunsManager = __webpack_require__(40);
+var RunManager = __webpack_require__(21).default;
+var SavedRunsManager = __webpack_require__(41);
 
 var strategyUtils = __webpack_require__(7);
 var rutil = __webpack_require__(8);
@@ -9841,7 +9843,7 @@ function reset(params, options, manager) {
 
 
 
-var ReuseinitStrategy = __webpack_require__(39);
+var ReuseinitStrategy = __webpack_require__(40);
 
 module.exports = function (options) {
     var defaults = {
@@ -9939,11 +9941,210 @@ module.exports = classFrom(Base, {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(41);
+/* harmony export (immutable) */ __webpack_exports__["parseUsers"] = parseUsers;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils__ = __webpack_require__(3);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
+
+function parseUsers(userList) {
+    var expectedCols = [{ label: 'Email', value: 'userName' }, { label: 'First Name', value: 'firstName' }, { label: 'Last Name', value: 'lastName' }, { label: 'Password', value: 'password' }];
+    var parsed = userList.split(/\r\r|\r|\n/).reduce(function (accum, row, index) {
+        var splitter = row && /\t/.test(row) ? /\t/ : ',';
+        var rowContents = row.split(splitter);
+        if (!rowContents.length) {
+            return accum;
+        }
+        var missingFields = expectedCols.filter(function (col, index) {
+            return rowContents[index] === undefined || !rowContents[index].trim();
+        });
+        if (missingFields.length) {
+            var missingLabels = missingFields.map(function (f) {
+                return f.label;
+            });
+            accum.invalid.push({
+                userName: rowContents[0] || 'Line ' + (index + 1),
+                message: 'Missing ' + missingLabels.join(', '),
+                reason: 'MISSING_FIELDS',
+                context: { missingFields: missingLabels }
+            });
+            return accum;
+        }
+        var user = expectedCols.reduce(function (accum, col, index) {
+            var val = rowContents[index].trim();
+            accum[col.value] = val;
+            return accum;
+        }, {});
+
+        accum.valid.push(user);
+        return accum;
+    }, {
+        valid: [],
+        invalid: []
+    });
+    return parsed;
+}
+
+var ERROR_TYPES = {
+    EMPTY_USERS: 'EMPTY_USERS',
+    NO_GROUP_PROVIDED: 'NO_GROUP_PROVIDED',
+    API_REJECT: 'API_REJECT',
+    GROUP_LIMIT_EXCEEDED: 'GROUP_LIMIT_EXCEEDED'
+};
+
+var UserManager = function () {
+    function UserManager(config) {
+        _classCallCheck(this, UserManager);
+
+        var defaults = {
+            /**
+             * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
+             * @type {String}
+             */
+            account: undefined,
+            /**
+             * The project id. Defaults to empty string. If left undefined, taken from the URL.
+             * @type {String}
+             */
+            project: undefined,
+            /**
+             * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
+             * @see [Authentication API Service](../auth-api-service/) for getting tokens.
+             * @type {String}
+             */
+            token: undefined,
+
+            //Options to pass on to the underlying transport layer
+            transport: {}
+        };
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_3_service_service_utils__["b" /* getDefaultOptions */])(defaults, config);
+        this.serviceOptions = serviceOptions;
+    }
+
+    /**
+     *  Bulk creates user accounts and adds them to a group. Input userlist is typically the string contents of a textarea with user data.
+     * 
+     * @param {string} userList list of users seperated by newlines, with each line containing email, firstname, lastname, password separated by tabs/commas
+     * @param {string} [groupId] id of group to upload to. Defaults to getting current group from session
+     * @param {object} [options]  overrides for service options
+     * @returns {JQuery.Promise}
+     */
+
+
+    _createClass(UserManager, [{
+        key: 'uploadUsersToGroup',
+        value: function uploadUsersToGroup(userList, groupId, options) {
+            if (!userList || !userList.trim()) {
+                return $.Deferred().reject({
+                    type: ERROR_TYPES.EMPTY_USERS,
+                    message: 'uploadUsersToGroup: No users specified to upload.'
+                }).promise();
+            }
+            var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_3_service_service_utils__["b" /* getDefaultOptions */])(this.serviceOptions, options);
+            if (!groupId) {
+                var am = new __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager___default.a(serviceOptions);
+                var session = am.getCurrentUserSessionInfo();
+                groupId = session.groupId;
+
+                if (!groupId) {
+                    return $.Deferred().reject({
+                        type: ERROR_TYPES.NO_GROUP_PROVIDED,
+                        message: 'uploadUsersToGroup: No group specified, and no session available to pick from.'
+                    }).promise();
+                }
+            }
+
+            var usersToAdd = parseUsers(userList.trim());
+            if (!usersToAdd.valid.length) {
+                return $.Deferred().resolve({
+                    errors: usersToAdd.invalid,
+                    duplicate: [],
+                    updated: [],
+                    saved: []
+                }).promise();
+            }
+
+            var userService = new __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__["default"](serviceOptions);
+            var memberService = new __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__["default"](serviceOptions);
+            return userService.uploadUsers(usersToAdd.valid).then(function (userRes) {
+                var validUsers = [].concat(userRes.saved, userRes.updated, userRes.duplicate);
+                var validIds = validUsers.map(function (u) {
+                    return u.id;
+                });
+                var userWithErrors = userRes.errors.map(function (e) {
+                    return $.extend(true, e, {
+                        reason: ERROR_TYPES.API_REJECT,
+                        context: e
+                    });
+                });
+                userRes.errors = [].concat(userWithErrors, usersToAdd.invalid);
+                return memberService.addUsersToGroup(validIds, groupId).then(function () {
+                    return userRes;
+                }, function handleMemberError(memberXHR) {
+                    var memberErr = memberXHR.responseJSON;
+                    var isGroupLimitErr = memberErr && memberErr.message && memberErr.message.match(/exceeded your group limit\(([0-9]+)\)/i);
+                    if (!isGroupLimitErr) {
+                        throw memberErr;
+                    }
+
+                    var groupLimit = +isGroupLimitErr[1];
+                    var skippedUsers = validUsers.slice(groupLimit).map(function (u) {
+                        return $.extend({}, u, { reason: ERROR_TYPES.GROUP_LIMIT_EXCEEDED, message: 'Exceeded group limit' });
+                    });
+
+                    function excludingSkipped(users, skipped) {
+                        return users.filter(function (u) {
+                            var isValid = !skipped.find(function (su) {
+                                return su.userName === u.userName;
+                            });
+                            return isValid;
+                        });
+                    }
+                    return {
+                        errors: [].concat(userRes.errors, skippedUsers),
+                        saved: excludingSkipped(userRes.saved, skippedUsers),
+                        updated: excludingSkipped(userRes.updated, skippedUsers),
+                        duplicate: excludingSkipped(userRes.duplicate, skippedUsers)
+                    };
+                });
+            }).then(function (res) {
+                return {
+                    errors: res.errors,
+                    duplicates: res.duplicate, //pluralizing for consistency
+                    created: [].concat(res.saved, res.updated) //no real distinction between the two so combining
+                };
+            });
+        }
+    }]);
+
+    return UserManager;
+}();
+
+UserManager.errors = ERROR_TYPES;
+
+/* harmony default export */ __webpack_exports__["default"] = (UserManager);
+
+/***/ }),
+/* 72 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_world_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(73);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10004,7 +10205,7 @@ var ConsensusManager = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ConsensusManager);
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -42,7 +42,15 @@ export function parseUsers(userList) {
     });
     return parsed;
 }
-export default class UserManager {
+
+const ERROR_TYPES = {
+    EMPTY_USERS: 'EMPTY_USERS',
+    NO_GROUP_PROVIDED: 'NO_GROUP_PROVIDED',
+    API_REJECT: 'API_REJECT',
+    GROUP_LIMIT_EXCEEDED: 'GROUP_LIMIT_EXCEEDED',
+};
+
+class UserManager {
     constructor(config) {
         const defaults = {
             /**
@@ -79,7 +87,10 @@ export default class UserManager {
      */
     uploadUsersToGroup(userList, groupId, options) {
         if (!userList || !userList.trim()) {
-            return $.Deferred().reject({ error: 'uploadUsersToGroup: No users specified to upload.' }).promise();
+            return $.Deferred().reject({ 
+                type: ERROR_TYPES.EMPTY_USERS,
+                message: 'uploadUsersToGroup: No users specified to upload.' 
+            }).promise();
         }
         const serviceOptions = getDefaultOptions(this.serviceOptions, options);
         if (!groupId) {
@@ -88,7 +99,10 @@ export default class UserManager {
             groupId = session.groupId;
 
             if (!groupId) {
-                return $.Deferred().reject({ error: 'uploadUsersToGroup: No group specified, and no session available to pick from.' }).promise();
+                return $.Deferred().reject({ 
+                    type: ERROR_TYPES.NO_GROUP_PROVIDED,
+                    message: 'uploadUsersToGroup: No group specified, and no session available to pick from.' 
+                }).promise();
             }
         }
 
@@ -109,7 +123,7 @@ export default class UserManager {
             const validIds = validUsers.map((u)=> u.id);
             const userWithErrors = userRes.errors.map((e)=> {
                 return $.extend(true, e, {
-                    reason: 'API_REJECT',
+                    reason: ERROR_TYPES.API_REJECT,
                     context: e
                 });
             });
@@ -123,7 +137,7 @@ export default class UserManager {
                 
                 const groupLimit = +isGroupLimitErr[1];
                 const skippedUsers = validUsers.slice(groupLimit).map((u)=> {
-                    return $.extend({}, u, { reason: 'GROUP_LIMIT_HIT', message: 'Exceeded group limit' });
+                    return $.extend({}, u, { reason: ERROR_TYPES.GROUP_LIMIT_EXCEEDED, message: 'Exceeded group limit' });
                 });
                 
                 function excludingSkipped(users, skipped) {
@@ -148,3 +162,7 @@ export default class UserManager {
         });
     }
 }
+
+UserManager.errors = ERROR_TYPES;
+
+export default UserManager;

@@ -117,7 +117,7 @@ describe('User Manager', ()=> {
                 expect(failSpy).to.have.been.calledOnce;
 
                 const args = failSpy.getCall(0).args[0];
-                expect(args.error).to.match(/no users/i);
+                expect(args.type).to.equal(UserManager.errors.EMPTY_USERS);
             });
         });
         it('should reject if called without a group id', ()=> {
@@ -133,7 +133,7 @@ describe('User Manager', ()=> {
                 expect(failSpy).to.have.been.calledOnce;
 
                 const args = failSpy.getCall(0).args[0];
-                expect(args.error).to.match(/no group/i);
+                expect(args.type).to.equal(UserManager.errors.NO_GROUP_PROVIDED);
             });
         });
         it('should call user api with valid users', ()=> {
@@ -195,7 +195,7 @@ describe('User Manager', ()=> {
                         opFormat[1],
                     ],
                     errors: [
-                        Object.assign(opFormat[2], { reason: 'API_REJECT' })
+                        Object.assign(opFormat[2], { reason: UserManager.errors.API_REJECT })
                     ],
                 });
             });
@@ -211,8 +211,8 @@ describe('User Manager', ()=> {
             return um.uploadUsersToGroup(users, 'groupWithLimit').then((r)=> {
                 expect(r.created.length).to.equal(2);
                 expect(r.errors.length).to.equal(2);
-                expect(r.errors[0].reason).to.equal('API_REJECT');
-                expect(r.errors[1].reason).to.equal('GROUP_LIMIT_HIT');
+                expect(r.errors[0].reason).to.equal(UserManager.errors.API_REJECT);
+                expect(r.errors[1].reason).to.equal(UserManager.errors.GROUP_LIMIT_EXCEEDED);
 
             });
         });
