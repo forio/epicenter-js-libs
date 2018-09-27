@@ -95,7 +95,7 @@ export default function MemberAPIService(config) {
         },
 
         /**
-         * @param {string[]} userlist list of users to add to group
+         * @param {string[]} userlist list of users to add to group. [userId1,userId2..] or [{userid: userId},{userId: userId2}...]
          * @param {string} [groupId] Group to add users to. Pulls current group from session if not provided
          * @param {object} [options] Overrides for configuration options.
          * @returns {JQuery.Promise}

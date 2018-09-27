@@ -95,7 +95,7 @@ export default class UserManager {
         return userService.uploadUsers(usersToAdd.valid).then((userRes)=> {
             const validUsers = [].concat(userRes.saved, userRes.updated, userRes.duplicate);
             const validIds = validUsers.map((u)=> u.id);
-            return memberService.addUsersToGroup(validIds).then(()=> {
+            return memberService.addUsersToGroup(validIds, groupId).then(()=> {
                 const apiErrors = userRes.errors.map((e)=> {
                     return $.extend(true, e, {
                         reason: 'API_REJECT',

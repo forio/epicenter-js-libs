@@ -12,6 +12,41 @@ describe('User Manager', ()=> {
         });
         return um;
     }
+
+    var server;
+    before(function () {
+        server = sinon.fakeServer.create();
+        server.respondWith('POST', /(.*)\/user\/(.*)/, function (xhr) {
+            const buckets = [[], [], [], []];
+            const body = JSON.parse(xhr.requestBody);
+            body.map((u)=> (Object.assign(u, { id: u.userName }))).forEach((user, index)=> {
+                const bucket = index % buckets.length;
+                buckets[bucket].push(user);
+            });
+            xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({
+                saved: buckets[0],
+                duplicate: buckets[1],
+                errors: buckets[2],
+                updated: buckets[3],
+            }));
+        });
+        server.respondWith('POST', /(.*)\/member\/(.*)/, function (xhr, id) {
+            xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({
+                message: 'You have exceeded your group limit(2)'
+            }));
+        });
+        server.respondWith('POST', /(.*)\/member\/groupWithLimit/, function (xhr, id) {
+            xhr.respond(400, { 'Content-Type': 'application/json' }, JSON.stringify({
+                message: 'You have exceeded your group limit(2)'
+            }));
+        });
+
+        server.respondImmediately = true;
+    });
+
+    after(function () {
+        server.restore();
+    });
     describe('#parseUsers', ()=> {
         it('should take in TSV', ()=> {
             const op = parseUsers([
@@ -80,6 +115,36 @@ describe('User Manager', ()=> {
                 const args = failSpy.getCall(0).args[0];
                 expect(args.error).to.match(/no users/i);
             });
+        });
+        it('should call user api with valid users', ()=> {
+            const users = [
+                ['jmith', 'john', 'smith', 'a'].join(','),
+                ['jmith2', 'john2', 'smith2', 'a2'].join(','),
+            ].join('\n');
+            const um = makeManager();
+            return um.uploadUsers(users, 'somegroup').then((r)=> {
+                const userReq = server.requests[0];
+                expect(userReq.requestBody).to.equal(JSON.stringify([
+                    { userName: 'jmith', firstName: 'john', lastName: 'smith', password: 'a', account: 'myaccount' },
+                    { userName: 'jmith2', firstName: 'john2', lastName: 'smith2', password: 'a2', account: 'myaccount' },
+                ]));
+            });
+        });
+        it.only('should call member api with saved users', ()=> {
+            const users = [
+                ['jmith', 'john', 'smith', 'a'].join(','),
+                ['jmith2', 'john2', 'smith2', 'a2'].join(','),
+                ['jmith3', 'john3', 'smith3', 'a3'].join(','),
+                ['jmith4', 'john4', 'smith4', 'a4'].join(','),
+            ].join('\n');
+            const um = makeManager();
+            return um.uploadUsers(users, 'somegroup').then((r)=> {
+                const memberReq = server.requests[1];
+                expect(memberReq.requestBody).to.equal(JSON.stringify([{ userId: 'jmith' }, { userId: 'jmith4' }, { userId: 'jmith2' }]));
+            });
+        });
+        it('should handle group expiry messages', ()=> {
+            
         });
     });
 });
