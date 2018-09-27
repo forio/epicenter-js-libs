@@ -30,12 +30,12 @@ describe('User Manager', ()=> {
                 updated: buckets[3],
             }));
         });
-        server.respondWith('POST', /(.*)\/member\/(.*)/, function (xhr, id) {
+        server.respondWith('POST', /(.*)\/member\/local\/somegroup/, function (xhr, id) {
             xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify({
-                message: 'You have exceeded your group limit(2)'
+                message: 'Success'
             }));
         });
-        server.respondWith('POST', /(.*)\/member\/groupWithLimit/, function (xhr, id) {
+        server.respondWith('POST', /(.*)\/member\/local\/groupWithLimit/, function (xhr, id) {
             xhr.respond(400, { 'Content-Type': 'application/json' }, JSON.stringify({
                 message: 'You have exceeded your group limit(2)'
             }));
@@ -46,6 +46,9 @@ describe('User Manager', ()=> {
 
     after(function () {
         server.restore();
+    });
+    afterEach(()=> {
+        server.requests = [];
     });
     describe('#parseUsers', ()=> {
         it('should take in TSV', ()=> {
@@ -130,7 +133,7 @@ describe('User Manager', ()=> {
                 ]));
             });
         });
-        it.only('should call member api with saved users', ()=> {
+        it('should call member api with saved users', ()=> {
             const users = [
                 ['jmith', 'john', 'smith', 'a'].join(','),
                 ['jmith2', 'john2', 'smith2', 'a2'].join(','),
@@ -144,7 +147,20 @@ describe('User Manager', ()=> {
             });
         });
         it('should handle group expiry messages', ()=> {
-            
+            const users = [
+                ['jmith', 'john', 'smith', 'a'].join(','), //saved
+                ['jmith2', 'john2', 'smith2', 'a2'].join(','), //updated
+                ['jmith3', 'john3', 'smith3', 'a3'].join(','), //duplicate & rejected by group, so move to error
+                ['jmith4', 'john4', 'smith4', 'a4'].join(','), //error
+            ].join('\n');
+            const um = makeManager();
+            return um.uploadUsers(users, 'groupWithLimit').then((r)=> {
+                expect(r.created.length).to.equal(2);
+                expect(r.errors.length).to.equal(2);
+                expect(r.errors[0].reason).to.equal('API_REJECT');
+                expect(r.errors[1].reason).to.equal('GROUP_LIMIT_HIT');
+
+            });
         });
     });
 });

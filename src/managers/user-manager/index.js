@@ -95,33 +95,29 @@ export default class UserManager {
         return userService.uploadUsers(usersToAdd.valid).then((userRes)=> {
             const validUsers = [].concat(userRes.saved, userRes.updated, userRes.duplicate);
             const validIds = validUsers.map((u)=> u.id);
-            return memberService.addUsersToGroup(validIds, groupId).then(()=> {
-                const apiErrors = userRes.errors.map((e)=> {
-                    return $.extend(true, e, {
-                        reason: 'API_REJECT',
-                        context: e
-                    });
+            const userWithErrors = userRes.errors.map((e)=> {
+                return $.extend(true, e, {
+                    reason: 'API_REJECT',
+                    context: e
                 });
-                const allErrors = [].concat(apiErrors, usersToAdd.invalid);
-                
-                return $.extend(true, {}, userRes, {
-                    errors: allErrors
-                });
-            }, (memberErr)=> {
+            });
+            userRes.errors = [].concat(userWithErrors, usersToAdd.invalid);
+            return memberService.addUsersToGroup(validIds, groupId).catch(function handleMemberError(memberXHR) {
+                const memberErr = memberXHR.responseJSON;
                 const isGroupLimitErr = memberErr && memberErr.message && memberErr.message.match(/exceeded your group limit\(([0-9]+)\)/i);
                 if (!isGroupLimitErr) {
                     throw memberErr;
                 }
                 
                 const groupLimit = +isGroupLimitErr[1];
-                const skippedUsers = validUsers.slice(groupLimit + 1).map((u)=> {
-                    return $.extend({}, u, { message: 'Exceeded group limit' });
+                const skippedUsers = validUsers.slice(groupLimit).map((u)=> {
+                    return $.extend({}, u, { reason: 'GROUP_LIMIT_HIT', message: 'Exceeded group limit' });
                 });
                 
                 function excludingSkipped(users, skipped) {
                     return users.filter((u)=> {
-                        const isSkipped = !!skipped.find((su)=> su.userName === u.userName);
-                        return isSkipped;
+                        const isValid = !skipped.find((su)=> su.userName === u.userName);
+                        return isValid;
                     });
                 }
                 return {
@@ -131,6 +127,12 @@ export default class UserManager {
                     duplicate: excludingSkipped(userRes.duplicate, skippedUsers),
                 };
             });
+        }).then((res)=> {
+            return {
+                errors: res.errors,
+                duplicates: res.duplicate, //pluralizing for consistency
+                created: [].concat(res.saved, res.updated), //no real distinction between the two so combining
+            };
         });
     }
 }
