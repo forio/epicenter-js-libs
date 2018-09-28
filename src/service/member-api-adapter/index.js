@@ -6,7 +6,7 @@
  *
  * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
  *
- *      const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+ *      const ma = new F.service.Member();
  *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
  *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
  */
@@ -66,7 +66,7 @@ export default function MemberAPIService(config) {
         *
         * **Example**
         *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member();
         *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
         *           .then(function(memberships){
         *               for (const i=0; i<memberships.length; i++) {
@@ -95,6 +95,12 @@ export default function MemberAPIService(config) {
         },
 
         /**
+         * Add given userids to group
+         *
+         * **Example**
+         *       const ma = new F.service.Member();
+         *       ma.addUsersToGroup(['42836d4b-5b61-4fe4-80eb-3136e956ee5c', '42836d4b-5b61-4fe4-80eb-3136e956ee5c'])
+         *
          * @param {string[] | {userId:string}[]} userlist list of users to add to group. [userId1,userId2..] or [{userid: userId},{userId: userId2}...]
          * @param {string} [groupId] Group to add users to. Pulls current group from session if not provided
          * @param {object} [options] Overrides for configuration options.
@@ -119,7 +125,7 @@ export default function MemberAPIService(config) {
         *
         * **Example**
         *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member();
         *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
         *           .then(function(group){
         *               for (const i=0; i<group.members.length; i++) {
@@ -156,7 +162,7 @@ export default function MemberAPIService(config) {
         *
         * **Example**
         *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member();
         *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
@@ -176,7 +182,7 @@ export default function MemberAPIService(config) {
         *
         * **Example**
         *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member();
         *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *

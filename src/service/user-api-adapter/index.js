@@ -58,7 +58,6 @@ export default function UserAPIAdapter(config) {
         *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
-        *           token: 'user-or-project-access-token'
         *       });
         *       ua.get({ userName: 'jsmith' });
         *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
@@ -105,7 +104,6 @@ export default function UserAPIAdapter(config) {
         *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
-        *           token: 'user-or-project-access-token'
         *       });
         *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
         *
@@ -121,7 +119,14 @@ export default function UserAPIAdapter(config) {
 
         /**
         * Upload list of users to current account
-        * 
+        *
+        * **Example**
+        *
+        *       var us = new F.service.User({
+        *           account: 'acme-simulations',
+        *       });
+        *       us.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
+        *       
         * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
