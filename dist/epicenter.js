@@ -1702,11 +1702,11 @@ function WorldAPIAdapter(config) {
         *
         *  **Parameters**
         * @param {object} params Parameters to create the world.
-        * @param {string} params.group (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
-        * @param {object} params.roles (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} params.optionalRoles (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {integer} params.minUsers (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {string} [params.group] The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
+        * @param {object} [params.roles] The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {object} [params.optionalRoles] The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {integer} [params.minUsers] The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         create: function (params, options) {
@@ -1747,10 +1747,10 @@ function WorldAPIAdapter(config) {
         *  **Parameters**
         * @param {object} params Parameters to update the world.
         * @param {string} params.name A string identifier for the linked end users, for example, "name": "Our Team".
-        * @param {object} params.roles (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} params.optionalRoles (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {integer} params.minUsers (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [params.roles] The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {object} [params.optionalRoles] The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {integer} [params.minUsers] The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         update: function (params, options) {
@@ -1782,7 +1782,7 @@ function WorldAPIAdapter(config) {
         *           });
         *
         *  **Parameters**
-        * @param {string|Object} options (Optional) The id of the world to delete, or options object to override global options.
+        * @param {string|Object} [options] The id of the world to delete, or options object to override global options.
         * @return {Promise}
         */
         delete: function (options) {
@@ -1829,7 +1829,7 @@ function WorldAPIAdapter(config) {
         *           });
         *
         *  **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         list: function (options) {
@@ -1845,7 +1845,7 @@ function WorldAPIAdapter(config) {
          *
          * **Parameters**
          * @param {string} worldId The id of the world to load.
-         * @param {Object} [options] (Optional) Options object to override global options.
+         * @param {Object} [options]] Options object to override global options.
          * @return {Promise}
          */
         load: function (worldId, options) {
@@ -1875,7 +1875,7 @@ function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {string} userId The `userId` of the user whose worlds are being retrieved.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         getWorldsForUser: function (userId, options) {
@@ -1919,7 +1919,7 @@ function WorldAPIAdapter(config) {
         * @param {string|object|array} users User id, array of user ids, object, or array of objects of the users to add to this world.
         * @param {string} users.role The `role` the user should have in the world. It is up to the caller to ensure, if needed, that the `role` passed in is one of the `roles` or `optionalRoles` of this world.
         * @param {string} worldId The world to which the users should be added. If not specified, the filter parameter of the `options` object is used.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         addUsers: function (users, worldId, options) {
@@ -1973,7 +1973,7 @@ function WorldAPIAdapter(config) {
         *
         * **Parameters**
         * @param {{userId: string, role: string}} user User object with `userId` and the new `role`.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         updateUser: function (user, options) {
@@ -2006,7 +2006,7 @@ function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {object|string} user The `userId` of the user to remove from the world, or an object containing the `userId` field.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         removeUser: function (user, options) {
@@ -2042,7 +2042,7 @@ function WorldAPIAdapter(config) {
         *           });
         *
         * ** Parameters **
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
         * @return {Promise}
         */
@@ -2072,8 +2072,8 @@ function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {string} userId The `userId` of the user whose current (most recent) world is being retrieved.
-        * @param {string} groupName (Optional) The name of the group. If not provided, defaults to the group used to create the service.
-        * @return {Promise}
+        * @param {string} [groupName] The name of the group. If not provided, defaults to the group used to create the service.
+        * @return {JQuery.Promise}
         */
         getCurrentWorldForUser: function (userId, groupName) {
             var dtd = $.Deferred();
@@ -2111,7 +2111,7 @@ function WorldAPIAdapter(config) {
         *
         *  **Parameters**
         * @param {string} worldId The `worldId` of the world from which the current run is being deleted.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         deleteRun: function (worldId, options) {
@@ -2144,7 +2144,7 @@ function WorldAPIAdapter(config) {
         *
         *  **Parameters**
         * @param {string} worldId worldId in which we create the new run.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
         * @return {Promise}
         */
@@ -2172,11 +2172,10 @@ function WorldAPIAdapter(config) {
         *      wa.autoAssign();
         *
         * **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @param {number} options.maxUsers Sets the maximum number of users in a world.
         * @param {string[]} options.userIds A list of users to be assigned be assigned instead of all end users in the group.
         * @return {Promise}
-        *
         */
         autoAssign: function (options) {
             var opt = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(assignmentEndpoint) });
@@ -2219,7 +2218,7 @@ function WorldAPIAdapter(config) {
         *           });
         *
         * **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         getProjectSettings: function (options) {
@@ -2233,7 +2232,7 @@ function WorldAPIAdapter(config) {
          * Get an instance of a consensus service for current world
          * 
          * @param {string|{ consensusGroup: string, name: string}} conOpts creates a consensus with an optional group name. If not specified, created under the 'default' group
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {ConsensusService}
          */
         consensus: function (conOpts, options) {
@@ -2266,8 +2265,8 @@ function WorldAPIAdapter(config) {
         },
 
         /**
-         * @param {string|{users: object} } world
-         * @param {object} options
+         * @param {string|{users: object} } world World to get users from.
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         getPresenceForUsers: function (world, options) {
@@ -2327,7 +2326,7 @@ var Strategy = classFrom(Base, {
      * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
      * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
      * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
-     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
+     * @param  {Object} [options] See [RunService#create](../run-api-service/#create) for supported options.
      * @return {Promise}             
      */
     reset: function (runService, userSession, options) {
@@ -2347,7 +2346,7 @@ var Strategy = classFrom(Base, {
      * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
      * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
      * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
-     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
+     * @param  {Object} [options] See [RunService#create](../run-api-service/#create) for supported options.
      * @return {Promise}             
      */
     getRun: function (runService, userSession, runSession, options) {
@@ -2506,12 +2505,12 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *
     * **Parameters**
     *
-    * @param {Object} options (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
+    * @param {Object} [options] Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
     * @param {string} options.account The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
     * @param {string} options.userName Email or username to use for logging in.
     * @param {string} options.password Password for specified `userName`.
-    * @param {string} options.project (Optional) The **Project ID** for the project to log this user into.
     * @param {string} options.groupId The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
+    * @param {string} [options.project] The **Project ID** for the project to log this user into.
     * @return {Promise}
     */
     login: function (options) {
@@ -2686,7 +2685,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *          });
      *
      * **Parameters**
-     * @param {Object} options (Optional) Overrides for configuration options.
+     * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
      */
     getToken: function (options) {
@@ -2724,7 +2723,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {Object} params Object with a userId and token properties.
      * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
      * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
-     * @param {Object} options (Optional) Overrides for configuration options.
+     * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
      */
     getUserGroups: function (params, options) {
@@ -2777,7 +2776,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      var sessionObj = authMgr.getCurrentUserSessionInfo();
      *
      * **Parameters**
-     * @param {Object} options (Optional) Overrides for configuration options.
+     * @param {Object} [options] Overrides for configuration options.
      * @return {Object} session information
      */
     getCurrentUserSessionInfo: function (options) {
@@ -2799,8 +2798,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *
      * **Parameters**
      * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
-     * @param {string} group.isFac (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
-     * @param {string} group.groupId (optional) Defaults to undefined. Needed mostly for the Members API.
+     * @param {string} [group.isFac] Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
+     * @param {string} [group.groupId] Defaults to undefined. Needed mostly for the Members API.
      * @return {Object} session information
     */
     addGroups: function (groups) {
@@ -3096,7 +3095,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
  *
  * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
  *
- *      const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+ *      const ma = new F.service.Member();
  *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
  *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
  */
@@ -3156,7 +3155,7 @@ function MemberAPIService(config) {
         *
         * **Example**
         *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member();
         *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
         *           .then(function(memberships){
         *               for (const i=0; i<memberships.length; i++) {
@@ -3185,6 +3184,12 @@ function MemberAPIService(config) {
         },
 
         /**
+         * Add given userids to group
+         *
+         * **Example**
+         *       const ma = new F.service.Member();
+         *       ma.addUsersToGroup(['42836d4b-5b61-4fe4-80eb-3136e956ee5c', '42836d4b-5b61-4fe4-80eb-3136e956ee5c'])
+         *
          * @param {string[] | {userId:string}[]} userlist list of users to add to group. [userId1,userId2..] or [{userid: userId},{userId: userId2}...]
          * @param {string} [groupId] Group to add users to. Pulls current group from session if not provided
          * @param {object} [options] Overrides for configuration options.
@@ -3211,7 +3216,7 @@ function MemberAPIService(config) {
         *
         * **Example**
         *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member();
         *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
         *           .then(function(group){
         *               for (const i=0; i<group.members.length; i++) {
@@ -3245,7 +3250,7 @@ function MemberAPIService(config) {
         *
         * **Example**
         *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member();
         *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
@@ -3265,7 +3270,7 @@ function MemberAPIService(config) {
         *
         * **Example**
         *
-        *       const ma = new F.service.Member({ token: 'user-or-project-access-token' });
+        *       const ma = new F.service.Member();
         *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
@@ -3441,7 +3446,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *      channel.publish('topic', { myData: 100 });
      *
      * **Parameters**
-     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
     getChannel: function (options) {
@@ -3487,7 +3492,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * **Parameters**
      *
-     * @param  {String} groupName (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getGroupChannel: function (groupName) {
@@ -3531,14 +3536,24 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *         });
      *      });
      *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
+     * The list of available topics to subscribe to are:
+         | Topic | Description |
+        | ------------- | ------------- |
+        | ALL | All events |
+        | RUN | All Run events |
+        | RUN_VARIABLES | Variable sets only |
+        | RUN_OPERATIONS | Operation executions only |
+        | RUN_RESET | New run attached to the world |
+        | PRESENCE | All Presence events |
+        | PRESENCE_ONLINE | Online notifications only |
+        | PRESENCE_OFFLINE | Offline notifications only |
+        | ROLES | All role events |
+        | ROLES_ASSIGN | Role assignments only |
+        | ROLES_UNASSIGN | Role unassignments |
+      * **Parameters**
      *
      * @param  {String|Object} world The world object or id.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getWorldChannel: function (world, groupName) {
@@ -3591,8 +3606,8 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      * **Parameters**
      *
      * @param  {String|{ id: string }} world World object or id.
-     * @param  {String|Object} user (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {String|Object} [user] User object or id. If not provided, picks up user id from current session if end user is logged in.
+     * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getUserChannel: function (world, user, groupName) {
@@ -3640,7 +3655,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * **Parameters**
      *
-     * @param  {String} groupName (Optional) Group the end user is in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group the end user is in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getPresenceChannel: function (groupName) {
@@ -4008,9 +4023,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 *       * `files`: (optional) If and only if you are using a Vensim model and you have additional data to pass in to your model, you can optionally pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (See more on [Using External Data in Vensim](../../../model_code/vensim/vensim_example_xls/).)
 *
 *   * `strategy`: (optional) Run creation strategy for when to create a new run and when to reuse an end user's existing run. This is *optional*; by default, the Run Manager selects `reuse-per-session`, or `reuse-last-initialized` if you also pass in an initial operation. See [below](#using-the-run-manager-to-access-and-register-strategies) for more information on strategies.
-*
 *   * `strategyOptions`: (optional) Additional options passed directly to the [run creation strategy](../strategies/).
-*
 *   * `sessionKey`: (optional) Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtime.
 *
 *
@@ -4436,9 +4449,9 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param {String} variable Name of variable to load.
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {string} variable Name of variable to load.
+         * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         load: function (variable, outputModifier, options) {
@@ -4463,8 +4476,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Object|Array} query The names of the variables requested.
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         query: function (query, outputModifier, options) {
@@ -4489,8 +4502,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Object|String} variable An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
-         * @param {Object} val (Optional) If passing a string for `variable`, use this argument for the value to save.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {object} [val] If passing a string for `variable`, use this argument for the value to save.
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         save: function (variable, val, options) {
@@ -4510,8 +4523,8 @@ module.exports = function (config) {
         // *
         //  * Save values to the api. Merges arrays, but otherwise same as save
         //  * @param {Object|String} variable Object with attributes, or string key
-        //  * @param {Object} val Optional if prev parameter was a string, set value here
-        //  * @param {Object} options Overrides for configuration options
+        //  * @param {object} val Optional if prev parameter was a string, set value here
+        //  * @param {object} options Overrides for configuration options
         //  *
         //  * @example
         //  *     vs.merge({ price: 4, quantity: 5, products: [2,3,4] })
@@ -4568,19 +4581,19 @@ module.exports = function (config) {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
+         * @type {string}
          */
         token: undefined,
 
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
-         * @type {String}
+         * @type {string}
          */
         account: undefined,
 
         /**
          * The project id. Defaults to empty string. If left undefined, taken from the URL.
-         * @type {String}
+         * @type {string}
          */
         project: undefined
 
@@ -4623,8 +4636,8 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} modelFile Name of the model file to introspect.
-         * @param  {Object} options (Optional) Overrides for configuration options.
+         * @param  {string} modelFile Name of the model file to introspect.
+         * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
          */
         byModel: function (modelFile, options) {
@@ -4655,8 +4668,8 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} runID Id of the run to introspect.
-         * @param  {Object} options (Optional) Overrides for configuration options.
+         * @param  {string} runID Id of the run to introspect.
+         * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
          */
         byRunID: function (runID, options) {
@@ -4755,8 +4768,8 @@ module.exports = function (config) {
         /**
          * Save cookie value
          * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-         * @param  {Object} value (Optional)
-         * @param {Object} options Overrides for service options
+         * @param  {any} [value] value to store
+         * @param {object} [options] Overrides for service options
          *
          * @return {*} The saved value
          *
@@ -4778,8 +4791,8 @@ module.exports = function (config) {
 
         /**
          * Load cookie value
-         * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-         * @return {*} The value stored
+         * @param  {string| object} key   If given a key save values under it, if given an object directly, save to top-level api
+         * @return {any} The value stored
          *
          * @example
          *     cs.get('person');
@@ -4794,9 +4807,9 @@ module.exports = function (config) {
 
         /**
          * Removes key from collection
-         * @param { string} key key to remove
-         * @param {object} options (optional) overrides for service options
-         * @return { string} key The key removed
+         * @param {string} key key to remove
+         * @param {object} [options] overrides for service options
+         * @return {string} key The key removed
          *
          * @example
          *     cs.remove('person');
@@ -4814,7 +4827,7 @@ module.exports = function (config) {
 
         /**
          * Removes collection being referenced
-         * @return { array} keys All the keys removed
+         * @return {string[]} keys All the keys removed
          */
         destroy: function () {
             var cookie = this.serviceOptions.cookie;
@@ -4909,6 +4922,28 @@ var DataService = function () {
              */
             token: undefined,
 
+            /**
+             *  Determines who has read/write access to this collection
+             * 
+                const DataService = F.service.Data;    
+                const groupScopeDataService = new DataService({    
+                    name: 'some-name', 
+                    scope: DataService.SCOPES.GROUP,   
+                });    
+                const userScopeDataService = new DataService({     
+                    name: 'some-name', 
+                    scope: DataService.SCOPES.USER,    
+                });    
+                ```
+                Available scopes are:
+                 | Scope | Readable By | Writable By
+                | ------------- | ------------- | ------------- |
+                | GROUP | Facilitators & Users in that group | Faciliators in that group|
+                | USER | Faciliator in that group. User who created the collection | Faciliator in that group. User who created the collection |
+                | FACILITATOR | Faciliators in that group | Faciliators in that group |
+                | PROJECT (default, for legacy reasons) | Any user in the project | Any user in the project |
+                | CUSTOM (to opt out of naming conventions) | customize with Epicenter-api-proxy | customize with Epicenter-api-proxy |
+             */
             scope: __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a" /* SCOPES */].CUSTOM,
 
             //Options to pass on to the underlying transport layer
@@ -5253,7 +5288,7 @@ module.exports = function (config) {
          *      });
          *
          * **Parameters**
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         login: function (options) {
@@ -5290,7 +5325,7 @@ module.exports = function (config) {
         //      auth.logout();
         //
         // **Parameters**
-        // @param {Object} `options` (Optional) Overrides for configuration options.
+        // @param {Object} [options] Overrides for configuration options.
         //
         logout: function (options) {
             var dtd = $.Deferred();
@@ -5362,7 +5397,7 @@ var GroupService = function (config) {
         * @patam {string} params.account Epicenter's Team ID
         * @patam {string} params.project Epicenter's Project ID
         * @patam {string} params.name Epicenter's Group Name
-        * @param {Object} options (Optional) Overrides for configuration options.
+        * @param {Object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         getGroups: function (params, options) {
@@ -5516,9 +5551,9 @@ Channel.prototype = $.extend(Channel.prototype, {
      * @param  {String|Array}   topic    List of topics to listen for changes on.
      * @param  {Function} callback Callback function to execute. Callback is called with signature `(evt, payload, metadata)`.
      * @param  {Object}   context  Context in which the `callback` is executed.
-     * @param  {Object}   options  (Optional) Overrides for configuration options.
-     * @param  {Number}   options.priority  Used to control order of operations. Defaults to 0. Can be any +ve or -ve number.
-     * @param  {String|Number|Function}   options.value The `callback` is only triggered if this condition matches. See examples for details.
+     * @param  {Object}   [options] Overrides for configuration options.
+     * @param  {number}   [options.priority]  Used to control order of operations. Defaults to 0. Can be any +ve or -ve number.
+     * @param  {String|number|Function}   [options.value] The `callback` is only triggered if this condition matches. See examples for details.
      * @return {string} Subscription ID
      */
     subscribe: function (topic, callback, context, options) {
@@ -5937,7 +5972,7 @@ module.exports = function (config) {
         *
         *  **Parameters**
         * @param {string} runId The id of the run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         load: function (runId, options) {
@@ -5956,9 +5991,9 @@ module.exports = function (config) {
         *  **Parameters**
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to bring back to memory.
-        * @param {string} params.stopBefore (Optional) The run is advanced only up to the first occurrence of this method.
-        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {string} [params.stopBefore] The run is advanced only up to the first occurrence of this method.
+        * @param {string[]} [params.exclude] Array of methods to exclude when advancing the run.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         replay: function (params, options) {
@@ -5990,9 +6025,9 @@ module.exports = function (config) {
         *  **Parameters**
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to clone from memory.
-        * @param {string} params.stopBefore (Optional) The newly cloned run is advanced only up to the first occurrence of this method.
-        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the newly cloned run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {string} [params.stopBefore] The newly cloned run is advanced only up to the first occurrence of this method.
+        * @param {string[]} [params.exclude] Array of methods to exclude when advancing the newly cloned run.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         clone: function (params, options) {
@@ -6025,7 +6060,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 *
 * The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
 *
-* To use the User API Adapter, instantiate it and then call its methods.
+* Example:
 *
 *       var ua = new F.service.User({
 *           account: 'acme-simulations',
@@ -6079,7 +6114,6 @@ function UserAPIAdapter(config) {
         *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
-        *           token: 'user-or-project-access-token'
         *       });
         *       ua.get({ userName: 'jsmith' });
         *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
@@ -6122,7 +6156,6 @@ function UserAPIAdapter(config) {
         *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
-        *           token: 'user-or-project-access-token'
         *       });
         *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
         *
@@ -6137,12 +6170,19 @@ function UserAPIAdapter(config) {
 
         /**
         * Upload list of users to current account
-        * 
+        *
+        * **Example**
+        *
+        *       var us = new F.service.User({
+        *           account: 'acme-simulations',
+        *       });
+        *       us.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
+        *       
         * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
         */
-        uploadUsers: function (userList, options) {
+        createUsers: function (userList, options) {
             if (!userList || !Array.isArray(userList)) {
                 return $.Deferred().reject({
                     type: 'INVALID_USERS',
@@ -6683,7 +6723,7 @@ SavedRunsManager.prototype = {
      *      sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
      *
      * @param  {String|RunService} run Run to save. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-     * @param  {Object} otherFields (Optional) Any other meta-data to save with the run.
+     * @param  {object} [otherFields] Any other meta-data to save with the run.
      * @return {Promise}
      */
     save: function (run, otherFields) {
@@ -6699,7 +6739,7 @@ SavedRunsManager.prototype = {
      *      sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
      *
      * @param  {String|RunService} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-     * @param  {Object} otherFields (Optional) any other meta-data to save with the run.
+     * @param  {object} [otherFields] any other meta-data to save with the run.
      * @return {Promise}
      */
     remove: function (run, otherFields) {
@@ -6751,9 +6791,9 @@ SavedRunsManager.prototype = {
      *          }
      *      });
      *
-     * @param  {Array} variables (Optional) If provided, in the returned list of runs, each run will have a `.variables` property with these set.
-     * @param  {Object} filter    (Optional) Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
-     * @param  {Object} modifiers (Optional) Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
+     * @param  {string[]} [variables] If provided, in the returned list of runs, each run will have a `.variables` property with these set.
+     * @param  {object} [filter]    Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
+     * @param  {object} [modifiers] Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
      * @return {Promise}
      */
     getRuns: function (variables, filter, modifiers) {
@@ -6876,8 +6916,8 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} userId (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
-        * @param {string} groupName (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @param {string} [userId] The id of the user whose world is being accessed. Defaults to the user in the current session.
+        * @param {string} [groupName] The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
         * @return {Promise}
         */
         getCurrentWorld: function (userId, groupName) {
@@ -6903,7 +6943,7 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} model (Optional) The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
+        * @param {string} [model] The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
         * @return {Promise}
         */
         getCurrentRun: function (model) {
@@ -7202,7 +7242,7 @@ module.exports = function (config) {
         /**
          * Get a directory listing, or contents of a file.
          * @param {String} filePath  Path to the file
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         getContents: function (filePath, options) {
@@ -7217,7 +7257,7 @@ module.exports = function (config) {
          * Replaces the file at the given file path.
          * @param  {String} filePath Path to the file
          * @param  {String | FormData } contents Contents to write to file
-         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @param  {object} [options] Overrides for configuration options
          * @return {Promise}
          */
         replace: function (filePath, contents, options) {
@@ -7230,7 +7270,7 @@ module.exports = function (config) {
          * @param  {String} filePath Path to the file
          * @param  {String | FormData } contents Contents to write to file
          * @param  {Boolean} replaceExisting Replace file if it already exists; defaults to false
-         * @param  {Object} options (Optional) Overrides for configuration options
+         * @param  {Object} [options] Overrides for configuration options
          * @return {Promise}
          */
         create: function (filePath, contents, replaceExisting, options) {
@@ -7251,7 +7291,7 @@ module.exports = function (config) {
         /**
          * Removes the file.
          * @param  {String} filePath Path to the file
-         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @param  {object} [options] Overrides for configuration options
          * @return {Promise}
          */
         remove: function (filePath, options) {
@@ -7266,7 +7306,7 @@ module.exports = function (config) {
          * Renames the file.
          * @param  {String} filePath Path to the file
          * @param  {String} newName  New name of file
-         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @param  {object} [options] Overrides for configuration options
          * @return {Promise}
          */
         rename: function (filePath, newName, options) {
@@ -7629,7 +7669,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *      channel.publish('topic', { myData: 100 });
      *
      * **Parameters**
-     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
     getChannel: function (options) {
@@ -8066,8 +8106,8 @@ module.exports = function (config) {
     //
     // @param {string} method` (Required) HTTP verb
     // @param {string} filename` (Required) Name of the file to delete/replace/create
-    // @param {object} params` (Optional) Body parameters to send to the Asset API
-    // @param {object} options` (Optional) Options object to override global options.
+    // @param {object} [params]` Body parameters to send to the Asset API
+    // @param {object} [options]` Options object to override global options.
     var upload = function (method, filename, params, options) {
         validateFilename(filename);
         // make sure the parameter is clean
@@ -8131,12 +8171,12 @@ module.exports = function (config) {
         *
         *
         *  **Parameters**
-        * @param {string} filename (Required) Name of the file to create.
-        * @param {object} params (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
-        * @param {string} params.encoding Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} params.data The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} params.contentType The mime type of the file. Optional.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {string} filename Name of the file to create.
+        * @param {object} [params] Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
+        * @param {string} [params.encoding] Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} [params.data] The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} [params.contentType] The mime type of the file. Optional.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         create: function (filename, params, options) {
@@ -8149,7 +8189,7 @@ module.exports = function (config) {
         *
         *  **Parameters**
         * @param {string} filename (Required) Name of the file to retrieve.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         get: function (filename, options) {
@@ -8171,9 +8211,9 @@ module.exports = function (config) {
         *       });
         *
         *  **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
-        * @param {string} options.scope (Optional) The scope (`user`, `group`, `project`).
-        * @param {boolean} options.fullUrl (Optional) Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
+        * @param {object} [options] Options object to override global options.
+        * @param {string} [options.scope] The scope (`user`, `group`, `project`).
+        * @param {boolean} [options.fullUrl] Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
         * @return {Promise}
         */
         list: function (options) {
@@ -8230,12 +8270,12 @@ module.exports = function (config) {
         *       });
         *
         *  **Parameters**
-        * @param {string} filename (Required) Name of the file being replaced.
-        * @param {object} params (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
-        * @param {string} params.encoding Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} params.data The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} params.contentType The mime type of the file. Optional.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {string} filename Name of the file being replaced.
+        * @param {object} [params] Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
+        * @param {string} [params.encoding] Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} [params.data] The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} [params.contentType] The mime type of the file. Optional.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         replace: function (filename, params, options) {
@@ -8251,7 +8291,7 @@ module.exports = function (config) {
         *
         *  **Parameters**
         * @param {string} filename (Required) Name of the file to delete.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         delete: function (filename, options) {
@@ -9906,7 +9946,12 @@ module.exports = classFrom(Base, {
     },
 
     reset: function (runService, userSession, options) {
-        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+        var scoped = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+        var opt = $.extend(true, {}, scoped, {
+            scope: {
+                trackingKey: 'current'
+            }
+        });
         return runService.create(opt, options).then(function (createResponse) {
             return $.extend(true, {}, createResponse, { freshlyCreated: true });
         });
@@ -9917,7 +9962,8 @@ module.exports = classFrom(Base, {
         var filter = injectFiltersFromSession({
             saved: false,
             trashed: false,
-            model: runopts.model
+            model: runopts.model,
+            'scope.trackingKey': 'current'
         }, userSession);
         var me = this;
         var outputModifiers = {
@@ -9952,19 +9998,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * 
- *  const UserManager = F.manager.User;
-    const um = new UserManager(getRunParams());
-    um.uploadUsersToGroup(contents).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
+* ## User Manager
+*
+* The User Manager provides a high-level abstraction over the User Service and Member Services to perform common simulation actions, like uploading users into a group.
+*
+* Example:
+
+    var UserManager = F.manager.User;
+    var um = new UserManager(getRunParams());
+    um.uploadUsersToGroup($('#userTextarea').val()).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
         if (res.type === UserManager.errors.EMPTY_USERS) {
             alert('No users specified to upload');
         } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
             alert('No group found. Create a group and login as a facilitator to upload users');
         } else {
             alert('Unknown error, please try again');
-            console.error('Upload users error', res);
         }
-    })
+    });
  */
 
 
@@ -10027,21 +10077,7 @@ var UserManager = function () {
              * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
              * @type {String}
              */
-            account: undefined,
-            /**
-             * The project id. Defaults to empty string. If left undefined, taken from the URL.
-             * @type {String}
-             */
-            project: undefined,
-            /**
-             * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-             * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-             * @type {String}
-             */
-            token: undefined,
-
-            //Options to pass on to the underlying transport layer
-            transport: {}
+            account: undefined
         };
         var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_3_service_service_utils__["b" /* getDefaultOptions */])(defaults, config);
         this.serviceOptions = serviceOptions;
@@ -10091,7 +10127,7 @@ var UserManager = function () {
 
             var userService = new __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__["default"](serviceOptions);
             var memberService = new __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__["default"](serviceOptions);
-            return userService.uploadUsers(usersToAdd.valid).then(function (userRes) {
+            return userService.createUsers(usersToAdd.valid).then(function (userRes) {
                 var validUsers = [].concat(userRes.saved, userRes.updated, userRes.duplicate);
                 var validIds = validUsers.map(function (u) {
                     return u.id;

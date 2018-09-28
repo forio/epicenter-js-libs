@@ -19,35 +19,41 @@
  */
 
 'use strict';
-var classFrom = require('util/inherit');
-var injectFiltersFromSession = require('managers/run-strategies/strategy-utils').injectFiltersFromSession;
-var injectScopeFromSession = require('managers/run-strategies/strategy-utils').injectScopeFromSession;
+const classFrom = require('util/inherit');
+const injectFiltersFromSession = require('managers/run-strategies/strategy-utils').injectFiltersFromSession;
+const injectScopeFromSession = require('managers/run-strategies/strategy-utils').injectScopeFromSession;
 
-var Base = {};
+const Base = {};
 
 //TODO: Make a more generic version of this called 'reuse-by-matching-filter';
 module.exports = classFrom(Base, {
     constructor: function (options) {
-        var strategyOptions = options ? options.strategyOptions : {};
+        const strategyOptions = options ? options.strategyOptions : {};
         this.options = strategyOptions;
     },
 
     reset: function (runService, userSession, options) {
-        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+        const scoped = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+        const opt = $.extend(true, {}, scoped, {
+            scope: {
+                trackingKey: 'current'
+            }
+        });
         return runService.create(opt, options).then(function (createResponse) {
             return $.extend(true, {}, createResponse, { freshlyCreated: true });
         });
     },
 
     getRun: function (runService, userSession, opts) {
-        var runopts = runService.getCurrentConfig();
-        var filter = injectFiltersFromSession({ 
+        const runopts = runService.getCurrentConfig();
+        const filter = injectFiltersFromSession({ 
             saved: false,
             trashed: false,
             model: runopts.model,
+            'scope.trackingKey': 'current',
         }, userSession);
-        var me = this;
-        var outputModifiers = { 
+        const me = this;
+        const outputModifiers = { 
             startrecord: 0,
             endrecord: 0,
             sort: 'created', 
