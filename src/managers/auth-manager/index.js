@@ -89,12 +89,12 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *
     * **Parameters**
     *
-    * @param {Object} options (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
+    * @param {Object} [options] Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
     * @param {string} options.account The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
     * @param {string} options.userName Email or username to use for logging in.
     * @param {string} options.password Password for specified `userName`.
-    * @param {string} options.project (Optional) The **Project ID** for the project to log this user into.
     * @param {string} options.groupId The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
+    * @param {string} [options.project] The **Project ID** for the project to log this user into.
     * @return {Promise}
     */
     login: function (options) {
@@ -270,7 +270,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *          });
      *
      * **Parameters**
-     * @param {Object} options (Optional) Overrides for configuration options.
+     * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
      */
     getToken: function (options) {
@@ -308,7 +308,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {Object} params Object with a userId and token properties.
      * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
      * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
-     * @param {Object} options (Optional) Overrides for configuration options.
+     * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
      */
     getUserGroups: function (params, options) {
@@ -361,7 +361,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      var sessionObj = authMgr.getCurrentUserSessionInfo();
      *
      * **Parameters**
-     * @param {Object} options (Optional) Overrides for configuration options.
+     * @param {Object} [options] Overrides for configuration options.
      * @return {Object} session information
      */
     getCurrentUserSessionInfo: function (options) {
@@ -383,8 +383,8 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *
      * **Parameters**
      * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
-     * @param {string} group.isFac (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
-     * @param {string} group.groupId (optional) Defaults to undefined. Needed mostly for the Members API.
+     * @param {string} [group.isFac] Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
+     * @param {string} [group.groupId] Defaults to undefined. Needed mostly for the Members API.
      * @return {Object} session information
     */
     addGroups: function (groups) {

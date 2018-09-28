@@ -70,7 +70,7 @@ module.exports = function (config) {
          *      });
          *
          * **Parameters**
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         login: function (options) {
@@ -107,7 +107,7 @@ module.exports = function (config) {
         //      auth.logout();
         //
         // **Parameters**
-        // @param {Object} `options` (Optional) Overrides for configuration options.
+        // @param {Object} [options] Overrides for configuration options.
         //
         logout: function (options) {
             var dtd = $.Deferred();

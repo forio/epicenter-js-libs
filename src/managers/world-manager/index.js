@@ -88,8 +88,8 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} userId (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
-        * @param {string} groupName (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @param {string} [userId] The id of the user whose world is being accessed. Defaults to the user in the current session.
+        * @param {string} [groupName] The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
         * @return {Promise}
         */
         getCurrentWorld: function (userId, groupName) {
@@ -115,7 +115,7 @@ module.exports = function (options) {
         *           });
         *
         * **Parameters**
-        * @param {string} model (Optional) The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
+        * @param {string} [model] The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
         * @return {Promise}
         */
         getCurrentRun: function (model) {

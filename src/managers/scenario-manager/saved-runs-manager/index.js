@@ -57,7 +57,7 @@ SavedRunsManager.prototype = {
      *      sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
      *
      * @param  {String|RunService} run Run to save. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-     * @param  {Object} otherFields (Optional) Any other meta-data to save with the run.
+     * @param  {object} [otherFields] Any other meta-data to save with the run.
      * @return {Promise}
      */
     save: function (run, otherFields) {
@@ -73,7 +73,7 @@ SavedRunsManager.prototype = {
      *      sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
      *
      * @param  {String|RunService} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-     * @param  {Object} otherFields (Optional) any other meta-data to save with the run.
+     * @param  {object} [otherFields] any other meta-data to save with the run.
      * @return {Promise}
      */
     remove: function (run, otherFields) {
@@ -126,9 +126,9 @@ SavedRunsManager.prototype = {
      *          }
      *      });
      *
-     * @param  {Array} variables (Optional) If provided, in the returned list of runs, each run will have a `.variables` property with these set.
-     * @param  {Object} filter    (Optional) Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
-     * @param  {Object} modifiers (Optional) Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
+     * @param  {string[]} [variables] If provided, in the returned list of runs, each run will have a `.variables` property with these set.
+     * @param  {object} [filter]    Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
+     * @param  {object} [modifiers] Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
      * @return {Promise}
      */
     getRuns: function (variables, filter, modifiers) {

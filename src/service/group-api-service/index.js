@@ -48,7 +48,7 @@ var GroupService = function (config) {
         * @patam {string} params.account Epicenter's Team ID
         * @patam {string} params.project Epicenter's Project ID
         * @patam {string} params.name Epicenter's Group Name
-        * @param {Object} options (Optional) Overrides for configuration options.
+        * @param {Object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         getGroups: function (params, options) {

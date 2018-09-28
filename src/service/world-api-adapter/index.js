@@ -135,11 +135,11 @@ export default function WorldAPIAdapter(config) {
         *
         *  **Parameters**
         * @param {object} params Parameters to create the world.
-        * @param {string} params.group (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
-        * @param {object} params.roles (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} params.optionalRoles (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {integer} params.minUsers (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {string} [params.group] The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
+        * @param {object} [params.roles] The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {object} [params.optionalRoles] The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {integer} [params.minUsers] The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         create: function (params, options) {
@@ -180,10 +180,10 @@ export default function WorldAPIAdapter(config) {
         *  **Parameters**
         * @param {object} params Parameters to update the world.
         * @param {string} params.name A string identifier for the linked end users, for example, "name": "Our Team".
-        * @param {object} params.roles (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} params.optionalRoles (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {integer} params.minUsers (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [params.roles] The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {object} [params.optionalRoles] The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {integer} [params.minUsers] The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         update: function (params, options) {
@@ -219,7 +219,7 @@ export default function WorldAPIAdapter(config) {
         *           });
         *
         *  **Parameters**
-        * @param {string|Object} options (Optional) The id of the world to delete, or options object to override global options.
+        * @param {string|Object} [options] The id of the world to delete, or options object to override global options.
         * @return {Promise}
         */
         delete: function (options) {
@@ -270,7 +270,7 @@ export default function WorldAPIAdapter(config) {
         *           });
         *
         *  **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         list: function (options) {
@@ -290,7 +290,7 @@ export default function WorldAPIAdapter(config) {
          *
          * **Parameters**
          * @param {string} worldId The id of the world to load.
-         * @param {Object} [options] (Optional) Options object to override global options.
+         * @param {Object} [options]] Options object to override global options.
          * @return {Promise}
          */
         load: function (worldId, options) {
@@ -320,7 +320,7 @@ export default function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {string} userId The `userId` of the user whose worlds are being retrieved.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         getWorldsForUser: function (userId, options) {
@@ -371,7 +371,7 @@ export default function WorldAPIAdapter(config) {
         * @param {string|object|array} users User id, array of user ids, object, or array of objects of the users to add to this world.
         * @param {string} users.role The `role` the user should have in the world. It is up to the caller to ensure, if needed, that the `role` passed in is one of the `roles` or `optionalRoles` of this world.
         * @param {string} worldId The world to which the users should be added. If not specified, the filter parameter of the `options` object is used.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         addUsers: function (users, worldId, options) {
@@ -429,7 +429,7 @@ export default function WorldAPIAdapter(config) {
         *
         * **Parameters**
         * @param {{userId: string, role: string}} user User object with `userId` and the new `role`.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         updateUser: function (user, options) {
@@ -466,7 +466,7 @@ export default function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {object|string} user The `userId` of the user to remove from the world, or an object containing the `userId` field.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         removeUser: function (user, options) {
@@ -506,7 +506,7 @@ export default function WorldAPIAdapter(config) {
         *           });
         *
         * ** Parameters **
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
         * @return {Promise}
         */
@@ -540,8 +540,8 @@ export default function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {string} userId The `userId` of the user whose current (most recent) world is being retrieved.
-        * @param {string} groupName (Optional) The name of the group. If not provided, defaults to the group used to create the service.
-        * @return {Promise}
+        * @param {string} [groupName] The name of the group. If not provided, defaults to the group used to create the service.
+        * @return {JQuery.Promise}
         */
         getCurrentWorldForUser: function (userId, groupName) {
             var dtd = $.Deferred();
@@ -579,7 +579,7 @@ export default function WorldAPIAdapter(config) {
         *
         *  **Parameters**
         * @param {string} worldId The `worldId` of the world from which the current run is being deleted.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         deleteRun: function (worldId, options) {
@@ -616,7 +616,7 @@ export default function WorldAPIAdapter(config) {
         *
         *  **Parameters**
         * @param {string} worldId worldId in which we create the new run.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
         * @return {Promise}
         */
@@ -649,11 +649,10 @@ export default function WorldAPIAdapter(config) {
         *      wa.autoAssign();
         *
         * **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @param {number} options.maxUsers Sets the maximum number of users in a world.
         * @param {string[]} options.userIds A list of users to be assigned be assigned instead of all end users in the group.
         * @return {Promise}
-        *
         */
         autoAssign: function (options) {
             var opt = $.extend(true, {},
@@ -700,7 +699,7 @@ export default function WorldAPIAdapter(config) {
         *           });
         *
         * **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         getProjectSettings: function (options) {
@@ -718,7 +717,7 @@ export default function WorldAPIAdapter(config) {
          * Get an instance of a consensus service for current world
          * 
          * @param {string|{ consensusGroup: string, name: string}} conOpts creates a consensus with an optional group name. If not specified, created under the 'default' group
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {ConsensusService}
          */
         consensus: function (conOpts, options) {
@@ -751,8 +750,8 @@ export default function WorldAPIAdapter(config) {
         },
 
         /**
-         * @param {string|{users: object} } world
-         * @param {object} options
+         * @param {string|{users: object} } world World to get users from.
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         getPresenceForUsers: function (world, options) {

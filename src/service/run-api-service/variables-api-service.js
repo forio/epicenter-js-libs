@@ -68,9 +68,9 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param {String} variable Name of variable to load.
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {string} variable Name of variable to load.
+         * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         load: function (variable, outputModifier, options) {
@@ -95,8 +95,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Object|Array} query The names of the variables requested.
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         query: function (query, outputModifier, options) {
@@ -121,8 +121,8 @@ module.exports = function (config) {
          *
          * **Parameters**
          * @param {Object|String} variable An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
-         * @param {Object} val (Optional) If passing a string for `variable`, use this argument for the value to save.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {object} [val] If passing a string for `variable`, use this argument for the value to save.
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         save: function (variable, val, options) {
@@ -142,8 +142,8 @@ module.exports = function (config) {
         // *
         //  * Save values to the api. Merges arrays, but otherwise same as save
         //  * @param {Object|String} variable Object with attributes, or string key
-        //  * @param {Object} val Optional if prev parameter was a string, set value here
-        //  * @param {Object} options Overrides for configuration options
+        //  * @param {object} val Optional if prev parameter was a string, set value here
+        //  * @param {object} options Overrides for configuration options
         //  *
         //  * @example
         //  *     vs.merge({ price: 4, quantity: 5, products: [2,3,4] })

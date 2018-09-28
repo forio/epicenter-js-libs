@@ -4,7 +4,7 @@
 *
 * The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
 *
-* To use the User API Adapter, instantiate it and then call its methods.
+* Example:
 *
 *       var ua = new F.service.User({
 *           account: 'acme-simulations',

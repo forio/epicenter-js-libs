@@ -66,7 +66,7 @@ module.exports = function (config) {
         *
         *  **Parameters**
         * @param {string} runId The id of the run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         load: function (runId, options) {
@@ -89,9 +89,9 @@ module.exports = function (config) {
         *  **Parameters**
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to bring back to memory.
-        * @param {string} params.stopBefore (Optional) The run is advanced only up to the first occurrence of this method.
-        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {string} [params.stopBefore] The run is advanced only up to the first occurrence of this method.
+        * @param {string[]} [params.exclude] Array of methods to exclude when advancing the run.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         replay: function (params, options) {
@@ -127,9 +127,9 @@ module.exports = function (config) {
         *  **Parameters**
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to clone from memory.
-        * @param {string} params.stopBefore (Optional) The newly cloned run is advanced only up to the first occurrence of this method.
-        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the newly cloned run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {string} [params.stopBefore] The newly cloned run is advanced only up to the first occurrence of this method.
+        * @param {string[]} [params.exclude] Array of methods to exclude when advancing the newly cloned run.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         clone: function (params, options) {

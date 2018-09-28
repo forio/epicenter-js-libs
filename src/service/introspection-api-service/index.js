@@ -28,19 +28,19 @@ module.exports = function (config) {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
+         * @type {string}
          */
         token: undefined,
 
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
-         * @type {String}
+         * @type {string}
          */
         account: undefined,
 
         /**
          * The project id. Defaults to empty string. If left undefined, taken from the URL.
-         * @type {String}
+         * @type {string}
          */
         project: undefined,
 
@@ -83,8 +83,8 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} modelFile Name of the model file to introspect.
-         * @param  {Object} options (Optional) Overrides for configuration options.
+         * @param  {string} modelFile Name of the model file to introspect.
+         * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
          */
         byModel: function (modelFile, options) {
@@ -115,8 +115,8 @@ module.exports = function (config) {
          *          });
          *
          * **Parameters**
-         * @param  {String} runID Id of the run to introspect.
-         * @param  {Object} options (Optional) Overrides for configuration options.
+         * @param  {string} runID Id of the run to introspect.
+         * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
          */
         byRunID: function (runID, options) {

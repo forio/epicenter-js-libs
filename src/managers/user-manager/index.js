@@ -1,17 +1,21 @@
 /**
- * 
- *  const UserManager = F.manager.User;
-    const um = new UserManager(getRunParams());
-    um.uploadUsersToGroup(contents).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
+* ## User Manager
+*
+* The User Manager provides a high-level abstraction over the User Service and Member Services to perform common simulation actions, like uploading users into a group.
+*
+* Example:
+
+    var UserManager = F.manager.User;
+    var um = new UserManager(getRunParams());
+    um.uploadUsersToGroup($('#userTextarea').val()).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
         if (res.type === UserManager.errors.EMPTY_USERS) {
             alert('No users specified to upload');
         } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
             alert('No group found. Create a group and login as a facilitator to upload users');
         } else {
             alert('Unknown error, please try again');
-            console.error('Upload users error', res);
         }
-    })
+    });
  */
 
 import UserService from 'service/user-api-adapter';

@@ -60,8 +60,8 @@ module.exports = function (config) {
         /**
          * Save cookie value
          * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-         * @param  {Object} value (Optional)
-         * @param {Object} options Overrides for service options
+         * @param  {any} [value] value to store
+         * @param {object} [options] Overrides for service options
          *
          * @return {*} The saved value
          *
@@ -87,8 +87,8 @@ module.exports = function (config) {
 
         /**
          * Load cookie value
-         * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-         * @return {*} The value stored
+         * @param  {string| object} key   If given a key save values under it, if given an object directly, save to top-level api
+         * @return {any} The value stored
          *
          * @example
          *     cs.get('person');
@@ -103,9 +103,9 @@ module.exports = function (config) {
 
         /**
          * Removes key from collection
-         * @param { string} key key to remove
-         * @param {object} options (optional) overrides for service options
-         * @return { string} key The key removed
+         * @param {string} key key to remove
+         * @param {object} [options] overrides for service options
+         * @return {string} key The key removed
          *
          * @example
          *     cs.remove('person');
@@ -127,7 +127,7 @@ module.exports = function (config) {
 
         /**
          * Removes collection being referenced
-         * @return { array} keys All the keys removed
+         * @return {string[]} keys All the keys removed
          */
         destroy: function () {
             var cookie = this.serviceOptions.cookie;

@@ -126,9 +126,9 @@ Channel.prototype = $.extend(Channel.prototype, {
      * @param  {String|Array}   topic    List of topics to listen for changes on.
      * @param  {Function} callback Callback function to execute. Callback is called with signature `(evt, payload, metadata)`.
      * @param  {Object}   context  Context in which the `callback` is executed.
-     * @param  {Object}   options  (Optional) Overrides for configuration options.
-     * @param  {Number}   options.priority  Used to control order of operations. Defaults to 0. Can be any +ve or -ve number.
-     * @param  {String|Number|Function}   options.value The `callback` is only triggered if this condition matches. See examples for details.
+     * @param  {Object}   [options] Overrides for configuration options.
+     * @param  {number}   [options.priority]  Used to control order of operations. Defaults to 0. Can be any +ve or -ve number.
+     * @param  {String|number|Function}   [options.value] The `callback` is only triggered if this condition matches. See examples for details.
      * @return {string} Subscription ID
      */
     subscribe: function (topic, callback, context, options) {
