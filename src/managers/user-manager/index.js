@@ -78,20 +78,6 @@ class UserManager {
              * @type {String}
              */
             account: undefined,
-            /**
-             * The project id. Defaults to empty string. If left undefined, taken from the URL.
-             * @type {String}
-             */
-            project: undefined,
-            /**
-             * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-             * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-             * @type {String}
-             */
-            token: undefined,
-
-            //Options to pass on to the underlying transport layer
-            transport: {}
         };
         const serviceOptions = getDefaultOptions(defaults, config);
         this.serviceOptions = serviceOptions;

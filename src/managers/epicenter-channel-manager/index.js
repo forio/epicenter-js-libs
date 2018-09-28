@@ -230,10 +230,22 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *         });
      *      });
      *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
+     * The list of available topics to subscribe to are:
+
+        | Topic | Description |
+        | ------------- | ------------- |
+        | ALL | All events |
+        | RUN | All Run events |
+        | RUN_VARIABLES | Variable sets only |
+        | RUN_OPERATIONS | Operation executions only |
+        | RUN_RESET | New run attached to the world |
+        | PRESENCE | All Presence events |
+        | PRESENCE_ONLINE | Online notifications only |
+        | PRESENCE_OFFLINE | Offline notifications only |
+        | ROLES | All role events |
+        | ROLES_ASSIGN | Role assignments only |
+        | ROLES_UNASSIGN | Role unassignments |
+
      * **Parameters**
      *
      * @param  {String|Object} world The world object or id.

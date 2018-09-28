@@ -61,6 +61,30 @@ class DataService {
              */
             token: undefined,
 
+
+            /**
+             *  Determines who has read/write access to this collection
+             * 
+                const DataService = F.service.Data;    
+                const groupScopeDataService = new DataService({    
+                    name: 'some-name', 
+                    scope: DataService.SCOPES.GROUP,   
+                });    
+                const userScopeDataService = new DataService({     
+                    name: 'some-name', 
+                    scope: DataService.SCOPES.USER,    
+                });    
+                ```
+                Available scopes are:
+
+                | Scope | Readable By | Writable By
+                | ------------- | ------------- | ------------- |
+                | GROUP | Facilitators & Users in that group | Faciliators in that group|
+                | USER | Faciliator in that group. User who created the collection | Faciliator in that group. User who created the collection |
+                | FACILITATOR | Faciliators in that group | Faciliators in that group |
+                | PROJECT (default, for legacy reasons) | Any user in the project | Any user in the project |
+                | CUSTOM (to opt out of naming conventions) | customize with Epicenter-api-proxy | customize with Epicenter-api-proxy |
+             */
             scope: SCOPES.CUSTOM,
 
             //Options to pass on to the underlying transport layer

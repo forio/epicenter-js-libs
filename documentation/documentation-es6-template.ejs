@@ -1,6 +1,4 @@
-<? docfiles.forEach(function (doc) { ?>
-    <? var moduleName = doc.filename.split('/').pop().split('.')[0] ?>
-    ---
+<? docfiles.forEach(function (doc) { ?><? var moduleName = doc.filename.split('/').pop().split('.')[0] ?>---
     title: <?= moduleName.split('-').join(' ') ?>
     layout: "default"
     isPage: true
