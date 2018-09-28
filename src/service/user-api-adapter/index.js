@@ -126,7 +126,7 @@ export default function UserAPIAdapter(config) {
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
         */
-        uploadUsers: function (userList, options) {
+        createUsers: function (userList, options) {
             if (!userList || !Array.isArray(userList)) {
                 return $.Deferred().reject({
                     type: 'INVALID_USERS',

@@ -9951,6 +9951,22 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+ * 
+ *  const UserManager = F.manager.User;
+    const um = new UserManager(getRunParams());
+    um.uploadUsersToGroup(contents).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
+        if (res.type === UserManager.errors.EMPTY_USERS) {
+            alert('No users specified to upload');
+        } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
+            alert('No group found. Create a group and login as a facilitator to upload users');
+        } else {
+            alert('Unknown error, please try again');
+            console.error('Upload users error', res);
+        }
+    })
+ */
+
 
 
 
@@ -10068,9 +10084,8 @@ var UserManager = function () {
             if (!usersToAdd.valid.length) {
                 return $.Deferred().resolve({
                     errors: usersToAdd.invalid,
-                    duplicate: [],
-                    updated: [],
-                    saved: []
+                    created: [],
+                    duplicates: []
                 }).promise();
             }
 

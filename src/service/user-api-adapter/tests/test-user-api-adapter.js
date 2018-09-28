@@ -67,9 +67,9 @@ describe('User API Service', function () {
             });
         });
     });
-    describe('#uploadUsers', ()=> {
+    describe('#createUsers', ()=> {
         it('should do a POST to the right URL', ()=> {
-            return createUserAdapter().uploadUsers([{ userName: 'foo', password: 'bar', firstName: 'X', lastName: 'Y' }]).then(()=> {
+            return createUserAdapter().createUsers([{ userName: 'foo', password: 'bar', firstName: 'X', lastName: 'Y' }]).then(()=> {
                 const req = server.requests.pop();
                 expect(req.method.toUpperCase()).to.equal('POST');
                 expect(req.url).to.equal(baseURL);
@@ -80,7 +80,7 @@ describe('User API Service', function () {
             it('should throw an error if no userlist provided', ()=> {
                 const successSpy = sinon.spy();
                 const failSpy = sinon.spy();
-                return createUserAdapter().uploadUsers().then(successSpy).catch(failSpy).then(()=> {
+                return createUserAdapter().createUsers().then(successSpy).catch(failSpy).then(()=> {
                     expect(successSpy).to.not.have.been.called;
                     expect(failSpy).to.have.been.calledOnce;
 
@@ -92,7 +92,7 @@ describe('User API Service', function () {
             it('should throw an error if userlist provided in the wrong format', ()=> {
                 const successSpy = sinon.spy();
                 const failSpy = sinon.spy();
-                return createUserAdapter().uploadUsers('foobar').then(successSpy).catch(failSpy).then(()=> {
+                return createUserAdapter().createUsers('foobar').then(successSpy).catch(failSpy).then(()=> {
                     expect(successSpy).to.not.have.been.called;
                     expect(failSpy).to.have.been.calledOnce;
 
@@ -104,7 +104,7 @@ describe('User API Service', function () {
             it('should return a rejected promise if user format does not have required fields', ()=> {
                 const successSpy = sinon.spy();
                 const failSpy = sinon.spy();
-                return createUserAdapter().uploadUsers([{ userName: 'blah' }]).then(successSpy).catch(failSpy).then(()=> {
+                return createUserAdapter().createUsers([{ userName: 'blah' }]).then(successSpy).catch(failSpy).then(()=> {
                     expect(successSpy).to.not.have.been.called;
                     expect(failSpy).to.have.been.calledOnce;
 
@@ -123,7 +123,7 @@ describe('User API Service', function () {
                     { userName: 'b', password: 'b', firstName: 'b', lastName: 'b' },
                 ];
                 const userListWithAccount = userList.map((u)=> ($.extend({}, u, { account: account })));
-                return createUserAdapter().uploadUsers(userList).then(successSpy).catch(failSpy).then(()=> {
+                return createUserAdapter().createUsers(userList).then(successSpy).catch(failSpy).then(()=> {
                     expect(failSpy).to.not.have.been.called;
                     expect(successSpy).to.have.been.calledOnce;
 
@@ -138,7 +138,7 @@ describe('User API Service', function () {
                     { userName: 'a', password: 'a', firstName: 'a', lastName: 'a' },
                     { userName: 'b', password: 'b', firstName: 'b', lastName: 'b' },
                 ];
-                return createUserAdapter({ account: null }).uploadUsers(userList).then(successSpy).catch(failSpy).then(()=> {
+                return createUserAdapter({ account: null }).createUsers(userList).then(successSpy).catch(failSpy).then(()=> {
                     expect(successSpy).to.not.have.been.called;
                     expect(failSpy).to.have.been.calledOnce;
                 });

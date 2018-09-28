@@ -1,3 +1,19 @@
+/**
+ * 
+ *  const UserManager = F.manager.User;
+    const um = new UserManager(getRunParams());
+    um.uploadUsersToGroup(contents).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
+        if (res.type === UserManager.errors.EMPTY_USERS) {
+            alert('No users specified to upload');
+        } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
+            alert('No group found. Create a group and login as a facilitator to upload users');
+        } else {
+            alert('Unknown error, please try again');
+            console.error('Upload users error', res);
+        }
+    })
+ */
+
 import UserService from 'service/user-api-adapter';
 import MemberService from 'service/member-api-adapter';
 import AuthManager from 'managers/auth-manager';
@@ -110,15 +126,14 @@ class UserManager {
         if (!usersToAdd.valid.length) {
             return $.Deferred().resolve({
                 errors: usersToAdd.invalid,
-                duplicate: [],
-                updated: [],
-                saved: []
+                created: [],
+                duplicates: []
             }).promise();
         }
 
         const userService = new UserService(serviceOptions);
         const memberService = new MemberService(serviceOptions);
-        return userService.uploadUsers(usersToAdd.valid).then((userRes)=> {
+        return userService.createUsers(usersToAdd.valid).then((userRes)=> {
             const validUsers = [].concat(userRes.saved, userRes.updated, userRes.duplicate);
             const validIds = validUsers.map((u)=> u.id);
             const userWithErrors = userRes.errors.map((e)=> {
