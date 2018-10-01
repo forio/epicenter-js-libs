@@ -1,0 +1,17 @@
+---
+title: <%= name %>
+layout: "default"
+isPage: true
+---
+
+### Methods
+<% methods.forEach((method)=> { %>
+#### <%= method.name %>(<%= method.params %>)
+<%= method.description %>
+<%= method.parameterTable %>
+<% if (method.tags.example.length) { %>
+**Example**
+<% method.tags.example.forEach((example)=> { %>```js
+<%=  example %>
+```
+<% }); %><% } %><% }); %>  
