@@ -3,7 +3,7 @@ const path = require('path');
 
 function paramsToTable(params) {
     if (!params || !params.length) {
-        return '';
+        return 'None';
     }
 
     const toRow = (arr)=> `|${arr.join('|')}|`;
@@ -37,6 +37,12 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
         splitMethodsAndConfig.methods = splitMethodsAndConfig.method.map((m)=> {
             m.tags.example = m.tags.example.map((r)=> r.trim());
             m.parameterTable = paramsToTable(m.tags.param);
+
+            const ret = m.tags.return[0];
+            m.returns = {
+                type: ret && ret.types && ret.types[0],
+                description: (ret && ret.description) ? `- ${ret.description}` : ''
+            };
             return m;
         });
         return Object.assign(file, splitMethodsAndConfig);

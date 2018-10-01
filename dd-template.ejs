@@ -4,14 +4,18 @@ layout: "default"
 isPage: true
 ---
 
-### Methods
+## Methods
 <% methods.forEach((method)=> { %>
-#### <%= method.name %>(<%= method.params %>)
+### <%= method.name %>(<%= method.params %>)
 <%= method.description %>
+#### Parameters
 <%= method.parameterTable %>
+#### Returns
+`<%= method.returns.type %>` <%= method.returns.description %>
 <% if (method.tags.example.length) { %>
-**Example**
+#### Example
 <% method.tags.example.forEach((example)=> { %>```js
 <%=  example %>
 ```
-<% }); %><% } %><% }); %>  
+<% }); %><% } %>
+<% }); %>  
