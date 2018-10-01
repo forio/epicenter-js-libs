@@ -25,7 +25,7 @@
 *
 * After instantiating a Run Manager, make a call to `getRun()` whenever you need to access a run for this end user. The `RunManager.run` contains the instantiated [Run Service](../run-api-service/). The Run Service allows you to access variables, call operations, etc.
 *
-* **Example**
+* @example
 *
 *       const rm = new F.manager.RunManager({
 *           run: {
@@ -133,7 +133,7 @@ class RunManager {
      * `getRun()` returns the run currently referenced in the browser cookie, and if there is none, creates a new run. 
      * See [Run Manager Strategies](../strategies/) for more on strategies.
      *
-     *  **Example**
+     * @example
      *
      *      rm.getRun().then(function (run) {
      *          // use the run object
@@ -196,7 +196,7 @@ class RunManager {
     /**
      * Returns the run object for a 'reset' run. The definition of a reset is defined by the strategy, but typically means forcing the creation of a new run. For example, `reset()` for the default strategies `reuse-per-session` and `reuse-last-initialized` both create new runs.
      *
-     *  **Example**
+     * @example
      *
      *      rm.reset().then(function (run) {
      *          // use the (new) run object
@@ -206,7 +206,7 @@ class RunManager {
      *          rm.run.do('runModel');
      *      });
      *
-     * **Parameters**
+     * 
      * @param {Object} [options] Configuration options; passed on to [RunService#create](../run-api-service/#create).
      * @return {Promise}
      */

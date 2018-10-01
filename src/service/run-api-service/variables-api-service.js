@@ -60,14 +60,14 @@ module.exports = function (config) {
         /**
          * Get values for a variable.
          *
-         * **Example**
+         * @example
          *
          *      vs.load('sample_int')
          *          .then(function(val){
          *              // val contains the value of sample_int
          *          });
          *
-         * **Parameters**
+         * 
          * @param {string} variable Name of variable to load.
          * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {object} [options] Overrides for configuration options.
@@ -84,7 +84,7 @@ module.exports = function (config) {
         /**
          * Returns particular variables, based on conditions specified in the `query` object.
          *
-         * **Example**
+         * @example
          *
          *      vs.query(['price', 'sales'])
          *          .then(function(val) {
@@ -93,7 +93,7 @@ module.exports = function (config) {
          *
          *      vs.query({ include:['price', 'sales'] });
          *
-         * **Parameters**
+         * 
          * @param {Object|Array} query The names of the variables requested.
          * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {object} [options] Overrides for configuration options.
@@ -114,12 +114,12 @@ module.exports = function (config) {
         /**
          * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](../run-api-service/) for calling methods from the model.)
          *
-         * **Example**
+         * @example
          *
          *      vs.save('price', 4);
          *      vs.save({ price: 4, quantity: 5, products: [2,3,4] });
          *
-         * **Parameters**
+         * 
          * @param {Object|String} variable An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
          * @param {object} [val] If passing a string for `variable`, use this argument for the value to save.
          * @param {object} [options] Overrides for configuration options.

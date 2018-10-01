@@ -59,7 +59,7 @@ module.exports = function (config) {
          *
          * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
          *
-         * **Example**
+         * @example
          *
          *      auth.login({
          *          userName: 'jsmith',
@@ -69,7 +69,7 @@ module.exports = function (config) {
          *          console.log("user access token is: ", token.access_token);
          *      });
          *
-         * **Parameters**
+         * 
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
@@ -102,11 +102,11 @@ module.exports = function (config) {
         //
         // Epicenter logout is not implemented yet, so for now this is a dummy promise that gets automatically resolved.
         //
-        // **Example**
+        // @example
         //
         //      auth.logout();
         //
-        // **Parameters**
+        // 
         // @param {Object} [options] Overrides for configuration options.
         //
         logout: function (options) {

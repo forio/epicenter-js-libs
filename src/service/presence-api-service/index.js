@@ -60,7 +60,7 @@ export default function (config) {
          * Marks an end user as online.
          *
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74')
@@ -73,7 +73,7 @@ export default function (config) {
          *
          * Promise with presence information for user marked online.
          *
-         * **Parameters**
+         * 
          *
          * @param  {string} [userId] optional If not provided, taken from session cookie.
          * @param  {Object} options Additional options to change the presence service defaults.
@@ -98,7 +98,7 @@ export default function (config) {
          * Marks an end user as offline.
          *
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     pr.markOffline('0000015a68d806bc09cd0a7d207f44ba5f74');
@@ -107,7 +107,7 @@ export default function (config) {
          *
          * Promise to remove presence record for end user.
          *
-         * **Parameters**
+         * 
          *
          * @param  {string} [userId] If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults.
@@ -132,7 +132,7 @@ export default function (config) {
          * Returns a list of all end users in this group that are currently online.
          *
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     pr.getStatus('groupName').then(function(onlineUsers) {
@@ -146,7 +146,7 @@ export default function (config) {
          *
          * Promise with response of online users
          *
-         * **Parameters**
+         * 
          *
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {object} [options] Additional options to change the presence service defaults.
@@ -168,7 +168,7 @@ export default function (config) {
         /**
          * Appends a boolean 'isOnline' field to provided list of users
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     pr.getStatusForUsers([{ userId: 'a', userId: 'b'}]).then(function(onlineUsers) {
@@ -198,7 +198,7 @@ export default function (config) {
          * End users are automatically marked online and offline in a "presence" channel that is specific to each group. Gets this channel (an instance of the [Channel Service](../channel-service/)) for the given group. (Note that this Channel Service instance is also available from the [Epicenter Channel Manager getPresenceChannel()](../epicenter-channel-manager/#getPresenceChannel).)
          *
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     var cm = pr.getChannel('group1');
@@ -208,7 +208,7 @@ export default function (config) {
          *
          * Channel instance for Presence channel
          *
-         * **Parameters**
+         * 
          *
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults

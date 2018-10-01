@@ -37,7 +37,7 @@ export default class PasswordService {
     /**
      * Send a password reset email for the provided userName.
      * 
-     * **Example**
+     * @example
             var ps = new F.service.Password();
             ps.resetPassword('myuserName@gmail.com', {
                 redirectUrl: 'login.html',

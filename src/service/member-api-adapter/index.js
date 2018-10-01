@@ -64,7 +64,7 @@ export default function MemberAPIService(config) {
         *
         * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
         *
-        * **Example**
+        * @example
         *
         *       const ma = new F.service.Member();
         *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
@@ -76,7 +76,7 @@ export default function MemberAPIService(config) {
         *
         *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
         *
-        * **Parameters**
+        * 
         * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -97,7 +97,7 @@ export default function MemberAPIService(config) {
         /**
          * Add given userids to group
          *
-         * **Example**
+         * @example
          *       const ma = new F.service.Member();
          *       ma.addUsersToGroup(['42836d4b-5b61-4fe4-80eb-3136e956ee5c', '42836d4b-5b61-4fe4-80eb-3136e956ee5c'])
          *
@@ -123,7 +123,7 @@ export default function MemberAPIService(config) {
         /**
         * Retrieve details about one group, including an array of all its members.
         *
-        * **Example**
+        * @example
         *
         *       const ma = new F.service.Member();
         *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
@@ -135,7 +135,7 @@ export default function MemberAPIService(config) {
         *
         *       ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * **Parameters**
+        * 
         * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -160,13 +160,13 @@ export default function MemberAPIService(config) {
         /**
         * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
         *
-        * **Example**
+        * @example
         *
         *       const ma = new F.service.Member();
         *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * **Parameters**
+        * 
         * @param {object} params The end user and group information.
         * @param {string} params.userId The id of the end user to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
@@ -180,13 +180,13 @@ export default function MemberAPIService(config) {
         /**
         * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
         *
-        * **Example**
+        * @example
         *
         *       const ma = new F.service.Member();
         *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * **Parameters**
+        * 
         * @param {object} params The end user and group information.
         * @param {string} params.userId The id of the end user to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.

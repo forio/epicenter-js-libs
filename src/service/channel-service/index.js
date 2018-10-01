@@ -44,7 +44,7 @@ var Channel = function (options) {
         /**
          * A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. By default, it just echoes the topic.
          *
-         * **Parameters**
+         * 
          *
          * * `topic` Topic to parse.
          *
@@ -100,7 +100,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * The topic should include the full path of the account id (**Team ID** for team projects), project id, and group name. (In most cases, it is simpler to use the [Epicenter Channel Manager](../epicenter-channel-manager/) instead, in which case this is configured for you.)
      *
-     *  **Examples**
+     *  @example
      *
      *      var cb = function(val) { console.log(val.data); };
      *
@@ -122,7 +122,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * * *String* Returns a token you can later use to unsubscribe.
      *
-     * **Parameters**
+     * 
      * @param  {String|Array}   topic    List of topics to listen for changes on.
      * @param  {Function} callback Callback function to execute. Callback is called with signature `(evt, payload, metadata)`.
      * @param  {Object}   context  Context in which the `callback` is executed.
@@ -150,7 +150,7 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Publish data to a topic.
      *
-     * **Examples**
+     * @example
      *
      *      // Send data to all subscribers of the 'run' topic
      *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run', { completed: false });
@@ -158,7 +158,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *      // Send data to all subscribers of the 'run/variables' topic
      *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
      *
-     * **Parameters**
+     * 
      *
      * @param  {String} topic Topic to publish to.
      * @param  {*} data  Data to publish to topic.
@@ -188,11 +188,11 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Unsubscribe from changes to a topic.
      *
-     * **Example**
+     * @example
      *
      *      cs.unsubscribe('sampleToken');
      *
-     * **Parameters**
+     * 
      * @param  {String} token The token for topic is returned when you initially subscribe. Pass it here to unsubscribe from that topic.
      * @return {Object} reference to current instance
      */
@@ -206,7 +206,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
@@ -217,7 +217,7 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
@@ -228,7 +228,7 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */

@@ -41,7 +41,7 @@ const strategyManager = {
     /**
      * Gets strategy by name.
      *
-     * **Example**
+     * @example
      *
      *      var reuseStrat = F.manager.RunManager.strategies.byName('reuse-across-sessions');
      *      // shows strategy function
@@ -49,7 +49,7 @@ const strategyManager = {
      *      // create a new run manager using this strategy
      *      var rm = new F.manager.RunManager({strategy: reuseStrat, run: { model: 'model.vmf'} });
      *
-     * **Parameters**
+     * 
      * @param  {String} strategyName Name of strategy to get.
      * @return {Function} Strategy function.
      */
@@ -87,7 +87,7 @@ const strategyManager = {
     /**
      * Adds a new strategy.
      *
-     * **Example**
+     * @example
      *
      *      // this "favorite run" strategy always returns the same run, no matter what
      *      // (not a useful strategy, except as an example)
@@ -103,7 +103,7 @@ const strategyManager = {
      *      
      *      var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
      *
-     * **Parameters**
+     * 
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.
      * @param  {Function} strategy The strategy constructor. Will be called with `new` on Run Manager initialization.
      * @param  {Object} options  Options for strategy.

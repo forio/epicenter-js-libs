@@ -57,14 +57,14 @@ module.exports = function (config) {
         /**
         * View the history of a run.
         * 
-        *  **Example**
+        * @example
         *
         *      var sa = new F.service.State();
         *      sa.load('0000015a06bb58613b28b57365677ec89ec5').then(function(history) {
         *            console.log('history = ', history);
         *      });
         *
-        *  **Parameters**
+        *  
         * @param {string} runId The id of the run.
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -81,12 +81,12 @@ module.exports = function (config) {
         /**
         * Replay a run. After this call, the run, with its original run id, is now available [in memory](../../../run_persistence/#runs-in-memory). (It continues to be persisted into the Epicenter database at regular intervals.)
         *
-        *  **Example**
+        * @example
         *
         *      var sa = new F.service.State();
         *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
         *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to bring back to memory.
         * @param {string} [params.stopBefore] The run is advanced only up to the first occurrence of this method.
@@ -119,12 +119,12 @@ module.exports = function (config) {
         *
         * The original run remains only [in the database](../../../run_persistence/#runs-in-db).
         *
-        *  **Example**
+        * @example
         *
         *      var sa = new F.service.State();
         *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
         *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to clone from memory.
         * @param {string} [params.stopBefore] The newly cloned run is advanced only up to the first occurrence of this method.

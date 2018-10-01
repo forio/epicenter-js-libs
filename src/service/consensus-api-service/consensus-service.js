@@ -73,7 +73,7 @@ export default function (config) {
         /**
          * Creates a new consensus point
          * 
-         * **Example**
+         * @example
          *
          *      cs.create({
                     roles: ['P1', 'P2'],

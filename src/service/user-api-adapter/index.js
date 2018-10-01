@@ -54,7 +54,7 @@ export default function UserAPIAdapter(config) {
         /**
         * Retrieve details about particular end users in your team, based on user name or user id.
         *
-        * **Example**
+        * @example
         *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
@@ -63,7 +63,7 @@ export default function UserAPIAdapter(config) {
         *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
         *
-        * **Parameters**
+        * 
         * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -100,14 +100,14 @@ export default function UserAPIAdapter(config) {
         /**
         * Retrieve details about a single end user in your team, based on user id.
         *
-        * **Example**
+        * @example
         *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
         *       });
         *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
         *
-        * **Parameters**
+        * 
         * @param {string} userId The user id for the end user in your team.
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -120,7 +120,7 @@ export default function UserAPIAdapter(config) {
         /**
         * Upload list of users to current account
         *
-        * **Example**
+        * @example
         *
         *       var us = new F.service.User({
         *           account: 'acme-simulations',

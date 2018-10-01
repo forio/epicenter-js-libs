@@ -73,7 +73,7 @@ module.exports = function (config) {
          *
          * Note: This does not work for any model which requires additional parameters, such as `files`.
          *
-         * **Example**
+         * @example
          *
          *      intro.byModel('abc.vmf')
          *          .then(function(data) {
@@ -82,7 +82,7 @@ module.exports = function (config) {
          *              console.log(data.variables);
          *          });
          *
-         * **Parameters**
+         * 
          * @param  {string} modelFile Name of the model file to introspect.
          * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
@@ -105,7 +105,7 @@ module.exports = function (config) {
          *
          * Note: This does not work for any model which requires additional parameters such as `files`.
          *
-         * **Example**
+         * @example
          *
          *      intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6')
          *          .then(function(data) {
@@ -114,7 +114,7 @@ module.exports = function (config) {
          *              console.log(data.variables);
          *          });
          *
-         * **Parameters**
+         * 
          * @param  {string} runID Id of the run to introspect.
          * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 

@@ -79,7 +79,7 @@ module.exports = function (options) {
         /**
         * Returns the current world (object) and an instance of the [World API Adapter](../world-api-adapter/).
         *
-        * **Example**
+        * @example
         *
         *       wMgr.getCurrentWorld()
         *           .then(function(world, worldAdapter) {
@@ -87,7 +87,7 @@ module.exports = function (options) {
         *               worldAdapter.getCurrentRunId();
         *           });
         *
-        * **Parameters**
+        * 
         * @param {string} [userId] The id of the user whose world is being accessed. Defaults to the user in the current session.
         * @param {string} [groupName] The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
         * @return {Promise}
@@ -106,7 +106,7 @@ module.exports = function (options) {
         /**
         * Returns the current run (object) and an instance of the [Run API Service](../run-api-service/).
         *
-        * **Example**
+        * @example
         *
         *       wMgr.getCurrentRun('myModel.py')
         *           .then(function(run, runService) {
@@ -114,7 +114,7 @@ module.exports = function (options) {
         *               runService.do('startGame');
         *           });
         *
-        * **Parameters**
+        * 
         * @param {string} [model] The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
         * @return {Promise}
         */

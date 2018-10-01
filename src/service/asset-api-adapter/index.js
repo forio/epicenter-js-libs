@@ -203,7 +203,7 @@ module.exports = function (config) {
         * Creates a file in the Asset API. The server returns an error (status code `409`, conflict) if the file already exists, so
         * check first with a `list()` or a `get()`.
         *
-        *  **Example**
+        * @example
         *
         *       var aa = new F.service.Asset({
         *          account: 'acme-simulations',
@@ -239,7 +239,7 @@ module.exports = function (config) {
         *       });
         *
         *
-        *  **Parameters**
+        *  
         * @param {string} filename Name of the file to create.
         * @param {object} [params] Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
         * @param {string} [params.encoding] Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
@@ -256,7 +256,7 @@ module.exports = function (config) {
         * Gets a file from the Asset API, fetching the asset content. (To get a list
         * of the assets in a scope, use `list()`.)
         *
-        *  **Parameters**
+        *  
         * @param {string} filename (Required) Name of the file to retrieve.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -273,13 +273,13 @@ module.exports = function (config) {
         /**
         * Gets the list of the assets in a scope.
         *
-        * **Example**
+        * @example
         *
         *       aa.list({ fullUrl: true }).then(function(fileList){
         *           console.log('array of files = ', fileList);
         *       });
         *
-        *  **Parameters**
+        *  
         * @param {object} [options] Options object to override global options.
         * @param {string} [options.scope] The scope (`user`, `group`, `project`).
         * @param {boolean} [options.fullUrl] Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
@@ -312,7 +312,7 @@ module.exports = function (config) {
         /**
         * Replaces an existing file in the Asset API.
         *
-        * **Example**
+        * @example
         *
         *       // replace an asset using encoded text
         *       aa.replace('test.txt', {
@@ -340,7 +340,7 @@ module.exports = function (config) {
         *          aa.replace(filename, data, { scope: 'user' });
         *       });
         *
-        *  **Parameters**
+        *  
         * @param {string} filename Name of the file being replaced.
         * @param {object} [params] Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
         * @param {string} [params.encoding] Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
@@ -356,11 +356,11 @@ module.exports = function (config) {
         /**
         * Deletes a file from the Asset API.
         *
-        * **Example**
+        * @example
         *
         *       aa.delete(sampleFileName);
         *
-        *  **Parameters**
+        *  
         * @param {string} filename (Required) Name of the file to delete.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}

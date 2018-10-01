@@ -132,7 +132,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * This method enforces Epicenter-specific channel naming: all channels requested must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`.
      *
-     * **Example**
+     * @example
      *
      *      var cm = new F.manager.EpicenterChannelManager();
      *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
@@ -140,7 +140,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * **Parameters**
+     * 
      * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
@@ -174,7 +174,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * There are no notifications from Epicenter on this channel; all messages are user-originated.
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var gc = cm.getGroupChannel();
@@ -184,7 +184,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
      *
-     * **Parameters**
+     * 
      *
      * @param  {string} [groupName] Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
@@ -214,7 +214,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * This is typically used together with the [World Manager](../world-manager).
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
@@ -246,7 +246,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
         | ROLES_ASSIGN | Role assignments only |
         | ROLES_UNASSIGN | Role unassignments |
 
-     * **Parameters**
+     * 
      *
      * @param  {String|Object} world The world object or id.
      * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
@@ -278,7 +278,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * This is typically used together with the [World Manager](../world-manager). Note that this channel only gets notifications for worlds currently in memory. (See more background on [persistence](../../../run_persistence).)
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
@@ -299,7 +299,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
      *
-     * **Parameters**
+     * 
      *
      * @param  {String|{ id: string }} world World object or id.
      * @param  {String|Object} [user] User object or id. If not provided, picks up user id from current session if end user is logged in.
@@ -329,7 +329,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * Note that the presence channel is tracking all end users in a group. In particular, if the project additionally splits each group into [worlds](../world-manager/), this channel continues to show notifications for all end users in the group (not restricted by worlds).
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var pc = cm.getPresenceChannel();
@@ -349,7 +349,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
      *
-     * **Parameters**
+     * 
      *
      * @param  {string} [groupName] Group the end user is in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
@@ -379,7 +379,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * There are automatic notifications from Epicenter on this channel when data is created, updated, or deleted in this collection. See more on [automatic messages to the data channel](../../../rest_apis/multiplayer/channel/#data-messages).
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var dc = cm.getDataChannel('survey-responses');
@@ -396,7 +396,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
      *
-     * **Parameters**
+     * 
      *
      * @param  {String} collection Name of collection whose automatic notifications you want to receive.
      * @return {Channel} Channel instance
