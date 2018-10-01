@@ -25,7 +25,7 @@ F.transport.Ajax = require('./transport/ajax-http-transport');
 
 F.service.URL = require('./service/url-config-service');
 F.service.Config = require('./service/configuration-service').default;
-F.service.Run = require('./service/run-api-service');
+F.service.Run = require('./service/run-api-service').default;
 F.service.File = require('./service/admin-file-service');
 F.service.Variables = require('./service/run-api-service/variables-api-service');
 F.service.Data = require('./service/data-api-service').default;

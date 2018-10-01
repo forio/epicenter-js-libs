@@ -19,9 +19,6 @@
  *
  */
 
-
-'use strict';
-
 var TransportFactory = require('transport/http-transport-factory').default;
 var rutil = require('util/run-util');
 

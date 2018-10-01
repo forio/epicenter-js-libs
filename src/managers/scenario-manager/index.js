@@ -81,7 +81,7 @@ var rutil = require('util/run-util');
 var NoneStrategy = require('managers/run-strategies/none-strategy');
 
 var StateService = require('service/state-api-adapter');
-var RunService = require('service/run-api-service');
+var RunService = require('service/run-api-service').default;
 
 var BaselineStrategy = require('./scenario-strategies/baseline-strategy');
 var LastUnsavedStrategy = require('./scenario-strategies/reuse-last-unsaved');

@@ -1,6 +1,6 @@
 'use strict';
 
-var RunService = require('service/run-api-service');
+var RunService = require('service/run-api-service').default;
 
 module.exports = {
     mergeRunOptions: function (run, options) {

@@ -51,70 +51,75 @@
  *
  */
 
-'use strict';
+import ConfigService from 'service/configuration-service';
+import { toMatrixFormat } from 'util/query-util';
+import { splitGetFactory, extractValidRunParams, normalizeOperations } from 'util/run-util';
+import TransportFactory from 'transport/http-transport-factory';
+import VariablesService from './variables-api-service';
+import IntrospectionService from 'service/introspection-api-service';
+import SessionManager from 'store/session-manager';
 
-var ConfigService = require('service/configuration-service').default;
-var { toMatrixFormat } = require('util/query-util');
-var rutil = require('util/run-util');
-var TransportFactory = require('transport/http-transport-factory').default;
-var VariablesService = require('./variables-api-service');
-var IntrospectionService = require('service/introspection-api-service');
-var SessionManager = require('store/session-manager');
+/**
+ * @typedef {object} RunServiceOptions
+ * @property {boolean} config foobar 
+ */
 
-module.exports = function (config) {
+/**
+  * @param {RunServiceOptions} config  something something
+  */
+export default function (config) {
     var defaults = {
         /**
          * For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
          * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
+         * @property {String}
          */
         token: undefined,
 
         /**
          * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL.
-         * @type {String}
+         * @property {String}
          */
         account: undefined,
 
         /**
          * The project id. Defaults to undefined. If left undefined, taken from the URL.
-         * @type {String}
+         * @property {String}
          */
         project: undefined,
 
         /**
          * Criteria by which to filter runs. Defaults to empty string.
-         * @type {String}
+         * @property {String}
          */
         filter: '',
 
         /**
-         * Convenience alias for filter. Pass in an existing run id to interact with a particular run.
-         * @type {String}
+         * @property {String} [id] Convenience alias for filter. Pass in an existing run id to interact with a particular run.
          */
         id: '',
 
         /**
          * Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to `true`.
-         * @type {boolean}
+         * @property {boolean}
          */
         autoRestore: true,
 
         /**
          * Called when the call completes successfully. Defaults to `$.noop`.
-         * @type {function}
+         * @property {function}
          */
         success: $.noop,
 
         /**
          * Called when the call fails. Defaults to `$.noop`.
-         * @type {function}
+         * @property {function}
          */
         error: $.noop,
 
         /**
          * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
+         * @property {Object}
          */
         transport: {}
     };
@@ -178,7 +183,7 @@ module.exports = function (config) {
             };
         }
         http = new TransportFactory(httpOptions);
-        http.splitGet = rutil.splitGetFactory(httpOptions);
+        http.splitGet = splitGetFactory(httpOptions);
     }
 
     var urlConfig = updateURLConfig(serviceOptions); //making a function so #updateConfig can call this; change when refactored
@@ -216,7 +221,7 @@ module.exports = function (config) {
             if (typeof params === 'string') {
                 params = { model: params };
             } else {
-                params = rutil.extractValidRunParams(params);
+                params = extractValidRunParams(params);
             }
 
             var oldSuccess = createOptions.success;
@@ -248,7 +253,7 @@ module.exports = function (config) {
          * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
          * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
-         * @return {Promise}
+         * @return {Promise.<object[]>}
          */
         query: function (qs, outputModifier, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, { url: urlConfig.getFilterURL(qs) }, options);
@@ -380,7 +385,7 @@ module.exports = function (config) {
             } else {
                 opsArgs = params;
             }
-            var result = rutil.normalizeOperations(operation, opsArgs);
+            var result = normalizeOperations(operation, opsArgs);
             var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
 
             setFilterOrThrowError(httpOptions);
@@ -410,7 +415,7 @@ module.exports = function (config) {
          * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         serial: function (operations, params, options) {
-            var opParams = rutil.normalizeOperations(operations, params);
+            var opParams = normalizeOperations(operations, params);
             var ops = opParams.ops;
             var args = opParams.args;
             var me = this;
@@ -466,7 +471,7 @@ module.exports = function (config) {
         parallel: function (operations, params, options) {
             var $d = $.Deferred();
 
-            var opParams = rutil.normalizeOperations(operations, params);
+            var opParams = normalizeOperations(operations, params);
             var ops = opParams.ops;
             var args = opParams.args;
             var postOptions = $.extend(true, {}, serviceOptions, options);

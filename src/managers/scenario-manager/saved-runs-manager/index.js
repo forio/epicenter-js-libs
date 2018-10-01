@@ -8,7 +8,7 @@
  */
 'use strict';
 
-var RunService = require('service/run-api-service');
+var RunService = require('service/run-api-service').default;
 var SessionManager = require('store/session-manager');
 
 var injectFiltersFromSession = require('managers/run-strategies/strategy-utils').injectFiltersFromSession;
