@@ -7,52 +7,22 @@ import IntrospectionService from 'service/introspection-api-service';
 import SessionManager from 'store/session-manager';
 
 /**
- * User type definition
- * @typedef {Object} User
- * @property {string} email
- * @property {string} [nickName]
- */
-
-
-/**
- * FSM states.
- *
- * @enum
- */
-FSM.prototype.states = {
-    STOPPED     : 0,
-    STARTING    : 1,
-    WORKING     : 2,
-    STOPPING    : 3
-}
-
-/**
  * @constructor
- * @param {object} config 
- * @param {string} config.filter Fooooa
+ * @param {AccountAPIServiceOptions} config 
+ * @property {string} filter Criteria by which to filter runs.
+ * @property {string} [id] Convenience alias for filter. Pass in an existing run id to interact with a particular run.
+ * @property {string} [autoRestore] Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to true.
  */
 export default function RunService(config) {
 
     var defaults = {
-        /**  */
         filter: '',
-        /**  */
         id: '',
-
         autoRestore: true,
 
-        /** @property {string} account The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects).  Calculated aken from the URL if not provided. */
         account: undefined,
-
-        /** @property {string} project The project id. Calculated aken from the URL if not provided. */
         project: undefined,
-
-        /** @property {string} token For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)). @see [Authentication API Service](../auth-api-service/) for getting tokens. */
         token: undefined,
-
-        /** @type JQueryAjaxSettings 
-         *  @description Options to pass on to the underlying transport layer. @see http://api.jquery.com/jQuery.ajax/ 
-         */
         transport: {},
 
         success: $.noop,

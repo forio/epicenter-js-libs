@@ -670,7 +670,7 @@ function normalizeSlashes(url, options) {
 "use strict";
 
 
-var RunService = __webpack_require__(9);
+var RunService = __webpack_require__(9).default;
 
 module.exports = {
     mergeRunOptions: function (run, options) {
@@ -950,141 +950,55 @@ function splitGetFactory(httpOptions) {
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/**
- *
- * ## Run API Service
- *
- * The Run API Service allows you to perform common tasks around creating and updating runs, variables, and data.
- *
- * When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly. This is because the Run Manager (and associated [run strategies](../strategies/)) gives you control over run creation depending on run states.
- *
- * The Run API Service is useful for building an interface where you want to show data across multiple runs (this is easy using the `filter()` and `query()` methods). For instance, you would probably use a Run Service to build a page for a facilitator. This is because a facilitator typically wants to evaluate performance from multiple end users, each of whom have been working with their own run.
- *
- * To use the Run API Service, instantiate it by passing in:
- *
- * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `project`: Epicenter project id.
- *
- * If you know in advance that you would like to work with particular, existing run(s), you can optionally pass in:
- *
- * * `filter`: (Optional) Criteria by which to filter for existing runs. 
- * * `id`: (Optional) The run id of an existing run. This is a convenience alias for using filter, in the case where you only want to work with one run.
- *
- * For example,
- *
- *       var rs = new F.service.Run({
- *            account: 'acme-simulations',
- *            project: 'supply-chain-game',
- *      });
- *      rs.create('supply_chain_game.py').then(function(run) {
- *             rs.do('someOperation');
- *      });
- *
- *
- * Additionally, all API calls take in an `options` object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below. In particular, passing `{ id: 'a-run-id' }` in this `options` object allows you to make calls to an existing run.
- *
- * Note that in addition to the `account`, `project`, and `model`, the Run Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
- *
- *       var rm = new F.manager.RunManager({
- *           run: {
- *               account: 'acme-simulations',
- *               project: 'supply-chain-game',
- *               model: 'supply_chain_game.py',
- *               server: { host: 'api.forio.com' }
- *           }
- *       });
- *       rm.getRun()
- *           .then(function(run) {
- *               // the RunManager.run contains the instantiated Run Service,
- *               // so any Run Service method is valid here
- *               var rs = rm.run;
- *               rs.do('someOperation');
- *       })
- *
- */
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = RunService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__variables_api_service__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_store_session_manager__);
 
 
 
-var ConfigService = __webpack_require__(4).default;
 
-var _require = __webpack_require__(6),
-    toMatrixFormat = _require.toMatrixFormat;
 
-var rutil = __webpack_require__(8);
-var TransportFactory = __webpack_require__(0).default;
-var VariablesService = __webpack_require__(24);
-var IntrospectionService = __webpack_require__(25);
-var SessionManager = __webpack_require__(1);
 
-module.exports = function (config) {
+
+
+function RunService(config) {
+
     var defaults = {
-        /**
-         * For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
-         */
-        token: undefined,
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL.
-         * @type {String}
-         */
-        account: undefined,
-
-        /**
-         * The project id. Defaults to undefined. If left undefined, taken from the URL.
-         * @type {String}
-         */
-        project: undefined,
-
-        /**
-         * Criteria by which to filter runs. Defaults to empty string.
-         * @type {String}
-         */
+        /**  @property {string} filter  Criteria by which to filter runs. */
         filter: '',
-
-        /**
-         * Convenience alias for filter. Pass in an existing run id to interact with a particular run.
-         * @type {String}
-         */
+        /** @property {string} id Convenience alias for filter. Pass in an existing run id to interact with a particular run. */
         id: '',
-
-        /**
-         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to `true`.
-         * @type {boolean}
-         */
+        /** @property {boolean} [autoRestore=true]  Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to `true`. */
         autoRestore: true,
 
-        /**
-         * Called when the call completes successfully. Defaults to `$.noop`.
-         * @type {function}
-         */
+        token: undefined,
+        account: undefined,
+        project: undefined,
         success: $.noop,
-
-        /**
-         * Called when the call fails. Defaults to `$.noop`.
-         * @type {function}
-         */
         error: $.noop,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
         transport: {}
     };
 
-    this.sessionManager = new SessionManager();
+    this.sessionManager = new __WEBPACK_IMPORTED_MODULE_6_store_session_manager___default.a();
     var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
     if (serviceOptions.id) {
         serviceOptions.filter = serviceOptions.id;
     }
 
     function updateURLConfig(opts) {
-        var urlConfig = new ConfigService(opts).get('server');
+        var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](opts).get('server');
         if (opts.account) {
             urlConfig.accountPath = opts.account;
         }
@@ -1095,7 +1009,7 @@ module.exports = function (config) {
         urlConfig.filter = ';';
         urlConfig.getFilterURL = function (filter) {
             var url = urlConfig.getAPIPath('run');
-            var filterMatrix = toMatrixFormat(filter || opts.filter);
+            var filterMatrix = Object(__WEBPACK_IMPORTED_MODULE_1_util_query_util__["toMatrixFormat"])(filter || opts.filter);
 
             if (filterMatrix) {
                 url += filterMatrix + '/';
@@ -1135,8 +1049,8 @@ module.exports = function (config) {
                 Authorization: 'Bearer ' + serviceOptions.token
             };
         }
-        http = new TransportFactory(httpOptions);
-        http.splitGet = rutil.splitGetFactory(httpOptions);
+        http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](httpOptions);
+        http.splitGet = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["splitGetFactory"])(httpOptions);
     }
 
     var urlConfig = updateURLConfig(serviceOptions); //making a function so #updateConfig can call this; change when refactored
@@ -1159,14 +1073,11 @@ module.exports = function (config) {
 
         /**
          * Create a new run.
-         *
          * NOTE: Typically this is not used! Use `RunManager.getRun()` with a `strategy` of `reuse-never`, or use `RunManager.reset()`. See [Run Manager](../run-manager/) for more details.
          *
-         *  **Example**
-         *
-         *      rs.create('hello_world.jl');
-         *
-         *  **Parameters**
+         * @example
+         * rs.create('hello_world.jl');
+         *  
          * @param {String|Object} params If a string, the name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project. If an object, may include `model`, `scope`, and `files`. (See the [Run Manager](../run_manager/) for more information on `scope` and `files`.)
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
@@ -1176,7 +1087,7 @@ module.exports = function (config) {
             if (typeof params === 'string') {
                 params = { model: params };
             } else {
-                params = rutil.extractValidRunParams(params);
+                params = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["extractValidRunParams"])(params);
             }
 
             var oldSuccess = createOptions.success;
@@ -1191,28 +1102,24 @@ module.exports = function (config) {
 
         /**
          * Returns particular runs, based on conditions specified in the `qs` object.
-         *
          * The elements of the `qs` object are ANDed together within a single call to `.query()`.
          *
-         * **Example**
-         *
-         *      // returns runs with saved = true and variables.price > 1,
-         *      // where variables.price has been persisted (recorded)
-         *      // in the model.
-         *     rs.query({
-         *          'saved': 'true',
-         *          '.price': '>1'
-         *       },
-         *       {
-         *          startrecord: 2,
-         *          endrecord: 5
-         *       });
-         *
-         * **Parameters**
+         * @example
+         * // returns runs with saved = true and variables.price > 1,
+         * // where variables.price has been persisted (recorded)
+         * // in the model.
+         * rs.query({
+         *      'saved': 'true',
+         *      '.price': '>1'
+         * }, {
+         *      startrecord: 2,
+         *      endrecord: 5
+         * });
+         * 
          * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
          * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
-         * @return {Promise}
+         * @return {Promise.<object[]>}
          */
         query: function (qs, outputModifier, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, { url: urlConfig.getFilterURL(qs) }, options);
@@ -1223,10 +1130,8 @@ module.exports = function (config) {
 
         /**
          * Returns particular runs, based on conditions specified in the `qs` object.
-         *
          * Similar to `.query()`.
-         *
-         * **Parameters**
+         * 
          * @param {Object} filter Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
          * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
@@ -1245,14 +1150,12 @@ module.exports = function (config) {
 
         /**
          * Get data for a specific run. This includes standard run data such as the account, model, project, and created and last modified dates. To request specific model variables or run record variables, pass them as part of the `filters` parameter.
-         *
          * Note that if the run is [in memory](../../../run_persistence/#runs-in-memory), any model variables are available; if the run is [in the database](../../../run_persistence/#runs-in-db), only model variables that have been persisted &mdash; that is, `record`ed or saved in your model &mdash; are available.
          *
-         * **Example**
+         * @example
+         * rs.load('bb589677-d476-4971-a68e-0c58d191e450', { include: ['.price', '.sales'] });
          *
-         *     rs.load('bb589677-d476-4971-a68e-0c58d191e450', { include: ['.price', '.sales'] });
-         *
-         * **Parameters**
+         * 
          * @param {String} runID The run id.
          * @param {Object} [filters] Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
@@ -1270,17 +1173,15 @@ module.exports = function (config) {
         /**
          * Removes specified runid from memory
          *
-         * **Example**
-         *
+         * @example
          *     rs.removeFromMemory('bb589677-d476-4971-a68e-0c58d191e450');
          *
          * See [details on run persistence](../../../run_persistence/#runs-in-memory)
          * @param  {String} runID   id of run to remove
-         * @param  {Object} [filters] Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param  {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
-        removeFromMemory: function (runID, filters, options) {
+        removeFromMemory: function (runID, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             if (runID) {
                 httpOptions.url = urlConfig.getAPIPath('run') + runID;
@@ -1291,18 +1192,15 @@ module.exports = function (config) {
         /**
          * Save attributes (data, model variables) of the run.
          *
-         * **Examples**
+         * @example
+         * // add 'completed' field to run record
+         * rs.save({ completed: true });
+         * // update 'saved' field of run record, and update values of model variables for this run
+         * rs.save({ saved: true, variables: { a: 23, b: 23 } });
+         * // update 'saved' field of run record for a particular run
+         * rs.save({ saved: true }, { id: '0000015bf2a04995880df6b868d23eb3d229' });
          *
-         *     // add 'completed' field to run record
-         *     rs.save({ completed: true });
-         *
-         *     // update 'saved' field of run record, and update values of model variables for this run
-         *     rs.save({ saved: true, variables: { a: 23, b: 23 } });
-         *
-         *     // update 'saved' field of run record for a particular run
-         *     rs.save({ saved: true }, { id: '0000015bf2a04995880df6b868d23eb3d229' });
-         *
-         * **Parameters**
+         * 
          * @param {Object} attributes The run data and variables to save.
          * @param {Object} attributes.variables Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
          * @param {Object} [options] Overrides for configuration options.
@@ -1316,29 +1214,25 @@ module.exports = function (config) {
 
         /**
          * Call an operation from the model.
-         *
          * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
-         *
          * The `params` argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
-         *
          * Note that you can combine the `operation` and `params` arguments into a single object if you prefer, as in the last example.
          *
-         * **Examples**
+         * @example
+         * // operation "solve" takes no arguments
+         * rs.do('solve');
+         * // operation "echo" takes one argument, a string
+         * rs.do('echo', ['hello']);
+         * // operation "echo" takes one argument, a string
+         * rs.do('echo', 'hello');
+         * // operation "sumArray" takes one argument, an array
+         * rs.do('sumArray', [[4,2,1]]);
+         * // operation "add" takes two arguments, both integers
+         * rs.do({ name:'add', params:[2,4] });
+         * // call operation "solve" on a different run 
+         * rs.do('solve', { id: '0000015bf2a04995880df6b868d23eb3d229' });
          *
-         *      // operation "solve" takes no arguments
-         *     rs.do('solve');
-         *      // operation "echo" takes one argument, a string
-         *     rs.do('echo', ['hello']);
-         *      // operation "echo" takes one argument, a string
-         *     rs.do('echo', 'hello');
-         *      // operation "sumArray" takes one argument, an array
-         *     rs.do('sumArray', [[4,2,1]]);
-         *      // operation "add" takes two arguments, both integers
-         *     rs.do({ name:'add', params:[2,4] });
-         *      // call operation "solve" on a different run 
-         *     rs.do('solve', { id: '0000015bf2a04995880df6b868d23eb3d229' });
-         *
-         * **Parameters**
+         * 
          * @param {String} operation Name of operation.
          * @param {Array} [params] Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
          * @param {Object} [options] Overrides for configuration options.
@@ -1357,7 +1251,7 @@ module.exports = function (config) {
             } else {
                 opsArgs = params;
             }
-            var result = rutil.normalizeOperations(operation, opsArgs);
+            var result = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["normalizeOperations"])(operation, opsArgs);
             var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
 
             setFilterOrThrowError(httpOptions);
@@ -1370,29 +1264,24 @@ module.exports = function (config) {
 
         /**
          * Call several operations from the model, sequentially.
-         *
          * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
-         * **Examples**
-         *
-         *      // operations "initialize" and "solve" do not take any arguments
-         *     rs.serial(['initialize', 'solve']);
-         *      // operations "init" and "reset" take two arguments each
-         *     rs.serial([  { name: 'init', params: [1,2] },
-         *                  { name: 'reset', params: [2,3] }]);
-         *      // operation "init" takes two arguments,
-         *      // operation "runmodel" takes none
-         *     rs.serial([  { name: 'init', params: [1,2] },
-         *                  { name: 'runmodel', params: [] }]);
-         *
-         * **Parameters**
+         * @example
+         * // operations "initialize" and "solve" do not take any arguments
+         * rs.serial(['initialize', 'solve']);
+         * // operations "init" and "reset" take two arguments each
+         * rs.serial([  { name: 'init', params: [1,2] }, { name: 'reset', params: [2,3] }]);
+         * // operation "init" takes two arguments,
+         * // operation "runmodel" takes none
+         * rs.serial([  { name: 'init', params: [1,2] }, { name: 'runmodel', params: [] }]);
+         * 
          * @param {Array} operations If none of the operations take parameters, pass an array of the operation names (strings). If any of the operations do take parameters, pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         serial: function (operations, params, options) {
-            var opParams = rutil.normalizeOperations(operations, params);
+            var opParams = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["normalizeOperations"])(operations, params);
             var ops = opParams.ops;
             var args = opParams.args;
             var me = this;
@@ -1430,20 +1319,16 @@ module.exports = function (config) {
 
         /**
          * Call several operations from the model, executing them in parallel.
-         *
          * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
-         * **Example**
+         * @example
+         * // operations "solve" and "reset" do not take any arguments
+         * rs.parallel(['solve', 'reset']);
+         * // operations "add" and "subtract" take two arguments each
+         * rs.parallel([ { name: 'add', params: [1,2] }, { name: 'subtract', params:[2,3] }]);
+         * // operations "add" and "subtract" take two arguments each
+         * rs.parallel({ add: [1,2], subtract: [2,4] });
          *
-         *      // operations "solve" and "reset" do not take any arguments
-         *     rs.parallel(['solve', 'reset']);
-         *      // operations "add" and "subtract" take two arguments each
-         *     rs.parallel([ { name: 'add', params: [1,2] },
-         *                   { name: 'subtract', params:[2,3] }]);
-         *      // operations "add" and "subtract" take two arguments each
-         *     rs.parallel({ add: [1,2], subtract: [2,4] });
-         *
-         * **Parameters**
          * @param {Array|Object} operations If none of the operations take parameters, pass an array of the operation names (as strings). If any of the operations do take parameters, you have two options. You can pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the operation name and a (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
          * @param {Object} [options] Overrides for configuration options.
@@ -1452,7 +1337,7 @@ module.exports = function (config) {
         parallel: function (operations, params, options) {
             var $d = $.Deferred();
 
-            var opParams = rutil.normalizeOperations(operations, params);
+            var opParams = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["normalizeOperations"])(operations, params);
             var ops = opParams.ops;
             var args = opParams.args;
             var postOptions = $.extend(true, {}, serviceOptions, options);
@@ -1485,20 +1370,19 @@ module.exports = function (config) {
         /**
          * Shortcut to using the [Introspection API Service](../introspection-api-service/). Allows you to view a list of the variables and operations in a model.
          *
-         * **Example**
+         * @example
+         * rs.introspect({ runID: 'cbf85437-b539-4977-a1fc-23515cf071bb' }).then(function (data) {
+         *      console.log(data.functions);
+         *      console.log(data.variables);
+         * });
          *
-         *     rs.introspect({ runID: 'cbf85437-b539-4977-a1fc-23515cf071bb' }).then(function (data) {
-         *          console.log(data.functions);
-         *          console.log(data.variables);
-         *     });
-         *
-         * **Parameters**
+         * 
          * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`. Note that the `runID` is optional if the Run Service is already associated with a particular run (because `id` was passed in when the Run Service was initialized). If provided, the `runID` overrides the `id` currently associated with the Run Service.
          * @param  {Object} [introspectionConfig] Service options for Introspection Service
          * @return {Promise}
          */
         introspect: function (options, introspectionConfig) {
-            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, introspectionConfig));
+            var introspection = new __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service___default.a($.extend(true, {}, serviceOptions, introspectionConfig));
             if (options) {
                 if (options.runID) {
                     return introspection.byRunID(options.runID);
@@ -1531,17 +1415,15 @@ module.exports = function (config) {
         /**
           * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.
           *
-          * **Example**
+          * @example
+          * var vs = rs.variables();
+          * vs.save({ sample_int: 4 });
           *
-          *      var vs = rs.variables();
-          *      vs.save({ sample_int: 4 });
-          *
-          * **Parameters**
           * @param {Object} [config] Overrides for configuration options.
           * @return {Object} variablesService Instance
           */
         variables: function (config) {
-            var vs = new VariablesService($.extend(true, {}, serviceOptions, config, {
+            var vs = new __WEBPACK_IMPORTED_MODULE_4__variables_api_service___default.a($.extend(true, {}, serviceOptions, config, {
                 runService: this
             }));
             return vs;
@@ -1550,7 +1432,7 @@ module.exports = function (config) {
 
     $.extend(this, publicAsyncAPI);
     $.extend(this, publicSyncAPI);
-};
+}
 
 /***/ }),
 /* 10 */
@@ -1690,7 +1572,7 @@ function WorldAPIAdapter(config) {
         *
         * Using this method is rare. It is more common to create worlds automatically while you `autoAssign()` end users to worlds. (In this case, configuration data for the world, such as the roles, are read from the project-level world configuration information, for example by `getProjectSettings()`.)
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -1700,7 +1582,7 @@ function WorldAPIAdapter(config) {
         *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
         *       });
         *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters to create the world.
         * @param {string} [params.group] The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
         * @param {object} [params.roles] The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
@@ -1733,7 +1615,7 @@ function WorldAPIAdapter(config) {
         *
         * Typically, you complete world configuration at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both. However, this method is available if you need to update the configuration of a particular world.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -1744,7 +1626,7 @@ function WorldAPIAdapter(config) {
         *               wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
         *           });
         *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters to update the world.
         * @param {string} params.name A string identifier for the linked end users, for example, "name": "Our Team".
         * @param {object} [params.roles] The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
@@ -1770,7 +1652,7 @@ function WorldAPIAdapter(config) {
         *
         * This function optionally takes one argument. If the argument is a string, it is the id of the world to delete. If the argument is an object, it is the override for global options.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -1781,7 +1663,7 @@ function WorldAPIAdapter(config) {
         *               wa.delete();
         *           });
         *
-        *  **Parameters**
+        *  
         * @param {string|Object} [options] The id of the world to delete, or options object to override global options.
         * @return {Promise}
         */
@@ -1797,11 +1679,11 @@ function WorldAPIAdapter(config) {
         /**
         * Updates the configuration for the current instance of the World API Adapter (including all subsequent function calls, until the configuration is updated again).
         *
-        * **Example**
+        * @example
         *
         *      var wa = new F.service.World({...}).updateConfig({ filter: '123' }).addUser({ userId: '123' });
         *
-        * **Parameters**
+        * 
         * @param {object} config The configuration object to use in updating existing configuration.
         * @return {Object} reference to current instance
         */
@@ -1813,7 +1695,7 @@ function WorldAPIAdapter(config) {
         /**
         * Lists all worlds for a given account, project, and group. All three are required, and if not specified as parameters, are read from the service.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -1828,7 +1710,7 @@ function WorldAPIAdapter(config) {
         *               wa.list({ group: 'other-group-name' });
         *           });
         *
-        *  **Parameters**
+        *  
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
@@ -1843,7 +1725,7 @@ function WorldAPIAdapter(config) {
         /**
          * Load information for a specific world. All further calls to the world service will use the id provided.
          *
-         * **Parameters**
+         * 
          * @param {string} worldId The id of the world to load.
          * @param {Object} [options]] Options object to override global options.
          * @return {Promise}
@@ -1862,7 +1744,7 @@ function WorldAPIAdapter(config) {
         /**
         * Gets all worlds that an end user belongs to for a given account (team), project, and group.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -1889,7 +1771,7 @@ function WorldAPIAdapter(config) {
         /**
         * Adds an end user or list of end users to a given world. The end user must be a member of the `group` that is associated with this world.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -1959,7 +1841,7 @@ function WorldAPIAdapter(config) {
         /**
         * Updates the role of an end user in a given world. (You can only update one end user at a time.)
         *
-        * **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -1971,7 +1853,7 @@ function WorldAPIAdapter(config) {
         *           wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
         *      });
         *
-        * **Parameters**
+        * 
         * @param {{userId: string, role: string}} user User object with `userId` and the new `role`.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -1991,7 +1873,7 @@ function WorldAPIAdapter(config) {
         /**
         * Removes an end user from a given world.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -2030,7 +1912,7 @@ function WorldAPIAdapter(config) {
         *
         * Remember that a [run](../../glossary/#run) is a collection of interactions with a project and its model. In the case of multiplayer projects, the run is shared by all end users in the world.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -2059,7 +1941,7 @@ function WorldAPIAdapter(config) {
         /**
         * Gets the current (most recent) world for the given end user in the given group. Brings this most recent world into memory if needed.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -2100,7 +1982,7 @@ function WorldAPIAdapter(config) {
         *
         * (Note that the world id remains part of the run record, indicating that the run was formerly an active run for the world.)
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -2109,7 +1991,7 @@ function WorldAPIAdapter(config) {
         *
         *      wa.deleteRun('sample-world-id');
         *
-        *  **Parameters**
+        *  
         * @param {string} worldId The `worldId` of the world from which the current run is being deleted.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -2130,7 +2012,7 @@ function WorldAPIAdapter(config) {
         /**
         * Creates a new run for the world.
         *
-        *  **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -2142,7 +2024,7 @@ function WorldAPIAdapter(config) {
         *                   wa.newRunForWorld(world.id);
         *           });
         *
-        *  **Parameters**
+        *  
         * @param {string} worldId worldId in which we create the new run.
         * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
@@ -2162,7 +2044,7 @@ function WorldAPIAdapter(config) {
         /**
         * Assigns end users to worlds, creating new worlds as appropriate, automatically. Assigns all end users in the group, and creates new worlds as needed based on the project-level world configuration (roles, optional roles, and minimum end users per world).
         *
-        * **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -2171,7 +2053,7 @@ function WorldAPIAdapter(config) {
         *
         *      wa.autoAssign();
         *
-        * **Parameters**
+        * 
         * @param {object} [options] Options object to override global options.
         * @param {number} options.maxUsers Sets the maximum number of users in a world.
         * @param {string[]} options.userIds A list of users to be assigned be assigned instead of all end users in the group.
@@ -2204,7 +2086,7 @@ function WorldAPIAdapter(config) {
         *
         * (The [Multiplayer Project REST API](../../../rest_apis/multiplayer/multiplayer_project/) allows you to set these project-level world configurations. The World Adapter simply retrieves them, for example so they can be used in auto-assignment of end users to worlds.)
         *
-        * **Example**
+        * @example
         *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
@@ -2217,7 +2099,7 @@ function WorldAPIAdapter(config) {
         *               console.log(settings.optionalRoles);
         *           });
         *
-        * **Parameters**
+        * 
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
@@ -2481,7 +2363,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     /**
     * Logs user in.
     *
-    * **Example**
+    * @example
     *
     *       authMgr.login({
     *           account: 'acme-simulations',
@@ -2503,7 +2385,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *               }
     *           });
     *
-    * **Parameters**
+    * 
     *
     * @param {Object} [options] Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
     * @param {string} options.account The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
@@ -2654,11 +2536,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     /**
     * Logs user out by clearing all session information.
     *
-    * **Example**
+    * @example
     *
     *       authMgr.logout();
     *
-    * **Parameters**
+    * 
     *
     * @param {Object} [options] Overrides for configuration options.
     * @return {Promise}
@@ -2677,14 +2559,14 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     /**
      * Returns the existing user access token if the user is already logged in. Otherwise, logs the user in, creating a new user access token, and returns the new token. (See [more background on access tokens](../../../project_access/)).
      *
-     * **Example**
+     * @example
      *
      *      authMgr.getToken()
      *          .then(function (token) {
      *              console.log('My token is ', token);
      *          });
      *
-     * **Parameters**
+     * 
      * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
      */
@@ -2706,7 +2588,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *
      * If some end users in your project are members of multiple groups, this is a useful method to call on your project's login page. When the user attempts to log in, you can use this to display the groups of which the user is member, and have the user select the correct group to log in to for this session.
      *
-     * **Example**
+     * @example
      *
      *      // get groups for current user
      *      var sessionObj = authMgr.getCurrentUserSessionInfo();
@@ -2719,7 +2601,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *      // get groups for particular user
      *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
      *
-     * **Parameters**
+     * 
      * @param {Object} params Object with a userId and token properties.
      * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
      * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
@@ -2751,11 +2633,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     /**
      * Helper method to check if you're currently logged in
      *
-     *  **Example**
+     * @example
      *  
      *      var amILoggedIn = authMgr.isLoggedIn();
      *
-     * **Parameters**
+     * 
      * @param {none} none
      * @return {Boolean} true if you're logged in
      */
@@ -2771,11 +2653,11 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *
      * Session information is stored in a cookie in the browser.
      *
-     * **Example**
+     * @example
      *
      *      var sessionObj = authMgr.getCurrentUserSessionInfo();
      *
-     * **Parameters**
+     * 
      * @param {Object} [options] Overrides for configuration options.
      * @return {Object} session information
      */
@@ -2791,12 +2673,12 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *
      * Returns the new session object.
      *
-     * **Example**
+     * @example
      *
      *      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
      *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
      *
-     * **Parameters**
+     * 
      * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
      * @param {string} [group.isFac] Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
      * @param {string} [group.groupId] Defaults to undefined. Needed mostly for the Members API.
@@ -3153,7 +3035,7 @@ function MemberAPIService(config) {
         *
         * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
         *
-        * **Example**
+        * @example
         *
         *       const ma = new F.service.Member();
         *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
@@ -3165,7 +3047,7 @@ function MemberAPIService(config) {
         *
         *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
         *
-        * **Parameters**
+        * 
         * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -3186,7 +3068,7 @@ function MemberAPIService(config) {
         /**
          * Add given userids to group
          *
-         * **Example**
+         * @example
          *       const ma = new F.service.Member();
          *       ma.addUsersToGroup(['42836d4b-5b61-4fe4-80eb-3136e956ee5c', '42836d4b-5b61-4fe4-80eb-3136e956ee5c'])
          *
@@ -3214,7 +3096,7 @@ function MemberAPIService(config) {
         /**
         * Retrieve details about one group, including an array of all its members.
         *
-        * **Example**
+        * @example
         *
         *       const ma = new F.service.Member();
         *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
@@ -3226,7 +3108,7 @@ function MemberAPIService(config) {
         *
         *       ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * **Parameters**
+        * 
         * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -3248,13 +3130,13 @@ function MemberAPIService(config) {
         /**
         * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
         *
-        * **Example**
+        * @example
         *
         *       const ma = new F.service.Member();
         *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * **Parameters**
+        * 
         * @param {object} params The end user and group information.
         * @param {string} params.userId The id of the end user to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
@@ -3268,13 +3150,13 @@ function MemberAPIService(config) {
         /**
         * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
         *
-        * **Example**
+        * @example
         *
         *       const ma = new F.service.Member();
         *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * **Parameters**
+        * 
         * @param {object} params The end user and group information.
         * @param {string} params.userId The id of the end user to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
@@ -3437,7 +3319,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * This method enforces Epicenter-specific channel naming: all channels requested must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`.
      *
-     * **Example**
+     * @example
      *
      *      var cm = new F.manager.EpicenterChannelManager();
      *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
@@ -3445,7 +3327,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * **Parameters**
+     * 
      * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
@@ -3480,7 +3362,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * There are no notifications from Epicenter on this channel; all messages are user-originated.
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var gc = cm.getGroupChannel();
@@ -3490,7 +3372,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
      *
-     * **Parameters**
+     * 
      *
      * @param  {string} [groupName] Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
@@ -3520,7 +3402,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * This is typically used together with the [World Manager](../world-manager).
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
@@ -3550,7 +3432,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
         | ROLES | All role events |
         | ROLES_ASSIGN | Role assignments only |
         | ROLES_UNASSIGN | Role unassignments |
-      * **Parameters**
+      * 
      *
      * @param  {String|Object} world The world object or id.
      * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
@@ -3582,7 +3464,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * This is typically used together with the [World Manager](../world-manager). Note that this channel only gets notifications for worlds currently in memory. (See more background on [persistence](../../../run_persistence).)
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
@@ -3603,7 +3485,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
      *
-     * **Parameters**
+     * 
      *
      * @param  {String|{ id: string }} world World object or id.
      * @param  {String|Object} [user] User object or id. If not provided, picks up user id from current session if end user is logged in.
@@ -3633,7 +3515,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * Note that the presence channel is tracking all end users in a group. In particular, if the project additionally splits each group into [worlds](../world-manager/), this channel continues to show notifications for all end users in the group (not restricted by worlds).
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var pc = cm.getPresenceChannel();
@@ -3653,7 +3535,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
      *
-     * **Parameters**
+     * 
      *
      * @param  {string} [groupName] Group the end user is in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
@@ -3683,7 +3565,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * There are automatic notifications from Epicenter on this channel when data is created, updated, or deleted in this collection. See more on [automatic messages to the data channel](../../../rest_apis/multiplayer/channel/#data-messages).
      *
-     * **Example**
+     * @example
      *
      *     var cm = new F.manager.ChannelManager();
      *     var dc = cm.getDataChannel('survey-responses');
@@ -3700,7 +3582,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
      *
-     * **Parameters**
+     * 
      *
      * @param  {String} collection Name of collection whose automatic notifications you want to receive.
      * @return {Channel} Channel instance
@@ -3826,7 +3708,7 @@ function normalizeActions(actions) {
         /**
          * Creates a new consensus point
          * 
-         * **Example**
+         * @example
          *
          *      cs.create({
                     roles: ['P1', 'P2'],
@@ -3996,7 +3878,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_service_run_api_service__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(5);
@@ -4029,7 +3910,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 *
 * After instantiating a Run Manager, make a call to `getRun()` whenever you need to access a run for this end user. The `RunManager.run` contains the instantiated [Run Service](../run-api-service/). The Run Service allows you to access variables, call operations, etc.
 *
-* **Example**
+* @example
 *
 *       const rm = new F.manager.RunManager({
 *           run: {
@@ -4123,10 +4004,10 @@ var RunManager = function () {
 
         this.options = $.extend(true, {}, defaults, options);
 
-        if (this.options.run instanceof __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default.a) {
+        if (this.options.run instanceof __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__["default"]) {
             this.run = this.options.run;
         } else if (!Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["isEmpty"])(this.options.run)) {
-            this.run = new __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default.a(this.options.run);
+            this.run = new __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__["default"](this.options.run);
         } else {
             throw new Error('No run options passed to RunManager');
         }
@@ -4144,7 +4025,7 @@ var RunManager = function () {
      * `getRun()` returns the run currently referenced in the browser cookie, and if there is none, creates a new run. 
      * See [Run Manager Strategies](../strategies/) for more on strategies.
      *
-     *  **Example**
+     * @example
      *
      *      rm.getRun().then(function (run) {
      *          // use the run object
@@ -4210,7 +4091,7 @@ var RunManager = function () {
         /**
          * Returns the run object for a 'reset' run. The definition of a reset is defined by the strategy, but typically means forcing the creation of a new run. For example, `reset()` for the default strategies `reuse-per-session` and `reuse-last-initialized` both create new runs.
          *
-         *  **Example**
+         * @example
          *
          *      rm.reset().then(function (run) {
          *          // use the (new) run object
@@ -4220,7 +4101,7 @@ var RunManager = function () {
          *          rm.run.do('runModel');
          *      });
          *
-         * **Parameters**
+         * 
          * @param {Object} [options] Configuration options; passed on to [RunService#create](../run-api-service/#create).
          * @return {Promise}
          */
@@ -4379,7 +4260,6 @@ module.exports = function (config) {
 /* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
 /**
  *
  * ## Variables API Service
@@ -4400,8 +4280,6 @@ module.exports = function (config) {
  *        });
  *
  */
-
-
 
 var TransportFactory = __webpack_require__(0).default;
 var rutil = __webpack_require__(8);
@@ -4441,14 +4319,14 @@ module.exports = function (config) {
         /**
          * Get values for a variable.
          *
-         * **Example**
+         * @example
          *
          *      vs.load('sample_int')
          *          .then(function(val){
          *              // val contains the value of sample_int
          *          });
          *
-         * **Parameters**
+         * 
          * @param {string} variable Name of variable to load.
          * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {object} [options] Overrides for configuration options.
@@ -4465,7 +4343,7 @@ module.exports = function (config) {
         /**
          * Returns particular variables, based on conditions specified in the `query` object.
          *
-         * **Example**
+         * @example
          *
          *      vs.query(['price', 'sales'])
          *          .then(function(val) {
@@ -4474,7 +4352,7 @@ module.exports = function (config) {
          *
          *      vs.query({ include:['price', 'sales'] });
          *
-         * **Parameters**
+         * 
          * @param {Object|Array} query The names of the variables requested.
          * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {object} [options] Overrides for configuration options.
@@ -4495,12 +4373,12 @@ module.exports = function (config) {
         /**
          * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](../run-api-service/) for calling methods from the model.)
          *
-         * **Example**
+         * @example
          *
          *      vs.save('price', 4);
          *      vs.save({ price: 4, quantity: 5, products: [2,3,4] });
          *
-         * **Parameters**
+         * 
          * @param {Object|String} variable An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
          * @param {object} [val] If passing a string for `variable`, use this argument for the value to save.
          * @param {object} [options] Overrides for configuration options.
@@ -4626,7 +4504,7 @@ module.exports = function (config) {
          *
          * Note: This does not work for any model which requires additional parameters, such as `files`.
          *
-         * **Example**
+         * @example
          *
          *      intro.byModel('abc.vmf')
          *          .then(function(data) {
@@ -4635,7 +4513,7 @@ module.exports = function (config) {
          *              console.log(data.variables);
          *          });
          *
-         * **Parameters**
+         * 
          * @param  {string} modelFile Name of the model file to introspect.
          * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
@@ -4658,7 +4536,7 @@ module.exports = function (config) {
          *
          * Note: This does not work for any model which requires additional parameters such as `files`.
          *
-         * **Example**
+         * @example
          *
          *      intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6')
          *          .then(function(data) {
@@ -4667,7 +4545,7 @@ module.exports = function (config) {
          *              console.log(data.variables);
          *          });
          *
-         * **Parameters**
+         * 
          * @param  {string} runID Id of the run to introspect.
          * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
@@ -4960,7 +4838,7 @@ var DataService = function () {
      *
      * Searching using comparison or logical operators (as opposed to exact matches) requires MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional details.
      *
-     * **Examples**
+     * @example
      *
      *      // request all data associated with document 'user1'
      *      ds.query('user1');
@@ -4984,7 +4862,7 @@ var DataService = function () {
      *      // where 'question5' contains the string '.*day'
      *      ds.query('', { 'question5': { '$regex': '.*day' } });
      *
-     * **Parameters**
+     * 
      * @param {String} key The name of the document to search. Pass the empty string ('') to search the entire collection.
      * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
      * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
@@ -5008,7 +4886,7 @@ var DataService = function () {
          *
          * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `save` method is making a `POST` request.)
          *
-         * **Example**
+         * @example
          *
          *      // Create a new document, with one element, at the default root level
          *      ds.save('question1', 'yes');
@@ -5019,7 +4897,7 @@ var DataService = function () {
          *      // Create a new document, with two elements, at `/students/`
          *      ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
          *
-         * **Parameters**
+         * 
          *
          * @param {String|Object} key If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
          * @param {Object} [value] The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
@@ -5068,7 +4946,7 @@ var DataService = function () {
          *
          * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `saveAs` method is making a `PUT` request.)
          *
-         * **Example**
+         * @example
          *
          *      // Create (or replace) the `user1` document at the default root level.
          *      // Note that this replaces any existing content in the `user1` document.
@@ -5094,7 +4972,7 @@ var DataService = function () {
          *          { scenarioYear: '2015' },
          *          { root: 'myclasses' });
          *
-         * **Parameters**
+         * 
          *
          * @param {String} key Id of the document.
          * @param {Object} [value] The data to save, in key:value pairs.
@@ -5112,12 +4990,12 @@ var DataService = function () {
         /**
          * Get data for a specific document or field.
          *
-         * **Example**
+         * @example
          *
          *      ds.load('user1');
          *      ds.load('user1/question3');
          *
-         * **Parameters**
+         * 
          * @param  {String|Object} key The id of the data to return. Can be the id of a document, or a path to data within that document.
          * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
@@ -5134,12 +5012,12 @@ var DataService = function () {
         /**
          * Removes data from collection. Only documents (top-level elements in each collection) can be deleted.
          *
-         * **Example**
+         * @example
          *
          *     ds.remove('user1');
          *
          *
-         * **Parameters**
+         * 
          *
          * @param {String|Array} keys The id of the document to remove from this collection, or an array of such ids.
          * @param {Object} [options] Overrides for configuration options.
@@ -5277,7 +5155,7 @@ module.exports = function (config) {
          *
          * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
          *
-         * **Example**
+         * @example
          *
          *      auth.login({
          *          userName: 'jsmith',
@@ -5287,7 +5165,7 @@ module.exports = function (config) {
          *          console.log("user access token is: ", token.access_token);
          *      });
          *
-         * **Parameters**
+         * 
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
@@ -5320,11 +5198,11 @@ module.exports = function (config) {
         //
         // Epicenter logout is not implemented yet, so for now this is a dummy promise that gets automatically resolved.
         //
-        // **Example**
+        // @example
         //
         //      auth.logout();
         //
-        // **Parameters**
+        // 
         // @param {Object} [options] Overrides for configuration options.
         //
         logout: function (options) {
@@ -5470,7 +5348,7 @@ var Channel = function (options) {
         /**
          * A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. By default, it just echoes the topic.
          *
-         * **Parameters**
+         * 
          *
          * * `topic` Topic to parse.
          *
@@ -5525,7 +5403,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * The topic should include the full path of the account id (**Team ID** for team projects), project id, and group name. (In most cases, it is simpler to use the [Epicenter Channel Manager](../epicenter-channel-manager/) instead, in which case this is configured for you.)
      *
-     *  **Examples**
+     *  @example
      *
      *      var cb = function(val) { console.log(val.data); };
      *
@@ -5547,7 +5425,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * * *String* Returns a token you can later use to unsubscribe.
      *
-     * **Parameters**
+     * 
      * @param  {String|Array}   topic    List of topics to listen for changes on.
      * @param  {Function} callback Callback function to execute. Callback is called with signature `(evt, payload, metadata)`.
      * @param  {Object}   context  Context in which the `callback` is executed.
@@ -5575,7 +5453,7 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Publish data to a topic.
      *
-     * **Examples**
+     * @example
      *
      *      // Send data to all subscribers of the 'run' topic
      *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run', { completed: false });
@@ -5583,7 +5461,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *      // Send data to all subscribers of the 'run/variables' topic
      *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
      *
-     * **Parameters**
+     * 
      *
      * @param  {String} topic Topic to publish to.
      * @param  {*} data  Data to publish to topic.
@@ -5612,11 +5490,11 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Unsubscribe from changes to a topic.
      *
-     * **Example**
+     * @example
      *
      *      cs.unsubscribe('sampleToken');
      *
-     * **Parameters**
+     * 
      * @param  {String} token The token for topic is returned when you initially subscribe. Pass it here to unsubscribe from that topic.
      * @return {Object} reference to current instance
      */
@@ -5630,7 +5508,7 @@ Channel.prototype = $.extend(Channel.prototype, {
      *
      * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
@@ -5641,7 +5519,7 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
@@ -5652,7 +5530,7 @@ Channel.prototype = $.extend(Channel.prototype, {
     /**
      * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
@@ -5734,7 +5612,7 @@ var apiEndpoint = 'presence';
          * Marks an end user as online.
          *
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74')
@@ -5747,7 +5625,7 @@ var apiEndpoint = 'presence';
          *
          * Promise with presence information for user marked online.
          *
-         * **Parameters**
+         * 
          *
          * @param  {string} [userId] optional If not provided, taken from session cookie.
          * @param  {Object} options Additional options to change the presence service defaults.
@@ -5770,7 +5648,7 @@ var apiEndpoint = 'presence';
          * Marks an end user as offline.
          *
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     pr.markOffline('0000015a68d806bc09cd0a7d207f44ba5f74');
@@ -5779,7 +5657,7 @@ var apiEndpoint = 'presence';
          *
          * Promise to remove presence record for end user.
          *
-         * **Parameters**
+         * 
          *
          * @param  {string} [userId] If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults.
@@ -5802,7 +5680,7 @@ var apiEndpoint = 'presence';
          * Returns a list of all end users in this group that are currently online.
          *
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     pr.getStatus('groupName').then(function(onlineUsers) {
@@ -5816,7 +5694,7 @@ var apiEndpoint = 'presence';
          *
          * Promise with response of online users
          *
-         * **Parameters**
+         * 
          *
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {object} [options] Additional options to change the presence service defaults.
@@ -5836,7 +5714,7 @@ var apiEndpoint = 'presence';
         /**
          * Appends a boolean 'isOnline' field to provided list of users
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     pr.getStatusForUsers([{ userId: 'a', userId: 'b'}]).then(function(onlineUsers) {
@@ -5868,7 +5746,7 @@ var apiEndpoint = 'presence';
          * End users are automatically marked online and offline in a "presence" channel that is specific to each group. Gets this channel (an instance of the [Channel Service](../channel-service/)) for the given group. (Note that this Channel Service instance is also available from the [Epicenter Channel Manager getPresenceChannel()](../epicenter-channel-manager/#getPresenceChannel).)
          *
          *
-         * **Example**
+         * @example
          *
          *     var pr = new F.service.Presence();
          *     var cm = pr.getChannel('group1');
@@ -5878,7 +5756,7 @@ var apiEndpoint = 'presence';
          *
          * Channel instance for Presence channel
          *
-         * **Parameters**
+         * 
          *
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults
@@ -5963,14 +5841,14 @@ module.exports = function (config) {
         /**
         * View the history of a run.
         * 
-        *  **Example**
+        * @example
         *
         *      var sa = new F.service.State();
         *      sa.load('0000015a06bb58613b28b57365677ec89ec5').then(function(history) {
         *            console.log('history = ', history);
         *      });
         *
-        *  **Parameters**
+        *  
         * @param {string} runId The id of the run.
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -5983,12 +5861,12 @@ module.exports = function (config) {
         /**
         * Replay a run. After this call, the run, with its original run id, is now available [in memory](../../../run_persistence/#runs-in-memory). (It continues to be persisted into the Epicenter database at regular intervals.)
         *
-        *  **Example**
+        * @example
         *
         *      var sa = new F.service.State();
         *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
         *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to bring back to memory.
         * @param {string} [params.stopBefore] The run is advanced only up to the first occurrence of this method.
@@ -6017,12 +5895,12 @@ module.exports = function (config) {
         *
         * The original run remains only [in the database](../../../run_persistence/#runs-in-db).
         *
-        *  **Example**
+        * @example
         *
         *      var sa = new F.service.State();
         *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
         *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to clone from memory.
         * @param {string} [params.stopBefore] The newly cloned run is advanced only up to the first occurrence of this method.
@@ -6110,7 +5988,7 @@ function UserAPIAdapter(config) {
         /**
         * Retrieve details about particular end users in your team, based on user name or user id.
         *
-        * **Example**
+        * @example
         *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
@@ -6119,7 +5997,7 @@ function UserAPIAdapter(config) {
         *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
         *
-        * **Parameters**
+        * 
         * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -6152,14 +6030,14 @@ function UserAPIAdapter(config) {
         /**
         * Retrieve details about a single end user in your team, based on user id.
         *
-        * **Example**
+        * @example
         *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
         *       });
         *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
         *
-        * **Parameters**
+        * 
         * @param {string} userId The user id for the end user in your team.
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -6171,7 +6049,7 @@ function UserAPIAdapter(config) {
         /**
         * Upload list of users to current account
         *
-        * **Example**
+        * @example
         *
         *       var us = new F.service.User({
         *           account: 'acme-simulations',
@@ -6485,7 +6363,7 @@ var strategyManager = {
     /**
      * Gets strategy by name.
      *
-     * **Example**
+     * @example
      *
      *      var reuseStrat = F.manager.RunManager.strategies.byName('reuse-across-sessions');
      *      // shows strategy function
@@ -6493,7 +6371,7 @@ var strategyManager = {
      *      // create a new run manager using this strategy
      *      var rm = new F.manager.RunManager({strategy: reuseStrat, run: { model: 'model.vmf'} });
      *
-     * **Parameters**
+     * 
      * @param  {String} strategyName Name of strategy to get.
      * @return {Function} Strategy function.
      */
@@ -6531,7 +6409,7 @@ var strategyManager = {
     /**
      * Adds a new strategy.
      *
-     * **Example**
+     * @example
      *
      *      // this "favorite run" strategy always returns the same run, no matter what
      *      // (not a useful strategy, except as an example)
@@ -6547,7 +6425,7 @@ var strategyManager = {
      *      
      *      var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
      *
-     * **Parameters**
+     * 
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.
      * @param  {Function} strategy The strategy constructor. Will be called with `new` on Run Manager initialization.
      * @param  {Object} options  Options for strategy.
@@ -6674,7 +6552,7 @@ module.exports = classFrom(Base, {
  */
 
 
-var RunService = __webpack_require__(9);
+var RunService = __webpack_require__(9).default;
 var SessionManager = __webpack_require__(1);
 
 var injectFiltersFromSession = __webpack_require__(7).injectFiltersFromSession;
@@ -6717,7 +6595,7 @@ SavedRunsManager.prototype = {
      *
      * Note that while any run can be saved, only runs which also match the configuration options `scopeByGroup` and `scopeByUser` are returned by the `getRuns()` method.
      *
-     * **Example**
+     * @example
      *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
@@ -6733,7 +6611,7 @@ SavedRunsManager.prototype = {
     /**
      * Marks a run as removed; the inverse of marking as saved.
      *
-     * **Example**
+     * @example
      *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
@@ -6750,7 +6628,7 @@ SavedRunsManager.prototype = {
     /**
      * Sets additional fields on a run. This is a convenience method for [RunService#save](../../run-api-service/#save).
      *
-     * **Example**
+     * @example
      *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
@@ -6782,7 +6660,7 @@ SavedRunsManager.prototype = {
     /**
      * Returns a list of saved runs.
      *
-     * **Example**
+     * @example
      *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.savedRuns.getRuns().then(function (runs) {
@@ -6907,7 +6785,7 @@ module.exports = function (options) {
         /**
         * Returns the current world (object) and an instance of the [World API Adapter](../world-api-adapter/).
         *
-        * **Example**
+        * @example
         *
         *       wMgr.getCurrentWorld()
         *           .then(function(world, worldAdapter) {
@@ -6915,7 +6793,7 @@ module.exports = function (options) {
         *               worldAdapter.getCurrentRunId();
         *           });
         *
-        * **Parameters**
+        * 
         * @param {string} [userId] The id of the user whose world is being accessed. Defaults to the user in the current session.
         * @param {string} [groupName] The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
         * @return {Promise}
@@ -6934,7 +6812,7 @@ module.exports = function (options) {
         /**
         * Returns the current run (object) and an instance of the [Run API Service](../run-api-service/).
         *
-        * **Example**
+        * @example
         *
         *       wMgr.getCurrentRun('myModel.py')
         *           .then(function(run, runService) {
@@ -6942,7 +6820,7 @@ module.exports = function (options) {
         *               runService.do('startGame');
         *           });
         *
-        * **Parameters**
+        * 
         * @param {string} [model] The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
         * @return {Promise}
         */
@@ -7004,7 +6882,7 @@ F.transport.Ajax = __webpack_require__(23);
 
 F.service.URL = __webpack_require__(14);
 F.service.Config = __webpack_require__(4).default;
-F.service.Run = __webpack_require__(9);
+F.service.Run = __webpack_require__(9).default;
 F.service.File = __webpack_require__(46);
 F.service.Variables = __webpack_require__(24);
 F.service.Data = __webpack_require__(28).default;
@@ -7660,7 +7538,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
     /**
      * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
      *
-     * **Example**
+     * @example
      *
      *      var cm = new F.manager.ChannelManager();
      *      var channel = cm.getChannel();
@@ -7668,7 +7546,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * **Parameters**
+     * 
      * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
@@ -7711,7 +7589,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *
      * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
@@ -7722,7 +7600,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
     /**
      * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
@@ -7733,7 +7611,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
     /**
      * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
      *
-     * **Parameters**
+     * 
      *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
@@ -8134,7 +8012,7 @@ module.exports = function (config) {
         * Creates a file in the Asset API. The server returns an error (status code `409`, conflict) if the file already exists, so
         * check first with a `list()` or a `get()`.
         *
-        *  **Example**
+        * @example
         *
         *       var aa = new F.service.Asset({
         *          account: 'acme-simulations',
@@ -8170,7 +8048,7 @@ module.exports = function (config) {
         *       });
         *
         *
-        *  **Parameters**
+        *  
         * @param {string} filename Name of the file to create.
         * @param {object} [params] Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
         * @param {string} [params.encoding] Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
@@ -8187,7 +8065,7 @@ module.exports = function (config) {
         * Gets a file from the Asset API, fetching the asset content. (To get a list
         * of the assets in a scope, use `list()`.)
         *
-        *  **Parameters**
+        *  
         * @param {string} filename (Required) Name of the file to retrieve.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -8204,13 +8082,13 @@ module.exports = function (config) {
         /**
         * Gets the list of the assets in a scope.
         *
-        * **Example**
+        * @example
         *
         *       aa.list({ fullUrl: true }).then(function(fileList){
         *           console.log('array of files = ', fileList);
         *       });
         *
-        *  **Parameters**
+        *  
         * @param {object} [options] Options object to override global options.
         * @param {string} [options.scope] The scope (`user`, `group`, `project`).
         * @param {boolean} [options.fullUrl] Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
@@ -8241,7 +8119,7 @@ module.exports = function (config) {
         /**
         * Replaces an existing file in the Asset API.
         *
-        * **Example**
+        * @example
         *
         *       // replace an asset using encoded text
         *       aa.replace('test.txt', {
@@ -8269,7 +8147,7 @@ module.exports = function (config) {
         *          aa.replace(filename, data, { scope: 'user' });
         *       });
         *
-        *  **Parameters**
+        *  
         * @param {string} filename Name of the file being replaced.
         * @param {object} [params] Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
         * @param {string} [params.encoding] Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
@@ -8285,11 +8163,11 @@ module.exports = function (config) {
         /**
         * Deletes a file from the Asset API.
         *
-        * **Example**
+        * @example
         *
         *       aa.delete(sampleFileName);
         *
-        *  **Parameters**
+        *  
         * @param {string} filename (Required) Name of the file to delete.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -9110,7 +8988,7 @@ var PasswordService = function () {
     /**
      * Send a password reset email for the provided userName.
      * 
-     * **Example**
+     * @example
             var ps = new F.service.Password();
             ps.resetPassword('myuserName@gmail.com', {
                 redirectUrl: 'login.html',
@@ -9319,7 +9197,7 @@ function ProjectAPIService(config) {
 *
 * To use the Scenario Manager, instantiate it, then access its Run Managers as needed to create your project's user interface:
 *
-* **Example**
+* @example
 *
 *       var sm = new F.manager.ScenarioManager({
 *           run: {
@@ -9380,7 +9258,7 @@ var rutil = __webpack_require__(8);
 var NoneStrategy = __webpack_require__(12);
 
 var StateService = __webpack_require__(33);
-var RunService = __webpack_require__(9);
+var RunService = __webpack_require__(9).default;
 
 var BaselineStrategy = __webpack_require__(69);
 var LastUnsavedStrategy = __webpack_require__(70);
@@ -9494,12 +9372,12 @@ function ScenarioManager(config) {
      *
      * Available only for the Scenario Manager's `current` property (Run Manager). 
      *
-     * **Example**
+     * @example
      *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.current.saveAndAdvance({'myRunName': 'sample policy decisions'});
      *
-     * **Parameters**
+     * 
      * @param  {Object} metadata   Metadata to save, for example, the run name.
      * @return {Promise}
      */
@@ -9960,7 +9838,6 @@ module.exports = classFrom(Base, {
     getRun: function (runService, userSession, opts) {
         var runopts = runService.getCurrentConfig();
         var filter = injectFiltersFromSession({
-            saved: false,
             trashed: false,
             model: runopts.model,
             'scope.trackingKey': 'current'

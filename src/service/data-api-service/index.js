@@ -1,31 +1,3 @@
-/**
- * ## Data API Service
- *
- * The Data API Service allows you to create, access, and manipulate data related to any of your projects. Data are organized in collections. Each collection contains a document; each element of this top-level document is a JSON object. (See additional information on the underlying [Data API](../../../rest_apis/data_api/).)
- *
- * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, there are three required parameters when you instantiate the Data Service:
- *
- * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `project`: Epicenter project id.
- * * `root`: The the name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
- *
- *       var ds = new F.service.Data({
- *          account: 'acme-simulations',
- *          project: 'supply-chain-game',
- *          root: 'survey-responses',
- *          server: { host: 'api.forio.com' }
- *       });
- *       ds.saveAs('user1',
- *          { 'question1': 2, 'question2': 10,
- *          'question3': false, 'question4': 'sometimes' } );
- *       ds.saveAs('user2',
- *          { 'question1': 3, 'question2': 8,
- *          'question3': true, 'question4': 'always' } );
- *       ds.query('',{ 'question2': { '$gt': 9} });
- *
- * Note that in addition to the `account`, `project`, and `root`, the Data Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
- */
-
 import TransportFactory from 'transport/http-transport-factory';
 
 import { getDefaultOptions } from 'service/service-utils';
@@ -37,66 +9,26 @@ const API_ENDPOINT = 'data';
 const getAPIURL = getURL.bind(null, API_ENDPOINT);
 
 class DataService {
+    /**
+     * @param {AccountAPIServiceOptions} config 
+     * @property {string} root Name of collection. Required. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`, but must be set to a collection name.
+     * @property {string} scope Determines who has read-write access to this data collection. See above for available scopes.
+     */
     constructor(config) {
-        var defaults = {
-            /**
-             * Name of collection. Required. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`, but must be set to a collection name.
-             * @type {String}
-             */
-            root: '/',
-            /**
-             * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
-             * @type {String}
-             */
-            account: undefined,
-            /**
-             * The project id. Defaults to empty string. If left undefined, taken from the URL.
-             * @type {String}
-             */
-            project: undefined,
-            /**
-             * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-             * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-             * @type {String}
-             */
-            token: undefined,
-
-
-            /**
-             *  Determines who has read/write access to this collection
-               
-                    const DataService = F.service.Data;    
-                    const groupScopeDataService = new DataService({    
-                        name: 'some-name', 
-                        scope: DataService.SCOPES.GROUP,   
-                    });    
-                    const userScopeDataService = new DataService({     
-                        name: 'some-name', 
-                        scope: DataService.SCOPES.USER,    
-                    });  
-
-                Available scopes are:
-
-                | Scope | Readable By | Writable By
-                | ------------- | ------------- | ------------- |
-                | GROUP | Facilitators & Users in that group | Faciliators in that group|
-                | USER | Faciliator in that group. User who created the collection | Faciliator in that group. User who created the collection |
-                | FACILITATOR | Faciliators in that group | Faciliators in that group |
-                | PROJECT (default, for legacy reasons) | Any user in the project | Any user in the project |
-                | CUSTOM (to opt out of naming conventions) | customize with Epicenter-api-proxy | customize with Epicenter-api-proxy |
-             */
+        const defaults = {
             scope: SCOPES.CUSTOM,
+            root: '/',
 
-            //Options to pass on to the underlying transport layer
+            account: undefined,
+            project: undefined,
+            token: undefined,
             transport: {}
         };
         const serviceOptions = getDefaultOptions(defaults, config, { apiEndpont: API_ENDPOINT });
 
-
         this.serviceOptions = serviceOptions;
         this.http = new TransportFactory(serviceOptions.transport);
     }
-
 
     /**
      * Search for data within a collection.
@@ -112,18 +44,15 @@ class DataService {
      * ds.query('', { 'question2': 9});
      *
      * // comparison operators:
-     * // request all documents in collection
-     * // where 'question2' is greater than 9
+     * // request all documents in collection where 'question2' is greater than 9
      * ds.query('', { 'question2': { '$gt': 9} });
      *
      * // logical operators:
-     * // request all documents in collection
-     * // where 'question2' is less than 10, and 'question3' is false
+     * // request all documents in collection where 'question2' is less than 10, and 'question3' is false
      * ds.query('', { '$and': [ { 'question2': { '$lt':10} }, { 'question3': false }] });
      *
      * // regular expresssions: use any Perl-compatible regular expressions
-     * // request all documents in collection
-     * // where 'question5' contains the string '.*day'
+     * // request all documents in collection where 'question5' contains the string '.*day'
      * ds.query('', { 'question5': { '$regex': '.*day' } });
      *
      * 
@@ -139,6 +68,7 @@ class DataService {
         mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
         return this.http.get(params, mergedOptions);
     }
+
     /**
      * Save data in an anonymous document within the collection.
      *
@@ -176,7 +106,8 @@ class DataService {
     }
     
     /**
-     * Append value to key
+     * Append value to an array data structure within a document
+     * 
      * @param  {string} key     path to array item
      * @param  {any} val     value to append to array
      * @param  {object} [options] Overrides for configuration options

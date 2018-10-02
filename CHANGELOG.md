@@ -241,7 +241,7 @@ This release adds a new `reuse-last-initialized` strategy. It is intended to be 
 
 This strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations.
 
-**Examples**:
+@example:
 
 - You have a time-based model and always want the run you're operating on to be at step 10:
 
