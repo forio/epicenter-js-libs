@@ -12,7 +12,7 @@ function paramsToTable(params) {
         return toRow([
             param.isOptional ? '' : '•',
             param.name,
-            param.types.length ? param.types.join(', ') : 'any',
+            param.types && param.types.length ? param.types.join(', ') : 'any',
             param.description, 
         ]);
     });
@@ -25,15 +25,19 @@ function paramsToTable(params) {
 }
 
 const plugin = (data)=> new Promise((resolve, reject)=> {
+    fs.writeFileSync('output-orig.json', JSON.stringify(data, null, 2));
+
     const parsedFiles = data.files.map((file)=> {
         const pathParams = file.name.split('/');
         const relevantModuleName = pathParams[pathParams.length - 2]; //last item is index.js
 
         file.name = relevantModuleName;
+        
         const splitMethodsAndConfig = file.methods.reduce((accum, m)=> {
             accum[m.type] = (accum[m.type] || []).concat(m);
             return accum;
         }, {});
+        file.constructorOptionsTable = paramsToTable(splitMethodsAndConfig.property);
         splitMethodsAndConfig.methods = splitMethodsAndConfig.method.map((m)=> {
             m.tags.example = m.tags.example.map((r)=> r.trim());
             m.parameterTable = paramsToTable(m.tags.param);

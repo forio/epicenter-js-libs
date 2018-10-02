@@ -1,8 +1,4 @@
----
-title: <%= name %>
-layout: "default"
-isPage: true
----
+<%= constructorOptionsTable %>
 
 ## Methods
 <% methods.forEach((method)=> { %>
@@ -12,8 +8,7 @@ isPage: true
 <%= method.parameterTable %>
 #### Returns
 `<%= method.returns.type %>` <%= method.returns.description %>
-<% if (method.tags.example.length) { %>
-#### Example
+<% if (method.tags.example.length) { %> #### Example
 <% method.tags.example.forEach((example)=> { %>```js
 <%=  example %>
 ```

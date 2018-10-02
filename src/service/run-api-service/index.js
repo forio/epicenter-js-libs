@@ -1,56 +1,3 @@
-/**
- *
- * ## Run API Service
- *
- * The Run API Service allows you to perform common tasks around creating and updating runs, variables, and data.
- *
- * When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly. This is because the Run Manager (and associated [run strategies](../strategies/)) gives you control over run creation depending on run states.
- *
- * The Run API Service is useful for building an interface where you want to show data across multiple runs (this is easy using the `filter()` and `query()` methods). For instance, you would probably use a Run Service to build a page for a facilitator. This is because a facilitator typically wants to evaluate performance from multiple end users, each of whom have been working with their own run.
- *
- * To use the Run API Service, instantiate it by passing in:
- *
- * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `project`: Epicenter project id.
- *
- * If you know in advance that you would like to work with particular, existing run(s), you can optionally pass in:
- *
- * * `filter`: (Optional) Criteria by which to filter for existing runs. 
- * * `id`: (Optional) The run id of an existing run. This is a convenience alias for using filter, in the case where you only want to work with one run.
- *
- * For example,
- *
- *       var rs = new F.service.Run({
- *            account: 'acme-simulations',
- *            project: 'supply-chain-game',
- *      });
- *      rs.create('supply_chain_game.py').then(function(run) {
- *             rs.do('someOperation');
- *      });
- *
- *
- * Additionally, all API calls take in an `options` object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below. In particular, passing `{ id: 'a-run-id' }` in this `options` object allows you to make calls to an existing run.
- *
- * Note that in addition to the `account`, `project`, and `model`, the Run Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
- *
- *       var rm = new F.manager.RunManager({
- *           run: {
- *               account: 'acme-simulations',
- *               project: 'supply-chain-game',
- *               model: 'supply_chain_game.py',
- *               server: { host: 'api.forio.com' }
- *           }
- *       });
- *       rm.getRun()
- *           .then(function(run) {
- *               // the RunManager.run contains the instantiated Run Service,
- *               // so any Run Service method is valid here
- *               var rs = rm.run;
- *               rs.do('someOperation');
- *       })
- *
- */
-
 import ConfigService from 'service/configuration-service';
 import { toMatrixFormat } from 'util/query-util';
 import { splitGetFactory, extractValidRunParams, normalizeOperations } from 'util/run-util';
@@ -60,67 +7,40 @@ import IntrospectionService from 'service/introspection-api-service';
 import SessionManager from 'store/session-manager';
 
 /**
- * @typedef {object} RunServiceOptions
- * @property {boolean} config foobar 
+ * @typedef {object} GeneralServiceOptions
+ * @property {function} [success] Called when the call completes successfully. Defaults to `$.noop`.
+ * @property {function} [error]  Called when the call completes successfully. Defaults to `$.noop`.
+ * @property {JQueryAjaxSettings} [transport] Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+ * @property {string} [token] For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)). @see [Authentication API Service](../auth-api-service/) for getting tokens.
  */
 
 /**
-  * @param {RunServiceOptions} config  something something
-  */
-export default function (config) {
+ * @typedef {object} AccountAPIServiceOptions
+ * @property {string} account The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL.
+ * @property {string} project The project id. Defaults to undefined. If left undefined, taken from the URL.
+ */
+
+/**
+ * @typedef {AccountAPIServiceOptions} RunServiceOptions
+ * @property {string} filter  Criteria by which to filter runs. Defaults to empty string.
+ * @property {string} id  Convenience alias for filter. Pass in an existing run id to interact with a particular run.
+ * @property {boolean} [autoRestore=true]  Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to `true`.
+ */
+ 
+/**
+ * @class
+ * @param {RunServiceOptions} config 
+ */
+export default function RunService(config) {
     var defaults = {
-        /**
-         * For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @property {String}
-         */
         token: undefined,
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL.
-         * @property {String}
-         */
         account: undefined,
-
-        /**
-         * The project id. Defaults to undefined. If left undefined, taken from the URL.
-         * @property {String}
-         */
         project: undefined,
-
-        /**
-         * Criteria by which to filter runs. Defaults to empty string.
-         * @property {String}
-         */
         filter: '',
-
-        /**
-         * @property {String} [id] Convenience alias for filter. Pass in an existing run id to interact with a particular run.
-         */
         id: '',
-
-        /**
-         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to `true`.
-         * @property {boolean}
-         */
         autoRestore: true,
-
-        /**
-         * Called when the call completes successfully. Defaults to `$.noop`.
-         * @property {function}
-         */
         success: $.noop,
-
-        /**
-         * Called when the call fails. Defaults to `$.noop`.
-         * @property {function}
-         */
         error: $.noop,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @property {Object}
-         */
         transport: {}
     };
 
