@@ -14,7 +14,11 @@ const files = [
     // 'service/data-api-service',
     // 'service/password-api-service',
 
-    'service/world-api-adapter',
+    'service/auth-api-service',
+    'service/presence-api-service',
+    'service/member-api-adapter',
+    // 'service/user-api-adapter',
+    // 'service/world-api-adapter',
 ];
 /**
  * Assumes following input folder structure

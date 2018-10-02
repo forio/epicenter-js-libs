@@ -29,7 +29,7 @@
 * If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
 */
 
-var AuthAdapter = require('service/auth-api-service');
+var AuthAdapter = require('service/auth-api-service').default;
 var MemberAdapter = require('service/member-api-adapter').default;
 var GroupService = require('service/group-api-service').default;
 var SessionManager = require('store/session-manager');

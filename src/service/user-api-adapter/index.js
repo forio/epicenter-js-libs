@@ -1,48 +1,34 @@
-
-/**
-* ## User API Adapter
-*
-* The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
-*
-* Example:
-*
-*       var ua = new F.service.User({
-*           account: 'acme-simulations',
-*           token: 'user-or-project-access-token'
-*       });
-*       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
-*       ua.get({ userName: 'jsmith' });
-*       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-*                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
-*
-* The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
-*/
-
 import { getDefaultOptions, getURLConfig } from '../service-utils';
 import TransportFactory from 'transport/http-transport-factory';
 import { toQueryFormat } from 'util/query-util';
 
+/**
+ * @description
+ * 
+ * ## User API Adapter
+ *
+ * The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
+ *
+ * Example:
+ *```js
+ * var ua = new F.service.User({
+ *     account: 'acme-simulations',
+ *     token: 'user-or-project-access-token'
+ * });
+ * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+ * ua.get({ userName: 'jsmith' });
+ * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+ *             '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+ * ```
+ * 
+ * @param {AccountAPIServiceOptions} config 
+ */
 export default function UserAPIAdapter(config) {
     const API_ENDPOINT = 'user';
 
     var defaults = {
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
-         * @type {String}
-         */
         account: undefined,
-
-        /**
-         * The access token to use when searching for end users. (See [more background on access tokens](../../../project_access/)).
-         * @type {String}
-         */
         token: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
         transport: {}
     };
 
@@ -55,11 +41,11 @@ export default function UserAPIAdapter(config) {
         * Retrieve details about particular end users in your team, based on user name or user id.
         *
         * @example
-        *       var ua = new F.service.User({
-        *           account: 'acme-simulations',
-        *       });
-        *       ua.get({ userName: 'jsmith' });
-        *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        * var ua = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * ua.get({ userName: 'jsmith' });
+        * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
         *
         * 
@@ -100,10 +86,10 @@ export default function UserAPIAdapter(config) {
         * Retrieve details about a single end user in your team, based on user id.
         *
         * @example
-        *       var ua = new F.service.User({
-        *           account: 'acme-simulations',
-        *       });
-        *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+        * var ua = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
         *
         * 
         * @param {string} userId The user id for the end user in your team.
@@ -119,10 +105,10 @@ export default function UserAPIAdapter(config) {
         * Upload list of users to current account
         *
         * @example
-        *       var us = new F.service.User({
-        *           account: 'acme-simulations',
-        *       });
-        *       us.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
+        * var us = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * us.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
         *       
         * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
         * @param {object} [options] Overrides for configuration options.

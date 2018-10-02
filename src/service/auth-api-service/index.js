@@ -1,5 +1,9 @@
+import ConfigService from 'service/configuration-service';
+import TransportFactory from 'transport/http-transport-factory';
+
 /**
- *
+ * @description
+ * 
  * ## Authentication API Service
  *
  * The Authentication API Service provides a method for logging in, which creates and returns a user access token.
@@ -11,37 +15,13 @@
  *      var auth = new F.service.Auth();
  *      auth.login({ userName: 'jsmith@acmesimulations.com',
  *                  password: 'passw0rd' });
+ *  @param {AccountAPIServiceOptions} config 
+ *  @property {string} userName Email or username to use for logging in.
  */
-
-'use strict';
-
-var ConfigService = require('service/configuration-service').default;
-var TransportFactory = require('transport/http-transport-factory').default;
-
-module.exports = function (config) {
+export default function AuthService(config) {
     var defaults = {
-        /**
-         * Email or username to use for logging in. Defaults to empty string.
-         * @type {String}
-         */
         userName: '',
-
-        /**
-         * Password for specified `userName`. Defaults to empty string.
-         * @type {String}
-         */
-        password: '',
-
-        /**
-         * The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects). Required if the `userName` is for an [end user](../../../glossary/#users). Defaults to empty string.
-         * @type {String}
-         */
         account: '',
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
         transport: {}
     };
     var serviceOptions = $.extend({}, defaults, config);
@@ -60,13 +40,13 @@ module.exports = function (config) {
          * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
          *
          * @example
-         *      auth.login({
-         *          userName: 'jsmith',
-         *          password: 'passw0rd',
-         *          account: 'acme-simulations' })
-         *      .then(function (token) {
-         *          console.log("user access token is: ", token.access_token);
-         *      });
+         * auth.login({
+         *     userName: 'jsmith',
+         *     password: 'passw0rd',
+         *     account: 'acme-simulations' })
+         * .then(function (token) {
+         *     console.log("user access token is: ", token.access_token);
+         * });
          *
          * 
          * @param {Object} [options] Overrides for configuration options.

@@ -45,10 +45,11 @@ function paramsToTable(params) {
     const paramRows = params.map((param)=> {
         const isOptional = param.isOptional || param.name.indexOf('[') === 0;
         const name = param.name.replace('[', '').replace(']', '');
+        const type = param.types && param.types.length ? param.types.join(', ') : 'any';
         return toRow([
             isOptional ? '' : '•',
             name,
-            param.types && param.types.length ? param.types.join(', ') : 'any',
+            type.indexOf('http') === -1 ? `\`${type}\`` : type,
             param.description, 
         ]);
     });
