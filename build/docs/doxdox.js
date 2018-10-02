@@ -14,6 +14,9 @@ const files = [
     // 'service/data-api-service',
     // 'service/password-api-service',
 
+    'service/asset-api-adapter',
+    'service/state-api-adapter',
+    'service/introspection-api-service',
     'service/auth-api-service',
     'service/presence-api-service',
     'service/member-api-adapter',

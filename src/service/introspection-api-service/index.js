@@ -12,12 +12,14 @@ var apiEndpoint = 'model/introspect';
  *
  * The Introspection API Service is not available for Forio SimLang.
  *
- *       var intro = new F.service.Introspect({
- *               account: 'acme-simulations',
- *               project: 'supply-chain-game'
- *       });
- *       intro.byModel('supply-chain.py').then(function(data){ ... });
- *       intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6').then(function(data){ ... });
+ * ```js
+ * var intro = new F.service.Introspect({
+ *         account: 'acme-simulations',
+ *         project: 'supply-chain-game'
+ * });
+ * intro.byModel('supply-chain.py').then(function(data){ ... });
+ * intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6').then(function(data){ ... });
+ * ```
  * 
  * @param {AccountAPIServiceOptions} config 
  */
@@ -41,12 +43,12 @@ export default function (config) {
          * Note: This does not work for any model which requires additional parameters, such as `files`.
          *
          * @example
-         *      intro.byModel('abc.vmf')
-         *          .then(function(data) {
-         *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)
-         *              console.log(data.functions);
-         *              console.log(data.variables);
-         *          });
+         * intro.byModel('abc.vmf')
+         *     .then(function(data) {
+         *         // data contains an object with available functions (used with operations API) and available variables (used with variables API)
+         *         console.log(data.functions);
+         *         console.log(data.variables);
+         *     });
          *
          * 
          * @param  {string} modelFile Name of the model file to introspect.
@@ -72,12 +74,12 @@ export default function (config) {
          * Note: This does not work for any model which requires additional parameters such as `files`.
          *
          * @example
-         *      intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6')
-         *          .then(function(data) {
-         *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)
-         *              console.log(data.functions);
-         *              console.log(data.variables);
-         *          });
+         * intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6')
+         *     .then(function(data) {
+         *         // data contains an object with available functions (used with operations API) and available variables (used with variables API)
+         *         console.log(data.functions);
+         *         console.log(data.variables);
+         *     });
          *
          * 
          * @param  {string} runID Id of the run to introspect.
