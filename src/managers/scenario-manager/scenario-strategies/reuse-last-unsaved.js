@@ -47,7 +47,6 @@ module.exports = classFrom(Base, {
     getRun: function (runService, userSession, opts) {
         const runopts = runService.getCurrentConfig();
         const filter = injectFiltersFromSession({ 
-            saved: false,
             trashed: false,
             model: runopts.model,
             'scope.trackingKey': 'current',

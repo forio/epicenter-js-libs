@@ -253,7 +253,7 @@ describe('Scenario Manager', function () {
             });
         });
         describe('#getRun', function () {
-            it('should query for unsaved runs', ()=> {
+            it('should query for current runs', ()=> {
                 var rs = new RunService(runOptions);
                 var sampleRun = {
                     id: 'run1',
@@ -268,19 +268,17 @@ describe('Scenario Manager', function () {
                 return sm.current.getRun().then(function (run) {
                     const args = querySpy.getCall(0).args[0];
                     expect(args).to.eql({
-                        saved: false,
                         trashed: false,
                         'scope.trackingKey': 'current',
                         model: runOptions.model,
                     });
                 });
             });
-            it('should return last unsaved run if found', function () {
+            it('should return last tracked run if found', function () {
                 var rs = new RunService(runOptions);
                 var sampleRun = {
                     id: 'run1',
                     name: 'food',
-                    saved: false
                 };
                 sinon.stub(rs, 'query').returns($.Deferred().resolve([
                     sampleRun
