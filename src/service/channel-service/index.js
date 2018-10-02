@@ -43,9 +43,6 @@ var Channel = function (options) {
 
         /**
          * A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. By default, it just echoes the topic.
-         *
-         * 
-         *
          * * `topic` Topic to parse.
          *
          * **Return Value**
@@ -101,7 +98,6 @@ Channel.prototype = $.extend(Channel.prototype, {
      * The topic should include the full path of the account id (**Team ID** for team projects), project id, and group name. (In most cases, it is simpler to use the [Epicenter Channel Manager](../epicenter-channel-manager/) instead, in which case this is configured for you.)
      *
      *  @example
-     *
      *      var cb = function(val) { console.log(val.data); };
      *
      *      // Subscribe to changes on a top-level 'run' topic
@@ -151,15 +147,11 @@ Channel.prototype = $.extend(Channel.prototype, {
      * Publish data to a topic.
      *
      * @example
-     *
      *      // Send data to all subscribers of the 'run' topic
      *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run', { completed: false });
      *
      *      // Send data to all subscribers of the 'run/variables' topic
      *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
-     *
-     * 
-     *
      * @param  {String} topic Topic to publish to.
      * @param  {*} data  Data to publish to topic.
      * @return {Array | Object} Responses to published data
@@ -189,7 +181,6 @@ Channel.prototype = $.extend(Channel.prototype, {
      * Unsubscribe from changes to a topic.
      *
      * @example
-     *
      *      cs.unsubscribe('sampleToken');
      *
      * 
@@ -205,9 +196,6 @@ Channel.prototype = $.extend(Channel.prototype, {
      * Start listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/on/.
      *
      * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
-     *
-     * 
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
     on: function (event) {
@@ -216,9 +204,6 @@ Channel.prototype = $.extend(Channel.prototype, {
 
     /**
      * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
-     *
-     * 
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
     off: function (event) {
@@ -227,9 +212,6 @@ Channel.prototype = $.extend(Channel.prototype, {
 
     /**
      * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
-     *
-     * 
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
     trigger: function (event) {

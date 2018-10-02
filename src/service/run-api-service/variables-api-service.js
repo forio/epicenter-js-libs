@@ -58,7 +58,6 @@ module.exports = function (config) {
          * Get values for a variable.
          *
          * @example
-         *
          *      vs.load('sample_int')
          *          .then(function(val){
          *              // val contains the value of sample_int
@@ -82,7 +81,6 @@ module.exports = function (config) {
          * Returns particular variables, based on conditions specified in the `query` object.
          *
          * @example
-         *
          *      vs.query(['price', 'sales'])
          *          .then(function(val) {
          *              // val is an object with the values of the requested variables: val.price, val.sales
@@ -112,7 +110,6 @@ module.exports = function (config) {
          * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](../run-api-service/) for calling methods from the model.)
          *
          * @example
-         *
          *      vs.save('price', 4);
          *      vs.save({ price: 4, quantity: 5, products: [2,3,4] });
          *

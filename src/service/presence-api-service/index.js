@@ -61,7 +61,6 @@ export default function (config) {
          *
          *
          * @example
-         *
          *     var pr = new F.service.Presence();
          *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74')
          *          .then(function(presenceObj) {
@@ -72,9 +71,6 @@ export default function (config) {
          * **Return Value**
          *
          * Promise with presence information for user marked online.
-         *
-         * 
-         *
          * @param  {string} [userId] optional If not provided, taken from session cookie.
          * @param  {Object} options Additional options to change the presence service defaults.
          * @return {Promise} promise
@@ -99,16 +95,12 @@ export default function (config) {
          *
          *
          * @example
-         *
          *     var pr = new F.service.Presence();
          *     pr.markOffline('0000015a68d806bc09cd0a7d207f44ba5f74');
          *
          * **Return Value**
          *
          * Promise to remove presence record for end user.
-         *
-         * 
-         *
          * @param  {string} [userId] If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults.
          * @return {Promise} promise
@@ -133,7 +125,6 @@ export default function (config) {
          *
          *
          * @example
-         *
          *     var pr = new F.service.Presence();
          *     pr.getStatus('groupName').then(function(onlineUsers) {
          *          for (var i=0; i < onlineUsers.length; i++) {
@@ -145,9 +136,6 @@ export default function (config) {
          * **Return Value**
          *
          * Promise with response of online users
-         *
-         * 
-         *
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {object} [options] Additional options to change the presence service defaults.
          * @return {Promise}
@@ -169,7 +157,6 @@ export default function (config) {
          * Appends a boolean 'isOnline' field to provided list of users
          *
          * @example
-         *
          *     var pr = new F.service.Presence();
          *     pr.getStatusForUsers([{ userId: 'a', userId: 'b'}]).then(function(onlineUsers) {
          *          console.log(onlineUsers[a].isOnline);
@@ -199,7 +186,6 @@ export default function (config) {
          *
          *
          * @example
-         *
          *     var pr = new F.service.Presence();
          *     var cm = pr.getChannel('group1');
          *     cm.publish('', 'a message to presence channel');
@@ -207,9 +193,6 @@ export default function (config) {
          * **Return Value**
          *
          * Channel instance for Presence channel
-         *
-         * 
-         *
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults
          * @return {Channel} Channel instance

@@ -64,17 +64,17 @@ class DataService {
 
             /**
              *  Determines who has read/write access to this collection
-             * 
-                const DataService = F.service.Data;    
-                const groupScopeDataService = new DataService({    
-                    name: 'some-name', 
-                    scope: DataService.SCOPES.GROUP,   
-                });    
-                const userScopeDataService = new DataService({     
-                    name: 'some-name', 
-                    scope: DataService.SCOPES.USER,    
-                });    
-                ```
+               
+                    const DataService = F.service.Data;    
+                    const groupScopeDataService = new DataService({    
+                        name: 'some-name', 
+                        scope: DataService.SCOPES.GROUP,   
+                    });    
+                    const userScopeDataService = new DataService({     
+                        name: 'some-name', 
+                        scope: DataService.SCOPES.USER,    
+                    });  
+
                 Available scopes are:
 
                 | Scope | Readable By | Writable By
@@ -104,28 +104,27 @@ class DataService {
      * Searching using comparison or logical operators (as opposed to exact matches) requires MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional details.
      *
      * @example
+     * // request all data associated with document 'user1'
+     * ds.query('user1');
      *
-     *      // request all data associated with document 'user1'
-     *      ds.query('user1');
+     * // exact matching:
+     * // request all documents in collection where 'question2' is 9
+     * ds.query('', { 'question2': 9});
      *
-     *      // exact matching:
-     *      // request all documents in collection where 'question2' is 9
-     *      ds.query('', { 'question2': 9});
+     * // comparison operators:
+     * // request all documents in collection
+     * // where 'question2' is greater than 9
+     * ds.query('', { 'question2': { '$gt': 9} });
      *
-     *      // comparison operators:
-     *      // request all documents in collection
-     *      // where 'question2' is greater than 9
-     *      ds.query('', { 'question2': { '$gt': 9} });
+     * // logical operators:
+     * // request all documents in collection
+     * // where 'question2' is less than 10, and 'question3' is false
+     * ds.query('', { '$and': [ { 'question2': { '$lt':10} }, { 'question3': false }] });
      *
-     *      // logical operators:
-     *      // request all documents in collection
-     *      // where 'question2' is less than 10, and 'question3' is false
-     *      ds.query('', { '$and': [ { 'question2': { '$lt':10} }, { 'question3': false }] });
-     *
-     *      // regular expresssions: use any Perl-compatible regular expressions
-     *      // request all documents in collection
-     *      // where 'question5' contains the string '.*day'
-     *      ds.query('', { 'question5': { '$regex': '.*day' } });
+     * // regular expresssions: use any Perl-compatible regular expressions
+     * // request all documents in collection
+     * // where 'question5' contains the string '.*day'
+     * ds.query('', { 'question5': { '$regex': '.*day' } });
      *
      * 
      * @param {String} key The name of the document to search. Pass the empty string ('') to search the entire collection.
@@ -148,17 +147,14 @@ class DataService {
      * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `save` method is making a `POST` request.)
      *
      * @example
+     * // Create a new document, with one element, at the default root level
+     * ds.save('question1', 'yes');
      *
-     *      // Create a new document, with one element, at the default root level
-     *      ds.save('question1', 'yes');
+     * // Create a new document, with two elements, at the default root level
+     * ds.save({ question1:'yes', question2: 32 });
      *
-     *      // Create a new document, with two elements, at the default root level
-     *      ds.save({ question1:'yes', question2: 32 });
-     *
-     *      // Create a new document, with two elements, at `/students/`
-     *      ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
-     *
-     * 
+     * // Create a new document, with two elements, at `/students/`
+     * ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
      *
      * @param {String|Object} key If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
      * @param {Object} [value] The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
@@ -202,32 +198,29 @@ class DataService {
      * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `saveAs` method is making a `PUT` request.)
      *
      * @example
+     * // Create (or replace) the `user1` document at the default root level.
+     * // Note that this replaces any existing content in the `user1` document.
+     * ds.saveAs('user1',
+     *     { 'question1': 2, 'question2': 10,
+     *      'question3': false, 'question4': 'sometimes' } );
      *
-     *      // Create (or replace) the `user1` document at the default root level.
-     *      // Note that this replaces any existing content in the `user1` document.
-     *      ds.saveAs('user1',
-     *          { 'question1': 2, 'question2': 10,
-     *           'question3': false, 'question4': 'sometimes' } );
+     * // Create (or replace) the `student1` document at the `students` root,
+     * // that is, the data at `/students/student1/`.
+     * // Note that this replaces any existing content in the `/students/student1/` document.
+     * // However, this will keep existing content in other paths of this collection.
+     * // For example, the data at `/students/student2/` is unchanged by this call.
+     * ds.saveAs('student1',
+     *     { firstName: 'john', lastName: 'smith' },
+     *     { root: 'students' });
      *
-     *      // Create (or replace) the `student1` document at the `students` root,
-     *      // that is, the data at `/students/student1/`.
-     *      // Note that this replaces any existing content in the `/students/student1/` document.
-     *      // However, this will keep existing content in other paths of this collection.
-     *      // For example, the data at `/students/student2/` is unchanged by this call.
-     *      ds.saveAs('student1',
-     *          { firstName: 'john', lastName: 'smith' },
-     *          { root: 'students' });
-     *
-     *      // Create (or replace) the `mgmt100/groupB` document at the `myclasses` root,
-     *      // that is, the data at `/myclasses/mgmt100/groupB/`.
-     *      // Note that this replaces any existing content in the `/myclasses/mgmt100/groupB/` document.
-     *      // However, this will keep existing content in other paths of this collection.
-     *      // For example, the data at `/myclasses/mgmt100/groupA/` is unchanged by this call.
-     *      ds.saveAs('mgmt100/groupB',
-     *          { scenarioYear: '2015' },
-     *          { root: 'myclasses' });
-     *
-     * 
+     * // Create (or replace) the `mgmt100/groupB` document at the `myclasses` root,
+     * // that is, the data at `/myclasses/mgmt100/groupB/`.
+     * // Note that this replaces any existing content in the `/myclasses/mgmt100/groupB/` document.
+     * // However, this will keep existing content in other paths of this collection.
+     * // For example, the data at `/myclasses/mgmt100/groupA/` is unchanged by this call.
+     * ds.saveAs('mgmt100/groupB',
+     *     { scenarioYear: '2015' },
+     *     { root: 'myclasses' });
      *
      * @param {String} key Id of the document.
      * @param {Object} [value] The data to save, in key:value pairs.
@@ -243,10 +236,8 @@ class DataService {
      * Get data for a specific document or field.
      *
      * @example
-     *
-     *      ds.load('user1');
-     *      ds.load('user1/question3');
-     *
+     * ds.load('user1');
+     * ds.load('user1/question3');
      * 
      * @param  {String|Object} key The id of the data to return. Can be the id of a document, or a path to data within that document.
      * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
@@ -262,11 +253,7 @@ class DataService {
      * Removes data from collection. Only documents (top-level elements in each collection) can be deleted.
      *
      * @example
-     *
-     *     ds.remove('user1');
-     *
-     *
-     * 
+     * ds.remove('user1');
      *
      * @param {String|Array} keys The id of the document to remove from this collection, or an array of such ids.
      * @param {Object} [options] Overrides for configuration options.
@@ -290,7 +277,8 @@ class DataService {
      *
      * @param {object} session Group/User info to add to scope. Gets it from current session otherwise
      * @param {Object} [options] Overrides for configuration options.
-     * @return {string} Scoped collection name
+     * @param {string} options.scope Scope to set to.
+     * @return {string} Scoped collection name.
      */
     getScopedName(session, options) {
         const opts = $.extend(true, {}, this.serviceOptions, options);
@@ -303,7 +291,7 @@ class DataService {
      * Gets a channel to listen to notifications on for this collection
      * 
      * @param {Object} [options] Overrides for configuration options.
-     * @return {Channnel} channel to subscribe on
+     * @return {Channnel} channel instance to subscribe with.
      */
     getChannel(options) {
         const opts = $.extend(true, {}, this.serviceOptions, options);

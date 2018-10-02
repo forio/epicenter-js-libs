@@ -42,7 +42,6 @@ const strategyManager = {
      * Gets strategy by name.
      *
      * @example
-     *
      *      var reuseStrat = F.manager.RunManager.strategies.byName('reuse-across-sessions');
      *      // shows strategy function
      *      console.log('reuseStrat = ', reuseStrat);
@@ -88,7 +87,6 @@ const strategyManager = {
      * Adds a new strategy.
      *
      * @example
-     *
      *      // this "favorite run" strategy always returns the same run, no matter what
      *      // (not a useful strategy, except as an example)
      *      F.manager.RunManager.strategies.register(

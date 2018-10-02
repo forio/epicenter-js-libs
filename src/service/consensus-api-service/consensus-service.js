@@ -74,7 +74,6 @@ export default function (config) {
          * Creates a new consensus point
          * 
          * @example
-         *
          *      cs.create({
                     roles: ['P1', 'P2'],
                     defaultActions: {

@@ -204,7 +204,6 @@ module.exports = function (config) {
         * check first with a `list()` or a `get()`.
         *
         * @example
-        *
         *       var aa = new F.service.Asset({
         *          account: 'acme-simulations',
         *          project: 'supply-chain-game',
@@ -274,7 +273,6 @@ module.exports = function (config) {
         * Gets the list of the assets in a scope.
         *
         * @example
-        *
         *       aa.list({ fullUrl: true }).then(function(fileList){
         *           console.log('array of files = ', fileList);
         *       });
@@ -313,7 +311,6 @@ module.exports = function (config) {
         * Replaces an existing file in the Asset API.
         *
         * @example
-        *
         *       // replace an asset using encoded text
         *       aa.replace('test.txt', {
         *           encoding: 'BASE_64',
@@ -357,7 +354,6 @@ module.exports = function (config) {
         * Deletes a file from the Asset API.
         *
         * @example
-        *
         *       aa.delete(sampleFileName);
         *
         *  

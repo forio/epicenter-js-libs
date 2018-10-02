@@ -171,7 +171,6 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
      *
      * @example
-     *
      *      var cm = new F.manager.ChannelManager();
      *      var channel = cm.getChannel();
      *
@@ -222,9 +221,6 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      * Start listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/on/.
      *
      * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
-     *
-     * 
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
     on: function (event) {
@@ -233,9 +229,6 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 
     /**
      * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
-     *
-     * 
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
     off: function (event) {
@@ -244,9 +237,6 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 
     /**
      * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
-     *
-     * 
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
     trigger: function (event) {

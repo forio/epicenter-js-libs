@@ -65,7 +65,6 @@ export default function MemberAPIService(config) {
         * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
         *
         * @example
-        *
         *       const ma = new F.service.Member();
         *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
         *           .then(function(memberships){
@@ -124,7 +123,6 @@ export default function MemberAPIService(config) {
         * Retrieve details about one group, including an array of all its members.
         *
         * @example
-        *
         *       const ma = new F.service.Member();
         *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
         *           .then(function(group){
@@ -161,7 +159,6 @@ export default function MemberAPIService(config) {
         * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
         *
         * @example
-        *
         *       const ma = new F.service.Member();
         *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
@@ -181,7 +178,6 @@ export default function MemberAPIService(config) {
         * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
         *
         * @example
-        *
         *       const ma = new F.service.Member();
         *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });

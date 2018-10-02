@@ -58,7 +58,6 @@ module.exports = function (config) {
         * View the history of a run.
         * 
         * @example
-        *
         *      var sa = new F.service.State();
         *      sa.load('0000015a06bb58613b28b57365677ec89ec5').then(function(history) {
         *            console.log('history = ', history);
@@ -82,7 +81,6 @@ module.exports = function (config) {
         * Replay a run. After this call, the run, with its original run id, is now available [in memory](../../../run_persistence/#runs-in-memory). (It continues to be persisted into the Epicenter database at regular intervals.)
         *
         * @example
-        *
         *      var sa = new F.service.State();
         *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
         *
@@ -120,7 +118,6 @@ module.exports = function (config) {
         * The original run remains only [in the database](../../../run_persistence/#runs-in-db).
         *
         * @example
-        *
         *      var sa = new F.service.State();
         *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
         *

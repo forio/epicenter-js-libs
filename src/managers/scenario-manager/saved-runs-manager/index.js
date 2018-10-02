@@ -52,7 +52,6 @@ SavedRunsManager.prototype = {
      * Note that while any run can be saved, only runs which also match the configuration options `scopeByGroup` and `scopeByUser` are returned by the `getRuns()` method.
      *
      * @example
-     *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
      *
@@ -68,7 +67,6 @@ SavedRunsManager.prototype = {
      * Marks a run as removed; the inverse of marking as saved.
      *
      * @example
-     *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
      *
@@ -86,7 +84,6 @@ SavedRunsManager.prototype = {
      * Sets additional fields on a run. This is a convenience method for [RunService#save](../../run-api-service/#save).
      *
      * @example
-     *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
      *          { 'myRunName': 'sample policy decisions' });
@@ -118,7 +115,6 @@ SavedRunsManager.prototype = {
      * Returns a list of saved runs.
      *
      * @example
-     *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.savedRuns.getRuns().then(function (runs) {
      *          for (var i=0; i<runs.length; i++) {

@@ -80,7 +80,6 @@ module.exports = function (options) {
         * Returns the current world (object) and an instance of the [World API Adapter](../world-api-adapter/).
         *
         * @example
-        *
         *       wMgr.getCurrentWorld()
         *           .then(function(world, worldAdapter) {
         *               console.log(world.id);
@@ -107,7 +106,6 @@ module.exports = function (options) {
         * Returns the current run (object) and an instance of the [Run API Service](../run-api-service/).
         *
         * @example
-        *
         *       wMgr.getCurrentRun('myModel.py')
         *           .then(function(run, runService) {
         *               console.log(run.id);

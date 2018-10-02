@@ -60,7 +60,6 @@ module.exports = function (config) {
          * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
          *
          * @example
-         *
          *      auth.login({
          *          userName: 'jsmith',
          *          password: 'passw0rd',
@@ -103,7 +102,6 @@ module.exports = function (config) {
         // Epicenter logout is not implemented yet, so for now this is a dummy promise that gets automatically resolved.
         //
         // @example
-        //
         //      auth.logout();
         //
         // 

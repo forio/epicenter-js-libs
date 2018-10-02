@@ -124,7 +124,6 @@ export default function WorldAPIAdapter(config) {
         * Using this method is rare. It is more common to create worlds automatically while you `autoAssign()` end users to worlds. (In this case, configuration data for the world, such as the roles, are read from the project-level world configuration information, for example by `getProjectSettings()`.)
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -167,7 +166,6 @@ export default function WorldAPIAdapter(config) {
         * Typically, you complete world configuration at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both. However, this method is available if you need to update the configuration of a particular world.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -208,7 +206,6 @@ export default function WorldAPIAdapter(config) {
         * This function optionally takes one argument. If the argument is a string, it is the id of the world to delete. If the argument is an object, it is the override for global options.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -239,7 +236,6 @@ export default function WorldAPIAdapter(config) {
         * Updates the configuration for the current instance of the World API Adapter (including all subsequent function calls, until the configuration is updated again).
         *
         * @example
-        *
         *      var wa = new F.service.World({...}).updateConfig({ filter: '123' }).addUser({ userId: '123' });
         *
         * 
@@ -255,7 +251,6 @@ export default function WorldAPIAdapter(config) {
         * Lists all worlds for a given account, project, and group. All three are required, and if not specified as parameters, are read from the service.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -308,7 +303,6 @@ export default function WorldAPIAdapter(config) {
         * Gets all worlds that an end user belongs to for a given account (team), project, and group.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -342,7 +336,6 @@ export default function WorldAPIAdapter(config) {
         * Adds an end user or list of end users to a given world. The end user must be a member of the `group` that is associated with this world.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -416,7 +409,6 @@ export default function WorldAPIAdapter(config) {
         * Updates the role of an end user in a given world. (You can only update one end user at a time.)
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -452,7 +444,6 @@ export default function WorldAPIAdapter(config) {
         * Removes an end user from a given world.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -495,7 +486,6 @@ export default function WorldAPIAdapter(config) {
         * Remember that a [run](../../glossary/#run) is a collection of interactions with a project and its model. In the case of multiplayer projects, the run is shared by all end users in the world.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -528,7 +518,6 @@ export default function WorldAPIAdapter(config) {
         * Gets the current (most recent) world for the given end user in the given group. Brings this most recent world into memory if needed.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -569,7 +558,6 @@ export default function WorldAPIAdapter(config) {
         * (Note that the world id remains part of the run record, indicating that the run was formerly an active run for the world.)
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -603,7 +591,6 @@ export default function WorldAPIAdapter(config) {
         * Creates a new run for the world.
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -640,7 +627,6 @@ export default function WorldAPIAdapter(config) {
         * Assigns end users to worlds, creating new worlds as appropriate, automatically. Assigns all end users in the group, and creates new worlds as needed based on the project-level world configuration (roles, optional roles, and minimum end users per world).
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -686,7 +672,6 @@ export default function WorldAPIAdapter(config) {
         * (The [Multiplayer Project REST API](../../../rest_apis/multiplayer/multiplayer_project/) allows you to set these project-level world configurations. The World Adapter simply retrieves them, for example so they can be used in auto-assignment of end users to worlds.)
         *
         * @example
-        *
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',

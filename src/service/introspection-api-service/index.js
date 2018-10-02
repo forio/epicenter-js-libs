@@ -74,7 +74,6 @@ module.exports = function (config) {
          * Note: This does not work for any model which requires additional parameters, such as `files`.
          *
          * @example
-         *
          *      intro.byModel('abc.vmf')
          *          .then(function(data) {
          *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)
@@ -106,7 +105,6 @@ module.exports = function (config) {
          * Note: This does not work for any model which requires additional parameters such as `files`.
          *
          * @example
-         *
          *      intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6')
          *          .then(function(data) {
          *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)

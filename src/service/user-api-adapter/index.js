@@ -55,7 +55,6 @@ export default function UserAPIAdapter(config) {
         * Retrieve details about particular end users in your team, based on user name or user id.
         *
         * @example
-        *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
         *       });
@@ -101,7 +100,6 @@ export default function UserAPIAdapter(config) {
         * Retrieve details about a single end user in your team, based on user id.
         *
         * @example
-        *
         *       var ua = new F.service.User({
         *           account: 'acme-simulations',
         *       });
@@ -121,7 +119,6 @@ export default function UserAPIAdapter(config) {
         * Upload list of users to current account
         *
         * @example
-        *
         *       var us = new F.service.User({
         *           account: 'acme-simulations',
         *       });

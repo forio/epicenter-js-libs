@@ -22,7 +22,6 @@
 * To use the Scenario Manager, instantiate it, then access its Run Managers as needed to create your project's user interface:
 *
 * @example
-*
 *       var sm = new F.manager.ScenarioManager({
 *           run: {
 *               model: 'mymodel.vmf'
@@ -196,7 +195,6 @@ function ScenarioManager(config) {
      * Available only for the Scenario Manager's `current` property (Run Manager). 
      *
      * @example
-     *
      *      var sm = new F.manager.ScenarioManager();
      *      sm.current.saveAndAdvance({'myRunName': 'sample policy decisions'});
      *

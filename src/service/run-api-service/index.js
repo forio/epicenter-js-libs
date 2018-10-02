@@ -7,41 +7,56 @@ import IntrospectionService from 'service/introspection-api-service';
 import SessionManager from 'store/session-manager';
 
 /**
- * @typedef {object} GeneralServiceOptions
- * @property {function} [success] Called when the call completes successfully. Defaults to `$.noop`.
- * @property {function} [error]  Called when the call completes successfully. Defaults to `$.noop`.
- * @property {JQueryAjaxSettings} [transport] Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
- * @property {string} [token] For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)). @see [Authentication API Service](../auth-api-service/) for getting tokens.
+ * User type definition
+ * @typedef {Object} User
+ * @property {string} email
+ * @property {string} [nickName]
  */
 
-/**
- * @typedef {object} AccountAPIServiceOptions
- * @property {string} account The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL.
- * @property {string} project The project id. Defaults to undefined. If left undefined, taken from the URL.
- */
 
 /**
- * @typedef {AccountAPIServiceOptions} RunServiceOptions
- * @property {string} filter  Criteria by which to filter runs. Defaults to empty string.
- * @property {string} id  Convenience alias for filter. Pass in an existing run id to interact with a particular run.
- * @property {boolean} [autoRestore=true]  Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to `true`.
+ * FSM states.
+ *
+ * @enum
  */
- 
+FSM.prototype.states = {
+    STOPPED     : 0,
+    STARTING    : 1,
+    WORKING     : 2,
+    STOPPING    : 3
+}
+
 /**
- * @class
- * @param {RunServiceOptions} config 
+ * @constructor
+ * @param {object} config 
+ * @param {string} config.filter Fooooa
  */
 export default function RunService(config) {
+
     var defaults = {
-        token: undefined,
-        account: undefined,
-        project: undefined,
+        /**  */
         filter: '',
+        /**  */
         id: '',
+
         autoRestore: true,
+
+        /** @property {string} account The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects).  Calculated aken from the URL if not provided. */
+        account: undefined,
+
+        /** @property {string} project The project id. Calculated aken from the URL if not provided. */
+        project: undefined,
+
+        /** @property {string} token For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)). @see [Authentication API Service](../auth-api-service/) for getting tokens. */
+        token: undefined,
+
+        /** @type JQueryAjaxSettings 
+         *  @description Options to pass on to the underlying transport layer. @see http://api.jquery.com/jQuery.ajax/ 
+         */
+        transport: {},
+
         success: $.noop,
         error: $.noop,
-        transport: {}
     };
 
     this.sessionManager = new SessionManager();
@@ -490,4 +505,4 @@ export default function RunService(config) {
 
     $.extend(this, publicAsyncAPI);
     $.extend(this, publicSyncAPI);
-};
+}
