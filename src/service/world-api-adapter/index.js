@@ -1,4 +1,21 @@
+import TransportFactory from 'transport/http-transport-factory';
+
+import ConsensusService from 'service/consensus-api-service/consensus-service';
+import PresenceService from 'service/presence-api-service';
+
+import { extractValidRunParams } from 'util/run-util';
+
+import { pick as _pick } from 'util/object-util';
+import { getDefaultOptions, getURLConfig } from 'service/service-utils';
+
+var apiBase = 'multiplayer/';
+var assignmentEndpoint = apiBase + 'assign';
+var apiEndpoint = apiBase + 'world';
+var projectEndpoint = apiBase + 'project';
+
 /**
+ * @description
+ * 
  * ## World API Adapter
  *
  * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. Only [team projects](../../../glossary/#team) can be multiplayer.
@@ -17,74 +34,24 @@
  *          .then(function(world) {
  *              // call methods, e.g. wa.addUsers()
  *          });
+ * 
+ * @param {AccountAPIServiceOptions} config 
+ * @property {string} [group] The group name to use for filters / new runs
+ * @property {string} [model] The model file to use to create runs in this world.
+ * @property {string} [filter] Criteria by which to filter world. Currently only supports world-ids as filters.
+ * @property {string} [id] Convenience alias for filter.
  */
-
-'use strict';
-
-import TransportFactory from 'transport/http-transport-factory';
-
-import ConsensusService from 'service/consensus-api-service/consensus-service';
-import PresenceService from 'service/presence-api-service';
-
-import { extractValidRunParams } from 'util/run-util';
-
-import { pick as _pick } from 'util/object-util';
-import { getDefaultOptions, getURLConfig } from 'service/service-utils';
-
-var apiBase = 'multiplayer/';
-var assignmentEndpoint = apiBase + 'assign';
-var apiEndpoint = apiBase + 'world';
-var projectEndpoint = apiBase + 'project';
-
 export default function WorldAPIAdapter(config) {
     var defaults = {
-        /**
-         * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
-         */
-        token: undefined,
-
-        /**
-         * The project id. If left undefined, taken from the URL.
-         * @type {String}
-         */
-        project: undefined,
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
-         * @type {String}
-         */
-        account: undefined,
-
-        /**
-         * The group name. Defaults to undefined.
-         * @type {String}
-         */
         group: undefined,
-
-        /**
-         * The model file to use to create runs in this world. Defaults to undefined.
-         * @type {String}
-         */
         model: undefined,
-
-        /**
-         * Criteria by which to filter world. Currently only supports world-ids as filters.
-         * @type {String}
-         */
         filter: '',
-
-        /**
-         * Convenience alias for filter
-         * @type {String}
-         */
         id: '',
 
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
+        token: undefined,
+        account: undefined,
+        project: undefined,
+
         transport: {},
     };
 

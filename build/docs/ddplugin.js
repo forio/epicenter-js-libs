@@ -87,9 +87,10 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
             return m;
         });
 
-        file.description = splitMethodsAndConfig.type_class && splitMethodsAndConfig.type_class[0].description;
+        const mainDescEl = splitMethodsAndConfig.type_class || splitMethodsAndConfig.type_function;
+        file.description = mainDescEl && mainDescEl[0].description;
 
-        const constructorOptions = splitMethodsAndConfig.type_constructor;
+        const constructorOptions = splitMethodsAndConfig.type_constructor || splitMethodsAndConfig.type_function;
         file.constructorOptionsTable = '';
         if (constructorOptions) {
             const co = constructorOptions[0];
