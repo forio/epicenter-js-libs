@@ -1,3 +1,9 @@
+import SessionManager from 'store/session-manager';
+import { pick } from 'util/object-util';
+import { getURLConfig, getHTTPTransport } from 'service/service-utils';
+
+const API_ENDPOINT = 'password';
+
 /**
  * 
  * ## Password Service
@@ -5,28 +11,14 @@
  * The primary use-case for the Password Service is to allow end-users to reset their passwords. 
  * 
  */
-
-import SessionManager from 'store/session-manager';
-import { pick } from 'util/object-util';
-import { getURLConfig, getHTTPTransport } from 'service/service-utils';
-
-const API_ENDPOINT = 'password';
-
 export default class PasswordService {
+    /**
+     * @param {AccountAPIServiceOptions} config 
+     */
     constructor(config) {
         var defaults = {
-            /**
-             * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
-             * @type {string}
-             */
             account: undefined,
-            /**
-             * The project id. Defaults to empty string. If left undefined, taken from the URL.
-             * @type {string}
-             */
             project: undefined,
-
-            //Options to pass on to the underlying transport layer
             transport: {}
         };
         this.sessionManager = new SessionManager();

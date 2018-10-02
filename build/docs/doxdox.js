@@ -8,8 +8,9 @@ const templateFile = fs.readFileSync(path.resolve(__dirname, './general-doc-temp
 const OP_FOLDER = path.resolve(__dirname, '../../documentation/generated');
 const IP_FOLDER = path.resolve(__dirname, '../../src');
 const files = [
-    'service/run-api-service',
-    'service/data-api-service',
+    // 'service/run-api-service',
+    // 'service/data-api-service',
+    'service/password-api-service',
 ];
 /**
  * Assumes following input folder structure

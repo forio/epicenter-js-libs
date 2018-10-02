@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 //FIXME: This should really be pulling this from typedefs, but current parser we use doesn't recognize typedefs
 const generalOptions = [
     {
@@ -59,7 +61,7 @@ function paramsToTable(params) {
 }
 
 const plugin = (data)=> new Promise((resolve, reject)=> {
-    // fs.writeFileSync('output-orig.json', JSON.stringify(data, null, 2));
+    fs.writeFileSync('output-orig.json', JSON.stringify(data, null, 2));
 
     const parsedFiles = data.files.map((file)=> {
         const pathParams = file.name.split('/');
@@ -84,6 +86,8 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
             };
             return m;
         });
+
+        file.description = splitMethodsAndConfig.type_class && splitMethodsAndConfig.type_class[0].description;
 
         const constructorOptions = splitMethodsAndConfig.type_constructor;
         file.constructorOptionsTable = '';
