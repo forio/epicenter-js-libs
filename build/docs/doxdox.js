@@ -14,18 +14,18 @@ const files = [
     'service/password-api-service',
 
     'service/run-api-service/variables-api-service.js',
-    'service/consensus-api-service/consensus-group-service.js',
-    'service/consensus-api-service/consensus-service.js',
+    
     'service/asset-api-adapter',
     'service/state-api-adapter',
     'service/introspection-api-service',
-    'service/auth-api-service',
+    
     'service/presence-api-service',
     'service/member-api-adapter',
     'service/user-api-adapter',
     'service/world-api-adapter',
 
     'managers/scenario-manager',
+
     {
         src: 'managers/scenario-manager/saved-runs-manager/index.js',
         dest: 'scenario-manager/saved/index.html.md',
@@ -38,12 +38,40 @@ const files = [
         src: 'managers/scenario-manager/scenario-strategies/reuse-last-unsaved.js',
         dest: 'scenario-manager/current/index.html.md',
     },
-    'managers/epicenter-channel-manager',
-    'service/channel-service',
-    'managers/epicenter-channel-manager/channel-manager',
+
+    {
+        src: 'service/consensus-api-service/consensus-group-service.js',
+        dest: 'consensus/consensus-group-service/index.html.md',
+    },
+    {
+        src: 'service/consensus-api-service/consensus-service.js',
+        dest: 'consensus/consensus-service/index.html.md',
+    },
+    {
+        src: 'managers/epicenter-channel-manager',
+        dest: 'channels/epicenter-channel-manager/index.html.md',
+    },
+    {
+        src: 'service/channel-service',
+        dest: 'channels/channel-service/index.html.md',
+    },
+    {
+        src: 'managers/epicenter-channel-manager/channel-manager',
+        dest: 'channels/channel-manager/index.html.md',
+    },
+
+    {
+        src: 'managers/auth-manager',
+        dest: 'auth/auth-manager/index.html.md',
+    },
+    {
+        src: 'service/auth-api-service',
+        dest: 'auth/auth-service/index.html.md',
+    },
+    
     'managers/world-manager',
     'managers/user-manager',
-    'managers/auth-manager',
+    
     'managers/run-manager',
 ];
 /**

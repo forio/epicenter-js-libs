@@ -80,7 +80,7 @@ function paramsToTable(params) {
 }
 
 const plugin = (data)=> new Promise((resolve, reject)=> {
-    fs.writeFileSync('output-orig.json', JSON.stringify(data, null, 2));
+    // fs.writeFileSync('output-raw.json', JSON.stringify(data, null, 2));
 
     const parsedFiles = data.files.map((file)=> {
         const pathParams = file.name.split('/');
