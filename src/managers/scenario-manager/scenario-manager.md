@@ -24,28 +24,21 @@ To use the Scenario Manager, instantiate it, then access its Run Managers as nee
 var sm = new F.manager.ScenarioManager({
 run: {
     model: 'mymodel.vmf'
-}
-});
+}});
 
-// The current is an instance of a Run Manager,
-// with a strategy which picks up the most recent unsaved run.
+// The current is an instance of a Run Manager,with a strategy which picks up the most recent unsaved run.
 // It is typically used to store the decisions being made by the end user. 
 var currentRM = sm.current;
 
 // The Run Manager operation, which retrieves the current run.
-sm.current.getRun();
+currentRM.getRun();
 // The Run Manager operation, which resets the decisions made on the current run.
-sm.current.reset();
-// A special method on the current run,
-// which clones the current run, then advances and saves this clone
-// (it becomes part of the saved runs list).
-// The current run is unchanged and can continue to be used
-// to store decisions being made by the end user.
-sm.current.saveAndAdvance();
+currentRM.reset();
+// A special method on the current run, which clones the current run, then advances and saves this clone (it becomes part of the saved runs list).
+// The current run is unchanged and can continue to be used to store decisions being made by the end user.
+currentRM.saveAndAdvance();
 
-// The savedRuns is an instance of a Saved Runs Manager 
-// (itself a variant of a Run Manager).
-// It is typically displayed in the project's UI as part of a run comparison table or chart.
+// The savedRuns is an instance of a Saved Runs Manager (itself a variant of a Run Manager). It is typically displayed in the project's UI as part of a run comparison table or chart.
 var savedRM = sm.savedRuns;
 // Mark a run as saved, adding it to the set of saved runs.
 sm.savedRuns.save(run);
@@ -54,15 +47,11 @@ sm.savedRuns.remove(run);
 // List the saved runs, optionally including some specific model variables for each.
 sm.savedRuns.getRuns();
 
-// The baseline is an instance of a Run Manager,
-// with a strategy which locates the most recent baseline run
-// (that is, flagged as `saved` and not `trashed`), or creates a new one.
-// It is typically displayed in the project's UI as part of a run comparison table or chart.
+// The baseline is an instance of a Run Manager, with a strategy which locates the most recent baseline run (that is, flagged as `saved` and not `trashed`), or creates a new one. It is typically displayed in the project's UI as part of a run comparison table or chart.
 var baselineRM = sm.baseline;
 
 // The Run Manager operation, which retrieves the baseline run.
 sm.baseline.getRun();
-// The Run Manager operation, which resets the baseline run.
-// Useful if the model has changed since the baseline run was created.
+// The Run Manager operation, which resets the baseline run. Useful if the model has changed since the baseline run was created.
 sm.baseline.reset(); 
 ```

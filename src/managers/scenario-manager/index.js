@@ -22,15 +22,15 @@ function cookieNameFromOptions(prefix, config) {
 
 /**
  * @param {object} config 
- * @property {object[]} advanceOperation Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
+ * @property {object[]} [advanceOperation] Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
  * @property {object} run Additional options to pass through to run creation (for e.g., `files`, etc.). Defaults to empty object.
- * @property {boolean} includeBaseLine Whether or not to auto-create and include a baseline run in this Scenario Manager. Defaults to `true`.
- * @property {object} baseline Additional configuration for the `baseline` run. 
- * @property {string} baseline.runName Name of the baseline run. Defaults to 'Baseline'. 
- * @property {string} baseline.run Additional options to pass through to run creation, specifically for the baseline run. These will override any options provided under `run`. Defaults to empty object. 
- * @property {object} current Additional configuration for the `current` run. 
- * @property {string} current.run Additional options to pass through to run creation, specifically for the current run. These will override any options provided under `run`. Defaults to empty object.
- * @property {object} savedRuns Options to pass through to the `savedRuns` list. See the [Saved Runs Manager](./saved/) for complete description of available options. Defaults to empty object.
+ * @property {boolean} [includeBaseLine] Whether or not to auto-create and include a baseline run in this Scenario Manager. Defaults to `true`.
+ * @property {object} [baseline] Additional configuration for the `baseline` run. 
+ * @property {string} [baseline.runName] Name of the baseline run. Defaults to 'Baseline'. 
+ * @property {string} [baseline.run] Additional options to pass through to run creation, specifically for the baseline run. These will override any options provided under `run`. Defaults to empty object. 
+ * @property {object} [current] Additional configuration for the `current` run. 
+ * @property {string} [current.run] Additional options to pass through to run creation, specifically for the current run. These will override any options provided under `run`. Defaults to empty object.
+ * @property {object} [savedRuns] Options to pass through to the `savedRuns` list. See the [Saved Runs Manager](./saved/) for complete description of available options. Defaults to empty object.
  */
 function ScenarioManager(config) {
     var defaults = {

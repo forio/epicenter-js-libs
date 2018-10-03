@@ -6,7 +6,7 @@ const generalOptions = [
         name: 'token',
         isOptional: true,
         types: ['string'],
-        description: 'For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)). @see [Authentication API Service](../auth-api-service/) for getting tokens.'
+        description: 'For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)). @see [Authentication API Service](../auth/auth-service/) for getting tokens.'
     },
     {
         name: 'transport',
@@ -29,7 +29,7 @@ const generalOptions = [
     {
         name: 'server.protocol',
         isOptional: true,
-        types: ['https|http'],
+        types: ['https', 'http'],
         description: 'Defaults to https',
     }
 ];
@@ -62,7 +62,7 @@ function paramsToTable(params) {
     const headers = ['Required?', 'Name', 'Type', 'Description'];
     const paramRows = params.map((param)=> {
         const isOptional = param.isOptional || param.name.indexOf('[') === 0;
-        const name = param.name.split('.').reverse()[0].replace('[', '').replace(']', '');
+        const name = param.name.replace('[', '').replace(']', '');
         const type = param.types && param.types.length ? param.types.join(' / ') : 'any';
         return toRow([
             isOptional ? '&nbsp;' : 'Yes',
@@ -97,7 +97,7 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
         splitMethodsAndConfig.methods = (splitMethodsAndConfig.type_method || []).map((m)=> {
             m.tags.example = m.tags.example.map((r)=> r.trim());
             m.parameterTable = paramsToTable(m.tags.param);
-
+            m.name = m.name.split('.').reverse()[0];
             const ret = m.tags.return[0];
             m.returns = {
                 type: ret && ret.types && ret.types[0],

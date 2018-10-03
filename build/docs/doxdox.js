@@ -94,7 +94,7 @@ files.forEach((ip)=> {
         const prologue = [
             '---',
             `title: ${key}`,
-            'layout: "default"',
+            'layout: "jslib"',
             'isPage: true',
             '---',
         ].join('\n');

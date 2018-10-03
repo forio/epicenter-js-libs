@@ -8,7 +8,7 @@ interface ServiceOptions {
     /** Called when the call completes successfully. Defaults to `$.noop`. */
     error?: Function,
 
-    /** For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)). @see [Authentication API Service](../auth-api-service/) for getting tokens. */
+    /** For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)). @see [Authentication API Service](../auth/auth-service/) for getting tokens. */
     token?: string,
 }
 

@@ -28,7 +28,7 @@ module.exports = function (config) {
     var defaults = {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
+         * @see [Authentication API Service](../auth/auth-service/) for getting tokens.
          * @type {String}
          */
         token: undefined,
