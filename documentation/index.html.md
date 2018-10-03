@@ -18,7 +18,7 @@ If you are comfortable with JavaScript, the epicenter.js library is an easy way 
 	* [Examples of usage: Callbacks and promises](#example)
 	* [Configuration options](#configuration)
 
-**The current version of Epicenter.js is 2.2**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
+**The current version of Epicenter.js is 2.8.0**. See the [Including](#include) section below. You can also view the history of releases on <a href="https://github.com/forio/epicenter-js-libs/releases/" target="_blank">GitHub</a>.
 
 <a name="concepts"></a>
 ### Concepts in Epicenter.js
@@ -29,23 +29,21 @@ Services encapsulate the [Epicenter REST APIs](../rest_apis/). Managers are resp
 
 In most cases you'll work with the managers directly:
 
-* [Authorization Manager](./generated/auth-manager/): The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
+* [Authorization Manager](./generated/auth/auth-manager/): The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
 * [Run Manager](./generated/run-manager/): The Run Manager gives you control over run creation depending on run state. You can select run creation [strategies](./generated/strategies/) (rules) for which runs end users of your project work with when they log in to your project. 
 * [World Manager](./generated/world-manager/): For building multiplayer games you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. The World Manager provides an easy way to track and access the current world and run for particular end users.
-* [Epicenter Channel Manager](./generated/epicenter-channel-manager/) (and the underlying [Channel Manager](./generated/channel-manager/)): Once you've created "[worlds](../glossary/#world)" with the World Manager, you often want end users in each world to be able to communicate: to talk with each other (e.g. a user-to-user chat feature), or to receive updates when something changes in their world (e.g. variables associated with their shared run are updated). The Epicenter Channel Manager provides a publish/subscribe channel using cometd.
+* [Epicenter Channel Manager](./generated/channels/epicenter-channel-manager/) (and the underlying [Channel Manager](./generated/channels/channel-manager/)): Once you've created "[worlds](../glossary/#world)" with the World Manager, you often want end users in each world to be able to communicate: to talk with each other (e.g. a user-to-user chat feature), or to receive updates when something changes in their world (e.g. variables associated with their shared run are updated). The Epicenter Channel Manager provides a publish/subscribe channel using cometd.
 
 
 Although in most cases you'll work with the managers directly, the services are also available if you just want to communicate with the underlying [RESTful APIs](../rest_apis/):
 
-* [Auth Service](./generated/auth-api-service)
-* [Channel Service](./generated/channel-service/)
+* [Auth Service](./generated/auth/auth-service)
+* [Channel Service](./generated/channels/channel-service/)
 * [Run Service](./generated/run-api-service/)
 * [Variables Service](./generated/variables-api-service/)
 * [World Adapter](./generated/world-api-adapter/)
 * [Data Service](./generated/data-api-service/)
 * [Other Adapters](./other-adapters/) are used less frequently, and include [Asset Adapter](./generated/asset-api-adapter/), [State Adapter](./generated/state-api-adapter/), [User Adapter](./generated/user-api-adapter/), [Member Adapter](./generated/member-api-adapter/), [Introspection Service](./generated/introspection-api-service/), and [Presence Service](./generated/presence-api-service/).
-
-
 
 <a name="using-epicenter-js"></a>
 ### Using Epicenter.js
@@ -55,9 +53,9 @@ Although in most cases you'll work with the managers directly, the services are 
 
 **Epicenter.js**
 
-The Epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/2.2.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/2.2.0/epicenter.min.js</a>. To use it in your project, simply add
+The Epicenter.js library is available from our tools: <a href="https://forio.com/tools/js-libs/2.8.0/epicenter.min.js" target="_blank">https://forio.com/tools/js-libs/2.8.0/epicenter.min.js</a>. To use it in your project, simply add
 
-    <script src="//forio.com/tools/js-libs/2.2.0/epicenter.min.js"></script>
+    <script src="//forio.com/tools/js-libs/2.8.0/epicenter.min.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
@@ -69,9 +67,9 @@ The Epicenter.js library depends on jQuery, so you'll also need to download jQue
 
 **Extensions**
 
-If you are building a [multiplayer game](../glossary/#world), you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/2.2.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/2.2.0/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
+If you are building a [multiplayer game](../glossary/#world), you'll also need to include the epicenter-multiplayer-dependencies.js library. This is available from our tools: <a href="https://forio.com/tools/js-libs/2.8.0/epicenter-multiplayer-dependencies.js" target="_blank">https://forio.com/tools/js-libs/2.8.0/epicenter-multiplayer-dependencies.js</a>. To use it in your project, simply add
 
-	<script src="//forio.com/tools/js-libs/2.2.0/epicenter-multiplayer-dependencies.js"></script>
+	<script src="//forio.com/tools/js-libs/2.8.0/epicenter-multiplayer-dependencies.js"></script>
 
 into any of your [interface](../creating_your_interface/) files (e.g. .html and .js files).
 
@@ -86,7 +84,7 @@ Provides a login form for team members and end users of your project. Includes a
 
 * `index.html`: The login form.
 * `login.css`: Provides styling for the group selector pop over dialog.
-* `login.js`: Uses the [Authorization Manager](./generated/auth-manager/) to log in users.
+* `login.js`: Uses the [Authorization Manager](./generated/auth/auth-manager/) to log in users.
 	
 The login component is available from <a href="https://github.com/forio/epicenter-js-libs/tree/master/dist/components/" target="_blank">GitHub</a>.
 
@@ -110,59 +108,13 @@ For example:
     var rm = new F.service.RunManager();
 
 <a name="example"></a>
-#### Examples of Usage: Callbacks and Promises
+#### Examples of Usage
 
-There are two different patterns for using the service adapters: using callbacks or using promises.
-
-**Callbacks**
-
-All services take in an ["options" configuration object](#configuration) as the final parameter. Among other things, the options object contains the following properties:
-
-* `success`: Called when the call completes successfully
-* `error`: Called when the call fails
-* `complete`: Called when the the call completes, regardless of success or failure
-* `progress`: Called at any significant point in the progress of the call, usually before and after server requests
-
-For example, you might write a sequence of operations using callbacks:
-
-    var rm = new F.service.RunManager({
-    	run: {
-        	account: 'myTeamId',
-        	project: 'sales_forecaster',
-        	model: 'sales_forecaster.jl'
-        }
-    });
-    rm.getRun({
-        success: function() {
-            rm.getRun(function(run) {
-            	run.serial(
-            		['initialize_inputs', 'calculate_input_totals', 'forecast_monthly_profit'], 
-            		null, 
-            		{ success: function(data) {
-                        displayUI(data, function () {
-                            hideLoadingScreen(function () {
-                                run.variables().load('profit_histogram');
-                            });
-                        });
-                      },
-                      error: function() {
-                        console.log('Oops! Something went wrong with the operations');
-                      }
-                	}
-                )
-            });
-        }
-    });
-
-Callbacks work well for one-off operations, but can become difficult to follow when used for a longer sequence of steps.
-
-**Promises**
-
-Every service call returns a promise. All services support the <a href="http://api.jquery.com/category/deferred-object/" target="_blank">jQuery Deferred Object functions</a>, including the following most common functions:
+Most service calls returns a promise. All services support the <a href="http://api.jquery.com/category/deferred-object/" target="_blank">jQuery Deferred Object functions</a>, including the following most common functions:
 
 * `then`: Add handlers to be called when the object is resolved, rejected, or still in progress
 * `done`: Add handlers to be called when the object is resolved
-* `fail`: Add handlers to be called when the object is rejected
+* `catch`: Add handlers to be called when the object is rejected
 
 For example, you might write the same sequence of operations as above using promises:
 
@@ -181,7 +133,7 @@ For example, you might write the same sequence of operations as above using prom
 	            .then(function () {
 	                run.variables().load('profit_histogram');
 	            })
-	            .fail(function() {
+	            .catch(function() {
 	                console.log('Oops! Something went wrong with the operations');
 	            });
 	    });

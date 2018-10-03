@@ -32,11 +32,11 @@ if (!am.isLoggedIn()) {
             bp.create({
                 executeActionsImmediately: false,
                 roles: ['P1', 'P2'],
-                defaultActions: {
-                    P2: [{ name: 'step', arguments: [2] }],
-                    P1: [{ name: 'step', arguments: [1] }],
-                },
-                ttlSeconds: 10
+                // defaultActions: {
+                //     P2: [{ name: 'step', arguments: [2] }],
+                //     P1: [{ name: 'step', arguments: [1] }],
+                // },
+                // ttlSeconds: 10
             });
         });
         $('#btnConsensusDelete').on('click', function () {

@@ -69,7 +69,7 @@ module.exports = classFrom(Base, {
     },
 
     getRun: function (runService, userSession, runSession, options) {
-        var sessionFilter = injectFiltersFromSession(this.options.flag, userSession);
+        var sessionFilter = injectFiltersFromSession(this.options.flag, userSession, this.options.scope);
         var runopts = runService.getCurrentConfig();
         var filter = $.extend(true, { trashed: false }, sessionFilter, { model: runopts.model });
         var me = this;

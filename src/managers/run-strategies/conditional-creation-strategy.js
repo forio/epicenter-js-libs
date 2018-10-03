@@ -22,7 +22,7 @@ var Strategy = classFrom(Base, {
      * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
      * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
      * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
-     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
+     * @param  {Object} [options] See [RunService#create](../run-api-service/#create) for supported options.
      * @return {Promise}             
      */
     reset: function (runService, userSession, options) {
@@ -44,7 +44,7 @@ var Strategy = classFrom(Base, {
      * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
      * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
      * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
-     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
+     * @param  {Object} [options] See [RunService#create](../run-api-service/#create) for supported options.
      * @return {Promise}             
      */
     getRun: function (runService, userSession, runSession, options) {

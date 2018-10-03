@@ -13,7 +13,7 @@ export default function subscribeToWorldChannel(worldid, channel, session, chann
             return oldsubs.call(channel, fullTopic, callback, context, subscribeOptions);
         }
 
-        const [subscribedTopic, subscribedSubTopic] = fullTopic.split('/');
+        const [subscribedTopic, subscribedSubTopic, subTopicFilter] = fullTopic.split('/');
         var defaults = {
             includeMine: true
         };
@@ -94,6 +94,10 @@ export default function subscribeToWorldChannel(worldid, channel, session, chann
                     const user = res.data.user;
                     user.isOnline = subType === TOPIC_SUBTYPES.ONLINE;
                     return callback(user, meta);
+                }
+                case TOPICS.CONSENSUS: {
+                    // const { name, stage } = payload;
+                    return callback(payload, meta);
                 }
                 default:
                     callback.call(context, res);

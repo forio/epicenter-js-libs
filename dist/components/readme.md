@@ -8,7 +8,7 @@ Provides a login form for team members and end users of your project. Includes a
 
 * `index.html`: The login form.
 * `login.css`: Provides styling for the group selector pop over dialog.
-* `login.js`: Uses the [Authorization Manager](./generated/auth-manager/) to log in users.
+* `login.js`: Uses the [Authorization Manager](./generated/auth/auth-manager/) to log in users.
 
 
 **Assignment Component**

@@ -47,7 +47,7 @@ var Strategy = classFrom(IdentityStrategy, {
         var dtd = $.Deferred();
 
         if (!curUserId) {
-            return dtd.reject({ statusCode: 401, type: 'UN_AUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
+            return dtd.reject({ statusCode: 401, type: 'UNAUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
         }
 
         var loadRunFromWorld = function (world) {

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Test User Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
+</head>
+<body class="container">
+    <div class="row">
+            <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
+
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="authenticated-smart-watch" >
+                <br/>
+
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="a1" >
+                <br/>
+
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="a1a1a1a1" >
+                <br/>
+
+                <label for="">Server</label>
+                <input type="text" id="txtServer" value="" >
+                <br/>
+
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+            </form>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <p>Enter a list of users in the box below. Use the following fields separated by tabs or commas.</p>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>Email</td>
+                        <td>First Name</td>
+                        <td>Last Name</td>
+                        <td>Password</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>A good way to get started is to enter user information into this <a href="{{ commonFilesPath }}/downloads/user-template.xlsx">Excel Template</a>, then paste directly from the spreadsheet to the text box below (do not include header row)</p>
+            <form class="uploaded-users" id="upload-users-container">
+                <div class="form-group">
+                    <textarea class="form-control" rows="12" cols="60"></textarea>
+                </div>
+                <button class="btn btn-primary" id="btn-upload-users">Upload Users</button>
+            </form>
+        </div>
+    </div>
+    <script src="../common.js"></script>
+    <script src="./integration-test-user-manager.js"></script>
+</body>
+</html>
