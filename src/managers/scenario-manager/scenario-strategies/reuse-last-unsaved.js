@@ -1,8 +1,5 @@
-import classFrom from 'util/inherit';
 import { injectFiltersFromSession } from 'managers/run-strategies/strategy-utils';
 import { injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
-
-const Base = {};
 
 //TODO: Make a more generic version of this called 'reuse-by-matching-filter';
 

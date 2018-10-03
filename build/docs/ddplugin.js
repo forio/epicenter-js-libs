@@ -36,13 +36,13 @@ const generalOptions = [
 const accountOptions = [].concat([
     {
         name: 'account',
-        isOptional: false,
+        isOptional: true,
         types: ['string'],
         description: 'The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL.'
     },
     {
         name: 'project',
-        isOptional: false,
+        isOptional: true,
         types: ['string'],
         description: 'The project id. Defaults to undefined. If left undefined, parsed from the URL.',
     }
@@ -62,10 +62,10 @@ function paramsToTable(params) {
     const headers = ['Required?', 'Name', 'Type', 'Description'];
     const paramRows = params.map((param)=> {
         const isOptional = param.isOptional || param.name.indexOf('[') === 0;
-        const name = param.name.replace('[', '').replace(']', '');
+        const name = param.name.split('.').reverse()[0].replace('[', '').replace(']', '');
         const type = param.types && param.types.length ? param.types.join(' / ') : 'any';
         return toRow([
-            isOptional ? '' : '•',
+            isOptional ? '&nbsp;' : 'Yes',
             name,
             type.indexOf('http') === -1 ? `\`${type}\`` : type,
             param.description, 

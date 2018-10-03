@@ -376,7 +376,7 @@ The `savedRuns` manager gives you utility functions for dealing with multiple ru
 
 ### Presence Service
 
-The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use channels, the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. See [complete details on the Presence Service](http://forio.com/epicenter/docs/public/api_adapters/generated/presence-api-service/) and also the updated [Epicenter Channel Manager's getPresenceChannel()](http://forio.com/epicenter/docs/public/api_adapters/generated/epicenter-channel-manager/#getpresencechannel).
+The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use channels, the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. See [complete details on the Presence Service](http://forio.com/epicenter/docs/public/api_adapters/generated/presence-api-service/) and also the updated [Epicenter Channel Manager's getPresenceChannel()](http://forio.com/epicenter/docs/public/api_adapters/generated/channels/epicenter-channel-manager/#getpresencechannel).
 
 
 ### jQuery Version Requirements
@@ -615,11 +615,11 @@ Authentication Manager and components.
 This release provides support for managing user authentication, especially for [end users](http://forio.com/epicenter/docs/public/glossary/#users) of [authenticated](http://forio.com/epicenter/docs/public/glossary/#access) Epicenter projects.
 
 #### Authentication API Service
-The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token. (User access tokens are required for each call to Epicenter.) Details available here: http://forio.com/epicenter/docs/public/api_adapters/generated/auth-api-service/
+The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token. (User access tokens are required for each call to Epicenter.) Details available here: http://forio.com/epicenter/docs/public/api_adapters/generated/auth/auth-service/
 
 #### Authorization Manager
 
-The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects. Details available here: http://forio.com/epicenter/docs/public/api_adapters/generated/auth-manager/
+The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects. Details available here: http://forio.com/epicenter/docs/public/api_adapters/generated/auth/auth-manager/
 
 #### Login Component
 

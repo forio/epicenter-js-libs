@@ -16,8 +16,8 @@ import ReuseinitStrategy from 'managers/run-strategies/reuse-last-initialized';
  * 
  * @constructor
  * @param {object} options
- * @property {string} baselineName Name of the baseline run. Defaults to 'Baseline'. 
- * @property {object[]} initOperation Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
+ * @property {string} [baselineName] Name of the baseline run. Defaults to 'Baseline'. 
+ * @property {object[]} [initOperation] Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
  */
 export default function BaselineStrategy(options) {
     var defaults = {
