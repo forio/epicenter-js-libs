@@ -11,8 +11,8 @@ const getAPIURL = getURL.bind(null, API_ENDPOINT);
 class DataService {
     /**
      * @param {AccountAPIServiceOptions} config 
-     * @property {string} root Name of collection. Required. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`, but must be set to a collection name.
-     * @property {string} scope Determines who has read-write access to this data collection. See above for available scopes.
+     * @property {string} root The name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
+     * @property {string} [scope] Determines who has read-write access to this data collection. See above for available scopes.
      */
     constructor(config) {
         const defaults = {

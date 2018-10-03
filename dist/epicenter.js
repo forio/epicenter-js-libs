@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.6.0
+ *         v2.7.0
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -68,7 +68,7 @@ var F =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 40);
+/******/ 	return __webpack_require__(__webpack_require__.s = 43);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,7 +77,7 @@ var F =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__);
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var transport = (isNode) ? require('./node-http-transport') : require('./ajax-http-transport');
@@ -86,14 +86,153 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /***/ }),
 /* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
+/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
+/* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
+/* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
+
+
+
+
+
+
+function getApiUrl(apiEndpoint, serviceOptions) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
+    if (serviceOptions.account) {
+        urlConfig.accountPath = serviceOptions.account;
+    }
+    if (serviceOptions.project) {
+        urlConfig.projectPath = serviceOptions.project;
+    }
+    return urlConfig.getAPIPath(apiEndpoint);
+}
+
+/*
+* Gets the default options for a api service.
+* It will merge:
+* - The Session options (Using the Session Manager)
+* - The Authorization Header from the token option
+* - The full url from the endpoint option
+* With the supplied overrides and defaults
+*
+*/
+function getDefaultOptions(defaults) {
+    var rest = Array.prototype.slice.call(arguments, 1);
+    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
+    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
+
+    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
+        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
+    });
+
+    if (serviceOptions.token) {
+        serviceOptions.transport.headers = {
+            Authorization: 'Bearer ' + serviceOptions.token
+        };
+    }
+    return serviceOptions;
+}
+
+function getURLConfig(options) {
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](options).get('server');
+    if (options.account) {
+        urlConfig.accountPath = options.account;
+    }
+    if (options.project) {
+        urlConfig.projectPath = options.project;
+    }
+    return urlConfig;
+}
+function getHTTPTransport(transportOptions, overrides) {
+    var mergedOptions = $.extend(true, {}, transportOptions, overrides);
+    var http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](mergedOptions);
+    return http;
+}
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+/* Inherit from a class (using prototype borrowing)
+*/
+
+
+function inherit(C, P) {
+    var F = function () {};
+    F.prototype = P.prototype;
+    C.prototype = new F();
+    C.__super = P.prototype;
+    C.prototype.constructor = C;
+}
+
+/**
+* Shallow copy of an object
+* @param {Object} dest object to extend
+* @return {Object} extended object
+*/
+var extend = function (dest /*, var_args*/) {
+    var obj = Array.prototype.slice.call(arguments, 1);
+    var current;
+    for (var j = 0; j < obj.length; j++) {
+        if (!(current = obj[j])) {
+            //eslint-disable-line
+            continue;
+        }
+
+        // do not wrap inner in dest.hasOwnProperty or bad things will happen
+        for (var key in current) {
+            //eslint-disable-line
+            dest[key] = current[key];
+        }
+    }
+
+    return dest;
+};
+
+module.exports = function (base, props, staticProps) {
+    var parent = base;
+    var child;
+
+    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
+        return parent.apply(this, arguments);
+    };
+
+    // add static properties to the child constructor function
+    extend(child, parent, staticProps);
+
+    // associate prototype chain
+    inherit(child, parent);
+
+    // add instance properties
+    if (props) {
+        extend(child.prototype, props);
+    }
+
+    // done
+    return child;
+};
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keyNames = __webpack_require__(14);
-var StorageFactory = __webpack_require__(25);
-var optionUtils = __webpack_require__(42);
+var keyNames = __webpack_require__(15);
+var StorageFactory = __webpack_require__(26);
+var optionUtils = __webpack_require__(45);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var EPI_MANAGER_KEY = 'epicenter.token'; //can't be under key-names, or logout will clear this too
@@ -178,7 +317,7 @@ var SessionManager = function (managerOptions) {
             var sessionDefaults = {
                 /**
                  * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-                 * @see [Authentication API Service](../auth-api-service/) for getting tokens.
+                 * @see [Authentication API Service](../auth/auth-service/) for getting tokens.
                  * @type {String}
                  */
                 token: token,
@@ -222,12 +361,75 @@ var SessionManager = function (managerOptions) {
 module.exports = SessionManager;
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(13);
+/* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
+/* harmony export (immutable) */ __webpack_exports__["omit"] = omit;
+/* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
+/* harmony export (immutable) */ __webpack_exports__["ensureKeysPresent"] = ensureKeysPresent;
+/**
+ * Return selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+function pick(obj, keys) {
+    var res = {};
+    for (var p in obj) {
+        if (keys.indexOf(p) !== -1) {
+            res[p] = obj[p];
+        }
+    }
+    return res;
+}
+
+/**
+ * Omits selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+function omit(obj, keys) {
+    keys.forEach(function (key) {
+        delete obj[key];
+    });
+    return obj;
+}
+
+function isEmpty(value) {
+    return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
+}
+
+/**
+ * Confirms presence of keys or throws error
+ * 
+ * @param {Object} obj
+ * @param {string[]} keysList
+ * @param {string} [context] Prefix to add to error message
+ * @throws {Error}
+ * @return {boolean}
+ */
+function ensureKeysPresent(obj, keysList, context) {
+    keysList.forEach(function (key) {
+        if (obj[key] === null || obj[key] === undefined) {
+            throw new Error((context || '') + ' Missing required parameter \'' + key + '\'\' in ' + JSON.stringify(obj) + ' ');
+        }
+    });
+    return true;
+}
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -314,202 +516,6 @@ var ConfigService = function () {
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (ConfigService);
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
-/* Inherit from a class (using prototype borrowing)
-*/
-
-
-function inherit(C, P) {
-    var F = function () {};
-    F.prototype = P.prototype;
-    C.prototype = new F();
-    C.__super = P.prototype;
-    C.prototype.constructor = C;
-}
-
-/**
-* Shallow copy of an object
-* @param {Object} dest object to extend
-* @return {Object} extended object
-*/
-var extend = function (dest /*, var_args*/) {
-    var obj = Array.prototype.slice.call(arguments, 1);
-    var current;
-    for (var j = 0; j < obj.length; j++) {
-        if (!(current = obj[j])) {
-            //eslint-disable-line
-            continue;
-        }
-
-        // do not wrap inner in dest.hasOwnProperty or bad things will happen
-        for (var key in current) {
-            //eslint-disable-line
-            dest[key] = current[key];
-        }
-    }
-
-    return dest;
-};
-
-module.exports = function (base, props, staticProps) {
-    var parent = base;
-    var child;
-
-    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
-        return parent.apply(this, arguments);
-    };
-
-    // add static properties to the child constructor function
-    extend(child, parent, staticProps);
-
-    // associate prototype chain
-    inherit(child, parent);
-
-    // add instance properties
-    if (props) {
-        extend(child.prototype, props);
-    }
-
-    // done
-    return child;
-};
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
-/* harmony export (immutable) */ __webpack_exports__["omit"] = omit;
-/* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
-/* harmony export (immutable) */ __webpack_exports__["ensureKeysPresent"] = ensureKeysPresent;
-/**
- * Return selected keys from obj
- * 
- * @param {object} obj
- * @param {string[]} keys
- * @return {object}
- */
-function pick(obj, keys) {
-    var res = {};
-    for (var p in obj) {
-        if (keys.indexOf(p) !== -1) {
-            res[p] = obj[p];
-        }
-    }
-    return res;
-}
-
-/**
- * Omits selected keys from obj
- * 
- * @param {object} obj
- * @param {string[]} keys
- * @return {object}
- */
-function omit(obj, keys) {
-    keys.forEach(function (key) {
-        delete obj[key];
-    });
-    return obj;
-}
-
-function isEmpty(value) {
-    return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
-}
-
-/**
- * Confirms presence of keys or throws error
- * 
- * @param {Object} obj
- * @param {string[]} keysList
- * @param {string} [context] Prefix to add to error message
- * @throws {Error}
- * @return {boolean}
- */
-function ensureKeysPresent(obj, keysList, context) {
-    keysList.forEach(function (key) {
-        if (obj[key] === null || obj[key] === undefined) {
-            throw new Error((context || '') + ' Missing required parameter \'' + key + '\'\' in ' + JSON.stringify(obj) + ' ');
-        }
-    });
-    return true;
-}
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = getApiUrl;
-/* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
-/* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
-/* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
-
-
-
-
-
-
-function getApiUrl(apiEndpoint, serviceOptions) {
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](serviceOptions).get('server');
-    return urlConfig.getAPIPath(apiEndpoint);
-}
-
-/*
-* Gets the default options for a api service.
-* It will merge:
-* - The Session options (Using the Session Manager)
-* - The Authorization Header from the token option
-* - The full url from the endpoint option
-* With the supplied overrides and defaults
-*
-*/
-function getDefaultOptions(defaults) {
-    var rest = Array.prototype.slice.call(arguments, 1);
-    var sessionManager = new __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default.a();
-    var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
-
-    serviceOptions.transport = __WEBPACK_IMPORTED_MODULE_2_object_assign___default()({}, serviceOptions.transport, {
-        url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
-    });
-
-    if (serviceOptions.token) {
-        serviceOptions.transport.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    return serviceOptions;
-}
-
-function getURLConfig(options) {
-    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0__configuration_service__["default"](options).get('server');
-    if (options.account) {
-        urlConfig.accountPath = options.account;
-    }
-    if (options.project) {
-        urlConfig.projectPath = options.project;
-    }
-    return urlConfig;
-}
-function getHTTPTransport(transportOptions, overrides) {
-    var mergedOptions = $.extend(true, {}, transportOptions, overrides);
-    var http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](mergedOptions);
-    return http;
-}
 
 /***/ }),
 /* 6 */
@@ -664,7 +670,7 @@ function normalizeSlashes(url, options) {
 "use strict";
 
 
-var RunService = __webpack_require__(9);
+var RunService = __webpack_require__(9).default;
 
 module.exports = {
     mergeRunOptions: function (run, options) {
@@ -725,7 +731,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 var MAX_URL_LENGTH = 2048;
 
 function extractValidRunParams(params) {
-    var validParams = ['model', 'scope', 'files', 'ephemeral', 'cinFiles'];
+    var validParams = ['model', 'sensitivityMode', 'scope', 'files', 'ephemeral', 'cinFiles'];
     return Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(params, validParams);
 }
 
@@ -944,141 +950,58 @@ function splitGetFactory(httpOptions) {
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = RunService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_store_session_manager__);
+
+
+
+
+
+
+
+
 /**
- *
- * ## Run API Service
- *
- * The Run API Service allows you to perform common tasks around creating and updating runs, variables, and data.
- *
- * When building interfaces to show run one at a time (as for standard end users), typically you first instantiate a [Run Manager](../run-manager/) and then access the Run Service that is automatically part of the manager, rather than instantiating the Run Service directly. This is because the Run Manager (and associated [run strategies](../strategies/)) gives you control over run creation depending on run states.
- *
- * The Run API Service is useful for building an interface where you want to show data across multiple runs (this is easy using the `filter()` and `query()` methods). For instance, you would probably use a Run Service to build a page for a facilitator. This is because a facilitator typically wants to evaluate performance from multiple end users, each of whom have been working with their own run.
- *
- * To use the Run API Service, instantiate it by passing in:
- *
- * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `project`: Epicenter project id.
- *
- * If you know in advance that you would like to work with particular, existing run(s), you can optionally pass in:
- *
- * * `filter`: (Optional) Criteria by which to filter for existing runs. 
- * * `id`: (Optional) The run id of an existing run. This is a convenience alias for using filter, in the case where you only want to work with one run.
- *
- * For example,
- *
- *       var rs = new F.service.Run({
- *            account: 'acme-simulations',
- *            project: 'supply-chain-game',
- *      });
- *      rs.create('supply_chain_game.py').then(function(run) {
- *             rs.do('someOperation');
- *      });
- *
- *
- * Additionally, all API calls take in an `options` object as the last parameter. The options can be used to extend/override the Run API Service defaults listed below. In particular, passing `{ id: 'a-run-id' }` in this `options` object allows you to make calls to an existing run.
- *
- * Note that in addition to the `account`, `project`, and `model`, the Run Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
- *
- *       var rm = new F.manager.RunManager({
- *           run: {
- *               account: 'acme-simulations',
- *               project: 'supply-chain-game',
- *               model: 'supply_chain_game.py',
- *               server: { host: 'api.forio.com' }
- *           }
- *       });
- *       rm.getRun()
- *           .then(function(run) {
- *               // the RunManager.run contains the instantiated Run Service,
- *               // so any Run Service method is valid here
- *               var rs = rm.run;
- *               rs.do('someOperation');
- *       })
- *
+ * @constructor
+ * @param {AccountAPIServiceOptions} config 
+ * @property {string} filter Criteria by which to filter runs.
+ * @property {string} [id] Convenience alias for filter. Pass in an existing run id to interact with a particular run.
+ * @property {string} [autoRestore] Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to true.
  */
+function RunService(config) {
 
-
-
-var ConfigService = __webpack_require__(2).default;
-
-var _require = __webpack_require__(6),
-    toMatrixFormat = _require.toMatrixFormat;
-
-var rutil = __webpack_require__(8);
-var TransportFactory = __webpack_require__(0).default;
-var VariablesService = __webpack_require__(23);
-var IntrospectionService = __webpack_require__(24);
-var SessionManager = __webpack_require__(1);
-
-module.exports = function (config) {
     var defaults = {
-        /**
-         * For projects that require authentication, pass in the user access token (defaults to undefined). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
-         */
-        token: undefined,
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL.
-         * @type {String}
-         */
-        account: undefined,
-
-        /**
-         * The project id. Defaults to undefined. If left undefined, taken from the URL.
-         * @type {String}
-         */
-        project: undefined,
-
-        /**
-         * Criteria by which to filter runs. Defaults to empty string.
-         * @type {String}
-         */
         filter: '',
-
-        /**
-         * Convenience alias for filter. Pass in an existing run id to interact with a particular run.
-         * @type {String}
-         */
         id: '',
-
-        /**
-         * Flag determines if `X-AutoRestore: true` header is sent to Epicenter, meaning runs are automatically pulled from the Epicenter backend database if not currently in memory on the Epicenter servers. Defaults to `true`.
-         * @type {boolean}
-         */
         autoRestore: true,
 
-        /**
-         * Called when the call completes successfully. Defaults to `$.noop`.
-         * @type {function}
-         */
+        account: undefined,
+        project: undefined,
+        token: undefined,
+        transport: {},
+
         success: $.noop,
-
-        /**
-         * Called when the call fails. Defaults to `$.noop`.
-         * @type {function}
-         */
-        error: $.noop,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
-        transport: {}
+        error: $.noop
     };
 
-    this.sessionManager = new SessionManager();
+    this.sessionManager = new __WEBPACK_IMPORTED_MODULE_6_store_session_manager___default.a();
     var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
     if (serviceOptions.id) {
         serviceOptions.filter = serviceOptions.id;
     }
 
     function updateURLConfig(opts) {
-        var urlConfig = new ConfigService(opts).get('server');
+        var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](opts).get('server');
         if (opts.account) {
             urlConfig.accountPath = opts.account;
         }
@@ -1089,7 +1012,7 @@ module.exports = function (config) {
         urlConfig.filter = ';';
         urlConfig.getFilterURL = function (filter) {
             var url = urlConfig.getAPIPath('run');
-            var filterMatrix = toMatrixFormat(filter || opts.filter);
+            var filterMatrix = Object(__WEBPACK_IMPORTED_MODULE_1_util_query_util__["toMatrixFormat"])(filter || opts.filter);
 
             if (filterMatrix) {
                 url += filterMatrix + '/';
@@ -1129,8 +1052,8 @@ module.exports = function (config) {
                 Authorization: 'Bearer ' + serviceOptions.token
             };
         }
-        http = new TransportFactory(httpOptions);
-        http.splitGet = rutil.splitGetFactory(httpOptions);
+        http = new __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__["default"](httpOptions);
+        http.splitGet = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["splitGetFactory"])(httpOptions);
     }
 
     var urlConfig = updateURLConfig(serviceOptions); //making a function so #updateConfig can call this; change when refactored
@@ -1153,16 +1076,13 @@ module.exports = function (config) {
 
         /**
          * Create a new run.
-         *
          * NOTE: Typically this is not used! Use `RunManager.getRun()` with a `strategy` of `reuse-never`, or use `RunManager.reset()`. See [Run Manager](../run-manager/) for more details.
          *
-         *  **Example**
-         *
-         *      rs.create('hello_world.jl');
-         *
-         *  **Parameters**
+         * @example
+         * rs.create('hello_world.jl');
+         *  
          * @param {String|Object} params If a string, the name of the primary [model file](../../../writing_your_model/). This is the one file in the project that explicitly exposes variables and methods, and it must be stored in the Model folder of your Epicenter project. If an object, may include `model`, `scope`, and `files`. (See the [Run Manager](../run_manager/) for more information on `scope` and `files`.)
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         create: function (params, options) {
@@ -1170,7 +1090,7 @@ module.exports = function (config) {
             if (typeof params === 'string') {
                 params = { model: params };
             } else {
-                params = rutil.extractValidRunParams(params);
+                params = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["extractValidRunParams"])(params);
             }
 
             var oldSuccess = createOptions.success;
@@ -1185,47 +1105,39 @@ module.exports = function (config) {
 
         /**
          * Returns particular runs, based on conditions specified in the `qs` object.
-         *
          * The elements of the `qs` object are ANDed together within a single call to `.query()`.
          *
-         * **Example**
-         *
-         *      // returns runs with saved = true and variables.price > 1,
-         *      // where variables.price has been persisted (recorded)
-         *      // in the model.
-         *     rs.query({
-         *          'saved': 'true',
-         *          '.price': '>1'
-         *       },
-         *       {
-         *          startrecord: 2,
-         *          endrecord: 5
-         *       });
-         *
-         * **Parameters**
+         * @example
+         * // returns runs with saved = true and variables.price > 1,
+         * // where variables.price has been persisted (recorded)
+         * // in the model.
+         * rs.query({
+         *      'saved': 'true',
+         *      '.price': '>1'
+         * }, {
+         *      startrecord: 2,
+         *      endrecord: 5
+         * });
+         * 
          * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
-         * @return {Promise}
+         * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} [options] Overrides for configuration options.
+         * @return {Promise.<object[]>}
          */
         query: function (qs, outputModifier, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, { url: urlConfig.getFilterURL(qs) }, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
 
-            return http.splitGet(outputModifier, httpOptions).then(function (r) {
-                return $.isPlainObject(r) && Object.keys(r).length === 0 ? [] : r;
-            });
+            return http.splitGet(outputModifier, httpOptions);
         },
 
         /**
          * Returns particular runs, based on conditions specified in the `qs` object.
-         *
          * Similar to `.query()`.
-         *
-         * **Parameters**
+         * 
          * @param {Object} filter Filter object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Filtering for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         filter: function (filter, outputModifier, options) {
@@ -1236,24 +1148,20 @@ module.exports = function (config) {
             }
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
-            return http.splitGet(outputModifier, httpOptions).then(function (r) {
-                return $.isPlainObject(r) && Object.keys(r).length === 0 ? [] : r;
-            });
+            return http.splitGet(outputModifier, httpOptions);
         },
 
         /**
          * Get data for a specific run. This includes standard run data such as the account, model, project, and created and last modified dates. To request specific model variables or run record variables, pass them as part of the `filters` parameter.
-         *
          * Note that if the run is [in memory](../../../run_persistence/#runs-in-memory), any model variables are available; if the run is [in the database](../../../run_persistence/#runs-in-db), only model variables that have been persisted &mdash; that is, `record`ed or saved in your model &mdash; are available.
          *
-         * **Example**
+         * @example
+         * rs.load('bb589677-d476-4971-a68e-0c58d191e450', { include: ['.price', '.sales'] });
          *
-         *     rs.load('bb589677-d476-4971-a68e-0c58d191e450', { include: ['.price', '.sales'] });
-         *
-         * **Parameters**
+         * 
          * @param {String} runID The run id.
-         * @param {Object} filters (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [filters] Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         load: function (runID, filters, options) {
@@ -1268,17 +1176,15 @@ module.exports = function (config) {
         /**
          * Removes specified runid from memory
          *
-         * **Example**
-         *
+         * @example
          *     rs.removeFromMemory('bb589677-d476-4971-a68e-0c58d191e450');
          *
          * See [details on run persistence](../../../run_persistence/#runs-in-memory)
-         * @param  {String} [runID]   id of run to remove
-         * @param  {Object} [filters] (Optional) Object containing filters and operation modifiers. Use key `include` to list model variables that you want to include in the response. Other available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param  {Object} [options] (Optional) Overrides for configuration options.
+         * @param  {String} runID   id of run to remove
+         * @param  {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
-        removeFromMemory: function (runID, filters, options) {
+        removeFromMemory: function (runID, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             if (runID) {
                 httpOptions.url = urlConfig.getAPIPath('run') + runID;
@@ -1289,21 +1195,18 @@ module.exports = function (config) {
         /**
          * Save attributes (data, model variables) of the run.
          *
-         * **Examples**
+         * @example
+         * // add 'completed' field to run record
+         * rs.save({ completed: true });
+         * // update 'saved' field of run record, and update values of model variables for this run
+         * rs.save({ saved: true, variables: { a: 23, b: 23 } });
+         * // update 'saved' field of run record for a particular run
+         * rs.save({ saved: true }, { id: '0000015bf2a04995880df6b868d23eb3d229' });
          *
-         *     // add 'completed' field to run record
-         *     rs.save({ completed: true });
-         *
-         *     // update 'saved' field of run record, and update values of model variables for this run
-         *     rs.save({ saved: true, variables: { a: 23, b: 23 } });
-         *
-         *     // update 'saved' field of run record for a particular run
-         *     rs.save({ saved: true }, { id: '0000015bf2a04995880df6b868d23eb3d229' });
-         *
-         * **Parameters**
+         * 
          * @param {Object} attributes The run data and variables to save.
          * @param {Object} attributes.variables Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         save: function (attributes, options) {
@@ -1314,32 +1217,28 @@ module.exports = function (config) {
 
         /**
          * Call an operation from the model.
-         *
          * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
-         *
          * The `params` argument is normally an array of arguments to the `operation`. In the special case where `operation` only takes one argument, you are not required to put that argument into an array.
-         *
          * Note that you can combine the `operation` and `params` arguments into a single object if you prefer, as in the last example.
          *
-         * **Examples**
+         * @example
+         * // operation "solve" takes no arguments
+         * rs.do('solve');
+         * // operation "echo" takes one argument, a string
+         * rs.do('echo', ['hello']);
+         * // operation "echo" takes one argument, a string
+         * rs.do('echo', 'hello');
+         * // operation "sumArray" takes one argument, an array
+         * rs.do('sumArray', [[4,2,1]]);
+         * // operation "add" takes two arguments, both integers
+         * rs.do({ name:'add', params:[2,4] });
+         * // call operation "solve" on a different run 
+         * rs.do('solve', { id: '0000015bf2a04995880df6b868d23eb3d229' });
          *
-         *      // operation "solve" takes no arguments
-         *     rs.do('solve');
-         *      // operation "echo" takes one argument, a string
-         *     rs.do('echo', ['hello']);
-         *      // operation "echo" takes one argument, a string
-         *     rs.do('echo', 'hello');
-         *      // operation "sumArray" takes one argument, an array
-         *     rs.do('sumArray', [[4,2,1]]);
-         *      // operation "add" takes two arguments, both integers
-         *     rs.do({ name:'add', params:[2,4] });
-         *      // call operation "solve" on a different run 
-         *     rs.do('solve', { id: '0000015bf2a04995880df6b868d23eb3d229' });
-         *
-         * **Parameters**
+         * 
          * @param {String} operation Name of operation.
-         * @param {Array} params (Optional) Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Array} [params] Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         do: function (operation, params, options) {
@@ -1355,7 +1254,7 @@ module.exports = function (config) {
             } else {
                 opsArgs = params;
             }
-            var result = rutil.normalizeOperations(operation, opsArgs);
+            var result = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["normalizeOperations"])(operation, opsArgs);
             var httpOptions = $.extend(true, {}, serviceOptions, postOptions);
 
             setFilterOrThrowError(httpOptions);
@@ -1368,29 +1267,24 @@ module.exports = function (config) {
 
         /**
          * Call several operations from the model, sequentially.
-         *
          * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
-         * **Examples**
-         *
-         *      // operations "initialize" and "solve" do not take any arguments
-         *     rs.serial(['initialize', 'solve']);
-         *      // operations "init" and "reset" take two arguments each
-         *     rs.serial([  { name: 'init', params: [1,2] },
-         *                  { name: 'reset', params: [2,3] }]);
-         *      // operation "init" takes two arguments,
-         *      // operation "runmodel" takes none
-         *     rs.serial([  { name: 'init', params: [1,2] },
-         *                  { name: 'runmodel', params: [] }]);
-         *
-         * **Parameters**
+         * @example
+         * // operations "initialize" and "solve" do not take any arguments
+         * rs.serial(['initialize', 'solve']);
+         * // operations "init" and "reset" take two arguments each
+         * rs.serial([  { name: 'init', params: [1,2] }, { name: 'reset', params: [2,3] }]);
+         * // operation "init" takes two arguments,
+         * // operation "runmodel" takes none
+         * rs.serial([  { name: 'init', params: [1,2] }, { name: 'runmodel', params: [] }]);
+         * 
          * @param {Array} operations If none of the operations take parameters, pass an array of the operation names (strings). If any of the operations do take parameters, pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         serial: function (operations, params, options) {
-            var opParams = rutil.normalizeOperations(operations, params);
+            var opParams = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["normalizeOperations"])(operations, params);
             var ops = opParams.ops;
             var args = opParams.args;
             var me = this;
@@ -1428,29 +1322,25 @@ module.exports = function (config) {
 
         /**
          * Call several operations from the model, executing them in parallel.
-         *
          * Depending on the language in which you have written your model, the operation (function or method) may need to be exposed (e.g. `export` for a Julia model) in the model file in order to be called through the API. See [Writing your Model](../../../writing_your_model/)).
          *
-         * **Example**
+         * @example
+         * // operations "solve" and "reset" do not take any arguments
+         * rs.parallel(['solve', 'reset']);
+         * // operations "add" and "subtract" take two arguments each
+         * rs.parallel([ { name: 'add', params: [1,2] }, { name: 'subtract', params:[2,3] }]);
+         * // operations "add" and "subtract" take two arguments each
+         * rs.parallel({ add: [1,2], subtract: [2,4] });
          *
-         *      // operations "solve" and "reset" do not take any arguments
-         *     rs.parallel(['solve', 'reset']);
-         *      // operations "add" and "subtract" take two arguments each
-         *     rs.parallel([ { name: 'add', params: [1,2] },
-         *                   { name: 'subtract', params:[2,3] }]);
-         *      // operations "add" and "subtract" take two arguments each
-         *     rs.parallel({ add: [1,2], subtract: [2,4] });
-         *
-         * **Parameters**
          * @param {Array|Object} operations If none of the operations take parameters, pass an array of the operation names (as strings). If any of the operations do take parameters, you have two options. You can pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the operation name and a (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         parallel: function (operations, params, options) {
             var $d = $.Deferred();
 
-            var opParams = rutil.normalizeOperations(operations, params);
+            var opParams = Object(__WEBPACK_IMPORTED_MODULE_2_util_run_util__["normalizeOperations"])(operations, params);
             var ops = opParams.ops;
             var args = opParams.args;
             var postOptions = $.extend(true, {}, serviceOptions, options);
@@ -1483,20 +1373,19 @@ module.exports = function (config) {
         /**
          * Shortcut to using the [Introspection API Service](../introspection-api-service/). Allows you to view a list of the variables and operations in a model.
          *
-         * **Example**
+         * @example
+         * rs.introspect({ runID: 'cbf85437-b539-4977-a1fc-23515cf071bb' }).then(function (data) {
+         *      console.log(data.functions);
+         *      console.log(data.variables);
+         * });
          *
-         *     rs.introspect({ runID: 'cbf85437-b539-4977-a1fc-23515cf071bb' }).then(function (data) {
-         *          console.log(data.functions);
-         *          console.log(data.variables);
-         *     });
-         *
-         * **Parameters**
+         * 
          * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`. Note that the `runID` is optional if the Run Service is already associated with a particular run (because `id` was passed in when the Run Service was initialized). If provided, the `runID` overrides the `id` currently associated with the Run Service.
-         * @param  {Object} introspectionConfig (Optional) Service options for Introspection Service
+         * @param  {Object} [introspectionConfig] Service options for Introspection Service
          * @return {Promise}
          */
         introspect: function (options, introspectionConfig) {
-            var introspection = new IntrospectionService($.extend(true, {}, serviceOptions, introspectionConfig));
+            var introspection = new __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__["default"]($.extend(true, {}, serviceOptions, introspectionConfig));
             if (options) {
                 if (options.runID) {
                     return introspection.byRunID(options.runID);
@@ -1529,17 +1418,15 @@ module.exports = function (config) {
         /**
           * Returns a Variables Service instance. Use the variables instance to load, save, and query for specific model variables. See the [Variable API Service](../variables-api-service/) for more information.
           *
-          * **Example**
+          * @example
+          * var vs = rs.variables();
+          * vs.save({ sample_int: 4 });
           *
-          *      var vs = rs.variables();
-          *      vs.save({ sample_int: 4 });
-          *
-          * **Parameters**
-          * @param {Object} config (Optional) Overrides for configuration options.
+          * @param {Object} [config] Overrides for configuration options.
           * @return {Object} variablesService Instance
           */
         variables: function (config) {
-            var vs = new VariablesService($.extend(true, {}, serviceOptions, config, {
+            var vs = new __WEBPACK_IMPORTED_MODULE_4__variables_api_service__["default"]($.extend(true, {}, serviceOptions, config, {
                 runService: this
             }));
             return vs;
@@ -1548,138 +1435,39 @@ module.exports = function (config) {
 
     $.extend(this, publicAsyncAPI);
     $.extend(this, publicSyncAPI);
-};
+}
 
 /***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Base = __webpack_require__(11);
-var classFrom = __webpack_require__(3);
-
-/**
-* ## Conditional Creation Strategy
-*
-* This strategy will try to get the run stored in the cookie and
-* evaluate if it needs to create a new run by calling the `condition` function.
-*/
-
-var Strategy = classFrom(Base, {
-    constructor: function Strategy(condition) {
-        if (condition == null) {
-            //eslint-disable-line
-            throw new Error('Conditional strategy needs a condition to create a run');
-        }
-        this.condition = typeof condition !== 'function' ? function () {
-            return condition;
-        } : condition;
-    },
-
-    /**
-     * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
-     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
-     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
-     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
-     * @return {Promise}             
-     */
-    reset: function (runService, userSession, options) {
-        var group = userSession && userSession.groupName;
-        var opt = $.extend({
-            scope: { group: group }
-        }, runService.getCurrentConfig());
-
-        return runService.create(opt, options).then(function (run) {
-            run.freshlyCreated = true;
-            return run;
-        });
-    },
-
-    /**
-     * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation).
-     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
-     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
-     * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
-     * @param  {Object} options (Optional) See [RunService#create](../run-api-service/#create) for supported options.
-     * @return {Promise}             
-     */
-    getRun: function (runService, userSession, runSession, options) {
-        var me = this;
-        if (runSession && runSession.id) {
-            return this.loadAndCheck(runService, userSession, runSession, options).catch(function () {
-                return me.reset(runService, userSession, options); //if it got the wrong cookie for e.g.
-            });
-        } else {
-            return this.reset(runService, userSession, options);
-        }
-    },
-
-    loadAndCheck: function (runService, userSession, runSession, options) {
-        var shouldCreate = false;
-        var me = this;
-
-        return runService.load(runSession.id, null, {
-            success: function (run, msg, headers) {
-                shouldCreate = me.condition(run, headers, userSession, runSession);
-            }
-        }).then(function (run) {
-            if (shouldCreate) {
-                return me.reset(runService, userSession, options);
-            }
-            return run;
-        });
-    }
-});
-
-module.exports = Strategy;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../run-api-service/).
- * 
- * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
- */
-
-
-
-var classFrom = __webpack_require__(3);
-var Base = {};
-
-// Interface that all strategies need to implement
-module.exports = classFrom(Base, {
-    constructor: function (options) {},
-
-    reset: function () {
-        // return a newly created run
-        return $.Deferred().resolve().promise();
-    },
-
-    getRun: function (runService) {
-        // return a usable run
-        return $.Deferred().resolve(runService).promise();
-    }
-});
-
-/***/ }),
-/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldAPIAdapter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(1);
+
+
+
+
+
+
+
+
+
+
+var apiBase = 'multiplayer/';
+var assignmentEndpoint = apiBase + 'assign';
+var apiEndpoint = apiBase + 'world';
+var projectEndpoint = apiBase + 'project';
+
 /**
+ * @description
+ * 
  * ## World API Adapter
  *
  * A [run](../../../glossary/#run) is a collection of end user interactions with a project and its model -- including setting variables, making decisions, and calling operations. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases. Only [team projects](../../../glossary/#team) can be multiplayer.
@@ -1698,74 +1486,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
  *          .then(function(world) {
  *              // call methods, e.g. wa.addUsers()
  *          });
+ * 
+ * @param {AccountAPIServiceOptions} config 
+ * @property {string} [group] The group name to use for filters / new runs
+ * @property {string} [model] The model file to use to create runs in this world.
+ * @property {string} [filter] Criteria by which to filter world. Currently only supports world-ids as filters.
+ * @property {string} [id] Convenience alias for filter.
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-var apiBase = 'multiplayer/';
-var assignmentEndpoint = apiBase + 'assign';
-var apiEndpoint = apiBase + 'world';
-var projectEndpoint = apiBase + 'project';
-
 function WorldAPIAdapter(config) {
     var defaults = {
-        /**
-         * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
-         */
-        token: undefined,
-
-        /**
-         * The project id. If left undefined, taken from the URL.
-         * @type {String}
-         */
-        project: undefined,
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
-         * @type {String}
-         */
-        account: undefined,
-
-        /**
-         * The group name. Defaults to undefined.
-         * @type {String}
-         */
         group: undefined,
-
-        /**
-         * The model file to use to create runs in this world. Defaults to undefined.
-         * @type {String}
-         */
         model: undefined,
-
-        /**
-         * Criteria by which to filter world. Currently only supports world-ids as filters.
-         * @type {String}
-         */
         filter: '',
-
-        /**
-         * Convenience alias for filter
-         * @type {String}
-         */
         id: '',
 
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
+        token: undefined,
+        account: undefined,
+        project: undefined,
+
         transport: {}
     };
 
@@ -1804,8 +1542,7 @@ function WorldAPIAdapter(config) {
         *
         * Using this method is rare. It is more common to create worlds automatically while you `autoAssign()` end users to worlds. (In this case, configuration data for the world, such as the roles, are read from the project-level world configuration information, for example by `getProjectSettings()`.)
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -1814,13 +1551,13 @@ function WorldAPIAdapter(config) {
         *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
         *       });
         *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters to create the world.
-        * @param {string} params.group (Optional) The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
-        * @param {object} params.roles (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} params.optionalRoles (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {integer} params.minUsers (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {string} [params.group] The **Group Name** to create this world under. Only end users in this group are eligible to join the world. Optional here; required when instantiating the service (`new F.service.World()`).
+        * @param {object} [params.roles] The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {object} [params.optionalRoles] The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {integer} [params.minUsers] The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         create: function (params, options) {
@@ -1847,8 +1584,7 @@ function WorldAPIAdapter(config) {
         *
         * Typically, you complete world configuration at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both. However, this method is available if you need to update the configuration of a particular world.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -1858,13 +1594,13 @@ function WorldAPIAdapter(config) {
         *               wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
         *           });
         *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters to update the world.
         * @param {string} params.name A string identifier for the linked end users, for example, "name": "Our Team".
-        * @param {object} params.roles (Optional) The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {object} params.optionalRoles (Optional) The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
-        * @param {integer} params.minUsers (Optional) The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [params.roles] The list of roles (strings) for this world. Some worlds have specific roles that **must** be filled by end users. Listing the roles allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {object} [params.optionalRoles] The list of optional roles (strings) for this world. Some worlds have specific roles that **may** be filled by end users. Listing the optional roles as part of the world object allows you to autoassign users to worlds and ensure that all roles are filled in each world.
+        * @param {integer} [params.minUsers] The minimum number of users for the world. Including this number allows you to autoassign end users to worlds and ensure that the correct number of users are in each world.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         update: function (params, options) {
@@ -1884,8 +1620,7 @@ function WorldAPIAdapter(config) {
         *
         * This function optionally takes one argument. If the argument is a string, it is the id of the world to delete. If the argument is an object, it is the override for global options.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -1895,8 +1630,8 @@ function WorldAPIAdapter(config) {
         *               wa.delete();
         *           });
         *
-        *  **Parameters**
-        * @param {string|Object} options (Optional) The id of the world to delete, or options object to override global options.
+        *  
+        * @param {string|Object} [options] The id of the world to delete, or options object to override global options.
         * @return {Promise}
         */
         delete: function (options) {
@@ -1911,11 +1646,10 @@ function WorldAPIAdapter(config) {
         /**
         * Updates the configuration for the current instance of the World API Adapter (including all subsequent function calls, until the configuration is updated again).
         *
-        * **Example**
-        *
+        * @example
         *      var wa = new F.service.World({...}).updateConfig({ filter: '123' }).addUser({ userId: '123' });
         *
-        * **Parameters**
+        * 
         * @param {object} config The configuration object to use in updating existing configuration.
         * @return {Object} reference to current instance
         */
@@ -1927,8 +1661,7 @@ function WorldAPIAdapter(config) {
         /**
         * Lists all worlds for a given account, project, and group. All three are required, and if not specified as parameters, are read from the service.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -1942,8 +1675,8 @@ function WorldAPIAdapter(config) {
         *               wa.list({ group: 'other-group-name' });
         *           });
         *
-        *  **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        *  
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         list: function (options) {
@@ -1957,9 +1690,9 @@ function WorldAPIAdapter(config) {
         /**
          * Load information for a specific world. All further calls to the world service will use the id provided.
          *
-         * **Parameters**
+         * 
          * @param {string} worldId The id of the world to load.
-         * @param {Object} [options] (Optional) Options object to override global options.
+         * @param {Object} [options]] Options object to override global options.
          * @return {Promise}
          */
         load: function (worldId, options) {
@@ -1976,8 +1709,7 @@ function WorldAPIAdapter(config) {
         /**
         * Gets all worlds that an end user belongs to for a given account (team), project, and group.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -1989,7 +1721,7 @@ function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {string} userId The `userId` of the user whose worlds are being retrieved.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         getWorldsForUser: function (userId, options) {
@@ -2003,8 +1735,7 @@ function WorldAPIAdapter(config) {
         /**
         * Adds an end user or list of end users to a given world. The end user must be a member of the `group` that is associated with this world.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2033,7 +1764,7 @@ function WorldAPIAdapter(config) {
         * @param {string|object|array} users User id, array of user ids, object, or array of objects of the users to add to this world.
         * @param {string} users.role The `role` the user should have in the world. It is up to the caller to ensure, if needed, that the `role` passed in is one of the `roles` or `optionalRoles` of this world.
         * @param {string} worldId The world to which the users should be added. If not specified, the filter parameter of the `options` object is used.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         addUsers: function (users, worldId, options) {
@@ -2073,8 +1804,7 @@ function WorldAPIAdapter(config) {
         /**
         * Updates the role of an end user in a given world. (You can only update one end user at a time.)
         *
-        * **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2085,9 +1815,9 @@ function WorldAPIAdapter(config) {
         *           wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
         *      });
         *
-        * **Parameters**
+        * 
         * @param {{userId: string, role: string}} user User object with `userId` and the new `role`.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         updateUser: function (user, options) {
@@ -2105,8 +1835,7 @@ function WorldAPIAdapter(config) {
         /**
         * Removes an end user from a given world.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2120,7 +1849,7 @@ function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {object|string} user The `userId` of the user to remove from the world, or an object containing the `userId` field.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         removeUser: function (user, options) {
@@ -2144,8 +1873,7 @@ function WorldAPIAdapter(config) {
         *
         * Remember that a [run](../../glossary/#run) is a collection of interactions with a project and its model. In the case of multiplayer projects, the run is shared by all end users in the world.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2156,7 +1884,7 @@ function WorldAPIAdapter(config) {
         *           });
         *
         * ** Parameters **
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
         * @return {Promise}
         */
@@ -2173,8 +1901,7 @@ function WorldAPIAdapter(config) {
         /**
         * Gets the current (most recent) world for the given end user in the given group. Brings this most recent world into memory if needed.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2186,8 +1913,8 @@ function WorldAPIAdapter(config) {
         *
         * ** Parameters **
         * @param {string} userId The `userId` of the user whose current (most recent) world is being retrieved.
-        * @param {string} groupName (Optional) The name of the group. If not provided, defaults to the group used to create the service.
-        * @return {Promise}
+        * @param {string} [groupName] The name of the group. If not provided, defaults to the group used to create the service.
+        * @return {JQuery.Promise}
         */
         getCurrentWorldForUser: function (userId, groupName) {
             var dtd = $.Deferred();
@@ -2214,8 +1941,7 @@ function WorldAPIAdapter(config) {
         *
         * (Note that the world id remains part of the run record, indicating that the run was formerly an active run for the world.)
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2223,9 +1949,9 @@ function WorldAPIAdapter(config) {
         *
         *      wa.deleteRun('sample-world-id');
         *
-        *  **Parameters**
+        *  
         * @param {string} worldId The `worldId` of the world from which the current run is being deleted.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         deleteRun: function (worldId, options) {
@@ -2244,8 +1970,7 @@ function WorldAPIAdapter(config) {
         /**
         * Creates a new run for the world.
         *
-        *  **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2256,9 +1981,9 @@ function WorldAPIAdapter(config) {
         *                   wa.newRunForWorld(world.id);
         *           });
         *
-        *  **Parameters**
+        *  
         * @param {string} worldId worldId in which we create the new run.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
         * @return {Promise}
         */
@@ -2276,8 +2001,7 @@ function WorldAPIAdapter(config) {
         /**
         * Assigns end users to worlds, creating new worlds as appropriate, automatically. Assigns all end users in the group, and creates new worlds as needed based on the project-level world configuration (roles, optional roles, and minimum end users per world).
         *
-        * **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2285,12 +2009,11 @@ function WorldAPIAdapter(config) {
         *
         *      wa.autoAssign();
         *
-        * **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        * 
+        * @param {object} [options] Options object to override global options.
         * @param {number} options.maxUsers Sets the maximum number of users in a world.
         * @param {string[]} options.userIds A list of users to be assigned be assigned instead of all end users in the group.
         * @return {Promise}
-        *
         */
         autoAssign: function (options) {
             var opt = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(assignmentEndpoint) });
@@ -2319,8 +2042,7 @@ function WorldAPIAdapter(config) {
         *
         * (The [Multiplayer Project REST API](../../../rest_apis/multiplayer/multiplayer_project/) allows you to set these project-level world configurations. The World Adapter simply retrieves them, for example so they can be used in auto-assignment of end users to worlds.)
         *
-        * **Example**
-        *
+        * @example
         *      var wa = new F.service.World({
         *           account: 'acme-simulations',
         *           project: 'supply-chain-game',
@@ -2332,8 +2054,8 @@ function WorldAPIAdapter(config) {
         *               console.log(settings.optionalRoles);
         *           });
         *
-        * **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
+        * 
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         getProjectSettings: function (options) {
@@ -2347,7 +2069,7 @@ function WorldAPIAdapter(config) {
          * Get an instance of a consensus service for current world
          * 
          * @param {string|{ consensusGroup: string, name: string}} conOpts creates a consensus with an optional group name. If not specified, created under the 'default' group
-         * @param {object} options Overrides for service options
+         * @param {object} [options] Overrides for service options
          * @returns {ConsensusService}
          */
         consensus: function (conOpts, options) {
@@ -2380,8 +2102,8 @@ function WorldAPIAdapter(config) {
         },
 
         /**
-         * @param {string|{users: object} } world
-         * @param {object} options
+         * @param {string|{users: object} } world World to get users from.
+         * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
         getPresenceForUsers: function (world, options) {
@@ -2410,13 +2132,512 @@ function WorldAPIAdapter(config) {
 }
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var epiVersion = __webpack_require__(21);
+var Base = __webpack_require__(12);
+var classFrom = __webpack_require__(2);
+
+/**
+* ## Conditional Creation Strategy
+*
+* This strategy will try to get the run stored in the cookie and
+* evaluate if it needs to create a new run by calling the `condition` function.
+*/
+
+var Strategy = classFrom(Base, {
+    constructor: function Strategy(condition) {
+        if (condition == null) {
+            //eslint-disable-line
+            throw new Error('Conditional strategy needs a condition to create a run');
+        }
+        this.condition = typeof condition !== 'function' ? function () {
+            return condition;
+        } : condition;
+    },
+
+    /**
+     * Gets a new 'correct' run, or updates the existing one (the definition of 'correct' depends on strategy implementation).
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {Object} [options] See [RunService#create](../run-api-service/#create) for supported options.
+     * @return {Promise}             
+     */
+    reset: function (runService, userSession, options) {
+        var group = userSession && userSession.groupName;
+        var opt = $.extend({
+            scope: { group: group }
+        }, runService.getCurrentConfig());
+
+        return runService.create(opt, options).then(function (run) {
+            run.freshlyCreated = true;
+            return run;
+        });
+    },
+
+    /**
+     * Gets the 'correct' run (the definition of 'correct' depends on strategy implementation).
+     * @param  {RunService} runService A Run Service instance for the current run, as determined by the Run Manager.
+     * @param  {Object} userSession Information about the current user session. See [AuthManager#getCurrentUserSessionInfo](../auth-manager/#getcurrentusersessioninfo) for format.
+     * @param  {Object} runSession The Run Manager stores the 'last accessed' run in a cookie and passes it back here.
+     * @param  {Object} [options] See [RunService#create](../run-api-service/#create) for supported options.
+     * @return {Promise}             
+     */
+    getRun: function (runService, userSession, runSession, options) {
+        var me = this;
+        if (runSession && runSession.id) {
+            return this.loadAndCheck(runService, userSession, runSession, options).catch(function () {
+                return me.reset(runService, userSession, options); //if it got the wrong cookie for e.g.
+            });
+        } else {
+            return this.reset(runService, userSession, options);
+        }
+    },
+
+    loadAndCheck: function (runService, userSession, runSession, options) {
+        var shouldCreate = false;
+        var me = this;
+
+        return runService.load(runSession.id, null, {
+            success: function (run, msg, headers) {
+                shouldCreate = me.condition(run, headers, userSession, runSession);
+            }
+        }).then(function (run) {
+            if (shouldCreate) {
+                return me.reset(runService, userSession, options);
+            }
+            return run;
+        });
+    }
+});
+
+module.exports = Strategy;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../run-api-service/).
+ * 
+ * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
+ */
+
+
+
+var classFrom = __webpack_require__(2);
+var Base = {};
+
+// Interface that all strategies need to implement
+module.exports = classFrom(Base, {
+    constructor: function (options) {},
+
+    reset: function () {
+        // return a newly created run
+        return $.Deferred().resolve().promise();
+    },
+
+    getRun: function (runService) {
+        // return a usable run
+        return $.Deferred().resolve(runService).promise();
+    }
+});
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_object_assign__);
+
+
+
+
+
+
+
+var atob = window.atob || __webpack_require__(48).atob;
+
+var defaults = {
+    requiresGroup: true
+};
+
+/**
+ * @param {AccountAPIServiceOptions} options 
+ * @property {string} [groupId] Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
+ * @property {string} [userName] Email or username to use for logging in.
+ * @property {string} [password] Password for specified `userName`.
+ */
+function AuthManager(options) {
+    options = $.extend(true, {}, defaults, options);
+    this.sessionManager = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(options);
+    this.options = this.sessionManager.getMergedOptions();
+
+    this.authAdapter = new __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__["default"](this.options);
+}
+
+var _findUserInGroup = function (members, id) {
+    for (var j = 0; j < members.length; j++) {
+        if (members[j].userId === id) {
+            return members[j];
+        }
+    }
+    return null;
+};
+
+AuthManager.prototype = $.extend(AuthManager.prototype, {
+    /**
+    * Logs user in.
+    *
+    * @example
+    *  authMgr.login({
+    *      account: 'acme-simulations',
+    *      project: 'supply-chain-game',
+    *      userName: 'enduser1',
+    *      password: 'passw0rd'
+    *  }).then(function(statusObj) {
+    *          // if enduser1 belongs to exactly one group
+    *          // (or if the login() call is modified to include the group id)
+    *          // continue here
+    *      })
+    *      .fail(function(statusObj) {
+    *          // if enduser1 belongs to multiple groups,
+    *          // the login() call fails
+    *          // and returns all groups of which the user is a member
+    *          for (var i=0; i < statusObj.userGroups.length; i++) {
+    *              console.log(statusObj.userGroups[i].name, statusObj.userGroups[i].groupId);
+    *          }
+    *      });
+    * @param {Object} [options] Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
+    * @param {string} options.account The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
+    * @param {string} options.userName Email or username to use for logging in.
+    * @param {string} options.password Password for specified `userName`.
+    * @param {string} options.groupId The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
+    * @param {string} [options.project] The **Project ID** for the project to log this user into.
+    * @return {JQuery.Promise}
+    */
+    login: function (options) {
+        var me = this;
+        var $d = $.Deferred();
+        var sessionManager = this.sessionManager;
+        var adapterOptions = sessionManager.getMergedOptions({ success: $.noop, error: $.noop }, options);
+        var outSuccess = adapterOptions.success;
+        var outError = adapterOptions.error;
+        var groupId = adapterOptions.groupId;
+
+        var decodeToken = function (token) {
+            var encoded = token.split('.')[1];
+            while (encoded.length % 4 !== 0) {
+                //eslint-disable-line
+                encoded += '=';
+            }
+            return JSON.parse(atob(encoded));
+        };
+
+        var handleGroupError = function (message, statusCode, data, type) {
+            // logout the user since it's in an invalid state with no group selected
+            me.logout().then(function () {
+                var error = $.extend(true, {}, data, { statusText: message, status: statusCode, type: type });
+                $d.reject(error);
+            });
+        };
+
+        var handleSuccess = function (response) {
+            var token = response.access_token;
+            var userInfo = decodeToken(token);
+            var oldGroups = sessionManager.getSession(adapterOptions).groups || {};
+            var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
+            var data = { auth: response, user: userInfo };
+            var project = adapterOptions.project;
+            var isTeamMember = userInfo.parent_account_id === null;
+            var requiresGroup = adapterOptions.requiresGroup && project;
+
+            var userName = (userInfo.user_name || '').split('/')[0]; //of form <user>/<team>
+            var sessionInfo = {
+                auth_token: token,
+                account: adapterOptions.account,
+                project: project,
+                userId: userInfo.user_id,
+                groups: oldGroups,
+                isTeamMember: isTeamMember,
+                userName: userName
+            };
+            // The group is not required if the user is not logging into a project
+            if (!requiresGroup) {
+                sessionManager.saveSession(sessionInfo);
+                outSuccess.apply(this, [data]);
+                $d.resolve(data);
+                return;
+            }
+
+            var handleGroupList = function (groupList) {
+                data.userGroups = groupList;
+
+                var group = null;
+                if (groupList.length === 0) {
+                    handleGroupError('The user has no groups associated in this account', 403, data, 'NO_GROUPS');
+                    return;
+                } else if (groupList.length === 1) {
+                    // Select the only group
+                    group = groupList[0];
+                } else if (groupList.length > 1) {
+                    if (groupId) {
+                        var filteredGroups = $.grep(groupList, function (resGroup) {
+                            return resGroup.groupId === groupId;
+                        });
+                        group = filteredGroups.length === 1 ? filteredGroups[0] : null;
+                    }
+                }
+
+                if (group) {
+                    // A team member does not get the group members because is calling the Group API
+                    // but it's automatically a fac user
+                    var isFac = isTeamMember ? true : _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator';
+                    var groupData = {
+                        groupId: group.groupId,
+                        groupName: group.name,
+                        isFac: isFac
+                    };
+                    var sessionInfoWithGroup = __WEBPACK_IMPORTED_MODULE_5_object_assign___default()({}, sessionInfo, groupData);
+                    sessionInfo.groups[project] = groupData;
+                    me.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
+                    outSuccess.apply(this, [data]);
+                    $d.resolve(data);
+                } else {
+                    handleGroupError('This user is associated with more than one group. Please specify a group id to log into and try again', 403, data, 'MULTIPLE_GROUPS');
+                }
+            };
+
+            if (!isTeamMember) {
+                me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).then(handleGroupList, $d.reject);
+            } else {
+                var opts = __WEBPACK_IMPORTED_MODULE_5_object_assign___default()({}, userGroupOpts, { token: token });
+                var groupService = new __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__["default"](opts);
+                groupService.getGroups({ account: adapterOptions.account, project: project }).then(function (groups) {
+                    // Group API returns id instead of groupId
+                    groups.forEach(function (group) {
+                        group.groupId = group.id;
+                    });
+
+                    if (groups.length) {
+                        handleGroupList(groups);
+                    } else {
+                        //either it's a private project or there are no groups
+                        sessionManager.saveSession(sessionInfo);
+                        outSuccess.apply(this, [data]);
+                        $d.resolve(data);
+                        return;
+                    }
+                }, $d.reject);
+            }
+        };
+
+        adapterOptions.success = handleSuccess;
+        adapterOptions.error = function (response) {
+            if (adapterOptions.account) {
+                // Try to login as a system user
+                adapterOptions.account = null;
+                adapterOptions.error = function () {
+                    outError.apply(this, arguments);
+                    $d.reject(response);
+                };
+
+                me.authAdapter.login(adapterOptions);
+                return;
+            }
+
+            outError.apply(this, arguments);
+            $d.reject(response);
+        };
+
+        this.authAdapter.login(adapterOptions);
+        return $d.promise();
+    },
+
+    /**
+    * Logs user out by clearing all session information.
+    *
+    * @example
+    *  authMgr.logout();
+    * @param {Object} [options] Overrides for configuration options.
+    * @return {Promise}
+    */
+    logout: function (options) {
+        var me = this;
+        var adapterOptions = this.sessionManager.getMergedOptions(options);
+
+        var removeCookieFn = function (response) {
+            me.sessionManager.removeSession();
+        };
+
+        return this.authAdapter.logout(adapterOptions).then(removeCookieFn);
+    },
+
+    /**
+     * Returns the existing user access token if the user is already logged in. Otherwise, logs the user in, creating a new user access token, and returns the new token. (See [more background on access tokens](../../../project_access/)).
+     *
+     * @example
+     * authMgr.getToken()
+     *     .then(function (token) {
+     *         console.log('My token is ', token);
+     *     });
+     * 
+     * @param {Object} [options] Overrides for configuration options.
+     * @return {JQuery.Promise}
+     */
+    getToken: function (options) {
+        var httpOptions = this.sessionManager.getMergedOptions(options);
+
+        var session = this.sessionManager.getSession(httpOptions);
+        var $d = $.Deferred();
+        if (session.auth_token) {
+            $d.resolve(session.auth_token);
+        } else {
+            this.login(httpOptions).then($d.resolve);
+        }
+        return $d.promise();
+    },
+
+    /**
+     * Returns an array of group records, one for each group of which the current user is a member. Each group record includes the group `name`, `account`, `project`, and `groupId`.
+     *
+     * If some end users in your project are members of multiple groups, this is a useful method to call on your project's login page. When the user attempts to log in, you can use this to display the groups of which the user is member, and have the user select the correct group to log in to for this session.
+     *
+     * @example
+     * // get groups for current user
+     * var sessionObj = authMgr.getCurrentUserSessionInfo();
+     * authMgr.getUserGroups({ userId: sessionObj.userId, token: sessionObj.auth_token })
+     *     .then(function (groups) {
+     *         for (var i=0; i < groups.length; i++)
+     *             { console.log(groups[i].name); }
+     *     });
+     *
+     * // get groups for particular user
+     * authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
+     *
+     * 
+     * @param {Object} params Object with a userId and token properties.
+     * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
+     * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
+     * @param {Object} [options] Overrides for configuration options.
+     * @return {JQuery.Promise}
+     */
+    getUserGroups: function (params, options) {
+        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
+        var $d = $.Deferred();
+        var outSuccess = adapterOptions.success;
+
+        adapterOptions.success = function (memberInfo) {
+            // The member API is at the account scope, we filter by project
+            if (adapterOptions.project) {
+                memberInfo = $.grep(memberInfo, function (group) {
+                    return group.project === adapterOptions.project;
+                });
+            }
+
+            outSuccess.apply(this, [memberInfo]);
+            $d.resolve(memberInfo);
+        };
+
+        var memberAdapter = new __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__["default"]({ token: params.token, server: adapterOptions.server });
+        memberAdapter.getGroupsForUser(params, adapterOptions).fail($d.reject);
+        return $d.promise();
+    },
+
+    /**
+     * Helper method to check if you're currently logged in
+     *
+     * @example
+     * var amILoggedIn = authMgr.isLoggedIn();
+     *
+     * 
+     * @param {none} none
+     * @return {Boolean} true if you're logged in
+     */
+    isLoggedIn: function () {
+        var session = this.getCurrentUserSessionInfo();
+        return !!(session && session.userId);
+    },
+
+    /**
+     * Returns session information for the current user, including the `userId`, `account`, `project`, `groupId`, `groupName`, `isFac` (whether the end user is a facilitator of this group), and `auth_token` (user access token).
+     *
+     * *Important*: This method is synchronous. The session information is returned immediately in an object; no callbacks or promises are needed.
+     *
+     * Session information is stored in a cookie in the browser.
+     *
+     * @example
+     * var sessionObj = authMgr.getCurrentUserSessionInfo();
+     *
+     * 
+     * @param {Object} [options] Overrides for configuration options.
+     * @return {Object} session information
+     */
+    getCurrentUserSessionInfo: function (options) {
+        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
+        return this.sessionManager.getSession(adapterOptions);
+    },
+
+    /*
+     * Adds one or more groups to the current session. 
+     *
+     * This method assumes that the project and group exist and the user specified in the session is part of this project and group.
+     *
+     * Returns the new session object.
+     *
+     * @example
+     * authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
+     * authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
+     *
+     * 
+     * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
+     * @param {string} [group.isFac] Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
+     * @param {string} [group.groupId] Defaults to undefined. Needed mostly for the Members API.
+     * @return {Object} session information
+    */
+    addGroups: function (groups) {
+        var session = this.getCurrentUserSessionInfo();
+        var isArray = Array.isArray(groups);
+        groups = isArray ? groups : [groups];
+
+        $.each(groups, function (index, group) {
+            var extendedGroup = $.extend({}, { isFac: false }, group);
+            var project = extendedGroup.project;
+            var validProps = ['groupName', 'groupId', 'isFac'];
+            if (!project || !extendedGroup.groupName) {
+                throw new Error('No project or groupName specified.');
+            }
+            // filter object
+            extendedGroup = Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["pick"])(extendedGroup, validProps);
+            session.groups[project] = extendedGroup;
+        });
+        this.sessionManager.saveSession(session);
+        return session;
+    }
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (AuthManager);
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var epiVersion = __webpack_require__(22);
 
 //TODO: urlutils to get host, since no window on node
 var defaults = {
@@ -2523,7 +2744,7 @@ var UrlConfigService = function (config) {
         },
 
         getAPIPath: function (api) {
-            var PROJECT_APIS = ['run', 'data', 'file', 'presence'];
+            var PROJECT_APIS = ['run', 'data', 'file', 'presence', 'project', 'multiplayer/project'];
             var apiMapping = {
                 channel: 'channel/subscribe'
             };
@@ -2553,7 +2774,7 @@ UrlConfigService.defaults = {};
 module.exports = UrlConfigService;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2565,7 +2786,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2662,500 +2883,218 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
-* ## Authorization Manager
-*
-* The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
-*
-* The Authorization Manager is most useful for [team projects](../../../glossary/#team) with an access level of [Authenticated](../../../glossary/#access). These projects are accessed by [end users](../../../glossary/#users) who are members of one or more [groups](../../../glossary/#groups).
-*
-* #### Using the Authorization Manager
-*
-* To use the Authorization Manager, instantiate it. Then, make calls to any of the methods you need:
-*
-*       var authMgr = new F.manager.AuthManager({
-*           account: 'acme-simulations',
-*           userName: 'enduser1',
-*           password: 'passw0rd'
-*       });
-*       authMgr.login().then(function () {
-*           authMgr.getCurrentUserSessionInfo();
-*       });
-*
-*
-* The `options` object passed to the `F.manager.AuthManager()` call can include:
-*
-*   * `account`: The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
-*   * `userName`: Email or username to use for logging in.
-*   * `password`: Password for specified `userName`.
-*   * `project`: The **Project ID** for the project to log this user into. Optional.
-*   * `groupId`: Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
-*
-* If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
-*/
-
-var AuthAdapter = __webpack_require__(28);
-var MemberAdapter = __webpack_require__(29);
-var GroupService = __webpack_require__(30).default;
-var SessionManager = __webpack_require__(1);
-var _pick = __webpack_require__(4).pick;
-var objectAssign = __webpack_require__(15);
-
-var atob = window.atob || __webpack_require__(45).atob;
-
-var defaults = {
-    requiresGroup: true
-};
-
-function AuthManager(options) {
-    options = $.extend(true, {}, defaults, options);
-    this.sessionManager = new SessionManager(options);
-    this.options = this.sessionManager.getMergedOptions();
-
-    this.authAdapter = new AuthAdapter(this.options);
-}
-
-var _findUserInGroup = function (members, id) {
-    for (var j = 0; j < members.length; j++) {
-        if (members[j].userId === id) {
-            return members[j];
-        }
-    }
-    return null;
-};
-
-AuthManager.prototype = $.extend(AuthManager.prototype, {
-
-    /**
-    * Logs user in.
-    *
-    * **Example**
-    *
-    *       authMgr.login({
-    *           account: 'acme-simulations',
-    *           project: 'supply-chain-game',
-    *           userName: 'enduser1',
-    *           password: 'passw0rd'
-    *       })
-    *           .then(function(statusObj) {
-    *               // if enduser1 belongs to exactly one group
-    *               // (or if the login() call is modified to include the group id)
-    *               // continue here
-    *           })
-    *           .fail(function(statusObj) {
-    *               // if enduser1 belongs to multiple groups,
-    *               // the login() call fails
-    *               // and returns all groups of which the user is a member
-    *               for (var i=0; i < statusObj.userGroups.length; i++) {
-    *                   console.log(statusObj.userGroups[i].name, statusObj.userGroups[i].groupId);
-    *               }
-    *           });
-    *
-    * **Parameters**
-    *
-    * @param {Object} options (Optional) Overrides for configuration options. If not passed in when creating an instance of the manager (`F.manager.AuthManager()`), these options should include:
-    * @param {string} options.account The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
-    * @param {string} options.userName Email or username to use for logging in.
-    * @param {string} options.password Password for specified `userName`.
-    * @param {string} options.project (Optional) The **Project ID** for the project to log this user into.
-    * @param {string} options.groupId The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
-    * @return {Promise}
-    */
-    login: function (options) {
-        var me = this;
-        var $d = $.Deferred();
-        var sessionManager = this.sessionManager;
-        var adapterOptions = sessionManager.getMergedOptions({ success: $.noop, error: $.noop }, options);
-        var outSuccess = adapterOptions.success;
-        var outError = adapterOptions.error;
-        var groupId = adapterOptions.groupId;
-
-        var decodeToken = function (token) {
-            var encoded = token.split('.')[1];
-            while (encoded.length % 4 !== 0) {
-                //eslint-disable-line
-                encoded += '=';
-            }
-            return JSON.parse(atob(encoded));
-        };
-
-        var handleGroupError = function (message, statusCode, data, type) {
-            // logout the user since it's in an invalid state with no group selected
-            me.logout().then(function () {
-                var error = $.extend(true, {}, data, { statusText: message, status: statusCode, type: type });
-                $d.reject(error);
-            });
-        };
-
-        var handleSuccess = function (response) {
-            var token = response.access_token;
-            var userInfo = decodeToken(token);
-            var oldGroups = sessionManager.getSession(adapterOptions).groups || {};
-            var userGroupOpts = $.extend(true, {}, adapterOptions, { success: $.noop });
-            var data = { auth: response, user: userInfo };
-            var project = adapterOptions.project;
-            var isTeamMember = userInfo.parent_account_id === null;
-            var requiresGroup = adapterOptions.requiresGroup && project;
-
-            var userName = (userInfo.user_name || '').split('/')[0]; //of form <user>/<team>
-            var sessionInfo = {
-                auth_token: token,
-                account: adapterOptions.account,
-                project: project,
-                userId: userInfo.user_id,
-                groups: oldGroups,
-                isTeamMember: isTeamMember,
-                userName: userName
-            };
-            // The group is not required if the user is not logging into a project
-            if (!requiresGroup) {
-                sessionManager.saveSession(sessionInfo);
-                outSuccess.apply(this, [data]);
-                $d.resolve(data);
-                return;
-            }
-
-            var handleGroupList = function (groupList) {
-                data.userGroups = groupList;
-
-                var group = null;
-                if (groupList.length === 0) {
-                    handleGroupError('The user has no groups associated in this account', 403, data, 'NO_GROUPS');
-                    return;
-                } else if (groupList.length === 1) {
-                    // Select the only group
-                    group = groupList[0];
-                } else if (groupList.length > 1) {
-                    if (groupId) {
-                        var filteredGroups = $.grep(groupList, function (resGroup) {
-                            return resGroup.groupId === groupId;
-                        });
-                        group = filteredGroups.length === 1 ? filteredGroups[0] : null;
-                    }
-                }
-
-                if (group) {
-                    // A team member does not get the group members because is calling the Group API
-                    // but it's automatically a fac user
-                    var isFac = isTeamMember ? true : _findUserInGroup(group.members, userInfo.user_id).role === 'facilitator';
-                    var groupData = {
-                        groupId: group.groupId,
-                        groupName: group.name,
-                        isFac: isFac
-                    };
-                    var sessionInfoWithGroup = objectAssign({}, sessionInfo, groupData);
-                    sessionInfo.groups[project] = groupData;
-                    me.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
-                    outSuccess.apply(this, [data]);
-                    $d.resolve(data);
-                } else {
-                    handleGroupError('This user is associated with more than one group. Please specify a group id to log into and try again', 403, data, 'MULTIPLE_GROUPS');
-                }
-            };
-
-            if (!isTeamMember) {
-                me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).then(handleGroupList, $d.reject);
-            } else {
-                var opts = objectAssign({}, userGroupOpts, { token: token });
-                var groupService = new GroupService(opts);
-                groupService.getGroups({ account: adapterOptions.account, project: project }).then(function (groups) {
-                    // Group API returns id instead of groupId
-                    groups.forEach(function (group) {
-                        group.groupId = group.id;
-                    });
-
-                    if (groups.length) {
-                        handleGroupList(groups);
-                    } else {
-                        //either it's a private project or there are no groups
-                        sessionManager.saveSession(sessionInfo);
-                        outSuccess.apply(this, [data]);
-                        $d.resolve(data);
-                        return;
-                    }
-                }, $d.reject);
-            }
-        };
-
-        adapterOptions.success = handleSuccess;
-        adapterOptions.error = function (response) {
-            if (adapterOptions.account) {
-                // Try to login as a system user
-                adapterOptions.account = null;
-                adapterOptions.error = function () {
-                    outError.apply(this, arguments);
-                    $d.reject(response);
-                };
-
-                me.authAdapter.login(adapterOptions);
-                return;
-            }
-
-            outError.apply(this, arguments);
-            $d.reject(response);
-        };
-
-        this.authAdapter.login(adapterOptions);
-        return $d.promise();
-    },
-
-    /**
-    * Logs user out by clearing all session information.
-    *
-    * **Example**
-    *
-    *       authMgr.logout();
-    *
-    * **Parameters**
-    *
-    * @param {Object} [options] Overrides for configuration options.
-    * @return {Promise}
-    */
-    logout: function (options) {
-        var me = this;
-        var adapterOptions = this.sessionManager.getMergedOptions(options);
-
-        var removeCookieFn = function (response) {
-            me.sessionManager.removeSession();
-        };
-
-        return this.authAdapter.logout(adapterOptions).then(removeCookieFn);
-    },
-
-    /**
-     * Returns the existing user access token if the user is already logged in. Otherwise, logs the user in, creating a new user access token, and returns the new token. (See [more background on access tokens](../../../project_access/)).
-     *
-     * **Example**
-     *
-     *      authMgr.getToken()
-     *          .then(function (token) {
-     *              console.log('My token is ', token);
-     *          });
-     *
-     * **Parameters**
-     * @param {Object} options (Optional) Overrides for configuration options.
-     * @return {Promise}
-     */
-    getToken: function (options) {
-        var httpOptions = this.sessionManager.getMergedOptions(options);
-
-        var session = this.sessionManager.getSession(httpOptions);
-        var $d = $.Deferred();
-        if (session.auth_token) {
-            $d.resolve(session.auth_token);
-        } else {
-            this.login(httpOptions).then($d.resolve);
-        }
-        return $d.promise();
-    },
-
-    /**
-     * Returns an array of group records, one for each group of which the current user is a member. Each group record includes the group `name`, `account`, `project`, and `groupId`.
-     *
-     * If some end users in your project are members of multiple groups, this is a useful method to call on your project's login page. When the user attempts to log in, you can use this to display the groups of which the user is member, and have the user select the correct group to log in to for this session.
-     *
-     * **Example**
-     *
-     *      // get groups for current user
-     *      var sessionObj = authMgr.getCurrentUserSessionInfo();
-     *      authMgr.getUserGroups({ userId: sessionObj.userId, token: sessionObj.auth_token })
-     *          .then(function (groups) {
-     *              for (var i=0; i < groups.length; i++)
-     *                  { console.log(groups[i].name); }
-     *          });
-     *
-     *      // get groups for particular user
-     *      authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
-     *
-     * **Parameters**
-     * @param {Object} params Object with a userId and token properties.
-     * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
-     * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
-     * @param {Object} options (Optional) Overrides for configuration options.
-     * @return {Promise}
-     */
-    getUserGroups: function (params, options) {
-        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
-        var $d = $.Deferred();
-        var outSuccess = adapterOptions.success;
-
-        adapterOptions.success = function (memberInfo) {
-            // The member API is at the account scope, we filter by project
-            if (adapterOptions.project) {
-                memberInfo = $.grep(memberInfo, function (group) {
-                    return group.project === adapterOptions.project;
-                });
-            }
-
-            outSuccess.apply(this, [memberInfo]);
-            $d.resolve(memberInfo);
-        };
-
-        var memberAdapter = new MemberAdapter({ token: params.token, server: adapterOptions.server });
-        memberAdapter.getGroupsForUser(params, adapterOptions).fail($d.reject);
-        return $d.promise();
-    },
-
-    /**
-     * Helper method to check if you're currently logged in
-     *
-     *  **Example**
-     *  
-     *      var amILoggedIn = authMgr.isLoggedIn();
-     *
-     * **Parameters**
-     * @param {none} none
-     * @return {Boolean} true if you're logged in
-     */
-    isLoggedIn: function () {
-        var session = this.getCurrentUserSessionInfo();
-        return !!(session && session.userId);
-    },
-
-    /**
-     * Returns session information for the current user, including the `userId`, `account`, `project`, `groupId`, `groupName`, `isFac` (whether the end user is a facilitator of this group), and `auth_token` (user access token).
-     *
-     * *Important*: This method is synchronous. The session information is returned immediately in an object; no callbacks or promises are needed.
-     *
-     * Session information is stored in a cookie in the browser.
-     *
-     * **Example**
-     *
-     *      var sessionObj = authMgr.getCurrentUserSessionInfo();
-     *
-     * **Parameters**
-     * @param {Object} options (Optional) Overrides for configuration options.
-     * @return {Object} session information
-     */
-    getCurrentUserSessionInfo: function (options) {
-        var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
-        return this.sessionManager.getSession(adapterOptions);
-    },
-
-    /*
-     * Adds one or more groups to the current session. 
-     *
-     * This method assumes that the project and group exist and the user specified in the session is part of this project and group.
-     *
-     * Returns the new session object.
-     *
-     * **Example**
-     *
-     *      authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
-     *      authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
-     *
-     * **Parameters**
-     * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
-     * @param {string} group.isFac (optional) Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
-     * @param {string} group.groupId (optional) Defaults to undefined. Needed mostly for the Members API.
-     * @return {Object} session information
-    */
-    addGroups: function (groups) {
-        var session = this.getCurrentUserSessionInfo();
-        var isArray = Array.isArray(groups);
-        groups = isArray ? groups : [groups];
-
-        $.each(groups, function (index, group) {
-            var extendedGroup = $.extend({}, { isFac: false }, group);
-            var project = extendedGroup.project;
-            var validProps = ['groupName', 'groupId', 'isFac'];
-            if (!project || !extendedGroup.groupName) {
-                throw new Error('No project or groupName specified.');
-            }
-            // filter object
-            extendedGroup = _pick(extendedGroup, validProps);
-            session.groups[project] = extendedGroup;
-        });
-        this.sessionManager.saveSession(session);
-        return session;
-    }
-});
-
-module.exports = AuthManager;
-
-/***/ }),
 /* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__channel_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(47);
-/**
- * ## Epicenter Channel Manager
- *
- * The Epicenter platform provides a push channel, which allows you to publish and subscribe to messages within a [project](../../../glossary/#projects), [group](../../../glossary/#groups), or [multiplayer world](../../../glossary/#world).
- *
- * <a name="background"></a>
- * ### Channel Background
- *
- * Channel notifications are only available for [team projects](../../../glossary/#team). There are two main use cases for the push channel: event notifications and chat messages.
- *
- * #### Event Notifications
- *
- * Within a [multiplayer simulation or world](../../../glossary/#world), it is often useful for your project's [model](../../../writing_your_model/) to alert the [user interface (browser)](../../../creating_your_interface/) that something new has happened.
- *
- * Usually, this "something new" is an event within the project, group, or world, such as:
- *
- * * An end user comes online (logs in) or goes offline. (This is especially interesting in a multiplayer world; only available if you have [enabled authorization](../../../updating_your_settings/#general-settings) for the channel.)
- * * An end user is assigned to a world.
- * * An end user updates a variable / makes a decision.
- * * An end user creates or updates data stored in the [Data API](../data-api-service/).
- * * An operation (method) is called. (This is especially interesting if the model is advanced, for instance, the Vensim `step` operation is called.)
- *
- * When these events occur, you often want to have the user interface for one or more end users automatically update with new information.
- *
- * #### Chat Messages
- *
- * Another reason to use the push channel is to allow players (end users) to send chat messages to other players, and to have those messages appear immediately.
- *
- * #### Getting Started
- *
- * For both the event notification and chat message use cases:
- *
- * * First, enable channel notifications for your project.
- *      * Channel notifications are only available for [team projects](../../../glossary/#team). To enable notifications for your project, [update your project settings](../../../updating_your_settings/#general-settings) to turn on the **Push Channel** setting, and optionally require authorization for the channel.
- * * Then, instantiate an Epicenter Channel Manager.
- * * Next, get the channel with the scope you want (user, world, group, data).
- * * Finally, use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
- *
- * Here's an example of those last three steps (instantiate, get channel, subscribe):
- *
- *     var cm = new F.manager.ChannelManager();
- *     var gc = cm.getGroupChannel();
- *     gc.subscribe('', function(data) { console.log(data); });
- *     gc.publish('', { message: 'a new message to the group' });
- *
- * For a more detailed example, see a [complete publish and subscribe example](../../../rest_apis/multiplayer/channel/#epijs-example).
- *
- * For details on what data is published automatically to which channels, see [Automatic Publishing of Events](../../../rest_apis/multiplayer/channel/#publish-message-auto).
- *
- * #### Creating an Epicenter Channel Manager
- *
- * The Epicenter Channel Manager is a wrapper around the (more generic) [Channel Manager](../channel-manager/), to instantiate it with Epicenter-specific defaults. If you are interested in including a notification or chat feature in your project, using an Epicenter Channel Manager is the easiest way to get started.
- *
- * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Epicenter Channel Manager. See [Including Epicenter.js](../../#include).
- *
- * The parameters for instantiating an Epicenter Channel Manager include:
- *
- * * `options` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
- * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `options.project` Epicenter project id.
- * * `options.userName` Epicenter userName used for authentication.
- * * `options.userId` Epicenter user id used for authentication. Optional; `options.userName` is preferred.
- * * `options.token` Epicenter token used for authentication. (You can retrieve this using `authManager.getToken()` from the [Authorization Manager](../auth-manager/).)
- * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
- */
+/* harmony export (immutable) */ __webpack_exports__["default"] = MemberAPIService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__service_utils__ = __webpack_require__(1);
 
+
+
+
+var API_ENDPOINT = 'member/local';
+
+/**
+ * @description
+ * ## Member API Adapter
+ *
+ * The Member API Adapter provides methods to look up information about end users for your project and how they are divided across groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
+ *
+ * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
+ *
+ * ```js
+ * const ma = new F.service.Member();
+ * ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
+ * ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
+ * ```
+ * 
+ * @param {ServiceOptions} config 
+ * @property {string} [userId] Epicenter user id.
+ * @property {string} [groupId] Epicenter group id. Note that this is the group *id*, not the group *name*.
+ */
+function MemberAPIService(config) {
+    var defaults = {
+        userId: undefined,
+        groupId: undefined,
+
+        transport: {}
+    };
+
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
+
+    var getFinalParams = function (params) {
+        if (typeof params === 'object') {
+            return $.extend(true, serviceOptions, params);
+        }
+        return serviceOptions;
+    };
+
+    var patchUserActiveField = function (params, active, options) {
+        var httpOptions = $.extend(true, serviceOptions, options, {
+            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + '/' + params.userId
+        });
+
+        return http.patch({ active: active }, httpOptions);
+    };
+
+    var publicAPI = {
+
+        /**
+        * Retrieve details about all of the group memberships for one end user. The membership details are returned in an array, with one element (group record) for each group to which the end user belongs.
+        *
+        * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
+        *
+        * @example
+        * const ma = new F.service.Member();
+        * ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
+        *     .then(function(memberships){
+        *         for (const i=0; i<memberships.length; i++) {
+        *             console.log(memberships[i].groupId);
+        *         }
+        *     });
+        *
+        * ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
+        *
+        * 
+        * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        getGroupsForUser: function (params, options) {
+            options = options || {};
+            var httpOptions = $.extend(true, serviceOptions, options);
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.userId) {
+                throw new Error('No userId specified.');
+            }
+
+            var getParms = isString ? { userId: params } : Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(objParams, ['userId']);
+            return http.get(getParms, httpOptions);
+        },
+
+        /**
+         * Add given userids to group
+         *
+         * @example
+         * const ma = new F.service.Member();
+         * ma.addUsersToGroup(['42836d4b-5b61-4fe4-80eb-3136e956ee5c', '42836d4b-5b61-4fe4-80eb-3136e956ee5c'])
+         *
+         * @param {string[] | {userId:string}[]} userlist list of users to add to group. [userId1,userId2..] or [{userid: userId},{userId: userId2}...]
+         * @param {string} [groupId] Group to add users to. Pulls current group from session if not provided
+         * @param {object} [options] Overrides for configuration options.
+         * @returns {JQuery.Promise}
+         */
+        addUsersToGroup: function (userlist, groupId, options) {
+            var httpOptions = Object(__WEBPACK_IMPORTED_MODULE_2__service_utils__["b" /* getDefaultOptions */])(serviceOptions, options, { groupId: groupId });
+            if (!httpOptions.groupId) {
+                throw new Error('addUsersToGroup: No group provided, and cannot retrieve from session');
+            }
+            if (!userlist || !Array.isArray(userlist)) {
+                throw new Error('addUsersToGroup: No userlist provided. Provide a list of userids to upload');
+            }
+
+            var params = userlist.map(function (u) {
+                return $.isPlainObject(u) ? u : { userId: u };
+            });
+            httpOptions.url = '' + urlConfig.getAPIPath(API_ENDPOINT) + httpOptions.groupId;
+            return http.post(params, httpOptions);
+        },
+
+        /**
+        * Retrieve details about one group, including an array of all its members.
+        *
+        * @example
+        * const ma = new F.service.Member();
+        * ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
+        *     .then(function(group){
+        *         for (const i=0; i<group.members.length; i++) {
+        *             console.log(group.members[i].userName);
+        *         }
+        *     });
+        *
+        * ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * 
+        * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        getGroupDetails: function (params, options) {
+            options = options || {};
+            var isString = typeof params === 'string';
+            var objParams = getFinalParams(params);
+            if (!isString && !objParams.groupId) {
+                throw new Error('No groupId specified.');
+            }
+
+            var groupId = isString ? params : objParams.groupId;
+            var httpOptions = $.extend(true, serviceOptions, options, { url: urlConfig.getAPIPath(API_ENDPOINT) + groupId });
+
+            return http.get({}, httpOptions);
+        },
+
+        /**
+        * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
+        *
+        * @example
+        * const ma = new F.service.Member();
+        * ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * 
+        * @param {object} params The end user and group information.
+        * @param {string} params.userId The id of the end user to make active.
+        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        makeUserActive: function (params, options) {
+            return patchUserActiveField(params, true, options);
+        },
+
+        /**
+        * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
+        *
+        * @example
+        * const ma = new F.service.Member();
+        * ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *   groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
+        *
+        * 
+        * @param {object} params The end user and group information.
+        * @param {string} params.userId The id of the end user to make inactive.
+        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        makeUserInactive: function (params, options) {
+            return patchUserActiveField(params, false, options);
+        }
+    };
+
+    $.extend(this, publicAPI);
+}
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(50);
 
 
 
@@ -3187,8 +3126,15 @@ var isPresenceData = function (payload) {
     return payload.data && payload.data.type === 'user' && payload.data.user;
 };
 
-var __super = __WEBPACK_IMPORTED_MODULE_0__channel_manager___default.a.prototype;
-var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default()(__WEBPACK_IMPORTED_MODULE_0__channel_manager___default.a, {
+var __super = __WEBPACK_IMPORTED_MODULE_0__channel_manager__["a" /* default */].prototype;
+var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default()(__WEBPACK_IMPORTED_MODULE_0__channel_manager__["a" /* default */], {
+    /**
+     * @constructor
+     * @param {AccountAPIServiceOptions} options
+     * @property {string} userName Epicenter userName used for authentication.
+     * @property {string} [userId] Epicenter user id used for authentication. Optional; `options.userName` is preferred.
+     * @property {boolean} [allowAllChannels] If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
+     */
     constructor: function (options) {
         this.sessionManager = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(options);
         var defaultCometOptions = this.sessionManager.getMergedOptions(options);
@@ -3224,16 +3170,15 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * This method enforces Epicenter-specific channel naming: all channels requested must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`.
      *
-     * **Example**
-     *
+     * @example
      *      var cm = new F.manager.EpicenterChannelManager();
      *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
      *
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * **Parameters**
-     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * 
+     * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
     getChannel: function (options) {
@@ -3267,8 +3212,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * There are no notifications from Epicenter on this channel; all messages are user-originated.
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var gc = cm.getGroupChannel();
      *     gc.subscribe('broadcasts', callback);
@@ -3276,10 +3220,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      * **Return Value**
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String} groupName (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getGroupChannel: function (groupName) {
@@ -3307,8 +3248,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * This is typically used together with the [World Manager](../world-manager).
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
@@ -3323,14 +3263,22 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *         });
      *      });
      *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
+     * The list of available topics to subscribe to are:
+         | Topic | Description |
+        | ------------- | ------------- |
+        | ALL | All events |
+        | RUN | All Run events |
+        | RUN_VARIABLES | Variable sets only |
+        | RUN_OPERATIONS | Operation executions only |
+        | RUN_RESET | New run attached to the world |
+        | PRESENCE | All Presence events |
+        | PRESENCE_ONLINE | Online notifications only |
+        | PRESENCE_OFFLINE | Offline notifications only |
+        | ROLES | All role events |
+        | ROLES_ASSIGN | Role assignments only |
+        | ROLES_UNASSIGN | Role unassignments |
      * @param  {String|Object} world The world object or id.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getWorldChannel: function (world, groupName) {
@@ -3359,8 +3307,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * This is typically used together with the [World Manager](../world-manager). Note that this channel only gets notifications for worlds currently in memory. (See more background on [persistence](../../../run_persistence).)
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
@@ -3379,12 +3326,9 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      * **Return Value**
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
      * @param  {String|{ id: string }} world World object or id.
-     * @param  {String|Object} user (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {String|Object} [user] User object or id. If not provided, picks up user id from current session if end user is logged in.
+     * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getUserChannel: function (world, user, groupName) {
@@ -3410,8 +3354,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * Note that the presence channel is tracking all end users in a group. In particular, if the project additionally splits each group into [worlds](../world-manager/), this channel continues to show notifications for all end users in the group (not restricted by worlds).
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var pc = cm.getPresenceChannel();
      *     pc.subscribe('', function (data) {
@@ -3429,10 +3372,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      * **Return Value**
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String} groupName (Optional) Group the end user is in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group the end user is in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getPresenceChannel: function (groupName) {
@@ -3460,8 +3400,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *
      * There are automatic notifications from Epicenter on this channel when data is created, updated, or deleted in this collection. See more on [automatic messages to the data channel](../../../rest_apis/multiplayer/channel/#data-messages).
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var dc = cm.getDataChannel('survey-responses');
      *     dc.subscribe('', function(data, meta) {
@@ -3476,9 +3415,6 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      * **Return Value**
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
      * @param  {String} collection Name of collection whose automatic notifications you want to receive.
      * @return {Channel} Channel instance
      */
@@ -3521,15 +3457,30 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 /* harmony default export */ __webpack_exports__["default"] = (EpicenterChannelManager);
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusService;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
+
+
+
+var API_ENDPOINT = 'multiplayer/consensus';
+
+function normalizeActions(actions) {
+    return [].concat(actions).map(function (action) {
+        if (action.arguments) {
+            return { execute: action };
+        }
+        return action;
+    });
+}
+
 /**
- * 
+ * @description
  * ## Consensus Service
  *
  * The Consensus Service allows you to build common features in multiplayer games like:
@@ -3558,29 +3509,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         });
 
     This allows you to use `F.service.ConsensusGroup` to list out/ delete all consensus points within that group for reporting.
- * 
+
+ *  @param {ServiceOptions} config
+ *  @property {string} worldId Id of world this consensus service is a part of
+ *  @property {string} name Name Unique identifier for this consensus point (e.g. step-1, step-2 etc.)
+ *  @property {string} [consensusGroup] This allows you to use `F.service.ConsensusGroup` to list out/ delete all consensus points within the given 'consensusGroup' for reporting.; if not passed in, a group name of 'default' is assumed.
  */
-
-
-
-var API_ENDPOINT = 'multiplayer/consensus';
-
-function normalizeActions(actions) {
-    return [].concat(actions).map(function (action) {
-        if (action.arguments) {
-            return { execute: action };
-        }
-        return action;
-    });
-}
-/* harmony default export */ __webpack_exports__["default"] = (function (config) {
+function ConsensusService(config) {
     var defaults = {
-        token: undefined,
-        account: undefined,
-        project: undefined,
         worldId: '',
         consensusGroup: '',
-        name: ''
+        name: '',
+        token: undefined
     };
     var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config);
     var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["d" /* getURLConfig */])(serviceOptions);
@@ -3605,16 +3545,15 @@ function normalizeActions(actions) {
         /**
          * Creates a new consensus point
          * 
-         * **Example**
-         *
-         *      cs.create({
-                    roles: ['P1', 'P2'],
-                    defaultActions: {
-                        P1: [{ name: 'submitPlayer1', arguments: [1] }],
-                        P2: [{ name: 'submitPlayer2', arguments: [2] }],
-                    },
-                    ttlSeconds: 10
-                }
+         * @example
+         *  cs.create({
+                roles: ['P1', 'P2'],
+                defaultActions: {
+                    P1: [{ name: 'submitPlayer1', arguments: [1] }],
+                    P2: [{ name: 'submitPlayer2', arguments: [2] }],
+                },
+                ttlSeconds: 10
+            }
          * 
          * @param  {object} params  creation options
          * @param  {string[]|{string: number}} params.roles
@@ -3690,6 +3629,9 @@ function normalizeActions(actions) {
         /**
          * Marks current consensus point as complete. Default actions, if specified, will be sent for defaulting roles.
          *
+         * @example
+         * cs.forceClose();
+         * 
          * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
@@ -3701,9 +3643,8 @@ function normalizeActions(actions) {
          * Submits actions for your turn and marks you as having `submitted`. If `executeActionsImmediately` was set to `true` while creating the consensus point, the actions will be immediately sent to the model.
          * Note that you can still call operations from the RunService directly, but will bypass the consensus requirements.
          *
-         * ** Example **
-         *
-                bp.submitActions([{ name: 'step', arguments: [] }]);
+         * @example
+         * cs.submitActions([{ name: 'step', arguments: [] }]);
          *  
          * @param {object[]|{name: string, arguments: any[]}} actions Actions to send
          * @param {object} [options] Overrides for service options
@@ -3736,13 +3677,15 @@ function normalizeActions(actions) {
          */
         getCurrentConfig: function () {
             return serviceOptions;
-        }
+        },
+
+        getChannel: function (options) {}
     };
-    return publicAPI;
-});
+    $.extend(this, publicAPI);
+}
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3764,82 +3707,20 @@ var STRATEGY = {
 };
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_service_run_api_service__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_managers_key_names__);
-/**
-* ## Run Manager
-*
-* The Run Manager gives you access to runs for your project. This allows you to read and update variables, call operations, etc. Additionally, the Run Manager gives you control over run creation depending on run states. Specifically, you can select [run creation strategies (rules)](../strategies/) for which runs end users of your project work with when they log in to your project.
-*
-* There are many ways to create new runs, including the Epicenter.js [Run Service](../run-api-service/) and the RESFTful [Run API](../../../rest_apis/aggregate_run_api). However, for some projects it makes more sense to pick up where the user left off, using an existing run. And in some projects, whether to create a new run or use an existing one is conditional, for example based on characteristics of the existing run or your own knowledge about the model. The Run Manager provides this level of control: your call to `getRun()`, rather than always returning a new run, returns a run based on the strategy you've specified.
-*
-*
-* ### Using the Run Manager to create and access runs
-*
-* To use the Run Manager, instantiate it by passing in:
-*
-*   * `run`: (required) Run object. Must contain:
-*       * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
-*       * `project`: Epicenter project id.
-*       * `model`: The name of your primary model file. (See more on [Writing your Model](../../../writing_your_model/).)
-*       * `scope`: (optional) Scope object for the run, for example `scope.group` with value of the name of the group.
-*       * `server`: (optional) An object with one field, `host`. The value of `host` is the string `api.forio.com`, the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
-*       * `files`: (optional) If and only if you are using a Vensim model and you have additional data to pass in to your model, you can optionally pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (See more on [Using External Data in Vensim](../../../model_code/vensim/vensim_example_xls/).)
-*
-*   * `strategy`: (optional) Run creation strategy for when to create a new run and when to reuse an end user's existing run. This is *optional*; by default, the Run Manager selects `reuse-per-session`, or `reuse-last-initialized` if you also pass in an initial operation. See [below](#using-the-run-manager-to-access-and-register-strategies) for more information on strategies.
-*
-*   * `strategyOptions`: (optional) Additional options passed directly to the [run creation strategy](../strategies/).
-*
-*   * `sessionKey`: (optional) Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtime.
-*
-*
-* After instantiating a Run Manager, make a call to `getRun()` whenever you need to access a run for this end user. The `RunManager.run` contains the instantiated [Run Service](../run-api-service/). The Run Service allows you to access variables, call operations, etc.
-*
-* **Example**
-*
-*       const rm = new F.manager.RunManager({
-*           run: {
-*               account: 'acme-simulations',
-*               project: 'supply-chain-game',
-*               model: 'supply-chain-model.jl',
-*               server: { host: 'api.forio.com' }
-*           },
-*           strategy: 'reuse-never',
-*           sessionKey: 'epicenter-session'
-*       });
-*       rm.getRun()
-*           .then(function(run) {
-*               // the return value of getRun() is a run object
-*               const thisRunId = run.id;
-*               // the RunManager.run also contains the instantiated Run Service,
-*               // so any Run Service method is valid here
-*               rm.run.do('runModel');
-*       })
-*
-*
-* ### Using the Run Manager to access and register strategies
-*
-* The `strategy` for a Run Manager describes when to create a new run and when to reuse an end user's existing run. The Run Manager is responsible for passing a strategy everything it might need to determine the 'correct' run, that is, how to find the best existing run and how to decide when to create a new run.
-*
-* There are several common strategies provided as part of Epicenter.js, which you can list by accessing `F.manager.RunManager.strategies`. You can also create your own strategies, and register them to use with Run Managers. See [Run Manager Strategies](../strategies/) for details.
-* 
-*/
-
-
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3887,6 +3768,16 @@ function setRunInSession(sessionKey, run, sessionManager) {
 }
 
 var RunManager = function () {
+    /**
+     * @param {AccountAPIServiceOptions} options 
+     * @property {object} run
+     * @property {string} run.model The name of your primary model file. (See more on [Writing your Model](../../../writing_your_model/).)
+     * @property {string} [run.scope] Scope object for the run, for example `scope.group` with value of the name of the group.
+     * @property {string[]} [run.files] If and only if you are using a Vensim model and you have additional data to pass in to your model, you can optionally pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (See more on [Using External Data in Vensim](../../../model_code/vensim/vensim_example_xls/).)
+     * @property {string|function} [strategy] Run creation strategy for when to create a new run and when to reuse an end user's existing run. This is *optional*; by default, the Run Manager selects `reuse-per-session`, or `reuse-last-initialized` if you also pass in an initial operation. See [below](#using-the-run-manager-to-access-and-register-strategies) for more information on strategies.
+     * @property {object} [strategyOptions] Additional options passed directly to the [run creation strategy](../strategies/).
+     * @property {string} [sessionKey] Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtime.
+     */
     function RunManager(options) {
         _classCallCheck(this, RunManager);
 
@@ -3902,10 +3793,10 @@ var RunManager = function () {
 
         this.options = $.extend(true, {}, defaults, options);
 
-        if (this.options.run instanceof __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default.a) {
+        if (this.options.run instanceof __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__["default"]) {
             this.run = this.options.run;
         } else if (!Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["isEmpty"])(this.options.run)) {
-            this.run = new __WEBPACK_IMPORTED_MODULE_2_service_run_api_service___default.a(this.options.run);
+            this.run = new __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__["default"](this.options.run);
         } else {
             throw new Error('No run options passed to RunManager');
         }
@@ -3923,22 +3814,21 @@ var RunManager = function () {
      * `getRun()` returns the run currently referenced in the browser cookie, and if there is none, creates a new run. 
      * See [Run Manager Strategies](../strategies/) for more on strategies.
      *
-     *  **Example**
+     * @example
+     * rm.getRun().then(function (run) {
+     *     // use the run object
+     *     const thisRunId = run.id;
      *
-     *      rm.getRun().then(function (run) {
-     *          // use the run object
-     *          const thisRunId = run.id;
+     *     // use the Run Service object
+     *     rm.run.do('runModel');
+     * });
      *
-     *          // use the Run Service object
-     *          rm.run.do('runModel');
-     *      });
-     *
-     *      rm.getRun(['sample_int']).then(function (run) {
-     *         // an object whose fields are the name : value pairs of the variables passed to getRun()
-     *         console.log(run.variables);
-     *         // the value of sample_int
-     *         console.log(run.variables.sample_int); 
-     *      });
+     * rm.getRun(['sample_int']).then(function (run) {
+     *    // an object whose fields are the name : value pairs of the variables passed to getRun()
+     *    console.log(run.variables);
+     *    // the value of sample_int
+     *    console.log(run.variables.sample_int); 
+     * });
      *
      * @param {string[]} [variables] The run object is populated with the provided model variables, if provided. Note: `getRun()` does not throw an error if you try to get a variable which doesn't exist. Instead, the variables list is empty, and any errors are logged to the console.
      * @param {Object} [options] Configuration options; passed on to [RunService#create](../run-api-service/#create) if the strategy does create a new run.
@@ -3963,7 +3853,7 @@ var RunManager = function () {
             var authSession = this.sessionManager.getSession();
             if (this.strategy.requiresAuth && Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["isEmpty"])(authSession)) {
                 console.error('No user-session available', this.options.strategy, 'requires authentication.');
-                return $.Deferred().reject({ type: 'UN_AUTHORIZED', message: 'No user-session available' }).promise();
+                return $.Deferred().reject({ type: 'UNAUTHORIZED', message: 'No user-session available' }).promise();
             }
             return this.strategy.getRun(this.run, authSession, runSession, options).then(function (run) {
                 if (run && run.id) {
@@ -3989,17 +3879,15 @@ var RunManager = function () {
         /**
          * Returns the run object for a 'reset' run. The definition of a reset is defined by the strategy, but typically means forcing the creation of a new run. For example, `reset()` for the default strategies `reuse-per-session` and `reuse-last-initialized` both create new runs.
          *
-         *  **Example**
+         * @example
+         * rm.reset().then(function (run) {
+         *     // use the (new) run object
+         *     const thisRunId = run.id;
          *
-         *      rm.reset().then(function (run) {
-         *          // use the (new) run object
-         *          const thisRunId = run.id;
+         *     // use the Run Service object
+         *     rm.run.do('runModel');
+         * });
          *
-         *          // use the Run Service object
-         *          rm.run.do('runModel');
-         *      });
-         *
-         * **Parameters**
          * @param {Object} [options] Configuration options; passed on to [RunService#create](../run-api-service/#create).
          * @return {Promise}
          */
@@ -4011,7 +3899,7 @@ var RunManager = function () {
             var authSession = this.sessionManager.getSession();
             if (this.strategy.requiresAuth && Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["isEmpty"])(authSession)) {
                 console.error('No user-session available', this.options.strategy, 'requires authentication.');
-                return $.Deferred().reject({ type: 'UN_AUTHORIZED', message: 'No user-session available' }).promise();
+                return $.Deferred().reject({ type: 'UNAUTHORIZED', message: 'No user-session available' }).promise();
             }
             return this.strategy.reset(this.run, authSession, options).then(function (run) {
                 if (run && run.id) {
@@ -4031,13 +3919,13 @@ RunManager.strategies = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___de
 /* harmony default export */ __webpack_exports__["default"] = (RunManager);
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = {"version":"v2"}
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _require = __webpack_require__(4),
@@ -4155,42 +4043,41 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = VariablesService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(8);
+
+
+
 /**
- *
+ * @description
  * ## Variables API Service
  *
  * Used in conjunction with the [Run API Service](../run-api-service/) to read, write, and search for specific model variables.
- *
- *     var rm = new F.manager.RunManager({
- *           run: {
- *               account: 'acme-simulations',
- *               project: 'supply-chain-game',
- *               model: 'supply-chain-model.jl'
- *           }
- *      });
- *     rm.getRun()
- *       .then(function() {
- *          var vs = rm.run.variables();
- *          vs.save({sample_int: 4});
- *        });
- *
+ * ```js
+ * var rm = new F.manager.RunManager({
+ *       run: {
+ *           account: 'acme-simulations',
+ *           project: 'supply-chain-game',
+ *           model: 'supply-chain-model.jl'
+ *       }
+ *  });
+ * rm.getRun()
+ *   .then(function() {
+ *      var vs = rm.run.variables();
+ *      vs.save({sample_int: 4});
+ *    });
+ * ```
+ * @param {object} config
+ * @property {RunService} runService The run service instance to which the variable filters apply.
  */
-
-
-
-var TransportFactory = __webpack_require__(0).default;
-var rutil = __webpack_require__(8);
-
-module.exports = function (config) {
+function VariablesService(config) {
     var defaults = {
-        /**
-         * The runs object to which the variable filters apply. Defaults to null.
-         * @type {runService}
-         */
         runService: null
     };
     var serviceOptions = $.extend({}, defaults, config);
@@ -4212,25 +4099,24 @@ module.exports = function (config) {
             Authorization: 'Bearer ' + serviceOptions.token
         };
     }
-    var http = new TransportFactory(httpOptions);
-    http.splitGet = rutil.splitGetFactory(httpOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](httpOptions);
+    http.splitGet = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["splitGetFactory"])(httpOptions);
 
     var publicAPI = {
 
         /**
          * Get values for a variable.
          *
-         * **Example**
+         * @example
+         * vs.load('sample_int')
+         *     .then(function(val){
+         *         // val contains the value of sample_int
+         *     });
          *
-         *      vs.load('sample_int')
-         *          .then(function(val){
-         *              // val contains the value of sample_int
-         *          });
-         *
-         * **Parameters**
-         * @param {String} variable Name of variable to load.
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * 
+         * @param {string} variable Name of variable to load.
+         * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         load: function (variable, outputModifier, options) {
@@ -4244,19 +4130,17 @@ module.exports = function (config) {
         /**
          * Returns particular variables, based on conditions specified in the `query` object.
          *
-         * **Example**
+         * @example
+         * vs.query(['price', 'sales'])
+         *     .then(function(val) {
+         *         // val is an object with the values of the requested variables: val.price, val.sales
+         *     });
          *
-         *      vs.query(['price', 'sales'])
-         *          .then(function(val) {
-         *              // val is an object with the values of the requested variables: val.price, val.sales
-         *          });
-         *
-         *      vs.query({ include:['price', 'sales'] });
-         *
-         * **Parameters**
+         * vs.query({ include:['price', 'sales'] });
+         * 
          * @param {Object|Array} query The names of the variables requested.
-         * @param {Object} outputModifier (Optional) Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         query: function (query, outputModifier, options) {
@@ -4274,15 +4158,13 @@ module.exports = function (config) {
         /**
          * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](../run-api-service/) for calling methods from the model.)
          *
-         * **Example**
-         *
-         *      vs.save('price', 4);
-         *      vs.save({ price: 4, quantity: 5, products: [2,3,4] });
-         *
-         * **Parameters**
+         * @example
+         * vs.save('price', 4);
+         * vs.save({ price: 4, quantity: 5, products: [2,3,4] });
+         * 
          * @param {Object|String} variable An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
-         * @param {Object} val (Optional) If passing a string for `variable`, use this argument for the value to save.
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {object} [val] If passing a string for `variable`, use this argument for the value to save.
+         * @param {object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         save: function (variable, val, options) {
@@ -4302,8 +4184,8 @@ module.exports = function (config) {
         // *
         //  * Save values to the api. Merges arrays, but otherwise same as save
         //  * @param {Object|String} variable Object with attributes, or string key
-        //  * @param {Object} val Optional if prev parameter was a string, set value here
-        //  * @param {Object} options Overrides for configuration options
+        //  * @param {object} val Optional if prev parameter was a string, set value here
+        //  * @param {object} options Overrides for configuration options
         //  *
         //  * @example
         //  *     vs.merge({ price: 4, quantity: 5, products: [2,3,4] })
@@ -4323,81 +4205,53 @@ module.exports = function (config) {
         // }
     };
     $.extend(this, publicAPI);
-};
+}
 
 /***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__service_utils__ = __webpack_require__(1);
+
+
+
+var apiEndpoint = 'model/introspect';
+
 /**
- *
+ * @description
+ * 
  * ## Introspection API Service
  *
  * The Introspection API Service allows you to view a list of the variables and operations in a model. Typically used in conjunction with the [Run API Service](../run-api-service/).
  *
  * The Introspection API Service is not available for Forio SimLang.
  *
- *       var intro = new F.service.Introspect({
- *               account: 'acme-simulations',
- *               project: 'supply-chain-game'
- *       });
- *       intro.byModel('supply-chain.py').then(function(data){ ... });
- *       intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6').then(function(data){ ... });
- *
+ * ```js
+ * var intro = new F.service.Introspect({
+ *         account: 'acme-simulations',
+ *         project: 'supply-chain-game'
+ * });
+ * intro.byModel('supply-chain.py').then(function(data){ ... });
+ * intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6').then(function(data){ ... });
+ * ```
+ * 
+ * @param {AccountAPIServiceOptions} config 
  */
-
-
-
-var ConfigService = __webpack_require__(2).default;
-var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(1);
-
-var apiEndpoint = 'model/introspect';
-
-module.exports = function (config) {
+/* harmony default export */ __webpack_exports__["default"] = (function (config) {
     var defaults = {
-        /**
-         * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
-         */
         token: undefined,
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
-         * @type {String}
-         */
         account: undefined,
-
-        /**
-         * The project id. Defaults to empty string. If left undefined, taken from the URL.
-         * @type {String}
-         */
         project: undefined
-
     };
 
-    var sessionManager = new SessionManager();
-    var serviceOptions = sessionManager.getMergedOptions(defaults, config);
-
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-    if (serviceOptions.account) {
-        urlConfig.accountPath = serviceOptions.account;
-    }
-    if (serviceOptions.project) {
-        urlConfig.projectPath = serviceOptions.project;
-    }
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1__service_utils__["b" /* getDefaultOptions */])(defaults, config, {
+        apiEndpoint: apiEndpoint
     });
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    var http = new TransportFactory(transportOptions);
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_1__service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
 
     var publicAPI = {
         /**
@@ -4405,18 +4259,17 @@ module.exports = function (config) {
          *
          * Note: This does not work for any model which requires additional parameters, such as `files`.
          *
-         * **Example**
+         * @example
+         * intro.byModel('abc.vmf')
+         *     .then(function(data) {
+         *         // data contains an object with available functions (used with operations API) and available variables (used with variables API)
+         *         console.log(data.functions);
+         *         console.log(data.variables);
+         *     });
          *
-         *      intro.byModel('abc.vmf')
-         *          .then(function(data) {
-         *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)
-         *              console.log(data.functions);
-         *              console.log(data.variables);
-         *          });
-         *
-         * **Parameters**
-         * @param  {String} modelFile Name of the model file to introspect.
-         * @param  {Object} options (Optional) Overrides for configuration options.
+         * 
+         * @param  {string} modelFile Name of the model file to introspect.
+         * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
          */
         byModel: function (modelFile, options) {
@@ -4437,18 +4290,17 @@ module.exports = function (config) {
          *
          * Note: This does not work for any model which requires additional parameters such as `files`.
          *
-         * **Example**
+         * @example
+         * intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6')
+         *     .then(function(data) {
+         *         // data contains an object with available functions (used with operations API) and available variables (used with variables API)
+         *         console.log(data.functions);
+         *         console.log(data.variables);
+         *     });
          *
-         *      intro.byRunID('2b4d8f71-5c34-435a-8c16-9de674ab72e6')
-         *          .then(function(data) {
-         *              // data contains an object with available functions (used with operations API) and available variables (used with variables API)
-         *              console.log(data.functions);
-         *              console.log(data.variables);
-         *          });
-         *
-         * **Parameters**
-         * @param  {String} runID Id of the run to introspect.
-         * @param  {Object} options (Optional) Overrides for configuration options.
+         * 
+         * @param  {string} runID Id of the run to introspect.
+         * @param  {object} [options] Overrides for configuration options.
          * @return {Promise} 
          */
         byRunID: function (runID, options) {
@@ -4461,10 +4313,10 @@ module.exports = function (config) {
         }
     };
     $.extend(this, publicAPI);
-};
+});
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4476,12 +4328,12 @@ module.exports = function (config) {
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var store = (isNode) ? require('./session-store') : require('./cookie-store');
 
-var store = __webpack_require__(26);
+var store = __webpack_require__(27);
 
 module.exports = store;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4547,8 +4399,8 @@ module.exports = function (config) {
         /**
          * Save cookie value
          * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-         * @param  {Object} value (Optional)
-         * @param {Object} options Overrides for service options
+         * @param  {any} [value] value to store
+         * @param {object} [options] Overrides for service options
          *
          * @return {*} The saved value
          *
@@ -4570,8 +4422,8 @@ module.exports = function (config) {
 
         /**
          * Load cookie value
-         * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
-         * @return {*} The value stored
+         * @param  {string| object} key   If given a key save values under it, if given an object directly, save to top-level api
+         * @return {any} The value stored
          *
          * @example
          *     cs.get('person');
@@ -4586,9 +4438,9 @@ module.exports = function (config) {
 
         /**
          * Removes key from collection
-         * @param { string} key key to remove
-         * @param {object} options (optional) overrides for service options
-         * @return { string} key The key removed
+         * @param {string} key key to remove
+         * @param {object} [options] overrides for service options
+         * @return {string} key The key removed
          *
          * @example
          *     cs.remove('person');
@@ -4606,7 +4458,7 @@ module.exports = function (config) {
 
         /**
          * Removes collection being referenced
-         * @return { array} keys All the keys removed
+         * @return {string[]} keys All the keys removed
          */
         destroy: function () {
             var cookie = this.serviceOptions.cookie;
@@ -4623,46 +4475,18 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(18);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * ## Data API Service
- *
- * The Data API Service allows you to create, access, and manipulate data related to any of your projects. Data are organized in collections. Each collection contains a document; each element of this top-level document is a JSON object. (See additional information on the underlying [Data API](../../../rest_apis/data_api/).)
- *
- * All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, there are three required parameters when you instantiate the Data Service:
- *
- * * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `project`: Epicenter project id.
- * * `root`: The the name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
- *
- *       var ds = new F.service.Data({
- *          account: 'acme-simulations',
- *          project: 'supply-chain-game',
- *          root: 'survey-responses',
- *          server: { host: 'api.forio.com' }
- *       });
- *       ds.saveAs('user1',
- *          { 'question1': 2, 'question2': 10,
- *          'question3': false, 'question4': 'sometimes' } );
- *       ds.saveAs('user2',
- *          { 'question1': 3, 'question2': 8,
- *          'question3': true, 'question4': 'always' } );
- *       ds.query('',{ 'question2': { '$gt': 9} });
- *
- * Note that in addition to the `account`, `project`, and `root`, the Data Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
- */
 
 
 
@@ -4675,35 +4499,21 @@ var API_ENDPOINT = 'data';
 var getAPIURL = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["c" /* getURL */].bind(null, API_ENDPOINT);
 
 var DataService = function () {
+    /**
+     * @param {AccountAPIServiceOptions} config 
+     * @property {string} root The name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
+     * @property {string} [scope] Determines who has read-write access to this data collection. See above for available scopes.
+     */
     function DataService(config) {
         _classCallCheck(this, DataService);
 
         var defaults = {
-            /**
-             * Name of collection. Required. Defaults to `/`, that is, the root level of your project at `forio.com/app/your-account-id/your-project-id/`, but must be set to a collection name.
-             * @type {String}
-             */
-            root: '/',
-            /**
-             * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
-             * @type {String}
-             */
-            account: undefined,
-            /**
-             * The project id. Defaults to empty string. If left undefined, taken from the URL.
-             * @type {String}
-             */
-            project: undefined,
-            /**
-             * For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-             * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-             * @type {String}
-             */
-            token: undefined,
-
             scope: __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a" /* SCOPES */].CUSTOM,
+            root: '/',
 
-            //Options to pass on to the underlying transport layer
+            account: undefined,
+            project: undefined,
+            token: undefined,
             transport: {}
         };
         var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpont: API_ENDPOINT });
@@ -4717,31 +4527,27 @@ var DataService = function () {
      *
      * Searching using comparison or logical operators (as opposed to exact matches) requires MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional details.
      *
-     * **Examples**
+     * @example
+     * // request all data associated with document 'user1'
+     * ds.query('user1');
      *
-     *      // request all data associated with document 'user1'
-     *      ds.query('user1');
+     * // exact matching:
+     * // request all documents in collection where 'question2' is 9
+     * ds.query('', { 'question2': 9});
      *
-     *      // exact matching:
-     *      // request all documents in collection where 'question2' is 9
-     *      ds.query('', { 'question2': 9});
+     * // comparison operators:
+     * // request all documents in collection where 'question2' is greater than 9
+     * ds.query('', { 'question2': { '$gt': 9} });
      *
-     *      // comparison operators:
-     *      // request all documents in collection
-     *      // where 'question2' is greater than 9
-     *      ds.query('', { 'question2': { '$gt': 9} });
+     * // logical operators:
+     * // request all documents in collection where 'question2' is less than 10, and 'question3' is false
+     * ds.query('', { '$and': [ { 'question2': { '$lt':10} }, { 'question3': false }] });
      *
-     *      // logical operators:
-     *      // request all documents in collection
-     *      // where 'question2' is less than 10, and 'question3' is false
-     *      ds.query('', { '$and': [ { 'question2': { '$lt':10} }, { 'question3': false }] });
+     * // regular expresssions: use any Perl-compatible regular expressions
+     * // request all documents in collection where 'question5' contains the string '.*day'
+     * ds.query('', { 'question5': { '$regex': '.*day' } });
      *
-     *      // regular expresssions: use any Perl-compatible regular expressions
-     *      // request all documents in collection
-     *      // where 'question5' contains the string '.*day'
-     *      ds.query('', { 'question5': { '$regex': '.*day' } });
-     *
-     * **Parameters**
+     * 
      * @param {String} key The name of the document to search. Pass the empty string ('') to search the entire collection.
      * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
      * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
@@ -4758,6 +4564,7 @@ var DataService = function () {
             mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
             return this.http.get(params, mergedOptions);
         }
+
         /**
          * Save data in an anonymous document within the collection.
          *
@@ -4765,18 +4572,15 @@ var DataService = function () {
          *
          * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `save` method is making a `POST` request.)
          *
-         * **Example**
+         * @example
+         * // Create a new document, with one element, at the default root level
+         * ds.save('question1', 'yes');
          *
-         *      // Create a new document, with one element, at the default root level
-         *      ds.save('question1', 'yes');
+         * // Create a new document, with two elements, at the default root level
+         * ds.save({ question1:'yes', question2: 32 });
          *
-         *      // Create a new document, with two elements, at the default root level
-         *      ds.save({ question1:'yes', question2: 32 });
-         *
-         *      // Create a new document, with two elements, at `/students/`
-         *      ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
-         *
-         * **Parameters**
+         * // Create a new document, with two elements, at `/students/`
+         * ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
          *
          * @param {String|Object} key If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
          * @param {Object} [value] The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
@@ -4801,7 +4605,8 @@ var DataService = function () {
         }
 
         /**
-         * Append value to key
+         * Append value to an array data structure within a document
+         * 
          * @param  {string} key     path to array item
          * @param  {any} val     value to append to array
          * @param  {object} [options] Overrides for configuration options
@@ -4825,33 +4630,30 @@ var DataService = function () {
          *
          * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `saveAs` method is making a `PUT` request.)
          *
-         * **Example**
+         * @example
+         * // Create (or replace) the `user1` document at the default root level.
+         * // Note that this replaces any existing content in the `user1` document.
+         * ds.saveAs('user1',
+         *     { 'question1': 2, 'question2': 10,
+         *      'question3': false, 'question4': 'sometimes' } );
          *
-         *      // Create (or replace) the `user1` document at the default root level.
-         *      // Note that this replaces any existing content in the `user1` document.
-         *      ds.saveAs('user1',
-         *          { 'question1': 2, 'question2': 10,
-         *           'question3': false, 'question4': 'sometimes' } );
+         * // Create (or replace) the `student1` document at the `students` root,
+         * // that is, the data at `/students/student1/`.
+         * // Note that this replaces any existing content in the `/students/student1/` document.
+         * // However, this will keep existing content in other paths of this collection.
+         * // For example, the data at `/students/student2/` is unchanged by this call.
+         * ds.saveAs('student1',
+         *     { firstName: 'john', lastName: 'smith' },
+         *     { root: 'students' });
          *
-         *      // Create (or replace) the `student1` document at the `students` root,
-         *      // that is, the data at `/students/student1/`.
-         *      // Note that this replaces any existing content in the `/students/student1/` document.
-         *      // However, this will keep existing content in other paths of this collection.
-         *      // For example, the data at `/students/student2/` is unchanged by this call.
-         *      ds.saveAs('student1',
-         *          { firstName: 'john', lastName: 'smith' },
-         *          { root: 'students' });
-         *
-         *      // Create (or replace) the `mgmt100/groupB` document at the `myclasses` root,
-         *      // that is, the data at `/myclasses/mgmt100/groupB/`.
-         *      // Note that this replaces any existing content in the `/myclasses/mgmt100/groupB/` document.
-         *      // However, this will keep existing content in other paths of this collection.
-         *      // For example, the data at `/myclasses/mgmt100/groupA/` is unchanged by this call.
-         *      ds.saveAs('mgmt100/groupB',
-         *          { scenarioYear: '2015' },
-         *          { root: 'myclasses' });
-         *
-         * **Parameters**
+         * // Create (or replace) the `mgmt100/groupB` document at the `myclasses` root,
+         * // that is, the data at `/myclasses/mgmt100/groupB/`.
+         * // Note that this replaces any existing content in the `/myclasses/mgmt100/groupB/` document.
+         * // However, this will keep existing content in other paths of this collection.
+         * // For example, the data at `/myclasses/mgmt100/groupA/` is unchanged by this call.
+         * ds.saveAs('mgmt100/groupB',
+         *     { scenarioYear: '2015' },
+         *     { root: 'myclasses' });
          *
          * @param {String} key Id of the document.
          * @param {Object} [value] The data to save, in key:value pairs.
@@ -4869,12 +4671,10 @@ var DataService = function () {
         /**
          * Get data for a specific document or field.
          *
-         * **Example**
-         *
-         *      ds.load('user1');
-         *      ds.load('user1/question3');
-         *
-         * **Parameters**
+         * @example
+         * ds.load('user1');
+         * ds.load('user1/question3');
+         * 
          * @param  {String|Object} key The id of the data to return. Can be the id of a document, or a path to data within that document.
          * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
@@ -4891,12 +4691,8 @@ var DataService = function () {
         /**
          * Removes data from collection. Only documents (top-level elements in each collection) can be deleted.
          *
-         * **Example**
-         *
-         *     ds.remove('user1');
-         *
-         *
-         * **Parameters**
+         * @example
+         * ds.remove('user1');
          *
          * @param {String|Array} keys The id of the document to remove from this collection, or an array of such ids.
          * @param {Object} [options] Overrides for configuration options.
@@ -4923,7 +4719,8 @@ var DataService = function () {
          *
          * @param {object} session Group/User info to add to scope. Gets it from current session otherwise
          * @param {Object} [options] Overrides for configuration options.
-         * @return {string} Scoped collection name
+         * @param {string} options.scope Scope to set to.
+         * @return {string} Scoped collection name.
          */
 
     }, {
@@ -4939,7 +4736,7 @@ var DataService = function () {
          * Gets a channel to listen to notifications on for this collection
          * 
          * @param {Object} [options] Overrides for configuration options.
-         * @return {Channnel} channel to subscribe on
+         * @return {Channnel} channel instance to subscribe with.
          */
 
     }, {
@@ -4969,12 +4766,20 @@ DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a"
 /* harmony default export */ __webpack_exports__["default"] = (DataService);
 
 /***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = AuthService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+
+
+
 /**
- *
+ * @description
+ * 
  * ## Authentication API Service
  *
  * The Authentication API Service provides a method for logging in, which creates and returns a user access token.
@@ -4986,46 +4791,22 @@ DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a"
  *      var auth = new F.service.Auth();
  *      auth.login({ userName: 'jsmith@acmesimulations.com',
  *                  password: 'passw0rd' });
+ *  @param {AccountAPIServiceOptions} config 
+ *  @property {string} userName Email or username to use for logging in.
  */
-
-
-
-var ConfigService = __webpack_require__(2).default;
-var TransportFactory = __webpack_require__(0).default;
-
-module.exports = function (config) {
+function AuthService(config) {
     var defaults = {
-        /**
-         * Email or username to use for logging in. Defaults to empty string.
-         * @type {String}
-         */
         userName: '',
-
-        /**
-         * Password for specified `userName`. Defaults to empty string.
-         * @type {String}
-         */
-        password: '',
-
-        /**
-         * The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects). Required if the `userName` is for an [end user](../../../glossary/#users). Defaults to empty string.
-         * @type {String}
-         */
         account: '',
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
         transport: {}
     };
     var serviceOptions = $.extend({}, defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](serviceOptions).get('server');
 
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath('authentication')
     });
-    var http = new TransportFactory(transportOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](transportOptions);
 
     var publicAPI = {
 
@@ -5034,18 +4815,17 @@ module.exports = function (config) {
          *
          * If no `userName` or `password` were provided in the initial configuration options, they are required in the `options` here. If no `account` was provided in the initial configuration options and the `userName` is for an [end user](../../../glossary/#users), the `account` is required as well.
          *
-         * **Example**
+         * @example
+         * auth.login({
+         *     userName: 'jsmith',
+         *     password: 'passw0rd',
+         *     account: 'acme-simulations' })
+         * .then(function (token) {
+         *     console.log("user access token is: ", token.access_token);
+         * });
          *
-         *      auth.login({
-         *          userName: 'jsmith',
-         *          password: 'passw0rd',
-         *          account: 'acme-simulations' })
-         *      .then(function (token) {
-         *          console.log("user access token is: ", token.access_token);
-         *      });
-         *
-         * **Parameters**
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * 
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         login: function (options) {
@@ -5077,12 +4857,11 @@ module.exports = function (config) {
         //
         // Epicenter logout is not implemented yet, so for now this is a dummy promise that gets automatically resolved.
         //
-        // **Example**
-        //
+        // @example
         //      auth.logout();
         //
-        // **Parameters**
-        // @param {Object} `options` (Optional) Overrides for configuration options.
+        // 
+        // @param {Object} [options] Overrides for configuration options.
         //
         logout: function (options) {
             var dtd = $.Deferred();
@@ -5092,198 +4871,7 @@ module.exports = function (config) {
     };
 
     $.extend(this, publicAPI);
-};
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- *
- * ## Member API Adapter
- *
- * The Member API Adapter provides methods to look up information about end users for your project and how they are divided across groups. It is based on query capabilities of the underlying RESTful [Member API](../../../rest_apis/user_management/member/).
- *
- * This is only needed for Authenticated projects, that is, team projects with [end users and groups](../../../groups_and_end_users/). For example, if some of your end users are facilitators, or if your end users should be treated differently based on which group they are in, use the Member API to find that information.
- *
- *      var ma = new F.service.Member({ token: 'user-or-project-access-token' });
- *      ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
- *      ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
- */
-
-
-
-var ConfigService = __webpack_require__(2).default;
-var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(1);
-var _pick = __webpack_require__(4).pick;
-var apiEndpoint = 'member/local';
-
-module.exports = function (config) {
-    var defaults = {
-        /**
-         * Epicenter user id. Defaults to a blank string.
-         * @type {string}
-         */
-        userId: undefined,
-
-        /**
-         * Epicenter group id. Defaults to a blank string. Note that this is the group *id*, not the group *name*.
-         * @type {string}
-         */
-        groupId: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
-         */
-        transport: {}
-    };
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
-    });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-    var http = new TransportFactory(transportOptions, serviceOptions);
-
-    var getFinalParams = function (params) {
-        if (typeof params === 'object') {
-            return $.extend(true, serviceOptions, params);
-        }
-        return serviceOptions;
-    };
-
-    var patchUserActiveField = function (params, active, options) {
-        var httpOptions = $.extend(true, serviceOptions, options, {
-            url: urlConfig.getAPIPath(apiEndpoint) + params.groupId + '/' + params.userId
-        });
-
-        return http.patch({ active: active }, httpOptions);
-    };
-
-    var publicAPI = {
-
-        /**
-        * Retrieve details about all of the group memberships for one end user. The membership details are returned in an array, with one element (group record) for each group to which the end user belongs.
-        *
-        * In the membership array, each group record includes the group id, project id, account (team) id, and an array of members. However, only the user whose userId is included in the call is listed in the members array (regardless of whether there are other members in this group).
-        *
-        * **Example**
-        *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.getGroupsForUser('42836d4b-5b61-4fe4-80eb-3136e956ee5c')
-        *           .then(function(memberships){
-        *               for (var i=0; i<memberships.length; i++) {
-        *                   console.log(memberships[i].groupId);
-        *               }
-        *           });
-        *
-        *       ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
-        *
-        * **Parameters**
-        * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
-        * @param {object} options (Optional) Overrides for configuration options.
-        */
-
-        getGroupsForUser: function (params, options) {
-            options = options || {};
-            var httpOptions = $.extend(true, serviceOptions, options);
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.userId) {
-                throw new Error('No userId specified.');
-            }
-
-            var getParms = isString ? { userId: params } : _pick(objParams, 'userId');
-            return http.get(getParms, httpOptions);
-        },
-
-        /**
-        * Retrieve details about one group, including an array of all its members.
-        *
-        * **Example**
-        *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.getGroupDetails('80257a25-aa10-4959-968b-fd053901f72f')
-        *           .then(function(group){
-        *               for (var i=0; i<group.members.length; i++) {
-        *                   console.log(group.members[i].userName);
-        *               }
-        *           });
-        *
-        *       ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-        getGroupDetails: function (params, options) {
-            options = options || {};
-            var isString = typeof params === 'string';
-            var objParams = getFinalParams(params);
-            if (!isString && !objParams.groupId) {
-                throw new Error('No groupId specified.');
-            }
-
-            var groupId = isString ? params : objParams.groupId;
-            var httpOptions = $.extend(true, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupId });
-
-            return http.get({}, httpOptions);
-        },
-
-        /**
-        * Set a particular end user as `active`. Active end users can be assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
-        *
-        * **Example**
-        *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make active.
-        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-        makeUserActive: function (params, options) {
-            return patchUserActiveField(params, true, options);
-        },
-
-        /**
-        * Set a particular end user as `inactive`. Inactive end users are not assigned to [worlds](../world-manager/) in multiplayer games during automatic assignment.
-        *
-        * **Example**
-        *
-        *       var ma = new F.service.Member({ token: 'user-or-project-access-token' });
-        *       ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
-        *
-        * **Parameters**
-        * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make inactive.
-        * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-        makeUserInactive: function (params, options) {
-            return patchUserActiveField(params, false, options);
-        }
-    };
-
-    $.extend(this, publicAPI);
-};
+}
 
 /***/ }),
 /* 30 */
@@ -5291,9 +4879,9 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
 /**
  *
@@ -5345,7 +4933,7 @@ var GroupService = function (config) {
         * @patam {string} params.account Epicenter's Team ID
         * @patam {string} params.project Epicenter's Project ID
         * @patam {string} params.name Epicenter's Group Name
-        * @param {Object} options (Optional) Overrides for configuration options.
+        * @param {Object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         getGroups: function (params, options) {
@@ -5368,80 +4956,13 @@ var GroupService = function (config) {
 
 /***/ }),
 /* 31 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/**
- * ## Channel Service
- *
- * The Epicenter platform provides a push channel, which allows you to publish and subscribe to messages within a [project](../../../glossary/#projects), [group](../../../glossary/#groups), or [multiplayer world](../../../glossary/#world). There are two main use cases for the channel: event notifications and chat messages.
- *
- * If you are developing with Epicenter.js, you should use the [Epicenter Channel Manager](../epicenter-channel-manager/) directly. The Epicenter Channel Manager documentation also has more [background](../epicenter-channel-manager/#background) information on channels and their use.
- *
- * The Channel Service is a building block for this functionality. It creates a publish-subscribe object, allowing you to publish messages, subscribe to messages, or unsubscribe from messages for a given 'topic' on a `$.cometd` transport instance.
- *
- * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Channel Service. See [Including Epicenter.js](../../#include).
- *
- * To use the Channel Service, instantiate it, then make calls to any of the methods you need.
- *
- *        var cs = new F.service.Channel();
- *        cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
- *
- * If you are working through the [Epicenter Channel Manager](../epicenter-channel-manager/), when you ask to "get" a particular channel, you are really asking for an instance of the Channel Service with a topic already set, for example to the appropriate group or world:
- *
- *      var cm = new F.manager.ChannelManager();
- *      var gc = cm.getGroupChannel();
- *      // because we used an Epicenter Channel Manager to get the group channel,
- *      // subscribe() and publish() here default to the base topic for the group
- *      gc.subscribe('', function(data) { console.log(data); });
- *      gc.publish('', { message: 'a new message to the group' });
- *
- * The parameters for instantiating a Channel Service include:
- *
- * * `options` The options object to configure the Channel Service.
- * * `options.base` The base topic. This is added as a prefix to all further topics you publish or subscribe to while working with this Channel Service.
- * * `options.topicResolver` A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. Returns a String. By default, it just echoes the topic.
- * * `options.transport` The instance of `$.cometd` to hook onto. See http://docs.cometd.org/reference/javascript.html for additional background on cometd.
- */
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-
-
-var Channel = function (options) {
-    var defaults = {
-
-        /**
-         * The base topic. This is added as a prefix to all further topics you publish or subscribe to while working with this Channel Service.
-         * @type {string}
-         */
-        base: '',
-
-        /**
-         * A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. By default, it just echoes the topic.
-         *
-         * **Parameters**
-         *
-         * * `topic` Topic to parse.
-         *
-         * **Return Value**
-         *
-         * * *String*: This function should return a string topic.
-         *
-         * @type {function}
-         * @param {String} topic topic to resolve
-         * @return {String}
-         */
-        topicResolver: function (topic) {
-            return topic;
-        },
-
-        /**
-         * The instance of `$.cometd` to hook onto.
-         * @type {object}
-         */
-        transport: null
-    };
-    this.channelOptions = $.extend(true, {}, defaults, options);
-};
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var makeName = function (channelName, topic) {
     //Replace trailing/double slashes
@@ -5449,168 +4970,186 @@ var makeName = function (channelName, topic) {
     return newName;
 };
 
-Channel.prototype = $.extend(Channel.prototype, {
+var ChannelService = function () {
+    /**
+     * @param {object} options 
+     * @property {string} [base] The base topic. This is added as a prefix to all further topics you publish or subscribe to while working with this Channel Service.
+     * @property {function(topic): string} [topicResolver]  A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. By default, it just echoes the topic.
+     * @property {object} [transport] The instance of `$.cometd` to hook onto. See http://docs.cometd.org/reference/javascript.html for additional background on cometd.
+     */
+    function ChannelService(options) {
+        _classCallCheck(this, ChannelService);
 
-    // future functionality:
-    //      // Set the context for the callback
-    //      cs.subscribe('run', function () { this.innerHTML = 'Triggered'}, document.body);
-    //
-    //      // Control the order of operations by setting the `priority`
-    //      cs.subscribe('run', cb, this, {priority: 9});
-    //
-    //      // Only execute the callback, `cb`, if the value of the `price` variable is 50
-    //      cs.subscribe('run/variables/price', cb, this, {priority: 30, value: 50});
-    //
-    //      // Only execute the callback, `cb`, if the value of the `price` variable is greater than 50
-    //      subscribe('run/variables/price', cb, this, {priority: 30, value: '>50'});
-    //
-    //      // Only execute the callback, `cb`, if the value of the `price` variable is even
-    //      subscribe('run/variables/price', cb, this, {priority: 30, value: function (val) {return val % 2 === 0}});
-
+        var defaults = {
+            base: '',
+            topicResolver: function (topic) {
+                return topic;
+            },
+            transport: null
+        };
+        this.channelOptions = $.extend(true, {}, defaults, options);
+    }
 
     /**
      * Subscribe to changes on a topic.
      *
      * The topic should include the full path of the account id (**Team ID** for team projects), project id, and group name. (In most cases, it is simpler to use the [Epicenter Channel Manager](../epicenter-channel-manager/) instead, in which case this is configured for you.)
      *
-     *  **Examples**
+     *  @example
+     *  var cb = function(val) { console.log(val.data); };
      *
-     *      var cb = function(val) { console.log(val.data); };
+     *  // Subscribe to changes on a top-level 'run' topic
+     *  cs.subscribe('/acme-simulations/supply-chain-game/fall-seminar/run', cb);
      *
-     *      // Subscribe to changes on a top-level 'run' topic
-     *      cs.subscribe('/acme-simulations/supply-chain-game/fall-seminar/run', cb);
+     *  // Subscribe to changes on children of the 'run' topic. Note this will also be triggered for changes to run.x.y.z.
+     *  cs.subscribe('/acme-simulations/supply-chain-game/fall-seminar/run/*', cb);
      *
-     *      // Subscribe to changes on children of the 'run' topic. Note this will also be triggered for changes to run.x.y.z.
-     *      cs.subscribe('/acme-simulations/supply-chain-game/fall-seminar/run/*', cb);
+     *  // Subscribe to changes on both the top-level 'run' topic and its children
+     *  cs.subscribe(['/acme-simulations/supply-chain-game/fall-seminar/run',
+     *      '/acme-simulations/supply-chain-game/fall-seminar/run/*'], cb);
      *
-     *      // Subscribe to changes on both the top-level 'run' topic and its children
-     *      cs.subscribe(['/acme-simulations/supply-chain-game/fall-seminar/run',
-     *          '/acme-simulations/supply-chain-game/fall-seminar/run/*'], cb);
+     *  // Subscribe to changes on a particular variable
+     *  subscribe('/acme-simulations/supply-chain-game/fall-seminar/run/variables/price', cb);
      *
-     *      // Subscribe to changes on a particular variable
-     *      subscribe('/acme-simulations/supply-chain-game/fall-seminar/run/variables/price', cb);
-     *
-     *
-     * **Return Value**
-     *
-     * * *String* Returns a token you can later use to unsubscribe.
-     *
-     * **Parameters**
      * @param  {String|Array}   topic    List of topics to listen for changes on.
      * @param  {Function} callback Callback function to execute. Callback is called with signature `(evt, payload, metadata)`.
      * @param  {Object}   context  Context in which the `callback` is executed.
-     * @param  {Object}   options  (Optional) Overrides for configuration options.
-     * @param  {Number}   options.priority  Used to control order of operations. Defaults to 0. Can be any +ve or -ve number.
-     * @param  {String|Number|Function}   options.value The `callback` is only triggered if this condition matches. See examples for details.
-     * @return {string} Subscription ID
+     * @param  {Object}   [options] Overrides for configuration options.
+     * @param  {number}   [options.priority]  Used to control order of operations. Defaults to 0. Can be any +ve or -ve number.
+     * @param  {String|number|Function}   [options.value] The `callback` is only triggered if this condition matches. See examples for details.
+     * @return {object} Returns a subscription object you can later use to unsubscribe.
      */
-    subscribe: function (topic, callback, context, options) {
 
-        var topics = [].concat(topic);
-        var me = this;
-        var subscriptionIds = [];
-        var opts = me.channelOptions;
 
-        opts.transport.batch(function () {
-            $.each(topics, function (index, topic) {
-                topic = makeName(opts.base, opts.topicResolver(topic));
-                subscriptionIds.push(opts.transport.subscribe(topic, callback));
+    _createClass(ChannelService, [{
+        key: 'subscribe',
+        value: function subscribe(topic, callback, context, options) {
+
+            var topics = [].concat(topic);
+            var me = this;
+            var subscriptionIds = [];
+            var opts = me.channelOptions;
+
+            opts.transport.batch(function () {
+                $.each(topics, function (index, topic) {
+                    topic = makeName(opts.base, opts.topicResolver(topic));
+                    subscriptionIds.push(opts.transport.subscribe(topic, callback));
+                });
             });
-        });
-        return subscriptionIds[1] ? subscriptionIds : subscriptionIds[0];
-    },
+            return subscriptionIds[1] ? subscriptionIds : subscriptionIds[0];
+        }
 
-    /**
-     * Publish data to a topic.
-     *
-     * **Examples**
-     *
-     *      // Send data to all subscribers of the 'run' topic
-     *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run', { completed: false });
-     *
-     *      // Send data to all subscribers of the 'run/variables' topic
-     *      cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
-     *
-     * **Parameters**
-     *
-     * @param  {String} topic Topic to publish to.
-     * @param  {*} data  Data to publish to topic.
-     * @return {Array | Object} Responses to published data
-     *
-     */
-    publish: function (topic, data) {
-        var topics = [].concat(topic);
-        var me = this;
-        var returnObjs = [];
-        var opts = me.channelOptions;
+        /**
+         * Publish data to a topic.
+         *
+         * @example
+         * // Send data to all subscribers of the 'run' topic
+         * cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run', { completed: false });
+         *
+         * // Send data to all subscribers of the 'run/variables' topic
+         * cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
+         * 
+         * @param  {String} topic Topic to publish to.
+         * @param  {*} data  Data to publish to topic.
+         * @return {Array | Object} Responses to published data
+         */
 
-        opts.transport.batch(function () {
-            $.each(topics, function (index, topic) {
-                topic = makeName(opts.base, opts.topicResolver(topic));
-                if (topic.charAt(topic.length - 1) === '*') {
-                    topic = topic.replace(/\*+$/, '');
-                    console.warn('You can cannot publish to channels with wildcards. Publishing to ', topic, 'instead');
-                }
-                returnObjs.push(opts.transport.publish(topic, data));
+    }, {
+        key: 'publish',
+        value: function publish(topic, data) {
+            var topics = [].concat(topic);
+            var me = this;
+            var returnObjs = [];
+            var opts = me.channelOptions;
+
+            opts.transport.batch(function () {
+                $.each(topics, function (index, topic) {
+                    topic = makeName(opts.base, opts.topicResolver(topic));
+                    if (topic.charAt(topic.length - 1) === '*') {
+                        topic = topic.replace(/\*+$/, '');
+                        console.warn('You can cannot publish to channels with wildcards. Publishing to ', topic, 'instead');
+                    }
+                    returnObjs.push(opts.transport.publish(topic, data));
+                });
             });
-        });
-        return returnObjs[1] ? returnObjs : returnObjs[0];
-    },
+            return returnObjs[1] ? returnObjs : returnObjs[0];
+        }
 
-    /**
-     * Unsubscribe from changes to a topic.
-     *
-     * **Example**
-     *
-     *      cs.unsubscribe('sampleToken');
-     *
-     * **Parameters**
-     * @param  {String} token The token for topic is returned when you initially subscribe. Pass it here to unsubscribe from that topic.
-     * @return {Object} reference to current instance
-     */
-    unsubscribe: function (token) {
-        this.channelOptions.transport.unsubscribe(token);
-        return this;
-    },
+        /**
+         * Unsubscribe from changes to a topic.
+         *
+         * @example
+         * cs.unsubscribe('sampleToken');
+         *
+         * 
+         * @param  {String} token The token for topic is returned when you initially subscribe. Pass it here to unsubscribe from that topic.
+         * @return {Object} reference to current instance
+         */
 
-    /**
-     * Start listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/on/.
-     *
-     * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
-     *
-     * **Parameters**
-     *
-     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
-     */
-    on: function (event) {
-        $(this).on.apply($(this), arguments);
-    },
+    }, {
+        key: 'unsubscribe',
+        value: function unsubscribe(token) {
+            this.channelOptions.transport.unsubscribe(token);
+            return this;
+        }
 
-    /**
-     * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
-     *
-     * **Parameters**
-     *
-     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
-     */
-    off: function (event) {
-        $(this).off.apply($(this), arguments);
-    },
+        /**
+         * Start listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/on/.
+         *
+         * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
+         * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
+         */
 
-    /**
-     * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
-     *
-     * **Parameters**
-     *
-     * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
-     */
-    trigger: function (event) {
-        $(this).trigger.apply($(this), arguments);
-    }
+    }, {
+        key: 'on',
+        value: function on(event) {
+            $(this).on.apply($(this), arguments);
+        }
 
-});
+        /**
+         * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
+         * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
+         */
 
-module.exports = Channel;
+    }, {
+        key: 'off',
+        value: function off(event) {
+            $(this).off.apply($(this), arguments);
+        }
+
+        /**
+         * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
+         * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
+         */
+
+    }, {
+        key: 'trigger',
+        value: function trigger(event) {
+            $(this).trigger.apply($(this), arguments);
+        }
+    }]);
+
+    return ChannelService;
+}();
+
+// future functionality:
+//      // Set the context for the callback
+//      cs.subscribe('run', function () { this.innerHTML = 'Triggered'}, document.body);
+//
+//      // Control the order of operations by setting the `priority`
+//      cs.subscribe('run', cb, this, {priority: 9});
+//
+//      // Only execute the callback, `cb`, if the value of the `price` variable is 50
+//      cs.subscribe('run/variables/price', cb, this, {priority: 30, value: 50});
+//
+//      // Only execute the callback, `cb`, if the value of the `price` variable is greater than 50
+//      subscribe('run/variables/price', cb, this, {priority: 30, value: '>50'});
+//
+//      // Only execute the callback, `cb`, if the value of the `price` variable is even
+//      subscribe('run/variables/price', cb, this, {priority: 30, value(val) {return val % 2 === 0}});
+
+
+/* harmony default export */ __webpack_exports__["default"] = (ChannelService);
 
 /***/ }),
 /* 32 */
@@ -5618,10 +5157,17 @@ module.exports = Channel;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+
+
+
+var apiEndpoint = 'presence';
+
 /**
  *
+ * @description
+ * 
  * ## Presence API Service
  *
  * The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use [channels](../epicenter-channel-manager/), the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. 
@@ -5632,36 +5178,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
  *      pr.markOnline('example-userId');
  *      pr.markOffline('example-userId');
  *      pr.getStatus();
+ * 
+ * @param {AccountAPIServiceOptions} config 
+ * @property {string} [groupName] Epicenter group name. Note that this is the group *name*, not the group *id*. If left blank, taken from the session manager.
  */
-
-
-
-var apiEndpoint = 'presence';
-
 /* harmony default export */ __webpack_exports__["default"] = (function (config) {
     var defaults = {
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to undefined. If left undefined, taken from the URL or session manager.
-         * @type {String}
-         */
-        account: undefined,
-
-        /**
-         * The project id. Defaults to undefined. If left undefined, taken from the URL or session manager.
-         * @type {String}
-         */
-        project: undefined,
-
-        /**
-         * Epicenter group name. Defaults to undefined. Note that this is the group *name*, not the group *id*. If left blank, taken from the session manager.
-         * @type {string}
-         */
         groupName: undefined,
 
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
-         */
+        account: undefined,
+        project: undefined,
+
         transport: {}
     };
     var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, {
@@ -5682,8 +5209,7 @@ var apiEndpoint = 'presence';
          * Marks an end user as online.
          *
          *
-         * **Example**
-         *
+         * @example
          *     var pr = new F.service.Presence();
          *     pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74')
          *          .then(function(presenceObj) {
@@ -5691,15 +5217,9 @@ var apiEndpoint = 'presence';
          *                    ' now online, as of ', presenceObj.lastModified);
          *          });
          *
-         * **Return Value**
-         *
-         * Promise with presence information for user marked online.
-         *
-         * **Parameters**
-         *
          * @param  {string} [userId] optional If not provided, taken from session cookie.
-         * @param  {Object} options Additional options to change the presence service defaults.
-         * @return {Promise} promise
+         * @param  {Object} [options] Additional options to change the presence service defaults.
+         * @return {Promise} Promise with presence information for user marked online.
          */
         markOnline: function (userId, options) {
             options = options || {};
@@ -5718,20 +5238,13 @@ var apiEndpoint = 'presence';
          * Marks an end user as offline.
          *
          *
-         * **Example**
-         *
-         *     var pr = new F.service.Presence();
-         *     pr.markOffline('0000015a68d806bc09cd0a7d207f44ba5f74');
-         *
-         * **Return Value**
-         *
-         * Promise to remove presence record for end user.
-         *
-         * **Parameters**
+         * @example
+         * var pr = new F.service.Presence();
+         * pr.markOffline('0000015a68d806bc09cd0a7d207f44ba5f74');
          *
          * @param  {string} [userId] If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults.
-         * @return {Promise} promise
+         * @return {Promise} Promise to remove presence record for end user.
          */
         markOffline: function (userId, options) {
             options = options || {};
@@ -5750,25 +5263,18 @@ var apiEndpoint = 'presence';
          * Returns a list of all end users in this group that are currently online.
          *
          *
-         * **Example**
-         *
-         *     var pr = new F.service.Presence();
-         *     pr.getStatus('groupName').then(function(onlineUsers) {
-         *          for (var i=0; i < onlineUsers.length; i++) {
-         *               console.log('user ', onlineUsers[i].userId, 
-         *                    ' is online as of ', onlineUsers[i].lastModified);
-         *          }
-         *     });
-         *
-         * **Return Value**
-         *
-         * Promise with response of online users
-         *
-         * **Parameters**
+         * @example
+         * var pr = new F.service.Presence();
+         * pr.getStatus('groupName').then(function(onlineUsers) {
+         *      for (var i=0; i < onlineUsers.length; i++) {
+         *           console.log('user ', onlineUsers[i].userId, 
+         *                ' is online as of ', onlineUsers[i].lastModified);
+         *      }
+         * });
          *
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {object} [options] Additional options to change the presence service defaults.
-         * @return {Promise}
+         * @return {Promise} Promise with status of online users
          */
         getStatus: function (groupName, options) {
             options = options || {};
@@ -5784,18 +5290,17 @@ var apiEndpoint = 'presence';
         /**
          * Appends a boolean 'isOnline' field to provided list of users
          *
-         * **Example**
-         *
-         *     var pr = new F.service.Presence();
-         *     pr.getStatusForUsers([{ userId: 'a', userId: 'b'}]).then(function(onlineUsers) {
-         *          console.log(onlineUsers[a].isOnline);
-         *     });
+         * @example
+         * var pr = new F.service.Presence();
+         * pr.getStatusForUsers([{ userId: 'a', userId: 'b'}]).then(function(onlineUsers) {
+         *      console.log(onlineUsers[a].isOnline);
+         * });
          *
          * @param {{userId: string}[]} userList Users to get status for
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {object} [options] Additional options to change the presence service defaults.
          * 
-         * @return {Promise}
+         * @return {Promise} Promise with status of online users
          */
         getStatusForUsers: function (userList, groupName, options) {
             if (!userList || !Array.isArray(userList)) {
@@ -5815,25 +5320,18 @@ var apiEndpoint = 'presence';
         /**
          * End users are automatically marked online and offline in a "presence" channel that is specific to each group. Gets this channel (an instance of the [Channel Service](../channel-service/)) for the given group. (Note that this Channel Service instance is also available from the [Epicenter Channel Manager getPresenceChannel()](../epicenter-channel-manager/#getPresenceChannel).)
          *
-         *
-         * **Example**
-         *
-         *     var pr = new F.service.Presence();
-         *     var cm = pr.getChannel('group1');
-         *     cm.publish('', 'a message to presence channel');
-         *
-         * **Return Value**
+         * @example
+         * var pr = new F.service.Presence();
+         * var cm = pr.getChannel('group1');
+         * cm.publish('', 'a message to presence channel');
          *
          * Channel instance for Presence channel
-         *
-         * **Parameters**
-         *
          * @param  {string} [groupName] If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
-            var ChannelManager = __webpack_require__(17).default;
+            var ChannelManager = __webpack_require__(18).default;
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);
@@ -5851,11 +5349,21 @@ var apiEndpoint = 'presence';
 
 /***/ }),
 /* 33 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = StateService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
+
+
+
+var apiEndpoint = 'model/state';
 
 /**
+ * @description
  * ## State API Adapter
  *
  * The State API Adapter allows you to view the history of a run, and to replay or clone runs. 
@@ -5869,35 +5377,17 @@ var apiEndpoint = 'presence';
  *      var sa = new F.service.State();
  *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f'});
  *
- * The constructor takes an optional `options` parameter in which you can specify the `account` and `project` if they are not already available in the current context.
- *
+ * @param {object} config
  */
-
-var ConfigService = __webpack_require__(2).default;
-var TransportFactory = __webpack_require__(0).default;
-var _pick = __webpack_require__(4).pick;
-var SessionManager = __webpack_require__(1);
-var apiEndpoint = 'model/state';
-
-module.exports = function (config) {
-
+function StateService(config) {
     var defaults = {};
 
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, {
+        apiEndpoint: apiEndpoint
     });
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
 
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-
-    var http = new TransportFactory(transportOptions);
     var parseRunIdOrError = function (params) {
         if ($.isPlainObject(params) && params.runId) {
             return params.runId;
@@ -5911,16 +5401,15 @@ module.exports = function (config) {
         /**
         * View the history of a run.
         * 
-        *  **Example**
+        * @example
+        * var sa = new F.service.State();
+        * sa.load('0000015a06bb58613b28b57365677ec89ec5').then(function(history) {
+        *       console.log('history = ', history);
+        * });
         *
-        *      var sa = new F.service.State();
-        *      sa.load('0000015a06bb58613b28b57365677ec89ec5').then(function(history) {
-        *            console.log('history = ', history);
-        *      });
-        *
-        *  **Parameters**
+        *  
         * @param {string} runId The id of the run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         load: function (runId, options) {
@@ -5931,17 +5420,16 @@ module.exports = function (config) {
         /**
         * Replay a run. After this call, the run, with its original run id, is now available [in memory](../../../run_persistence/#runs-in-memory). (It continues to be persisted into the Epicenter database at regular intervals.)
         *
-        *  **Example**
+        * @example
+        * var sa = new F.service.State();
+        * sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
         *
-        *      var sa = new F.service.State();
-        *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
-        *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to bring back to memory.
-        * @param {string} params.stopBefore (Optional) The run is advanced only up to the first occurrence of this method.
-        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {string} [params.stopBefore] The run is advanced only up to the first occurrence of this method.
+        * @param {string[]} [params.exclude] Array of methods to exclude when advancing the run.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         replay: function (params, options) {
@@ -5949,7 +5437,7 @@ module.exports = function (config) {
 
             var replayOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + runId });
 
-            params = $.extend(true, { action: 'replay' }, _pick(params, ['stopBefore', 'exclude']));
+            params = $.extend(true, { action: 'replay' }, Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(params, ['stopBefore', 'exclude']));
 
             return http.post(params, replayOptions);
         },
@@ -5965,17 +5453,15 @@ module.exports = function (config) {
         *
         * The original run remains only [in the database](../../../run_persistence/#runs-in-db).
         *
-        *  **Example**
-        *
-        *      var sa = new F.service.State();
-        *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
-        *
-        *  **Parameters**
+        * @example
+        * var sa = new F.service.State();
+        * sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
+        *  
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to clone from memory.
-        * @param {string} params.stopBefore (Optional) The newly cloned run is advanced only up to the first occurrence of this method.
-        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the newly cloned run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {string} [params.stopBefore] The newly cloned run is advanced only up to the first occurrence of this method.
+        * @param {string[]} [params.exclude] Array of methods to exclude when advancing the newly cloned run.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         clone: function (params, options) {
@@ -5983,14 +5469,14 @@ module.exports = function (config) {
 
             var replayOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + runId });
 
-            params = $.extend(true, { action: 'clone' }, _pick(params, ['stopBefore', 'exclude']));
+            params = $.extend(true, { action: 'clone' }, Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(params, ['stopBefore', 'exclude']));
 
             return http.post(params, replayOptions);
         }
     };
 
     $.extend(this, publicAPI);
-};
+}
 
 /***/ }),
 /* 34 */
@@ -5998,7 +5484,168 @@ module.exports = function (config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(2);
+/* harmony export (immutable) */ __webpack_exports__["default"] = UserAPIAdapter;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(6);
+
+
+
+
+/**
+ * @description
+ * 
+ * ## User API Adapter
+ *
+ * The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
+ *
+ * Example:
+ *```js
+ * var ua = new F.service.User({
+ *     account: 'acme-simulations',
+ *     token: 'user-or-project-access-token'
+ * });
+ * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+ * ua.get({ userName: 'jsmith' });
+ * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+ *             '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+ * ```
+ * 
+ * @param {AccountAPIServiceOptions} config 
+ */
+function UserAPIAdapter(config) {
+    var API_ENDPOINT = 'user';
+
+    var defaults = {
+        account: undefined,
+        token: undefined,
+        transport: {}
+    };
+
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+    var publicAPI = {
+
+        /**
+        * Retrieve details about particular end users in your team, based on user name or user id.
+        *
+        * @example
+        * var ua = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * ua.get({ userName: 'jsmith' });
+        * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+        *
+        * 
+        * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
+        * @param {object} [options] Overrides for configuration options.
+        * @return {Promise}
+        */
+        get: function (filter, options) {
+            filter = filter || {};
+
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            function toIdFilters(id) {
+                if (!id) return '';
+
+                var qs = Array.isArray(id) ? id : [id];
+                return 'id=' + qs.join('&id=');
+            }
+
+            var query = filter.userName ? { q: filter.userName } : {}; // API only supports filtering by username
+            var params = ['account=' + httpOptions.account, toIdFilters(filter.id), Object(__WEBPACK_IMPORTED_MODULE_2_util_query_util__["toQueryFormat"])(query)].join('&');
+
+            // special case for queries with large number of ids
+            // make it as a post with GET semantics
+            var threshold = 30;
+            if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
+                httpOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
+                return http.post({ id: filter.id }, httpOptions);
+            } else {
+                return http.get(params, httpOptions);
+            }
+        },
+
+        /**
+        * Retrieve details about a single end user in your team, based on user id.
+        *
+        * @example
+        * var ua = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+        *
+        * 
+        * @param {string} userId The user id for the end user in your team.
+        * @param {object} [options] Overrides for configuration options.
+        * @return {Promise}
+        */
+        getById: function (userId, options) {
+            return publicAPI.get({ id: userId }, options);
+        },
+
+        /**
+        * Upload list of users to current account
+        *
+        * @example
+        * var us = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * us.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
+        *       
+        * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        createUsers: function (userList, options) {
+            if (!userList || !Array.isArray(userList)) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: userList
+                }).promise();
+            }
+
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var requiredFields = ['userName', 'password', 'firstName', 'lastName'];
+
+            var sortedUsers = userList.reduce(function (accum, user) {
+                var missingRequiredFields = requiredFields.filter(function (field) {
+                    return user[field] === undefined;
+                });
+                var account = user.account || httpOptions.account;
+                if (!account) missingRequiredFields.push(account);
+                if (missingRequiredFields.length) {
+                    accum.invalid.push({ user: user, missingFields: missingRequiredFields });
+                }
+                if (!user.account) {
+                    user.account = httpOptions.account;
+                }
+                accum.valid.push(user);
+                return accum;
+            }, { valid: [], invalid: [] });
+
+            if (sortedUsers.invalid.length) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: sortedUsers.invalid
+                }).promise();
+            }
+            return http.post(sortedUsers.valid, httpOptions);
+        }
+    };
+
+    $.extend(this, publicAPI);
+}
+
+/***/ }),
+/* 35 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -6046,7 +5693,7 @@ var TimeAPIService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (TimeAPIService);
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6070,12 +5717,12 @@ function intersection(a, b) {
 }
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(20);
 
 
 function reduceActions(actions, options) {
@@ -6112,7 +5759,108 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 37 */
+/* 38 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(1);
+
+
+
+
+
+var API_ENDPOINT = 'multiplayer/consensus';
+
+/**
+ * @description
+ * ## Consensus Group Service
+ *
+ * The Consensus Group Service provides a way to group different consensus points within your world. This is typically used in faculty pages to report progression throw different Consensus Points.
+ * 
+ *      var cg = new F.service.ConsensusGroup({
+ *          worldId: world.id,
+ *          name: 'rounds'
+ *      });
+ *      cg.consensus('round1').create(..);
+ *
+ * You can use the Consensus Service (`F.service.Consensus`) without using the ConsensusGroup (`F.service.ConsensusGroup`) - the Consensus Service uses a group called "default" by default.
+ * 
+ *  @param {ServiceOptions} config
+ *  @property {string} worldId Id of world this consensus service is a part of
+ *  @property {string} [name] Unique identifier for this consensus group. Defaults to being named 'default'
+ */
+function ConsensusGroupService(config) {
+    var defaults = {
+        worldId: '',
+        name: 'default',
+        token: undefined
+    };
+
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["b" /* getDefaultOptions */])(defaults, config);
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["d" /* getURLConfig */])(serviceOptions);
+
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+
+    function getHTTPOptions(options) {
+        var mergedOptions = $.extend(true, {}, serviceOptions, options);
+        if (!mergedOptions.worldId) {
+            throw new Error('ConsensusGroup Service: worldId is required');
+        }
+        var baseURL = urlConfig.getAPIPath(API_ENDPOINT);
+        var url = baseURL + [mergedOptions.worldId, mergedOptions.name].join('/');
+
+        var httpOptions = $.extend(true, {}, mergedOptions, { url: url });
+        return httpOptions;
+    }
+    var publicAPI = {
+        /**
+         * List all consensus points within this group
+         * 
+         * @param {object} outputModifier Currently unused, may be used for paging etc later
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {Promise}
+         */
+        list: function (outputModifier, options) {
+            var httpOptions = getHTTPOptions(options);
+            return http.get(outputModifier, httpOptions);
+        },
+
+        /**
+         * Deletes all consensus points within this group
+         * 
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {Promise}
+         */
+        delete: function (options) {
+            var httpOptions = getHTTPOptions(options);
+            return http.delete({}, httpOptions);
+        },
+
+        /**
+         * Helper to return a Consensus instance 
+         * 
+         * @param {string} [name] Returns a new instance of a consensus service. Note it is not created until you call `create` on the returned service.
+         * @param {object} [options] Overrides for serviceoptions
+         * @returns {ConsensusService}
+         */
+        consensus: function (name, options) {
+            var opts = $.extend({}, true, serviceOptions, options);
+            var cs = new __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__["default"]($.extend(true, opts, {
+                consensusGroup: opts.name,
+                name: name
+            }));
+            return cs;
+        }
+    };
+    $.extend(this, publicAPI);
+}
+
+/***/ }),
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -6128,17 +5876,17 @@ function reduceActions(actions, options) {
  */
 
 var list = {
-    'conditional-creation': __webpack_require__(10),
-    'new-if-initialized': __webpack_require__(60), //deprecated
-    'new-if-persisted': __webpack_require__(61), //deprecated
+    'conditional-creation': __webpack_require__(11),
+    'new-if-initialized': __webpack_require__(62), //deprecated
+    'new-if-persisted': __webpack_require__(63), //deprecated
 
-    none: __webpack_require__(11),
+    none: __webpack_require__(12),
 
-    multiplayer: __webpack_require__(62),
-    'reuse-never': __webpack_require__(63),
-    'reuse-per-session': __webpack_require__(64),
-    'reuse-across-sessions': __webpack_require__(65),
-    'reuse-last-initialized': __webpack_require__(38)
+    multiplayer: __webpack_require__(64),
+    'reuse-never': __webpack_require__(65),
+    'reuse-per-session': __webpack_require__(66),
+    'reuse-across-sessions': __webpack_require__(67),
+    'reuse-last-initialized': __webpack_require__(40)
 };
 
 //Add back older aliases
@@ -6156,15 +5904,14 @@ var strategyManager = {
     /**
      * Gets strategy by name.
      *
-     * **Example**
-     *
+     * @example
      *      var reuseStrat = F.manager.RunManager.strategies.byName('reuse-across-sessions');
      *      // shows strategy function
      *      console.log('reuseStrat = ', reuseStrat);
      *      // create a new run manager using this strategy
      *      var rm = new F.manager.RunManager({strategy: reuseStrat, run: { model: 'model.vmf'} });
      *
-     * **Parameters**
+     * 
      * @param  {String} strategyName Name of strategy to get.
      * @return {Function} Strategy function.
      */
@@ -6202,8 +5949,7 @@ var strategyManager = {
     /**
      * Adds a new strategy.
      *
-     * **Example**
-     *
+     * @example
      *      // this "favorite run" strategy always returns the same run, no matter what
      *      // (not a useful strategy, except as an example)
      *      F.manager.RunManager.strategies.register(
@@ -6218,7 +5964,7 @@ var strategyManager = {
      *      
      *      var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
      *
-     * **Parameters**
+     * 
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.
      * @param  {Function} strategy The strategy constructor. Will be called with `new` on Run Manager initialization.
      * @param  {Object} options  Options for strategy.
@@ -6233,7 +5979,7 @@ var strategyManager = {
 module.exports = strategyManager;
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6262,7 +6008,7 @@ module.exports = strategyManager;
 
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 
 var _require = __webpack_require__(7),
     injectFiltersFromSession = _require.injectFiltersFromSession,
@@ -6312,7 +6058,7 @@ module.exports = classFrom(Base, {
     },
 
     getRun: function (runService, userSession, runSession, options) {
-        var sessionFilter = injectFiltersFromSession(this.options.flag, userSession);
+        var sessionFilter = injectFiltersFromSession(this.options.flag, userSession, this.options.scope);
         var runopts = runService.getCurrentConfig();
         var filter = $.extend(true, { trashed: false }, sessionFilter, { model: runopts.model });
         var me = this;
@@ -6331,166 +6077,311 @@ module.exports = classFrom(Base, {
 });
 
 /***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 41 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
 /**
+ * @description
+ * 
  * ## Saved Runs Manager
  *
  * The Saved Runs Manager is a specific type of [Run Manager](../../run-manager/) which provides access to a list of runs (rather than just one run). It also provides utility functions for dealing with multiple runs (e.g. saving, deleting, listing).
  *
  * An instance of a Saved Runs Manager is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.savedRuns`. See [more information](../#properties) on using `.savedRuns` within the Scenario Manager.
- *
  */
 
+var SavedRunsManager = function () {
 
-var RunService = __webpack_require__(9);
-var SessionManager = __webpack_require__(1);
+    /**
+     * @param {object} config 
+     * @property {boolean} scopeByGroup  If set, will only pull runs from current group. Defaults to `true`.
+     * @property {boolean} scopeByUser  If set, will only pull runs from current user. Defaults to `true`. For multiplayer run comparison projects, set this to false so that all end users in a group can view the shared set of saved runs.
+     */
+    function SavedRunsManager(config) {
+        _classCallCheck(this, SavedRunsManager);
 
-var injectFiltersFromSession = __webpack_require__(7).injectFiltersFromSession;
+        var defaults = {
+            scopeByGroup: true,
+            scopeByUser: true
+        };
 
-var SavedRunsManager = function (config) {
-    var defaults = {
-        /**
-         * If set, will only pull runs from current group. Defaults to `true`.
-         * @type {Boolean}
-         */
-        scopeByGroup: true,
+        this.sessionManager = new __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default.a();
 
-        /**
-         * If set, will only pull runs from current user. Defaults to `true`.
-         *
-         * For multiplayer run comparison projects, set this to false so that all end users in a group can view the shared set of saved runs.
-         * @type {Boolean}
-         */
-        scopeByUser: true
-    };
-
-    this.sessionManager = new SessionManager();
-
-    var options = $.extend(true, {}, defaults, config);
-    if (options.run) {
-        if (options.run instanceof RunService) {
-            this.runService = options.run;
+        var options = $.extend(true, {}, defaults, config);
+        if (options.run) {
+            if (options.run instanceof __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]) {
+                this.runService = options.run;
+            } else {
+                this.runService = new __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"](options.run);
+            }
+            this.options = options;
         } else {
-            this.runService = new RunService(options.run);
+            throw new Error('No run options passed to SavedRunsManager');
         }
-        this.options = options;
-    } else {
-        throw new Error('No run options passed to SavedRunsManager');
     }
-};
 
-SavedRunsManager.prototype = {
     /**
      * Marks a run as saved. 
      *
      * Note that while any run can be saved, only runs which also match the configuration options `scopeByGroup` and `scopeByUser` are returned by the `getRuns()` method.
      *
-     * **Example**
-     *
-     *      var sm = new F.manager.ScenarioManager();
-     *      sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
+     * @example
+     * var sm = new F.manager.ScenarioManager();
+     * sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
      *
      * @param  {String|RunService} run Run to save. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-     * @param  {Object} otherFields (Optional) Any other meta-data to save with the run.
+     * @param  {object} [otherFields] Any other meta-data to save with the run.
      * @return {Promise}
      */
-    save: function (run, otherFields) {
-        var param = $.extend(true, {}, otherFields, { saved: true, trashed: false });
-        return this.mark(run, param);
-    },
-    /**
-     * Marks a run as removed; the inverse of marking as saved.
-     *
-     * **Example**
-     *
-     *      var sm = new F.manager.ScenarioManager();
-     *      sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
-     *
-     * @param  {String|RunService} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-     * @param  {Object} otherFields (Optional) any other meta-data to save with the run.
-     * @return {Promise}
-     */
-    remove: function (run, otherFields) {
-        var param = $.extend(true, {}, otherFields, { saved: false, trashed: true });
-        return this.mark(run, param);
-    },
 
-    /**
-     * Sets additional fields on a run. This is a convenience method for [RunService#save](../../run-api-service/#save).
-     *
-     * **Example**
-     *
-     *      var sm = new F.manager.ScenarioManager();
-     *      sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
-     *          { 'myRunName': 'sample policy decisions' });
-     *
-     * @param  {String|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-     * @param  {Object} toMark Fields to set, as name : value pairs.
-     * @return {Promise}
-     */
-    mark: function (run, toMark) {
-        var rs;
-        var existingOptions = this.runService.getCurrentConfig();
-        if (run instanceof RunService) {
-            rs = run;
-        } else if (run && typeof run === 'string') {
-            rs = new RunService($.extend(true, {}, existingOptions, { id: run, autoRestore: false }));
-        } else if (Array.isArray(run)) {
-            var me = this;
-            var proms = run.map(function (r) {
-                return me.mark(r, toMark);
+
+    _createClass(SavedRunsManager, [{
+        key: 'save',
+        value: function save(run, otherFields) {
+            var param = $.extend(true, {}, otherFields, { saved: true, trashed: false });
+            return this.mark(run, param);
+        }
+
+        /**
+         * Marks a run as removed; the inverse of marking as saved.
+         *
+         * @example
+         * var sm = new F.manager.ScenarioManager();
+         * sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
+         *
+         * @param  {String|RunService} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+         * @param  {object} [otherFields] any other meta-data to save with the run.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(run, otherFields) {
+            var param = $.extend(true, {}, otherFields, { saved: false, trashed: true });
+            return this.mark(run, param);
+        }
+
+        /**
+         * Sets additional fields on a run. This is a convenience method for [RunService#save](../../run-api-service/#save).
+         *
+         * @example
+         * var sm = new F.manager.ScenarioManager();
+         * sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
+         *     { 'myRunName': 'sample policy decisions' });
+         *
+         * @param  {String|string[]|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+         * @param  {Object} toMark Fields to set, as name : value pairs.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'mark',
+        value: function mark(run, toMark) {
+            var rs;
+            var existingOptions = this.runService.getCurrentConfig();
+            if (run instanceof __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]) {
+                rs = run;
+            } else if (run && typeof run === 'string') {
+                rs = new __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]($.extend(true, {}, existingOptions, { id: run, autoRestore: false }));
+            } else if (Array.isArray(run)) {
+                var me = this;
+                var proms = run.map(function (r) {
+                    return me.mark(r, toMark);
+                });
+                return $.when.apply(null, proms);
+            } else {
+                throw new Error('Invalid run object provided');
+            }
+            return rs.save(toMark);
+        }
+
+        /**
+         * Returns a list of saved runs.
+         *
+         * @example
+         * var sm = new F.manager.ScenarioManager();
+         * sm.savedRuns.getRuns().then(function (runs) {
+         *     for (var i=0; i<runs.length; i++) {
+         *         console.log('run id of saved run: ', runs[i].id);
+         *     }
+         * });
+         *
+         * @param  {string[]} [variables] If provided, in the returned list of runs, each run will have a `.variables` property with these set.
+         * @param  {object} [filter]    Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
+         * @param  {object} [modifiers] Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'getRuns',
+        value: function getRuns(variables, filter, modifiers) {
+            var session = this.sessionManager.getSession(this.runService.getCurrentConfig());
+
+            var runopts = this.runService.getCurrentConfig();
+            var scopedFilter = Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["injectFiltersFromSession"])($.extend(true, {}, {
+                saved: true,
+                trashed: false,
+                model: runopts.model
+            }, filter), session, this.options);
+
+            Object.keys(filter || {}).forEach(function (key) {
+                if (filter[key] === undefined) {
+                    delete scopedFilter[key];
+                }
             });
-            return $.when.apply(null, proms);
-        } else {
-            throw new Error('Invalid run object provided');
+            var opModifiers = $.extend(true, {}, {
+                sort: 'created',
+                direction: 'asc'
+            }, modifiers);
+
+            if (variables) {
+                opModifiers.include = [].concat(variables);
+            }
+            return this.runService.query(scopedFilter, opModifiers);
         }
-        return rs.save(toMark);
-    },
+    }]);
 
-    /**
-     * Returns a list of saved runs.
-     *
-     * **Example**
-     *
-     *      var sm = new F.manager.ScenarioManager();
-     *      sm.savedRuns.getRuns().then(function (runs) {
-     *          for (var i=0; i<runs.length; i++) {
-     *              console.log('run id of saved run: ', runs[i].id);
-     *          }
-     *      });
-     *
-     * @param  {Array} variables (Optional) If provided, in the returned list of runs, each run will have a `.variables` property with these set.
-     * @param  {Object} filter    (Optional) Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
-     * @param  {Object} modifiers (Optional) Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
-     * @return {Promise}
-     */
-    getRuns: function (variables, filter, modifiers) {
-        var session = this.sessionManager.getSession(this.runService.getCurrentConfig());
+    return SavedRunsManager;
+}();
 
-        var runopts = this.runService.getCurrentConfig();
-        var scopedFilter = injectFiltersFromSession($.extend(true, {}, {
-            saved: true,
-            trashed: false,
-            model: runopts.model
-        }, filter), session, this.options);
-
-        var opModifiers = $.extend(true, {}, {
-            sort: 'created',
-            direction: 'asc'
-        }, modifiers);
-        if (variables) {
-            opModifiers.include = [].concat(variables);
-        }
-        return this.runService.query(scopedFilter, opModifiers);
-    }
-};
-module.exports = SavedRunsManager;
+/* harmony default export */ __webpack_exports__["default"] = (SavedRunsManager);
 
 /***/ }),
-/* 40 */
+/* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = WorldManager;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
+
+
+
+
+var worldApi;
+function buildStrategy(worldId) {
+    return function Ctor(options) {
+        this.options = options;
+
+        $.extend(this, {
+            reset: function () {
+                throw new Error('not implemented. Need api changes');
+            },
+            getRun: function (runService) {
+                // Model is required in the options
+                var model = this.options.run.model || this.options.model;
+                return worldApi.getCurrentRunId({ model: model, filter: worldId }).then(function (runId) {
+                    return runService.load(runId);
+                });
+            }
+        });
+    };
+}
+
+/**
+ * @param {AccountAPIServiceOptions} options 
+ * @property {string} [group] The group name to use for filters / new runs
+ * @property {object} run Options to use when creating new runs with the manager, e.g. `run: { files: ['data.xls'] }`. See RunService for details.
+ * @property {string} run.model The name of the primary model file for this project. 
+ */
+function WorldManager(options) {
+    this.options = options || { run: {}, world: {} };
+
+    $.extend(true, this.options, this.options.run);
+    $.extend(true, this.options, this.options.world);
+
+    worldApi = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](this.options);
+    this._auth = new __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__["default"]();
+    var me = this;
+
+    var api = {
+
+        /**
+        * Returns the current world (object) and an instance of the [World API Adapter](../world-api-adapter/).
+        *
+        * @example
+        * wMgr.getCurrentWorld()
+        *     .then(function(world, worldAdapter) {
+        *         console.log(world.id);
+        *         worldAdapter.getCurrentRunId();
+        *     });
+        *
+        * 
+        * @param {string} [userId] The id of the user whose world is being accessed. Defaults to the user in the current session.
+        * @param {string} [groupName] The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
+        * @return {Promise}
+        */
+        getCurrentWorld: function (userId, groupName) {
+            var session = this._auth.getCurrentUserSessionInfo();
+            if (!userId) {
+                userId = session.userId;
+            }
+            if (!groupName) {
+                groupName = session.groupName;
+            }
+            return worldApi.getCurrentWorldForUser(userId, groupName);
+        },
+
+        /**
+        * Returns the current run (object) and an instance of the [Run API Service](../run-api-service/).
+        *
+        * @example
+        * wMgr.getCurrentRun('myModel.py')
+        *     .then(function(run, runService) {
+        *         console.log(run.id);
+        *         runService.do('startGame');
+        *     });
+        *
+        * @param {string} [model] The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
+        * @return {Promise}
+        */
+        getCurrentRun: function (model) {
+            var session = this._auth.getCurrentUserSessionInfo();
+            var curUserId = session.userId;
+            var curGroupName = session.groupName;
+
+            return this.getCurrentWorld(curUserId, curGroupName).then(function getAndRestoreLatestRun(world) {
+                if (!world) {
+                    return $.Deferred().reject({ error: 'The user is not part of any world!' }).promise();
+                }
+                var runOpts = $.extend(true, me.options, { model: model });
+                var strategy = buildStrategy(world.id);
+                var opt = $.extend(true, {}, {
+                    strategy: strategy,
+                    run: runOpts
+                });
+                var rm = new __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__["default"](opt);
+                return rm.getRun().then(function (run) {
+                    run.world = world;
+                    return run;
+                });
+            });
+        }
+    };
+
+    $.extend(this, api);
+}
+
+/***/ }),
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var F = {
@@ -6505,7 +6396,7 @@ var F = {
     }
 };
 
-F.load = __webpack_require__(41);
+F.load = __webpack_require__(44);
 
 if (!window.SKIP_ENV_LOAD) {
     F.load();
@@ -6513,62 +6404,66 @@ if (!window.SKIP_ENV_LOAD) {
 
 F.util.query = __webpack_require__(6);
 F.util.run = __webpack_require__(8);
-F.util.classFrom = __webpack_require__(3);
+F.util.classFrom = __webpack_require__(2);
 
 F.factory.Transport = __webpack_require__(0).default;
-F.transport.Ajax = __webpack_require__(22);
+F.transport.Ajax = __webpack_require__(23);
 
-F.service.URL = __webpack_require__(13);
-F.service.Config = __webpack_require__(2).default;
-F.service.Run = __webpack_require__(9);
-F.service.File = __webpack_require__(43);
-F.service.Variables = __webpack_require__(23);
-F.service.Data = __webpack_require__(27).default;
-F.service.Auth = __webpack_require__(28);
-F.service.World = __webpack_require__(12).default;
-F.service.State = __webpack_require__(33);
-F.service.User = __webpack_require__(49);
-F.service.Member = __webpack_require__(29);
-F.service.Asset = __webpack_require__(50);
+F.service.URL = __webpack_require__(14);
+F.service.Config = __webpack_require__(5).default;
+F.service.Run = __webpack_require__(9).default;
+F.service.File = __webpack_require__(46);
+F.service.Variables = __webpack_require__(24).default;
+F.service.Data = __webpack_require__(28).default;
+F.service.Auth = __webpack_require__(29).default;
+F.service.World = __webpack_require__(10).default;
+F.service.State = __webpack_require__(33).default;
+F.service.User = __webpack_require__(34).default;
+F.service.Member = __webpack_require__(17).default;
+F.service.Asset = __webpack_require__(52).default;
 F.service.Group = __webpack_require__(30).default;
-F.service.Introspect = __webpack_require__(24);
+F.service.Introspect = __webpack_require__(25).default;
 F.service.Presence = __webpack_require__(32).default;
-F.service.Time = __webpack_require__(34).default;
-F.service.Timer = __webpack_require__(51).default;
-F.service.Password = __webpack_require__(57).default;
+F.service.Time = __webpack_require__(35).default;
+F.service.Timer = __webpack_require__(53).default;
+F.service.Password = __webpack_require__(59).default;
 
-F.service.Consensus = __webpack_require__(18);
-F.service.ConsensusGroup = __webpack_require__(58);
+F.service.Consensus = __webpack_require__(19).default;
+F.service.ConsensusGroup = __webpack_require__(38).default;
 
-F.store.Cookie = __webpack_require__(26);
+F.service.Project = __webpack_require__(60).default;
 
-F.factory.Store = __webpack_require__(25);
+F.store.Cookie = __webpack_require__(27);
+F.factory.Store = __webpack_require__(26);
 
-F.manager.ScenarioManager = __webpack_require__(59);
-F.manager.RunManager = __webpack_require__(20).default;
-F.manager.AuthManager = __webpack_require__(16);
-F.manager.WorldManager = __webpack_require__(69);
-F.manager.SavedRunsManager = __webpack_require__(39);
+F.manager.ScenarioManager = __webpack_require__(61).default;
+F.manager.RunManager = __webpack_require__(21).default;
+F.manager.User = __webpack_require__(71).default;
+F.manager.AuthManager = __webpack_require__(13).default;
+F.manager.WorldManager = __webpack_require__(42).default;
+F.manager.SavedRunsManager = __webpack_require__(41).default;
 
-var strategies = __webpack_require__(37);
+var strategies = __webpack_require__(39);
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.ChannelManager = __webpack_require__(17).default;
-F.service.Channel = __webpack_require__(31);
+F.manager.ChannelManager = __webpack_require__(18).default;
+F.service.Channel = __webpack_require__(31).default;
 
-if (true) F.version = "2.6.0"; //eslint-disable-line no-undef
-F.api = __webpack_require__(21);
+F.manager.ConsensusManager = __webpack_require__(72).default;
 
-F.constants = __webpack_require__(14);
+if (true) F.version = "2.7.0"; //eslint-disable-line no-undef
+F.api = __webpack_require__(22);
+
+F.constants = __webpack_require__(15);
 
 module.exports = F;
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var URLConfigService = __webpack_require__(13);
+var URLConfigService = __webpack_require__(14);
 
 var envLoad = function (callback) {
     var urlService = new URLConfigService();
@@ -6584,13 +6479,13 @@ var envLoad = function (callback) {
 module.exports = envLoad;
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(5).default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
@@ -6631,10 +6526,9 @@ var optionUtils = {
 module.exports = optionUtils;
 
 /***/ }),
-/* 43 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
 /**
  * ## File API Service
  *
@@ -6657,17 +6551,15 @@ module.exports = optionUtils;
  *       });
  */
 
-
-
-var ConfigService = __webpack_require__(2).default;
+var ConfigService = __webpack_require__(5).default;
 var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(1);
+var SessionManager = __webpack_require__(3);
 
 module.exports = function (config) {
     var defaults = {
         /**
          * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
+         * @see [Authentication API Service](../auth/auth-service/) for getting tokens.
          * @type {String}
          */
         token: undefined,
@@ -6757,7 +6649,7 @@ module.exports = function (config) {
         /**
          * Get a directory listing, or contents of a file.
          * @param {String} filePath  Path to the file
-         * @param {Object} options (Optional) Overrides for configuration options.
+         * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
         getContents: function (filePath, options) {
@@ -6772,7 +6664,7 @@ module.exports = function (config) {
          * Replaces the file at the given file path.
          * @param  {String} filePath Path to the file
          * @param  {String | FormData } contents Contents to write to file
-         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @param  {object} [options] Overrides for configuration options
          * @return {Promise}
          */
         replace: function (filePath, contents, options) {
@@ -6785,7 +6677,7 @@ module.exports = function (config) {
          * @param  {String} filePath Path to the file
          * @param  {String | FormData } contents Contents to write to file
          * @param  {Boolean} replaceExisting Replace file if it already exists; defaults to false
-         * @param  {Object} options (Optional) Overrides for configuration options
+         * @param  {Object} [options] Overrides for configuration options
          * @return {Promise}
          */
         create: function (filePath, contents, replaceExisting, options) {
@@ -6806,7 +6698,7 @@ module.exports = function (config) {
         /**
          * Removes the file.
          * @param  {String} filePath Path to the file
-         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @param  {object} [options] Overrides for configuration options
          * @return {Promise}
          */
         remove: function (filePath, options) {
@@ -6821,7 +6713,7 @@ module.exports = function (config) {
          * Renames the file.
          * @param  {String} filePath Path to the file
          * @param  {String} newName  New name of file
-         * @param  {Object} options  (Optional) Overrides for configuration options
+         * @param  {object} [options] Overrides for configuration options
          * @return {Promise}
          */
         rename: function (filePath, newName, options) {
@@ -6837,7 +6729,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 44 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6845,10 +6737,9 @@ module.exports = function (config) {
 /* unused harmony export addScopeToCollection */
 /* harmony export (immutable) */ __webpack_exports__["b"] = getScopedName;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getURL;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
 
 
 
@@ -6906,7 +6797,7 @@ function addScopeToCollection(key, scope, session) {
  */
 function getScopedName(name, scope, session) {
     if (!session) {
-        var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager___default.a();
+        var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__["default"]();
         session = am.getCurrentUserSessionInfo();
     }
     var split = name.split('/');
@@ -6929,7 +6820,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 }
 
 /***/ }),
-/* 45 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -7000,51 +6891,28 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
 
 /***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 49 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_channel_service__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
+
 
 
 /**
- * ## Channel Manager
- *
- * There are two main use cases for the channel: event notifications and chat messages.
- *
- * If you are developing with Epicenter.js, you should use the [Epicenter Channel Manager](../epicenter-channel-manager/) rather than this more generic Channel Manager. (The Epicenter Channel Manager is a wrapper that instantiates a Channel Manager with Epicenter-specific defaults.) The Epicenter Channel Manager documentation also has more [background](../epicenter-channel-manager/#background) information on channels and their use. 
- *
- * However, you can work directly with the Channel Manager if you like. (This might be useful if you are working through Node.js, for example, `require('manager/channel-manager')`.)
- *
- * The Channel Manager is a wrapper around the default [cometd JavaScript library](http://docs.cometd.org/2/reference/javascript.html), `$.cometd`. It provides a few nice features that `$.cometd` doesn't, including:
- *
- * * Automatic re-subscription to channels if you lose your connection
- * * Online / Offline notifications
- * * 'Events' for cometd notifications (instead of having to listen on specific meta channels)
- *
- * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Channel Manager. (See [Including Epicenter.js](../../#include).)
- *
- * To use the Channel Manager in client-side JavaScript, instantiate the [Epicenter Channel Manager](../epicenter-channel-manager/), get a particular channel -- that is, an instance of a [Channel Service](../channel-service/) -- then use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
- *
- *      var cm = new F.manager.ChannelManager();
- *      var gc = cm.getGroupChannel();
- *      // because we used an Epicenter Channel Manager to get the group channel,
- *      // subscribe() and publish() here default to the base topic for the group;
- *      gc.subscribe('', function(data) { console.log(data); });
- *      gc.publish('', { message: 'a new message to the group' });
- *
- * The parameters for instantiating a Channel Manager include:
- *
- * * `options` The options object to configure the Channel Manager. Besides the common options listed here, see http://docs.cometd.org/reference/javascript.html for other supported options.
- * * `options.url` The Cometd endpoint URL.
- * * `options.websocketEnabled` Whether websocket support is active (boolean).
- * * `options.channel` Other defaults to pass on to instances of the underlying Channel Service. See [Channel Service](../channel-service/) for details.
- *
+ * @constructor
+ * @param {object} options 
+ * @property {string} url The Cometd endpoint URL.
+ * @property {string} [logLevel] The log level for the channel (logs to console).
+ * @property {boolean} [websocketEnabled] Whether websocket support is active. Defaults to `true`, uses long-polling if false
+ * @property {boolean} [ackEnabled] Whether the ACK extension is enabled. Defaults to `true`. See [https://docs.cometd.org/current/reference/#_extensions_acknowledge](https://docs.cometd.org/current/reference/#_extensions_acknowledge) for more info.
+ * @property {boolean} [shareConnection] If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true (default) to re-use the same connection across instances.
+ * @property {object} [channel] Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
+ * @property {object} [handshake] Options to pass to the channel handshake. For example, the [Epicenter Channel Manager](../epicenter-channel-manager/) passes `ext` and authorization information. More information on possible options is in the details of the underlying [Push Channel API](../../../rest_apis/multiplayer/channel/).
  */
-
-var Channel = __webpack_require__(31);
-var SessionManager = __webpack_require__(1);
-
-var ChannelManager = function (options) {
+function ChannelManager(options) {
     if (!$.cometd) {
         console.error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
         throw new Error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
@@ -7054,52 +6922,15 @@ var ChannelManager = function (options) {
     }
 
     var defaults = {
-        /**
-         * The Cometd endpoint URL.
-         * @type {string}
-         */
         url: '',
-
-        /**
-         * The log level for the channel (logs to console).
-         * @type {string}
-         */
         logLevel: 'info',
-
-        /**
-         * Whether websocket support is active. Defaults to `true`.
-         * @type {boolean}
-         */
         websocketEnabled: true,
-
-        /**
-         * Whether the ACK extension is enabled. Defaults to `true`. See [https://docs.cometd.org/current/reference/#_extensions_acknowledge](https://docs.cometd.org/current/reference/#_extensions_acknowledge) for more info.
-         * @type {boolean}
-         */
         ackEnabled: true,
-
-        /**
-         * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true to re-use the same connection across instances.
-         * @type {boolean}
-         */
-        shareConnection: false,
-
-        /**
-         * Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
-         * @type {object}
-         */
+        shareConnection: true,
         channel: {},
-
-        /**
-         * Options to pass to the channel handshake.
-         *
-         * For example, the [Epicenter Channel Manager](../epicenter-channel-manager/) passes `ext` and authorization information. More information on possible options is in the details of the underlying [Push Channel API](../../../rest_apis/multiplayer/channel/).
-         *
-         * @type {object}
-         */
         handshake: undefined
     };
-    this.sessionManager = new SessionManager();
+    this.sessionManager = new __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default.a();
     var defaultCometOptions = this.sessionManager.getMergedOptions(defaults, options);
     this.currentSubscriptions = [];
     this.options = defaultCometOptions;
@@ -7168,23 +6999,22 @@ var ChannelManager = function (options) {
     cometd.handshake(defaultCometOptions.handshake);
 
     this.cometd = cometd;
-};
+}
 
 ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 
     /**
      * Creates and returns a channel, that is, an instance of a [Channel Service](../channel-service/).
      *
-     * **Example**
-     *
+     * @example
      *      var cm = new F.manager.ChannelManager();
      *      var channel = cm.getChannel();
      *
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * **Parameters**
-     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * 
+     * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
     getChannel: function (options) {
@@ -7197,7 +7027,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
         var defaults = {
             transport: this.cometd
         };
-        var channel = new Channel($.extend(true, {}, this.options.channel, defaults, options));
+        var channel = new __WEBPACK_IMPORTED_MODULE_0_service_channel_service__["default"]($.extend(true, {}, this.options.channel, defaults, options));
 
         //Wrap subs and unsubs so we can use it to re-attach handlers after being disconnected
         var subs = channel.subscribe;
@@ -7225,9 +7055,6 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      * Start listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/on/.
      *
      * Supported events are: `connect`, `disconnect`, `subscribe`, `unsubscribe`, `publish`, `error`.
-     *
-     * **Parameters**
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/on/.
      */
     on: function (event) {
@@ -7236,9 +7063,6 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 
     /**
      * Stop listening for events on this instance. Signature is same as for jQuery Events: http://api.jquery.com/off/.
-     *
-     * **Parameters**
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/off/.
      */
     off: function (event) {
@@ -7247,9 +7071,6 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 
     /**
      * Trigger events and execute handlers. Signature is same as for jQuery Events: http://api.jquery.com/trigger/.
-     *
-     * **Parameters**
-     *
      * @param {string} event The event type. See more detail at jQuery Events: http://api.jquery.com/trigger/.
      */
     trigger: function (event) {
@@ -7257,16 +7078,16 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
     }
 });
 
-module.exports = ChannelManager;
+/* harmony default export */ __webpack_exports__["a"] = (ChannelManager);
 
 /***/ }),
-/* 47 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(4);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -7288,9 +7109,10 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
         }
 
         var _fullTopic$split = fullTopic.split('/'),
-            _fullTopic$split2 = _slicedToArray(_fullTopic$split, 2),
+            _fullTopic$split2 = _slicedToArray(_fullTopic$split, 3),
             subscribedTopic = _fullTopic$split2[0],
-            subscribedSubTopic = _fullTopic$split2[1];
+            subscribedSubTopic = _fullTopic$split2[1],
+            subTopicFilter = _fullTopic$split2[2];
 
         var defaults = {
             includeMine: true
@@ -7382,6 +7204,11 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
                         user.isOnline = subType === __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__["b" /* TOPIC_SUBTYPES */].ONLINE;
                         return callback(user, meta);
                     }
+                case __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__["a" /* TOPICS */].CONSENSUS:
+                    {
+                        // const { name, stage } = payload;
+                        return callback(payload, meta);
+                    }
                 default:
                     callback.call(context, res);
                     break;
@@ -7393,7 +7220,7 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
 }
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7406,294 +7233,75 @@ var TOPIC_SUBTYPES = {
     ONLINE: 'connect',
     OFFLINE: 'disconnect',
     ASSIGN: 'assign',
-    UNASSIGN: 'unassign'
+    UNASSIGN: 'unassign',
+    CREATE: 'create',
+    UPDATE: 'update'
 };
 
 var TOPICS = {
     ALL: '',
+
     RUN: 'run',
     RUN_VARIABLES: 'run/' + TOPIC_SUBTYPES.VARIABLES,
     RUN_OPERATIONS: 'run/' + TOPIC_SUBTYPES.OPERATIONS,
     RUN_RESET: 'run/' + TOPIC_SUBTYPES.RESET,
+
     PRESENCE: 'user',
     PRESENCE_ONLINE: 'user/' + TOPIC_SUBTYPES.ONLINE,
     PRESENCE_OFFLINE: 'user/' + TOPIC_SUBTYPES.OFFLINE,
+
     ROLES: 'world',
     ROLES_ASSIGN: 'world/' + TOPIC_SUBTYPES.ASSIGN,
-    ROLES_UNASSIGN: 'world/' + TOPIC_SUBTYPES.UNASSIGN
+    ROLES_UNASSIGN: 'world/' + TOPIC_SUBTYPES.UNASSIGN,
+
+    CONSENSUS: 'consensus',
+    CONSENSUS_CREATE: 'consensus/' + TOPIC_SUBTYPES.CREATE,
+    CONSENSUS_UPDATE: 'consensus/' + TOPIC_SUBTYPES.UPDATE
 };
 
 /***/ }),
-/* 49 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 52 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-/**
-* ## User API Adapter
-*
-* The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
-*
-* To use the User API Adapter, instantiate it and then call its methods.
-*
-*       var ua = new F.service.User({
-*           account: 'acme-simulations',
-*           token: 'user-or-project-access-token'
-*       });
-*       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
-*       ua.get({ userName: 'jsmith' });
-*       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-*                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
-*
-* The constructor takes an optional `options` parameter in which you can specify the `account` and `token` if they are not already available in the current context.
-*/
-
-var ConfigService = __webpack_require__(2).default;
-var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(1);
-
-var _require = __webpack_require__(6),
-    toQueryFormat = _require.toQueryFormat;
-
-module.exports = function (config) {
-    var defaults = {
-
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string.
-         * @type {String}
-         */
-        account: undefined,
-
-        /**
-         * The access token to use when searching for end users. (See [more background on access tokens](../../../project_access/)).
-         * @type {String}
-         */
-        token: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {Object}
-         */
-        transport: {}
-    };
-
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath('user')
-    });
-
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-
-    var http = new TransportFactory(transportOptions);
-
-    var publicAPI = {
-
-        /**
-        * Retrieve details about particular end users in your team, based on user name or user id.
-        *
-        * **Example**
-        *
-        *       var ua = new F.service.User({
-        *           account: 'acme-simulations',
-        *           token: 'user-or-project-access-token'
-        *       });
-        *       ua.get({ userName: 'jsmith' });
-        *       ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
-        *
-        * **Parameters**
-        * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-
-        get: function (filter, options) {
-            options = options || {};
-            filter = filter || {};
-
-            var getOptions = $.extend(true, {}, serviceOptions, options);
-
-            var toQFilter = function (filter) {
-                var res = {};
-
-                // API only supports filtering by username for now
-                if (filter.userName) {
-                    res.q = filter.userName;
-                }
-
-                return res;
-            };
-
-            var toIdFilters = function (id) {
-                if (!id) {
-                    return '';
-                }
-
-                id = Array.isArray(id) ? id : [id];
-                return 'id=' + id.join('&id=');
-            };
-
-            var getFilters = ['account=' + getOptions.account, toIdFilters(filter.id), toQueryFormat(toQFilter(filter))].join('&');
-
-            // special case for queries with large number of ids
-            // make it as a post with GET semantics
-            var threshold = 30;
-            if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
-                getOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
-                return http.post({ id: filter.id }, getOptions);
-            } else {
-                return http.get(getFilters, getOptions);
-            }
-        },
-
-        /**
-        * Retrieve details about a single end user in your team, based on user id.
-        *
-        * **Example**
-        *
-        *       var ua = new F.service.User({
-        *           account: 'acme-simulations',
-        *           token: 'user-or-project-access-token'
-        *       });
-        *       ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
-        *
-        * **Parameters**
-        * @param {string} userId The user id for the end user in your team.
-        * @param {object} options (Optional) Overrides for configuration options.
-        * @return {Promise}
-        */
-
-        getById: function (userId, options) {
-            return publicAPI.get({ id: userId }, options);
-        }
-    };
-
-    $.extend(this, publicAPI);
-};
-
-/***/ }),
-/* 50 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ## Asset API Adapter
- *
- * The Asset API Adapter allows you to store assets -- resources or files of any kind -- used by a project with a scope that is specific to project, group, or end user.
- *
- * Assets are used with [team projects](../../../project_admin/#team). One common use case is having end users in a [group](../../../glossary/#groups) or in a [multiplayer world](../../../glossary/#world) upload data -- videos created during game play, profile pictures for customizing their experience, etc. -- as part of playing through the project.
- *
- * Resources created using the Asset Adapter are scoped:
- *
- *  * Project assets are writable only by [team members](../../../glossary/#team), that is, Epicenter authors.
- *  * Group assets are writable by anyone with access to the project that is part of that particular [group](../../../glossary/#groups). This includes all [team members](../../../glossary/#team) (Epicenter authors) and any [end users](../../../glossary/#users) who are members of the group -- both facilitators and standard end users.
- *  * User assets are writable by the specific end user, and by the facilitator of the group.
- *  * All assets are readable by anyone with the exact URI.
- *
- * To use the Asset Adapter, instantiate it and then access the methods provided. Instantiating requires the account id (**Team ID** in the Epicenter user interface) and project id (**Project ID**). The group name is required for assets with a group scope, and the group name and userId are required for assets with a user scope. If not included, they are taken from the logged in user's session information if needed.
- *
- * When creating an asset, you can pass in text (encoded data) to the `create()` call. Alternatively, you can make the `create()` call as part of an HTML form and pass in a file uploaded via the form.
- *
- *       // instantiate the Asset Adapter
- *       var aa = new F.service.Asset({
- *          account: 'acme-simulations',
- *          project: 'supply-chain-game',
- *          group: 'team1',
- *          userId: '12345'
- *       });
- *
- *       // create a new asset using encoded text
- *       aa.create('test.txt', {
- *           encoding: 'BASE_64',
- *           data: 'VGhpcyBpcyBhIHRlc3QgZmlsZS4=',
- *           contentType: 'text/plain'
- *       }, { scope: 'user' });
- *
- *       // alternatively, create a new asset using a file uploaded through a form
- *       // this sample code goes with an html form that looks like this:
- *       //
- *       // <form id="upload-file">
- *       //   <input id="file" type="file">
- *       //   <input id="filename" type="text" value="myFile.txt">
- *       //   <button type="submit">Upload myFile</button>
- *       // </form>
- *       //
- *       $('#upload-file').on('submit', function (e) {
- *          e.preventDefault();
- *          var filename = $('#filename').val();
- *          var data = new FormData();
- *          var inputControl = $('#file')[0];
- *          data.append('file', inputControl.files[0], filename);
- *
- *          aa.create(filename, data, { scope: 'user' });
- *       });
- *
- */
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = AssetAdapter;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 
 
 
-var ConfigService = __webpack_require__(2).default;
-var TransportFactory = __webpack_require__(0).default;
-var _pick = __webpack_require__(4).pick;
-var SessionManager = __webpack_require__(1);
+
 
 var apiEndpoint = 'asset';
 
-module.exports = function (config) {
+/**
+ * @param {AccountAPIServiceOptions} config 
+ * @property {string} userId The user id. Defaults to session's `userId`.
+ * @property {user|group|project} scope The scope for the asset. Valid values are: `user`, `group`, and `project`. See above for the required permissions to write to each scope. Defaults to `user`, meaning the current end user or a facilitator in the end user's group can edit the asset.
+ * @property {boolean} fullUrl  Determines if a request to list the assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`). Defaults to `true`.
+ */
+function AssetAdapter(config) {
     var defaults = {
-        /**
-         * For projects that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
-         * @see [Authentication API Service](../auth-api-service/) for getting tokens.
-         * @type {String}
-         */
-        token: undefined,
-        /**
-         * The account id. In the Epicenter UI, this is the **Team ID** (for team projects). If left undefined, taken from the URL.
-         * @type {String}
-         */
-        account: undefined,
-        /**
-         * The project id. If left undefined, taken from the URL.
-         * @type {String}
-         */
-        project: undefined,
-        /**
-         * The group name. Defaults to session's `groupName`.
-         * @type {String}
-         */
-        group: undefined,
-        /**
-         * The user id. Defaults to session's `userId`.
-         * @type {String}
-         */
         userId: undefined,
-        /**
-         * The scope for the asset. Valid values are: `user`, `group`, and `project`. See above for the required permissions to write to each scope. Defaults to `user`, meaning the current end user or a facilitator in the end user's group can edit the asset.
-         * @type {String}
-         */
         scope: 'user',
-        /**
-         * Determines if a request to list the assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`). Defaults to `true`.
-         * @type {boolean}
-         */
         fullUrl: true,
-        /**
-         * The transport object contains the options passed to the XHR request.
-         * @type {object}
-         */
+
+        token: undefined,
+        account: undefined,
+        project: undefined,
+        group: undefined,
+
         transport: {
             processData: false
         }
     };
-    this.sessionManager = new SessionManager();
+    this.sessionManager = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a();
     var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
+    var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](serviceOptions).get('server');
 
     if (!serviceOptions.account) {
         serviceOptions.account = urlConfig.accountPath;
@@ -7713,7 +7321,7 @@ module.exports = function (config) {
         };
     }
 
-    var http = new TransportFactory(transportOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](transportOptions);
 
     var assetApiParams = ['encoding', 'data', 'contentType'];
     var scopeConfig = {
@@ -7760,8 +7368,8 @@ module.exports = function (config) {
     //
     // @param {string} method` (Required) HTTP verb
     // @param {string} filename` (Required) Name of the file to delete/replace/create
-    // @param {object} params` (Optional) Body parameters to send to the Asset API
-    // @param {object} options` (Optional) Options object to override global options.
+    // @param {object} [params]` Body parameters to send to the Asset API
+    // @param {object} [options]` Options object to override global options.
     var upload = function (method, filename, params, options) {
         validateFilename(filename);
         // make sure the parameter is clean
@@ -7769,7 +7377,7 @@ module.exports = function (config) {
         var contentType = params instanceof FormData === true ? false : 'application/json';
         if (contentType === 'application/json') {
             // whitelist the fields that we actually can send to the api
-            params = _pick(params, assetApiParams);
+            params = Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["pick"])(params, assetApiParams);
         } else {
             // else we're sending form data which goes directly in request body
             // For multipart/form-data uploads the filename is not set in the URL,
@@ -7788,8 +7396,7 @@ module.exports = function (config) {
         * Creates a file in the Asset API. The server returns an error (status code `409`, conflict) if the file already exists, so
         * check first with a `list()` or a `get()`.
         *
-        *  **Example**
-        *
+        * @example
         *       var aa = new F.service.Asset({
         *          account: 'acme-simulations',
         *          project: 'supply-chain-game',
@@ -7824,13 +7431,13 @@ module.exports = function (config) {
         *       });
         *
         *
-        *  **Parameters**
-        * @param {string} filename (Required) Name of the file to create.
-        * @param {object} params (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
-        * @param {string} params.encoding Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} params.data The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} params.contentType The mime type of the file. Optional.
-        * @param {object} options (Optional) Options object to override global options.
+        *  
+        * @param {string} filename Name of the file to create.
+        * @param {object} [params] Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
+        * @param {string} [params.encoding] Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} [params.data] The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} [params.contentType] The mime type of the file. Optional.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         create: function (filename, params, options) {
@@ -7841,13 +7448,13 @@ module.exports = function (config) {
         * Gets a file from the Asset API, fetching the asset content. (To get a list
         * of the assets in a scope, use `list()`.)
         *
-        *  **Parameters**
+        *  
         * @param {string} filename (Required) Name of the file to retrieve.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         get: function (filename, options) {
-            var getServiceOptions = _pick(serviceOptions, ['scope', 'account', 'project', 'group', 'userId']);
+            var getServiceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["pick"])(serviceOptions, ['scope', 'account', 'project', 'group', 'userId']);
             var urlOptions = $.extend({}, getServiceOptions, options);
             var url = buildUrl(filename, urlOptions);
             var getOptions = $.extend(true, {}, urlOptions, { url: url });
@@ -7858,16 +7465,15 @@ module.exports = function (config) {
         /**
         * Gets the list of the assets in a scope.
         *
-        * **Example**
-        *
+        * @example
         *       aa.list({ fullUrl: true }).then(function(fileList){
         *           console.log('array of files = ', fileList);
         *       });
         *
-        *  **Parameters**
-        * @param {object} options (Optional) Options object to override global options.
-        * @param {string} options.scope (Optional) The scope (`user`, `group`, `project`).
-        * @param {boolean} options.fullUrl (Optional) Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
+        *  
+        * @param {object} [options] Options object to override global options.
+        * @param {string} [options.scope] The scope (`user`, `group`, `project`).
+        * @param {boolean} [options.fullUrl] Determines if the list of assets in a scope includes the complete URL for each asset (`true`), or only the file names of the assets (`false`).
         * @return {Promise}
         */
         list: function (options) {
@@ -7895,8 +7501,7 @@ module.exports = function (config) {
         /**
         * Replaces an existing file in the Asset API.
         *
-        * **Example**
-        *
+        * @example
         *       // replace an asset using encoded text
         *       aa.replace('test.txt', {
         *           encoding: 'BASE_64',
@@ -7923,13 +7528,13 @@ module.exports = function (config) {
         *          aa.replace(filename, data, { scope: 'user' });
         *       });
         *
-        *  **Parameters**
-        * @param {string} filename (Required) Name of the file being replaced.
-        * @param {object} params (Optional) Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
-        * @param {string} params.encoding Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} params.data The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
-        * @param {string} params.contentType The mime type of the file. Optional.
-        * @param {object} options (Optional) Options object to override global options.
+        *  
+        * @param {string} filename Name of the file being replaced.
+        * @param {object} [params] Body parameters to send to the Asset API. Required if the `options.transport.contentType` is `application/json`, otherwise ignored.
+        * @param {string} [params.encoding] Either `HEX` or `BASE_64`. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} [params.data] The encoded data for the file. Required if `options.transport.contentType` is `application/json`.
+        * @param {string} [params.contentType] The mime type of the file. Optional.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         replace: function (filename, params, options) {
@@ -7939,13 +7544,12 @@ module.exports = function (config) {
         /**
         * Deletes a file from the Asset API.
         *
-        * **Example**
-        *
+        * @example
         *       aa.delete(sampleFileName);
         *
-        *  **Parameters**
+        *  
         * @param {string} filename (Required) Name of the file to delete.
-        * @param {object} options (Optional) Options object to override global options.
+        * @param {object} [options] Options object to override global options.
         * @return {Promise}
         */
         delete: function (filename, options) {
@@ -7958,22 +7562,22 @@ module.exports = function (config) {
         }
     };
     $.extend(this, publicAPI);
-};
+}
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(53);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(56);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(20);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8003,38 +7607,29 @@ function getStateFromActions(actions, currentTime, options) {
     return state;
 }
 
-/**
- * @typedef {object} TimerOptions
- * @name TimerOptions
- * @property {string} [account] The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
- * @property {string} [project] The project id. Defaults to empty string. If left undefined, taken from the URL.
- * @property {string} [token] For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
- * @property {object} [transport] Options to pass on to the underlying transport layer
- * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
- * @property {string} [scope] Determines the specificity of the timer, see DataService for available scopes
- * @property {string|function} [strategy] strategy to use to resolve start time. Available strategies are 'first-user' (default) or 'last-user'. Can also take in a function to return a custom start time.
- */
-
 var TimerService = function () {
     /**
-     * @param {TimerOptions} options 
+     * @param {AccountAPIServiceOptions} options 
+     * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
+     * @property {string} [scope] Determines the specificity of the timer, see DataService for available scopes
+     * @property {string|function} [strategy] strategy to use to resolve start time. Available strategies are 'first-user' (default) or 'last-user'. Can also take in a function to return a custom start time.
      */
     function TimerService(options) {
         _classCallCheck(this, TimerService);
 
         var defaults = {
+            name: 'timer',
+            strategy: __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a" /* STRATEGIES */].START_BY_FIRST_USER,
+            strategyOptions: {},
+
             account: undefined,
             project: undefined,
             token: undefined,
-            transport: {},
-            name: 'timer',
-            strategy: __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a" /* STRATEGIES */].START_BY_FIRST_USER,
-            strategyOptions: {}
+            transport: {}
         };
 
         this.ACTIONS = __WEBPACK_IMPORTED_MODULE_6__timer_constants__["a" /* ACTIONS */];
 
-        /** @type {TimerOptions} */
         this.options = $.extend(true, {}, defaults, options);
         this.sessionManager = new __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default.a(this.options);
         this.channel = new __WEBPACK_IMPORTED_MODULE_3_util_pubsub__["a" /* default */]();
@@ -8048,9 +7643,9 @@ var TimerService = function () {
      * 
      * @param {object} createOptions
      * @param {number} createOptions.timeLimit Limit for the timer, in milliseconds
-     * @param {boolean} createOptions.startImmediately Determines if the timer should start ticking immediately. If set to false (default) call timer.start to start ticking.
+     * @param {boolean} [createOptions.startImmediately] Determines if the timer should start ticking immediately. If set to false (default) call timer.start to start ticking.
      * 
-     * @returns {Promise}
+     * @returns {JQuery.Promise}
      */
 
 
@@ -8332,14 +7927,14 @@ TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a"
 /* harmony default export */ __webpack_exports__["default"] = (TimerService);
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* unused harmony export objectToPublishable */
 /* unused harmony export publishableToObject */
 /* unused harmony export normalizeParamOptions */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_array_utils__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_array_utils__ = __webpack_require__(36);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8548,14 +8143,14 @@ var PubSub = function () {
 /* harmony default export */ __webpack_exports__["a"] = (PubSub);
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return STRATEGIES; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(57);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -8580,12 +8175,12 @@ function getStrategy(strategy) {
 }
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(37);
 
 
 function reduceActions(actions) {
@@ -8597,13 +8192,13 @@ function reduceActions(actions) {
 }
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(36);
 
 
 
@@ -8627,12 +8222,12 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(20);
 
 
 function toDetailedTime(ts) {
@@ -8710,18 +8305,24 @@ function reduceActions(actions, startTime, currentTime) {
 }
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+var API_ENDPOINT = 'password';
 
 /**
  * 
@@ -8731,29 +8332,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * 
  */
 
-
-
-
-
-var API_ENDPOINT = 'password';
-
 var PasswordService = function () {
+    /**
+     * @param {AccountAPIServiceOptions} config 
+     */
     function PasswordService(config) {
         _classCallCheck(this, PasswordService);
 
         var defaults = {
-            /**
-             * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
-             * @type {string}
-             */
             account: undefined,
-            /**
-             * The project id. Defaults to empty string. If left undefined, taken from the URL.
-             * @type {string}
-             */
             project: undefined,
-
-            //Options to pass on to the underlying transport layer
             transport: {}
         };
         this.sessionManager = new __WEBPACK_IMPORTED_MODULE_0_store_session_manager___default.a();
@@ -8764,7 +8352,7 @@ var PasswordService = function () {
     /**
      * Send a password reset email for the provided userName.
      * 
-     * **Example**
+     * @example
             var ps = new F.service.Password();
             ps.resetPassword('myuserName@gmail.com', {
                 redirectUrl: 'login.html',
@@ -8832,247 +8420,150 @@ var PasswordService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (PasswordService);
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(18);
+/* harmony export (immutable) */ __webpack_exports__["default"] = ProjectAPIService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(5);
 /**
- * 
- * ## Consensus Group Service
  *
- * The Consensus Group Service provides a way to group different consensus points within your world. This is typically used in faculty pages to report progression throw different Consensus Points.
- * 
- *      var cg = new F.service.ConsensusGroup({
- *          worldId: world.id,
- *          name: 'rounds'
- *      });
- *      cg.consensus('round1').create(..);
+ * ## Project API Adapter
  *
- * You can use the Consensus Service (`F.service.Consensus`) without using the ConsensusGroup (`F.service.ConsensusGroup`) - the Consensus Service uses a group called "default" by default.
- * 
+ * The Project API allows reading/writing project settings. An author/admin project token is required for most operations.
+ *
+ *      var ps = new F.service.Project({  account: 'acme', project: 'sample', token: 'author-or-project-access-token' });
+ *      ps.getProjectSettings();
  */
 
 
 
 
+var API_ENDPOINT = 'project';
+var MULTIPLAYER_ENDPOINT = 'multiplayer/project';
 
-
-var API_ENDPOINT = 'multiplayer/consensus';
-
-function ConsensusGroupService(config) {
+function ProjectAPIService(config) {
     var defaults = {
-        token: undefined,
+        /**
+         * Epicenter account name. Defaults to undefined.
+         * @type {string}
+         */
         account: undefined,
+
+        /**
+         * Epicenter project name. Defaults to undefined.
+         * @type {string}
+         */
         project: undefined,
-        worldId: '',
-        name: 'default'
+
+        /**
+         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
+         * @type {object}
+         */
+        transport: {}
     };
 
-    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["b" /* getDefaultOptions */])(defaults, config);
-    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__["d" /* getURLConfig */])(serviceOptions);
-
-    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
-
-    function getHTTPOptions(options) {
-        var mergedOptions = $.extend(true, {}, serviceOptions, options);
-        if (!mergedOptions.worldId) {
-            throw new Error('ConsensusGroup Service: worldId is required');
-        }
-        var baseURL = urlConfig.getAPIPath(API_ENDPOINT);
-        var url = baseURL + [mergedOptions.worldId, mergedOptions.name].join('/');
-
-        var httpOptions = $.extend(true, {}, mergedOptions, { url: url });
-        return httpOptions;
+    function getHTTP(overrides) {
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, {
+            apiEndpoint: API_ENDPOINT
+        }, overrides);
+        var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+        return http;
     }
+
     var publicAPI = {
         /**
-         * List all consensus points within this group
+         * Get current settings for project
          * 
-         * @param {object} outputModifier Currently unused, may be used for paging etc later
-         * @param {object} [options] Overrides for serviceoptions
+         * @param {object} [options] 
          * @returns {Promise}
          */
-        list: function (outputModifier, options) {
-            var httpOptions = getHTTPOptions(options);
-            return http.get(outputModifier, httpOptions);
+        getProjectSettings: function (options) {
+            var http = getHTTP(options);
+            return http.get();
+        },
+        /**
+         * Update settings for project
+         * 
+         * @param {object} settings New settings to apply 
+         * @param {object} [options] 
+         * @returns {Promise}
+         */
+        updateProjectSettings: function (settings, options) {
+            var http = getHTTP(options);
+            return http.patch(settings);
         },
 
         /**
-         * Deletes all consensus points within this group
+         * Get current multiplayer settings for project
          * 
-         * @param {object} [options] Overrides for serviceoptions
+         * @param {object} [options] 
          * @returns {Promise}
          */
-        delete: function (options) {
-            var httpOptions = getHTTPOptions(options);
-            return http.delete({}, httpOptions);
+        getMultiplayerSettings: function (options) {
+            var overrides = $.extend({}, options, {
+                apiEndpoint: MULTIPLAYER_ENDPOINT
+            });
+            var http = getHTTP(overrides);
+            return http.get();
         },
 
         /**
-         * Helper to return a Consensus instance 
+         * Update multiplayer settings for project - usually used to add roles on the fly
          * 
-         * @param {string} [name] Returns a new instance of a consensus service. Note it is not created until you call `create` on the returned service.
-         * @param {object} [options] Overrides for serviceoptions
-         * @returns {ConsensusService}
+         * @param {object} settings 
+         * @param {{ autoCreate: boolean}} [options] 
+         * @param {object} [serviceOverrides] 
+         * @returns {Promise}
          */
-        consensus: function (name, options) {
-            var opts = $.extend({}, true, serviceOptions, options);
-            var cs = new __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__["default"]($.extend(true, opts, {
-                consensusGroup: opts.name,
-                name: name
-            }));
-            return cs;
+        updateMultiplayerSettings: function (settings, options, serviceOverrides) {
+            var overrides = $.extend({}, serviceOverrides, {
+                apiEndpoint: MULTIPLAYER_ENDPOINT
+            });
+            var http = getHTTP(overrides);
+            if (options && options.autoCreate) {
+                return http.put(settings);
+            } else {
+                return http.patch(settings);
+            }
         }
     };
     return publicAPI;
 }
 
 /***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 61 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/**
-* ## Scenario Manager
-*
-* In some projects, often called "turn-by-turn" projects, end users advance through the project's model step-by-step, working either individually or together to make decisions at each step. 
-*
-* In other projects, often called "run comparison" or "scenario comparison" projects, end users set some initial decisions, then simulate the model to its end. Typically end users will do this several times, creating several runs, and compare the results. 
-*
-* The Scenario Manager makes it easy to create these "run comparison" projects. Each Scenario Manager allows you to compare the results of several runs. This is mostly useful for time-based models; by default, you can use the Scenario Manager with [Vensim](../../../model_code/vensim/), [Powersim](../../../model_code/powersim/), and [SimLang](../../../model_code/forio_simlang). (You can use the Scenario Manager with other languages as well, by using the Scenario Manager's [configuration options](#configuration-options) to change the `advanceOperation`.)
-*
-* The Scenario Manager can be thought of as a collection of [Run Managers](../run-manager/) with pre-configured [strategies](../strategies/). Just as the Run Manager provides use case -based abstractions and utilities for managing the [Run Service](../run-api-service/), the Scenario Manager does the same for the Run Manager.
-*
-* There are typically three components to building a run comparison:
-*
-* * A `current` run in which to make decisions; this is defined as a run that hasn't been advanced yet, and so can be used to set initial decisions. The current run maintains state across different sessions.
-* * A list of `saved` runs, that is, all runs that you want to use for comparisons.
-* * A `baseline` run to compare against; this is defined as a run "advanced to the end" of your model using just the model defaults. Comparing against a baseline run is optional; you can [configure](#configuration-options) the Scenario Manager to not include one.
-*
-* To satisfy these needs a Scenario Manager instance has three Run Managers: [baseline](./baseline/), [current](./current/), and [savedRuns](./saved/).
-*
-* ### Using the Scenario Manager to create a run comparison project
-*
-* To use the Scenario Manager, instantiate it, then access its Run Managers as needed to create your project's user interface:
-*
-* **Example**
-*
-*       var sm = new F.manager.ScenarioManager({
-*           run: {
-*               model: 'mymodel.vmf'
-*           }
-*       });
-*
-*       // The current is an instance of a Run Manager,
-*       // with a strategy which picks up the most recent unsaved run.
-*       // It is typically used to store the decisions being made by the end user. 
-*       var currentRM = sm.current;
-*
-*       // The Run Manager operation, which retrieves the current run.
-*       sm.current.getRun();
-*       // The Run Manager operation, which resets the decisions made on the current run.
-*       sm.current.reset();
-*       // A special method on the current run,
-*       // which clones the current run, then advances and saves this clone
-*       // (it becomes part of the saved runs list).
-*       // The current run is unchanged and can continue to be used
-*       // to store decisions being made by the end user.
-*       sm.current.saveAndAdvance();
-*
-*       // The savedRuns is an instance of a Saved Runs Manager 
-*       // (itself a variant of a Run Manager).
-*       // It is typically displayed in the project's UI as part of a run comparison table or chart.
-*       var savedRM = sm.savedRuns;
-*       // Mark a run as saved, adding it to the set of saved runs.
-*       sm.savedRuns.save(run);
-*       // Mark a run as removed, removing it from the set of saved runs.
-*       sm.savedRuns.remove(run);
-*       // List the saved runs, optionally including some specific model variables for each.
-*       sm.savedRuns.getRuns();
-*
-*       // The baseline is an instance of a Run Manager,
-*       // with a strategy which locates the most recent baseline run
-*       // (that is, flagged as `saved` and not `trashed`), or creates a new one.
-*       // It is typically displayed in the project's UI as part of a run comparison table or chart.
-*       var baselineRM = sm.baseline;
-*
-*       // The Run Manager operation, which retrieves the baseline run.
-*       sm.baseline.getRun();
-*       // The Run Manager operation, which resets the baseline run.
-*       // Useful if the model has changed since the baseline run was created.
-*       sm.baseline.reset(); 
-*/
-
-
-
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__saved_runs_manager__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(70);
 // See integration-test-scenario-manager for usage examples
 
-var RunManager = __webpack_require__(20).default;
-var SavedRunsManager = __webpack_require__(39);
 
-var strategyUtils = __webpack_require__(7);
-var rutil = __webpack_require__(8);
 
-var NoneStrategy = __webpack_require__(11);
 
-var StateService = __webpack_require__(33);
-var RunService = __webpack_require__(9);
 
-var BaselineStrategy = __webpack_require__(67);
-var LastUnsavedStrategy = __webpack_require__(68);
 
-var defaults = {
-    /**
-     * Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
-     * @type {Array}
-     */
-    advanceOperation: [{ name: 'stepTo', params: ['end'] }],
 
-    /**
-     * Additional options to pass through to run creation (for e.g., `files`, etc.). Defaults to empty object.
-     * @type {Object}
-     */
-    run: {},
 
-    /**
-     * Whether or not to include a baseline run in this Scenario Manager. Defaults to `true`.
-     * @type {Boolean}
-     */
-    includeBaseLine: true,
 
-    /**
-     * Additional configuration for the `baseline` run. 
-     *
-     * * `baseline.runName`: Name of the baseline run. Defaults to 'Baseline'. 
-     * * `baseline.run`: Additional options to pass through to run creation, specifically for the baseline run. These will override any options provided under `run`. Defaults to empty object. 
-     * @type {Object}
-     */
-    baseline: {
-        runName: 'Baseline',
-        run: {}
-    },
 
-    /**
-     * Additional configuration for the `current` run. 
-     *
-     * * `current.run`: Additional options to pass through to run creation, specifically for the current run. These will override any options provided under `run`. Defaults to empty object.
-     * @type {Object}
-     */
-    current: {
-        run: {}
-    },
 
-    /**
-     * Options to pass through to the `savedRuns` list. See the [Saved Runs Manager](./saved/) for complete description of available options. Defaults to empty object.
-     * @type {Object}
-     */
-    savedRuns: {}
-};
+
+
 
 function cookieNameFromOptions(prefix, config) {
     var key = ['account', 'project', 'model'].reduce(function (accum, key) {
@@ -9081,24 +8572,51 @@ function cookieNameFromOptions(prefix, config) {
     return key;
 }
 
+/**
+ * @param {object} config 
+ * @property {object[]} [advanceOperation] Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
+ * @property {object} run Additional options to pass through to run creation (for e.g., `files`, etc.). Defaults to empty object.
+ * @property {boolean} [includeBaseLine] Whether or not to auto-create and include a baseline run in this Scenario Manager. Defaults to `true`.
+ * @property {object} [baseline] Additional configuration for the `baseline` run. 
+ * @property {string} [baseline.runName] Name of the baseline run. Defaults to 'Baseline'. 
+ * @property {string} [baseline.run] Additional options to pass through to run creation, specifically for the baseline run. These will override any options provided under `run`. Defaults to empty object. 
+ * @property {object} [current] Additional configuration for the `current` run. 
+ * @property {string} [current.run] Additional options to pass through to run creation, specifically for the current run. These will override any options provided under `run`. Defaults to empty object.
+ * @property {object} [savedRuns] Options to pass through to the `savedRuns` list. See the [Saved Runs Manager](./saved/) for complete description of available options. Defaults to empty object.
+ */
 function ScenarioManager(config) {
+    var defaults = {
+        advanceOperation: [{ name: 'stepTo', params: ['end'] }],
+        run: {},
+        includeBaseLine: true,
+        baseline: {
+            runName: 'Baseline',
+            run: {}
+        },
+        current: {
+            run: {}
+        },
+        savedRuns: {}
+    };
+
     var opts = $.extend(true, {}, defaults, config);
     if (config && config.advanceOperation) {
         opts.advanceOperation = config.advanceOperation; //jquery.extend does a poor job trying to merge arrays
     }
 
-    var BaselineStrategyToUse = opts.includeBaseLine ? BaselineStrategy : NoneStrategy;
+    var BaselineStrategyToUse = opts.includeBaseLine ? __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__["a" /* default */] : __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy___default.a;
     /**
      * A [Run Manager](../run-manager/) instance containing a 'baseline' run to compare against; this is defined as a run "advanced to the end" of your model using just the model defaults. By default the "advance" operation is assumed to be `stepTo: end`, which works for time-based models in [Vensim](../../../model_code/vensim/), [Powersim](../../../model_code/powersim/), and [SimLang](../../../model_code/forio_simlang). If you're using a different language, or need to change this, just pass in a different `advanceOperation` option while creating the Scenario Manager. The baseline run is typically displayed in the project's UI as part of a run comparison table or chart.
      * @return {RunManager}
      */
-    this.baseline = new RunManager({
+    this.baseline = new __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__["default"]({
         strategy: BaselineStrategyToUse,
         sessionKey: cookieNameFromOptions.bind(null, 'sm-baseline-run'),
-        run: strategyUtils.mergeRunOptions(opts.run, opts.baseline.run),
+        run: Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["mergeRunOptions"])(opts.run, opts.baseline.run),
         strategyOptions: {
             baselineName: opts.baseline.runName,
-            initOperation: opts.advanceOperation
+            initOperation: opts.advanceOperation,
+            scope: opts.baseline.scope
         }
     });
 
@@ -9106,7 +8624,7 @@ function ScenarioManager(config) {
      * A [SavedRunsManager](../saved-runs-manager/) instance containing a list of saved runs, that is, all runs that you want to use for comparisons. The saved runs are typically displayed in the project's UI as part of a run comparison table or chart.
      * @return {SavedRunsManager}
      */
-    this.savedRuns = new SavedRunsManager($.extend(true, {}, {
+    this.savedRuns = new __WEBPACK_IMPORTED_MODULE_1__saved_runs_manager__["default"]($.extend(true, {}, {
         run: opts.run
     }, opts.savedRuns));
 
@@ -9123,10 +8641,10 @@ function ScenarioManager(config) {
      * A [Run Manager](../run-manager/) instance containing a 'current' run; this is defined as a run that hasn't been advanced yet, and so can be used to set initial decisions. The current run is typically used to store the decisions being made by the end user.
      * @return {RunManager}
      */
-    this.current = new RunManager({
-        strategy: LastUnsavedStrategy,
+    this.current = new __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__["default"]({
+        strategy: __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__["a" /* default */],
         sessionKey: cookieNameFromOptions.bind(null, 'sm-current-run'),
-        run: strategyUtils.mergeRunOptions(opts.run, opts.current.run)
+        run: Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["mergeRunOptions"])(opts.run, opts.current.run)
     });
 
     /**
@@ -9134,22 +8652,20 @@ function ScenarioManager(config) {
      *
      * Available only for the Scenario Manager's `current` property (Run Manager). 
      *
-     * **Example**
-     *
-     *      var sm = new F.manager.ScenarioManager();
-     *      sm.current.saveAndAdvance({'myRunName': 'sample policy decisions'});
-     *
-     * **Parameters**
-     * @param  {Object} metadata   Metadata to save, for example, the run name.
+     * @example
+     * var sm = new F.manager.ScenarioManager();
+     * sm.current.saveAndAdvance({'myRunName': 'sample policy decisions'});
+     * 
+     * @param {object} metadata Metadata to save, for example, `{ name: 'Run Name' }`
      * @return {Promise}
      */
     this.current.saveAndAdvance = function (metadata) {
         function clone(run) {
-            var sa = new StateService();
-            var advanceOpns = rutil.normalizeOperations(opts.advanceOperation);
+            var sa = new __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__["default"]();
+            var advanceOpns = Object(__WEBPACK_IMPORTED_MODULE_3_util_run_util__["normalizeOperations"])(opts.advanceOperation);
             //run i'm cloning shouldn't have the advance operations there by default, but just in case
             return sa.clone({ runId: run.id, exclude: advanceOpns.ops }).then(function (response) {
-                var rs = new RunService(me.current.run.getCurrentConfig());
+                var rs = new __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__["default"](me.current.run.getCurrentConfig());
                 return rs.load(response.run);
             });
         }
@@ -9159,7 +8675,7 @@ function ScenarioManager(config) {
             });
         }
         function advance(run) {
-            var rs = new RunService(run);
+            var rs = new __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__["default"](run);
             return rs.serial(opts.advanceOperation).then(function () {
                 return run;
             });
@@ -9168,10 +8684,10 @@ function ScenarioManager(config) {
     };
 }
 
-module.exports = ScenarioManager;
+/* harmony default export */ __webpack_exports__["default"] = (ScenarioManager);
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9195,8 +8711,8 @@ module.exports = ScenarioManager;
 
 
 
-var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(10);
+var classFrom = __webpack_require__(2);
+var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9214,7 +8730,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9241,8 +8757,8 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(10);
+var classFrom = __webpack_require__(2);
+var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9260,7 +8776,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9271,10 +8787,10 @@ module.exports = Strategy;
  */
 
 
-var classFrom = __webpack_require__(3);
+var classFrom = __webpack_require__(2);
 
-var IdentityStrategy = __webpack_require__(11);
-var WorldApiAdapter = __webpack_require__(12).default;
+var IdentityStrategy = __webpack_require__(12);
+var WorldApiAdapter = __webpack_require__(10).default;
 
 var defaults = {};
 
@@ -9311,7 +8827,7 @@ var Strategy = classFrom(IdentityStrategy, {
         var dtd = $.Deferred();
 
         if (!curUserId) {
-            return dtd.reject({ statusCode: 401, type: 'UN_AUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
+            return dtd.reject({ statusCode: 401, type: 'UNAUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
         }
 
         var loadRunFromWorld = function (world) {
@@ -9341,7 +8857,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9357,8 +8873,8 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(10);
+var classFrom = __webpack_require__(2);
+var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9376,7 +8892,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9399,8 +8915,8 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
-var ConditionalStrategy = __webpack_require__(10);
+var classFrom = __webpack_require__(2);
+var ConditionalStrategy = __webpack_require__(11);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9422,7 +8938,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9442,8 +8958,8 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(3);
-var IdentityStrategy = __webpack_require__(11);
+var classFrom = __webpack_require__(2);
+var IdentityStrategy = __webpack_require__(12);
 
 var _require = __webpack_require__(7),
     injectFiltersFromSession = _require.injectFiltersFromSession,
@@ -9491,7 +9007,7 @@ var Strategy = classFrom(IdentityStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9502,11 +9018,17 @@ function reset(params, options, manager) {
 }
 
 /***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 69 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = BaselineStrategy;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized__);
+
+
 /**
+ * @description
  * ## Baseline
  *
  * An instance of a [Run Manager](../../run-manager/) with a baseline strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.baseline`.
@@ -9518,38 +9040,50 @@ function reset(params, options, manager) {
  * Comparing against a baseline run is optional in a Scenario Manager; you can [configure](../#configuration-options) your Scenario Manager to not include one. See [more information](../#properties) on using `.baseline` within the Scenario Manager.
  *
  * See also: [additional information on run strategies](../../strategies/).
- *
+ * 
+ * @constructor
+ * @param {object} options
+ * @property {string} [baselineName] Name of the baseline run. Defaults to 'Baseline'. 
+ * @property {object[]} [initOperation] Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
  */
-
-
-
-var ReuseinitStrategy = __webpack_require__(38);
-
-module.exports = function (options) {
+function BaselineStrategy(options) {
     var defaults = {
         baselineName: 'Baseline',
         initOperation: [{ stepTo: 'end' }]
     };
     var strategyOptions = options ? options.strategyOptions : {};
     var opts = $.extend({}, defaults, strategyOptions);
-    return new ReuseinitStrategy({
+    return new __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized___default.a({
         strategyOptions: {
             initOperation: opts.initOperation,
             flag: {
                 saved: true,
                 trashed: false,
                 name: opts.baselineName
-            }
+            },
+            scope: opts.scope
         }
     });
-};
+}
 
 /***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 70 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+//TODO: Make a more generic version of this called 'reuse-by-matching-filter';
+
 /**
+ * @description
  * ## Current (reuse-last-unsaved)
  *
  * An instance of a [Run Manager](../../run-manager/) with this strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.current`.
@@ -9569,199 +9103,361 @@ module.exports = function (options) {
  * See also: [additional information on run strategies](../../strategies/).
  */
 
+var ReuseLastUnsaved = function () {
+    function ReuseLastUnsaved(options) {
+        _classCallCheck(this, ReuseLastUnsaved);
 
-
-var classFrom = __webpack_require__(3);
-var injectFiltersFromSession = __webpack_require__(7).injectFiltersFromSession;
-var injectScopeFromSession = __webpack_require__(7).injectScopeFromSession;
-
-var Base = {};
-
-//TODO: Make a more generic version of this called 'reuse-by-matching-filter';
-module.exports = classFrom(Base, {
-    constructor: function (options) {
         var strategyOptions = options ? options.strategyOptions : {};
         this.options = strategyOptions;
-    },
-
-    reset: function (runService, userSession, options) {
-        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
-        return runService.create(opt, options).then(function (createResponse) {
-            return $.extend(true, {}, createResponse, { freshlyCreated: true });
-        });
-    },
-
-    getRun: function (runService, userSession, opts) {
-        var runopts = runService.getCurrentConfig();
-        var filter = injectFiltersFromSession({
-            saved: false,
-            trashed: false,
-            model: runopts.model
-        }, userSession);
-        var me = this;
-        var outputModifiers = {
-            startrecord: 0,
-            endrecord: 0,
-            sort: 'created',
-            direction: 'desc'
-        };
-        return runService.query(filter, outputModifiers).then(function (runs) {
-            if (!runs.length) {
-                return me.reset(runService, userSession);
-            }
-            return runs[0];
-        });
     }
-}, { requiresAuth: false });
+
+    _createClass(ReuseLastUnsaved, [{
+        key: 'reset',
+        value: function reset(runService, userSession, options) {
+            var scoped = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["injectScopeFromSession"])(runService.getCurrentConfig(), userSession);
+            var opt = $.extend(true, {}, scoped, {
+                scope: {
+                    trackingKey: 'current'
+                }
+            });
+            return runService.create(opt, options).then(function (createResponse) {
+                return $.extend(true, {}, createResponse, { freshlyCreated: true });
+            });
+        }
+    }, {
+        key: 'getRun',
+        value: function getRun(runService, userSession, opts) {
+            var runopts = runService.getCurrentConfig();
+            var filter = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["injectFiltersFromSession"])({
+                trashed: false,
+                model: runopts.model,
+                'scope.trackingKey': 'current'
+            }, userSession);
+            var me = this;
+            var outputModifiers = {
+                startrecord: 0,
+                endrecord: 0,
+                sort: 'created',
+                direction: 'desc'
+            };
+            return runService.query(filter, outputModifiers).then(function (runs) {
+                if (!runs.length) {
+                    return me.reset(runService, userSession);
+                }
+                return runs[0];
+            });
+        }
+    }]);
+
+    return ReuseLastUnsaved;
+}();
+
+ReuseLastUnsaved.requiresAuth = false;
+/* harmony default export */ __webpack_exports__["a"] = (ReuseLastUnsaved);
 
 /***/ }),
-/* 69 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 71 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/**
-* ## World Manager
-*
-* As discussed under the [World API Adapter](../world-api-adapter/), a [run](../../../glossary/#run) is a collection of end user interactions with a project and its model. For building multiplayer simulations you typically want multiple end users to share the same set of interactions, and work within a common state. Epicenter allows you to create "worlds" to handle such cases.
-*
-* The World Manager provides an easy way to track and access the current world and run for particular end users. It is typically used in pages that end users will interact with. (The related [World API Adapter](../world-api-adapter/) handles creating multiplayer worlds, and adding and removing end users and runs from a world. Because of this, typically the World Adapter is used for facilitator pages in your project.)
-*
-* ### Using the World Manager
-*
-* To use the World Manager, instantiate it. Then, make calls to any of the methods you need.
-*
-* When you instantiate a World Manager, the world's account id, project id, and group are automatically taken from the session (thanks to the [Authentication Service](../auth-api-service)).
-*
-* Note that the World Manager does *not* create worlds automatically. (This is different than the [Run Manager](../run-manager).) However, you can pass in specific options to any runs created by the manager, using a `run` object.
-*
-* The parameters for creating a World Manager are:
-*
-*   * `account`: The **Team ID** in the Epicenter user interface for this project.
-*   * `project`: The **Project ID** for this project.
-*   * `group`: The **Group Name** for this world.
-*   * `run`: Options to use when creating new runs with the manager, e.g. `run: { files: ['data.xls'] }`.
-*   * `run.model`: The name of the primary model file for this project. Required if you have not already passed it in as part of the `options` parameter for an enclosing call.
-*
-* For example:
-*
-*       var wMgr = new F.manager.WorldManager({
-*          account: 'acme-simulations',
-*          project: 'supply-chain-game',
-*          run: { model: 'supply-chain.py' },
-*          group: 'team1'
-*       });
-*
-*       wMgr.getCurrentRun();
-*/
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["parseUsers"] = parseUsers;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils__ = __webpack_require__(1);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
 
-var WorldApi = __webpack_require__(12).default;
-var RunManager = __webpack_require__(20).default;
-var AuthManager = __webpack_require__(16);
-var worldApi;
 
-function buildStrategy(worldId) {
 
-    return function Ctor(options) {
-        this.options = options;
 
-        $.extend(this, {
-            reset: function () {
-                throw new Error('not implementd. Need api changes');
-            },
 
-            getRun: function (runService) {
-                // Model is required in the options
-                var model = this.options.run.model || this.options.model;
-                return worldApi.getCurrentRunId({ model: model, filter: worldId }).then(function (runId) {
-                    return runService.load(runId);
-                });
-            }
+function parseUsers(userList) {
+    var expectedCols = [{ label: 'Email', value: 'userName' }, { label: 'First Name', value: 'firstName' }, { label: 'Last Name', value: 'lastName' }, { label: 'Password', value: 'password' }];
+    var parsed = userList.split(/\r\r|\r|\n/).reduce(function (accum, row, index) {
+        var splitter = row && /\t/.test(row) ? /\t/ : ',';
+        var rowContents = row.split(splitter);
+        if (!rowContents.length) {
+            return accum;
+        }
+        var missingFields = expectedCols.filter(function (col, index) {
+            return rowContents[index] === undefined || !rowContents[index].trim();
         });
-    };
+        if (missingFields.length) {
+            var missingLabels = missingFields.map(function (f) {
+                return f.label;
+            });
+            accum.invalid.push({
+                userName: rowContents[0] || 'Line ' + (index + 1),
+                message: 'Missing ' + missingLabels.join(', '),
+                reason: 'MISSING_FIELDS',
+                context: { missingFields: missingLabels }
+            });
+            return accum;
+        }
+        var user = expectedCols.reduce(function (accum, col, index) {
+            var val = rowContents[index].trim();
+            accum[col.value] = val;
+            return accum;
+        }, {});
+
+        accum.valid.push(user);
+        return accum;
+    }, {
+        valid: [],
+        invalid: []
+    });
+    return parsed;
 }
 
-module.exports = function (options) {
-    this.options = options || { run: {}, world: {} };
+var ERROR_TYPES = {
+    EMPTY_USERS: 'EMPTY_USERS',
+    NO_GROUP_PROVIDED: 'NO_GROUP_PROVIDED',
+    API_REJECT: 'API_REJECT',
+    GROUP_LIMIT_EXCEEDED: 'GROUP_LIMIT_EXCEEDED'
+};
 
-    $.extend(true, this.options, this.options.run);
-    $.extend(true, this.options, this.options.world);
+/**
+ * @description
+ * ## User Manager
+ *
+ * The User Manager provides a high-level abstraction over the User Service and Member Services to perform common simulation actions, like uploading users into a group.
+ *
+ * ```js
+     var UserManager = F.manager.User;
+     var um = new UserManager(getRunParams());
+     um.uploadUsersToGroup($('#userTextarea').val()).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
+         if (res.type === UserManager.errors.EMPTY_USERS) {
+             alert('No users specified to upload');
+         } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
+             alert('No group found. Create a group and login as a facilitator to upload users');
+         } else {
+             alert('Unknown error, please try again');
+         }
+     });
+  * ```
+  * @param {AccountAPIServiceOptions} config
+  */
 
-    worldApi = new WorldApi(this.options);
-    this._auth = new AuthManager();
-    var me = this;
+var UserManager = function () {
+    function UserManager(config) {
+        _classCallCheck(this, UserManager);
 
-    var api = {
+        var defaults = {
+            account: undefined
+        };
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_3_service_service_utils__["b" /* getDefaultOptions */])(defaults, config);
+        this.serviceOptions = serviceOptions;
+    }
 
-        /**
-        * Returns the current world (object) and an instance of the [World API Adapter](../world-api-adapter/).
-        *
-        * **Example**
-        *
-        *       wMgr.getCurrentWorld()
-        *           .then(function(world, worldAdapter) {
-        *               console.log(world.id);
-        *               worldAdapter.getCurrentRunId();
-        *           });
-        *
-        * **Parameters**
-        * @param {string} userId (Optional) The id of the user whose world is being accessed. Defaults to the user in the current session.
-        * @param {string} groupName (Optional) The name of the group whose world is being accessed. Defaults to the group for the user in the current session.
-        * @return {Promise}
-        */
-        getCurrentWorld: function (userId, groupName) {
-            var session = this._auth.getCurrentUserSessionInfo();
-            if (!userId) {
-                userId = session.userId;
+    /**
+     *  Bulk creates user accounts and adds them to a group. Input userlist is typically the string contents of a textarea with user data.
+     * 
+     * @example
+     * um.upload($('#textareaWithUsers').val());
+     * 
+     * @param {string} userList list of users seperated by newlines, with each line containing email, firstname, lastname, password separated by tabs/commas
+     * @param {string} [groupId] id of group to upload to. Defaults to getting current group from session
+     * @param {object} [options]  overrides for service options
+     * @returns {JQuery.Promise}
+     */
+
+
+    _createClass(UserManager, [{
+        key: 'uploadUsersToGroup',
+        value: function uploadUsersToGroup(userList, groupId, options) {
+            if (!userList || !userList.trim()) {
+                return $.Deferred().reject({
+                    type: ERROR_TYPES.EMPTY_USERS,
+                    message: 'uploadUsersToGroup: No users specified to upload.'
+                }).promise();
             }
-            if (!groupName) {
-                groupName = session.groupName;
-            }
-            return worldApi.getCurrentWorldForUser(userId, groupName);
-        },
+            var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_3_service_service_utils__["b" /* getDefaultOptions */])(this.serviceOptions, options);
+            if (!groupId) {
+                var am = new __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__["default"](serviceOptions);
+                var session = am.getCurrentUserSessionInfo();
+                groupId = session.groupId;
 
-        /**
-        * Returns the current run (object) and an instance of the [Run API Service](../run-api-service/).
-        *
-        * **Example**
-        *
-        *       wMgr.getCurrentRun('myModel.py')
-        *           .then(function(run, runService) {
-        *               console.log(run.id);
-        *               runService.do('startGame');
-        *           });
-        *
-        * **Parameters**
-        * @param {string} model (Optional) The name of the model file. Required if not already passed in as `run.model` when the World Manager is created.
-        * @return {Promise}
-        */
-        getCurrentRun: function (model) {
-            var session = this._auth.getCurrentUserSessionInfo();
-            var curUserId = session.userId;
-            var curGroupName = session.groupName;
-
-            return this.getCurrentWorld(curUserId, curGroupName).then(function getAndRestoreLatestRun(world) {
-                if (!world) {
-                    return $.Deferred().reject({ error: 'The user is not part of any world!' }).promise();
+                if (!groupId) {
+                    return $.Deferred().reject({
+                        type: ERROR_TYPES.NO_GROUP_PROVIDED,
+                        message: 'uploadUsersToGroup: No group specified, and no session available to pick from.'
+                    }).promise();
                 }
-                var runOpts = $.extend(true, me.options, { model: model });
-                var strategy = buildStrategy(world.id);
-                var opt = $.extend(true, {}, {
-                    strategy: strategy,
-                    run: runOpts
+            }
+
+            var usersToAdd = parseUsers(userList.trim());
+            if (!usersToAdd.valid.length) {
+                return $.Deferred().resolve({
+                    errors: usersToAdd.invalid,
+                    created: [],
+                    duplicates: []
+                }).promise();
+            }
+
+            var userService = new __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__["default"](serviceOptions);
+            var memberService = new __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__["default"](serviceOptions);
+            return userService.createUsers(usersToAdd.valid).then(function (userRes) {
+                var validUsers = [].concat(userRes.saved, userRes.updated, userRes.duplicate);
+                var validIds = validUsers.map(function (u) {
+                    return u.id;
                 });
-                var rm = new RunManager(opt);
-                return rm.getRun().then(function (run) {
-                    run.world = world;
-                    return run;
+                var userWithErrors = userRes.errors.map(function (e) {
+                    return $.extend(true, e, {
+                        reason: ERROR_TYPES.API_REJECT,
+                        context: e
+                    });
+                });
+                userRes.errors = [].concat(userWithErrors, usersToAdd.invalid);
+                return memberService.addUsersToGroup(validIds, groupId).then(function () {
+                    return userRes;
+                }, function handleMemberError(memberXHR) {
+                    var memberErr = memberXHR.responseJSON;
+                    var isGroupLimitErr = memberErr && memberErr.message && memberErr.message.match(/exceeded your group limit\(([0-9]+)\)/i);
+                    if (!isGroupLimitErr) {
+                        throw memberErr;
+                    }
+
+                    var groupLimit = +isGroupLimitErr[1];
+                    var skippedUsers = validUsers.slice(groupLimit).map(function (u) {
+                        return $.extend({}, u, { reason: ERROR_TYPES.GROUP_LIMIT_EXCEEDED, message: 'Exceeded group limit' });
+                    });
+
+                    function excludingSkipped(users, skipped) {
+                        return users.filter(function (u) {
+                            var isValid = !skipped.find(function (su) {
+                                return su.userName === u.userName;
+                            });
+                            return isValid;
+                        });
+                    }
+                    return {
+                        errors: [].concat(userRes.errors, skippedUsers),
+                        saved: excludingSkipped(userRes.saved, skippedUsers),
+                        updated: excludingSkipped(userRes.updated, skippedUsers),
+                        duplicate: excludingSkipped(userRes.duplicate, skippedUsers)
+                    };
+                });
+            }).then(function (res) {
+                return {
+                    errors: res.errors,
+                    duplicates: res.duplicate, //pluralizing for consistency
+                    created: [].concat(res.saved, res.updated) //no real distinction between the two so combining
+                };
+            });
+        }
+    }]);
+
+    return UserManager;
+}();
+
+UserManager.errors = ERROR_TYPES;
+
+/* harmony default export */ __webpack_exports__["default"] = (UserManager);
+
+/***/ }),
+/* 72 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(73);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
+
+function getCurrentWorldIdAndRoles(opts) {
+    if (opts.id && opts.roles) {
+        return $.Deferred().resolve({
+            id: opts.id,
+            roles: opts.roles
+        }).promise();
+    } else if (opts.worldId) {
+        var ws = new __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__["default"]();
+        return ws.load(opts.worldId);
+    } else {
+        var wm = new __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__["default"](opts);
+        return wm.getCurrentWorld();
+    }
+}
+
+var ConsensusManager = function () {
+    function ConsensusManager(config) {
+        _classCallCheck(this, ConsensusManager);
+
+        var opts = {
+            name: 'default',
+            strategy: '',
+            strategyOptions: {}
+        };
+
+        this.serviceOptions = $.extend(true, {}, opts, config);
+    }
+
+    _createClass(ConsensusManager, [{
+        key: 'getCurrent',
+        value: function getCurrent() {
+            var _this = this;
+
+            return getCurrentWorldIdAndRoles(this.serviceOptions).then(function (world) {
+                var cg = new __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__["default"]($.extend({}, _this.serviceOptions, {
+                    worldId: world.id
+                }));
+                return Object(__WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__["a" /* default */])(cg, {
+                    roles: world.roles
                 });
             });
         }
-    };
+    }]);
 
-    $.extend(this, api);
-};
+    return ConsensusManager;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (ConsensusManager);
+
+/***/ }),
+/* 73 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = mandatoryConsensusStrategy;
+function mandatoryConsensusStrategy(consensusGroup, strategyOptions) {
+    var options = $.extend({}, {
+        maxRounds: Infinity,
+        name: function (list) {
+            return "round-" + (list.length + 1);
+        }
+    }, strategyOptions);
+    return consensusGroup.list().then(function (consensusList) {
+        var lastConsensus = consensusList[consensusList.length - 1];
+        var isLastPending = lastConsensus && !lastConsensus.closed;
+        var allowCreateNew = options.maxRounds >= consensusList.length;
+
+        if (isLastPending || !allowCreateNew) {
+            return lastConsensus;
+        }
+
+        var name = options.name(consensusList);
+        var newConsensusPromise = consensusGroup.consensus(name).create({
+            roles: options.roles,
+            executeActionsImmediately: false
+        });
+        return newConsensusPromise;
+    });
+}
 
 /***/ })
 /******/ ]);

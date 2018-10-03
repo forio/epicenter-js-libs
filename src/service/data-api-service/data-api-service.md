@@ -2,10 +2,7 @@
 
 The Data API Service allows you to create, access, and manipulate data related to any of your projects. Data are organized in collections. Each collection contains a document; each element of this top-level document is a JSON object. (See additional information on the underlying [Data API](../../../rest_apis/data_api/).)
 
-All API calls take in an "options" object as the last parameter. The options can be used to extend/override the Data API Service defaults. In particular, there are three required parameters when you instantiate the Data Service:
-* `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
-* `project`: Epicenter project id.
-* `root`: The the name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
+**Example**:
 
  ```js
 var ds = new F.service.Data({
@@ -23,9 +20,7 @@ ds.saveAs('user2',
 ds.query('',{ 'question2': { '$gt': 9} });
 ``` 
 
-Note that in addition to the `account`, `project`, and `root`, the Data Service parameters optionally include a `server` object, whose `host` field contains the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
-
-### Notes on scoping:
+### Scoping:
 
 The `scope` parameter determines who has read-write access to this data collection. Available scopes are:
 
@@ -36,6 +31,8 @@ The `scope` parameter determines who has read-write access to this data collecti
 | FACILITATOR | Faciliators in that group | Faciliators in that group |
 | PROJECT (default, for legacy reasons) | Any user in the project | Any user in the project |
 | CUSTOM (to opt out of naming conventions) | customize with Epicenter-api-proxy | customize with Epicenter-api-proxy |
+
+**Example**:
 
 ```js
 const DataService = F.service.Data;    

@@ -15,7 +15,7 @@ export default class ChannelService {
     constructor(options) {
         var defaults = {
             base: '',
-            topicResolver(topic) {
+            topicResolver: function (topic) {
                 return topic;
             },
             transport: null
