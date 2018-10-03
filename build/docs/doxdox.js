@@ -22,6 +22,9 @@ const files = [
     'service/member-api-adapter',
     // 'service/user-api-adapter',
     // 'service/world-api-adapter',
+
+    'managers/auth-manager',
+    'managers/run-manager',
 ];
 /**
  * Assumes following input folder structure

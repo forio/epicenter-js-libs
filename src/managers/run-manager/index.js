@@ -1,60 +1,3 @@
-/**
-* ## Run Manager
-*
-* The Run Manager gives you access to runs for your project. This allows you to read and update variables, call operations, etc. Additionally, the Run Manager gives you control over run creation depending on run states. Specifically, you can select [run creation strategies (rules)](../strategies/) for which runs end users of your project work with when they log in to your project.
-*
-* There are many ways to create new runs, including the Epicenter.js [Run Service](../run-api-service/) and the RESFTful [Run API](../../../rest_apis/aggregate_run_api). However, for some projects it makes more sense to pick up where the user left off, using an existing run. And in some projects, whether to create a new run or use an existing one is conditional, for example based on characteristics of the existing run or your own knowledge about the model. The Run Manager provides this level of control: your call to `getRun()`, rather than always returning a new run, returns a run based on the strategy you've specified.
-*
-*
-* ### Using the Run Manager to create and access runs
-*
-* To use the Run Manager, instantiate it by passing in:
-*
-*   * `run`: (required) Run object. Must contain:
-*       * `account`: Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
-*       * `project`: Epicenter project id.
-*       * `model`: The name of your primary model file. (See more on [Writing your Model](../../../writing_your_model/).)
-*       * `scope`: (optional) Scope object for the run, for example `scope.group` with value of the name of the group.
-*       * `server`: (optional) An object with one field, `host`. The value of `host` is the string `api.forio.com`, the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/).
-*       * `files`: (optional) If and only if you are using a Vensim model and you have additional data to pass in to your model, you can optionally pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (See more on [Using External Data in Vensim](../../../model_code/vensim/vensim_example_xls/).)
-*
-*   * `strategy`: (optional) Run creation strategy for when to create a new run and when to reuse an end user's existing run. This is *optional*; by default, the Run Manager selects `reuse-per-session`, or `reuse-last-initialized` if you also pass in an initial operation. See [below](#using-the-run-manager-to-access-and-register-strategies) for more information on strategies.
-*   * `strategyOptions`: (optional) Additional options passed directly to the [run creation strategy](../strategies/).
-*   * `sessionKey`: (optional) Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtime.
-*
-*
-* After instantiating a Run Manager, make a call to `getRun()` whenever you need to access a run for this end user. The `RunManager.run` contains the instantiated [Run Service](../run-api-service/). The Run Service allows you to access variables, call operations, etc.
-*
-* @example
-*       const rm = new F.manager.RunManager({
-*           run: {
-*               account: 'acme-simulations',
-*               project: 'supply-chain-game',
-*               model: 'supply-chain-model.jl',
-*               server: { host: 'api.forio.com' }
-*           },
-*           strategy: 'reuse-never',
-*           sessionKey: 'epicenter-session'
-*       });
-*       rm.getRun()
-*           .then(function(run) {
-*               // the return value of getRun() is a run object
-*               const thisRunId = run.id;
-*               // the RunManager.run also contains the instantiated Run Service,
-*               // so any Run Service method is valid here
-*               rm.run.do('runModel');
-*       })
-*
-*
-* ### Using the Run Manager to access and register strategies
-*
-* The `strategy` for a Run Manager describes when to create a new run and when to reuse an end user's existing run. The Run Manager is responsible for passing a strategy everything it might need to determine the 'correct' run, that is, how to find the best existing run and how to decide when to create a new run.
-*
-* There are several common strategies provided as part of Epicenter.js, which you can list by accessing `F.manager.RunManager.strategies`. You can also create your own strategies, and register them to use with Run Managers. See [Run Manager Strategies](../strategies/) for details.
-* 
-*/
-
-'use strict';
 import strategies, { getBestStrategy } from 'managers/run-strategies';
 import * as specialOperations from './special-operations';
 
@@ -98,6 +41,16 @@ function setRunInSession(sessionKey, run, sessionManager) {
 }
 
 class RunManager {
+    /**
+     * @param {AccountAPIServiceOptions} options 
+     * @property {object} run
+     * @property {string} run.model The name of your primary model file. (See more on [Writing your Model](../../../writing_your_model/).)
+     * @property {string} [run.scope] Scope object for the run, for example `scope.group` with value of the name of the group.
+     * @property {string[]} [run.files] If and only if you are using a Vensim model and you have additional data to pass in to your model, you can optionally pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (See more on [Using External Data in Vensim](../../../model_code/vensim/vensim_example_xls/).)
+     * @property {string|function} [strategy] Run creation strategy for when to create a new run and when to reuse an end user's existing run. This is *optional*; by default, the Run Manager selects `reuse-per-session`, or `reuse-last-initialized` if you also pass in an initial operation. See [below](#using-the-run-manager-to-access-and-register-strategies) for more information on strategies.
+     * @property {object} [strategyOptions] Additional options passed directly to the [run creation strategy](../strategies/).
+     * @property {string} [sessionKey] Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtime.
+     */
     constructor(options) {
         const defaults = {
             sessionKey: function (config) { 
@@ -133,20 +86,20 @@ class RunManager {
      * See [Run Manager Strategies](../strategies/) for more on strategies.
      *
      * @example
-     *      rm.getRun().then(function (run) {
-     *          // use the run object
-     *          const thisRunId = run.id;
+     * rm.getRun().then(function (run) {
+     *     // use the run object
+     *     const thisRunId = run.id;
      *
-     *          // use the Run Service object
-     *          rm.run.do('runModel');
-     *      });
+     *     // use the Run Service object
+     *     rm.run.do('runModel');
+     * });
      *
-     *      rm.getRun(['sample_int']).then(function (run) {
-     *         // an object whose fields are the name : value pairs of the variables passed to getRun()
-     *         console.log(run.variables);
-     *         // the value of sample_int
-     *         console.log(run.variables.sample_int); 
-     *      });
+     * rm.getRun(['sample_int']).then(function (run) {
+     *    // an object whose fields are the name : value pairs of the variables passed to getRun()
+     *    console.log(run.variables);
+     *    // the value of sample_int
+     *    console.log(run.variables.sample_int); 
+     * });
      *
      * @param {string[]} [variables] The run object is populated with the provided model variables, if provided. Note: `getRun()` does not throw an error if you try to get a variable which doesn't exist. Instead, the variables list is empty, and any errors are logged to the console.
      * @param {Object} [options] Configuration options; passed on to [RunService#create](../run-api-service/#create) if the strategy does create a new run.
@@ -195,15 +148,14 @@ class RunManager {
      * Returns the run object for a 'reset' run. The definition of a reset is defined by the strategy, but typically means forcing the creation of a new run. For example, `reset()` for the default strategies `reuse-per-session` and `reuse-last-initialized` both create new runs.
      *
      * @example
-     *      rm.reset().then(function (run) {
-     *          // use the (new) run object
-     *          const thisRunId = run.id;
+     * rm.reset().then(function (run) {
+     *     // use the (new) run object
+     *     const thisRunId = run.id;
      *
-     *          // use the Run Service object
-     *          rm.run.do('runModel');
-     *      });
+     *     // use the Run Service object
+     *     rm.run.do('runModel');
+     * });
      *
-     * 
      * @param {Object} [options] Configuration options; passed on to [RunService#create](../run-api-service/#create).
      * @return {Promise}
      */

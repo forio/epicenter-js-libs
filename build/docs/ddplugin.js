@@ -13,6 +13,12 @@ const generalOptions = [
         isOptional: true,
         types: ['[JQueryAjaxOptions](http://api.jquery.com/jQuery.ajax)'],
         description: 'Options to pass on to the underlying transport layer. All jquery.ajax options are supported.'
+    },
+    {
+        name: 'server',
+        isOptional: true,
+        types: ['[JQueryAjaxOptions](http://api.jquery.com/jQuery.ajax)'],
+        description: 'An object with one field, `host`. The value of `host` is the string `api.forio.com`, the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/)'
     }
 ];
 const accountOptions = [].concat([

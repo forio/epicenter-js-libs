@@ -1,40 +1,9 @@
-/**
-* ## Authorization Manager
-*
-* The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects.
-*
-* The Authorization Manager is most useful for [team projects](../../../glossary/#team) with an access level of [Authenticated](../../../glossary/#access). These projects are accessed by [end users](../../../glossary/#users) who are members of one or more [groups](../../../glossary/#groups).
-*
-* #### Using the Authorization Manager
-*
-* To use the Authorization Manager, instantiate it. Then, make calls to any of the methods you need:
-*
-*  var authMgr = new F.manager.AuthManager({
-*      account: 'acme-simulations',
-*      userName: 'enduser1',
-*      password: 'passw0rd'
-*  });
-*  authMgr.login().then(function () {
-*      authMgr.getCurrentUserSessionInfo();
-*  });
-*
-*
-* The `options` object passed to the `F.manager.AuthManager()` call can include:
-*   * `account`: The account id for this `userName`. In the Epicenter UI, this is the **Team ID** (for team projects) or the **User ID** (for personal projects).
-*   * `userName`: Email or username to use for logging in.
-*   * `password`: Password for specified `userName`.
-*   * `project`: The **Project ID** for the project to log this user into. Optional.
-*   * `groupId`: Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
-*
-* If you prefer starting from a template, the Epicenter JS Libs [Login Component](../../#components) uses the Authorization Manager as well. This sample HTML page (and associated CSS and JS files) provides a login form for team members and end users of your project. It also includes a group selector for end users that are members of multiple groups.
-*/
-
-var AuthAdapter = require('service/auth-api-service').default;
-var MemberAdapter = require('service/member-api-adapter').default;
-var GroupService = require('service/group-api-service').default;
-var SessionManager = require('store/session-manager');
-var _pick = require('util/object-util').pick;
-var objectAssign = require('object-assign');
+import AuthAdapter from 'service/auth-api-service';
+import MemberAdapter from 'service/member-api-adapter';
+import GroupService from 'service/group-api-service';
+import SessionManager from 'store/session-manager';
+import { pick as _pick } from 'util/object-util';
+import objectAssign from 'object-assign';
 
 var atob = window.atob || require('Base64').atob;
 
@@ -42,6 +11,12 @@ var defaults = {
     requiresGroup: true
 };
 
+/**
+ * @param {AccountAPIServiceOptions} options 
+ * @property {string} [groupId] Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
+ * @property {string} [userName] Email or username to use for logging in.
+ * @property {string} [password] Password for specified `userName`.
+ */
 function AuthManager(options) {
     options = $.extend(true, {}, defaults, options);
     this.sessionManager = new SessionManager(options);
@@ -60,7 +35,6 @@ var _findUserInGroup = function (members, id) {
 };
 
 AuthManager.prototype = $.extend(AuthManager.prototype, {
-
     /**
     * Logs user in.
     *
@@ -70,8 +44,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     *      project: 'supply-chain-game',
     *      userName: 'enduser1',
     *      password: 'passw0rd'
-    *  })
-    *      .then(function(statusObj) {
+    *  }).then(function(statusObj) {
     *          // if enduser1 belongs to exactly one group
     *          // (or if the login() call is modified to include the group id)
     *          // continue here
@@ -90,7 +63,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     * @param {string} options.password Password for specified `userName`.
     * @param {string} options.groupId The id of the group to which `userName` belongs. Required for [end users](../../../glossary/#users) if the `project` is specified and if the end users are members of multiple [groups](../../../glossary/#groups), otherwise optional.
     * @param {string} [options.project] The **Project ID** for the project to log this user into.
-    * @return {Promise}
+    * @return {JQuery.Promise}
     */
     login: function (options) {
         var me = this;
@@ -258,10 +231,9 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *     .then(function (token) {
      *         console.log('My token is ', token);
      *     });
-     *
      * 
      * @param {Object} [options] Overrides for configuration options.
-     * @return {Promise}
+     * @return {JQuery.Promise}
      */
     getToken: function (options) {
         var httpOptions = this.sessionManager.getMergedOptions(options);
@@ -298,7 +270,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
      * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
      * @param {Object} [options] Overrides for configuration options.
-     * @return {Promise}
+     * @return {JQuery.Promise}
      */
     getUserGroups: function (params, options) {
         var adapterOptions = this.sessionManager.getMergedOptions({ success: $.noop }, options);
@@ -394,4 +366,4 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     }
 });
 
-module.exports = AuthManager;
+export default AuthManager;

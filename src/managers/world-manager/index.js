@@ -37,7 +37,7 @@
 
 var WorldApi = require('service/world-api-adapter').default;
 var RunManager = require('managers/run-manager').default;
-var AuthManager = require('managers/auth-manager');
+var AuthManager = require('managers/auth-manager').default;
 var worldApi;
 
 function buildStrategy(worldId) {
