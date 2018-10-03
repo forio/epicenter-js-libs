@@ -1,33 +1,30 @@
+import TransportFactory from 'transport/http-transport-factory';
+import { splitGetFactory } from 'util/run-util';
+
 /**
- *
+ * @description
  * ## Variables API Service
  *
  * Used in conjunction with the [Run API Service](../run-api-service/) to read, write, and search for specific model variables.
- *
- *     var rm = new F.manager.RunManager({
- *           run: {
- *               account: 'acme-simulations',
- *               project: 'supply-chain-game',
- *               model: 'supply-chain-model.jl'
- *           }
- *      });
- *     rm.getRun()
- *       .then(function() {
- *          var vs = rm.run.variables();
- *          vs.save({sample_int: 4});
- *        });
- *
+ * ```js
+ * var rm = new F.manager.RunManager({
+ *       run: {
+ *           account: 'acme-simulations',
+ *           project: 'supply-chain-game',
+ *           model: 'supply-chain-model.jl'
+ *       }
+ *  });
+ * rm.getRun()
+ *   .then(function() {
+ *      var vs = rm.run.variables();
+ *      vs.save({sample_int: 4});
+ *    });
+ * ```
+ * @param {object} config
+ * @property {RunService} runService The run service instance to which the variable filters apply.
  */
-
-var TransportFactory = require('transport/http-transport-factory').default;
-var rutil = require('util/run-util');
-
-module.exports = function (config) {
+export default function VariablesService(config) {
     var defaults = {
-        /**
-         * The runs object to which the variable filters apply. Defaults to null.
-         * @type {runService}
-         */
         runService: null
     };
     var serviceOptions = $.extend({}, defaults, config);
@@ -50,7 +47,7 @@ module.exports = function (config) {
         };
     }
     var http = new TransportFactory(httpOptions);
-    http.splitGet = rutil.splitGetFactory(httpOptions);
+    http.splitGet = splitGetFactory(httpOptions);
 
     var publicAPI = {
 
@@ -58,10 +55,10 @@ module.exports = function (config) {
          * Get values for a variable.
          *
          * @example
-         *      vs.load('sample_int')
-         *          .then(function(val){
-         *              // val contains the value of sample_int
-         *          });
+         * vs.load('sample_int')
+         *     .then(function(val){
+         *         // val contains the value of sample_int
+         *     });
          *
          * 
          * @param {string} variable Name of variable to load.
@@ -81,13 +78,12 @@ module.exports = function (config) {
          * Returns particular variables, based on conditions specified in the `query` object.
          *
          * @example
-         *      vs.query(['price', 'sales'])
-         *          .then(function(val) {
-         *              // val is an object with the values of the requested variables: val.price, val.sales
-         *          });
+         * vs.query(['price', 'sales'])
+         *     .then(function(val) {
+         *         // val is an object with the values of the requested variables: val.price, val.sales
+         *     });
          *
-         *      vs.query({ include:['price', 'sales'] });
-         *
+         * vs.query({ include:['price', 'sales'] });
          * 
          * @param {Object|Array} query The names of the variables requested.
          * @param {{startRecord:?number, endRecord:?number, sort:?string, direction:?string}} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
@@ -110,9 +106,8 @@ module.exports = function (config) {
          * Save values to model variables. Overwrites existing values. Note that you can only update model variables if the run is [in memory](../../../run_persistence/#runs-in-memory). (An alternate way to update model variables is to call a method from the model and make sure that the method persists the variables. See `do`, `serial`, and `parallel` in the [Run API Service](../run-api-service/) for calling methods from the model.)
          *
          * @example
-         *      vs.save('price', 4);
-         *      vs.save({ price: 4, quantity: 5, products: [2,3,4] });
-         *
+         * vs.save('price', 4);
+         * vs.save({ price: 4, quantity: 5, products: [2,3,4] });
          * 
          * @param {Object|String} variable An object composed of the model variables and the values to save. Alternatively, a string with the name of the variable.
          * @param {object} [val] If passing a string for `variable`, use this argument for the value to save.

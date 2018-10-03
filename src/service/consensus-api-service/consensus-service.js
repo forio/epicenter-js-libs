@@ -1,5 +1,19 @@
+import TransportFactory from 'transport/http-transport-factory';
+import { getDefaultOptions, getURLConfig } from 'service/service-utils';
+
+const API_ENDPOINT = 'multiplayer/consensus';
+
+function normalizeActions(actions) {
+    return [].concat(actions).map(function (action) {
+        if (action.arguments) {
+            return { execute: action };
+        }
+        return action;
+    });
+}
+
 /**
- * 
+ * @description
  * ## Consensus Service
  *
  * The Consensus Service allows you to build common features in multiplayer games like:
@@ -28,27 +42,18 @@
         });
 
     This allows you to use `F.service.ConsensusGroup` to list out/ delete all consensus points within that group for reporting.
- * 
+
+ *  @param {ServiceOptions} config
+ *  @property {string} worldId Id of world this consensus service is a part of
+ *  @property {string} name Name Unique identifier for this consensus point (e.g. step-1, step-2 etc.)
+ *  @property {string} [consensusGroup] This allows you to use `F.service.ConsensusGroup` to list out/ delete all consensus points within the given 'consensusGroup' for reporting.; if not passed in, a group name of 'default' is assumed.
  */
-import TransportFactory from 'transport/http-transport-factory';
-import { getDefaultOptions, getURLConfig } from 'service/service-utils';
-
-const API_ENDPOINT = 'multiplayer/consensus';
-
-function normalizeActions(actions) {
-    return [].concat(actions).map(function (action) {
-        if (action.arguments) {
-            return { execute: action };
-        }
-        return action;
-    });
-}
-export default function (config) {
+export default function ConsensusService(config) {
     const defaults = {
-        token: undefined,
         worldId: '',
         consensusGroup: '',
         name: '',
+        token: undefined,
     };
     const serviceOptions = getDefaultOptions(defaults, config);
     const urlConfig = getURLConfig(serviceOptions);
@@ -74,14 +79,14 @@ export default function (config) {
          * Creates a new consensus point
          * 
          * @example
-         *      cs.create({
-                    roles: ['P1', 'P2'],
-                    defaultActions: {
-                        P1: [{ name: 'submitPlayer1', arguments: [1] }],
-                        P2: [{ name: 'submitPlayer2', arguments: [2] }],
-                    },
-                    ttlSeconds: 10
-                }
+         *  cs.create({
+                roles: ['P1', 'P2'],
+                defaultActions: {
+                    P1: [{ name: 'submitPlayer1', arguments: [1] }],
+                    P2: [{ name: 'submitPlayer2', arguments: [2] }],
+                },
+                ttlSeconds: 10
+            }
          * 
          * @param  {object} params  creation options
          * @param  {string[]|{string: number}} params.roles
@@ -157,6 +162,9 @@ export default function (config) {
         /**
          * Marks current consensus point as complete. Default actions, if specified, will be sent for defaulting roles.
          *
+         * @example
+         * cs.forceClose();
+         * 
          * @param {object} [options] Overrides for service options
          * @returns {Promise}
          */
@@ -168,9 +176,8 @@ export default function (config) {
          * Submits actions for your turn and marks you as having `submitted`. If `executeActionsImmediately` was set to `true` while creating the consensus point, the actions will be immediately sent to the model.
          * Note that you can still call operations from the RunService directly, but will bypass the consensus requirements.
          *
-         * ** Example **
-         *
-                bp.submitActions([{ name: 'step', arguments: [] }]);
+         * @example
+         * cs.submitActions([{ name: 'step', arguments: [] }]);
          *  
          * @param {object[]|{name: string, arguments: any[]}} actions Actions to send
          * @param {object} [options] Overrides for service options
@@ -209,5 +216,5 @@ export default function (config) {
             
         }
     };
-    return publicAPI;
+    $.extend(this, publicAPI);
 }

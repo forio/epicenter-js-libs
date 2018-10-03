@@ -27,7 +27,7 @@ F.service.URL = require('./service/url-config-service');
 F.service.Config = require('./service/configuration-service').default;
 F.service.Run = require('./service/run-api-service').default;
 F.service.File = require('./service/admin-file-service');
-F.service.Variables = require('./service/run-api-service/variables-api-service');
+F.service.Variables = require('./service/run-api-service/variables-api-service').default;
 F.service.Data = require('./service/data-api-service').default;
 F.service.Auth = require('./service/auth-api-service').default;
 F.service.World = require('./service/world-api-adapter').default;
@@ -50,11 +50,11 @@ F.service.Project = require('./service/project-api-service').default;
 F.store.Cookie = require('./store/cookie-store');
 F.factory.Store = require('./store/store-factory');
 
-F.manager.ScenarioManager = require('./managers/scenario-manager');
+F.manager.ScenarioManager = require('./managers/scenario-manager').default;
 F.manager.RunManager = require('./managers/run-manager').default;
 F.manager.User = require('./managers/user-manager').default;
 F.manager.AuthManager = require('./managers/auth-manager').default;
-F.manager.WorldManager = require('./managers/world-manager');
+F.manager.WorldManager = require('./managers/world-manager').default;
 F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-manager');
 
 var strategies = require('./managers/run-strategies');

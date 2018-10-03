@@ -1,4 +1,13 @@
+import classFrom from 'util/inherit';
+import { injectFiltersFromSession } from 'managers/run-strategies/strategy-utils';
+import { injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
+
+const Base = {};
+
+//TODO: Make a more generic version of this called 'reuse-by-matching-filter';
+
 /**
+ * @description
  * ## Current (reuse-last-unsaved)
  *
  * An instance of a [Run Manager](../../run-manager/) with this strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.current`.
@@ -17,22 +26,13 @@
  *
  * See also: [additional information on run strategies](../../strategies/).
  */
-
-'use strict';
-const classFrom = require('util/inherit');
-const injectFiltersFromSession = require('managers/run-strategies/strategy-utils').injectFiltersFromSession;
-const injectScopeFromSession = require('managers/run-strategies/strategy-utils').injectScopeFromSession;
-
-const Base = {};
-
-//TODO: Make a more generic version of this called 'reuse-by-matching-filter';
-module.exports = classFrom(Base, {
-    constructor: function (options) {
+class ReuseLastUnsaved {
+    constructor(options) {
         const strategyOptions = options ? options.strategyOptions : {};
         this.options = strategyOptions;
-    },
+    }
 
-    reset: function (runService, userSession, options) {
+    reset(runService, userSession, options) {
         const scoped = injectScopeFromSession(runService.getCurrentConfig(), userSession);
         const opt = $.extend(true, {}, scoped, {
             scope: {
@@ -42,9 +42,9 @@ module.exports = classFrom(Base, {
         return runService.create(opt, options).then(function (createResponse) {
             return $.extend(true, {}, createResponse, { freshlyCreated: true });
         });
-    },
+    }
 
-    getRun: function (runService, userSession, opts) {
+    getRun(runService, userSession, opts) {
         const runopts = runService.getCurrentConfig();
         const filter = injectFiltersFromSession({ 
             trashed: false,
@@ -65,4 +65,6 @@ module.exports = classFrom(Base, {
             return runs[0];
         });
     }
-}, { requiresAuth: false });
+}
+ReuseLastUnsaved.requiresAuth = false;
+export default ReuseLastUnsaved;

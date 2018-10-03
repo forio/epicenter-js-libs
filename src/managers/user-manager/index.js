@@ -1,23 +1,3 @@
-/**
-* ## User Manager
-*
-* The User Manager provides a high-level abstraction over the User Service and Member Services to perform common simulation actions, like uploading users into a group.
-*
-* Example:
-
-    var UserManager = F.manager.User;
-    var um = new UserManager(getRunParams());
-    um.uploadUsersToGroup($('#userTextarea').val()).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
-        if (res.type === UserManager.errors.EMPTY_USERS) {
-            alert('No users specified to upload');
-        } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
-            alert('No group found. Create a group and login as a facilitator to upload users');
-        } else {
-            alert('Unknown error, please try again');
-        }
-    });
- */
-
 import UserService from 'service/user-api-adapter';
 import MemberService from 'service/member-api-adapter';
 import AuthManager from 'managers/auth-manager';
@@ -70,13 +50,30 @@ const ERROR_TYPES = {
     GROUP_LIMIT_EXCEEDED: 'GROUP_LIMIT_EXCEEDED',
 };
 
+/**
+ * @description
+ * ## User Manager
+ *
+ * The User Manager provides a high-level abstraction over the User Service and Member Services to perform common simulation actions, like uploading users into a group.
+ *
+ * ```js
+     var UserManager = F.manager.User;
+     var um = new UserManager(getRunParams());
+     um.uploadUsersToGroup($('#userTextarea').val()).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
+         if (res.type === UserManager.errors.EMPTY_USERS) {
+             alert('No users specified to upload');
+         } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
+             alert('No group found. Create a group and login as a facilitator to upload users');
+         } else {
+             alert('Unknown error, please try again');
+         }
+     });
+  * ```
+  * @param {AccountAPIServiceOptions} config
+  */
 class UserManager {
     constructor(config) {
         const defaults = {
-            /**
-             * The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
-             * @type {String}
-             */
             account: undefined,
         };
         const serviceOptions = getDefaultOptions(defaults, config);
@@ -85,6 +82,9 @@ class UserManager {
 
     /**
      *  Bulk creates user accounts and adds them to a group. Input userlist is typically the string contents of a textarea with user data.
+     * 
+     * @example
+     * um.upload($('#textareaWithUsers').val());
      * 
      * @param {string} userList list of users seperated by newlines, with each line containing email, firstname, lastname, password separated by tabs/commas
      * @param {string} [groupId] id of group to upload to. Defaults to getting current group from session

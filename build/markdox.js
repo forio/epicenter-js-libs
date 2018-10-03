@@ -27,15 +27,8 @@ module.exports = function (grunt) {
                 template: 'documentation/documentation-es6-template.ejs',
             },
             files: [
-                {
-                    src: 'src/managers/user-manager/index.js',
-                },
-                //     src: 'src/service/consensus-api-service/consensus-service.js',
-                //     src: 'src/service/consensus-api-service/consensus-group-service.js',
                 //     src: 'src/service/run-api-service/variables-api-service/index.js',
                 //     src: 'src/service/channel-service/index.js',
-                //     src: 'src/managers/auth-manager/index.js',
-                //     src: 'src/managers/world-manager/index.js',
                 //     src: 'src/managers/epicenter-channel-manager/channel-manager/index.js',
                 //     src: 'src/managers/epicenter-channel-manager/index.js',
                 //     src: 'src/managers/scenario-manager/index.js',

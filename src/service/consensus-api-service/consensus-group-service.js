@@ -1,5 +1,12 @@
+import ConsensusService from './consensus-service.js';
+import TransportFactory from 'transport/http-transport-factory';
+
+import { getDefaultOptions, getURLConfig } from 'service/service-utils.js';
+
+const API_ENDPOINT = 'multiplayer/consensus';
+
 /**
- * 
+ * @description
  * ## Consensus Group Service
  *
  * The Consensus Group Service provides a way to group different consensus points within your world. This is typically used in faculty pages to report progression throw different Consensus Points.
@@ -12,20 +19,15 @@
  *
  * You can use the Consensus Service (`F.service.Consensus`) without using the ConsensusGroup (`F.service.ConsensusGroup`) - the Consensus Service uses a group called "default" by default.
  * 
+ *  @param {ServiceOptions} config
+ *  @property {string} worldId Id of world this consensus service is a part of
+ *  @property {string} [name] Unique identifier for this consensus group. Defaults to being named 'default'
  */
-
-import ConsensusService from './consensus-service.js';
-import TransportFactory from 'transport/http-transport-factory';
-
-import { getDefaultOptions, getURLConfig } from 'service/service-utils.js';
-
-const API_ENDPOINT = 'multiplayer/consensus';
-
 export default function ConsensusGroupService(config) {
     const defaults = {
-        token: undefined,
         worldId: '',
         name: 'default',
+        token: undefined,
     };
 
     const serviceOptions = getDefaultOptions(defaults, config);
@@ -84,5 +86,5 @@ export default function ConsensusGroupService(config) {
             return cs;
         }
     };
-    return publicAPI;
+    $.extend(this, publicAPI);
 }
