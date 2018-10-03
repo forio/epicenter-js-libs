@@ -1,44 +1,18 @@
-'use strict';
+import Channel from 'service/channel-service';
+import SessionManager from 'store/session-manager';
 
 /**
- * ## Channel Manager
- *
- * There are two main use cases for the channel: event notifications and chat messages.
- *
- * If you are developing with Epicenter.js, you should use the [Epicenter Channel Manager](../epicenter-channel-manager/) rather than this more generic Channel Manager. (The Epicenter Channel Manager is a wrapper that instantiates a Channel Manager with Epicenter-specific defaults.) The Epicenter Channel Manager documentation also has more [background](../epicenter-channel-manager/#background) information on channels and their use. 
- *
- * However, you can work directly with the Channel Manager if you like. (This might be useful if you are working through Node.js, for example, `require('manager/channel-manager')`.)
- *
- * The Channel Manager is a wrapper around the default [cometd JavaScript library](http://docs.cometd.org/2/reference/javascript.html), `$.cometd`. It provides a few nice features that `$.cometd` doesn't, including:
- *
- * * Automatic re-subscription to channels if you lose your connection
- * * Online / Offline notifications
- * * 'Events' for cometd notifications (instead of having to listen on specific meta channels)
- *
- * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Channel Manager. (See [Including Epicenter.js](../../#include).)
- *
- * To use the Channel Manager in client-side JavaScript, instantiate the [Epicenter Channel Manager](../epicenter-channel-manager/), get a particular channel -- that is, an instance of a [Channel Service](../channel-service/) -- then use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
- *
- *      var cm = new F.manager.ChannelManager();
- *      var gc = cm.getGroupChannel();
- *      // because we used an Epicenter Channel Manager to get the group channel,
- *      // subscribe() and publish() here default to the base topic for the group;
- *      gc.subscribe('', function(data) { console.log(data); });
- *      gc.publish('', { message: 'a new message to the group' });
- *
- * The parameters for instantiating a Channel Manager include:
- *
- * * `options` The options object to configure the Channel Manager. Besides the common options listed here, see http://docs.cometd.org/reference/javascript.html for other supported options.
- * * `options.url` The Cometd endpoint URL.
- * * `options.websocketEnabled` Whether websocket support is active (boolean).
- * * `options.channel` Other defaults to pass on to instances of the underlying Channel Service. See [Channel Service](../channel-service/) for details.
- *
+ * @constructor
+ * @param {object} options 
+ * @property {string} url The Cometd endpoint URL.
+ * @property {string} [logLevel] The log level for the channel (logs to console).
+ * @property {boolean} [websocketEnabled] Whether websocket support is active. Defaults to `true`, uses long-polling if false
+ * @property {boolean} [ackEnabled] Whether the ACK extension is enabled. Defaults to `true`. See [https://docs.cometd.org/current/reference/#_extensions_acknowledge](https://docs.cometd.org/current/reference/#_extensions_acknowledge) for more info.
+ * @property {boolean} [shareConnection] If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true (default) to re-use the same connection across instances.
+ * @property {object} [channel] Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
+ * @property {object} [handshake] Options to pass to the channel handshake. For example, the [Epicenter Channel Manager](../epicenter-channel-manager/) passes `ext` and authorization information. More information on possible options is in the details of the underlying [Push Channel API](../../../rest_apis/multiplayer/channel/).
  */
-
-var Channel = require('service/channel-service');
-var SessionManager = require('store/session-manager');
-
-var ChannelManager = function (options) {
+function ChannelManager(options) {
     if (!$.cometd) {
         console.error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
         throw new Error('Cometd library not found. Please include epicenter-multiplayer-dependencies.js');
@@ -48,51 +22,14 @@ var ChannelManager = function (options) {
     }
 
     var defaults = {
-        /**
-         * The Cometd endpoint URL.
-         * @type {string}
-         */
         url: '',
-
-        /**
-         * The log level for the channel (logs to console).
-         * @type {string}
-         */
         logLevel: 'info',
-
-        /**
-         * Whether websocket support is active. Defaults to `true`.
-         * @type {boolean}
-         */
         websocketEnabled: true,
-
-        /**
-         * Whether the ACK extension is enabled. Defaults to `true`. See [https://docs.cometd.org/current/reference/#_extensions_acknowledge](https://docs.cometd.org/current/reference/#_extensions_acknowledge) for more info.
-         * @type {boolean}
-         */
         ackEnabled: true,
-
-        /**
-         * If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true (default) to re-use the same connection across instances.
-         * @type {boolean}
-         */
         shareConnection: true,
-
-        /**
-         * Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
-         * @type {object}
-         */
         channel: {
 
         },
-
-        /**
-         * Options to pass to the channel handshake.
-         *
-         * For example, the [Epicenter Channel Manager](../epicenter-channel-manager/) passes `ext` and authorization information. More information on possible options is in the details of the underlying [Push Channel API](../../../rest_apis/multiplayer/channel/).
-         *
-         * @type {object}
-         */
         handshake: undefined
     };
     this.sessionManager = new SessionManager();
@@ -244,4 +181,4 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
     }
 });
 
-module.exports = ChannelManager;
+export default ChannelManager;

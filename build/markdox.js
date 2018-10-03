@@ -27,15 +27,7 @@ module.exports = function (grunt) {
                 template: 'documentation/documentation-es6-template.ejs',
             },
             files: [
-                //     src: 'src/service/run-api-service/variables-api-service/index.js',
-                //     src: 'src/service/channel-service/index.js',
-                //     src: 'src/managers/epicenter-channel-manager/channel-manager/index.js',
-                //     src: 'src/managers/epicenter-channel-manager/index.js',
-                //     src: 'src/managers/scenario-manager/index.js',
-                //     src: 'src/managers/scenario-manager/scenario-strategies/baseline-strategy/index.js',
-                //     src: 'src/managers/scenario-manager/scenario-strategies/reuse-last-unsaved/index.js',
-                //     src: 'src/managers/scenario-manager/saved-runs-manager/index.js',
-                // }, 
+                //     src: 'src//index.js',
                
             ]
         }

@@ -55,13 +55,13 @@ F.manager.RunManager = require('./managers/run-manager').default;
 F.manager.User = require('./managers/user-manager').default;
 F.manager.AuthManager = require('./managers/auth-manager').default;
 F.manager.WorldManager = require('./managers/world-manager').default;
-F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-manager');
+F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-manager').default;
 
 var strategies = require('./managers/run-strategies');
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager').default;
-F.service.Channel = require('./service/channel-service');
+F.service.Channel = require('./service/channel-service').default;
 
 F.manager.ConsensusManager = require('./managers/consensus-manager').default;
 

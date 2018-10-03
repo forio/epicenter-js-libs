@@ -8,25 +8,28 @@ const templateFile = fs.readFileSync(path.resolve(__dirname, './general-doc-temp
 const OP_FOLDER = path.resolve(__dirname, '../../documentation/generated');
 const IP_FOLDER = path.resolve(__dirname, '../../src');
 const files = [
-    //src/service/timer-service/index.js
+    'service/timer-service',
+    'service/run-api-service',
+    'service/data-api-service',
+    'service/password-api-service',
 
-    // 'service/run-api-service',
-    // 'service/data-api-service',
-    // 'service/password-api-service',
+    'service/run-api-service/variables-api-service.js',
+    'service/consensus-api-service/consensus-group-service.js',
+    'service/consensus-api-service/consensus-service.js',
+    'service/asset-api-adapter',
+    'service/state-api-adapter',
+    'service/introspection-api-service',
+    'service/auth-api-service',
+    'service/presence-api-service',
+    'service/member-api-adapter',
+    'service/user-api-adapter',
+    'service/world-api-adapter',
 
-    // 'service/run-api-service/variables-api-service.js',
-    // 'service/consensus-api-service/consensus-group-service.js',
-    // 'service/consensus-api-service/consensus-service.js',
-    // 'service/asset-api-adapter',
-    // 'service/state-api-adapter',
-    // 'service/introspection-api-service',
-    // 'service/auth-api-service',
-    // 'service/presence-api-service',
-    // 'service/member-api-adapter',
-    // 'service/user-api-adapter',
-    // 'service/world-api-adapter',
-
-    // 'managers/scenario-manager',
+    'managers/scenario-manager',
+    {
+        src: 'managers/scenario-manager/saved-runs-manager/index.js',
+        dest: 'scenario-manager/saved/index.html.md',
+    },
     {
         src: 'managers/scenario-manager/scenario-strategies/baseline-strategy.js',
         dest: 'scenario-manager/baseline/index.html.md',
@@ -35,11 +38,13 @@ const files = [
         src: 'managers/scenario-manager/scenario-strategies/reuse-last-unsaved.js',
         dest: 'scenario-manager/current/index.html.md',
     },
-
-    // 'managers/world-manager',
-    // 'managers/user-manager',
-    // 'managers/auth-manager',
-    // 'managers/run-manager',
+    'managers/epicenter-channel-manager',
+    'service/channel-service',
+    'managers/epicenter-channel-manager/channel-manager',
+    'managers/world-manager',
+    'managers/user-manager',
+    'managers/auth-manager',
+    'managers/run-manager',
 ];
 /**
  * Assumes following input folder structure

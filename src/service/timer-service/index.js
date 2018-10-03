@@ -24,35 +24,27 @@ function getStateFromActions(actions, currentTime, options) {
     return state;
 }
 
-/**
- * @typedef {object} TimerOptions
- * @name TimerOptions
- * @property {string} [account] The account id. In the Epicenter UI, this is the **Team ID** (for team projects) or **User ID** (for personal projects). Defaults to empty string. If left undefined, taken from the URL.
- * @property {string} [project] The project id. Defaults to empty string. If left undefined, taken from the URL.
- * @property {string} [token] For operations that require authentication, pass in the user access token (defaults to empty string). If the user is already logged in to Epicenter, the user access token is already set in a cookie and automatically loaded from there. (See [more background on access tokens](../../../project_access/)).
- * @property {object} [transport] Options to pass on to the underlying transport layer
- * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
- * @property {string} [scope] Determines the specificity of the timer, see DataService for available scopes
- * @property {string|function} [strategy] strategy to use to resolve start time. Available strategies are 'first-user' (default) or 'last-user'. Can also take in a function to return a custom start time.
- */
 class TimerService {
     /**
-     * @param {TimerOptions} options 
+     * @param {AccountAPIServiceOptions} options 
+     * @property {string} [name] Key to associate with this specific timer, use to disassociate multiple timers with the same scope
+     * @property {string} [scope] Determines the specificity of the timer, see DataService for available scopes
+     * @property {string|function} [strategy] strategy to use to resolve start time. Available strategies are 'first-user' (default) or 'last-user'. Can also take in a function to return a custom start time.
      */
     constructor(options) {
         const defaults = {
+            name: 'timer',
+            strategy: STRATEGIES.START_BY_FIRST_USER,
+            strategyOptions: {},
+
             account: undefined,
             project: undefined,
             token: undefined,
             transport: {},
-            name: 'timer',
-            strategy: STRATEGIES.START_BY_FIRST_USER,
-            strategyOptions: {},
         };
 
         this.ACTIONS = ACTIONS;
 
-        /** @type {TimerOptions} */
         this.options = $.extend(true, {}, defaults, options); 
         this.sessionManager = new SessionManager(this.options);
         this.channel = new PubSub();
@@ -66,9 +58,9 @@ class TimerService {
      * 
      * @param {object} createOptions
      * @param {number} createOptions.timeLimit Limit for the timer, in milliseconds
-     * @param {boolean} createOptions.startImmediately Determines if the timer should start ticking immediately. If set to false (default) call timer.start to start ticking.
+     * @param {boolean} [createOptions.startImmediately] Determines if the timer should start ticking immediately. If set to false (default) call timer.start to start ticking.
      * 
-     * @returns {Promise}
+     * @returns {JQuery.Promise}
      */
     create(createOptions) {
         const options = this.sessionManager.getMergedOptions(this.options, createOptions);
@@ -111,7 +103,6 @@ class TimerService {
             return this.create(createOpts);
         });
     }
-    
 
     /**
      * Cancels current timer. Need to call `create` again to restart.
