@@ -17,8 +17,20 @@ const generalOptions = [
     {
         name: 'server',
         isOptional: true,
-        types: ['[JQueryAjaxOptions](http://api.jquery.com/jQuery.ajax)'],
-        description: 'An object with one field, `host`. The value of `host` is the string `api.forio.com`, the URI of the Forio server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/)'
+        types: ['object'],
+        description: '',
+    },
+    {
+        name: 'server.host',
+        isOptional: true,
+        types: ['string'],
+        description: 'The value of `host` is usually the string `api.forio.com`, the URI of the Forio API server. This is automatically set, but you can pass it explicitly if desired. It is most commonly used for clarity when you are [hosting an Epicenter project on your own server](../../../how_to/self_hosting/)'
+    },
+    {
+        name: 'server.protocol',
+        isOptional: true,
+        types: ['https|http'],
+        description: 'Defaults to https',
     }
 ];
 const accountOptions = [].concat([
@@ -51,7 +63,7 @@ function paramsToTable(params) {
     const paramRows = params.map((param)=> {
         const isOptional = param.isOptional || param.name.indexOf('[') === 0;
         const name = param.name.replace('[', '').replace(']', '');
-        const type = param.types && param.types.length ? param.types.join(', ') : 'any';
+        const type = param.types && param.types.length ? param.types.join(' / ') : 'any';
         return toRow([
             isOptional ? '' : '•',
             name,
@@ -82,7 +94,7 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
             return accum;
         }, {});
 
-        splitMethodsAndConfig.methods = splitMethodsAndConfig.type_method.map((m)=> {
+        splitMethodsAndConfig.methods = (splitMethodsAndConfig.type_method || []).map((m)=> {
             m.tags.example = m.tags.example.map((r)=> r.trim());
             m.parameterTable = paramsToTable(m.tags.param);
 

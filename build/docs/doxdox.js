@@ -14,17 +14,32 @@ const files = [
     // 'service/data-api-service',
     // 'service/password-api-service',
 
-    'service/asset-api-adapter',
-    'service/state-api-adapter',
-    'service/introspection-api-service',
-    'service/auth-api-service',
-    'service/presence-api-service',
-    'service/member-api-adapter',
+    // 'service/run-api-service/variables-api-service.js',
+    // 'service/consensus-api-service/consensus-group-service.js',
+    // 'service/consensus-api-service/consensus-service.js',
+    // 'service/asset-api-adapter',
+    // 'service/state-api-adapter',
+    // 'service/introspection-api-service',
+    // 'service/auth-api-service',
+    // 'service/presence-api-service',
+    // 'service/member-api-adapter',
     // 'service/user-api-adapter',
     // 'service/world-api-adapter',
 
-    'managers/auth-manager',
-    'managers/run-manager',
+    // 'managers/scenario-manager',
+    {
+        src: 'managers/scenario-manager/scenario-strategies/baseline-strategy.js',
+        dest: 'scenario-manager/baseline/index.html.md',
+    },
+    {
+        src: 'managers/scenario-manager/scenario-strategies/reuse-last-unsaved.js',
+        dest: 'scenario-manager/current/index.html.md',
+    },
+
+    // 'managers/world-manager',
+    // 'managers/user-manager',
+    // 'managers/auth-manager',
+    // 'managers/run-manager',
 ];
 /**
  * Assumes following input folder structure
@@ -33,14 +48,16 @@ const files = [
  *      run-api-service.md (optional)
  *  Creates run-api-service/index.html.md
  */
-files.forEach((file)=> {
-    dd.parseFiles([`${IP_FOLDER}/${file}/index.js`], {
+files.forEach((ip)=> {
+    const file = ip.src || ip;
+    const srcFile = file.indexOf('.js') === -1 ? `${file}/index.js` : file;
+    dd.parseFiles([`${IP_FOLDER}/${srcFile}`], {
         ignore: '', 
         parser: 'dox', 
         layout: path.resolve(__dirname, 'ddplugin.js')
     }).then((data)=> {
         const contents = _.template(templateFile)(data[0]);
-        const key = file.split('/').reverse()[0];
+        const key = file.split('/').reverse()[0].replace('.js', '');
         const prologue = [
             '---',
             `title: ${key}`,
@@ -52,10 +69,11 @@ files.forEach((file)=> {
         try {
             header = fs.readFileSync(`${IP_FOLDER}/${file}/${key}.md`, 'utf-8');
         } catch (e) {
-            console.log('No description file found for', file);
+            // console.log('No description file found for', file);
         }
 
-        const dest = `${OP_FOLDER}/${key}/index.html.md`;
+        const destFile = ip.dest || `${key}/index.html.md`;
+        const dest = `${OP_FOLDER}/${destFile}`;
         fs.writeFileSync(dest, [prologue, header, contents].join('\n'));
         console.log('Created', dest);
     });
