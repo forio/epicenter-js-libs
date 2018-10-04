@@ -123,6 +123,32 @@ describe('Scenario Manager', function () {
             expect(config.project).to.equal('js-libs');
         });
         describe('getRun', function () {
+            it('should query for the right baseline filter', ()=> {
+                var rs = new RunService(runOptions);
+                var sampleBaseline = {
+                    id: 'run1',
+                    name: 'baseline',
+                    saved: true
+                };
+                const querySpy = sinon.spy(()=> $.Deferred().resolve([
+                    sampleBaseline
+                ]).promise());
+                sinon.stub(rs, 'query').callsFake(querySpy);
+                var sm = new ScenarioManager({ run: rs });
+                return sm.baseline.getRun().then(function (run) {
+                    expect(querySpy).to.have.been.calledOnce;
+                    const args = querySpy.getCall(0).args[0];
+                    expect(args).to.eql({
+                        model: runOptions.model,
+                        saved: true,
+                        trashed: false,
+                        name: 'Baseline',
+                        scope: {
+                            trackingKey: 'baseline'
+                        }
+                    });
+                });
+            });
             it('should return existing runs if it finds one', function () {
                 var rs = new RunService(runOptions);
                 var sampleBaseline = {
@@ -178,8 +204,14 @@ describe('Scenario Manager', function () {
                 return sm.baseline.getRun().then(function (run) {
                     expect(saveStub).to.have.been.calledOnce;
                     var args = saveStub.getCall(0).args;
-                    expect(args[0].name).to.eql('batman');
-                    expect(args[0].saved).to.eql(true);
+                    expect(args[0]).to.eql({
+                        name: 'batman',
+                        saved: true,
+                        trashed: false,
+                        scope: {
+                            trackingKey: 'baseline'
+                        }
+                    });
                 });
             });
             describe('Scope', ()=> {
