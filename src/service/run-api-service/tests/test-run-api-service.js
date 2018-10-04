@@ -561,7 +561,7 @@ describe('Run API Service', function () {
             req.method.toUpperCase().should.equal('PATCH');
         });
 
-        it('should take in options and send to server', function () {
+        it('should take in body and send to server', function () {
             var params = { completed: true };
             var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
             rs.save(params);
@@ -569,6 +569,16 @@ describe('Run API Service', function () {
             var req = server.requests.pop();
             req.url.should.equal(baseURL + ';saved=true/');
             req.requestBody.should.equal(JSON.stringify(params));
+
+        });
+        it('should special case scooe', function () {
+            var params = { completed: true, scope: { trackingKey: 'foo' } };
+            var rs = new RunService({ account: account, project: 'js-libs', filter: { saved: true } });
+            rs.save(params);
+
+            var req = server.requests.pop();
+            req.url.should.equal(baseURL + ';saved=true/');
+            req.requestBody.should.equal(JSON.stringify({ completed: true, 'scope.trackingKey': 'foo' }));
 
         });
     });

@@ -246,7 +246,19 @@ export default function RunService(config) {
         save: function (attributes, options) {
             var httpOptions = $.extend(true, {}, serviceOptions, options);
             setFilterOrThrowError(httpOptions);
-            return http.patch(attributes, httpOptions);
+            const saveable = Object.keys(attributes).reduce((accum, key)=> {
+                const val = attributes[key];
+                if (key === 'scope' && $.isPlainObject(val)) { //Epicenter cannot handle { scope: { trackingKey: 'foo' }}, needs 'scope.trackingKey': foo 
+                    Object.keys(val).forEach((k)=> {
+                        const nestedVal = val[k];
+                        accum[`${key}.${k}`] = nestedVal;
+                    });
+                } else {
+                    accum[key] = val;
+                }
+                return accum;
+            }, {});
+            return http.patch(saveable, httpOptions);
         },
 
         /**
