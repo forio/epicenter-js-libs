@@ -28,6 +28,9 @@ function cookieNameFromOptions(prefix, config) {
  * @property {object} [baseline] Additional configuration for the `baseline` run. 
  * @property {string} [baseline.runName] Name of the baseline run. Defaults to 'Baseline'. 
  * @property {string} [baseline.run] Additional options to pass through to run creation, specifically for the baseline run. These will override any options provided under `run`. Defaults to empty object. 
+ * @property {object} [baseline.scope]
+ * @property {boolean} [baseline.scope.scopeByUser] Controls if a baseline should be created per **user** or per **group** True by default.
+ * @property {boolean} [baseline.scope.scopeByGroup] Controls if a baseline should be created per **group** or per **project** True by default.
  * @property {object} [current] Additional configuration for the `current` run. 
  * @property {string} [current.run] Additional options to pass through to run creation, specifically for the current run. These will override any options provided under `run`. Defaults to empty object.
  * @property {object} [savedRuns] Options to pass through to the `savedRuns` list. See the [Saved Runs Manager](./saved/) for complete description of available options. Defaults to empty object.

@@ -1,3 +1,96 @@
+<a name="2.8.0"></a>
+
+### Features
+
+#### Share connections with the Channel Manager
+- Different instances of the Channel Manager now use the same underlying websocket connection by default. This should drastically reduce network traffic if you were creating different instances to listen on different channels before. You can replicate the older behavior by setting the 'shareConnection' property to `false` when creating the Channel Manager. e.g.
+
+```js
+var cm = new F.manager.ChannelManager({
+    shareConnection: false
+});
+```
+
+#### New 'consensus' topics for the World Channel
+You can now subscribe only to consensus updates on the world channel. e.g.
+
+```js
+var worldChannel = cm.getWorldChannel(worldObject);
+worldChannel.subscribe(worldChannel.TOPICS.CONSENSUS, function (data) {
+    console.log(data);
+});
+```
+
+#### Scenario Manager changes
+
+##### Control scope for baseline run in the Scenario Manager
+The `baseline` strategy for the scenario manager used to create a new baseline run per *user* by default. You can now pass in strategy options to control this behavior, and create one for the group instead.
+
+```js
+var sm = new F.manager.ScenarioManager({
+    run: {
+        model: 'mymodel.vmf'
+    },
+    baseline: {
+        scope: {
+            scopeByUser: false
+        }
+    }
+});
+```
+##### Control filters for the saved runs manager
+The saved runs manager filters for saved runs by default; you can overrided that by passing in `saved: undefined`  as a filter. e.g.
+
+```js
+var sm = new F.manager.SavedRunsManager({
+    scopeByUser: true,
+    run: runParams
+});
+sm.getRuns(['Time'], {
+    saved: undefined,
+});
+```        
+
+
+#### User Management features:
+
+##### New User Manager (F.manager.User)
+This release includes a new 'User Manager' to help facilitate common user management issues (bulk upload users from a textarea for instance).
+
+```js
+var UserManager = F.manager.User;
+var um = new UserManager(getRunParams());
+um.uploadUsersToGroup($('#userTextarea').val()).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
+    if (res.type === UserManager.errors.EMPTY_USERS) {
+        alert('No users specified to upload');
+    } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
+        alert('No group found. Create a group and login as a facilitator to upload users');
+    } else {
+        alert('Unknown error, please try again');
+    }
+});
+```
+
+##### User service has a new `createUsers` function to add users to your account.
+```js
+var ua = new F.service.User({
+  account: 'acme-simulations',
+});
+ua.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
+```
+
+##### Member service has a new `addUsersToGroup` to add existing users into a group.
+```js
+const ma = new F.service.Member();
+ma.addUsersToGroup(['42836d4b-5b61-4fe4-80eb-3136e956ee5c', '42836d4b-5b61-4fe4-80eb-3136e956ee5c'])
+```
+
+### Improvements:
+- Renamed `un_authorized` to `unauthorized` in errors thrown by misc. services (Run Manager and Auth Manager) for consistency.
+- The older lua based run api used to return `{}` instead of `[]` for empty results, and jslibs was translating `{}` to `[]` for consistency. The newer Java-based run api does not have this issue, so this workaround has been removed.
+- The `current` run strategy for the `ScenarioManager` used to pick the last run which was not-saved/trashed as the 'current' run; it now sets a trackingKey called `current` and uses that instead to pick the current run.
+
+
 <a name="2.7.0"></a>
 
 ### Features

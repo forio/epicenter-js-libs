@@ -151,6 +151,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * This is typically used together with the [World Manager](../world-manager).
      *
      * @example
+     * ```js
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
@@ -160,26 +161,27 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *     });
      *     worldManager.getCurrentWorld().then(function (worldObject, worldAdapter) {
      *         var worldChannel = cm.getWorldChannel(worldObject);
-     *         worldChannel.subscribe('', function (data) {
+     *         worldChannel.subscribe(worldChannel.TOPICS.RUN, function (data) {
      *             console.log(data);
      *         });
      *      });
-     *
-     * The list of available topics to subscribe to are:
-
-        | Topic | Description |
-        | ------------- | ------------- |
-        | ALL | All events |
-        | RUN | All Run events |
-        | RUN_VARIABLES | Variable sets only |
-        | RUN_OPERATIONS | Operation executions only |
-        | RUN_RESET | New run attached to the world |
-        | PRESENCE | All Presence events |
-        | PRESENCE_ONLINE | Online notifications only |
-        | PRESENCE_OFFLINE | Offline notifications only |
-        | ROLES | All role events |
-        | ROLES_ASSIGN | Role assignments only |
-        | ROLES_UNASSIGN | Role unassignments |
+     *```
+     * The list of available topics available to subscribe to are:
+     * | Topic | Description |
+     * | ------------- | ------------- |
+     * | ALL | All events |
+     * | RUN | All Run events |
+     * | RUN_VARIABLES | Variable sets only |
+     * | RUN_OPERATIONS | Operation executions only |
+     * | RUN_RESET | New run attached to the world |
+     * | PRESENCE | All Presence events |
+     * | PRESENCE_ONLINE | Online notifications only |
+     * | PRESENCE_OFFLINE | Offline notifications only |
+     * | ROLES | All role events |
+     * | ROLES_ASSIGN | Role assignments only |
+     * | ROLES_UNASSIGN | Role unassignments |
+     * | CONSENSU | Consensus topics |
+     * 
      * @param  {String|Object} world The world object or id.
      * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance

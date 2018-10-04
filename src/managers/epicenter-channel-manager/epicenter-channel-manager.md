@@ -37,11 +37,12 @@
 
  Here's an example of those last three steps (instantiate, get channel, subscribe):
 
-     var cm = new F.manager.ChannelManager();
-     var gc = cm.getGroupChannel();
-     gc.subscribe('', function(data) { console.log(data); });
-     gc.publish('', { message: 'a new message to the group' });
-
+```js
+ var cm = new F.manager.ChannelManager();
+ var gc = cm.getGroupChannel();
+ gc.subscribe('', function(data) { console.log(data); });
+ gc.publish('', { message: 'a new message to the group' });
+```
  For a more detailed example, see a [complete publish and subscribe example](../../../rest_apis/multiplayer/channel/#epijs-example).
 
  For details on what data is published automatically to which channels, see [Automatic Publishing of Events](../../../rest_apis/multiplayer/channel/#publish-message-auto).
