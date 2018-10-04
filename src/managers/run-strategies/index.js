@@ -22,7 +22,7 @@ var list = {
     'reuse-never': require('./reuse-never'),
     'reuse-per-session': require('./reuse-per-session'),
     'reuse-across-sessions': require('./reuse-across-sessions'),
-    'reuse-last-initialized': require('./reuse-last-initialized'),
+    'reuse-last-initialized': require('./reuse-last-initialized').default,
 };
 
 //Add back older aliases
