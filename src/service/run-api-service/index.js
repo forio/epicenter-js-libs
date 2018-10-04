@@ -314,7 +314,7 @@ export default function RunService(config) {
          * @param {Array} operations If none of the operations take parameters, pass an array of the operation names (strings). If any of the operations do take parameters, pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
          * @param {Object} [options] Overrides for configuration options.
-         * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
+         * @return {JQuery.Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         serial: function (operations, params, options) {
             var opParams = normalizeOperations(operations, params);
@@ -368,7 +368,7 @@ export default function RunService(config) {
          * @param {Array|Object} operations If none of the operations take parameters, pass an array of the operation names (as strings). If any of the operations do take parameters, you have two options. You can pass an array of objects, each of which contains an operation name and its own (possibly empty) array of parameters. Alternatively, you can pass a single object with the operation name and a (possibly empty) array of parameters.
          * @param {*} params Parameters to pass to operations.
          * @param {Object} [options] Overrides for configuration options.
-         * @return {Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
+         * @return {JQuery.Promise} The parameter to the callback is an array. Each array element is an object containing the results of one operation.
          */
         parallel: function (operations, params, options) {
             var $d = $.Deferred();

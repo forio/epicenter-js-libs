@@ -307,6 +307,14 @@ describe('Run API Service', function () {
             var req = server.requests.pop();
             req.url.should.equal(baseURL + ';saved=true;.price=1/');
         });
+        it('should support complex filters', function () {
+            var rs = new RunService({ account: account, project: project });
+            rs.query({ scope: { trackingKey: 'foo' }, saved: true, id: [1, 2] });
+
+            var req = server.requests.pop();
+            req.url.should.equal(baseURL + ';scope.trackingKey=foo;saved=true;id=1;id=2/');
+        });
+
 
         it('should take matrix params with arithmetic operators', function () {
             var rs = new RunService({ account: account, project: project });
