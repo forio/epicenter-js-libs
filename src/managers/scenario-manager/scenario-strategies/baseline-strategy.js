@@ -30,6 +30,9 @@ export default function BaselineStrategy(options) {
         strategyOptions: {
             initOperation: opts.initOperation,
             flag: {
+                scope: {
+                    trackingKey: 'baseline',
+                },
                 saved: true,
                 trashed: false,
                 name: opts.baselineName
