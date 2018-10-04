@@ -210,12 +210,11 @@ export default function RunService(config) {
         },
 
         /**
-         * Removes specified runid from memory
+         * Removes specified runid from memory. See [details on run persistence](../../../run_persistence/#runs-in-memory)
          *
          * @example
-         *     rs.removeFromMemory('bb589677-d476-4971-a68e-0c58d191e450');
+         * rs.removeFromMemory('bb589677-d476-4971-a68e-0c58d191e450');
          *
-         * See [details on run persistence](../../../run_persistence/#runs-in-memory)
          * @param  {String} runID   id of run to remove
          * @param  {Object} [options] Overrides for configuration options.
          * @return {Promise}
@@ -239,7 +238,6 @@ export default function RunService(config) {
          * // update 'saved' field of run record for a particular run
          * rs.save({ saved: true }, { id: '0000015bf2a04995880df6b868d23eb3d229' });
          *
-         * 
          * @param {Object} attributes The run data and variables to save.
          * @param {Object} attributes.variables Model variables must be included in a `variables` field within the `attributes` object. (Otherwise they are treated as run data and added to the run record directly.)
          * @param {Object} [options] Overrides for configuration options.
@@ -270,7 +268,6 @@ export default function RunService(config) {
          * rs.do({ name:'add', params:[2,4] });
          * // call operation "solve" on a different run 
          * rs.do('solve', { id: '0000015bf2a04995880df6b868d23eb3d229' });
-         *
          * 
          * @param {String} operation Name of operation.
          * @param {Array} [params] Any parameters the operation takes, passed as an array. In the special case where `operation` only takes one argument, you are not required to put that argument into an array, and can just pass it directly.
@@ -418,7 +415,6 @@ export default function RunService(config) {
          *      console.log(data.functions);
          *      console.log(data.variables);
          * });
-         *
          * 
          * @param  {Object} options Options can either be of the form `{ runID: <runid> }` or `{ model: <modelFileName> }`. Note that the `runID` is optional if the Run Service is already associated with a particular run (because `id` was passed in when the Run Service was initialized). If provided, the `runID` overrides the `id` currently associated with the Run Service.
          * @param  {Object} [introspectionConfig] Service options for Introspection Service

@@ -49,9 +49,7 @@ var sm = new F.manager.SavedRunsManager({
 sm.getRuns(['Time'], {
     saved: undefined,
 });
-```        
-
-
+```   
 #### User Management features:
 
 ##### New User Manager (F.manager.User)
