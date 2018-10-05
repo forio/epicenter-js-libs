@@ -22,22 +22,28 @@ import ReuseinitStrategy from 'managers/run-strategies/reuse-last-initialized';
 export default function BaselineStrategy(options) {
     var defaults = {
         baselineName: 'Baseline',
+        trackingKey: null,
         initOperation: [{ stepTo: 'end' }]
     };
     var strategyOptions = options ? options.strategyOptions : {};
     var opts = $.extend({}, defaults, strategyOptions);
+
+    const reuseStrategyOptions = {
+        initOperation: opts.initOperation,
+        flag: {
+            saved: true,
+            trashed: false,
+            name: opts.baselineName
+        },
+        scope: opts.scope,
+    };
+    if (opts.trackingKey) {
+        reuseStrategyOptions.flag.scope = {
+            trackingKey: opts.trackingKey
+        };
+    }
+
     return new ReuseinitStrategy({
-        strategyOptions: {
-            initOperation: opts.initOperation,
-            flag: {
-                scope: {
-                    trackingKey: 'baseline',
-                },
-                saved: true,
-                trashed: false,
-                name: opts.baselineName
-            },
-            scope: opts.scope,
-        }
+        strategyOptions: reuseStrategyOptions
     });
 }

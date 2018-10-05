@@ -31,11 +31,12 @@ class ReuseLastUnsaved {
 
     reset(runService, userSession, options) {
         const scoped = injectScopeFromSession(runService.getCurrentConfig(), userSession);
-        const opt = $.extend(true, {}, scoped, {
-            scope: {
+        const opt = $.extend(true, {}, scoped);
+        if (this.options.trackingKey) {
+            opt.scope = {
                 trackingKey: 'current'
-            }
-        });
+            };
+        }
         return runService.create(opt, options).then(function (createResponse) {
             return $.extend(true, {}, createResponse, { freshlyCreated: true });
         });
