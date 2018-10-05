@@ -143,9 +143,7 @@ describe('Scenario Manager', function () {
                         saved: true,
                         trashed: false,
                         name: 'Baseline',
-                        scope: {
-                            trackingKey: 'baseline'
-                        }
+                        isBaseline: true,
                     });
                 });
             });
@@ -208,9 +206,7 @@ describe('Scenario Manager', function () {
                         name: 'batman',
                         saved: true,
                         trashed: false,
-                        scope: {
-                            trackingKey: 'baseline'
-                        }
+                        isBaseline: true,
                     });
                 });
             });

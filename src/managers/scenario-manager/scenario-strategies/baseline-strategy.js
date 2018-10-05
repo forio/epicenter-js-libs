@@ -22,7 +22,6 @@ import ReuseinitStrategy from 'managers/run-strategies/reuse-last-initialized';
 export default function BaselineStrategy(options) {
     var defaults = {
         baselineName: 'Baseline',
-        trackingKey: null,
         initOperation: [{ stepTo: 'end' }]
     };
     var strategyOptions = options ? options.strategyOptions : {};
@@ -33,15 +32,11 @@ export default function BaselineStrategy(options) {
         flag: {
             saved: true,
             trashed: false,
+            isBaseline: true,
             name: opts.baselineName
         },
         scope: opts.scope,
     };
-    if (opts.trackingKey) {
-        reuseStrategyOptions.flag.scope = {
-            trackingKey: opts.trackingKey
-        };
-    }
 
     return new ReuseinitStrategy({
         strategyOptions: reuseStrategyOptions
