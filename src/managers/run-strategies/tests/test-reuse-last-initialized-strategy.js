@@ -50,7 +50,20 @@ describe('Reuse last initialized', function () {
                 expect(queryStub).to.have.been.calledWith({
                     foo: 'bar',
                     trashed: false,
-                    'scope.group': 'groupName',
+                    scope: {
+                        group: 'groupName'
+                    }
+                });
+            });
+        });
+        it('should merge scope from current run', function () {
+            return strategy.getRun(rs, { groupName: 'groupName' }).then(function () {
+                expect(queryStub).to.have.been.calledWith({
+                    foo: 'bar',
+                    trashed: false,
+                    scope: {
+                        group: 'groupName'
+                    }
                 });
             });
         });
@@ -70,7 +83,9 @@ describe('Reuse last initialized', function () {
                 expect(queryStub).to.have.been.calledWith({
                     foo: 'bar',
                     trashed: false,
-                    'scope.group': 'groupName',
+                    scope: {
+                        group: 'groupName'
+                    },
                     model: 'model.eqn',
                 });
             });

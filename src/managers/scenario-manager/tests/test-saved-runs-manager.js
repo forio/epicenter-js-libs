@@ -222,7 +222,7 @@ describe('Saved Runs Manager', function () {
                 });
                 return srm.getRuns().then(function (runs) {
                     var args = queryStub.getCall(0).args;
-                    expect(args[0]['scope.group']).to.eql('foo');
+                    expect(args[0].scope.group).to.eql('foo');
                     sessionStub.restore();
                 });
             });
@@ -236,7 +236,7 @@ describe('Saved Runs Manager', function () {
                 });
                 return srm.getRuns().then(function (runs) {
                     var args = queryStub.getCall(0).args;
-                    expect(args[0]['scope.group']).to.eql(undefined);
+                    expect(args[0].scope).to.not.exist;
                     sessionStub.restore();
                 });
 
