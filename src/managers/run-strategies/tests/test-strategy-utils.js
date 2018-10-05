@@ -29,7 +29,19 @@ describe('Strategy Utils', function () {
                 var op = injectFiltersFromSession({ foo: 'bar' }, { groupName: 'blah' });
                 expect(op).to.eql({
                     foo: 'bar',
-                    'scope.group': 'blah'
+                    scope: {
+                        group: 'blah'
+                    }
+                });
+            });
+            it('should merge with existing scope', function () {
+                var op = injectFiltersFromSession({ foo: 'bar', scope: { trackingKey: 'mykey' } }, { groupName: 'blah' });
+                expect(op).to.eql({
+                    foo: 'bar',
+                    scope: {
+                        trackingKey: 'mykey',
+                        group: 'blah'
+                    }
                 });
             });
             it('should not add scope if `scopeByGroup` is false', function () {
