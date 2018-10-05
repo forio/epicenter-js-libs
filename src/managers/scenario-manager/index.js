@@ -42,9 +42,11 @@ function ScenarioManager(config) {
         includeBaseLine: true,
         baseline: {
             runName: 'Baseline',
+            trackingKey: 'baseline',
             run: {}
         },
         current: {
+            trackingKey: 'current',
             run: {}
         },
         savedRuns: {}
@@ -68,6 +70,7 @@ function ScenarioManager(config) {
             baselineName: opts.baseline.runName,
             initOperation: opts.advanceOperation,
             scope: opts.baseline.scope,
+            trackingKey: opts.baseline.trackingKey,
         }
     });
 
@@ -95,7 +98,10 @@ function ScenarioManager(config) {
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
         sessionKey: cookieNameFromOptions.bind(null, 'sm-current-run'),
-        run: mergeRunOptions(opts.run, opts.current.run)
+        run: mergeRunOptions(opts.run, opts.current.run),
+        strategyOptions: {
+            trackingKey: opts.current.trackingKey,
+        }
     });
 
     /**
