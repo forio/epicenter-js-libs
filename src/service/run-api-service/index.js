@@ -161,7 +161,13 @@ export default function RunService(config) {
          * @return {Promise.<object[]>}
          */
         query: function (qs, outputModifier, options) {
-            var httpOptions = $.extend(true, {}, serviceOptions, { url: urlConfig.getFilterURL(qs) }, options);
+            const mergedOptions = $.extend(true, {}, serviceOptions, options);
+            const mergedQuery = $.extend(true, {}, qs);
+            if (mergedOptions.scope) {
+                mergedQuery.scope = mergedOptions.scope;
+            }
+
+            let httpOptions = $.extend(true, {}, mergedOptions, { url: urlConfig.getFilterURL(mergedQuery) });
             httpOptions = urlConfig.addAutoRestoreHeader(httpOptions);
 
             return http.splitGet(outputModifier, httpOptions);

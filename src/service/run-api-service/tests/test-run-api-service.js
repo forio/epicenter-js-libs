@@ -314,6 +314,12 @@ describe('Run API Service', function () {
             var req = server.requests.pop();
             req.url.should.equal(baseURL + ';scope.trackingKey=foo;saved=true;id=1;id=2/');
         });
+        it('should use scope provided in service options to query where possible', function () {
+            var rs = new RunService({ account: account, project: project, scope: { trackingKey: 'foo' }, });
+            rs.query({ saved: true, id: [1, 2] });
+            var req = server.requests.pop();
+            req.url.should.equal(baseURL + ';saved=true;id=1;id=2;scope.trackingKey=foo/');
+        });
 
 
         it('should take matrix params with arithmetic operators', function () {
