@@ -297,8 +297,34 @@ describe('Scenario Manager', function () {
                     const args = querySpy.getCall(0).args[0];
                     expect(args).to.eql({
                         trashed: false,
-                        'scope.trackingKey': 'current',
+                        scope: {
+                            trackingKey: 'current'
+                        },
                         model: runOptions.model,
+                    });
+                });
+            });
+            it('should suffix trackingKey with current if run already has one', ()=> {
+                var rs = new RunService($.extend(true, {}, runOptions, { scope: { trackingKey: 'mykey' } }));
+                const querySpy = sinon.spy(()=> $.Deferred().resolve([]).promise());
+                const createSpy = sinon.spy(()=> $.Deferred().resolve([]).promise());
+                sinon.stub(rs, 'query').callsFake(querySpy);
+                sinon.stub(rs, 'create').callsFake(createSpy);
+                var sm = new ScenarioManager({ run: rs });
+                return sm.current.getRun().then(function (run) {
+                    const queryArgs = querySpy.getCall(0).args[0];
+                    expect(queryArgs).to.eql({
+                        trashed: false,
+                        scope: {
+                            trackingKey: 'mykey-current'
+                        },
+                        model: runOptions.model,
+                    });
+
+                    const createArgs = createSpy.getCall(0).args[0];
+                    expect(createArgs.model).to.eql(runOptions.model);
+                    expect(createArgs.scope).to.eql({
+                        trackingKey: 'mykey-current'
                     });
                 });
             });
