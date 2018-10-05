@@ -18,11 +18,13 @@ class SavedRunsManager {
      * @param {object} config 
      * @property {boolean} scopeByGroup  If set, will only pull runs from current group. Defaults to `true`.
      * @property {boolean} scopeByUser  If set, will only pull runs from current user. Defaults to `true`. For multiplayer run comparison projects, set this to false so that all end users in a group can view the shared set of saved runs.
+     * @property {object} run Run Service options
      */
     constructor(config) {
         var defaults = {
             scopeByGroup: true,
             scopeByUser: true,
+            run: null,
         };
     
         this.sessionManager = new SessionManager();
@@ -54,7 +56,12 @@ class SavedRunsManager {
      * @return {Promise}
      */
     save(run, otherFields) {
-        var param = $.extend(true, {}, otherFields, { saved: true, trashed: false });
+        const runConfig = this.runService.getCurrentConfig();
+        const defaultToSave = {};
+        if (runConfig.scope && runConfig.scope.trackingKey) {
+            defaultToSave.scope = { trackingKey: runConfig.scope.trackingKey };
+        }
+        const param = $.extend(true, defaultToSave, otherFields, { saved: true, trashed: false });
         return this.mark(run, param);
     }
 

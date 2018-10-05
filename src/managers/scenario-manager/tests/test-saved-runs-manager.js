@@ -85,6 +85,19 @@ describe('Saved Runs Manager', function () {
                 expect(args[0]).to.eql({ saved: true, trashed: false, name: 'foo' });
             });
         });
+        it('should patch trackingKey if provided in runOptions', ()=> {
+            const runToSave = new RunService($.extend(true, {}, runOptions, { id: 'foobar' }));
+            const saveStub = sinon.stub(runToSave, 'save').callsFake(function (params) {
+                return $.Deferred().resolve(params).promise();
+            });
+            const srm = new SavedRunsManager({
+                run: { scope: { trackingKey: 'mykey' } }
+            });
+            return srm.save(runToSave, { name: 'foo' }).then(function () {
+                var args = saveStub.getCall(0).args;
+                expect(args[0]).to.eql({ saved: true, trashed: false, name: 'foo', scope: { trackingKey: 'mykey' } });
+            });
+        });
         it('allow passing in string runids', function () {
             return srm.save('food', { name: 'foo' }).then(function () {
                 var req = server.requests.pop();
