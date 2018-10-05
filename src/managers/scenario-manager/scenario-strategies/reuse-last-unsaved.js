@@ -23,6 +23,13 @@ import { injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
  *
  * See also: [additional information on run strategies](../../strategies/).
  */
+
+function getTrackingKey(runConfig) {
+    const base = (runConfig && runConfig.scope && runConfig.scope.trackingKey);
+    const newKey = base ? `${base}-current` : 'current';
+    return newKey;
+}
+
 class ReuseLastUnsaved {
     constructor(options) {
         const strategyOptions = options ? options.strategyOptions : {};
@@ -30,24 +37,25 @@ class ReuseLastUnsaved {
     }
 
     reset(runService, userSession, options) {
-        const scoped = injectScopeFromSession(runService.getCurrentConfig(), userSession);
-        const opt = $.extend(true, {}, scoped);
-        if (this.options.trackingKey) {
-            opt.scope = {
-                trackingKey: 'current'
-            };
-        }
+        const runConfig = runService.getCurrentConfig();
+        const trackingKey = getTrackingKey(runConfig);
+
+        const scoped = injectScopeFromSession(runConfig, userSession);
+        const opt = $.extend(true, {}, scoped, { scope: { trackingKey: trackingKey } });
         return runService.create(opt, options).then(function (createResponse) {
             return $.extend(true, {}, createResponse, { freshlyCreated: true });
         });
     }
 
     getRun(runService, userSession, opts) {
-        const runopts = runService.getCurrentConfig();
+        const runConfig = runService.getCurrentConfig();
+        const trackingKey = getTrackingKey(runConfig);
         const filter = injectFiltersFromSession({ 
             trashed: false,
-            model: runopts.model,
-            'scope.trackingKey': 'current',
+            model: runConfig.model,
+            scope: {
+                trackingKey: trackingKey
+            }
         }, userSession);
         const me = this;
         const outputModifiers = { 
