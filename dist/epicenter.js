@@ -564,7 +564,7 @@ function toMatrixFormat(qs) {
                     return '' + key + translated;
                 });
                 accum = accum.concat(mapped);
-            } else if (typeof val === 'object') {
+            } else if (val !== null && typeof val === 'object') {
                 var translated = translateParts(val);
                 var prefixed = translated.map(function (t) {
                     return key + '.' + t;
@@ -2097,8 +2097,6 @@ function WorldAPIAdapter(config) {
         */
         getProjectSettings: function (options) {
             var opt = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(projectEndpoint) });
-
-            opt.url += [opt.account, opt.project].join('/');
             return http.get(null, opt);
         },
 
@@ -6511,7 +6509,6 @@ F.factory.Store = __webpack_require__(26);
 F.manager.ScenarioManager = __webpack_require__(61).default;
 F.manager.RunManager = __webpack_require__(21).default;
 F.manager.User = __webpack_require__(71).default;
-F.manager.Session = __webpack_require__(2);
 F.manager.AuthManager = __webpack_require__(13).default;
 F.manager.WorldManager = __webpack_require__(42).default;
 F.manager.SavedRunsManager = __webpack_require__(41).default;

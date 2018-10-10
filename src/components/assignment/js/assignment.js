@@ -79,7 +79,7 @@ Assignment.prototype = {
     getSelectedIds: function () {
         return this.$('tbody :checkbox:checked').map(function () {
             return $(this).data('id');
-        });
+        }).get();
     },
 
     findRowViews: function (ids) {
