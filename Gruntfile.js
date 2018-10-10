@@ -18,7 +18,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['webpack:edge', 'karma:testWithCoverage']);
     grunt.registerTask('validate', ['eslint', 'test']);
     grunt.registerTask('concatCometd', ['uglify:cometdMin', 'uglify:cometdDebug']);
-    grunt.registerTask('components', ['templates', 'webpack:assignment', 'webpack:login', 'copy:components']);
+    grunt.registerTask('components', ['webpack:assignment', 'webpack:login', 'copy:components']);
     grunt.registerTask('production', ['concatCometd', 'validate', 'webpack:mapped', 'webpack:min', 'components']);
 
     grunt.registerTask('release', function (type) {
