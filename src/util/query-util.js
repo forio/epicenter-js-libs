@@ -30,7 +30,7 @@ export function toMatrixFormat(qs) {
                     return `${key}${translated}`;
                 });
                 accum = accum.concat(mapped);
-            } else if (typeof val === 'object') {
+            } else if (val !== null && typeof val === 'object') {
                 const translated = translateParts(val);
                 const prefixed = translated.map((t)=> {
                     return `${key}.${t}`;
