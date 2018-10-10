@@ -78,7 +78,7 @@ _.extend(BaseCollection.prototype, {
     },
 
     all: function (cb, ctx) {
-        return _.all(this._models, cb, ctx || this);
+        return _.every(this._models, cb, ctx || this);
     },
 
     toJSON: function () {
