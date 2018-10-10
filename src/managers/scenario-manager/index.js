@@ -42,11 +42,9 @@ function ScenarioManager(config) {
         includeBaseLine: true,
         baseline: {
             runName: 'Baseline',
-            trackingKey: 'baseline',
             run: {}
         },
         current: {
-            trackingKey: 'current',
             run: {}
         },
         savedRuns: {}
@@ -70,7 +68,6 @@ function ScenarioManager(config) {
             baselineName: opts.baseline.runName,
             initOperation: opts.advanceOperation,
             scope: opts.baseline.scope,
-            trackingKey: opts.baseline.trackingKey,
         }
     });
 
@@ -91,6 +88,17 @@ function ScenarioManager(config) {
         });
     };
 
+    function scopeFromConfig(config) {
+        const currentTrackingKey = config.scope && config.scope.trackingKey ? `${config.scope.trackingKey}-current` : 'current';
+        return { scope: { trackingKey: currentTrackingKey } };
+    }
+    const mergedCurrentRunOptions = mergeRunOptions(opts.run, opts.current.run);
+    if (mergedCurrentRunOptions instanceof RunService) {
+        const config = mergedCurrentRunOptions.getCurrentConfig();
+        mergedCurrentRunOptions.updateConfig(scopeFromConfig(config));
+    } else {
+        $.extend(true, mergedCurrentRunOptions, scopeFromConfig(mergedCurrentRunOptions));
+    }
     /**
      * A [Run Manager](../run-manager/) instance containing a 'current' run; this is defined as a run that hasn't been advanced yet, and so can be used to set initial decisions. The current run is typically used to store the decisions being made by the end user.
      * @return {RunManager}
@@ -98,10 +106,7 @@ function ScenarioManager(config) {
     this.current = new RunManager({
         strategy: LastUnsavedStrategy,
         sessionKey: cookieNameFromOptions.bind(null, 'sm-current-run'),
-        run: mergeRunOptions(opts.run, opts.current.run),
-        strategyOptions: {
-            trackingKey: opts.current.trackingKey,
-        }
+        run: mergedCurrentRunOptions,
     });
 
     /**
