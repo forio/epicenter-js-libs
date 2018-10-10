@@ -297,9 +297,7 @@ describe('Scenario Manager', function () {
                     const args = querySpy.getCall(0).args[0];
                     expect(args).to.eql({
                         trashed: false,
-                        scope: {
-                            trackingKey: 'current'
-                        },
+                        saved: false,
                         model: runOptions.model,
                     });
                 });
@@ -315,9 +313,7 @@ describe('Scenario Manager', function () {
                     const queryArgs = querySpy.getCall(0).args[0];
                     expect(queryArgs).to.eql({
                         trashed: false,
-                        scope: {
-                            trackingKey: 'mykey-current'
-                        },
+                        saved: false,
                         model: runOptions.model,
                     });
 
@@ -351,9 +347,11 @@ describe('Scenario Manager', function () {
                 return sm.current.getRun().then(function (run) {
                     expect(createStub).to.have.been.calledOnce;
 
-                    const args = createSpy.getCall(0).args[0];
-                    expect(args.model).to.eql(runOptions.model);
-                    expect(args.scope.trackingKey).to.eql('current');
+                    const createArgs = createSpy.getCall(0).args[0];
+                    expect(createArgs.model).to.eql(runOptions.model);
+                    expect(createArgs.scope).to.eql({
+                        trackingKey: 'current'
+                    });
                 });
             });
             
