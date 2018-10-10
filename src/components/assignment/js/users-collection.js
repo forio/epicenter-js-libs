@@ -70,19 +70,13 @@ module.exports = classFrom(Base, {
 
             var loadUsersInfo = function (group) {
                 var nonFacAndActive = function (u) { return u.active && u.role !== 'facilitator'; };
-                var users = _.pluck(_.filter(group.members, nonFacAndActive), 'userId');
-                var chunkedUsers = splitIdChunks(users);
+                const endUsers = group.members.filter((m)=> nonFacAndActive(m));
+                const endUserIds = endUsers.map((u)=> u.userId);
+                var chunkedUsers = splitIdChunks(endUserIds);
                 var chunkedPromises = chunkedUsers.map(function (users) {
                     return userApi.get({ id: users });
                 });
-                return $.when.apply($, chunkedPromises).then(function (/** [ users[], ajaxStatus, promise ][] */) {
-                    // Converting arguments object to an Array in order to map over them
-                    var argumentsArray = Array.prototype.slice.call(arguments);
-
-                    var userGroups = argumentsArray.map(function (arg) {
-                        return arg[0];
-                    });
-
+                return $.when.apply($, chunkedPromises).then(function (userGroups) {
                     var totalUsers = userGroups.reduce(function (acc, userGroup) {
                         return acc.concat(userGroup);
                     }, []);
@@ -98,7 +92,7 @@ module.exports = classFrom(Base, {
 
         getGroupUsers()
             .then(function (users) {
-                users = _.map(users, function (u) { return _.extend(u, { groupId: groupId }); });
+                users = users.map(function (u) { return $.extend(u, { groupId: groupId }); });
                 me.set(users);
                 dtd.resolve(users);
             });
