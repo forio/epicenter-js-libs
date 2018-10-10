@@ -44,15 +44,13 @@ _.extend(BaseCollection.prototype, {
             return;
         }
 
-        _.each(models, function (m) {
+        models.forEach((m)=> {
             if (!(m instanceof this.model)) {
                 m = new this.model(m);
             }
-
             m.collection = this;
-
             this._models.push(m);
-        }, this);
+        });
 
         this.sort();
 
@@ -70,9 +68,9 @@ _.extend(BaseCollection.prototype, {
     },
 
     getById: function (id) {
-        return _.find(this._models, function (m) {
+        return _.find(this._models, (m)=> {
             return m.get(this.idAttribute) === id;
-        }, this);
+        });
     },
 
     each: function (cb, ctx) {
