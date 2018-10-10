@@ -33,7 +33,6 @@
         "grunt-eslint": "^20.2.0",
         "grunt-karma": "^2.0.0",
         "grunt-markdox": "^1.2.1",
-        "grunt-template-module": "^0.5.1",
         "grunt-webpack": "^3.1.2",
         "husky": "^0.14.3",
         "jit-grunt": "^0.10.0",
@@ -58,6 +57,7 @@
         "document": "node ./build/docs/doxdox.js",
         "release": "npm run document && ./node_modules/grunt-cli/bin/grunt production",
         "build": "./node_modules/grunt-cli/bin/grunt production && npm run document",
+        "build:components": "./node_modules/grunt-cli/bin/grunt components",
         "start": "./node_modules/grunt-cli/bin/grunt",
         "prepush": "./node_modules/grunt-cli/bin/grunt validate"
     },

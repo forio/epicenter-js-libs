@@ -1,6 +1,44 @@
-'use strict';
+const userRowTemplate = `
+    <td><input type="checkbox" class="select" data-id="<%= id%>"</td>
+    <td><%= !isWorldComplete ? '<em class="f-icon f-warning"></em>' : '' %></td>
+    <td><%= world %></td>
+    <td><%= role %></td>
+    <td><%= lastName %></td>
+    <td><%= userName %></td>
+    <td><%= !world ? '<em class="f-icon f-warning"></em>' : '' %></td>
+    <td class="actions"><button class="btn edit btn-edit btn-tools auto-hide">Edit</button></td>
+`.trim();
+const editUserRowTemplate = `
+    <td><input type="checkbox" class="select" data-id="<%= id %>"</td>
+    <td></td>
+    <td>
+        <select name="worlds" class="form-control" data-field="world">
 
-var templates = require('./templates');
+        <% _.each(worlds, function (w) { %>
+            <option value="<%= w %>" <%= w === world ? 'selected' : '' %>><%= w %></option>
+        <% }); %>
+            <option value="<%= newWorld %>" class="new-world-text"><i><%= newWorld %> - New -</i></option>
+        </select>
+    </td>
+    <td>
+        <select name="roles" class="form-control" data-field="role">
+        <% _.each(roles, function (r) { %>
+            <option value="<%= r %>" <%= r === role ? 'selected' : '' %>><%= r %></option>
+        <% }); %>
+
+        <% _.each(optionalRoles, function (r) { %>
+            <option value="<%= r %>" <%= r === role ? 'selected' : '' %>><%= r %> <i>(Optional)</i></option>
+        <% }); %>
+        </select>
+    </td>
+    <td><%= lastName %></td>
+    <td><%= userName %></td>
+    <td><%= !world ? '<em class="f-icon f-warning"></em>' : '' %></td>
+    <td class="actions">
+        <button class="btn btn-primary btn-tools btn-save save">Save</button>
+        <button class="btn btn-tools btn-cancel cancel">Cancel</button>
+    </td>
+`;
 
 var AssignmentRow = function (options) {
     this.$el = $('<tr>');
@@ -20,9 +58,8 @@ var AssignmentRow = function (options) {
 
 _.extend(AssignmentRow.prototype, {
 
-    template: templates['user-row'],
-
-    editTemplate: templates['edit-user-row'],
+    template: _.template(userRowTemplate),
+    editTemplate: _.template(editUserRowTemplate),
 
     bindEvents: function () {
         this.$el.on('click', 'button.edit', this.setEditMode);
@@ -101,4 +138,4 @@ _.extend(AssignmentRow.prototype, {
 });
 
 
-module.exports = AssignmentRow;
+export default AssignmentRow;
