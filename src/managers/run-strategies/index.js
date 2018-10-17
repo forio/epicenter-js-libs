@@ -10,26 +10,43 @@
  * * You can specify whether or not your strategy requires authorization (a valid user session) to work.
  */
 
+import conditionalCreation from './conditional-creation-strategy';
+import newIfInitialized from './deprecated/new-if-initialized-strategy';
+import newIfPersisted from './deprecated/new-if-persisted-strategy';
+
+import identity from './none-strategy';
+import multiplayer from './multiplayer-strategy';
+import reuseNever from './reuse-never';
+import reusePerSession from './reuse-per-session';
+import reuseAcrossSessions from './reuse-across-sessions';
+import reuseLastInitialized from './reuse-last-initialized';
+ 
+const strategyKeys = {
+    REUSE_NEVER: 'reuse-never',
+    REUSE_PER_SESSION: 'reuse-per-session',
+    REUSE_ACROSS_SESSIONS: 'reuse-across-sessions',
+    REUSE_LAST_INITIALIZED: 'reuse-last-initialized',
+    MULTIPLAYER: 'multiplayer',
+    NONE: 'none'
+};
 
 var list = {
-    'conditional-creation': require('./conditional-creation-strategy'),
-    'new-if-initialized': require('./deprecated/new-if-initialized-strategy'), //deprecated
-    'new-if-persisted': require('./deprecated/new-if-persisted-strategy'), //deprecated
+    'conditional-creation': conditionalCreation,
+    'new-if-initialized': newIfInitialized,
+    'new-if-persisted': newIfPersisted,
 
-    none: require('./none-strategy'),
-
-    multiplayer: require('./multiplayer-strategy'),
-    'reuse-never': require('./reuse-never'),
-    'reuse-per-session': require('./reuse-per-session'),
-    'reuse-across-sessions': require('./reuse-across-sessions'),
-    'reuse-last-initialized': require('./reuse-last-initialized').default,
+    [strategyKeys.NONE]: identity,
+    [strategyKeys.MULTIPLAYER]: multiplayer,
+    [strategyKeys.REUSE_NEVER]: reuseNever,
+    [strategyKeys.REUSE_PER_SESSION]: reusePerSession,
+    [strategyKeys.REUSE_ACROSS_SESSIONS]: reuseAcrossSessions,
+    [strategyKeys.REUSE_LAST_INITIALIZED]: reuseLastInitialized,
 };
 
 //Add back older aliases
 list['always-new'] = list['reuse-never'];
 list['new-if-missing'] = list['reuse-per-session'];
 list['persistent-single-player'] = list['reuse-across-sessions'];
-
 
 const strategyManager = {
     /**
@@ -113,4 +130,4 @@ const strategyManager = {
     }
 };
 
-module.exports = strategyManager;
+export default strategyManager;
