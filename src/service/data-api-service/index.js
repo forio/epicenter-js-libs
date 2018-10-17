@@ -170,7 +170,7 @@ class DataService {
      * ds.load('user1');
      * ds.load('user1/question3');
      * 
-     * @param  {String|Object} key The id of the data to return. Can be the id of a document, or a path to data within that document.
+     * @param  {String|Object} [key] The id of the data to return. Can be the id of a document, or a path to data within that document. If blank, returns whole collection
      * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
      * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
