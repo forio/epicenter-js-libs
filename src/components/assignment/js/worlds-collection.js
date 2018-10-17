@@ -137,7 +137,7 @@ module.exports = classFrom(Base, {
             return (usersHash[u.get('id')] = u);
         });
 
-        this.each(function (w, i) {
+        this.each((w, i)=> {
             var name = w.get('name');
             var isComplete = w.get('complete');
             w.set({ index: i, name: name || (i + 1) + '' });
@@ -146,7 +146,7 @@ module.exports = classFrom(Base, {
                     usersHash[u.get('userId')].set({ world: name, role: u.get('role'), isWorldComplete: isComplete });
                 }
             });
-        }, this);
+        });
 
         usersCollection.sort();
     },

@@ -660,8 +660,6 @@ export default function WorldAPIAdapter(config) {
                 options,
                 { url: urlConfig.getAPIPath(projectEndpoint) }
             );
-
-            opt.url += [opt.account, opt.project].join('/');
             return http.get(null, opt);
         },
 

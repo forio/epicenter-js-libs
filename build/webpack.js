@@ -119,6 +119,9 @@ module.exports = function (grunt) {
         assignment: {
             entry: path.resolve('./src/components/assignment/js/index.js'),
             devtool: 'source-map',
+            module: {
+                rules: [babelloader]
+            },
             output: {
                 path: path.resolve('./dist/components/assignment'),
                 filename: 'assignment.min.js'
