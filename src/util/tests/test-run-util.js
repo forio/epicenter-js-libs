@@ -1,7 +1,22 @@
 
 import * as rutil from '../run-util';
+import { expect } from 'chai';
 
 describe('Run Utilities', function () {
+    describe('#parseContentRange', ()=> {
+        it('should return parsed values from content range header', ()=> {
+            const op = rutil.parseContentRange('records 0-99/3570');
+            expect(op).to.eql({
+                start: 0,
+                end: 99,
+                total: 3570
+            });
+        });
+        it('should return null if called with nothing', ()=> {
+            const op = rutil.parseContentRange(undefined);
+            expect(op).to.eql(null);
+        });
+    });
     describe('#normalizeOperations()', function () {
         describe('#_normalizePlainObjects', function () {
             it('takes in multi anon object with [..]', function () {
