@@ -2,7 +2,7 @@ import RunService from 'service/run-api-service';
 import SessionManager from 'store/session-manager';
 
 import { injectFiltersFromSession } from 'managers/run-strategies/strategy-utils';
-import bulkFetchRuns from './bulk-fetch-runs';
+import bulkFetchRuns from 'util/bulk-fetch-records';
 
 /**
  * @description

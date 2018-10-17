@@ -1,5 +1,5 @@
 
-import SavedRunsManager from '../saved-runs-manager';
+import SavedRunsManager from '../index';
 import RunService from 'service/run-api-service';
 import URLService from 'service/url-config-service';
 

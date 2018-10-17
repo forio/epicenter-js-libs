@@ -1,7 +1,9 @@
 import { parseContentRange } from 'util/run-util';
 
 /**
- * @param {Function} fetchFn 
+ * Recursively fetches from any API which supports content-range
+ * 
+ * @param {function(Number, Number):Promise<object[], string, XMLHttpRequest>} fetchFn Function which returns a promise (presumably an API call)
  * @param {{ startRecord:? Number, endRecord:? Number, recordsPerFetch:? Number, onData:? Function }} options 
  * @return {Promise.<object[]>}
  */
@@ -33,6 +35,6 @@ export default function bulkFetchRecords(fetchFn, options) {
         });
     }
 
-    const runLoadPromise = getRecords(fetchFn, ops);
-    return runLoadPromise;
+    const Promise = getRecords(fetchFn, ops);
+    return Promise;
 } 
