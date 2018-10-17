@@ -1,4 +1,4 @@
-import strategies, { getBestStrategy } from 'managers/run-strategies';
+import strategies from 'managers/run-strategies';
 import * as specialOperations from './special-operations';
 
 import RunService from 'service/run-api-service';
@@ -73,7 +73,7 @@ class RunManager {
         }
         patchRunService(this.run, this);
     
-        this.strategy = getBestStrategy(this.options);
+        this.strategy = strategies.getBestStrategy(this.options);
         this.sessionManager = new SessionManager(this.options);
     }
 
