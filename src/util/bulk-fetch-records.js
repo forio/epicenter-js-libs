@@ -4,7 +4,12 @@ import { parseContentRange } from 'util/run-util';
  * Recursively fetches from any API which supports content-range
  * 
  * @param {function(Number, Number):Promise<object[], string, XMLHttpRequest>} fetchFn Function which returns a promise (presumably an API call)
- * @param {{ startRecord:? Number, endRecord:? Number, recordsPerFetch:? Number, onData:? Function }} options 
+ * @param {object} [options] 
+ * @param {Number} [options.startRecord]
+ * @param {Number} [options.endRecord]
+ * @param {Number} [options.recordsPerFetch]
+ * @param {function(Number, Number):Promise<object[]>} [options.recordsPerFetch]
+ * @param {Function} [options.contentRangeParser]
  * @return {Promise.<object[]>}
  */
 export default function bulkFetchRecords(fetchFn, options) {
@@ -13,28 +18,29 @@ export default function bulkFetchRecords(fetchFn, options) {
         endRecord: Infinity,
         
         recordsPerFetch: 100,
+        contentRangeParser: (currentRecords, xhr)=> xhr && parseContentRange(xhr.getResponseHeader('content-range')),
 
         onData: ()=> {}
     }, options);
 
     function getRecords(fetchFn, options, recordsFoundSoFar) {
-        const endRecord = Math.min(options.startRecord + options.recordsPerFetch - 1, options.endRecord);
-        return fetchFn(options, endRecord).then(function (currentRecords, status, xhr) {
+        const endRecord = Math.min(options.startRecord + options.recordsPerFetch, options.endRecord);
+        return fetchFn(options.startRecord, endRecord).then(function (currentRecords, status, xhr) {
             const allFound = (recordsFoundSoFar || []).concat(currentRecords);
-            const recordsLeft = xhr && parseContentRange(xhr.getResponseHeader('content-range'));
-
+            const recordsLeft = ops.contentRangeParser(allFound, xhr);
             options.onData(currentRecords, recordsLeft);
-    
-            if (recordsLeft && recordsLeft.total > recordsLeft.end + 1) {
+            
+            const recordsNeeded = Math.min(recordsLeft.total, ops.endRecord - ops.startRecord);
+            if (recordsLeft && recordsNeeded > recordsLeft.end + 1) {
                 const nextFetchOptions = $.extend({}, options, {
-                    startRecord: endRecord,
+                    startRecord: recordsLeft.end + 1,
                 });
-                return getRecords(endRecord, nextFetchOptions, allFound);
+                return getRecords(fetchFn, nextFetchOptions, allFound);
             }
             return allFound;
         });
     }
 
-    const Promise = getRecords(fetchFn, ops);
-    return Promise;
+    const prom = getRecords(fetchFn, ops);
+    return prom;
 } 
