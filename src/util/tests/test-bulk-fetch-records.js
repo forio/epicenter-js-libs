@@ -28,7 +28,7 @@ function makeContentRangeParser(totalRecords) {
     };
 }
 
-describe.only('Bulk Fetch records', ()=> {
+describe('Bulk Fetch records', ()=> {
     it('should call data generator with default start record and end record if not provided', ()=> {
         const dataSize = 10;
         const generateSpy = sinon.spy(makeDataGenerator(dataSize));

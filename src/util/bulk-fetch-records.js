@@ -37,7 +37,7 @@ export default function bulkFetchRecords(fetchFn, options) {
                 });
                 return getRecords(fetchFn, nextFetchOptions, allFound);
             }
-            return allFound;
+            return $.Deferred().resolve(allFound, status, xhr).promise();
         });
     }
 
