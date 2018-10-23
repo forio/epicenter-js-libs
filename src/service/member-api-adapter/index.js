@@ -42,8 +42,8 @@ export default function MemberAPIService(config) {
     };
 
     const generateUserQuery = function (params) {
-        if (params.hasOwnProperty('userIds')) {
-            return '?' + $.map(params.userIds, function (u) {
+        if (Array.isArray(params.userId)) {
+            return '?' + $.map(params.userId, function (u) {
                 return 'userId=' + u;
             }).join('&');
         }
@@ -167,7 +167,7 @@ export default function MemberAPIService(config) {
         *
         * 
         * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make active.
+        * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -186,7 +186,7 @@ export default function MemberAPIService(config) {
         *
         * 
         * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make inactive.
+        * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
