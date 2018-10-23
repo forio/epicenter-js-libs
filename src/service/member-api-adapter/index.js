@@ -41,9 +41,19 @@ export default function MemberAPIService(config) {
         return serviceOptions;
     };
 
+    const generateUserQuery = function (params) {
+        if (params.hasOwnProperty('userIds')) {
+            return '?' + $.map(params.userIds, function (u) {
+                return 'userId=' + u;
+            }).join('&');
+        }
+        return '/' + params.userId;
+    };
+
     const patchUserActiveField = function (params, active, options) {
+        params = getFinalParams(params);
         const httpOptions = $.extend(true, serviceOptions, options, {
-            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + '/' + params.userId
+            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + generateUserQuery(params)
         });
 
         return http.patch({ active: active }, httpOptions);
@@ -81,8 +91,8 @@ export default function MemberAPIService(config) {
                 throw new Error('No userId specified.');
             }
 
-            const getParms = isString ? { userId: params } : pick(objParams, ['userId']);
-            return http.get(getParms, httpOptions);
+            const getParams = isString ? { userId: params } : pick(objParams, ['userId']);
+            return http.get(getParams, httpOptions);
         },
 
         /**
