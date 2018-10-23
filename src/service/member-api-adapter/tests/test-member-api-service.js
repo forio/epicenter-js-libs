@@ -105,9 +105,23 @@ describe('Member API Service', function () {
         expect(req.requestBody).to.eq(JSON.stringify({ active: active }));
     };
 
+    var testPatchUsersActiveField = function (active) {
+        var method = active ? 'makeUserActive' : 'makeUserInactive';
+        createMemberAdapter()[method]({ userId: ['123', '132', '213'], groupId: 'abc' });
+
+        var req = server.requests.pop();
+        expect(req.method).to.equal('PATCH');
+        expect(req.url).to.match(/\/member\/local\/abc\?userId=123&userId=132&userId=213/);
+        expect(req.requestBody).to.eq(JSON.stringify({ active: active }));
+    };
+
     describe('#makeUserActive', function () {
         it('should PATCH the member/local/<groupId>/<userId> to set active equal to true', function () {
             testPatchUserActiveField(true);
+        });
+
+        it('should PATCH the member/local/<groupId>?userId=<userId>&userId=<userId>...', function () {
+            testPatchUsersActiveField(true);
         });
 
         it('should inclide the authorization header', function () {
@@ -148,6 +162,10 @@ describe('Member API Service', function () {
     describe('#makeUserInactive', function () {
         it('should PATCH the member/local/<groupId>/<userId> to set active equal to false', function () {
             testPatchUserActiveField(false);
+        });
+
+        it('should PATCH the member/local/<groupId>?userId=<userId>&userId=<userId>...', function () {
+            testPatchUsersActiveField(false);
         });
 
         it('should inclide the authorization header', function () {
