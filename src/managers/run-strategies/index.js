@@ -21,11 +21,15 @@ import reusePerSession from './reuse-per-session';
 import reuseAcrossSessions from './reuse-across-sessions';
 import reuseLastInitialized from './reuse-last-initialized';
  
-const strategyKeys = {
+import useSpecificRun from './use-specific-run-strategy';
+
+export const strategyKeys = {
     REUSE_NEVER: 'reuse-never',
     REUSE_PER_SESSION: 'reuse-per-session',
     REUSE_ACROSS_SESSIONS: 'reuse-across-sessions',
     REUSE_LAST_INITIALIZED: 'reuse-last-initialized',
+    USE_SPECIFIC_RUN: 'use-specific-run',
+
     MULTIPLAYER: 'multiplayer',
     NONE: 'none'
 };
@@ -37,6 +41,7 @@ var list = {
 
     [strategyKeys.NONE]: identity,
     [strategyKeys.MULTIPLAYER]: multiplayer,
+    [strategyKeys.USE_SPECIFIC_RUN]: useSpecificRun,
     [strategyKeys.REUSE_NEVER]: reuseNever,
     [strategyKeys.REUSE_PER_SESSION]: reusePerSession,
     [strategyKeys.REUSE_ACROSS_SESSIONS]: reuseAcrossSessions,
@@ -96,6 +101,7 @@ const strategyManager = {
             throw new Error('All strategies should implement a `getRun` and `reset` interface' + options.strategy);
         }
         strategyInstance.requiresAuth = StrategyCtor.requiresAuth;
+        strategyInstance.allowRunIDCache = StrategyCtor.allowRunIDCache;
 
         return strategyInstance;
     },
