@@ -1,3 +1,8 @@
+<a name="2.9.0"></a>
+
+Run Manager detects and synchronizes simultaneous calls to getRun
+New use specific run strategy
+
 <a name="2.8.0"></a>
 
 ### Features
