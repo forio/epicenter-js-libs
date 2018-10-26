@@ -18,16 +18,16 @@ var classFrom = require('util/inherit');
 var IdentityStrategy = require('./none-strategy');
 var { injectFiltersFromSession, injectScopeFromSession } = require('managers/run-strategies/strategy-utils');
 
-var defaults = {
-    /**
-     * (Optional) Additional criteria to use while selecting the last run
-     * @type {Object}
-     */
-    filter: {},
-};
-
 var Strategy = classFrom(IdentityStrategy, {
     constructor: function Strategy(options) {
+        var defaults = {
+            /**
+             * (Optional) Additional criteria to use while selecting the last run
+             * @type {Object}
+             */
+            filter: {},
+        };
+        
         var strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
     },

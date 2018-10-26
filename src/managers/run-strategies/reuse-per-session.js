@@ -15,10 +15,8 @@
  * @name new-if-missing
  */
 
-'use strict';
-
-var classFrom = require('../../util/inherit');
-var ConditionalStrategy = require('./conditional-creation-strategy');
+import classFrom from '../../util/inherit';
+import ConditionalStrategy from './conditional-creation-strategy';
 
 var __super = ConditionalStrategy.prototype;
 
@@ -37,4 +35,4 @@ var Strategy = classFrom(ConditionalStrategy, {
     }
 });
 
-module.exports = Strategy;
+export default Strategy;
