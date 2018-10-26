@@ -30,7 +30,7 @@ describe('Run Manager', function () {
         describe('run', function () {
             it('creates a run member property if passed in run options', function () {
                 var rm = new RunManager({
-                    strategy: 'always-new',
+                    strategy: RunManager.STRATEGY.REUSE_NEVER,
                     run: runOptions
                 });
                 expect(rm.run).to.be.instanceof(RunService);
@@ -38,18 +38,18 @@ describe('Run Manager', function () {
             it('creates a run member property if passed in a runservice', function () {
                 var rs = new RunService(runOptions);
                 var rm = new RunManager({
-                    strategy: 'always-new',
+                    strategy: RunManager.STRATEGY.REUSE_NEVER,
                     run: rs
                 });
                 expect(rm.run).to.be.instanceof(RunService);
             });
             it('should throw an error if no run passed in', function () {
-                expect(function () { new RunManager({ strategy: 'always-new' }); }).to.throw(Error);
+                expect(function () { new RunManager({ strategy: RunManager.STRATEGY.REUSE_NEVER }); }).to.throw(Error);
             });
         });
         describe('strategy', function () {
             it('should allow passing in known strategy names', function () {
-                expect(function () { new RunManager({ strategy: 'always-new', run: runOptions }); }).to.not.throw(Error);
+                expect(function () { new RunManager({ strategy: RunManager.STRATEGY.REUSE_NEVER, run: runOptions }); }).to.not.throw(Error);
             });
             it('should throw an error with unknown strategy names', function () {
                 expect(function () { new RunManager({ strategy: 'booya', run: runOptions }); }).to.throw(Error);
@@ -214,6 +214,30 @@ describe('Run Manager', function () {
             };
         });
 
+        describe('#allowRunIDCache', ()=> {
+            it('should not store generated runid in session', ()=> {
+                var createResponse = { id: 'samplerunid' };
+                var rs = new RunService(runOptions);
+                sinon.stub(rs, 'create').callsFake(function (options) {
+                    return $.Deferred().resolve(createResponse).promise();
+                });
+                sinon.stub(rs, 'load').callsFake(function (runid, filters, options) {
+                    options.success({ id: runid });
+                    return $.Deferred().resolve({ id: runid }).promise();
+                });
+                var rm = new RunManager({
+                    strategy: RunManager.STRATEGY.REUSE_NEVER,
+                    run: rs,
+                });
+                rm.sessionManager = dummySessionStore;
+                return rm.getRun().then(function () {
+                    return rm.reset().then(()=> {
+                        expect(setSpy).to.not.have.been.called;
+                    });
+                });
+            });
+        });
+
         it('should pass runid in session into strategy', function () {
             var getRunSpy = sinon.spy(function () {
                 return $.Deferred().resolve(runSession).promise();
@@ -241,12 +265,11 @@ describe('Run Manager', function () {
             sinon.stub(rs, 'create').callsFake(function (options) {
                 return $.Deferred().resolve(createResponse).promise();
             });
-            sinon.stub(rs, 'load').callsFake(function (runid, filters, options) {
-                options.success({ id: runid });
-                return $.Deferred().resolve({ id: runid }).promise();
+            sinon.stub(rs, 'query').callsFake(function () {
+                return $.Deferred().resolve([createResponse]).promise();
             });
             var rm = new RunManager({
-                strategy: 'always-new',
+                strategy: RunManager.STRATEGY.REUSE_ACROSS_SESSIONS,
                 run: rs,
             });
             rm.sessionManager = dummySessionStore;
@@ -313,13 +336,12 @@ describe('Run Manager', function () {
                         id: sampleRunid
                     }).promise();
                 });
-                sinon.stub(rs, 'load').callsFake(function (runid, filters, options) {
-                    options.success({ id: runid });
-                    return $.Deferred().resolve({ id: runid }).promise();
+                sinon.stub(rs, 'query').callsFake(function () {
+                    return $.Deferred().resolve({ id: sampleRunid }).promise();
                 });
                 var rm = new RunManager({
                     sessionKey: 'abc',
-                    strategy: 'always-new',
+                    strategy: RunManager.STRATEGY.REUSE_ACROSS_SESSIONS,
                     run: rs,
                 });
                 rm.sessionManager = dummySessionStore;
