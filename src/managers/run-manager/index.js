@@ -1,4 +1,4 @@
-import strategies from 'managers/run-strategies';
+import strategies, { strategyKeys } from 'managers/run-strategies';
 import * as specialOperations from './special-operations';
 
 import RunService from 'service/run-api-service';
@@ -49,7 +49,7 @@ class RunManager {
      * @property {string[]} [run.files] If and only if you are using a Vensim model and you have additional data to pass in to your model, you can optionally pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (See more on [Using External Data in Vensim](../../../model_code/vensim/vensim_example_xls/).)
      * @property {string|function} [strategy] Run creation strategy for when to create a new run and when to reuse an end user's existing run. This is *optional*; by default, the Run Manager selects `reuse-per-session`, or `reuse-last-initialized` if you also pass in an initial operation. See [below](#using-the-run-manager-to-access-and-register-strategies) for more information on strategies.
      * @property {object} [strategyOptions] Additional options passed directly to the [run creation strategy](../strategies/).
-     * @property {string} [sessionKey] Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtime.
+     * @property {string} [sessionKey] Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtithis.
      */
     constructor(options) {
         const defaults = {
@@ -125,14 +125,20 @@ class RunManager {
             console.warn('Two simultaneous calls to `getRun` detected on the same RunManager instance. Either create different instances, or eliminate duplicate call');
             return this.fetchProm;
         }
+
+
         this.fetchProm = this.strategy
             .getRun(this.run, authSession, runSession, options).then((run)=> {
                 if (!run || !run.id) {
                     return run;
                 }
+
                 this.run.updateConfig({ filter: run.id });
-                const sessionKey = sessionKeyFromOptions(this.options, this.run);
-                setRunInSession(sessionKey, run, this.sessionManager);
+                const canCache = this.strategy.allowRunIDCache !== false;
+                if (canCache) {
+                    const sessionKey = sessionKeyFromOptions(this.options, this.run);
+                    setRunInSession(sessionKey, run, this.sessionManager);
+                }
 
                 if (!variables || !variables.length) {
                     return run;
@@ -171,22 +177,25 @@ class RunManager {
      * @return {Promise}
      */
     reset(options) {
-        const me = this;
         const authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject({ type: 'UNAUTHORIZED', message: 'No user-session available' }).promise();
         }
-        return this.strategy.reset(this.run, authSession, options).then(function (run) {
+        return this.strategy.reset(this.run, authSession, options).then((run)=> {
             if (run && run.id) {
-                me.run.updateConfig({ filter: run.id });
-                const sessionKey = sessionKeyFromOptions(me.options, me.run);
-                setRunInSession(sessionKey, run.id, me.sessionManager);
+                this.run.updateConfig({ filter: run.id });
+                const canCache = this.strategy.allowRunIDCache !== false;
+                if (canCache) {
+                    const sessionKey = sessionKeyFromOptions(this.options, this.run);
+                    setRunInSession(sessionKey, run.id, this.sessionManager);
+                }
             }
             return run;
         });
     }
 }
 
+RunManager.STRATEGY = strategyKeys;
 RunManager.strategies = strategies;
 export default RunManager;
