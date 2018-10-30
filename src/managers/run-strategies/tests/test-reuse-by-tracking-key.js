@@ -26,8 +26,13 @@ describe('Reuse by tracking key', function () {
             });
             xhr.respond(201, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
         });
-        server.respondWith('GET', /(.*)\/run\/(.*)\/(.*)/, function (xhr, id) {
-            xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ id: id, url: xhr.url }));
+        server.respondWith('GET', /.*\/run\/(.*)\/(.*)\/\?(.*)/, function (xhr, base, filter, qs) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (filter.indexOf('tracker-with-run-limit') !== -1) {
+                headers['content-range'] = '0-0/100';
+            }
+            
+            xhr.respond(200, headers, JSON.stringify({ id: filter, url: xhr.url }));
             return true;
         });
         server.respondImmediately = true;
@@ -145,10 +150,32 @@ describe('Reuse by tracking key', function () {
         
         describe('Run limit', ()=> {
             it('should throw an error if runs exceed limit', ()=> {
-            
+                const strategy = new Strategy({
+                    strategyOptions: {
+                        settings: {
+                            trackingKey: 'tracker-with-run-limit',
+                            runLimit: 1
+                        }
+                    }
+                });
+                return strategy.reset(rs, auth).catch((e)=> {
+                    expect(e).to.equal(Strategy.errors.RUN_LIMIT_REACHED);
+                    expect(createStub).to.not.have.been.called;
+
+                });
             });
             it('should call create if runs are lower than limit', ()=> {
-                
+                const strategy = new Strategy({
+                    strategyOptions: {
+                        settings: {
+                            trackingKey: 'tracker-with-run-limit',
+                            runLimit: 1000
+                        }
+                    }
+                });
+                return strategy.reset(rs, auth).then((e)=> {
+                    expect(createStub).to.have.been.calledOnce;
+                });
             });
         });
         describe('Create options', ()=> {

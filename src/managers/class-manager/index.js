@@ -1,5 +1,5 @@
 import SettingsManager from './settings-manager';
-import ReuseWithTracking from 'managers/run-strategies/reuse-with-tracking-key';
+import ReuseWithTracking from 'managers/run-strategies/reuse-by-tracking-key';
 
 class ClassManager {
 
