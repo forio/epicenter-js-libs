@@ -30,7 +30,7 @@ export default function bulkFetchRecords(fetchFn, options) {
             const recordsLeft = ops.contentRangeParser(allFound, xhr);
             options.onData(currentRecords, recordsLeft);
             
-            const recordsNeeded = Math.min(recordsLeft.total, ops.endRecord - ops.startRecord);
+            const recordsNeeded = recordsLeft && Math.min(recordsLeft.total, ops.endRecord - ops.startRecord);
             if (recordsLeft && recordsNeeded > recordsLeft.end + 1) {
                 const nextFetchOptions = $.extend({}, options, {
                     startRecord: recordsLeft.end + 1,
