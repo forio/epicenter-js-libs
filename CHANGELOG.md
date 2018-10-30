@@ -1,7 +1,7 @@
 <a name="2.9.0"></a>
 
 Run Manager detects and synchronizes simultaneous calls to getRun
-New use specific run strategy
+added 'use specific run' strategy to help with impersonation
 
 <a name="2.8.0"></a>
 

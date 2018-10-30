@@ -12,15 +12,13 @@
  * @name persistent-single-player
  */
 
-'use strict';
+import classFrom from 'util/inherit';
+import IdentityStrategy from './none-strategy';
+import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
 
-var classFrom = require('util/inherit');
-var IdentityStrategy = require('./none-strategy');
-var { injectFiltersFromSession, injectScopeFromSession } = require('managers/run-strategies/strategy-utils');
-
-var Strategy = classFrom(IdentityStrategy, {
+const Strategy = classFrom(IdentityStrategy, {
     constructor: function Strategy(options) {
-        var defaults = {
+        const defaults = {
             /**
              * (Optional) Additional criteria to use while selecting the last run
              * @type {Object}
@@ -28,12 +26,12 @@ var Strategy = classFrom(IdentityStrategy, {
             filter: {},
         };
         
-        var strategyOptions = options ? options.strategyOptions : {};
+        const strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
     },
 
     reset: function (runService, userSession, options) {
-        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+        const opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
         return runService
             .create(opt, options)
             .then(function (run) {
@@ -43,20 +41,19 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     getRun: function (runService, userSession, runSession, options) {
-        var filter = injectFiltersFromSession(this.options.filter, userSession);
-        var me = this;
+        const filter = injectFiltersFromSession(this.options.filter, userSession);
         return runService.query(filter, { 
             startrecord: 0,
             endrecord: 0,
             sort: 'created', 
             direction: 'desc'
-        }).then(function (runs) {
+        }).then((runs)=> {
             if (!runs.length) {
-                return me.reset(runService, userSession, options);
+                return this.reset(runService, userSession, options);
             }
             return runs[0];
         });
     }
 });
 
-module.exports = Strategy;
+export default Strategy;
