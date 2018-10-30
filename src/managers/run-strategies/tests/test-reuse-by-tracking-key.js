@@ -161,7 +161,6 @@ describe('Reuse by tracking key', function () {
                 return strategy.reset(rs, auth).catch((e)=> {
                     expect(e).to.equal(Strategy.errors.RUN_LIMIT_REACHED);
                     expect(createStub).to.not.have.been.called;
-
                 });
             });
             it('should call create if runs are lower than limit', ()=> {
@@ -178,16 +177,30 @@ describe('Reuse by tracking key', function () {
                 });
             });
         });
-        describe('Create options', ()=> {
+        describe('#onCreate', ()=> {
             it('should call onCreate with resolved settings', ()=> {
-                
+                const postCreateSpy = sinon.spy(()=> ({ a: 1 }));
+                const settings = {
+                    trackingKey: 'tracker',
+                    foo: 'ba1',
+                    runLimit: 1000,
+                    a: '1'
+                };
+                const strategy = new Strategy({
+                    strategyOptions: {
+                        settings: settings,
+                        onCreate: postCreateSpy
+                    }
+                });
+                return strategy.reset(rs, auth).then((run)=> {
+                    expect(createStub).to.have.been.calledOnce;
+                    expect(postCreateSpy).to.have.been.calledOnce;
+
+                    const args = postCreateSpy.getCall(0).args;
+                    expect(args[0]).to.be.instanceof(RunService);
+                    expect(args[1]).to.be.eql(settings);
+                });
             });
-        });
-        it('should pass in the right auth params', function () {
-            // return strategy.reset(rs, { groupName: 'group-123' }).then(function () {
-            //     const args = createStub.getCall(0).args;
-            //     expect(args[0].scope).to.eql({ group: 'group-123' });
-            // });
         });
     });
 });
