@@ -28,11 +28,12 @@ describe('Reuse by tracking key', function () {
         });
         server.respondWith('GET', /.*\/run\/(.*)\/(.*)\/\?(.*)/, function (xhr, base, filter, qs) {
             const headers = { 'Content-Type': 'application/json' };
+            const runs = filter.indexOf('noruns') === -1 ? [{ id: 'existingRunI', url: xhr.url }] : [];
             if (filter.indexOf('tracker-with-run-limit') !== -1) {
                 headers['content-range'] = '0-0/100';
             }
             
-            xhr.respond(200, headers, JSON.stringify({ id: filter, url: xhr.url }));
+            xhr.respond(200, headers, JSON.stringify(runs));
             return true;
         });
         server.respondImmediately = true;
@@ -44,16 +45,77 @@ describe('Reuse by tracking key', function () {
 
     describe('#getRun', ()=> {
         it('should throw an error with invalid settings', ()=> {
-            
-        });
-        it('should create if no runs found', ()=> {
-            
+            const rs = new RunService(runOptions);
+            const settingsFetcher = sinon.spy(()=> {
+                return $.Deferred().resolve({ a: 1 }).promise();
+            });
+            const strategy = new Strategy({
+                strategyOptions: {
+                    settings: settingsFetcher
+                }
+            });
+
+            return strategy.getRun(rs).catch((err)=> {
+                expect(err.message).to.equal(Strategy.errors.NO_TRACKING_KEY);
+            });
         });
         it('should return existing run if found', ()=> {
-            
+            const rs = new RunService(runOptions);
+            const settingsFetcher = sinon.spy(()=> {
+                return $.Deferred().resolve({ trackingKey: 'tracker' }).promise();
+            });
+            const strategy = new Strategy({
+                strategyOptions: {
+                    settings: settingsFetcher
+                }
+            });
+
+            return strategy.getRun(rs).then((run)=> {
+                expect(run.id).to.equal('existingRunI');
+            });
+        });
+        it('should create if no runs found', ()=> {
+            const rs = new RunService(runOptions);
+            const createSub = sinon.stub(rs, 'create').callsFake(()=> ($.Deferred().resolve({ id: 'newrunid' }).promise()));
+            const strategy = new Strategy({
+                strategyOptions: {
+                    settings: {
+                        trackingKey: 'noruns'
+                    }
+                }
+            });
+            return strategy.getRun(rs).then((run)=> {
+                expect(createSub).to.have.been.calledOnce;
+                expect(run.id).to.equal('newrunid');
+            });
+        });
+        it('should pass options to create stub', ()=> {
+            const opts = Object.assign({}, runOptions, { files: ['a'] });
+            const rs = new RunService(opts);
+            const createSub = sinon.stub(rs, 'create').callsFake(()=> ($.Deferred().resolve({ id: 'newrunid' }).promise()));
+            const strategy = new Strategy({
+                strategyOptions: {
+                    settings: {
+                        trackingKey: 'noruns'
+                    }
+                }
+            });
+            return strategy.getRun(rs, auth).then((run)=> {
+                expect(createSub).to.have.been.calledOnce;
+                const args = createSub.getCall(0).args[0];
+                const knownArgs = pick(args, ['model', 'scope', 'files']);
+                expect(knownArgs).to.eql({
+                    model: runOptions.model,
+                    scope: {
+                        trackingKey: 'noruns',
+                        group: auth.groupName
+                    },
+                    files: opts.files
+                });
+            });
         });
     });
-    describe.only('#reset', function () {
+    describe('#reset', function () {
         let rs, createStub;
         beforeEach(function () {
             rs = new RunService(runOptions);

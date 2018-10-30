@@ -58,7 +58,7 @@ class ReuseWithTrackingKeyStrategy {
 
     forceCreateRun(runService, userSession, settings) {
         const runConfig = runService.getCurrentConfig();
-        const dupeRunService = new RunService(runConfig);
+        // const dupeRunService = new RunService(runConfig);
         const trackingKey = settings && settings.trackingKey;
 
         const createOptions = injectScopeFromSession(runConfig, userSession);
@@ -68,7 +68,7 @@ class ReuseWithTrackingKeyStrategy {
             }
         });
         return runService.create(opt).then((run)=> {
-            const applied = this.options.onCreate(dupeRunService, settings);
+            const applied = this.options.onCreate(runService, settings);
             return $.Deferred().resolve(applied).promise().then(()=> run);
         });
     }
