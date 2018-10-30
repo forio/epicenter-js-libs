@@ -1,5 +1,4 @@
 var F = {
-    _private: {}, //need this hook now because tests expect everything to be global. Delete once tests are browserified
     util: {},
     factory: {},
     transport: {},
