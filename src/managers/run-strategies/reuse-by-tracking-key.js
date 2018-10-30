@@ -29,7 +29,7 @@ function getRunsForKey(runService, trackingKey, userSession) {
     });
 }
 
-export default class ReuseWithTrackingKeyStrategy {
+class ReuseWithTrackingKeyStrategy {
     constructor(options) {
         const defaults = {
             settings: {
@@ -77,8 +77,7 @@ export default class ReuseWithTrackingKeyStrategy {
         return this.getSettings().then((settings)=> {
             return getRunsForKey(runService, settings.trackingKey, userSession).then((runs, status, xhr)=> {
                 const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
-                const runCount = startedRuns.total;
-                if (runCount >= this.options.runLimit) {
+                if (startedRuns && startedRuns.total >= this.options.runLimit) {
                     throw new Error(errors.RUN_LIMIT_REACHED);
                 }
                 return this.forceCreateRun(runService, userSession, settings);
@@ -97,3 +96,6 @@ export default class ReuseWithTrackingKeyStrategy {
         });
     }
 }
+
+ReuseWithTrackingKeyStrategy.errors = errors;
+export default ReuseWithTrackingKeyStrategy;
