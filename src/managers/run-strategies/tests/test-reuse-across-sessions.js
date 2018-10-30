@@ -1,13 +1,10 @@
-
 import RunService from 'service/run-api-service';
 
 import Strategy from '../reuse-across-sessions';
 
 import sinon from 'sinon';
-import chai from 'chai';
+import chai, { expect } from 'chai';
 chai.use(require('sinon-chai'));
-
-const { expect } = chai;
 
 describe('Reuse Across Sessions strategy', function () {
     var runOptions = {
@@ -34,7 +31,7 @@ describe('Reuse Across Sessions strategy', function () {
     });
 
     describe('getRun', function () {
-            var rs, createStub, queryStub, loadStub, rm; //eslint-disable-line
+            var rs, createStub, queryStub, loadStub, strategy; //eslint-disable-line
         beforeEach(function () {
             rs = new RunService(runOptions);
             createStub = sinon.stub(rs, 'create').callsFake(function () {
@@ -57,10 +54,10 @@ describe('Reuse Across Sessions strategy', function () {
                 options.success({ id: runid }, null);
                 return $.Deferred().resolve({ id: runid }).promise();
             });
-            rm = new Strategy();
+            strategy = new Strategy();
         });
         it('should query for all runs in group', function () {
-            return rm.getRun(rs, auth).then(function () {
+            return strategy.getRun(rs, auth).then(function () {
                 expect(queryStub).to.have.been.calledOnce;
                 var args = queryStub.getCall(0).args;
                     
@@ -82,14 +79,14 @@ describe('Reuse Across Sessions strategy', function () {
                     id: 'def'
                 }).promise();
             });
-            return rm.getRun(rs, auth).then(function () {
+            return strategy.getRun(rs, auth).then(function () {
                 expect(createStub).to.have.been.calledOnce;
             });
         });
     });
 
     describe('#reset', function () {
-        var rs, createStub, rm;
+        var rs, createStub, strategy;
         beforeEach(function () {
             rs = new RunService(runOptions);
             createStub = sinon.stub(rs, 'create').callsFake(function () {
@@ -97,15 +94,15 @@ describe('Reuse Across Sessions strategy', function () {
                     id: 'def'
                 }).promise();
             });
-            rm = new Strategy();
+            strategy = new Strategy();
         });
         it('should call runservice.create', function () {
-            return rm.reset(rs, { groupName: 'group-123' }).then(function () {
+            return strategy.reset(rs, { groupName: 'group-123' }).then(function () {
                 expect(createStub).to.have.been.calledOnce;
             });
         });
         it('should pass in the right auth params', function () {
-            return rm.reset(rs, { groupName: 'group-123' }).then(function () {
+            return strategy.reset(rs, { groupName: 'group-123' }).then(function () {
                 var args = createStub.getCall(0).args;
                 expect(args[0].scope).to.eql({ group: 'group-123' });
             });
