@@ -1,6 +1,7 @@
 import RunService from 'service/run-api-service';
 import { parseContentRange } from 'util/run-util';
 import { injectScopeFromSession, injectFiltersFromSession } from './strategy-utils';
+import { result, makePromise } from 'util/index';
 
 const errors = {
     RUN_LIMIT_REACHED: 'RUN_LIMIT_REACHED',
@@ -39,12 +40,13 @@ export default class ReuseWithTrackingKeyStrategy {
 
             }
         };
-        this.options = $.extend(true, {}, defaults, options);
+        const strategyOptions = options ? options.strategyOptions : {};
+        this.options = $.extend(true, {}, defaults, strategyOptions);
     }
 
     getSettings() {
-        const settings = (typeof this.options.settings === 'function') ? this.options.settings() : this.options.settings;
-        const prom = $.Deferred().resolve(settings).promise().then((settings)=> {
+        const settings = result(this.options.settings);
+        const prom = makePromise(settings).then((settings)=> {
             const key = settings && settings.trackingKey;
             if (!key) {
                 throw new Error(errors.NO_TRACKING_KEY);
