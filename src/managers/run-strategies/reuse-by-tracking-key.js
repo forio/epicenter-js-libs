@@ -43,9 +43,7 @@ class ReuseWithTrackingKeyStrategy {
                 trackingKey: null,
                 runLimit: Infinity,
             },
-            onCreate: function (runService) {
-
-            }
+            onCreate: (runService, settings, run)=> run
         };
         const strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
@@ -75,8 +73,10 @@ class ReuseWithTrackingKeyStrategy {
             }
         });
         return runService.create(opt).then((run)=> {
-            const applied = this.options.onCreate(runService, settings);
-            return $.Deferred().resolve(applied).promise().then(()=> run);
+            const applied = this.options.onCreate(runService, settings, run);
+            return makePromise(applied).then((res)=> {
+                return res && res.id ? res : run; 
+            });
         });
     }
 
