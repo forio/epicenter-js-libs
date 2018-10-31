@@ -29,6 +29,7 @@ function init() {
             });
         }
     });
+
     
     function updateUI(run) {
         $('#curr-run-id').html(run.id);
@@ -40,21 +41,32 @@ function init() {
         run: serviceOptions,
         strategy: strategy
     });
-    rm.getRun(['Price']).then((run)=> {
-        updateUI(run);
-    }, (e)=> {
-        console.error('Run errors', e);
-    });
+
+    function getRunAndUpdate() {
+        rm.getRun(['Price']).then((run)=> {
+            updateUI(run);
+        }, (e)=> {
+            console.error('Run errors', e);
+        });
+    }
+    
 
     $('#btn-reset').on('click', ()=> {
         rm.reset().then(()=> {
-            return rm.getRun(['Price']).then((run)=> {
-                updateUI(run);
-            });
+            getRunAndUpdate();
         }).catch((e)=> {
             alert(e.message);
         });
     });
+
+    const actions = F.manager.Settings.actions;
+    const channel = settingsManager.getChannel();
+    channel.subscribe([actions.SETTINGS_ACTIVATED, actions.SETTINGS_DELETED], ()=> {
+        getRunAndUpdate();
+    });
+
+    getRunAndUpdate();
+    // channel.subscribe();
 }
 
 init();

@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import { intersection } from 'util/array-utils';
 /**
  * @typedef Publishable
@@ -128,7 +129,14 @@ function checkAndNotify(topics, subscription) {
 
 
 class PubSub {
+    /**
+     * @param {{validTopics: string[]}} [options] 
+     */
     constructor(options) {
+        const defaults = {
+            validTopics: []
+        };
+        this.options = $.extend({}, defaults, options);
         this.subscriptions = [];
     }
 
@@ -154,6 +162,13 @@ class PubSub {
      * @return {String}
      */
     subscribe(topics, cb, options) {
+        topics = [].concat(topics);
+        const knownTopics = this.options.validTopics; 
+        const areAllValid = knownTopics.length === 0 || intersection(topics, knownTopics).length === topics.length;
+        if (!areAllValid) {
+            console.error('Uknown topics - ', topics, '. Only known topics are', knownTopics);
+            throw new Error('INVALID_TOPICS');
+        }
         var subs = makeSubs(topics, cb, options);
         this.subscriptions = this.subscriptions.concat(subs);
         return subs.id;
