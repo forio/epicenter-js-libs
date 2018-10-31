@@ -27,6 +27,8 @@ function init() {
 
 
     function checkAndDisableInputs(settings) {
+        $('#txt-run-name').val(settings.name);
+        $('#txt-price').val(settings.Price);
         if (!settings.isDraft) {
             $('input, button:not(#btn-new-run):not(#btn-delete-all)').attr('disabled', true);
             $('#btn-new-run').removeAttr('disabled');
@@ -37,8 +39,6 @@ function init() {
     }
     function initializeUI() {
         settingsManager.settings.getMostRecent().then((settings)=> {
-            $('#txt-run-name').val(settings.name);
-            $('#txt-price').val(settings.Price);
             checkAndDisableInputs(settings);
         }, (e)=> {
             console.error('Run errors', e);
@@ -59,8 +59,8 @@ function init() {
     });
     $('#btn-reset').on('click', ()=> {
         rm.reset().then(()=> {
-            settingsManager.settings.createDraft().then(()=> {
-                initializeUI();
+            settingsManager.settings.resetDraft().then((settings)=> {
+                checkAndDisableInputs(settings);
             });
         });
     });
