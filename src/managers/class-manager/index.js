@@ -22,20 +22,22 @@ class ClassManager {
         };
         const opts = $.extend({}, defaults, options);
         const strategy = new ReuseWithTracking({
-            settings: ()=> {
-                return this.settings.getCurrentActive().then((settings)=> {
-                    if (!settings) {
-                        if (opts.allowRunsWithoutSettings) {
-                            return this.settings.getDefaults();
+            strategyOptions: {
+                settings: ()=> {
+                    return this.settings.getCurrentActive().then((settings)=> {
+                        if (!settings) {
+                            if (opts.allowRunsWithoutSettings) {
+                                return this.settings.getDefaults();
+                            }
+                            throw new Error('NO_ACTIVE_SETTINGS');
                         }
-                        throw new Error('NO_ACTIVE_SETTINGS');
-                    }
-                    return settings;
-                }).then((settings)=> {
-                    return $.extend(true, {}, settings, { trackingKey: settings.id || 'defaultSettings' });
-                });
-            },
-            onCreate: opts.applySettings,
+                        return settings;
+                    }).then((settings)=> {
+                        return $.extend(true, {}, settings, { trackingKey: settings.id || 'defaultSettings' });
+                    });
+                },
+                onCreate: opts.applySettings,
+            }
         });
         return strategy;
     }

@@ -59,6 +59,8 @@ F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-man
 var strategies = require('./managers/run-strategies').default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
+F.manager.Settings = require('./managers/class-manager').default;
+
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager').default;
 F.service.Channel = require('./service/channel-service').default;
 

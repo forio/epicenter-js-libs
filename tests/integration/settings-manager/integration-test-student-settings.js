@@ -17,14 +17,16 @@ function init() {
     
     var strategy = settingsManager.getUserRunStrategy({
         allowRunsWithoutSettings: true,
-        applySettings: (runService, settings)=> {
+        applySettings: (runService, settings, run)=> {
             let prom = runService.save({ name: settings.name });
             if (settings.Price) {
                 prom = prom.then(()=> {
                     runService.variables().save({ Price: +settings.Price });
                 });
             }
-            return prom;
+            return prom.then(()=> {
+                return Object.assign({}, run, { name: settings.name });
+            });
         }
     });
     
