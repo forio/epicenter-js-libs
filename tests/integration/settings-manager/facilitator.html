@@ -65,53 +65,40 @@
       </div>
     </section>
 
-    <h4> Please follow the steps below to set up and open the simulation for play.</h4>
     <div class="row">
-        <div class="col-xs-12 col-md-8">
+        <section class="col-xs-12 col-md-8">
+            <h4> Please follow the steps below to set up and open the simulation for play.</h4>
             <ol class="settings-steps">
                 <li>
-                    <section class="section">
-                        <h3 class="section-head">Set up a new run</h3>
-                        <button class="btn btn-primary" id="btn-new-run">Set up a new run</button>
-                    </section>
+                    <h5>Set up a new run</h5>
+                    <button class="btn btn-primary" id="btn-new-run">Set up a new run</button>
                 </li>
-                <li class="settings-section">
-                    <section class="section">
-                        <h3 class="section-head">Customize Simulation</h3>
-                        <div class="collapsible">
-                            <div class="f-text-container"></div>
-                            <section class="long-inputs f-decision-container">
-                                <div class="decision-container">
-                                    <label for="">Enter Price</label>
-                                    <input type="text" id="txt-price" name="Price">
-                                </div>
-                                <div class="decision-container">
-                                    <label for="">Run Name</label>
-                                    <input type="text" id="txt-run-name" name="name">
-                                </div>
-                                <div class="decision-container"></div>
-                            </section>
+                <li>
+                    <h5>Customize Simulation</h5>
+                    <form>
+                        <div class="form-group">
+                            <label for="">Enter Price</label>
+                            <input type="text" class="form-control" id="txt-price" name="Price">
                         </div>
-                    </section>
+                        <div class="form-group">
+                            <label for="">Run Name</label>
+                            <input type="text" class="form-control" id="txt-run-name" name="name">
+                        </div>
+                        <div class="decision-container"></div>
+                    </form>
                 </li>
-                <li class="settings-section">
-                    <section class="section">
-                        <h3 class="section-head">Apply settings to all runs</h3>
-                        <div class="action-bar col-xs-12 -undeletable">
-                            <div class="action">
-                                <button class="btn btn-link f-action-button" id="btn-reset">Reset</button>
-                            </div>
-                            <div class="action">
-                                <button id="btn-save-settings" class="btn btn-primary f-action-button">Save & Apply settings</button>
-                            </div>
-                        </div>
-                    </section>
+                <li>
+                    <h5>Apply settings to all runs</h5>
+                    <div class="btn-container">
+                        <button id="btn-reset" class="btn btn-link f-action-button">Reset</button>
+                        <button id="btn-save-settings" class="btn btn-primary f-action-button">Save & Apply settings</button>
+                        <button id="btn-delete-all" class="btn btn-danger">Delete ALL</button>
+                    </div>
                 </li>
             </ol>
-        </div>
+        </section>
     </div>
     
-    <button class="btn btn-danger" id="btn-delete-all">Delete ALL</button>
     <script src="../common.js"></script>
     <script src="integration-test-fac-settings.js"></script>
 </body>
