@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Fac Settings test </title>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter-multiplayer-dependencies.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter.js"></script> -->
+
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        section {
+            padding: 30px 0;
+            border-top: 1px dotted silver;
+        }
+        .instructions {
+            color: blue;
+        }
+    </style>
+</head>
+<body class="container">
+    <section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
+
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="authenticated-glasses" >
+                <br/>
+
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="nrn_fac" >
+                <br/>
+
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="password1" >
+                <br/>
+
+                <label for="">API Server (leave blank to use default)</label>
+                <input type="text" id="txtServer" value="" >
+                <br/>
+
+                <label for="">Model</label>
+                <input type="text" id="txtModel" value="gglasses.vmf" >
+                <br/>
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              Make sure you enter info for 
+              <ul>
+                  <li>A team account</li>
+                  <li>A facilitator user</li>
+              </ul>
+          </div>
+      </div>
+    </section>
+
+    <h4> Please follow the steps below to set up and open the simulation for play.</h4>
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <ol class="settings-steps">
+                <li>
+                    <section class="section">
+                        <h3 class="section-head">Set up a new run</h3>
+                        <button class="btn btn-primary" id="btn-new-run">Set up a new run</button>
+                    </section>
+                </li>
+                <li class="settings-section">
+                    <section class="section">
+                        <h3 class="section-head">Customize Simulation</h3>
+                        <div class="collapsible">
+                            <div class="f-text-container"></div>
+                            <section class="long-inputs f-decision-container">
+                                <div class="decision-container">
+                                    <label for="">Enter Price</label>
+                                    <input type="text" id="txt-price" name="Price">
+                                </div>
+                                <div class="decision-container">
+                                    <label for="">Run Name</label>
+                                    <input type="text" id="txt-run-name" name="name">
+                                </div>
+                                <div class="decision-container"></div>
+                            </section>
+                        </div>
+                    </section>
+                </li>
+                <li class="settings-section">
+                    <section class="section">
+                        <h3 class="section-head">Apply settings to all runs</h3>
+                        <div class="action-bar col-xs-12 -undeletable">
+                            <div class="action">
+                                <button class="btn btn-link f-action-button" id="btn-reset">Reset</button>
+                            </div>
+                            <div class="action">
+                                <button id="btn-save-settings" class="btn btn-primary f-action-button">Save & Apply settings</button>
+                            </div>
+                        </div>
+                    </section>
+                </li>
+            </ol>
+        </div>
+    </div>
+    
+    <button class="btn btn-danger" id="btn-delete-all">Delete ALL</button>
+    <script src="../common.js"></script>
+    <script src="integration-test-fac-settings.js"></script>
+</body>
+</html>
