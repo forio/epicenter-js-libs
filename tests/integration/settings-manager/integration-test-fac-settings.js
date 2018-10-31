@@ -28,9 +28,11 @@ function init() {
 
     function checkAndDisableInputs(settings) {
         if (!settings.isDraft) {
-            $('input, button:not(#btn-new-run)').attr('disabled', true);
+            $('input, button:not(#btn-new-run):not(#btn-delete-all)').attr('disabled', true);
+            $('#btn-new-run').removeAttr('disabled');
         } else {
             $('#btn-new-run').attr('disabled', true);
+            $('input, button:not(#btn-new-run)').removeAttr('disabled');
         }
     }
     function initializeUI() {
@@ -63,7 +65,7 @@ function init() {
         });
     });
     $('#btn-delete-all').on('click', ()=> {
-        settingsManager.settings.ds.remove();
+        settingsManager.settings.ds.remove().then(initializeUI);
     });
 
     $('input').on('change', (evt)=> {
