@@ -25,21 +25,35 @@ function init() {
                 });
             }
             return prom.then(()=> {
-                return Object.assign({}, run, { name: settings.name });
+                return Object.assign({}, run, { name: settings.name, runLimit: settings.runLimit });
             });
         }
     });
     
+    function updateUI(run) {
+        $('#curr-run-id').html(run.id);
+        $('#run-name').html(run.name);
+        $('#run-limit').html(run.runLimit);
+        $('#price-val').html(run.variables.Price[run.variables.Price.length - 1]);
+    }
     var rm = new F.manager.RunManager({
         run: serviceOptions,
         strategy: strategy
     });
     rm.getRun(['Price']).then((run)=> {
-        $('#curr-run-id').html(run.id);
-        $('#run-name').html(run.name);
-        $('#price-val').html(run.variables.Price[run.variables.Price.length - 1]);
+        updateUI(run);
     }, (e)=> {
         console.error('Run errors', e);
+    });
+
+    $('#btn-reset').on('click', ()=> {
+        rm.reset().then(()=> {
+            return rm.getRun(['Price']).then((run)=> {
+                updateUI(run);
+            });
+        }).catch((e)=> {
+            alert(e.message);
+        });
     });
 }
 

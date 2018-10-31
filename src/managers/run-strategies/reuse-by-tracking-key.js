@@ -79,12 +79,11 @@ class ReuseWithTrackingKeyStrategy {
             });
         });
     }
-
     reset(runService, userSession, options) {
         return this.getSettings().then((settings)=> {
             return getRunsForKey(runService, settings.trackingKey, userSession).then((runs, status, xhr)=> {
                 const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
-                if (startedRuns && startedRuns.total >= this.options.runLimit) {
+                if (startedRuns && startedRuns.total >= +settings.runLimit) {
                     throw new Error(errors.RUN_LIMIT_REACHED);
                 }
                 return this.forceCreateRun(runService, userSession, settings);

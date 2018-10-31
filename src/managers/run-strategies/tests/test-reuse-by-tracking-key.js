@@ -221,7 +221,7 @@ describe('Reuse by tracking key', function () {
                     }
                 });
                 return strategy.reset(rs, auth).catch((e)=> {
-                    expect(e).to.equal(Strategy.errors.RUN_LIMIT_REACHED);
+                    expect(e.message).to.equal(Strategy.errors.RUN_LIMIT_REACHED);
                     expect(createStub).to.not.have.been.called;
                 });
             });
