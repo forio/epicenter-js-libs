@@ -26,20 +26,21 @@ function init() {
     });
 
 
-    function checkAndDisableInputs(settings) {
+    function updateUIWithSettings(settings) {
         $('#txt-run-name').val(settings.name);
         $('#txt-price').val(settings.Price);
+        $('#lst-run-limit').val(settings.runLimit || '');
         if (!settings.isDraft) {
-            $('input, button:not(#btn-new-run):not(#btn-delete-all)').attr('disabled', true);
+            $('input, select, button:not(#btn-new-run):not(#btn-delete-all)').attr('disabled', true);
             $('#btn-new-run').removeAttr('disabled');
         } else {
             $('#btn-new-run').attr('disabled', true);
-            $('input, button:not(#btn-new-run)').removeAttr('disabled');
+            $('input, select, button:not(#btn-new-run)').removeAttr('disabled');
         }
     }
     function initializeUI() {
         settingsManager.settings.getMostRecent().then((settings)=> {
-            checkAndDisableInputs(settings);
+            updateUIWithSettings(settings);
         }, (e)=> {
             console.error('Run errors', e);
         });
@@ -48,19 +49,19 @@ function init() {
     $('#btn-new-run').on('click', ()=> {
         settingsManager.settings.createDraft().then((settings)=> {
             alert('Draft created');
-            checkAndDisableInputs(settings);
+            updateUIWithSettings(settings);
         });
     });
     $('#btn-save-settings').on('click', ()=> {
         settingsManager.settings.saveAndActivate().then((settings)=> {
             alert('Activated');
-            checkAndDisableInputs(settings);
+            updateUIWithSettings(settings);
         });
     });
     $('#btn-reset').on('click', ()=> {
         rm.reset().then(()=> {
             settingsManager.settings.resetDraft().then((settings)=> {
-                checkAndDisableInputs(settings);
+                updateUIWithSettings(settings);
             });
         });
     });
@@ -68,7 +69,7 @@ function init() {
         settingsManager.settings.ds.remove().then(initializeUI);
     });
 
-    $('input').on('change', (evt)=> {
+    $('input, select').on('change', (evt)=> {
         const $el = $(evt.target);
         const params = {
             [$el.attr('name')]: $el.val()
