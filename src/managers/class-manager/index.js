@@ -1,6 +1,13 @@
 import SettingsManager from './settings-manager';
 import ReuseWithTracking from 'managers/run-strategies/reuse-by-tracking-key';
+import PubSub from 'util/pubsub';
 
+const actions = {
+    SETTINGS_DELETED: 'SETTINGS_DELETED',
+    SETTINGS_ACTIVATED: 'SETTINGS_ACTIVATED',
+    DRAFT_CREATED: 'DRAFT_CREATED',
+    DRAFT_UPDATED: 'DRAFT_UPDATED',
+};
 class ClassManager {
     constructor(options) {
         const defaultSettings = {
@@ -13,8 +20,28 @@ class ClassManager {
 
         this.options = $.extend(true, {}, defaultSettings, options);
         this.settings = new SettingsManager(this.options);
+        this.channel = new PubSub();
     }
 
+    getChannel() {
+        const rawDataChannel = this.settings.ds.getChannel();
+        rawDataChannel.subscribe('', (res, meta)=> {
+            if (meta.subType === 'delete') {
+                this.channel.publish(actions.SETTINGS_DELETED, meta);
+            } else if (meta.subType === 'new') {
+                this.channel.publish(actions.DRAFT_CREATED, res);
+            } else if (meta.subType === 'update') {
+                if (res.isDraft) {
+                    this.channel.publish(actions.DRAFT_UPDATED, res);
+                } else {
+                    this.channel.publish(actions.SETTINGS_ACTIVATED, res);
+                }
+            } else {
+                console.log('getChannel: Unknown subtype', res, meta);
+            }
+        });
+        return this.channel;
+    }
     getUserRunStrategy(options) {
         const defaults = {
             allowRunsWithoutSettings: true,
@@ -42,5 +69,7 @@ class ClassManager {
         return strategy;
     }
 }
+
+ClassManager.actions = actions;
 
 export default ClassManager;
