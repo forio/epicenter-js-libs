@@ -1,53 +1,71 @@
 import DataService from 'service/data-api-service';
 import SavedRunsManager from 'managers/scenario-manager/saved-runs-manager';
+import { makePromise, result } from 'util/index';
 
 class SettingsManager {
     constructor(opts) {
         const defaults = {
             run: {},
-            defaults: {
-                runLimit: 1000000, //Infinity isn't json serializable so using a big number instead
+            settings: {
+                collection: 'settings',
+                defaults: {},
             },
-            settingsKey: 'settings',
-            allowRunCreateWithEmptySettings: true
         };
 
-        this.options = $.extend(true, {}, defaults, this.options);
-        this.ds = new DataService({
-            root: this.options.settingsKey,
+        this.options = $.extend(true, {}, defaults, opts);
+
+        const serviceOptions = $.extend(true, {}, this.options.run, {
+            root: this.options.settings.collection,
             scope: DataService.SCOPES.GROUP
         });
+        this.ds = new DataService(serviceOptions);
+
+        this.state = {
+            currentDraft: null
+        };
     }
 
-    _updateDraftOrCreate(settings, meta) {
-        return this.getAll().then((settingsList)=> {
-            const lastSettings = settingsList[0] || {};
-            const newSettings = $.extend(true, {}, lastSettings, settings, meta);
-            if (lastSettings.isDraft) {
-                return this.ds.saveAs(lastSettings.id, newSettings);
-            } 
-            return this.ds.save(newSettings);
-        });
-    }
-
-    getAll(excludeDrafts) {
-        const ds = new DataService({
-            root: this.options.settingsKey,
-            scope: DataService.SCOPES.GROUP
-        });
-        return ds.load().then((settingHistory)=> {
+    /**
+     * @param {{excludeDrafts: boolean}} [options]
+     * @returns {Promise<object[]>} 
+     */
+    getAll(options) {
+        return this.ds.load().then((settingHistory)=> {
             const sorted = settingHistory.sort((a, b)=> {
                 return a.key > b.key ? -1 : 1;
             });
-            if (excludeDrafts) {
+            if (options && options.excludeDrafts) {
                 return sorted.filter((s)=> s.isDraft === false);
             }
             return sorted;
         });
     }
 
+    _updateDraftOrCreate(settings, meta) {
+        function getLastDraft() {
+            if (this.state.currentDraft) {
+                return $.Deferred().resolve(this.state.currentDraft).promise();
+            }
+            return this.getAll().then((settingsList)=> {
+                const lastSettings = settingsList[0] || {};
+                if (lastSettings.isDraft) {
+                    return lastSettings;
+                } 
+                return this.ds.save({});
+            });
+        }
+
+        return getLastDraft.call(this).then((draft)=> {
+            const newSettings = $.extend(true, {}, draft, settings, meta);
+            return this.ds.saveAs(draft.id, newSettings);
+        }).then((d)=> {
+            this.state.currentDraft = d.isDraft ? d : null;
+            return d;
+        });
+    }
+
     getCurrentActive() {
-        return this.getAll(true).then((activeSettings)=> {
+        return this.getAll({ excludeDrafts: true }).then((activeSettings)=> {
             const lastActive = activeSettings[0];
             return lastActive;
         });
@@ -63,10 +81,17 @@ class SettingsManager {
         });
     }
 
+    getDefaults() {
+        const defaultsProm = makePromise(result(this.options.settings.defaults));
+        return defaultsProm;
+    }
     createDraft(settings) {
-        const { defaults } = this.options;
-        const newSettings = $.extend(true, {}, defaults, settings, { isDraft: true, key: Date.now() });
-        return this.ds.save(newSettings);
+        return this.getDefaults().then((defaults)=> {
+            const newSettings = $.extend(true, {}, defaults, settings, { isDraft: true, key: Date.now() });
+            return this.ds.save(newSettings);
+        }).then((d)=> {
+            this.state.currentDraft = d;
+        });
     }
     updateDraft(settings) {
         return this._updateDraftOrCreate(settings);
