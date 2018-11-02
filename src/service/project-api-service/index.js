@@ -16,22 +16,8 @@ const MULTIPLAYER_ENDPOINT = 'multiplayer/project';
 
 export default function ProjectAPIService(config) {
     const defaults = {
-        /**
-         * Epicenter account name. Defaults to undefined.
-         * @type {string}
-         */
         account: undefined,
-
-        /**
-         * Epicenter project name. Defaults to undefined.
-         * @type {string}
-         */
         project: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
-         */
         transport: {}
     };
    
