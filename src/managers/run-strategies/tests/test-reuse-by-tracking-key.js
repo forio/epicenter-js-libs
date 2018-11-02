@@ -56,7 +56,7 @@ describe('Reuse by tracking key', function () {
             });
 
             return strategy.getRun(rs).catch((err)=> {
-                expect(err.message).to.equal(Strategy.errors.NO_TRACKING_KEY);
+                expect(err.type).to.equal(Strategy.errors.NO_TRACKING_KEY);
             });
         });
         it('should return existing run if found', ()=> {
@@ -154,7 +154,7 @@ describe('Reuse by tracking key', function () {
                 });
 
                 return strategy.reset(rs).catch((err)=> {
-                    expect(err.message).to.equal(Strategy.errors.NO_TRACKING_KEY);
+                    expect(err.type).to.equal(Strategy.errors.NO_TRACKING_KEY);
                     expect(settingsFetcher).to.have.been.calledOnce;
                     expect(createStub).to.not.have.been.called;
                 });
@@ -221,7 +221,7 @@ describe('Reuse by tracking key', function () {
                     }
                 });
                 return strategy.reset(rs, auth).catch((e)=> {
-                    expect(e.message).to.equal(Strategy.errors.RUN_LIMIT_REACHED);
+                    expect(e.type).to.equal(Strategy.errors.RUN_LIMIT_REACHED);
                     expect(createStub).to.not.have.been.called;
                 });
             });

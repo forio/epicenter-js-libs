@@ -1,7 +1,7 @@
 import RunService from 'service/run-api-service';
 import { parseContentRange } from 'util/run-util';
 import { injectScopeFromSession, injectFiltersFromSession } from './strategy-utils';
-import { result, makePromise } from 'util/index';
+import { result, makePromise, rejectPromise } from 'util/index';
 
 const errors = {
     RUN_LIMIT_REACHED: 'RUN_LIMIT_REACHED',
@@ -54,7 +54,7 @@ class ReuseWithTrackingKeyStrategy {
         const prom = makePromise(settings).then((settings)=> {
             const key = settings && settings.trackingKey;
             if (!key) {
-                throw new Error(errors.NO_TRACKING_KEY);
+                return rejectPromise(errors.NO_TRACKING_KEY, 'No tracking key provided to reuse-by-tracking-key strategy');
             }
             return settings;
         });
@@ -84,7 +84,7 @@ class ReuseWithTrackingKeyStrategy {
             return getRunsForKey(runService, settings.trackingKey, userSession).then((runs, status, xhr)=> {
                 const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
                 if (startedRuns && startedRuns.total >= +settings.runLimit) {
-                    throw new Error(errors.RUN_LIMIT_REACHED);
+                    return rejectPromise(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
                 }
                 return this.forceCreateRun(runService, userSession, settings);
             });
