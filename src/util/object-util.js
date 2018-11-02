@@ -23,10 +23,11 @@ export function pick(obj, keys) {
  * @return {object}
  */
 export function omit(obj, keys) {
+    const copy = $.extend(true, {}, obj);
     keys.forEach((key)=> {
-        delete obj[key];
+        delete copy[key];
     });
-    return obj;
+    return copy;
 }
 
 export function isEmpty(value) {
