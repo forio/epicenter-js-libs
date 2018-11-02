@@ -6,6 +6,14 @@ export function result(item) {
 }
 
 /**
+ * @param {string} type 
+ * @param {string} message 
+ * @returns {Promise}
+ */
+export function rejectPromise(type, message) {
+    return $.Deferred().reject({ type: type, message: message }).promise();
+}
+/**
  * @param {any} val 
  * @returns {Promise}
  */
