@@ -1,6 +1,7 @@
 import SettingsManager from './settings-manager';
 import ReuseWithTracking from 'managers/run-strategies/reuse-by-tracking-key';
 import PubSub from 'util/pubsub';
+import { omit } from 'util/object-util';
 
 const actions = {
     SETTINGS_DELETED: 'SETTINGS_DELETED',
@@ -60,7 +61,8 @@ class ClassManager {
                         }
                         return settings;
                     }).then((settings)=> {
-                        return $.extend(true, {}, settings, { trackingKey: settings.id || 'defaultSettings' });
+                        const cleanedSettings = omit(settings, ['id', 'lastModified', 'isDraft', 'key']);
+                        return $.extend(true, {}, cleanedSettings, { trackingKey: settings.id || 'defaultSettings' });
                     });
                 },
                 onCreate: opts.applySettings,
