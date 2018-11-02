@@ -4,7 +4,7 @@ import * as specialOperations from './special-operations';
 import RunService from 'service/run-api-service';
 import SessionManager from 'store/session-manager';
 
-import { isEmpty } from 'util/object-util';
+import { isEmpty, omit } from 'util/object-util';
 import { STRATEGY_SESSION_KEY } from 'managers/key-names';
 
 function patchRunService(service, manager) {
@@ -126,7 +126,6 @@ class RunManager {
             return this.fetchProm;
         }
 
-
         this.fetchProm = this.strategy
             .getRun(this.run, authSession, runSession, options).then((run)=> {
                 if (!run || !run.id) {
@@ -182,7 +181,9 @@ class RunManager {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject({ type: 'UNAUTHORIZED', message: 'No user-session available' }).promise();
         }
-        return this.strategy.reset(this.run, authSession, options).then((run)=> {
+
+        const optionsToPassOn = omit(options, ['success', 'error']); //strategy can just throw, so handle errors directly
+        return this.strategy.reset(this.run, authSession, optionsToPassOn).then((run)=> {
             if (run && run.id) {
                 this.run.updateConfig({ filter: run.id });
                 const canCache = this.strategy.allowRunIDCache !== false;
@@ -191,7 +192,15 @@ class RunManager {
                     setRunInSession(sessionKey, run.id, this.sessionManager);
                 }
             }
+            if (options && options.success) {
+                options && options.success(run);
+            }
             return run;
+        }).catch((e)=> {
+            if (options && options.error) {
+                options && options.error(e);
+            }
+            throw e;
         });
     }
 }
