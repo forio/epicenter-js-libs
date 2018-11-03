@@ -42,12 +42,12 @@ export default function MemberAPIService(config) {
     };
 
     const generateUserQuery = function (params) {
-        if (Array.isArray(params.userId)) {
-            return '?' + $.map(params.userId, function (u) {
-                return 'userId=' + u;
-            }).join('&');
+        if (!params.userId || !params.userId.length) {
+            throw new Error('No userId specified.');
         }
-        return '/' + params.userId;
+
+        const uidQuery = ([].concat(params.userId)).join('&userId=');
+        return `?userId=${uidQuery}`;
     };
 
     const patchUserActiveField = function (params, active, options) {
