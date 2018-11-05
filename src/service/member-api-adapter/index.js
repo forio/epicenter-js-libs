@@ -41,9 +41,19 @@ export default function MemberAPIService(config) {
         return serviceOptions;
     };
 
+    const generateUserQuery = function (params) {
+        if (!params.userId || !params.userId.length) {
+            throw new Error('No userId specified.');
+        }
+
+        const uidQuery = ([].concat(params.userId)).join('&userId=');
+        return `?userId=${uidQuery}`;
+    };
+
     const patchUserActiveField = function (params, active, options) {
+        params = getFinalParams(params);
         const httpOptions = $.extend(true, serviceOptions, options, {
-            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + '/' + params.userId
+            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + generateUserQuery(params)
         });
 
         return http.patch({ active: active }, httpOptions);
@@ -81,8 +91,8 @@ export default function MemberAPIService(config) {
                 throw new Error('No userId specified.');
             }
 
-            const getParms = isString ? { userId: params } : pick(objParams, ['userId']);
-            return http.get(getParms, httpOptions);
+            const getParams = isString ? { userId: params } : pick(objParams, ['userId']);
+            return http.get(getParams, httpOptions);
         },
 
         /**
@@ -157,7 +167,7 @@ export default function MemberAPIService(config) {
         *
         * 
         * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make active.
+        * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -176,7 +186,7 @@ export default function MemberAPIService(config) {
         *
         * 
         * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make inactive.
+        * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}

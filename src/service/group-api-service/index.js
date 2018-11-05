@@ -44,10 +44,10 @@ var GroupService = function (config) {
         /**
         * Gets information for a group or multiple groups.
         * @param {Object} params object with query parameters
-        * @patam {string} params.q partial match for name, organization or event.
-        * @patam {string} params.account Epicenter's Team ID
-        * @patam {string} params.project Epicenter's Project ID
-        * @patam {string} params.name Epicenter's Group Name
+        * @param {string} params.q partial match for name, organization or event.
+        * @param {string} params.account Epicenter's Team ID
+        * @param {string} params.project Epicenter's Project ID
+        * @param {string} params.name Epicenter's Group Name
         * @param {Object} [options] Overrides for configuration options.
         * @return {Promise}
         */
