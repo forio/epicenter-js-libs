@@ -6,7 +6,10 @@ function addToLog(parent, d) {
 }
 
 $(function () {
-    var cm = new F.manager.ChannelManager(getServiceOptions());
+    const opts = $.extend(true, {
+        logLevel: 'debug',
+    }, getServiceOptions());
+    var cm = new F.manager.ChannelManager(opts);
     cm.on('connect', function () {
         $('#status').html('connected');
     });

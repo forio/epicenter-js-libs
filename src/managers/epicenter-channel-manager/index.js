@@ -51,18 +51,18 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             var userName = defaultCometOptions.userName;
             var userId = defaultCometOptions.userId;
             var token = defaultCometOptions.token;
+            const defaultExt = {
+                ack: true
+            };
             if ((userName || userId) && token) {
                 var userProp = userName ? 'userName' : 'userId';
-                var ext = {
-                    authorization: 'Bearer ' + token
-                };
-                ext[userProp] = userName ? userName : userId;
-
-                defaultCometOptions.handshake = {
-                    ext: ext
-                };
+                defaultExt[userProp] = userName ? userName : userId;
+                defaultExt.authorization = 'Bearer ' + token;
             }
-        }
+            defaultCometOptions.handshake = {
+                ext: defaultExt
+            };
+        } 
 
         this.options = defaultCometOptions;
         return __super.constructor.call(this, defaultCometOptions);

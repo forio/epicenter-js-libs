@@ -7,7 +7,7 @@ chai.use(require('sinon-chai'));
 
 describe('Epicenter ChannelManager', function () {
     var oldCometd;
-    var handshakeSpy = sinon.spy();
+    var handshakeSpy;
     var mockCometd = function () {
         return {
             addListener: sinon.spy(),
@@ -22,6 +22,9 @@ describe('Epicenter ChannelManager', function () {
         oldCometd = $.CometD;
         $.CometD = mockCometd;
     });
+    beforeEach(()=> {
+        handshakeSpy = sinon.spy();
+    });
     after(function () {
         $.CometD = oldCometd;
     });
@@ -30,13 +33,23 @@ describe('Epicenter ChannelManager', function () {
     });
 
     describe('#handshake', function () {
-        it('should send authentication parametes', function () {
+        it('should send authentication parameters', function () {
             new Manager({ userId: 'userId', token: 'token' });
             handshakeSpy.calledOnce.should.be.true;
             handshakeSpy.getCall(0).args[0].should.be.eql({
                 ext: {
+                    ack: true,
                     userId: 'userId',
                     authorization: 'Bearer token'
+                }
+            });
+        });
+        it('should send ack without userid if none provided', function () {
+            new Manager({ shareConnection: false });
+            handshakeSpy.calledOnce.should.be.true;
+            handshakeSpy.getCall(0).args[0].should.be.eql({
+                ext: {
+                    ack: true,
                 }
             });
         });
