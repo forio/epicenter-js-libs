@@ -1,4 +1,4 @@
-import SettingsManager from './settings-manager';
+import SettingsManager from './settings-service';
 import ReuseWithTracking from 'managers/run-strategies/reuse-by-tracking-key';
 import PubSub from 'util/pubsub';
 import { omit } from 'util/object-util';

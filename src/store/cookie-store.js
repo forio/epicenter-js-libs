@@ -8,9 +8,6 @@
 
  */
 
-
-'use strict';
-
 // Thin document.cookie wrapper to allow unit testing
 var Cookie = function () {
     this.get = function () {
@@ -76,11 +73,11 @@ module.exports = function (config) {
             var path = setOptions.root;
             var cookie = setOptions.cookie;
 
-            cookie.set(encodeURIComponent(key) + '=' +
-                                encodeURIComponent(value) +
-                                (domain ? '; domain=' + domain : '') +
-                                (path ? '; path=' + path : '')
-            );
+            const contents = [`${encodeURIComponent(key)}=${encodeURIComponent(value)}`];
+            if (domain) contents.push(`domain=${domain}`);
+            if (path) contents.push(`path=${path}`);
+            if (setOptions.expires !== undefined) contents.push(`expires=${setOptions.expires}`);
+            cookie.set(contents.join('; '));
 
             return value;
         },
