@@ -3507,17 +3507,17 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
             var userName = defaultCometOptions.userName;
             var userId = defaultCometOptions.userId;
             var token = defaultCometOptions.token;
+            var defaultExt = {
+                ack: true
+            };
             if ((userName || userId) && token) {
                 var userProp = userName ? 'userName' : 'userId';
-                var ext = {
-                    authorization: 'Bearer ' + token
-                };
-                ext[userProp] = userName ? userName : userId;
-
-                defaultCometOptions.handshake = {
-                    ext: ext
-                };
+                defaultExt[userProp] = userName ? userName : userId;
+                defaultExt.authorization = 'Bearer ' + token;
             }
+            defaultCometOptions.handshake = {
+                ext: defaultExt
+            };
         }
 
         this.options = defaultCometOptions;
@@ -5016,7 +5016,11 @@ module.exports = function (config) {
             var path = setOptions.root;
             var cookie = setOptions.cookie;
 
-            cookie.set(encodeURIComponent(key) + '=' + encodeURIComponent(value) + (domain ? '; domain=' + domain : '') + (path ? '; path=' + path : ''));
+            var contents = [encodeURIComponent(key) + '=' + encodeURIComponent(value)];
+            if (domain) contents.push('domain=' + domain);
+            if (path) contents.push('path=' + path);
+            if (setOptions.expires !== undefined) contents.push('expires=' + setOptions.expires);
+            cookie.set(contents.join('; '));
 
             return value;
         },

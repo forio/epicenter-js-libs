@@ -6,7 +6,15 @@ import { omit } from 'util/object-util';
 function sanitize(obj) {
     return omit(obj, ['id', 'lastModified']);
 }
-class SettingsManager {
+
+class SettingsService {
+    /**
+     * @param {object} opts 
+     * @property {AccountAPIServiceOptions} opts.run Parameters passed on to run service 
+     * @property {object} [opts.settings]
+     * @property {string} [opts.settings.collection]
+     * @property {object | function(): object | function(): Promise<object>} [opts.settings.collection]
+     */
     constructor(opts) {
         const defaults = {
             run: {},
@@ -27,22 +35,6 @@ class SettingsManager {
         this.state = {
             currentDraft: null
         };
-    }
-
-    /**
-     * @param {{excludeDrafts: boolean}} [options]
-     * @returns {Promise<object[]>} 
-     */
-    getAll(options) {
-        return this.ds.load('', { sort: 'key', direction: 'desc' }).then((settingHistory)=> {
-            const sorted = settingHistory.sort((a, b)=> {
-                return a.key > b.key ? -1 : 1;
-            });
-            if (options && options.excludeDrafts) {
-                return sorted.filter((s)=> s.isDraft === false);
-            }
-            return sorted;
-        });
     }
 
     _updateDraftOrCreate(settings, meta) {
@@ -68,17 +60,46 @@ class SettingsManager {
         });
     }
 
+    /**
+     * Evaluates and returns default settings.
+     * @returns {Promise<object>}
+     */
+    getDefaults() {
+        const defaultsProm = makePromise(result(this.options.settings.defaults));
+        return defaultsProm;
+    }
+
+    /**
+     * @param {{excludeDrafts: boolean}} [options]
+     * @returns {Promise<object[]>} 
+     */
+    getAll(options) {
+        return this.ds.load('', { sort: 'key', direction: 'desc' }).then((settingHistory)=> {
+            const sorted = settingHistory.sort((a, b)=> {
+                return a.key > b.key ? -1 : 1;
+            });
+            if (options && options.excludeDrafts) {
+                return sorted.filter((s)=> s.isDraft === false);
+            }
+            return sorted;
+        });
+    }
+
+    /**
+     * Returns currently active settings, or undefined if there are none.
+     * @returns {Promise<object[]>}
+     */
     getCurrentActive() {
         return this.getAll({ excludeDrafts: true }).then((activeSettings)=> {
             const lastActive = activeSettings[0];
             return lastActive;
         });
     }
-    getDefaults() {
-        const defaultsProm = makePromise(result(this.options.settings.defaults));
-        return defaultsProm;
-    }
 
+    /**
+     * Returns most recent settings; creates a new draft if none exist. Use to show current state on settings screen.
+     * @returns {Promise<object>}
+     */
     getMostRecent() {
         return this.getAll().then((settingsList)=> {
             const lastSettings = settingsList[0];
@@ -88,7 +109,13 @@ class SettingsManager {
             return lastSettings;
         });
     }
-    
+
+    /**
+     * Creates new draft settings. Usually used when there's already 'active' settings, and you want to start with a new set without affecting existing runs.
+     * 
+     * @param {{ useDefaults: boolean }} options If `useDefaults` is set, a draft is created with the default settings, else it clones the last available settings (either draft or active)
+     * @returns {Promise<object>}
+     */
     createDraft(options) {
         function getSettings(options) {
             if (options.useDefaults) {
@@ -106,12 +133,32 @@ class SettingsManager {
             return d;
         });
     }
+
+    /**
+     * Resets draft to defaults. If you need to reset to previous settings, use `createDraft` instead.
+     * 
+     * @returns {Promise<object>}
+     */
     resetDraft() {
         return this.createDraft({ useDefaults: true });
     }
+
+    /**
+     * Updates current draft with provided settings. Creates draft if none exist.
+     * 
+     * @param {Object} settings
+     * @returns {Promise<object>}
+     */
     updateDraft(settings) {
         return this._updateDraftOrCreate(settings);
     }
+
+    /**
+     * Activates the current settings, and makes it so it can no longer be modified; this will be applied to new runs (if you use the settings strategy)
+     * 
+     * @param {Object} settings
+     * @returns {Promise<object>}
+     */
     saveAndActivate(settings) {
         return this._updateDraftOrCreate(settings, { isDraft: false, key: Date.now() });
     }
@@ -125,4 +172,4 @@ class SettingsManager {
     }
 }
 
-export default SettingsManager;
+export default SettingsService;
