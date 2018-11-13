@@ -1,7 +1,10 @@
-import SettingsManager from './settings-service';
+import SavedRunsManager from 'managers/scenario-manager/saved-runs-manager';
+import SettingsService from './settings-service';
+
 import ReuseWithTracking from 'managers/run-strategies/reuse-by-tracking-key';
 import PubSub from 'util/pubsub';
 import { omit } from 'util/object-util';
+import { rejectPromise } from 'util/index';
 
 const actions = {
     SETTINGS_DELETED: 'SETTINGS_DELETED',
@@ -9,7 +12,14 @@ const actions = {
     DRAFT_CREATED: 'DRAFT_CREATED',
     DRAFT_UPDATED: 'DRAFT_UPDATED',
 };
-class ClassManager {
+class SettingsManager {
+    /**
+     * @param {object} options 
+     * @property {AccountAPIServiceOptions} options.run Parameters to pass on to run service (account / project / model / files etc.)
+     * @property {object} [options.settings]
+     * @property {string} [options.settings.collection]
+     * @property {object | function(): object | function(): Promise<object>} [options.settings.collection]
+     */
     constructor(options) {
         const defaultSettings = {
             run: {},
@@ -20,13 +30,20 @@ class ClassManager {
         };
 
         this.options = $.extend(true, {}, defaultSettings, options);
-        this.settings = new SettingsManager(this.options);
+        this.settings = new SettingsService(this.options);
         this.channel = new PubSub();
+        this.state = {
+            subscription: null
+        };
     }
 
     getChannel() {
+        if (this.state.subscription) {
+            return this.channel;
+        }
+
         const rawDataChannel = this.settings.ds.getChannel();
-        rawDataChannel.subscribe('', (res, meta)=> {
+        this.state.subscription = rawDataChannel.subscribe('', (res, meta)=> {
             if (meta.subType === 'delete') {
                 this.channel.publish(actions.SETTINGS_DELETED, meta);
             } else if (meta.subType === 'new') {
@@ -38,11 +55,16 @@ class ClassManager {
                     this.channel.publish(actions.SETTINGS_ACTIVATED, res);
                 }
             } else {
-                console.log('getChannel: Unknown subtype', res, meta);
+                console.warn('getChannel: Unknown subtype', res, meta);
             }
         });
         return this.channel;
     }
+
+    /**
+     * @param {object} options 
+     * @returns {object} Run Strategy 
+     */
     getUserRunStrategy(options) {
         const defaults = {
             allowRunsWithoutSettings: true,
@@ -57,7 +79,7 @@ class ClassManager {
                             if (opts.allowRunsWithoutSettings) {
                                 return this.settings.getDefaults();
                             }
-                            throw new Error('NO_ACTIVE_SETTINGS');
+                            return rejectPromise('NO_ACTIVE_SETTINGS', 'The facilitator has not opened the simulation for gameplay.');
                         }
                         return settings;
                     }).then((settings)=> {
@@ -70,8 +92,17 @@ class ClassManager {
         });
         return strategy;
     }
+
+
+    getSavedRunsManagerForSetting(settingsId) {
+        const runOptions = $.extend(true, {}, this.options.run, { scope: { 
+            trackingKey: settingsId
+        } });
+        const sm = new SavedRunsManager(runOptions);
+        return sm;
+    }
 }
 
-ClassManager.actions = actions;
+SettingsManager.actions = actions;
 
-export default ClassManager;
+export default SettingsManager;
