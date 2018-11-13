@@ -448,9 +448,8 @@ export default function RunService(config) {
                 }
             } else if (serviceOptions.id) {
                 return introspection.byRunID(serviceOptions.id);
-            } else {
-                throw new Error('Please specify either the model or runid to introspect');
             }
+            throw new Error('Please specify either the model or runid to introspect');
         }
     };
 

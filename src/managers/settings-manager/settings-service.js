@@ -1,5 +1,4 @@
 import DataService from 'service/data-api-service';
-import SavedRunsManager from 'managers/scenario-manager/saved-runs-manager';
 import { makePromise, result } from 'util/index';
 import { omit } from 'util/object-util';
 
@@ -10,7 +9,7 @@ function sanitize(obj) {
 class SettingsService {
     /**
      * @param {object} opts 
-     * @property {AccountAPIServiceOptions} opts.run Parameters passed on to run service 
+     * @property {AccountAPIServiceOptions} opts.run Parameters to pass on to run service (account / project / model / files etc.)
      * @property {object} [opts.settings]
      * @property {string} [opts.settings.collection]
      * @property {object | function(): object | function(): Promise<object>} [opts.settings.collection]
@@ -161,14 +160,6 @@ class SettingsService {
      */
     saveAndActivate(settings) {
         return this._updateDraftOrCreate(settings, { isDraft: false, key: Date.now() });
-    }
-
-    getRunsForSettings(settingsId) {
-        const runOptions = $.extend(true, {}, this.options.run, { scope: { 
-            trackingKey: settingsId
-        } });
-        const sm = new SavedRunsManager(runOptions);
-        return sm;
     }
 }
 
