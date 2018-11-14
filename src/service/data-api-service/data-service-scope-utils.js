@@ -27,7 +27,6 @@ export const errors = {
 export function addScopeToCollection(key, scope, session) {
     const publicAccessScopes = [SCOPES.CUSTOM];
     const allowPublicAccess = publicAccessScopes.indexOf(scope) !== -1;
-    
     const isValidSession = session && session.groupId && session.userId;
     if (!isValidSession && !allowPublicAccess) {
         throw new CustomError(errors.UNAUTHORIZED, `DataService Authorization error: ${scope} for ${key} requires an authenticated user`);
