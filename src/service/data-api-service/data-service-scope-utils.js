@@ -1,6 +1,7 @@
 import AuthManager from 'managers/auth-manager';
 import { normalizeSlashes } from 'util/query-util';
 import { getURLConfig } from 'service/service-utils';
+import { CustomError } from 'util/index';
 
 export const SCOPES = {
     GROUP: 'GROUP',
@@ -9,6 +10,10 @@ export const SCOPES = {
     PROJECT: 'PROJECT',
     FACILITATOR: 'FACILITATOR',
     CUSTOM: 'CUSTOM',
+};
+
+export const errors = {
+    UNAUTHORIZED: 'UNAUTHORIZED'
 };
 
 /**
@@ -23,7 +28,7 @@ export function addScopeToCollection(key, scope, session) {
     const publicAccessScopes = [SCOPES.CUSTOM];
     const allowPublicAccess = publicAccessScopes.indexOf(scope) !== -1;
     if (!Object.keys(session || {}).length && !allowPublicAccess) {
-        throw new Error(`DataService Authorization error: ${scope} for ${key} requires an authenticated user`);
+        throw new CustomError(errors.UNAUTHORIZED, `DataService Authorization error: ${scope} for ${key} requires an authenticated user`);
     }
     scope = scope.toUpperCase();
     const delimiter = '_';
@@ -34,7 +39,7 @@ export function addScopeToCollection(key, scope, session) {
     } else if (scope === SCOPES.FACILITATOR) {
         const isFac = session.isTeamMember || session.isFac;
         if (!isFac) {
-            throw new Error(`DataService Authorization error: ${scope} for ${key} requires a Facilitator user`);
+            throw new CustomError(errors.UNAUTHORIZED, `DataService Authorization error: ${scope} for ${key} requires a Facilitator user`);
         }
         return [key, 'fac', 'group', session.groupId].join(delimiter);
     } else if (scope === SCOPES.PROJECT) {

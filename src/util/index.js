@@ -13,6 +13,19 @@ export function result(item) {
 export function rejectPromise(type, message) {
     return $.Deferred().reject({ type: type, message: message }).promise();
 }
+
+/**
+ * @param {string} type
+ * @param {string} message
+ */
+export class CustomError extends Error {
+    constructor(type, message) {
+        super(message);
+        this.message = message;
+        this.type = type;
+    }
+}
+
 /**
  * @param {any} val 
  * @returns {Promise}

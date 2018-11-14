@@ -4,6 +4,7 @@ import { getDefaultOptions } from 'service/service-utils';
 import { SCOPES, getURL, getScopedName } from './data-service-scope-utils';
 
 import ChannelManager from 'managers/epicenter-channel-manager';
+import { rejectPromise } from 'util/index';
 
 const API_ENDPOINT = 'data';
 const getAPIURL = getURL.bind(null, API_ENDPOINT);
@@ -65,7 +66,11 @@ class DataService {
     query(documentID, query, outputModifier, options) {
         var params = $.extend(true, { q: query }, outputModifier);
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, documentID, mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, documentID, mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.get(params, mergedOptions);
     }
 
@@ -101,7 +106,11 @@ class DataService {
         }
 
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.post(attrs, mergedOptions);
     }
 
@@ -115,7 +124,11 @@ class DataService {
      */
     pushToArray(documentPath, val, options) {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.post(val, mergedOptions);
     }
 
@@ -160,7 +173,11 @@ class DataService {
      */
     saveAs(documentPath, value, options) {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.put(value, mergedOptions);
     }
 
@@ -178,7 +195,11 @@ class DataService {
      */
     load(documentPath, outputModifier, options) {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.get(outputModifier, mergedOptions);
     }
     /**
@@ -194,12 +215,16 @@ class DataService {
     remove(keys, options) {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
         var params;
-        if (Array.isArray(keys)) {
-            params = 'id=' + keys.join('&id=');
-            mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
-        } else {
-            params = '';
-            mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
+        try {
+            if (Array.isArray(keys)) {
+                params = 'id=' + keys.join('&id=');
+                mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+            } else {
+                params = '';
+                mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
+            }
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
         }
         return this.http.delete(params, mergedOptions);
     }

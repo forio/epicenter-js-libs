@@ -17,6 +17,7 @@ describe('Data API Service', function () {
         server.respondWith(/(.*)\/data\/(.*)\/(.*)/, function (xhr, id) {
             xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ url: xhr.url }));
         });
+        server.respondImmediately = true;
     });
 
     after(function () {
@@ -151,6 +152,17 @@ describe('Data API Service', function () {
             req.url.should.equal(baseURL + 'people/me/user/');
             req.requestBody.should.equal(JSON.stringify({ name: 'john' }));
         });
+        it('should not allow deleting scoped collections without authorization', ()=> {
+            var ds = new DataService({ root: 'person', account: account, project: 'js-libs', scope: DataService.SCOPES.GROUP });
+            const successSpy = sinon.spy();
+            const errorSpy = sinon.spy();
+            return ds.saveAs('user', { name: 'john' }).then(successSpy, errorSpy).then(()=> {
+                expect(successSpy).to.not.have.been.called;
+                expect(errorSpy).to.have.been.calledOnce;
+                const args = errorSpy.getCall(0).args[0];
+                expect(args.type).to.eql('UNAUTHORIZED');
+            });
+        });
     });
 
     describe('#remove', function () {
@@ -192,6 +204,18 @@ describe('Data API Service', function () {
 
             var req = server.requests.pop();
             req.url.should.equal(baseURL + 'people/me/user/');
+        });
+
+        it('should not allow deleting scoped collections without authorization', ()=> {
+            var ds = new DataService({ root: 'person', account: account, project: 'js-libs', scope: DataService.SCOPES.GROUP });
+            const successSpy = sinon.spy();
+            const errorSpy = sinon.spy();
+            return ds.remove('user', { root: 'people/me' }).then(successSpy, errorSpy).then(()=> {
+                expect(successSpy).to.not.have.been.called;
+                expect(errorSpy).to.have.been.calledOnce;
+                const args = errorSpy.getCall(0).args[0];
+                expect(args.type).to.eql('UNAUTHORIZED');
+            });
         });
     });
 
