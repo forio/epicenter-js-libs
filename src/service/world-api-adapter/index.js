@@ -152,7 +152,7 @@ export default function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         update: function (params, options) {
-            var whitelist = ['roles', 'optionalRoles', 'minUsers'];
+            var whitelist = ['roles', 'optionalRoles', 'minUsers', 'name'];
             options = options || {};
             setIdFilterOrThrowError(options);
 
