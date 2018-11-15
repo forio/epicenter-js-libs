@@ -96,7 +96,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
 
@@ -229,7 +229,7 @@ function ensureKeysPresent(obj, keysList, context) {
 "use strict";
 
 
-var keyNames = __webpack_require__(15);
+var keyNames = __webpack_require__(16);
 var StorageFactory = __webpack_require__(29);
 var optionUtils = __webpack_require__(47);
 
@@ -430,7 +430,7 @@ module.exports = function (base, props, staticProps) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -1499,10 +1499,95 @@ function RunService(config) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["d"] = result;
+/* harmony export (immutable) */ __webpack_exports__["c"] = rejectPromise;
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomError; });
+/* harmony export (immutable) */ __webpack_exports__["b"] = makePromise;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function result(item) {
+    if (typeof item === 'function') {
+        return item();
+    }
+    return item;
+}
+
+/**
+ * @param {string} type 
+ * @param {string} message 
+ * @returns {Promise}
+ */
+function rejectPromise(type, message) {
+    return $.Deferred().reject({ type: type, message: message }).promise();
+}
+
+/**
+ * @param {string} type
+ * @param {string} message
+ */
+var CustomError = function (_Error) {
+    _inherits(CustomError, _Error);
+
+    function CustomError(type, message) {
+        _classCallCheck(this, CustomError);
+
+        var _this = _possibleConstructorReturn(this, (CustomError.__proto__ || Object.getPrototypeOf(CustomError)).call(this, message));
+
+        _this.message = message;
+        _this.type = type;
+        return _this;
+    }
+
+    return CustomError;
+}(Error);
+
+/**
+ * @param {any} val 
+ * @returns {Promise}
+ */
+function makePromise(val) {
+    //Can be replaced with Promise.resolve when we drop IE11;
+    // if (isFunction(val)) {
+    //     return Promise.resolve(val());
+    // }
+    // return Promise.resolve(val);
+    if (val.then) {
+        return val;
+    }
+    var $def = $.Deferred();
+    if (typeof val === 'function') {
+        try {
+            var toReturn = val();
+            if (toReturn && toReturn.then) {
+                return toReturn.then(function (r) {
+                    return $def.resolve(r);
+                }).catch(function (e) {
+                    return $def.reject(e);
+                });
+            }
+            $def.resolve(toReturn);
+        } catch (e) {
+            $def.reject(e);
+        }
+    } else {
+        $def.resolve(val);
+    }
+    return $def.promise();
+}
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldAPIAdapter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
@@ -1661,7 +1746,7 @@ function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         update: function (params, options) {
-            var whitelist = ['roles', 'optionalRoles', 'minUsers'];
+            var whitelist = ['roles', 'optionalRoles', 'minUsers', 'name'];
             options = options || {};
             setIdFilterOrThrowError(options);
 
@@ -1907,6 +1992,7 @@ function WorldAPIAdapter(config) {
         * ** Parameters **
         * @param {object|string} user The `userId` of the user to remove from the world, or an object containing the `userId` field.
         * @param {object} [options] Options object to override global options.
+        * @param {boolean} [options.deleteWorldIfEmpty] Delete the world if you removed the last user.
         * @return {Promise}
         */
         removeUser: function (user, options) {
@@ -1918,11 +2004,17 @@ function WorldAPIAdapter(config) {
                 throw new Error('You need to pass a userId to remove from the world');
             }
 
-            setIdFilterOrThrowError(options);
+            var mergedOptions = $.extend(true, {}, serviceOptions, options);
+            setIdFilterOrThrowError(mergedOptions);
 
-            var getOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId });
+            var autoDeleteWorld = options && options.deleteWorldIfEmpty === true;
+            var url = urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId;
+            if (autoDeleteWorld) {
+                url += '?deleteWorld=true';
+            }
+            mergedOptions.url = url;
 
-            return http.delete(null, getOptions);
+            return http.delete(null, mergedOptions);
         },
 
         /**
@@ -2187,13 +2279,13 @@ function WorldAPIAdapter(config) {
 }
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Base = __webpack_require__(12);
+var Base = __webpack_require__(13);
 var classFrom = __webpack_require__(4);
 
 /**
@@ -2272,7 +2364,7 @@ var Strategy = classFrom(Base, {
 module.exports = Strategy;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2314,18 +2406,18 @@ var NoRunStrategy = function () {
 /* harmony default export */ __webpack_exports__["default"] = (NoRunStrategy);
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_object_assign__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_object_assign__);
 
 
@@ -2697,7 +2789,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 /* harmony default export */ __webpack_exports__["default"] = (AuthManager);
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2840,7 +2932,7 @@ UrlConfigService.defaults = {};
 module.exports = UrlConfigService;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2852,7 +2944,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2949,7 +3041,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2957,10 +3049,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_index__ = __webpack_require__(10);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 
 
 
@@ -3035,7 +3129,11 @@ var DataService = function () {
         value: function query(documentID, _query, outputModifier, options) {
             var params = $.extend(true, { q: _query }, outputModifier);
             var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, documentID, mergedOptions);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, documentID, mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
             return this.http.get(params, mergedOptions);
         }
 
@@ -3074,7 +3172,11 @@ var DataService = function () {
             }
 
             var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
             return this.http.post(attrs, mergedOptions);
         }
 
@@ -3091,7 +3193,11 @@ var DataService = function () {
         key: 'pushToArray',
         value: function pushToArray(documentPath, val, options) {
             var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
             return this.http.post(val, mergedOptions);
         }
 
@@ -3139,7 +3245,11 @@ var DataService = function () {
         key: 'saveAs',
         value: function saveAs(documentPath, value, options) {
             var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
             return this.http.put(value, mergedOptions);
         }
 
@@ -3160,7 +3270,11 @@ var DataService = function () {
         key: 'load',
         value: function load(documentPath, outputModifier, options) {
             var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
             return this.http.get(outputModifier, mergedOptions);
         }
         /**
@@ -3179,12 +3293,16 @@ var DataService = function () {
         value: function remove(keys, options) {
             var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
             var params;
-            if (Array.isArray(keys)) {
-                params = { id: keys };
-                mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
-            } else {
-                params = '';
-                mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
+            try {
+                if (Array.isArray(keys)) {
+                    params = { id: keys };
+                    mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+                } else {
+                    params = '';
+                    mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
+                }
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
             }
             return this.http.delete(params, mergedOptions);
         }
@@ -3241,7 +3359,7 @@ DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a"
 /* harmony default export */ __webpack_exports__["default"] = (DataService);
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3293,9 +3411,19 @@ function MemberAPIService(config) {
         return serviceOptions;
     };
 
+    var generateUserQuery = function (params) {
+        if (!params.userId || !params.userId.length) {
+            throw new Error('No userId specified.');
+        }
+
+        var uidQuery = [].concat(params.userId).join('&userId=');
+        return '?userId=' + uidQuery;
+    };
+
     var patchUserActiveField = function (params, active, options) {
+        params = getFinalParams(params);
         var httpOptions = $.extend(true, serviceOptions, options, {
-            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + '/' + params.userId
+            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + generateUserQuery(params)
         });
 
         return http.patch({ active: active }, httpOptions);
@@ -3333,8 +3461,8 @@ function MemberAPIService(config) {
                 throw new Error('No userId specified.');
             }
 
-            var getParms = isString ? { userId: params } : Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(objParams, ['userId']);
-            return http.get(getParms, httpOptions);
+            var getParams = isString ? { userId: params } : Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(objParams, ['userId']);
+            return http.get(getParams, httpOptions);
         },
 
         /**
@@ -3408,7 +3536,7 @@ function MemberAPIService(config) {
         *
         * 
         * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make active.
+        * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -3427,7 +3555,7 @@ function MemberAPIService(config) {
         *
         * 
         * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make inactive.
+        * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -3441,7 +3569,7 @@ function MemberAPIService(config) {
 }
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3817,7 +3945,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 /* harmony default export */ __webpack_exports__["default"] = (EpicenterChannelManager);
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4045,7 +4173,7 @@ function ConsensusService(config) {
 }
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4067,7 +4195,7 @@ var STRATEGY = {
 };
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4078,7 +4206,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_managers_key_names__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -4311,7 +4439,7 @@ RunManager.strategies = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__["d
 /* harmony default export */ __webpack_exports__["default"] = (RunManager);
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4517,63 +4645,6 @@ var SavedRunsManager = function () {
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (SavedRunsManager);
-
-/***/ }),
-/* 24 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["c"] = result;
-/* harmony export (immutable) */ __webpack_exports__["b"] = rejectPromise;
-/* harmony export (immutable) */ __webpack_exports__["a"] = makePromise;
-function result(item) {
-    if (typeof item === 'function') {
-        return item();
-    }
-    return item;
-}
-
-/**
- * @param {string} type 
- * @param {string} message 
- * @returns {Promise}
- */
-function rejectPromise(type, message) {
-    return $.Deferred().reject({ type: type, message: message }).promise();
-}
-/**
- * @param {any} val 
- * @returns {Promise}
- */
-function makePromise(val) {
-    //Can be replaced with Promise.resolve when we drop IE11;
-    // if (isFunction(val)) {
-    //     return Promise.resolve(val());
-    // }
-    // return Promise.resolve(val);
-    if (val.then) {
-        return val;
-    }
-    var $def = $.Deferred();
-    if (typeof val === 'function') {
-        try {
-            var toReturn = val();
-            if (toReturn && toReturn.then) {
-                return toReturn.then(function (r) {
-                    return $def.resolve(r);
-                }).catch(function (e) {
-                    return $def.reject(e);
-                });
-            }
-            $def.resolve(toReturn);
-        } catch (e) {
-            $def.reject(e);
-        }
-    } else {
-        $def.resolve(val);
-    }
-    return $def.promise();
-}
 
 /***/ }),
 /* 25 */
@@ -5247,7 +5318,7 @@ function AuthService(config) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
 /**
  *
@@ -5295,10 +5366,10 @@ var GroupService = function (config) {
         /**
         * Gets information for a group or multiple groups.
         * @param {Object} params object with query parameters
-        * @patam {string} params.q partial match for name, organization or event.
-        * @patam {string} params.account Epicenter's Team ID
-        * @patam {string} params.project Epicenter's Project ID
-        * @patam {string} params.name Epicenter's Group Name
+        * @param {string} params.q partial match for name, organization or event.
+        * @param {string} params.account Epicenter's Team ID
+        * @param {string} params.project Epicenter's Project ID
+        * @param {string} params.name Epicenter's Group Name
         * @param {Object} [options] Overrides for configuration options.
         * @return {Promise}
         */
@@ -5697,7 +5768,7 @@ var apiEndpoint = 'presence';
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
-            var ChannelManager = __webpack_require__(19).default;
+            var ChannelManager = __webpack_require__(20).default;
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);
@@ -6321,7 +6392,7 @@ function intersection(a, b) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(22);
 
 
 function reduceActions(actions, options) {
@@ -6364,7 +6435,7 @@ function reduceActions(actions, options) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(1);
 
@@ -6465,13 +6536,13 @@ function ConsensusGroupService(config) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "strategyKeys", function() { return strategyKeys; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__ = __webpack_require__(66);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__none_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__none_strategy__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__ = __webpack_require__(67);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reuse_never__ = __webpack_require__(68);
@@ -6734,9 +6805,9 @@ var ReuseLastInitializedStrategy = function () {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldManager;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(14);
 
 
 
@@ -6873,17 +6944,17 @@ F.util.classFrom = __webpack_require__(4);
 F.factory.Transport = __webpack_require__(0).default;
 F.transport.Ajax = __webpack_require__(26);
 
-F.service.URL = __webpack_require__(14);
+F.service.URL = __webpack_require__(15);
 F.service.Config = __webpack_require__(5).default;
 F.service.Run = __webpack_require__(9).default;
 F.service.File = __webpack_require__(48);
 F.service.Variables = __webpack_require__(27).default;
-F.service.Data = __webpack_require__(17).default;
+F.service.Data = __webpack_require__(18).default;
 F.service.Auth = __webpack_require__(31).default;
-F.service.World = __webpack_require__(10).default;
+F.service.World = __webpack_require__(11).default;
 F.service.State = __webpack_require__(35).default;
 F.service.User = __webpack_require__(36).default;
-F.service.Member = __webpack_require__(18).default;
+F.service.Member = __webpack_require__(19).default;
 F.service.Asset = __webpack_require__(54).default;
 F.service.Group = __webpack_require__(32).default;
 F.service.Introspect = __webpack_require__(28).default;
@@ -6894,7 +6965,7 @@ F.service.Password = __webpack_require__(61).default;
 
 F.service.Account = __webpack_require__(62).default;
 
-F.service.Consensus = __webpack_require__(20).default;
+F.service.Consensus = __webpack_require__(21).default;
 F.service.ConsensusGroup = __webpack_require__(41).default;
 
 F.service.Project = __webpack_require__(63).default;
@@ -6903,18 +6974,18 @@ F.store.Cookie = __webpack_require__(30);
 F.factory.Store = __webpack_require__(29);
 
 F.manager.ScenarioManager = __webpack_require__(64).default;
-F.manager.RunManager = __webpack_require__(22).default;
+F.manager.RunManager = __webpack_require__(23).default;
 F.manager.User = __webpack_require__(76).default;
-F.manager.AuthManager = __webpack_require__(13).default;
+F.manager.AuthManager = __webpack_require__(14).default;
 F.manager.WorldManager = __webpack_require__(44).default;
-F.manager.SavedRunsManager = __webpack_require__(23).default;
+F.manager.SavedRunsManager = __webpack_require__(24).default;
 
 var strategies = __webpack_require__(42).default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
 F.manager.Settings = __webpack_require__(77).default;
 
-F.manager.ChannelManager = __webpack_require__(19).default;
+F.manager.ChannelManager = __webpack_require__(20).default;
 F.service.Channel = __webpack_require__(33).default;
 
 F.manager.ConsensusManager = __webpack_require__(80).default;
@@ -6922,7 +6993,7 @@ F.manager.ConsensusManager = __webpack_require__(80).default;
 if (true) F.version = "2.8.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(25);
 
-F.constants = __webpack_require__(15);
+F.constants = __webpack_require__(16);
 
 module.exports = F;
 
@@ -6931,7 +7002,7 @@ module.exports = F;
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var URLConfigService = __webpack_require__(14);
+var URLConfigService = __webpack_require__(15);
 
 var envLoad = function (callback) {
     var urlService = new URLConfigService();
@@ -7202,12 +7273,15 @@ module.exports = function (config) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SCOPES; });
+/* unused harmony export errors */
 /* unused harmony export addScopeToCollection */
 /* harmony export (immutable) */ __webpack_exports__["b"] = getScopedName;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getURL;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
+
 
 
 
@@ -7219,6 +7293,10 @@ var SCOPES = {
     PROJECT: 'PROJECT',
     FACILITATOR: 'FACILITATOR',
     CUSTOM: 'CUSTOM'
+};
+
+var errors = {
+    UNAUTHORIZED: 'UNAUTHORIZED'
 };
 
 /**
@@ -7233,7 +7311,7 @@ function addScopeToCollection(key, scope, session) {
     var publicAccessScopes = [SCOPES.CUSTOM];
     var allowPublicAccess = publicAccessScopes.indexOf(scope) !== -1;
     if (!Object.keys(session || {}).length && !allowPublicAccess) {
-        throw new Error('DataService Authorization error: ' + scope + ' for ' + key + ' requires an authenticated user');
+        throw new __WEBPACK_IMPORTED_MODULE_3_util_index__["a" /* CustomError */](errors.UNAUTHORIZED, 'DataService Authorization error: ' + scope + ' for ' + key + ' requires an authenticated user');
     }
     scope = scope.toUpperCase();
     var delimiter = '_';
@@ -7244,7 +7322,7 @@ function addScopeToCollection(key, scope, session) {
     } else if (scope === SCOPES.FACILITATOR) {
         var isFac = session.isTeamMember || session.isFac;
         if (!isFac) {
-            throw new Error('DataService Authorization error: ' + scope + ' for ' + key + ' requires a Facilitator user');
+            throw new __WEBPACK_IMPORTED_MODULE_3_util_index__["a" /* CustomError */](errors.UNAUTHORIZED, 'DataService Authorization error: ' + scope + ' for ' + key + ' requires a Facilitator user');
         }
         return [key, 'fac', 'group', session.groupId].join(delimiter);
     } else if (scope === SCOPES.PROJECT) {
@@ -7554,7 +7632,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -8038,14 +8116,14 @@ function AssetAdapter(config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(22);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8485,7 +8563,7 @@ function reduceActions(actions, options) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(22);
 
 
 function toDetailedTime(ts) {
@@ -8839,11 +8917,11 @@ function ProjectAPIService(config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__saved_runs_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__saved_runs_manager__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(74);
@@ -9024,7 +9102,7 @@ function ScenarioManager(config) {
 
 
 var classFrom = __webpack_require__(4);
-var ConditionalStrategy = __webpack_require__(11);
+var ConditionalStrategy = __webpack_require__(12);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9070,7 +9148,7 @@ module.exports = Strategy;
 
 
 var classFrom = __webpack_require__(4);
-var ConditionalStrategy = __webpack_require__(11);
+var ConditionalStrategy = __webpack_require__(12);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -9101,8 +9179,8 @@ module.exports = Strategy;
 
 var classFrom = __webpack_require__(4);
 
-var IdentityStrategy = __webpack_require__(12);
-var WorldApiAdapter = __webpack_require__(10).default;
+var IdentityStrategy = __webpack_require__(13);
+var WorldApiAdapter = __webpack_require__(11).default;
 
 var defaults = {};
 
@@ -9175,7 +9253,7 @@ module.exports = Strategy;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__util_inherit__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__);
 /**
  * The `reuse-never` strategy always creates a new run for this end user irrespective of current state. This is equivalent to calling `F.service.Run.create()` from the [Run Service](../run-api-service/) every time. 
@@ -9214,7 +9292,7 @@ Strategy.allowRunIDCache = false;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__util_inherit__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__);
 /**
  * The `reuse-per-session` strategy creates a new run when the current one is not in the browser cookie.
@@ -9262,7 +9340,7 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_I
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_util_inherit__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__none_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__none_strategy__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
 /**
  * The `reuse-across-sessions` strategy returns the latest (most recent) run for this user, whether it is in memory or not. If there are no runs for this user, it creates a new one.
@@ -9585,8 +9663,8 @@ ReuseLastUnsaved.requiresAuth = false;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["parseUsers"] = parseUsers;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils__ = __webpack_require__(1);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -9787,12 +9865,12 @@ UserManager.errors = ERROR_TYPES;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_scenario_manager_saved_runs_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_scenario_manager_saved_runs_manager__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(78);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_util_index__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_util_index__ = __webpack_require__(10);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9890,7 +9968,7 @@ var SettingsManager = function () {
                                 if (opts.allowRunsWithoutSettings) {
                                     return _this2.settings.getDefaults();
                                 }
-                                return Object(__WEBPACK_IMPORTED_MODULE_5_util_index__["b" /* rejectPromise */])('NO_ACTIVE_SETTINGS', 'The facilitator has not opened the simulation for gameplay.');
+                                return Object(__WEBPACK_IMPORTED_MODULE_5_util_index__["c" /* rejectPromise */])('NO_ACTIVE_SETTINGS', 'The facilitator has not opened the simulation for gameplay.');
                             }
                             return settings;
                         }).then(function (settings) {
@@ -9926,8 +10004,8 @@ SettingsManager.actions = actions;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -10010,7 +10088,7 @@ var SettingsService = function () {
     }, {
         key: 'getDefaults',
         value: function getDefaults() {
-            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["a" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* result */])(this.options.settings.defaults));
+            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["b" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["d" /* result */])(this.options.settings.defaults));
             return defaultsProm;
         }
 
@@ -10151,7 +10229,7 @@ var SettingsService = function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategy_utils__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10214,11 +10292,11 @@ var ReuseWithTrackingKeyStrategy = function () {
     _createClass(ReuseWithTrackingKeyStrategy, [{
         key: 'getSettings',
         value: function getSettings() {
-            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* result */])(this.options.settings);
-            var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["a" /* makePromise */])(settings).then(function (settings) {
+            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* result */])(this.options.settings);
+            var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(settings).then(function (settings) {
                 var key = settings && settings.trackingKey;
                 if (!key) {
-                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* rejectPromise */])(errors.NO_TRACKING_KEY, 'No tracking key provided to reuse-by-tracking-key strategy');
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.NO_TRACKING_KEY, 'No tracking key provided to reuse-by-tracking-key strategy');
                 }
                 return settings;
             });
@@ -10241,7 +10319,7 @@ var ReuseWithTrackingKeyStrategy = function () {
             });
             return runService.create(opt).then(function (run) {
                 var applied = _this.options.onCreate(runService, settings, run);
-                return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["a" /* makePromise */])(applied).then(function (res) {
+                return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(applied).then(function (res) {
                     return res && res.id ? res : run;
                 });
             });
@@ -10255,7 +10333,7 @@ var ReuseWithTrackingKeyStrategy = function () {
                 return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs, status, xhr) {
                     var startedRuns = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
                     if (startedRuns && startedRuns.total >= +settings.runLimit) {
-                        return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
+                        return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
                     }
                     return _this2.forceCreateRun(runService, userSession, settings);
                 });
@@ -10290,7 +10368,7 @@ ReuseWithTrackingKeyStrategy.errors = errors;
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(81);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
