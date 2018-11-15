@@ -1660,10 +1660,10 @@ function WorldAPIAdapter(config) {
 
     var setIdFilterOrThrowError = function (options) {
         if (!options) options = {};
+
         if (options.id) {
             serviceOptions.filter = options.id;
-        }
-        if (options.filter) {
+        } else if (options.filter) {
             serviceOptions.filter = options.filter;
         }
         if (!serviceOptions.filter) {
