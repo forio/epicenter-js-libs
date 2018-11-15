@@ -425,6 +425,7 @@ export default function WorldAPIAdapter(config) {
         * ** Parameters **
         * @param {object|string} user The `userId` of the user to remove from the world, or an object containing the `userId` field.
         * @param {object} [options] Options object to override global options.
+        * @param {boolean} [options.deleteWorldIfEmpty] Delete the world if you removed the last user.
         * @return {Promise}
         */
         removeUser: function (user, options) {
@@ -436,15 +437,17 @@ export default function WorldAPIAdapter(config) {
                 throw new Error('You need to pass a userId to remove from the world');
             }
 
-            setIdFilterOrThrowError(options);
+            const mergedOptions = $.extend(true, {}, serviceOptions, options);
+            setIdFilterOrThrowError(mergedOptions);
 
-            var getOptions = $.extend(true, {},
-                serviceOptions,
-                options,
-                { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId }
-            );
+            const autoDeleteWorld = options && options.deleteWorldIfEmpty === true;
+            let url = urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId;
+            if (autoDeleteWorld) {
+                url += '?deleteWorld=true';
+            }
+            mergedOptions.url = url;
 
-            return http.delete(null, getOptions);
+            return http.delete(null, mergedOptions);
         },
 
         /**
