@@ -65,7 +65,10 @@ export function toQueryFormat(qs) {
     var returnArray = [];
     $.each(qs, function (key, value) {
         if (Array.isArray(value)) {
-            value = value.join(',');
+            value.forEach(function (val) {
+                returnArray.push(key + '=' + value);
+            });
+            return;
         }
         if ($.isPlainObject(value)) {
             //Mostly for data api
@@ -117,12 +120,12 @@ export function mergeQS(qs1, qs2) {
 }
 
 /**
- * 
+ *
  * @param {string} url url to sanitize
  * @param {object} [options] determines if leading/trailing slashes are expected
  * @param {boolean} [options.leading]
  * @param {boolean} [options.trailing]
- * 
+ *
  * @returns {string}
  */
 export function normalizeSlashes(url, options) {
@@ -141,7 +144,7 @@ export function normalizeSlashes(url, options) {
     let cleaned = rest.replace(/\/{2,}/g, '/');
     if (opts.leading && cleaned.charAt(0) !== '/' && !protocol) {
         cleaned = `/${cleaned}`;
-    } 
+    }
     if (opts.trailing && cleaned.charAt(cleaned.length - 1) !== '/') {
         cleaned = `${cleaned}/`;
     }
