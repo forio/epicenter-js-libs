@@ -65,11 +65,9 @@ export function toQueryFormat(qs) {
     var returnArray = [];
     $.each(qs, function (key, value) {
         if (Array.isArray(value)) {
-            value.forEach(function (val) {
-                returnArray.push(key + '=' + value);
-            });
-            return;
+            value = value.join(',');
         }
+
         if ($.isPlainObject(value)) {
             //Mostly for data api
             value = JSON.stringify(value);
