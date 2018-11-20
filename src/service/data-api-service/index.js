@@ -104,7 +104,7 @@ class DataService {
         mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
         return this.http.post(attrs, mergedOptions);
     }
-    
+
     /**
      * Append value to an array data structure within a document
      * 
@@ -194,7 +194,7 @@ class DataService {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
         var params;
         if (Array.isArray(keys)) {
-            params = { id: keys };
+            params = 'id=' + keys.join('&id=');
             mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
         } else {
             params = '';
@@ -220,7 +220,7 @@ class DataService {
 
     /**
      * Gets a channel to listen to notifications on for this collection
-     * 
+     *
      * @param {Object} [options] Overrides for configuration options.
      * @return {Channnel} channel instance to subscribe with.
      */
