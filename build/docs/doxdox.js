@@ -27,6 +27,15 @@ const files = [
     'managers/scenario-manager',
 
     {
+        src: 'managers/settings-manager/index.js',
+        dest: 'settings-manager/index.html.md',
+    },
+    {
+        src: 'managers/settings-manager/settings-service.js',
+        dest: 'settings-service/index.html.md',
+    },
+
+    {
         src: 'managers/scenario-manager/saved-runs-manager/index.js',
         dest: 'scenario-manager/saved/index.html.md',
     },
