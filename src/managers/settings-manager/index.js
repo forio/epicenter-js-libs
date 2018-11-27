@@ -12,6 +12,7 @@ const actions = {
     DRAFT_CREATED: 'DRAFT_CREATED',
     DRAFT_UPDATED: 'DRAFT_UPDATED',
 };
+
 class SettingsManager {
     /**
      * @param {object} options 
@@ -62,6 +63,18 @@ class SettingsManager {
     }
 
     /**
+     * Use to get a strategy to use for user-runs. 
+     * 
+     * @example
+     * var settingsManager = new F.manager.Settings({
+            run: serviceOptions,
+        });
+        var strategy = settingsManager.getUserRunStrategy({
+            allowRunsWithoutSettings: true,
+            applySettings: (runService, settings, run)=> {
+                return run.variables().save(settings); // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
+            }
+        });
      * @param {object} options 
      * @returns {object} Run Strategy 
      */

@@ -73,7 +73,7 @@ export default class SavedRunsManager {
      * const sm = new F.manager.ScenarioManager();
      * sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
      *
-     * @param  {String|RunService} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+     * @param  {String|RunService|object} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
      * @param  {object} [otherFields] any other meta-data to save with the run.
      * @return {Promise}
      */
