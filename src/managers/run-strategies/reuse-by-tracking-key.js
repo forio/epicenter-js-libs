@@ -83,7 +83,9 @@ class ReuseWithTrackingKeyStrategy {
         return this.getSettings().then((settings)=> {
             return getRunsForKey(runService, settings.trackingKey, userSession).then((runs, status, xhr)=> {
                 const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
-                if (startedRuns && startedRuns.total >= +settings.runLimit) {
+                const runLimitNotSet = settings.runLimit === Infinity || `${settings.runLimit}`.trim() === '';
+                const runLimit = runLimitNotSet ? Infinity : +settings.runLimit;
+                if (startedRuns && startedRuns.total >= runLimit) {
                     return rejectPromise(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
                 }
                 return this.forceCreateRun(runService, userSession, settings);
