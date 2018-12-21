@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.6.0
+ *         v2.7.0
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -572,6 +572,7 @@ function toQueryFormat(qs) {
         if (Array.isArray(value)) {
             value = value.join(',');
         }
+
         if ($.isPlainObject(value)) {
             //Mostly for data api
             value = JSON.stringify(value);
@@ -622,12 +623,12 @@ function mergeQS(qs1, qs2) {
 }
 
 /**
- * 
+ *
  * @param {string} url url to sanitize
  * @param {object} [options] determines if leading/trailing slashes are expected
  * @param {boolean} [options.leading]
  * @param {boolean} [options.trailing]
- * 
+ *
  * @returns {string}
  */
 function normalizeSlashes(url, options) {
@@ -2420,6 +2421,7 @@ var epiVersion = __webpack_require__(21);
 
 //TODO: urlutils to get host, since no window on node
 var defaults = {
+    protocol: window.location.protocol.replace(':', ''),
     host: window.location.host,
     pathname: window.location.pathname
 };
@@ -2463,14 +2465,20 @@ var UrlConfigService = function (config) {
         actingHost = options.host;
     }
 
-    var API_PROTOCOL = 'https';
+    var actingProtocol = config && config.protocol;
+    if (!actingProtocol && options.isLocalhost()) {
+        actingProtocol = 'https';
+    } else {
+        actingProtocol = options.protocol;
+    }
+
     var HOST_API_MAPPING = {
         'forio.com': 'api.forio.com',
         'foriodev.com': 'api.epicenter.foriodev.com'
     };
 
     var publicExports = {
-        protocol: API_PROTOCOL,
+        protocol: actingProtocol,
 
         api: '',
 
@@ -4909,7 +4917,7 @@ var DataService = function () {
             var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
             var params;
             if (Array.isArray(keys)) {
-                params = { id: keys };
+                params = 'id=' + keys.join('&id=');
                 mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
             } else {
                 params = '';
@@ -4937,7 +4945,7 @@ var DataService = function () {
 
         /**
          * Gets a channel to listen to notifications on for this collection
-         * 
+         *
          * @param {Object} [options] Overrides for configuration options.
          * @return {Channnel} channel to subscribe on
          */
@@ -6556,7 +6564,7 @@ F.manager.strategy = strategies.list; //TODO: this is not really a manager so na
 F.manager.ChannelManager = __webpack_require__(17).default;
 F.service.Channel = __webpack_require__(31);
 
-if (true) F.version = "2.6.0"; //eslint-disable-line no-undef
+if (true) F.version = "2.7.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(21);
 
 F.constants = __webpack_require__(14);
