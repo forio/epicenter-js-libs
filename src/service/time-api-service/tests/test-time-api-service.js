@@ -49,6 +49,7 @@ describe('Timer API Service', function () {
     it('should allow overriding server host', function () {
         var ts = new TimeService({
             server: {
+                protocol: 'https',
                 host: 'foobar.com'
             }
         });
