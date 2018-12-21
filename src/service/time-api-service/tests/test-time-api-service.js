@@ -42,6 +42,7 @@ describe('Timer API Service', function () {
     it('should respect server config', function () {
         var ts = new TimeService({
             server: {
+                protocol: 'https',
                 host: 'foobar.com'
             }
         });
