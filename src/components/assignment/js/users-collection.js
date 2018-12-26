@@ -22,11 +22,16 @@ module.exports = classFrom(Base, {
     },
 
     initialize: function () {
-        $.ajaxSetup({
-            headers: {
-                Authorization: 'Bearer ' + env.get().token
-            }
-        });
+        const am = new F.manager.AuthManager();
+        const session = am.getCurrentUserSessionInfo();
+        const token = session.auth_token;
+        if (token) {
+            $.ajaxSetup({
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            });
+        }
     },
 
     allUsersAssigned: function () {
