@@ -1,3 +1,94 @@
+<a name="2.8.0"></a>
+
+### Features
+
+#### Share connections with the Channel Manager
+- Different instances of the Channel Manager now use the same underlying websocket connection by default. This should drastically reduce network traffic if you were creating different instances to listen on different channels before. You can replicate the older behavior by setting the 'shareConnection' property to `false` when creating the Channel Manager. e.g.
+
+```js
+var cm = new F.manager.ChannelManager({
+    shareConnection: false
+});
+```
+
+#### New 'consensus' topics for the World Channel
+You can now subscribe only to consensus updates on the world channel. e.g.
+
+```js
+var worldChannel = cm.getWorldChannel(worldObject);
+worldChannel.subscribe(worldChannel.TOPICS.CONSENSUS, function (data) {
+    console.log(data);
+});
+```
+
+#### Scenario Manager changes
+
+##### Control scope for baseline run in the Scenario Manager
+The `baseline` strategy for the scenario manager used to create a new baseline run per *user* by default. You can now pass in strategy options to control this behavior, and create one for the group instead.
+
+```js
+var sm = new F.manager.ScenarioManager({
+    run: {
+        model: 'mymodel.vmf'
+    },
+    baseline: {
+        scope: {
+            scopeByUser: false
+        }
+    }
+});
+```
+##### Control filters for the saved runs manager
+The saved runs manager filters for saved runs by default; you can overrided that by passing in `saved: undefined`  as a filter. e.g.
+
+```js
+var sm = new F.manager.SavedRunsManager({
+    scopeByUser: true,
+    run: runParams
+});
+sm.getRuns(['Time'], {
+    saved: undefined,
+});
+```   
+#### User Management features:
+
+##### New User Manager (F.manager.User)
+This release includes a new 'User Manager' to help facilitate common user management issues (bulk upload users from a textarea for instance).
+
+```js
+var UserManager = F.manager.User;
+var um = new UserManager(getRunParams());
+um.uploadUsersToGroup($('#userTextarea').val()).then(function(){ alert('Upload sucess!'); }).catch(function (res) {
+    if (res.type === UserManager.errors.EMPTY_USERS) {
+        alert('No users specified to upload');
+    } else if (res.type === UserManager.errors.NO_GROUP_PROVIDED) {
+        alert('No group found. Create a group and login as a facilitator to upload users');
+    } else {
+        alert('Unknown error, please try again');
+    }
+});
+```
+
+##### User service has a new `createUsers` function to add users to your account.
+```js
+var ua = new F.service.User({
+  account: 'acme-simulations',
+});
+ua.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
+```
+
+##### Member service has a new `addUsersToGroup` to add existing users into a group.
+```js
+const ma = new F.service.Member();
+ma.addUsersToGroup(['42836d4b-5b61-4fe4-80eb-3136e956ee5c', '42836d4b-5b61-4fe4-80eb-3136e956ee5c'])
+```
+
+### Improvements:
+- Renamed `un_authorized` to `unauthorized` in errors thrown by misc. services (Run Manager and Auth Manager) for consistency.
+- The older lua based run api used to return `{}` instead of `[]` for empty results, and jslibs was translating `{}` to `[]` for consistency. The newer Java-based run api does not have this issue, so this workaround has been removed.
+- The `current` run strategy for the `ScenarioManager` used to pick the last run which was not-saved/trashed as the 'current' run; it now sets a trackingKey called `current` and uses that instead to pick the current run.
+
+
 <a name="2.7.0"></a>
 
 ### Features
@@ -241,7 +332,7 @@ This release adds a new `reuse-last-initialized` strategy. It is intended to be 
 
 This strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations.
 
-**Examples**:
+@example:
 
 - You have a time-based model and always want the run you're operating on to be at step 10:
 
@@ -376,7 +467,7 @@ The `savedRuns` manager gives you utility functions for dealing with multiple ru
 
 ### Presence Service
 
-The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use channels, the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. See [complete details on the Presence Service](http://forio.com/epicenter/docs/public/api_adapters/generated/presence-api-service/) and also the updated [Epicenter Channel Manager's getPresenceChannel()](http://forio.com/epicenter/docs/public/api_adapters/generated/epicenter-channel-manager/#getpresencechannel).
+The Presence API Service provides methods to get and set the presence of an end user in a project, that is, to indicate whether the end user is online. This happens automatically: in projects that use channels, the end user's presence is published automatically on a "presence" channel that is specific to each group. You can also use the Presence API Service to do this explicitly: you can make a call to indicate that a particular end user is online or offline. See [complete details on the Presence Service](http://forio.com/epicenter/docs/public/api_adapters/generated/presence-api-service/) and also the updated [Epicenter Channel Manager's getPresenceChannel()](http://forio.com/epicenter/docs/public/api_adapters/generated/channels/epicenter-channel-manager/#getpresencechannel).
 
 
 ### jQuery Version Requirements
@@ -615,11 +706,11 @@ Authentication Manager and components.
 This release provides support for managing user authentication, especially for [end users](http://forio.com/epicenter/docs/public/glossary/#users) of [authenticated](http://forio.com/epicenter/docs/public/glossary/#access) Epicenter projects.
 
 #### Authentication API Service
-The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token. (User access tokens are required for each call to Epicenter.) Details available here: http://forio.com/epicenter/docs/public/api_adapters/generated/auth-api-service/
+The Authentication API Service provides methods for logging in and logging out. On login, this service creates and returns a user access token. (User access tokens are required for each call to Epicenter.) Details available here: http://forio.com/epicenter/docs/public/api_adapters/generated/auth/auth-service/
 
 #### Authorization Manager
 
-The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects. Details available here: http://forio.com/epicenter/docs/public/api_adapters/generated/auth-manager/
+The Authorization Manager provides an easy way to manage user authentication (logging in and out) and authorization (keeping track of tokens, sessions, and groups) for projects. Details available here: http://forio.com/epicenter/docs/public/api_adapters/generated/auth/auth-manager/
 
 #### Login Component
 

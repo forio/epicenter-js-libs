@@ -66,7 +66,9 @@ describe('Reuse Across Sessions strategy', function () {
                     
                 expect(args[0]).to.eql({
                     'user.id': auth.userId,
-                    'scope.group': auth.groupName
+                    scope: {
+                        group: auth.groupName
+                    }
                 });
             });
         });

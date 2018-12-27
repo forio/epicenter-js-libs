@@ -1,4 +1,10 @@
+import { injectFiltersFromSession } from 'managers/run-strategies/strategy-utils';
+import { injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
+
+//TODO: Make a more generic version of this called 'reuse-by-matching-filter';
+
 /**
+ * @description
  * ## Current (reuse-last-unsaved)
  *
  * An instance of a [Run Manager](../../run-manager/) with this strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.current`.
@@ -18,36 +24,31 @@
  * See also: [additional information on run strategies](../../strategies/).
  */
 
-'use strict';
-var classFrom = require('util/inherit');
-var injectFiltersFromSession = require('managers/run-strategies/strategy-utils').injectFiltersFromSession;
-var injectScopeFromSession = require('managers/run-strategies/strategy-utils').injectScopeFromSession;
-
-var Base = {};
-
-//TODO: Make a more generic version of this called 'reuse-by-matching-filter';
-module.exports = classFrom(Base, {
-    constructor: function (options) {
-        var strategyOptions = options ? options.strategyOptions : {};
+class ReuseLastUnsaved {
+    constructor(options) {
+        const strategyOptions = options ? options.strategyOptions : {};
         this.options = strategyOptions;
-    },
+    }
 
-    reset: function (runService, userSession, options) {
-        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+    reset(runService, userSession, options) {
+        const runConfig = runService.getCurrentConfig();
+
+        const scoped = injectScopeFromSession(runConfig, userSession);
+        const opt = $.extend(true, {}, scoped);
         return runService.create(opt, options).then(function (createResponse) {
             return $.extend(true, {}, createResponse, { freshlyCreated: true });
         });
-    },
+    }
 
-    getRun: function (runService, userSession, opts) {
-        var runopts = runService.getCurrentConfig();
-        var filter = injectFiltersFromSession({ 
-            saved: false,
+    getRun(runService, userSession, opts) {
+        const runConfig = runService.getCurrentConfig();
+        const filter = injectFiltersFromSession({ 
             trashed: false,
-            model: runopts.model,
+            saved: false,
+            model: runConfig.model,
         }, userSession);
-        var me = this;
-        var outputModifiers = { 
+        const me = this;
+        const outputModifiers = { 
             startrecord: 0,
             endrecord: 0,
             sort: 'created', 
@@ -60,4 +61,6 @@ module.exports = classFrom(Base, {
             return runs[0];
         });
     }
-}, { requiresAuth: false });
+}
+ReuseLastUnsaved.requiresAuth = false;
+export default ReuseLastUnsaved;

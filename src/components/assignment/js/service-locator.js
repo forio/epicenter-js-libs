@@ -9,7 +9,6 @@ module.exports = {
         if (!cache.worldApi) {
             cache.worldApi = new F.service.World(env.get());
         }
-
         return cache.worldApi;
     },
 

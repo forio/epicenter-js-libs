@@ -1,5 +1,10 @@
-'use strict';
+import TransportFactory from 'transport/http-transport-factory';
+import { pick } from 'util/object-util';
+import { getDefaultOptions, getURLConfig } from 'service/service-utils';
+var apiEndpoint = 'model/state';
+
 /**
+ * @description
  * ## State API Adapter
  *
  * The State API Adapter allows you to view the history of a run, and to replay or clone runs. 
@@ -13,37 +18,17 @@
  *      var sa = new F.service.State();
  *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f'});
  *
- * The constructor takes an optional `options` parameter in which you can specify the `account` and `project` if they are not already available in the current context.
- *
+ * @param {object} config
  */
+export default function StateService(config) {
+    var defaults = {};
 
-var ConfigService = require('service/configuration-service').default;
-var TransportFactory = require('transport/http-transport-factory').default;
-var _pick = require('util/object-util').pick;
-var SessionManager = require('store/session-manager');
-var apiEndpoint = 'model/state';
-
-module.exports = function (config) {
-
-    var defaults = {
-
-    };
-
-    this.sessionManager = new SessionManager();
-    var serviceOptions = this.sessionManager.getMergedOptions(defaults, config);
-    var urlConfig = new ConfigService(serviceOptions).get('server');
-
-    var transportOptions = $.extend(true, {}, serviceOptions.transport, {
-        url: urlConfig.getAPIPath(apiEndpoint)
+    const serviceOptions = getDefaultOptions(defaults, config, {
+        apiEndpoint: apiEndpoint
     });
+    const urlConfig = getURLConfig(serviceOptions);
+    var http = new TransportFactory(serviceOptions.transport);
 
-    if (serviceOptions.token) {
-        transportOptions.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
-    }
-
-    var http = new TransportFactory(transportOptions);
     var parseRunIdOrError = function (params) {
         if ($.isPlainObject(params) && params.runId) {
             return params.runId;
@@ -57,16 +42,15 @@ module.exports = function (config) {
         /**
         * View the history of a run.
         * 
-        *  **Example**
+        * @example
+        * var sa = new F.service.State();
+        * sa.load('0000015a06bb58613b28b57365677ec89ec5').then(function(history) {
+        *       console.log('history = ', history);
+        * });
         *
-        *      var sa = new F.service.State();
-        *      sa.load('0000015a06bb58613b28b57365677ec89ec5').then(function(history) {
-        *            console.log('history = ', history);
-        *      });
-        *
-        *  **Parameters**
+        *  
         * @param {string} runId The id of the run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         load: function (runId, options) {
@@ -81,17 +65,16 @@ module.exports = function (config) {
         /**
         * Replay a run. After this call, the run, with its original run id, is now available [in memory](../../../run_persistence/#runs-in-memory). (It continues to be persisted into the Epicenter database at regular intervals.)
         *
-        *  **Example**
+        * @example
+        * var sa = new F.service.State();
+        * sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
         *
-        *      var sa = new F.service.State();
-        *      sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
-        *
-        *  **Parameters**
+        *  
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to bring back to memory.
-        * @param {string} params.stopBefore (Optional) The run is advanced only up to the first occurrence of this method.
-        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {string} [params.stopBefore] The run is advanced only up to the first occurrence of this method.
+        * @param {string[]} [params.exclude] Array of methods to exclude when advancing the run.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         replay: function (params, options) {
@@ -103,7 +86,7 @@ module.exports = function (config) {
                 { url: urlConfig.getAPIPath(apiEndpoint) + runId }
             );
 
-            params = $.extend(true, { action: 'replay' }, _pick(params, ['stopBefore', 'exclude']));
+            params = $.extend(true, { action: 'replay' }, pick(params, ['stopBefore', 'exclude']));
 
             return http.post(params, replayOptions);
         },
@@ -119,17 +102,15 @@ module.exports = function (config) {
         *
         * The original run remains only [in the database](../../../run_persistence/#runs-in-db).
         *
-        *  **Example**
-        *
-        *      var sa = new F.service.State();
-        *      sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
-        *
-        *  **Parameters**
+        * @example
+        * var sa = new F.service.State();
+        * sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
+        *  
         * @param {object} params Parameters object.
         * @param {string} params.runId The id of the run to clone from memory.
-        * @param {string} params.stopBefore (Optional) The newly cloned run is advanced only up to the first occurrence of this method.
-        * @param {array} params.exclude (Optional) Array of methods to exclude when advancing the newly cloned run.
-        * @param {object} options (Optional) Overrides for configuration options.
+        * @param {string} [params.stopBefore] The newly cloned run is advanced only up to the first occurrence of this method.
+        * @param {string[]} [params.exclude] Array of methods to exclude when advancing the newly cloned run.
+        * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
         */
         clone: function (params, options) {
@@ -141,11 +122,11 @@ module.exports = function (config) {
                 { url: urlConfig.getAPIPath(apiEndpoint) + runId }
             );
 
-            params = $.extend(true, { action: 'clone' }, _pick(params, ['stopBefore', 'exclude']));
+            params = $.extend(true, { action: 'clone' }, pick(params, ['stopBefore', 'exclude']));
 
             return http.post(params, replayOptions);
         }
     };
 
     $.extend(this, publicAPI);
-};
+}

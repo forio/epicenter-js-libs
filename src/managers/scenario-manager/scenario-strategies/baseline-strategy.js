@@ -1,4 +1,7 @@
+import ReuseinitStrategy from 'managers/run-strategies/reuse-last-initialized';
+
 /**
+ * @description
  * ## Baseline
  *
  * An instance of a [Run Manager](../../run-manager/) with a baseline strategy is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.baseline`.
@@ -10,28 +13,32 @@
  * Comparing against a baseline run is optional in a Scenario Manager; you can [configure](../#configuration-options) your Scenario Manager to not include one. See [more information](../#properties) on using `.baseline` within the Scenario Manager.
  *
  * See also: [additional information on run strategies](../../strategies/).
- *
+ * 
+ * @constructor
+ * @param {object} options
+ * @property {string} [baselineName] Name of the baseline run. Defaults to 'Baseline'. 
+ * @property {object[]} [initOperation] Operations to perform on each run to indicate that the run is complete. Operations are executed [serially](../run-api-service/#serial). Defaults to calling the model operation `stepTo('end')`, which advances Vensim, Powersim, and SimLang models to the end. 
  */
-
-'use strict';
-
-var ReuseinitStrategy = require('managers/run-strategies/reuse-last-initialized');
-
-module.exports = function (options) {
+export default function BaselineStrategy(options) {
     var defaults = {
         baselineName: 'Baseline',
         initOperation: [{ stepTo: 'end' }]
     };
     var strategyOptions = options ? options.strategyOptions : {};
     var opts = $.extend({}, defaults, strategyOptions);
+
+    const reuseStrategyOptions = {
+        initOperation: opts.initOperation,
+        flag: {
+            saved: true,
+            trashed: false,
+            isBaseline: true,
+            name: opts.baselineName
+        },
+        scope: opts.scope,
+    };
+
     return new ReuseinitStrategy({
-        strategyOptions: {
-            initOperation: opts.initOperation,
-            flag: {
-                saved: true,
-                trashed: false,
-                name: opts.baselineName
-            }
-        }
+        strategyOptions: reuseStrategyOptions
     });
-};
+}

@@ -14,18 +14,39 @@ export function toMatrixFormat(qs) {
     if (typeof qs === 'string') {
         return qs;
     }
-
-    var returnArray = [];
-    var OPERATORS = ['<', '>', '!'];
-    $.each(qs, function (key, value) {
-        if (typeof value !== 'string' || $.inArray($.trim(value).charAt(0), OPERATORS) === -1) {
-            value = '=' + value;
+    function translateParts(ip) {
+        function translateRawValue(val) {
+            const OPERATORS = ['<', '>', '!'];
+            const alreadyHasOperator = OPERATORS.some((o)=> `${val}`.charAt(0) === o);
+            const withPrefix = alreadyHasOperator ? val : `=${val}`;
+            return withPrefix;
         }
-        returnArray.push(key + value);
-    });
+    
+        const parts = Object.keys(ip).reduce((accum, key)=> {
+            const val = ip[key];
+            if (Array.isArray(val)) {
+                const mapped = val.map((v)=> {
+                    const translated = translateRawValue(v);
+                    return `${key}${translated}`;
+                });
+                accum = accum.concat(mapped);
+            } else if (val !== null && typeof val === 'object') {
+                const translated = translateParts(val);
+                const prefixed = translated.map((t)=> {
+                    return `${key}.${t}`;
+                });
+                accum = accum.concat(prefixed);
+            } else {
+                const translated = translateRawValue(val);
+                accum.push(`${key}${translated}`);
+            }
+            return accum;
+        }, []);
+        return parts;
+    }
 
-    var mtrx = ';' + returnArray.join(';');
-    return mtrx;
+    const parts = translateParts(qs);
+    return `;${parts.join(';')}`;
 }
 
 /**
@@ -46,6 +67,7 @@ export function toQueryFormat(qs) {
         if (Array.isArray(value)) {
             value = value.join(',');
         }
+
         if ($.isPlainObject(value)) {
             //Mostly for data api
             value = JSON.stringify(value);
@@ -96,12 +118,12 @@ export function mergeQS(qs1, qs2) {
 }
 
 /**
- * 
+ *
  * @param {string} url url to sanitize
  * @param {object} [options] determines if leading/trailing slashes are expected
  * @param {boolean} [options.leading]
  * @param {boolean} [options.trailing]
- * 
+ *
  * @returns {string}
  */
 export function normalizeSlashes(url, options) {
@@ -120,7 +142,7 @@ export function normalizeSlashes(url, options) {
     let cleaned = rest.replace(/\/{2,}/g, '/');
     if (opts.leading && cleaned.charAt(0) !== '/' && !protocol) {
         cleaned = `/${cleaned}`;
-    } 
+    }
     if (opts.trailing && cleaned.charAt(cleaned.length - 1) !== '/') {
         cleaned = `${cleaned}/`;
     }

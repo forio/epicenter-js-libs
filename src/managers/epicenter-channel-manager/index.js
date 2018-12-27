@@ -1,69 +1,3 @@
-/**
- * ## Epicenter Channel Manager
- *
- * The Epicenter platform provides a push channel, which allows you to publish and subscribe to messages within a [project](../../../glossary/#projects), [group](../../../glossary/#groups), or [multiplayer world](../../../glossary/#world).
- *
- * <a name="background"></a>
- * ### Channel Background
- *
- * Channel notifications are only available for [team projects](../../../glossary/#team). There are two main use cases for the push channel: event notifications and chat messages.
- *
- * #### Event Notifications
- *
- * Within a [multiplayer simulation or world](../../../glossary/#world), it is often useful for your project's [model](../../../writing_your_model/) to alert the [user interface (browser)](../../../creating_your_interface/) that something new has happened.
- *
- * Usually, this "something new" is an event within the project, group, or world, such as:
- *
- * * An end user comes online (logs in) or goes offline. (This is especially interesting in a multiplayer world; only available if you have [enabled authorization](../../../updating_your_settings/#general-settings) for the channel.)
- * * An end user is assigned to a world.
- * * An end user updates a variable / makes a decision.
- * * An end user creates or updates data stored in the [Data API](../data-api-service/).
- * * An operation (method) is called. (This is especially interesting if the model is advanced, for instance, the Vensim `step` operation is called.)
- *
- * When these events occur, you often want to have the user interface for one or more end users automatically update with new information.
- *
- * #### Chat Messages
- *
- * Another reason to use the push channel is to allow players (end users) to send chat messages to other players, and to have those messages appear immediately.
- *
- * #### Getting Started
- *
- * For both the event notification and chat message use cases:
- *
- * * First, enable channel notifications for your project.
- *      * Channel notifications are only available for [team projects](../../../glossary/#team). To enable notifications for your project, [update your project settings](../../../updating_your_settings/#general-settings) to turn on the **Push Channel** setting, and optionally require authorization for the channel.
- * * Then, instantiate an Epicenter Channel Manager.
- * * Next, get the channel with the scope you want (user, world, group, data).
- * * Finally, use the channel's `subscribe()` and `publish()` methods to subscribe to topics or publish data to topics.
- *
- * Here's an example of those last three steps (instantiate, get channel, subscribe):
- *
- *     var cm = new F.manager.ChannelManager();
- *     var gc = cm.getGroupChannel();
- *     gc.subscribe('', function(data) { console.log(data); });
- *     gc.publish('', { message: 'a new message to the group' });
- *
- * For a more detailed example, see a [complete publish and subscribe example](../../../rest_apis/multiplayer/channel/#epijs-example).
- *
- * For details on what data is published automatically to which channels, see [Automatic Publishing of Events](../../../rest_apis/multiplayer/channel/#publish-message-auto).
- *
- * #### Creating an Epicenter Channel Manager
- *
- * The Epicenter Channel Manager is a wrapper around the (more generic) [Channel Manager](../channel-manager/), to instantiate it with Epicenter-specific defaults. If you are interested in including a notification or chat feature in your project, using an Epicenter Channel Manager is the easiest way to get started.
- *
- * You'll need to include the `epicenter-multiplayer-dependencies.js` library in addition to the `epicenter.js` library in your project to use the Epicenter Channel Manager. See [Including Epicenter.js](../../#include).
- *
- * The parameters for instantiating an Epicenter Channel Manager include:
- *
- * * `options` Object with details about the Epicenter project for this Epicenter Channel Manager instance.
- * * `options.account` The Epicenter account id (**Team ID** for team projects, **User ID** for personal projects).
- * * `options.project` Epicenter project id.
- * * `options.userName` Epicenter userName used for authentication.
- * * `options.userId` Epicenter user id used for authentication. Optional; `options.userName` is preferred.
- * * `options.token` Epicenter token used for authentication. (You can retrieve this using `authManager.getToken()` from the [Authorization Manager](../auth-manager/).)
- * * `options.allowAllChannels` If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
- */
-
 import ChannelManager from './channel-manager';
 import ConfigService from 'service/configuration-service';
 import classFrom from 'util/inherit';
@@ -97,6 +31,13 @@ var isPresenceData = function (payload) {
 
 var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
+    /**
+     * @constructor
+     * @param {AccountAPIServiceOptions} options
+     * @property {string} userName Epicenter userName used for authentication.
+     * @property {string} [userId] Epicenter user id used for authentication. Optional; `options.userName` is preferred.
+     * @property {boolean} [allowAllChannels] If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
+     */
     constructor: function (options) {
         this.sessionManager = new SessionManager(options);
         var defaultCometOptions = this.sessionManager.getMergedOptions(options);
@@ -132,16 +73,15 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * This method enforces Epicenter-specific channel naming: all channels requested must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`.
      *
-     * **Example**
-     *
+     * @example
      *      var cm = new F.manager.EpicenterChannelManager();
      *      var channel = cm.getChannel('/group/acme/supply-chain-game/');
      *
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * **Parameters**
-     * @param {Object|String} options (Optional) If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
+     * 
+     * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
     getChannel: function (options) {
@@ -174,8 +114,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * There are no notifications from Epicenter on this channel; all messages are user-originated.
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var gc = cm.getGroupChannel();
      *     gc.subscribe('broadcasts', callback);
@@ -183,10 +122,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * **Return Value**
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String} groupName (Optional) Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group to broadcast to. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getGroupChannel: function (groupName) {
@@ -211,11 +147,26 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
 
     /**
      * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the given [world](../../../glossary/#world).
-     *
      * This is typically used together with the [World Manager](../world-manager).
      *
-     * **Example**
-     *
+     * The list of available topics available to subscribe to are:
+     * 
+     * | Topic | Description |
+     * | ------------- | ------------- |
+     * | ALL | All events |
+     * | RUN | All Run events |
+     * | RUN_VARIABLES | Variable sets only |
+     * | RUN_OPERATIONS | Operation executions only |
+     * | RUN_RESET | New run attached to the world |
+     * | PRESENCE | All Presence events |
+     * | PRESENCE_ONLINE | Online notifications only |
+     * | PRESENCE_OFFLINE | Offline notifications only |
+     * | ROLES | All role events |
+     * | ROLES_ASSIGN | Role assignments only |
+     * | ROLES_UNASSIGN | Role unassignments |
+     * | CONSENSUS | Consensus topics |
+     * 
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
@@ -225,19 +176,13 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *     });
      *     worldManager.getCurrentWorld().then(function (worldObject, worldAdapter) {
      *         var worldChannel = cm.getWorldChannel(worldObject);
-     *         worldChannel.subscribe('', function (data) {
+     *         worldChannel.subscribe(worldChannel.TOPICS.RUN, function (data) {
      *             console.log(data);
      *         });
      *      });
      *
-     * **Return Value**
-     *
-     * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
      * @param  {String|Object} world The world object or id.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getWorldChannel: function (world, groupName) {
@@ -266,8 +211,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * This is typically used together with the [World Manager](../world-manager). Note that this channel only gets notifications for worlds currently in memory. (See more background on [persistence](../../../run_persistence).)
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
      *         account: 'acme-simulations',
@@ -286,12 +230,9 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * **Return Value**
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
      * @param  {String|{ id: string }} world World object or id.
-     * @param  {String|Object} user (Optional) User object or id. If not provided, picks up user id from current session if end user is logged in.
-     * @param  {String} groupName (Optional) Group the world exists in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {String|Object} [user] User object or id. If not provided, picks up user id from current session if end user is logged in.
+     * @param  {string} [groupName] Group the world exists in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getUserChannel: function (world, user, groupName) {
@@ -317,8 +258,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * Note that the presence channel is tracking all end users in a group. In particular, if the project additionally splits each group into [worlds](../world-manager/), this channel continues to show notifications for all end users in the group (not restricted by worlds).
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var pc = cm.getPresenceChannel();
      *     pc.subscribe('', function (data) {
@@ -336,10 +276,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * **Return Value**
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
-     * @param  {String} groupName (Optional) Group the end user is in. If not provided, picks up group from current session if end user is logged in.
+     * @param  {string} [groupName] Group the end user is in. If not provided, picks up group from current session if end user is logged in.
      * @return {Channel} Channel instance
      */
     getPresenceChannel: function (groupName) {
@@ -367,8 +304,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *
      * There are automatic notifications from Epicenter on this channel when data is created, updated, or deleted in this collection. See more on [automatic messages to the data channel](../../../rest_apis/multiplayer/channel/#data-messages).
      *
-     * **Example**
-     *
+     * @example
      *     var cm = new F.manager.ChannelManager();
      *     var dc = cm.getDataChannel('survey-responses');
      *     dc.subscribe('', function(data, meta) {
@@ -383,9 +319,6 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * **Return Value**
      *
      * * *Channel* Returns the channel (an instance of the [Channel Service](../channel-service/)).
-     *
-     * **Parameters**
-     *
      * @param  {String} collection Name of collection whose automatic notifications you want to receive.
      * @return {Channel} Channel instance
      */

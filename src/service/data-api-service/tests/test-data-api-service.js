@@ -175,7 +175,7 @@ describe('Data API Service', function () {
             ds.remove(['name', 'age']);
 
             var req = server.requests.pop();
-            req.url.should.equal(baseURL + 'person/?id=name,age');
+            req.url.should.equal(baseURL + 'person/?id=name&id=age');
         });
 
         it('Should remove nested keys from collection', function () {

@@ -3,7 +3,7 @@
  *
  * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *
- *      var rm = new F.manager.RunManager({
+ *      const rm = new F.manager.RunManager({
  *          strategy: 'reuse-last-initialized',
  *          strategyOptions: {
  *              initOperation: [{ step: 10 }]
@@ -21,28 +21,28 @@
  *
  */
 
-'use strict';
-var classFrom = require('util/inherit');
-var { injectFiltersFromSession, injectScopeFromSession } = require('managers/run-strategies/strategy-utils');
+import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
 
-var Base = {};
-
-var defaults = {
+export default class ReuseLastInitializedStrategy {
     /**
-     * Operations to execute in the model for initialization to be considered complete.
-     * @type {Array} Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
+     * 
+     * @param {object} [options] 
+     * @property {object[]} [initOperation] Operations to execute in the model for initialization to be considered complete. Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
+     * @property {object} [flag] Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
+     * @property {object} scope 
+     * @property {boolean} scope.scopeByUser  If true, only returns the last run for the user in session. Defaults to true.
+     * @property {boolean} scope.scopeByGroup If true, only returns the last run for the group in session. Defaults to true.
      */
-    initOperation: [],
-
-    /**
-     * (Optional) Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
-     * @type {Object}
-     */
-    flag: null,
-};
-module.exports = classFrom(Base, {
-    constructor: function (options) {
-        var strategyOptions = options ? options.strategyOptions : {};
+    constructor(options) {
+        const defaults = {
+            initOperation: [],
+            flag: null,
+            scope: {
+                scopeByUser: true,
+                scopeByGroup: true,
+            }
+        };
+        const strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
         if (!this.options.initOperation || !this.options.initOperation.length) {
             throw new Error('Specifying an init function is required for this strategy');
@@ -52,37 +52,33 @@ module.exports = classFrom(Base, {
                 isInitComplete: true
             };
         }
-    },
+    }
 
-    reset: function (runService, userSession, options) {
-        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
-        var me = this;
-        return runService.create(opt, options).then(function (createResponse) {
-            return runService.serial([].concat(me.options.initOperation)).then(function () {
-                return createResponse;
-            });
-        }).then(function (createResponse) {
-            return runService.save(me.options.flag).then(function (patchResponse) {
+    reset(runService, userSession, options) {
+        const opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+        return runService.create(opt, options).then((createResponse)=> {
+            return runService.serial([].concat(this.options.initOperation)).then(()=> createResponse);
+        }).then((createResponse)=> {
+            return runService.save(this.options.flag).then((patchResponse)=> {
                 return $.extend(true, {}, createResponse, patchResponse);
             });
         });
-    },
+    }
 
-    getRun: function (runService, userSession, runSession, options) {
-        var sessionFilter = injectFiltersFromSession(this.options.flag, userSession);
-        var runopts = runService.getCurrentConfig();
-        var filter = $.extend(true, { trashed: false }, sessionFilter, { model: runopts.model });
-        var me = this;
+    getRun(runService, userSession, runSession, options) {
+        const sessionFilter = injectFiltersFromSession(this.options.flag, userSession, this.options.scope);
+        const runopts = runService.getCurrentConfig();
+        const filter = $.extend(true, { trashed: false }, sessionFilter, { model: runopts.model });
         return runService.query(filter, { 
             startrecord: 0,
             endrecord: 0,
             sort: 'created', 
             direction: 'desc'
-        }).then(function (runs) {
+        }).then((runs)=> {
             if (!runs.length) {
-                return me.reset(runService, userSession, options);
+                return this.reset(runService, userSession, options);
             }
             return runs[0];
         });
     }
-});
+}

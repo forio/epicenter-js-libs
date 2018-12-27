@@ -123,6 +123,30 @@ describe('Scenario Manager', function () {
             expect(config.project).to.equal('js-libs');
         });
         describe('getRun', function () {
+            it('should query for the right baseline filter', ()=> {
+                var rs = new RunService(runOptions);
+                var sampleBaseline = {
+                    id: 'run1',
+                    name: 'baseline',
+                    saved: true
+                };
+                const querySpy = sinon.spy(()=> $.Deferred().resolve([
+                    sampleBaseline
+                ]).promise());
+                sinon.stub(rs, 'query').callsFake(querySpy);
+                var sm = new ScenarioManager({ run: rs });
+                return sm.baseline.getRun().then(function (run) {
+                    expect(querySpy).to.have.been.calledOnce;
+                    const args = querySpy.getCall(0).args[0];
+                    expect(args).to.eql({
+                        model: runOptions.model,
+                        saved: true,
+                        trashed: false,
+                        name: 'Baseline',
+                        isBaseline: true,
+                    });
+                });
+            });
             it('should return existing runs if it finds one', function () {
                 var rs = new RunService(runOptions);
                 var sampleBaseline = {
@@ -178,10 +202,61 @@ describe('Scenario Manager', function () {
                 return sm.baseline.getRun().then(function (run) {
                     expect(saveStub).to.have.been.calledOnce;
                     var args = saveStub.getCall(0).args;
-                    expect(args[0].name).to.eql('batman');
-                    expect(args[0].saved).to.eql(true);
+                    expect(args[0]).to.eql({
+                        name: 'batman',
+                        saved: true,
+                        trashed: false,
+                        isBaseline: true,
+                    });
                 });
             });
+            describe('Scope', ()=> {
+                it('should scope by user by default', ()=> {
+                    var rs = new RunService(runOptions);
+                    const queryStub = sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
+                    var sm = new ScenarioManager({ 
+                        run: rs,
+                        baseline: {
+                            runName: 'batman',
+                        }
+                    });
+                    sinon.stub(sm.baseline.sessionManager, 'getSession').returns(sampleSession);
+
+                    sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                    sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
+                    sinon.stub(sm.baseline.run, 'save').returns($.Deferred().resolve([]).promise());
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(queryStub).to.have.been.calledOnce;
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['user.id']).to.eql(sampleSession.userId);
+                    });
+                });
+
+                it('should allow to not scope by user', ()=> {
+                    var rs = new RunService(runOptions);
+                    const queryStub = sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
+                    var sm = new ScenarioManager({ 
+                        run: rs,
+                        baseline: {
+                            runName: 'batman',
+                            scope: {
+                                scopeByUser: false,
+                            }
+                        }
+                    });
+                    sinon.stub(sm.baseline.sessionManager, 'getSession').returns(sampleSession);
+
+                    sinon.stub(sm.baseline.run, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                    sinon.stub(sm.baseline.run, 'serial').returns($.Deferred().resolve([]).promise());
+                    sinon.stub(sm.baseline.run, 'save').returns($.Deferred().resolve([]).promise());
+                    return sm.baseline.getRun().then(function (run) {
+                        expect(queryStub).to.have.been.calledOnce;
+                        var args = queryStub.getCall(0).args;
+                        expect(args[0]['user.id']).to.not.exist;
+                    });
+                });
+            });
+           
         });
     });
     describe('current run', function () {
@@ -206,12 +281,54 @@ describe('Scenario Manager', function () {
             });
         });
         describe('#getRun', function () {
-            it('should return last unsaved run if found', function () {
+            it('should query for current runs', ()=> {
                 var rs = new RunService(runOptions);
                 var sampleRun = {
                     id: 'run1',
                     name: 'food',
                     saved: false
+                };
+                const querySpy = sinon.spy(()=> $.Deferred().resolve([
+                    sampleRun
+                ]).promise());
+                sinon.stub(rs, 'query').callsFake(querySpy);
+                var sm = new ScenarioManager({ run: rs });
+                return sm.current.getRun().then(function (run) {
+                    const args = querySpy.getCall(0).args[0];
+                    expect(args).to.eql({
+                        trashed: false,
+                        saved: false,
+                        model: runOptions.model,
+                    });
+                });
+            });
+            it('should suffix trackingKey with current if run already has one', ()=> {
+                var rs = new RunService($.extend(true, {}, runOptions, { scope: { trackingKey: 'mykey' } }));
+                const querySpy = sinon.spy(()=> $.Deferred().resolve([]).promise());
+                const createSpy = sinon.spy(()=> $.Deferred().resolve([]).promise());
+                sinon.stub(rs, 'query').callsFake(querySpy);
+                sinon.stub(rs, 'create').callsFake(createSpy);
+                var sm = new ScenarioManager({ run: rs });
+                return sm.current.getRun().then(function (run) {
+                    const queryArgs = querySpy.getCall(0).args[0];
+                    expect(queryArgs).to.eql({
+                        trashed: false,
+                        saved: false,
+                        model: runOptions.model,
+                    });
+
+                    const createArgs = createSpy.getCall(0).args[0];
+                    expect(createArgs.model).to.eql(runOptions.model);
+                    expect(createArgs.scope).to.eql({
+                        trackingKey: 'mykey-current'
+                    });
+                });
+            });
+            it('should return last tracked run if found', function () {
+                var rs = new RunService(runOptions);
+                var sampleRun = {
+                    id: 'run1',
+                    name: 'food',
                 };
                 sinon.stub(rs, 'query').returns($.Deferred().resolve([
                     sampleRun
@@ -224,12 +341,20 @@ describe('Scenario Manager', function () {
             it('should create a new run if no runs are found', function () {
                 var rs = new RunService(runOptions);
                 sinon.stub(rs, 'query').returns($.Deferred().resolve([]).promise());
-                var createStub = sinon.stub(rs, 'create').returns($.Deferred().resolve({ id: 'foo' }).promise());
+                const createSpy = sinon.spy(()=> $.Deferred().resolve({ id: 'foo' }).promise());
+                var createStub = sinon.stub(rs, 'create').callsFake(createSpy);
                 var sm = new ScenarioManager({ run: rs });
                 return sm.current.getRun().then(function (run) {
                     expect(createStub).to.have.been.calledOnce;
+
+                    const createArgs = createSpy.getCall(0).args[0];
+                    expect(createArgs.model).to.eql(runOptions.model);
+                    expect(createArgs.scope).to.eql({
+                        trackingKey: 'current'
+                    });
                 });
             });
+            
         });
         describe('#saveAndAdvance', function () {
             var rs, sm, saveStub;

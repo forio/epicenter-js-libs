@@ -8,7 +8,7 @@ import { pick } from 'util/object-util';
 var MAX_URL_LENGTH = 2048;
 
 export function extractValidRunParams(params) {
-    const validParams = ['model', 'scope', 'files', 'ephemeral', 'cinFiles'];
+    const validParams = ['model', 'sensitivityMode', 'scope', 'files', 'ephemeral', 'cinFiles'];
     return pick(params, validParams);
 }
 

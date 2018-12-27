@@ -14,18 +14,16 @@ However, you can also work with adapters (services) directly if you just want to
 
 The most commonly used adapters include:
 
-* [Auth Service](../generated/auth-api-service)
-* [Channel Service](../generated/channel-service/)
+* [Data Service](../generated/data-api-service/)
 * [Run Service](../generated/run-api-service/)
 * [Variables Service](../generated/variables-api-service/)
 * [World Adapter](../generated/world-api-adapter/)
-* [Data Service](../generated/data-api-service/)
+* [Asset Adapter](../generated/asset-api-adapter/)
+* [Timer Service](../generated/timer-service/)
 
 The other, less commonly used adapters include:
-
-* [Asset Adapter](../generated/asset-api-adapter/)
+* [Channel Service](../generated/channels/channel-service/)
+* [Auth Service](../generated/auth/auth-service)
 * [State Adapter](../generated/state-api-adapter/)
-* [User Adapter](../generated/user-api-adapter/)
-* [Member Adapter](../generated/member-api-adapter/)
 * [Introspection Service](../generated/introspection-api-service/)
 * [Presence Service](../generated/presence-api-service/)

@@ -56,8 +56,9 @@ $(function () {
         var action = form.prop('action') || 'index.html';
         var userName = $('#username').val();
         var password = $('#password').val();
-        var account = $('#account').val() || fromUrl.account;
-        var project = $('#project').val() || fromUrl.project;
+
+        var account = $('#account:not([data-local])').val() || fromUrl.account || $('#account').val();
+        var project = $('#project:not([data-local])').val() || fromUrl.project || $('#project').val();
         var groupId = ($('#groupId').length ? $('#groupId') : $('<input type="hidden" id="groupId">').appendTo(form)).val();
 
         $('button', form).attr('disabled', 'disabled').addClass('disabled');
@@ -98,6 +99,10 @@ $(function () {
             })
             .then(function () {
                 var session = auth.getCurrentUserSessionInfo();
+                if ($('#log-login').length) {
+                    var url = $('#log-login').val();
+                    $.get(url + '?userName=' + session.userName + '&groupName=' + session.groupName);
+                }
                 var newPage = action;
                 var facPage = $('#fac-redirect-page').val();
                 if ((session.isFac || session.isTeamMember) && facPage) {

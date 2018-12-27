@@ -3,7 +3,7 @@
 var UsersCollection = require('./users-collection');
 var WorldsCollection = require('./worlds-collection');
 var ProjectModel = require('./project-model');
-var AssignemntRow = require('./assignment-row');
+var AssignemntRow = require('./assignment-row').default;
 var env = require('./defaults');
 var AjaxQueue = require('../../../util/ajax-queue');
 
@@ -42,7 +42,6 @@ Assignment.prototype = {
     },
 
     load: function () {
-
         var join = function () {
             this.worlds.setUsersCollection(this.users);
             this.worlds.joinUsers();
@@ -54,7 +53,6 @@ Assignment.prototype = {
             this.users.fetch(),
             this.project.fetch()
         ).then(join);
-
     },
 
     saveEdit: function () {
@@ -81,13 +79,13 @@ Assignment.prototype = {
     getSelectedIds: function () {
         return this.$('tbody :checkbox:checked').map(function () {
             return $(this).data('id');
-        });
+        }).get();
     },
 
     findRowViews: function (ids) {
-        return _.map(ids, function (id) {
+        return ids.map((id)=> {
             return this.rowViews[id];
-        }, this);
+        });
     },
 
     unassignUsers: function (ids) {
@@ -99,12 +97,12 @@ Assignment.prototype = {
         // for now we need to sequence the calls to unassign users from worlds
         var queue = new AjaxQueue();
 
-        _.each(ids, function (userId) {
+        ids.forEach((userId)=> {
             var user = this.users.getById(userId);
             user.set('world', '');
             user.set('role', '');
             queue.add(_.partial(_.bind(this.worlds.updateUser, this.worlds), user));
-        }, this);
+        });
 
         queue.execute(this).then(done);
 
@@ -142,7 +140,7 @@ Assignment.prototype = {
             // for now we need to sequence the calls to patch the users
             // since the API can only operate on one call per group at a time
             var queue = new AjaxQueue();
-            _.each(rows, function (view) {
+            rows.forEach((view)=> {
                 var user = view.model;
                 queue.add(function () {
                     return view.makeInactive()
@@ -152,7 +150,7 @@ Assignment.prototype = {
                         });
                 });
 
-            }, this);
+            });
 
             queue.execute(this).then(done);
         }.bind(this);
@@ -212,11 +210,11 @@ Assignment.prototype = {
     renderTable: function () {
         this.rowViews = {};
         var rows = [];
-        this.users.each(function (u) {
+        this.users.each((u)=> {
             var view = new AssignemntRow({ model: u, worlds: this.worlds, project: this.project });
             this.rowViews[u.get('id')] = view;
             rows.push(view.render().el);
-        }, this);
+        });
 
         this.$('table tbody').append(rows);
     },

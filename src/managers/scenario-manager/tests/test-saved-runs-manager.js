@@ -85,6 +85,19 @@ describe('Saved Runs Manager', function () {
                 expect(args[0]).to.eql({ saved: true, trashed: false, name: 'foo' });
             });
         });
+        it('should patch trackingKey if provided in runOptions', ()=> {
+            const runToSave = new RunService($.extend(true, {}, runOptions, { id: 'foobar' }));
+            const saveStub = sinon.stub(runToSave, 'save').callsFake(function (params) {
+                return $.Deferred().resolve(params).promise();
+            });
+            const srm = new SavedRunsManager({
+                run: { scope: { trackingKey: 'mykey' } }
+            });
+            return srm.save(runToSave, { name: 'foo' }).then(function () {
+                var args = saveStub.getCall(0).args;
+                expect(args[0]).to.eql({ saved: true, trashed: false, name: 'foo', scope: { trackingKey: 'mykey' } });
+            });
+        });
         it('allow passing in string runids', function () {
             return srm.save('food', { name: 'foo' }).then(function () {
                 var req = server.requests.pop();
@@ -222,7 +235,7 @@ describe('Saved Runs Manager', function () {
                 });
                 return srm.getRuns().then(function (runs) {
                     var args = queryStub.getCall(0).args;
-                    expect(args[0]['scope.group']).to.eql('foo');
+                    expect(args[0].scope.group).to.eql('foo');
                     sessionStub.restore();
                 });
             });
@@ -236,7 +249,7 @@ describe('Saved Runs Manager', function () {
                 });
                 return srm.getRuns().then(function (runs) {
                     var args = queryStub.getCall(0).args;
-                    expect(args[0]['scope.group']).to.eql(undefined);
+                    expect(args[0].scope).to.not.exist;
                     sessionStub.restore();
                 });
 

@@ -378,6 +378,20 @@ describe('Run Manager', function () {
                 expect(getRunSpy).to.have.been.calledOnce;
             });
         });
+        it('should combine simultaneous calls to getRun', ()=> {
+            return Promise.all([rm.getRun(), rm.getRun()]).then((resArr)=> {
+                expect(getRunSpy).to.have.been.calledOnce;
+                expect(resArr[0]).to.eql({ id: runid });
+            });
+        });
+        it('should not combine non-simultaneous calls to getRun', ()=> {
+            return rm.getRun().then(()=> {
+                return rm.getRun();
+            }).then((res)=> {
+                expect(getRunSpy).to.have.been.calledTwice;
+                expect(res).to.eql({ id: runid });
+            });
+        });
         it('should be called with the right run service', function () {
             return rm.getRun().then(function () {
                 expect(getRunSpy.getCall(0).args[0]).to.be.instanceof(RunService);
@@ -393,10 +407,12 @@ describe('Run Manager', function () {
             var rs, variableStub, rm;
             beforeEach(function () {
                 rs = new RunService(runOptions);
-                var variableQuerySpy = sinon.spy(function () {
-                    return $.Deferred().resolve({
-                        price: 2
-                    }).promise();
+                var variableQuerySpy = sinon.spy(function (v) {
+                    const res = [].concat(v).reduce((accum, vName)=> {
+                        accum[vName] = 2;
+                        return accum;
+                    }, {});
+                    return $.Deferred().resolve(res).promise();
                 });
                 variableStub = sinon.stub(rs, 'variables').callsFake(function (options) {
                     return {
@@ -413,6 +429,17 @@ describe('Run Manager', function () {
                     expect(variableStub).to.not.have.been.called;
                 });
             });
+            it('should combine simultaneous calls to getRun with variables', ()=> {
+                return Promise.all([rm.getRun('price'), rm.getRun('sales')]).then((resArr)=> {
+                    expect(getRunSpy).to.have.been.calledOnce;
+                    expect(resArr[0]).to.eql({ 
+                        id: runid,
+                        variables: {
+                            price: 2 
+                        }
+                    });
+                });
+            });
             it('should call variables service if variables provided', function () {
                 return rm.getRun('price').then(function (run) {
                     expect(variableStub).to.have.been.calledOnce;
@@ -422,6 +449,7 @@ describe('Run Manager', function () {
                     expect(run.variables).to.eql({ price: 2 });
                 });
             });
+            
             it('should return a run with no variables if variables call fails', function () {
                 var rs = new RunService(runOptions);
                 var variableQuerySpy = sinon.spy(function () {

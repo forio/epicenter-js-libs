@@ -25,41 +25,45 @@ F.transport.Ajax = require('./transport/ajax-http-transport');
 
 F.service.URL = require('./service/url-config-service');
 F.service.Config = require('./service/configuration-service').default;
-F.service.Run = require('./service/run-api-service');
+F.service.Run = require('./service/run-api-service').default;
 F.service.File = require('./service/admin-file-service');
-F.service.Variables = require('./service/run-api-service/variables-api-service');
+F.service.Variables = require('./service/run-api-service/variables-api-service').default;
 F.service.Data = require('./service/data-api-service').default;
-F.service.Auth = require('./service/auth-api-service');
+F.service.Auth = require('./service/auth-api-service').default;
 F.service.World = require('./service/world-api-adapter').default;
-F.service.State = require('./service/state-api-adapter');
-F.service.User = require('./service/user-api-adapter');
-F.service.Member = require('./service/member-api-adapter');
-F.service.Asset = require('./service/asset-api-adapter');
+F.service.State = require('./service/state-api-adapter').default;
+F.service.User = require('./service/user-api-adapter').default;
+F.service.Member = require('./service/member-api-adapter').default;
+F.service.Asset = require('./service/asset-api-adapter').default;
 F.service.Group = require('./service/group-api-service').default;
-F.service.Introspect = require('./service/introspection-api-service');
+F.service.Introspect = require('./service/introspection-api-service').default;
 F.service.Presence = require('./service/presence-api-service').default;
 F.service.Time = require('./service/time-api-service').default;
 F.service.Timer = require('./service/timer-service').default;
 F.service.Password = require('./service/password-api-service').default;
 
-F.service.Consensus = require('./service/consensus-api-service/consensus-service');
-F.service.ConsensusGroup = require('./service/consensus-api-service/consensus-group-service');
+F.service.Consensus = require('./service/consensus-api-service/consensus-service').default;
+F.service.ConsensusGroup = require('./service/consensus-api-service/consensus-group-service').default;
+
+F.service.Project = require('./service/project-api-service').default;
 
 F.store.Cookie = require('./store/cookie-store');
-
 F.factory.Store = require('./store/store-factory');
 
-F.manager.ScenarioManager = require('./managers/scenario-manager');
+F.manager.ScenarioManager = require('./managers/scenario-manager').default;
 F.manager.RunManager = require('./managers/run-manager').default;
-F.manager.AuthManager = require('./managers/auth-manager');
-F.manager.WorldManager = require('./managers/world-manager');
-F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-manager');
+F.manager.User = require('./managers/user-manager').default;
+F.manager.AuthManager = require('./managers/auth-manager').default;
+F.manager.WorldManager = require('./managers/world-manager').default;
+F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-manager').default;
 
 var strategies = require('./managers/run-strategies');
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager').default;
-F.service.Channel = require('./service/channel-service');
+F.service.Channel = require('./service/channel-service').default;
+
+F.manager.ConsensusManager = require('./managers/consensus-manager').default;
 
 if (RELEASE_VERSION) F.version = RELEASE_VERSION; //eslint-disable-line no-undef
 F.api = require('./api-version.json');

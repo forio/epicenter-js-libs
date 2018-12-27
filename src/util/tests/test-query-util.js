@@ -1,5 +1,5 @@
 
-import { toMatrixFormat, normalizeSlashes, toQueryFormat, qsToObject, mergeQS, addTrailingSlash } from '../query-util';
+import { toMatrixFormat, normalizeSlashes, toQueryFormat, qsToObject, mergeQS } from '../query-util';
 
 describe('Query Util', function () {
     describe('#toMatrixFormat()', function () {
@@ -21,6 +21,12 @@ describe('Query Util', function () {
         });
         it('should leave strings as is', function () {
             toMatrixFormat('a=b').should.equal('a=b');
+        });
+        it('should handle nested objects', ()=> {
+            toMatrixFormat({ scope: { trackingKey: 'foo' }, a: 2, b: 3 }).should.equal(';scope.trackingKey=foo;a=2;b=3');
+        });
+        it('should handle arrays', ()=> {
+            toMatrixFormat({ scope: { trackingKey: 'foo' }, id: [1, 2] }).should.equal(';scope.trackingKey=foo;id=1;id=2');
         });
     });
 
