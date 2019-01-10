@@ -601,6 +601,7 @@ function toQueryFormat(qs) {
         if (Array.isArray(value)) {
             value = value.join(',');
         }
+
         if ($.isPlainObject(value)) {
             //Mostly for data api
             value = JSON.stringify(value);
@@ -651,12 +652,12 @@ function mergeQS(qs1, qs2) {
 }
 
 /**
- * 
+ *
  * @param {string} url url to sanitize
  * @param {object} [options] determines if leading/trailing slashes are expected
  * @param {boolean} [options.leading]
  * @param {boolean} [options.trailing]
- * 
+ *
  * @returns {string}
  */
 function normalizeSlashes(url, options) {
@@ -1641,7 +1642,7 @@ function WorldAPIAdapter(config) {
         * @return {Promise}
         */
         update: function (params, options) {
-            var whitelist = ['roles', 'optionalRoles', 'minUsers'];
+            var whitelist = ['roles', 'optionalRoles', 'minUsers', 'name'];
             options = options || {};
             setIdFilterOrThrowError(options);
 
@@ -2676,6 +2677,7 @@ var epiVersion = __webpack_require__(22);
 
 //TODO: urlutils to get host, since no window on node
 var defaults = {
+    protocol: window.location.protocol.replace(':', ''),
     host: window.location.host,
     pathname: window.location.pathname
 };
@@ -2719,14 +2721,20 @@ var UrlConfigService = function (config) {
         actingHost = options.host;
     }
 
-    var API_PROTOCOL = 'https';
+    var actingProtocol = config && config.protocol;
+    if (!actingProtocol && options.isLocalhost()) {
+        actingProtocol = 'https';
+    } else {
+        actingProtocol = options.protocol;
+    }
+
     var HOST_API_MAPPING = {
         'forio.com': 'api.forio.com',
         'foriodev.com': 'api.epicenter.foriodev.com'
     };
 
     var publicExports = {
-        protocol: API_PROTOCOL,
+        protocol: actingProtocol,
 
         api: '',
 
@@ -2970,9 +2978,19 @@ function MemberAPIService(config) {
         return serviceOptions;
     };
 
+    var generateUserQuery = function (params) {
+        if (!params.userId || !params.userId.length) {
+            throw new Error('No userId specified.');
+        }
+
+        var uidQuery = [].concat(params.userId).join('&userId=');
+        return '?userId=' + uidQuery;
+    };
+
     var patchUserActiveField = function (params, active, options) {
+        params = getFinalParams(params);
         var httpOptions = $.extend(true, serviceOptions, options, {
-            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + '/' + params.userId
+            url: urlConfig.getAPIPath(API_ENDPOINT) + params.groupId + generateUserQuery(params)
         });
 
         return http.patch({ active: active }, httpOptions);
@@ -3010,8 +3028,8 @@ function MemberAPIService(config) {
                 throw new Error('No userId specified.');
             }
 
-            var getParms = isString ? { userId: params } : Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(objParams, ['userId']);
-            return http.get(getParms, httpOptions);
+            var getParams = isString ? { userId: params } : Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(objParams, ['userId']);
+            return http.get(getParams, httpOptions);
         },
 
         /**
@@ -3085,7 +3103,7 @@ function MemberAPIService(config) {
         *
         * 
         * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make active.
+        * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -3104,7 +3122,7 @@ function MemberAPIService(config) {
         *
         * 
         * @param {object} params The end user and group information.
-        * @param {string} params.userId The id of the end user to make inactive.
+        * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -4755,7 +4773,7 @@ var DataService = function () {
             var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
             var params;
             if (Array.isArray(keys)) {
-                params = { id: keys };
+                params = 'id=' + keys.join('&id=');
                 mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
             } else {
                 params = '';
@@ -4784,7 +4802,7 @@ var DataService = function () {
 
         /**
          * Gets a channel to listen to notifications on for this collection
-         * 
+         *
          * @param {Object} [options] Overrides for configuration options.
          * @return {Channnel} channel instance to subscribe with.
          */
@@ -4979,10 +4997,10 @@ var GroupService = function (config) {
         /**
         * Gets information for a group or multiple groups.
         * @param {Object} params object with query parameters
-        * @patam {string} params.q partial match for name, organization or event.
-        * @patam {string} params.account Epicenter's Team ID
-        * @patam {string} params.project Epicenter's Project ID
-        * @patam {string} params.name Epicenter's Group Name
+        * @param {string} params.q partial match for name, organization or event.
+        * @param {string} params.account Epicenter's Team ID
+        * @param {string} params.project Epicenter's Project ID
+        * @param {string} params.name Epicenter's Group Name
         * @param {Object} [options] Overrides for configuration options.
         * @return {Promise}
         */

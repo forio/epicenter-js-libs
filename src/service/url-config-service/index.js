@@ -2,8 +2,18 @@
 
 var epiVersion = require('../../api-version.json');
 
+function isLocalHost(host) {
+    var isLocal = !host || //phantomjs
+        host === '127.0.0.1' ||
+        host.indexOf('local.') === 0 ||
+        host.indexOf('ngrok') !== -1 ||
+        host.indexOf('localhost') === 0;
+    return isLocal;
+}
+
 //TODO: urlutils to get host, since no window on node
 var defaults = {
+    protocol: isLocalHost(window.location.host) ? 'https' : window.location.protocol.replace(':', ''),
     host: window.location.host,
     pathname: window.location.pathname
 };
@@ -18,12 +28,7 @@ function getLocalHost(existingFn, host) {
         }
     } else {
         localHostFn = function () {
-            var isLocal = !host || //phantomjs
-                host === '127.0.0.1' || 
-                host.indexOf('local.') === 0 || 
-                host.indexOf('ngrok') !== -1 || 
-                host.indexOf('localhost') === 0;
-            return isLocal;
+            return isLocalHost(host);
         };
     }
     return localHostFn;
@@ -40,7 +45,7 @@ var UrlConfigService = function (config) {
     var options = $.extend({}, defaults, overrides);
 
     overrides.isLocalhost = options.isLocalhost = getLocalHost(options.isLocalhost, configOverrides.host);
-    
+
     var actingHost = config && config.host;
     if (!actingHost && options.isLocalhost()) {
         actingHost = 'forio.com';
@@ -48,14 +53,20 @@ var UrlConfigService = function (config) {
         actingHost = options.host;
     }
 
-    var API_PROTOCOL = 'https';
+    var actingProtocol = config && config.protocol;
+    if (!actingProtocol && options.isLocalhost()) {
+        actingProtocol = 'https';
+    } else {
+        actingProtocol = options.protocol;
+    }
+
     var HOST_API_MAPPING = {
         'forio.com': 'api.forio.com',
         'foriodev.com': 'api.epicenter.foriodev.com'
     };
 
     var publicExports = {
-        protocol: API_PROTOCOL,
+        protocol: actingProtocol,
 
         api: '',
 
@@ -113,7 +124,7 @@ var UrlConfigService = function (config) {
                 channel: 'channel/subscribe'
             };
             var apiEndpoint = apiMapping[api] || api;
-            
+
             if (apiEndpoint === 'config') {
                 var actualProtocol = window.location.protocol.replace(':', '');
                 var configProtocol = (options.isLocalhost()) ? this.protocol : actualProtocol;

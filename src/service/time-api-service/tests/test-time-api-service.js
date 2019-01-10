@@ -39,7 +39,14 @@ describe('Timer API Service', function () {
             req.url.should.equal(baseURL);
         });
     });
-    it('should respect server config', function () {
+    it('should respect default server protocol', function () {
+        var ts = new TimeService();
+        return ts.getTime().then(function () {
+            var req = server.requests.pop();
+            req.url.should.equal('https://api.forio.com/v2/time/');
+        });
+    });
+    it('should allow overriding server host', function () {
         var ts = new TimeService({
             server: {
                 host: 'foobar.com'
@@ -48,6 +55,18 @@ describe('Timer API Service', function () {
         return ts.getTime().then(function () {
             var req = server.requests.pop();
             req.url.should.equal('https://foobar.com/v2/time/');
+        });
+    });
+    it('should allow overriding server protocol', function () {
+        var ts = new TimeService({
+            server: {
+                protocol: 'utp',
+                host: 'foobar.com'
+            }
+        });
+        return ts.getTime().then(function () {
+            var req = server.requests.pop();
+            req.url.should.equal('utp://foobar.com/v2/time/');
         });
     });
     it('should return a date object', function () {
