@@ -2,9 +2,18 @@
 
 var epiVersion = require('../../api-version.json');
 
+function isLocalHost(host) {
+    var isLocal = !host || //phantomjs
+        host === '127.0.0.1' ||
+        host.indexOf('local.') === 0 ||
+        host.indexOf('ngrok') !== -1 ||
+        host.indexOf('localhost') === 0;
+    return isLocal;
+}
+
 //TODO: urlutils to get host, since no window on node
 var defaults = {
-    protocol: window.location.protocol.replace(':', ''),
+    protocol: isLocalHost(window.location.host) ? 'https' : window.location.protocol.replace(':', ''),
     host: window.location.host,
     pathname: window.location.pathname
 };
@@ -19,12 +28,7 @@ function getLocalHost(existingFn, host) {
         }
     } else {
         localHostFn = function () {
-            var isLocal = !host || //phantomjs
-                host === '127.0.0.1' ||
-                host.indexOf('local.') === 0 ||
-                host.indexOf('ngrok') !== -1 ||
-                host.indexOf('localhost') === 0;
-            return isLocal;
+            return isLocalHost(host);
         };
     }
     return localHostFn;
