@@ -90,6 +90,19 @@ const files = [
  *      run-api-service.md (optional)
  *  Creates run-api-service/index.html.md
  */
+
+function createFile(dest, contents) {
+    const spilt = dest.split('/');
+    const fileName = spilt.pop();
+    try {
+        fs.mkdirSync(spilt.join('/'), { recursive: true });
+    } catch (e) {
+        //folder alerady exists, and that's okay
+    }
+    fs.writeFileSync(dest, contents, { flag: 'wx' });
+    console.log(`Created ${dest}`);
+}
+
 files.forEach((ip)=> {
     const file = ip.src || ip;
     const srcFile = file.indexOf('.js') === -1 ? `${file}/index.js` : file;
@@ -116,8 +129,7 @@ files.forEach((ip)=> {
 
         const destFile = ip.dest || `${key}/index.html.md`;
         const dest = `${OP_FOLDER}/${destFile}`;
-        fs.writeFileSync(dest, [prologue, header, contents].join('\n'));
-        console.log('Created', dest);
+        createFile(dest, [prologue, header, contents].join('\n'));
     });
 });
 
