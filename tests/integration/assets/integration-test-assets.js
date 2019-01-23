@@ -3,14 +3,14 @@
 $(function () {
     var server = {
         server: {
-            host: 'api.forio.com'
+            host: 'test.forio.com'
         },
         account: 'forio-dev',
         project: 'dummy'
     };
     var credentials = {
-        userName: 'ricardo001',
-        password: 'test1234'
+        userName: 'testuser1',
+        password: 'testuser1'
     };
 
     var scopes = {
@@ -20,20 +20,24 @@ $(function () {
     };
 
     var AssetView = function () {
-        var $el = $('#content');
+        var am = new F.manager.AuthManager(server);
+
         var $loginEl = $('#loginModal');
 
         return {
-            assetAdapter: null,
+            assetAdapter: new F.service.Asset(server),
 
             init: function () {
                 $('.btn-primary', $loginEl).on('click', $.proxy(this.login, this));
                 $('.list [name=scope]').on('change', $.proxy(this.listAssets, this));
                 $('.upload form').on('submit', $.proxy(this.uploadFile, this));
-                $loginEl.modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
+                if (!am.isLoggedIn()) {
+                    $loginEl.modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                }
+                
 
                 //Populate scopes
                 var scopeEl = $('[name=scope]');
@@ -43,21 +47,32 @@ $(function () {
                         .html(scopes[key]);
                     scopeEl.append(opt);
                 }
+
+                $('#btnGetURL').on('click', (evt)=> {
+                    evt.preventDefault();
+                    this.assetAdapter.getTargetUploadURL('foo.bar').then((res)=> {
+                        alert('See console for details');
+                        console.log('Target is', res);
+                    });
+                });
             },
 
             login: function () {
                 var am = new F.manager.AuthManager(server);
-                var _this = this;
-                am.login({
-                    userName: $('#txtUsername').val(),
-                    password: $('#txtPassword').val(),
-                }).then(function (response) {
-                    $loginEl.modal('hide');
-                    $('.status').append('<div class="alert alert-success">Logged in as: ' + credentials.userName + '</div>');
-                    _this.assetAdapter = new F.service.Asset(server);
-                    _this.listAssets();
-                }).fail(function () {
-                    $('.modal-status').append('<div class="alert alert-danger">Invalid username or password</div>');
+                function doLogin() {
+                    return am.login({
+                        userName: $('#txtUsername').val(),
+                        password: $('#txtPassword').val(),
+                    }).then(function (response) {
+                        $loginEl.modal('hide');
+                        $('.status').append('<div class="alert alert-success">Logged in as: ' + credentials.userName + '</div>');
+                    }).fail(function () {
+                        $('.modal-status').append('<div class="alert alert-danger">Invalid username or password</div>');
+                    });
+                }
+                const prom = am.isLoggedIn() ? Promise.resolve() : doLogin();
+                prom.then(()=> {
+                    this.listAssets();
                 });
             },
 

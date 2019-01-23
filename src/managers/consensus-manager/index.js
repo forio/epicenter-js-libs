@@ -28,7 +28,6 @@ export default class ConsensusManager {
 
             }
         };
-
         this.serviceOptions = $.extend(true, {}, opts, config);
     }
 
