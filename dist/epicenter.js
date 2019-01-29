@@ -7895,12 +7895,13 @@ function AssetAdapter(config) {
         });
     };
 
-    var buildUrl = function (filename, options) {
+    var buildUrl = function (filename, options, subEndPoint) {
         validateUrlParams(options);
         var partKeys = scopeConfig[options.scope];
-        var parts = $.map(partKeys, function (key) {
+        var parts = partKeys.map(function (key) {
             return options[key];
         });
+        if (subEndPoint) parts = [subEndPoint].concat(parts);
         if (filename) {
             // This prevents adding a trailing / in the URL as the Asset API
             // does not work correctly with it
@@ -8085,6 +8086,28 @@ function AssetAdapter(config) {
         */
         replace: function (filename, params, options) {
             return upload('put', filename, params, options);
+        },
+
+        /**
+         * Get upload url to S3
+         * 
+         * @param {string} filename  Name of the file to upload.
+         * @param {object} [params] 
+         * @param {number} params.ttlSeconds Number of seconds link is valid for
+         * @param {object} [options] Options object to override service options.
+         * @return {Promise}
+         */
+        getTargetUploadURL: function (filename, params, options) {
+            var getServiceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["pick"])(serviceOptions, ['scope', 'account', 'project', 'group', 'userId']);
+            var urlOptions = $.extend({}, getServiceOptions, options);
+            var url = buildUrl(filename, urlOptions, 'register');
+
+            var postOptions = Object.assign({}, {
+                ttlSeconds: 900
+            }, params);
+            var httpOptions = $.extend(true, {}, urlOptions, { url: url });
+
+            return http.post(postOptions, httpOptions);
         },
 
         /**
@@ -10494,7 +10517,6 @@ var ConsensusManager = function () {
             strategy: '',
             strategyOptions: {}
         };
-
         this.serviceOptions = $.extend(true, {}, opts, config);
     }
 

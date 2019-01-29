@@ -99,7 +99,7 @@ function createFile(dest, contents) {
     } catch (e) {
         //folder alerady exists, and that's okay
     }
-    fs.writeFileSync(dest, contents, { flag: 'wx' });
+    fs.writeFileSync(dest, contents);
     console.log(`Created ${dest}`);
 }
 

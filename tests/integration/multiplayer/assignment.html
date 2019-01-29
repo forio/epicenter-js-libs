@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Multiplayer Assignment test </title>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter-multiplayer-dependencies.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter.js"></script> -->
+
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/lodash/lodash.js"></script>
+    <script src="/dist/epicenter-multiplayer-dependencies.min.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
+    <script src="/dist/components/assignment/assignment.min.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/dist/components/assignment/assignment.css">
+    <style>
+        section {
+            padding: 30px 0;
+            border-top: 1px dotted silver;
+        }
+        .instructions {
+            color: blue;
+        }
+    </style>
+</head>
+<body class="container">
+    <section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
+
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="multiplayer-test" >
+                <br/>
+
+                <label for="">FAC Username</label>
+                <input type="text" id="txtUsername" value="nrn_fac" >
+                <br/>
+
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="password1" >
+                <br/>
+
+                <label for="">API Server (leave blank to use default)</label>
+                <input type="text" id="txtServer" value="" >
+                <br/>
+
+                <label for="">Model</label>
+                <input type="text" id="txtModel" value="gglasses.vmf" >
+                <br/>
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              Make sure you enter info for 
+              <ul>
+                  <li>A team account</li>
+                  <li>Push channel turned on</li>
+              </ul>
+          </div>
+      </div>
+    </section>
+
+    <section>
+        <div class="row assign-users" id="assign-users">
+            <div class="row">
+                <div class="col-sm-10 col-xs-12">
+                    <h4 class="f-text-container">Assign Roles</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 control-panel">
+                    <div class="table-controls">
+                        <button class="auto-assign-all btn btn-primary">Automatically assign users</button>
+                        <div class="component controls">
+                            <button class="unassign-user btn btn-default">Unassign Selected Users</button>
+                            <!-- <button class="make-user-inactive btn">Make Inactive</button> -->
+                        </div>
+                    </div>
+                    <span class="status-widget">
+                        <div class="status" id="users-status">
+                            <span class="success-icon glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            <span class="error-icon glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                            <span class="text"></span>
+                        </div>
+                        <div class="status" id="worlds-status">
+                            <span class="success-icon glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            <span class="error-icon glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                            <span class="text"></span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            
+            <table class="table users-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th></th>
+                        <th>World</th>
+                        <th>Role</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Unassigned</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        
+    </section>
+    <script src="../common.js"></script>
+    <script>
+        new window.forio.MultiplayerAssignmentComponent({
+            el: '#assign-users',
+            account: 'team-naren',
+            project: 'multiplayer-test',
+            group: 'default-feb-2015',
+            groupId: '3ea1fde9-cd6b-4326-8bb1-3bb79b4cf1f1',
+        }).load();
+    </script>
+</body>
+</html>
