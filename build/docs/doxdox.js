@@ -3,10 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 
-const templateFile = fs.readFileSync(path.resolve(__dirname, './general-doc-template.ejs'), 'utf-8');
-
-const OP_FOLDER = path.resolve(__dirname, '../../documentation/generated');
-const IP_FOLDER = path.resolve(__dirname, '../../src');
 const files = [
     'service/timer-service',
     'service/run-api-service',
@@ -34,7 +30,6 @@ const files = [
         src: 'managers/settings-manager/settings-service.js',
         dest: 'settings-service/index.html.md',
     },
-
     {
         src: 'managers/scenario-manager/saved-runs-manager/index.js',
         dest: 'scenario-manager/saved/index.html.md',
@@ -68,7 +63,14 @@ const files = [
         src: 'managers/epicenter-channel-manager/channel-manager',
         dest: 'channels/channel-manager/index.html.md',
     },
-
+    {
+        src: 'managers/run-strategies',
+        include: [
+            'managers/run-strategies/multiplayer-strategy',  
+            'managers/run-strategies/reuse-across-sessions',  
+        ],
+        dest: 'run-strategies/index.html.md',
+    },
     {
         src: 'managers/auth-manager',
         dest: 'auth/auth-manager/index.html.md',
@@ -91,6 +93,25 @@ const files = [
  *  Creates run-api-service/index.html.md
  */
 
+const defaultDocTemplate = fs.readFileSync(path.resolve(__dirname, './general-doc-template.ejs'), 'utf-8');
+const OP_FOLDER = path.resolve(__dirname, '../../documentation/generated');
+const IP_FOLDER = path.resolve(__dirname, '../../src');
+
+function normalizeInputStructure(ip) {
+    const file = ip.src || ip;
+    const key = file.split('/').reverse()[0].replace('.js', '');
+    const srcFile = file.indexOf('.js') === -1 ? `${file}/index.js` : file;
+    const destFile = ip.dest || `${key}/index.html.md`;
+
+    return {
+        src: `${IP_FOLDER}/${srcFile}`,
+        dest: `${OP_FOLDER}/${destFile}`,
+        docTitle: ip.title || key,
+        headerFile: ip.header || `${IP_FOLDER}/${file}/${key}.md`,
+        includes: ip.includes || [],
+        template: ip.template || defaultDocTemplate,
+    };
+}
 function createFile(dest, contents) {
     const spilt = dest.split('/');
     const fileName = spilt.pop();
@@ -103,33 +124,41 @@ function createFile(dest, contents) {
     console.log(`Created ${dest}`);
 }
 
-files.forEach((ip)=> {
-    const file = ip.src || ip;
-    const srcFile = file.indexOf('.js') === -1 ? `${file}/index.js` : file;
-    dd.parseFiles([`${IP_FOLDER}/${srcFile}`], {
+function getHeaderText(headerFile, includes) {
+    if (!headerFile) return Promise.resolve('');
+    return new Promise((resolve, reject)=> {
+        let header = '';
+        try {
+            const headerContents = fs.readFileSync(headerFile, 'utf-8');
+            // parseFiles(ip).
+            header = _.template(headerContents)({ data: includes });
+            resolve(header);
+        } catch (e) {
+            resolve('');
+        }
+    });
+}
+
+files.map(normalizeInputStructure).forEach((ip)=> {
+    dd.parseFiles([ip.src], {
         ignore: '', 
         parser: 'dox', 
         layout: path.resolve(__dirname, 'ddplugin.js')
     }).then((data)=> {
-        const contents = _.template(templateFile)(data[0]);
-        const key = file.split('/').reverse()[0].replace('.js', '');
+        const contents = _.template(ip.template)(data[0]);
         const prologue = [
             '---',
-            `title: ${key}`,
+            `title: ${ip.docTitle}`,
             'layout: "jslib"',
             'isPage: true',
             '---',
         ].join('\n');
-        let header = '';
-        try {
-            header = fs.readFileSync(`${IP_FOLDER}/${file}/${key}.md`, 'utf-8');
-        } catch (e) {
-            // console.log('No description file found for', file);
-        }
-
-        const destFile = ip.dest || `${key}/index.html.md`;
-        const dest = `${OP_FOLDER}/${destFile}`;
-        createFile(dest, [prologue, header, contents].join('\n'));
+        
+        getHeaderText(ip.headerFile, ip.includes).then((headerData)=> {
+            createFile(ip.dest, [prologue, headerData, contents].join('\n'));
+        }, (e)=> {
+            console.error('Could not get header text', e);
+        });
     });
 });
 
