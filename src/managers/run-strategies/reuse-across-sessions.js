@@ -1,3 +1,7 @@
+import classFrom from 'util/inherit';
+import IdentityStrategy from './none-strategy';
+import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
+
 /**
  * The `reuse-across-sessions` strategy returns the latest (most recent) run for this user, whether it is in memory or not. If there are no runs for this user, it creates a new one.
  *
@@ -9,23 +13,16 @@
  *     * If there are no runs (either in memory or in the database), create a new one.
  *     * If there are runs, take the latest (most recent) one.
  *
- * @name persistent-single-player
  */
-
-import classFrom from 'util/inherit';
-import IdentityStrategy from './none-strategy';
-import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
-
 const Strategy = classFrom(IdentityStrategy, {
+    /**
+     * @param {object} [options] strategy options
+     * @param {object} [options.filter ] Additional filters to retreive a run (e.g { saved: true }) etc
+     */
     constructor: function Strategy(options) {
         const defaults = {
-            /**
-             * (Optional) Additional criteria to use while selecting the last run
-             * @type {Object}
-             */
             filter: {},
         };
-        
         const strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
     },

@@ -20,6 +20,7 @@ import reuseNever from './reuse-never';
 import reusePerSession from './reuse-per-session';
 import reuseAcrossSessions from './reuse-across-sessions';
 import reuseLastInitialized from './reuse-last-initialized';
+import reuseByTrackingKey from './reuse-by-tracking-key';
  
 import useSpecificRun from './use-specific-run-strategy';
 
@@ -28,6 +29,8 @@ export const strategyKeys = {
     REUSE_PER_SESSION: 'reuse-per-session',
     REUSE_ACROSS_SESSIONS: 'reuse-across-sessions',
     REUSE_LAST_INITIALIZED: 'reuse-last-initialized',
+
+    REUSE_BY_TRACKINGKEY: 'reuse-by-tracking-key',
     USE_SPECIFIC_RUN: 'use-specific-run',
 
     MULTIPLAYER: 'multiplayer',
@@ -46,6 +49,7 @@ var list = {
     [strategyKeys.REUSE_PER_SESSION]: reusePerSession,
     [strategyKeys.REUSE_ACROSS_SESSIONS]: reuseAcrossSessions,
     [strategyKeys.REUSE_LAST_INITIALIZED]: reuseLastInitialized,
+    [strategyKeys.REUSE_BY_TRACKINGKEY]: reuseByTrackingKey,
 };
 
 //Add back older aliases
@@ -110,19 +114,14 @@ const strategyManager = {
      * Adds a new strategy.
      *
      * @example
-     *      // this "favorite run" strategy always returns the same run, no matter what
-     *      // (not a useful strategy, except as an example)
-     *      F.manager.RunManager.strategies.register(
-     *          'favRun', 
-     *          function() { 
-     *              return { getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
-     *                      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
-     *              } 
-     *          }, 
-     *          { requiresAuth: true }
-     *      );
-     *      
-     *      var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
+     * // this "favorite run" strategy always returns the same run, no matter what
+     * // (not a useful strategy, except as an example)
+     * F.manager.RunManager.strategies.register('favRun', function() { 
+     *  return { 
+     *      getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
+     *      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
+     *  }}, { requiresAuth: true });
+     * var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
      *
      * 
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.

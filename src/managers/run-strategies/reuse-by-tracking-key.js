@@ -8,6 +8,7 @@ const errors = {
     NO_TRACKING_KEY: 'NO_TRACKING_KEY'
 };
 
+
 /**
  * @param {RunService} runService 
  * @param {string} trackingKey 
@@ -29,6 +30,13 @@ function getRunsForKey(runService, trackingKey, userSession) {
     });
 }
 
+/**
+ * The `reuse-by-tracking-key` strategy creates or returns the most recent run matching a given tracking key. You can optionally  also provide a "Run limit", and it'll prevent new runs from being created with this strategy once that limit has  been reached.
+ *
+ * This strategy is used by the Settings Manager to apply class settings for turn-by-turn simulations, but can also be used stand-alone.
+ *
+ * @name reuse-by-tracking-key
+ */
 class ReuseWithTrackingKeyStrategy {
     /**
      * @param {object} [options] 

@@ -8,14 +8,10 @@
 <body>
     <script>
         var rm = new F.manager.RunManager({
-            strategy: 'reuse-last-initialized',
-            strategyOptions: {
-                initOperation: [{ stepTo: 'end' }]
-            },
             run: {
-                account: 'jaimedp',
-                project: 'glasses',
-                model: 'gglasses.vmf'
+                scope: {
+                    trackingKey: 'foo'
+                }
             }
         });
         
