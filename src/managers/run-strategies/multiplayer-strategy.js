@@ -10,7 +10,6 @@ export default class MultiplayerStrategy {
     constructor(options) {
         const defaults = {};
         this.options = $.extend(true, {}, defaults, options);
-        this.worldApi = new WorldApiAdapter(this.options.run);
     }
 
     reset(runService, session, options) {
@@ -18,10 +17,11 @@ export default class MultiplayerStrategy {
         const optionsToPassOn = $.extend(true, {}, options, {
             success: $.noop,
         });
-        return this.worldApi
+        const worldApi = new WorldApiAdapter(runService.getCurrentConfig());
+        return worldApi
             .getCurrentWorldForUser(userId, groupName)
             .then((world)=> {
-                return this.worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
+                return worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
                     const toReturn = {
                         id: runid
                     };
@@ -33,7 +33,7 @@ export default class MultiplayerStrategy {
 
     getRun(runService, session) {
         const { userId, groupName } = session;
-        const worldApi = this.worldApi;
+        const worldApi = new WorldApiAdapter(runService.getCurrentConfig());
         const model = this.options.model;
 
         if (!userId) {
@@ -54,7 +54,7 @@ export default class MultiplayerStrategy {
                 });
         };
 
-        return this.worldApi
+        return worldApi
             .getCurrentWorldForUser(userId, groupName)
             .then(loadRunFromWorld);
     }
