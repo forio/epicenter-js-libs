@@ -122,15 +122,5 @@ describe('Multiplayer strategy', function () {
         });
     });
     describe('#reset', function () {
-        it('should pass through options to worldapi:newrunforworld', function () {
-            var rm = createRunManager();
-            var worldapi = rm.strategy.worldApi;
-            var newrunStub = sinon.stub(worldapi, 'newRunForWorld').returns($.Deferred().resolve('runid').promise());
-            var options = { success: sinon.spy() };
-
-            return rm.reset(options).then(function () {
-                newrunStub.should.have.been.calledOnce;
-            });
-        });
     });
 });
