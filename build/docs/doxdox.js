@@ -65,9 +65,15 @@ const files = [
     },
     {
         src: 'managers/run-strategies',
-        include: [
-            'managers/run-strategies/multiplayer-strategy',  
+        includeFiles: [
+            'managers/run-strategies/reuse-per-session',  
             'managers/run-strategies/reuse-across-sessions',  
+            'managers/run-strategies/reuse-by-tracking-key',  
+            'managers/run-strategies/reuse-last-initialized',  
+            'managers/run-strategies/reuse-never',  
+            'managers/run-strategies/multiplayer-strategy',  
+            'managers/run-strategies/use-specific-run-strategy',  
+            'managers/run-strategies/none-strategy',  
         ],
         dest: 'run-strategies/index.html.md',
     },
@@ -82,7 +88,6 @@ const files = [
     
     'managers/world-manager',
     'managers/user-manager',
-    
     'managers/run-manager',
 ];
 /**
@@ -103,12 +108,13 @@ function normalizeInputStructure(ip) {
     const srcFile = file.indexOf('.js') === -1 ? `${file}/index.js` : file;
     const destFile = ip.dest || `${key}/index.html.md`;
 
+    const includeFiles = (ip.includeFiles || []).map((d)=> `${IP_FOLDER}/${d}.js`);
     return {
         src: `${IP_FOLDER}/${srcFile}`,
         dest: `${OP_FOLDER}/${destFile}`,
         docTitle: ip.title || key,
         headerFile: ip.header || `${IP_FOLDER}/${file}/${key}.md`,
-        includes: ip.includes || [],
+        includeFiles: includeFiles,
         template: ip.template || defaultDocTemplate,
     };
 }
@@ -124,15 +130,19 @@ function createFile(dest, contents) {
     console.log(`Created ${dest}`);
 }
 
-function getHeaderText(headerFile, includes) {
+function getHeaderText(headerFile, includeFiles) {
     if (!headerFile) return Promise.resolve('');
     return new Promise((resolve, reject)=> {
-        let header = '';
         try {
-            const headerContents = fs.readFileSync(headerFile, 'utf-8');
-            // parseFiles(ip).
-            header = _.template(headerContents)({ data: includes });
-            resolve(header);
+            const headerText = fs.readFileSync(headerFile, 'utf-8');
+            if (!headerText) resolve(headerText);
+
+            const prom = dd.parseFiles(includeFiles, { ignore: '', parser: 'dox', layout: path.resolve(__dirname, 'ddplugin.js') }).then((parsedIncludes)=> {
+                // console.log(JSON.stringify(parsedIncludes, 4, 4));
+                const parsedHeader = _.template(headerText)({ docs: parsedIncludes });
+                return parsedHeader;
+            });
+            resolve(prom);
         } catch (e) {
             resolve('');
         }
@@ -154,7 +164,7 @@ files.map(normalizeInputStructure).forEach((ip)=> {
             '---',
         ].join('\n');
         
-        getHeaderText(ip.headerFile, ip.includes).then((headerData)=> {
+        getHeaderText(ip.headerFile, ip.includeFiles).then((headerData)=> {
             createFile(ip.dest, [prologue, headerData, contents].join('\n'));
         }, (e)=> {
             console.error('Could not get header text', e);

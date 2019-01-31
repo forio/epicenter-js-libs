@@ -3,9 +3,6 @@
  * 
  * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
  */
-
-// Interface that all strategies need to implement
-
 export default class NoRunStrategy {
     reset() {
         // return a newly created run
