@@ -64,6 +64,10 @@ module.exports = function (config) {
             }
         };
 
+        delete options.username;
+        delete options.password;
+        delete options.isLocal;
+        delete options.type;
         return $.ajax(options);
     };
 
