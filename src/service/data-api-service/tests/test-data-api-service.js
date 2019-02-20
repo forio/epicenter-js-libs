@@ -66,6 +66,17 @@ describe('Data API Service', function () {
             req.url.should.equal(baseURL + 'people/me/name/');
         });
 
+        it('should allow specifying custom sessions to override scope', ()=> {
+            var ds = new DataService({ root: 'person', account: account, project: 'js-libs', scope: DataService.SCOPES.USER });
+            ds.load('name', null, { 
+                userId: 'foo',
+                groupId: 'bar',
+            });
+
+            var req = server.requests.pop();
+            req.url.should.equal(baseURL + 'person_user_foo_group_bar/name/');
+        });
+
         it('should support nested urls', function () {
             var ds = new DataService({ root: 'person', account: account, project: 'js-libs' });
             ds.load('first/name');
@@ -106,6 +117,16 @@ describe('Data API Service', function () {
             var req = server.requests.pop();
             req.requestBody.should.equal(JSON.stringify({ name: 'John' }));
         });
+        it('should allow specifying custom sessions to override scope', ()=> {
+            var ds = new DataService({ root: 'person', account: account, project: 'js-libs', scope: DataService.SCOPES.USER });
+            ds.save('name', 'myname', { 
+                userId: 'foo',
+                groupId: 'bar',
+            });
+
+            var req = server.requests.pop();
+            req.url.should.equal(baseURL + 'person_user_foo_group_bar/');
+        });
 
         it('Should send object requests in body', function () {
             var params = { fname: 'john', lname: 'smith' };
@@ -144,6 +165,16 @@ describe('Data API Service', function () {
             req.requestBody.should.equal(JSON.stringify({ name: 'john' }));
         });
 
+        it('should allow specifying custom sessions to override scope', ()=> {
+            var ds = new DataService({ root: 'person', account: account, project: 'js-libs', scope: DataService.SCOPES.USER });
+            ds.saveAs('user', { name: 'john' }, { 
+                userId: 'foo',
+                groupId: 'bar',
+            });
+
+            var req = server.requests.pop();
+            req.url.should.equal(baseURL + 'person_user_foo_group_bar/user/');
+        });
         it('should allow overriding the root', function () {
             var ds = new DataService({ root: 'person', account: account, project: 'js-libs' });
             ds.saveAs('user', { name: 'john' }, { root: 'people/me' });
