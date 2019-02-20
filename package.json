@@ -55,6 +55,7 @@
     },
     "scripts": {
         "document": "node ./build/docs/doxdox.js",
+        "debug": "./node_modules/grunt-cli/bin/grunt karma:debugMode",
         "release": "npm run document && ./node_modules/grunt-cli/bin/grunt production",
         "build": "./node_modules/grunt-cli/bin/grunt production && npm run document",
         "build:components": "./node_modules/grunt-cli/bin/grunt components",
