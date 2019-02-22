@@ -68,7 +68,7 @@ var F =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 45);
+/******/ 	return __webpack_require__(__webpack_require__.s = 46);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,7 +93,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
 /* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(18);
@@ -231,7 +231,7 @@ function ensureKeysPresent(obj, keysList, context) {
 
 var keyNames = __webpack_require__(17);
 var StorageFactory = __webpack_require__(29);
-var optionUtils = __webpack_require__(47);
+var optionUtils = __webpack_require__(48);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var EPI_MANAGER_KEY = 'epicenter.token'; //can't be under key-names, or logout will clear this too
@@ -361,71 +361,6 @@ module.exports = SessionManager;
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
-/* Inherit from a class (using prototype borrowing)
-*/
-
-
-function inherit(C, P) {
-    var F = function () {};
-    F.prototype = P.prototype;
-    C.prototype = new F();
-    C.__super = P.prototype;
-    C.prototype.constructor = C;
-}
-
-/**
-* Shallow copy of an object
-* @param {Object} dest object to extend
-* @return {Object} extended object
-*/
-var extend = function (dest /*, var_args*/) {
-    var obj = Array.prototype.slice.call(arguments, 1);
-    var current;
-    for (var j = 0; j < obj.length; j++) {
-        if (!(current = obj[j])) {
-            //eslint-disable-line
-            continue;
-        }
-
-        // do not wrap inner in dest.hasOwnProperty or bad things will happen
-        for (var key in current) {
-            //eslint-disable-line
-            dest[key] = current[key];
-        }
-    }
-
-    return dest;
-};
-
-module.exports = function (base, props, staticProps) {
-    var parent = base;
-    var child;
-
-    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
-        return parent.apply(this, arguments);
-    };
-
-    // add static properties to the child constructor function
-    extend(child, parent, staticProps);
-
-    // associate prototype chain
-    inherit(child, parent);
-
-    // add instance properties
-    if (props) {
-        extend(child.prototype, props);
-    }
-
-    // done
-    return child;
-};
-
-/***/ }),
-/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -517,6 +452,71 @@ var ConfigService = function () {
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (ConfigService);
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+/* Inherit from a class (using prototype borrowing)
+*/
+
+
+function inherit(C, P) {
+    var F = function () {};
+    F.prototype = P.prototype;
+    C.prototype = new F();
+    C.__super = P.prototype;
+    C.prototype.constructor = C;
+}
+
+/**
+* Shallow copy of an object
+* @param {Object} dest object to extend
+* @return {Object} extended object
+*/
+var extend = function (dest /*, var_args*/) {
+    var obj = Array.prototype.slice.call(arguments, 1);
+    var current;
+    for (var j = 0; j < obj.length; j++) {
+        if (!(current = obj[j])) {
+            //eslint-disable-line
+            continue;
+        }
+
+        // do not wrap inner in dest.hasOwnProperty or bad things will happen
+        for (var key in current) {
+            //eslint-disable-line
+            dest[key] = current[key];
+        }
+    }
+
+    return dest;
+};
+
+module.exports = function (base, props, staticProps) {
+    var parent = base;
+    var child;
+
+    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
+        return parent.apply(this, arguments);
+    };
+
+    // add static properties to the child constructor function
+    extend(child, parent, staticProps);
+
+    // associate prototype chain
+    inherit(child, parent);
+
+    // add instance properties
+    if (props) {
+        extend(child.prototype, props);
+    }
+
+    // done
+    return child;
+};
 
 /***/ }),
 /* 6 */
@@ -906,6 +906,7 @@ function toQueryFormat(qs) {
         if (Array.isArray(value)) {
             value = value.join(',');
         }
+
         if ($.isPlainObject(value)) {
             //Mostly for data api
             value = JSON.stringify(value);
@@ -956,12 +957,12 @@ function mergeQS(qs1, qs2) {
 }
 
 /**
- * 
+ *
  * @param {string} url url to sanitize
  * @param {object} [options] determines if leading/trailing slashes are expected
  * @param {boolean} [options.leading]
  * @param {boolean} [options.trailing]
- * 
+ *
  * @returns {string}
  */
 function normalizeSlashes(url, options) {
@@ -998,7 +999,7 @@ function normalizeSlashes(url, options) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = RunService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
@@ -1155,14 +1156,14 @@ function RunService(config) {
          * // where variables.price has been persisted (recorded)
          * // in the model.
          * rs.query({
-         *      'saved': 'true',
-         *      '.price': '>1'
+         *      saved: true,
+         *      include: ['Price', 'MyOtherVariable']
          * }, {
          *      startrecord: 2,
          *      endrecord: 5
          * });
          * 
-         * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
+         * @param {Object} qs Query object. Each key should be a property of the run (saved/trashed/custom metadata saved with `.save`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
          * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise.<object[]>}
@@ -1678,20 +1679,19 @@ function WorldAPIAdapter(config) {
     };
 
     var publicAPI = {
-
         /**
         * Creates a new World.
         *
         * Using this method is rare. It is more common to create worlds automatically while you `autoAssign()` end users to worlds. (In this case, configuration data for the world, such as the roles, are read from the project-level world configuration information, for example by `getProjectSettings()`.)
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create({
-        *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
-        *       });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create({
+        *      roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
+        *  });
         *
         *  
         * @param {object} params Parameters to create the world.
@@ -1727,14 +1727,14 @@ function WorldAPIAdapter(config) {
         * Typically, you complete world configuration at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both. However, this method is available if you need to update the configuration of a particular world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
+        *      });
         *
         *  
         * @param {object} params Parameters to update the world.
@@ -1763,14 +1763,14 @@ function WorldAPIAdapter(config) {
         * This function optionally takes one argument. If the argument is a string, it is the id of the world to delete. If the argument is an object, it is the override for global options.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.delete();
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.delete();
+        *      });
         *
         *  
         * @param {string|Object} [options] The id of the world to delete, or options object to override global options.
@@ -1804,18 +1804,18 @@ function WorldAPIAdapter(config) {
         * Lists all worlds for a given account, project, and group. All three are required, and if not specified as parameters, are read from the service.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               // lists all worlds in group "team1"
-        *               wa.list();
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          // lists all worlds in group "team1"
+        *          wa.list();
         *
-        *               // lists all worlds in group "other-group-name"
-        *               wa.list({ group: 'other-group-name' });
-        *           });
+        *          // lists all worlds in group "other-group-name"
+        *          wa.list({ group: 'other-group-name' });
+        *      });
         *
         *  
         * @param {object} [options] Options object to override global options.
@@ -1852,16 +1852,15 @@ function WorldAPIAdapter(config) {
         * Gets all worlds that an end user belongs to for a given account (team), project, and group.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
+        *      });
         *
-        * ** Parameters **
         * @param {string} userId The `userId` of the user whose worlds are being retrieved.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -1878,31 +1877,30 @@ function WorldAPIAdapter(config) {
         * Adds an end user or list of end users to a given world. The end user must be a member of the `group` that is associated with this world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               // add one user
-        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
-        *               wa.addUsers(['b1c19dda-2d2e-4777-ad5d-3929f17e86d3']);
-        *               wa.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          // add one user
+        *          wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *          wa.addUsers(['b1c19dda-2d2e-4777-ad5d-3929f17e86d3']);
+        *          wa.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
         *
-        *               // add several users
-        *               wa.addUsers([
-        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44',
-        *                     role: 'VP Marketing' },
-        *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee',
-        *                     role: 'VP Engineering' }
-        *               ]);
+        *          // add several users
+        *          wa.addUsers([
+        *              { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44',
+        *                role: 'VP Marketing' },
+        *              { userId: '8f2604cf-96cd-449f-82fa-e331530734ee',
+        *                role: 'VP Engineering' }
+        *          ]);
         *
-        *               // add one user to a specific world
-        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', world.id);
-        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', { filter: world.id });
-        *           });
+        *          // add one user to a specific world
+        *          wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', world.id);
+        *          wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', { filter: world.id });
+        *      });
         *
-        * ** Parameters **
         * @param {string|object|array} users User id, array of user ids, object, or array of objects of the users to add to this world.
         * @param {string} users.role The `role` the user should have in the world. It is up to the caller to ensure, if needed, that the `role` passed in is one of the `roles` or `optionalRoles` of this world.
         * @param {string} worldId The world to which the users should be added. If not specified, the filter parameter of the `options` object is used.
@@ -1947,15 +1945,15 @@ function WorldAPIAdapter(config) {
         * Updates the role of an end user in a given world. (You can only update one end user at a time.)
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.create().then(function(world) {
-        *           wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
-        *           wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
-        *      });
+        * wa.create().then(function(world) {
+        *      wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *      wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        * });
         *
         * 
         * @param {{userId: string, role: string}} user User object with `userId` and the new `role`.
@@ -1978,18 +1976,17 @@ function WorldAPIAdapter(config) {
         * Removes an end user from a given world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.addUsers(['a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', '8f2604cf-96cd-449f-82fa-e331530734ee']);
-        *               wa.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
-        *               wa.removeUser({ userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.addUsers(['a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', '8f2604cf-96cd-449f-82fa-e331530734ee']);
+        *          wa.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
+        *          wa.removeUser({ userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
+        *      });
         *
-        * ** Parameters **
         * @param {object|string} user The `userId` of the user to remove from the world, or an object containing the `userId` field.
         * @param {object} [options] Options object to override global options.
         * @param {boolean} [options.deleteWorldIfEmpty] Delete the world if you removed the last user.
@@ -2023,16 +2020,15 @@ function WorldAPIAdapter(config) {
         * Remember that a [run](../../glossary/#run) is a collection of interactions with a project and its model. In the case of multiplayer projects, the run is shared by all end users in the world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.getCurrentRunId({ model: 'model.py' });
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.getCurrentRunId({ model: 'model.py' });
+        *      });
         *
-        * ** Parameters **
         * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
         * @return {Promise}
@@ -2051,16 +2047,15 @@ function WorldAPIAdapter(config) {
         * Gets the current (most recent) world for the given end user in the given group. Brings this most recent world into memory if needed.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
-        *           .then(function(world) {
-        *               // use data from world
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
+        *      .then(function(world) {
+        *          // use data from world
+        *      });
         *
-        * ** Parameters **
         * @param {string} userId The `userId` of the user whose current (most recent) world is being retrieved.
         * @param {string} [groupName] The name of the group. If not provided, defaults to the group used to create the service.
         * @return {JQuery.Promise}
@@ -2091,14 +2086,13 @@ function WorldAPIAdapter(config) {
         * (Note that the world id remains part of the run record, indicating that the run was formerly an active run for the world.)
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.deleteRun('sample-world-id');
+        * wa.deleteRun('sample-world-id');
         *
-        *  
         * @param {string} worldId The `worldId` of the world from which the current run is being deleted.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -2120,17 +2114,16 @@ function WorldAPIAdapter(config) {
         * Creates a new run for the world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
-        *           .then(function (world) {
-        *                   wa.newRunForWorld(world.id);
-        *           });
+        * wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
+        *      .then(function (world) {
+        *              wa.newRunForWorld(world.id);
+        *      });
         *
-        *  
         * @param {string} worldId worldId in which we create the new run.
         * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
@@ -2151,12 +2144,12 @@ function WorldAPIAdapter(config) {
         * Assigns end users to worlds, creating new worlds as appropriate, automatically. Assigns all end users in the group, and creates new worlds as needed based on the project-level world configuration (roles, optional roles, and minimum end users per world).
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.autoAssign();
+        * wa.autoAssign();
         *
         * 
         * @param {object} [options] Options object to override global options.
@@ -2192,16 +2185,16 @@ function WorldAPIAdapter(config) {
         * (The [Multiplayer Project REST API](../../../rest_apis/multiplayer/multiplayer_project/) allows you to set these project-level world configurations. The World Adapter simply retrieves them, for example so they can be used in auto-assignment of end users to worlds.)
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.getProjectSettings()
-        *           .then(function(settings) {
-        *               console.log(settings.roles);
-        *               console.log(settings.optionalRoles);
-        *           });
+        * wa.getProjectSettings()
+        *      .then(function(settings) {
+        *          console.log(settings.roles);
+        *          console.log(settings.optionalRoles);
+        *      });
         *
         * 
         * @param {object} [options] Options object to override global options.
@@ -2274,7 +2267,6 @@ function WorldAPIAdapter(config) {
             });
         }
     };
-
     $.extend(this, publicAPI);
 }
 
@@ -2285,8 +2277,8 @@ function WorldAPIAdapter(config) {
 "use strict";
 
 
-var Base = __webpack_require__(13);
-var classFrom = __webpack_require__(4);
+var Base = __webpack_require__(14);
+var classFrom = __webpack_require__(5);
 
 /**
 * ## Conditional Creation Strategy
@@ -2369,48 +2361,6 @@ module.exports = Strategy;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../run-api-service/).
- * 
- * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
- */
-
-// Interface that all strategies need to implement
-
-var NoRunStrategy = function () {
-    function NoRunStrategy() {
-        _classCallCheck(this, NoRunStrategy);
-    }
-
-    _createClass(NoRunStrategy, [{
-        key: "reset",
-        value: function reset() {
-            // return a newly created run
-            return $.Deferred().resolve().promise();
-        }
-    }, {
-        key: "getRun",
-        value: function getRun(runService) {
-            // return a usable run
-            return $.Deferred().resolve(runService).promise();
-        }
-    }]);
-
-    return NoRunStrategy;
-}();
-
-/* harmony default export */ __webpack_exports__["default"] = (NoRunStrategy);
-
-/***/ }),
-/* 14 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(32);
@@ -2426,7 +2376,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var atob = window.atob || __webpack_require__(50).atob;
+var atob = window.atob || __webpack_require__(51).atob;
 
 var defaults = {
     requiresGroup: true
@@ -2789,6 +2739,45 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 /* harmony default export */ __webpack_exports__["default"] = (AuthManager);
 
 /***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../run-api-service/).
+ * 
+ * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
+ */
+var NoRunStrategy = function () {
+    function NoRunStrategy() {
+        _classCallCheck(this, NoRunStrategy);
+    }
+
+    _createClass(NoRunStrategy, [{
+        key: "reset",
+        value: function reset() {
+            // return a newly created run
+            return $.Deferred().resolve().promise();
+        }
+    }, {
+        key: "getRun",
+        value: function getRun(runService) {
+            // return a usable run
+            return $.Deferred().resolve(runService).promise();
+        }
+    }]);
+
+    return NoRunStrategy;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (NoRunStrategy);
+
+/***/ }),
 /* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2798,7 +2787,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(74);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3005,8 +2994,15 @@ var SavedRunsManager = function () {
 
 var epiVersion = __webpack_require__(25);
 
+function isLocalHost(host) {
+    var isLocal = !host || //phantomjs
+    host === '127.0.0.1' || host.indexOf('local.') === 0 || host.indexOf('ngrok') !== -1 || host.indexOf('localhost') === 0;
+    return isLocal;
+}
+
 //TODO: urlutils to get host, since no window on node
 var defaults = {
+    protocol: isLocalHost(window.location.host) ? 'https' : window.location.protocol.replace(':', ''),
     host: window.location.host,
     pathname: window.location.pathname
 };
@@ -3023,9 +3019,7 @@ function getLocalHost(existingFn, host) {
         }
     } else {
         localHostFn = function () {
-            var isLocal = !host || //phantomjs
-            host === '127.0.0.1' || host.indexOf('local.') === 0 || host.indexOf('ngrok') !== -1 || host.indexOf('localhost') === 0;
-            return isLocal;
+            return isLocalHost(host);
         };
     }
     return localHostFn;
@@ -3050,14 +3044,20 @@ var UrlConfigService = function (config) {
         actingHost = options.host;
     }
 
-    var API_PROTOCOL = 'https';
+    var actingProtocol = config && config.protocol;
+    if (!actingProtocol && options.isLocalhost()) {
+        actingProtocol = 'https';
+    } else {
+        actingProtocol = options.protocol;
+    }
+
     var HOST_API_MAPPING = {
         'forio.com': 'api.forio.com',
         'foriodev.com': 'api.epicenter.foriodev.com'
     };
 
     var publicExports = {
-        protocol: API_PROTOCOL,
+        protocol: actingProtocol,
 
         api: '',
 
@@ -3256,7 +3256,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_index__ = __webpack_require__(10);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3503,7 +3503,7 @@ var DataService = function () {
             var params;
             try {
                 if (Array.isArray(keys)) {
-                    params = { id: keys };
+                    params = 'id=' + keys.join('&id=');
                     mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
                 } else {
                     params = '';
@@ -3535,7 +3535,7 @@ var DataService = function () {
 
         /**
          * Gets a channel to listen to notifications on for this collection
-         * 
+         *
          * @param {Object} [options] Overrides for configuration options.
          * @return {Channnel} channel instance to subscribe with.
          */
@@ -3782,13 +3782,13 @@ function MemberAPIService(config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(53);
 
 
 
@@ -4409,7 +4409,7 @@ var STRATEGY = {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(73);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
@@ -5209,7 +5209,7 @@ module.exports = function (config) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = AuthService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 
 
@@ -6082,7 +6082,7 @@ function UserAPIAdapter(config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -6137,7 +6137,7 @@ var TimeAPIService = function () {
 /* unused harmony export objectToPublishable */
 /* unused harmony export publishableToObject */
 /* unused harmony export normalizeParamOptions */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(39);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6538,18 +6538,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "strategyKeys", function() { return strategyKeys; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__ = __webpack_require__(66);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__ = __webpack_require__(67);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__none_strategy__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__ = __webpack_require__(67);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reuse_never__ = __webpack_require__(68);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__ = __webpack_require__(69);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__none_strategy__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reuse_never__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__ = __webpack_require__(71);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__use_specific_run_strategy__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__use_specific_run_strategy__ = __webpack_require__(72);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -6579,11 +6579,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
 var strategyKeys = {
     REUSE_NEVER: 'reuse-never',
     REUSE_PER_SESSION: 'reuse-per-session',
     REUSE_ACROSS_SESSIONS: 'reuse-across-sessions',
     REUSE_LAST_INITIALIZED: 'reuse-last-initialized',
+
+    REUSE_BY_TRACKINGKEY: 'reuse-by-tracking-key',
     USE_SPECIFIC_RUN: 'use-specific-run',
 
     MULTIPLAYER: 'multiplayer',
@@ -6595,7 +6598,7 @@ var list = (_list = {
     'new-if-initialized': __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy___default.a,
     'new-if-persisted': __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy___default.a
 
-}, _defineProperty(_list, strategyKeys.NONE, __WEBPACK_IMPORTED_MODULE_3__none_strategy__["default"]), _defineProperty(_list, strategyKeys.MULTIPLAYER, __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy___default.a), _defineProperty(_list, strategyKeys.USE_SPECIFIC_RUN, __WEBPACK_IMPORTED_MODULE_9__use_specific_run_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_NEVER, __WEBPACK_IMPORTED_MODULE_5__reuse_never__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_PER_SESSION, __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_ACROSS_SESSIONS, __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_LAST_INITIALIZED, __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__["a" /* default */]), _list);
+}, _defineProperty(_list, strategyKeys.NONE, __WEBPACK_IMPORTED_MODULE_3__none_strategy__["default"]), _defineProperty(_list, strategyKeys.MULTIPLAYER, __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.USE_SPECIFIC_RUN, __WEBPACK_IMPORTED_MODULE_10__use_specific_run_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_NEVER, __WEBPACK_IMPORTED_MODULE_5__reuse_never__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_PER_SESSION, __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_ACROSS_SESSIONS, __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_LAST_INITIALIZED, __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_BY_TRACKINGKEY, __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__["a" /* default */]), _list);
 
 //Add back older aliases
 list['always-new'] = list['reuse-never'];
@@ -6659,19 +6662,14 @@ var strategyManager = {
      * Adds a new strategy.
      *
      * @example
-     *      // this "favorite run" strategy always returns the same run, no matter what
-     *      // (not a useful strategy, except as an example)
-     *      F.manager.RunManager.strategies.register(
-     *          'favRun', 
-     *          function() { 
-     *              return { getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
-     *                      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
-     *              } 
-     *          }, 
-     *          { requiresAuth: true }
-     *      );
-     *      
-     *      var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
+     * // this "favorite run" strategy always returns the same run, no matter what
+     * // (not a useful strategy, except as an example)
+     * F.manager.RunManager.strategies.register('favRun', function() { 
+     *  return { 
+     *      getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
+     *      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
+     *  }}, { requiresAuth: true });
+     * var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
      *
      * 
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.
@@ -6697,18 +6695,21 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+
+
 /**
  * The `reuse-last-initialized` strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations. 
  *
  * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *
- *      const rm = new F.manager.RunManager({
- *          strategy: 'reuse-last-initialized',
- *          strategyOptions: {
- *              initOperation: [{ step: 10 }]
- *          }
- *      });
- * 
+ *  ```js
+ *  const rm = new F.manager.RunManager({
+ *      strategy: 'reuse-last-initialized',
+ *      strategyOptions: {
+ *          initOperation: [{ step: 10 }]
+ *      }
+ *  });
+ *  ```
  * This strategy is also useful if you have a custom initialization function in your model, and want to make sure it's always executed for new runs.
  *
  * Specifically, the strategy is:
@@ -6720,17 +6721,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  */
 
-
-
 var ReuseLastInitializedStrategy = function () {
     /**
      * 
      * @param {object} [options] 
-     * @property {object[]} [initOperation] Operations to execute in the model for initialization to be considered complete. Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
-     * @property {object} [flag] Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
-     * @property {object} scope 
-     * @property {boolean} scope.scopeByUser  If true, only returns the last run for the user in session. Defaults to true.
-     * @property {boolean} scope.scopeByGroup If true, only returns the last run for the group in session. Defaults to true.
+     * @property {object[]} [options.initOperation] Operations to execute in the model for initialization to be considered complete. Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
+     * @property {object} [options.flag] Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
+     * @property {object} [options.scope] 
+     * @property {boolean} [options.scope.scopeByUser]  If true, only returns the last run for the user in session. Defaults to true.
+     * @property {boolean} [options.scope.scopeByGroup] If true, only returns the last run for the group in session. Defaults to true.
      */
     function ReuseLastInitializedStrategy(options) {
         _classCallCheck(this, ReuseLastInitializedStrategy);
@@ -6803,11 +6802,161 @@ var ReuseLastInitializedStrategy = function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategy_utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
+var errors = {
+    RUN_LIMIT_REACHED: 'RUN_LIMIT_REACHED',
+    NO_TRACKING_KEY: 'NO_TRACKING_KEY'
+};
+
+/**
+ * @param {RunService} runService 
+ * @param {string} trackingKey 
+ * @param {object} userSession 
+ * @returns {Promise<object[]>}
+ */
+function getRunsForKey(runService, trackingKey, userSession) {
+    var filter = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["a" /* injectFiltersFromSession */])({
+        scope: {
+            trackingKey: trackingKey
+        }
+    }, userSession);
+
+    return runService.query(filter, {
+        startRecord: 0,
+        endRecord: 0,
+        sort: 'created',
+        direction: 'desc'
+    });
+}
+
+/**
+ * The `reuse-by-tracking-key` strategy creates or returns the most recent run matching a given tracking key. You can optionally  also provide a "Run limit", and it'll prevent new runs from being created with this strategy once that limit has  been reached.
+ *
+ * This strategy is used by the Settings Manager to apply class settings for turn-by-turn simulations, but can also be used stand-alone.
+ *
+ * @name reuse-by-tracking-key
+ */
+
+var ReuseWithTrackingKeyStrategy = function () {
+    /**
+     * @param {object} [options] 
+     * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
+     * @property {string} settings.trackingKey Key to track runs with
+     * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
+     * @property {function(RunService, object):any} onCreate Callback will be called each time a new run is created
+     */
+    function ReuseWithTrackingKeyStrategy(options) {
+        _classCallCheck(this, ReuseWithTrackingKeyStrategy);
+
+        var defaults = {
+            settings: {
+                trackingKey: null,
+                runLimit: Infinity
+            },
+            onCreate: function (runService, settings, run) {
+                return run;
+            }
+        };
+        var strategyOptions = options ? options.strategyOptions : {};
+        this.options = $.extend(true, {}, defaults, strategyOptions);
+    }
+
+    _createClass(ReuseWithTrackingKeyStrategy, [{
+        key: 'getSettings',
+        value: function getSettings() {
+            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* result */])(this.options.settings);
+            var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(settings).then(function (settings) {
+                var key = settings && settings.trackingKey;
+                if (!key) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.NO_TRACKING_KEY, 'No tracking key provided to reuse-by-tracking-key strategy');
+                }
+                return settings;
+            });
+            return prom;
+        }
+    }, {
+        key: 'forceCreateRun',
+        value: function forceCreateRun(runService, userSession, settings) {
+            var _this = this;
+
+            var runConfig = runService.getCurrentConfig();
+            // const dupeRunService = new RunService(runConfig);
+            var trackingKey = settings && settings.trackingKey;
+
+            var createOptions = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["b" /* injectScopeFromSession */])(runConfig, userSession);
+            var opt = $.extend(true, createOptions, {
+                scope: {
+                    trackingKey: trackingKey
+                }
+            });
+            return runService.create(opt).then(function (run) {
+                var applied = _this.options.onCreate(runService, settings, run);
+                return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(applied).then(function (res) {
+                    return res && res.id ? res : run;
+                });
+            });
+        }
+    }, {
+        key: 'reset',
+        value: function reset(runService, userSession, options) {
+            var _this2 = this;
+
+            return this.getSettings().then(function (settings) {
+                return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs, status, xhr) {
+                    var startedRuns = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
+                    var runLimitNotSet = settings.runLimit === Infinity || ('' + settings.runLimit).trim() === '';
+                    var runLimit = runLimitNotSet ? Infinity : +settings.runLimit;
+                    if (startedRuns && startedRuns.total >= runLimit) {
+                        return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
+                    }
+                    return _this2.forceCreateRun(runService, userSession, settings);
+                });
+            });
+        }
+    }, {
+        key: 'getRun',
+        value: function getRun(runService, userSession, runSession, options) {
+            var _this3 = this;
+
+            return this.getSettings().then(function (settings) {
+                return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs) {
+                    if (!runs.length) {
+                        return _this3.forceCreateRun(runService, userSession, settings);
+                    }
+                    return runs[0];
+                });
+            });
+        }
+    }]);
+
+    return ReuseWithTrackingKeyStrategy;
+}();
+
+ReuseWithTrackingKeyStrategy.errors = errors;
+/* harmony default export */ __webpack_exports__["a"] = (ReuseWithTrackingKeyStrategy);
+
+/***/ }),
+/* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldManager;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
 
 
 
@@ -6917,7 +7066,7 @@ function WorldManager(options) {
 }
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var F = {
@@ -6931,7 +7080,7 @@ var F = {
     }
 };
 
-F.load = __webpack_require__(46);
+F.load = __webpack_require__(47);
 
 if (!window.SKIP_ENV_LOAD) {
     F.load();
@@ -6939,15 +7088,15 @@ if (!window.SKIP_ENV_LOAD) {
 
 F.util.query = __webpack_require__(8);
 F.util.run = __webpack_require__(6);
-F.util.classFrom = __webpack_require__(4);
+F.util.classFrom = __webpack_require__(5);
 
 F.factory.Transport = __webpack_require__(0).default;
 F.transport.Ajax = __webpack_require__(26);
 
 F.service.URL = __webpack_require__(16);
-F.service.Config = __webpack_require__(5).default;
+F.service.Config = __webpack_require__(4).default;
 F.service.Run = __webpack_require__(9).default;
-F.service.File = __webpack_require__(48);
+F.service.File = __webpack_require__(49);
 F.service.Variables = __webpack_require__(27).default;
 F.service.Data = __webpack_require__(19).default;
 F.service.Auth = __webpack_require__(31).default;
@@ -6955,35 +7104,35 @@ F.service.World = __webpack_require__(11).default;
 F.service.State = __webpack_require__(35).default;
 F.service.User = __webpack_require__(36).default;
 F.service.Member = __webpack_require__(20).default;
-F.service.Asset = __webpack_require__(54).default;
+F.service.Asset = __webpack_require__(55).default;
 F.service.Group = __webpack_require__(32).default;
 F.service.Introspect = __webpack_require__(28).default;
 F.service.Presence = __webpack_require__(34).default;
 F.service.Time = __webpack_require__(37).default;
-F.service.Timer = __webpack_require__(55).default;
-F.service.Password = __webpack_require__(61).default;
+F.service.Timer = __webpack_require__(56).default;
+F.service.Password = __webpack_require__(62).default;
 
-F.service.Account = __webpack_require__(62).default;
+F.service.Account = __webpack_require__(63).default;
 
 F.service.Consensus = __webpack_require__(22).default;
 F.service.ConsensusGroup = __webpack_require__(41).default;
 
-F.service.Project = __webpack_require__(63).default;
+F.service.Project = __webpack_require__(64).default;
 
 F.store.Cookie = __webpack_require__(30);
 F.factory.Store = __webpack_require__(29);
 
-F.manager.ScenarioManager = __webpack_require__(64).default;
+F.manager.ScenarioManager = __webpack_require__(65).default;
 F.manager.RunManager = __webpack_require__(24).default;
-F.manager.User = __webpack_require__(76).default;
-F.manager.AuthManager = __webpack_require__(14).default;
-F.manager.WorldManager = __webpack_require__(44).default;
+F.manager.User = __webpack_require__(77).default;
+F.manager.AuthManager = __webpack_require__(13).default;
+F.manager.WorldManager = __webpack_require__(45).default;
 F.manager.SavedRunsManager = __webpack_require__(15).default;
 
 var strategies = __webpack_require__(42).default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.Settings = __webpack_require__(77).default;
+F.manager.Settings = __webpack_require__(78).default;
 
 F.manager.ChannelManager = __webpack_require__(21).default;
 F.service.Channel = __webpack_require__(33).default;
@@ -6998,7 +7147,7 @@ F.constants = __webpack_require__(17);
 module.exports = F;
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -7018,13 +7167,13 @@ var envLoad = function (callback) {
 module.exports = envLoad;
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfigService = __webpack_require__(5).default;
+var ConfigService = __webpack_require__(4).default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
@@ -7065,7 +7214,7 @@ var optionUtils = {
 module.exports = optionUtils;
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -7090,7 +7239,7 @@ module.exports = optionUtils;
  *       });
  */
 
-var ConfigService = __webpack_require__(5).default;
+var ConfigService = __webpack_require__(4).default;
 var TransportFactory = __webpack_require__(0).default;
 var SessionManager = __webpack_require__(3);
 
@@ -7268,7 +7417,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7277,7 +7426,7 @@ module.exports = function (config) {
 /* unused harmony export addScopeToCollection */
 /* harmony export (immutable) */ __webpack_exports__["b"] = getScopedName;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getURL;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
@@ -7310,7 +7459,8 @@ var errors = {
 function addScopeToCollection(key, scope, session) {
     var publicAccessScopes = [SCOPES.CUSTOM];
     var allowPublicAccess = publicAccessScopes.indexOf(scope) !== -1;
-    if (!Object.keys(session || {}).length && !allowPublicAccess) {
+    var isValidSession = session && session.groupId && session.userId;
+    if (!isValidSession && !allowPublicAccess) {
         throw new __WEBPACK_IMPORTED_MODULE_3_util_index__["a" /* CustomError */](errors.UNAUTHORIZED, 'DataService Authorization error: ' + scope + ' for ' + key + ' requires an authenticated user');
     }
     scope = scope.toUpperCase();
@@ -7338,14 +7488,14 @@ function addScopeToCollection(key, scope, session) {
  * 
  * @param {string} name 
  * @param {string} scope 
- * @param {object} [session] 
+ * @param {object} [sessionOverride] 
  * @returns {string}
  */
-function getScopedName(name, scope, session) {
-    if (!session) {
-        var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__["default"]();
-        session = am.getCurrentUserSessionInfo();
-    }
+function getScopedName(name, scope, sessionOverride) {
+    var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__["default"]();
+    var defaultSession = am.getCurrentUserSessionInfo();
+    var session = $.extend(true, {}, defaultSession, sessionOverride);
+
     var split = name.split('/');
     var collection = split[0];
 
@@ -7356,7 +7506,7 @@ function getScopedName(name, scope, session) {
 }
 
 function getURL(API_ENDPOINT, collection, doc, options) {
-    var scopedCollection = getScopedName(collection || options.root, options.scope);
+    var scopedCollection = getScopedName(collection || options.root, options.scope, options);
 
     var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["d" /* getURLConfig */])(options);
     var baseURL = urlConfig.getAPIPath(API_ENDPOINT);
@@ -7366,7 +7516,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 }
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -7437,7 +7587,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7627,13 +7777,13 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 /* harmony default export */ __webpack_exports__["a"] = (ChannelManager);
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -7766,7 +7916,7 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
 }
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7806,13 +7956,13 @@ var TOPICS = {
 };
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = AssetAdapter;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
@@ -8134,7 +8284,7 @@ function AssetAdapter(config) {
 }
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8144,8 +8294,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(60);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(23);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -8496,20 +8646,20 @@ TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a"
 /* harmony default export */ __webpack_exports__["default"] = (TimerService);
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports) {
 
 module.exports = jQuery;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return STRATEGIES; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(60);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -8534,7 +8684,7 @@ function getStrategy(strategy) {
 }
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8551,7 +8701,7 @@ function reduceActions(actions) {
 }
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8581,7 +8731,7 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8664,7 +8814,7 @@ function reduceActions(actions, startTime, currentTime) {
 }
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8779,7 +8929,7 @@ var PasswordService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (PasswordService);
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8835,7 +8985,7 @@ function AccountAPIService(config) {
 }
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8935,7 +9085,7 @@ function ProjectAPIService(config) {
 }
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8944,11 +9094,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__saved_runs_manager__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(74);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(76);
 // See integration-test-scenario-manager for usage examples
 
 
@@ -9100,7 +9250,7 @@ function ScenarioManager(config) {
 /* harmony default export */ __webpack_exports__["default"] = (ScenarioManager);
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9124,7 +9274,7 @@ function ScenarioManager(config) {
 
 
 
-var classFrom = __webpack_require__(4);
+var classFrom = __webpack_require__(5);
 var ConditionalStrategy = __webpack_require__(12);
 
 var __super = ConditionalStrategy.prototype;
@@ -9143,7 +9293,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9170,7 +9320,7 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(4);
+var classFrom = __webpack_require__(5);
 var ConditionalStrategy = __webpack_require__(12);
 
 var __super = ConditionalStrategy.prototype;
@@ -9189,92 +9339,93 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 68 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(10);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
 /**
  * The `multiplayer` strategy is for use with [multiplayer worlds](../../../glossary/#world). It checks the current world for this end user, and always returns the current run for that world. This is equivalent to calling `getCurrentWorldForUser()` and then `getCurrentRunId()` from the [World API Adapater](../world-api-adapter/). If you use the [World Manager](../world-manager/), you are automatically using this strategy.
  * 
  * Using this strategy means that end users in projects with multiplayer worlds always see the most current world and run. This ensures that they are in sync with the other end users sharing their world and run. In turn, this allows for competitive or collaborative multiplayer projects.
  */
 
+var MultiplayerStrategy = function () {
+    function MultiplayerStrategy(options) {
+        _classCallCheck(this, MultiplayerStrategy);
 
-var classFrom = __webpack_require__(4);
-
-var IdentityStrategy = __webpack_require__(13);
-var WorldApiAdapter = __webpack_require__(11).default;
-
-var defaults = {};
-
-var Strategy = classFrom(IdentityStrategy, {
-    constructor: function (options) {
+        var defaults = {};
         this.options = $.extend(true, {}, defaults, options);
-        this.worldApi = new WorldApiAdapter(this.options.run);
-    },
-
-    reset: function (runService, session, options) {
-        var curUserId = session.userId;
-        var curGroupName = session.groupName;
-
-        var optionsToPassOn = $.extend(true, {}, options, {
-            success: $.noop
-        });
-        return this.worldApi.getCurrentWorldForUser(curUserId, curGroupName).then(function (world) {
-            return this.worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
-                var toReturn = {
-                    id: runid
-                };
-                if (options && options.success) options.success(toReturn);
-                return toReturn;
-            });
-        }.bind(this));
-    },
-
-    getRun: function (runService, session) {
-        var curUserId = session.userId;
-        var curGroupName = session.groupName;
-        var worldApi = this.worldApi;
-        var model = this.options.model;
-        var me = this;
-        var dtd = $.Deferred();
-
-        if (!curUserId) {
-            return dtd.reject({ statusCode: 401, type: 'UNAUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
-        }
-
-        var loadRunFromWorld = function (world) {
-            if (!world) {
-                return dtd.reject({ statusCode: 404, type: 'NO_WORLD_FOR_USER', message: 'The user is not in any world.' }, { options: me.options, session: session });
-            }
-            return worldApi.getCurrentRunId({ model: model, filter: world.id }).then(function (id) {
-                return runService.load(id);
-            }).then(function (run) {
-                run.world = world;
-                return run;
-            }).then(dtd.resolve).catch(dtd.reject);
-        };
-
-        var serverError = function (error) {
-            // is this possible?
-            return dtd.reject(error, session, me.options);
-        };
-
-        this.worldApi.getCurrentWorldForUser(curUserId, curGroupName).then(loadRunFromWorld).fail(serverError);
-
-        return dtd.promise();
     }
 
-});
+    _createClass(MultiplayerStrategy, [{
+        key: 'reset',
+        value: function reset(runService, session, options) {
+            var userId = session.userId,
+                groupName = session.groupName;
 
-module.exports = Strategy;
+            var optionsToPassOn = $.extend(true, {}, options, {
+                success: $.noop
+            });
+            var worldApi = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](runService.getCurrentConfig());
+            return worldApi.getCurrentWorldForUser(userId, groupName).then(function (world) {
+                return worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
+                    var toReturn = {
+                        id: runid
+                    };
+                    if (options && options.success) options.success(toReturn);
+                    return toReturn;
+                });
+            });
+        }
+    }, {
+        key: 'getRun',
+        value: function getRun(runService, session) {
+            var userId = session.userId,
+                groupName = session.groupName;
+
+            var worldApi = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](runService.getCurrentConfig());
+            var model = this.options.model;
+
+            if (!userId) {
+                return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('UNAUTHORIZED', 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)');
+            }
+
+            var loadRunFromWorld = function (world) {
+                if (!world) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('NO_WORLD_FOR_USER', 'User ' + userId + ' not part of a world');
+                }
+                return worldApi.getCurrentRunId({ model: model, filter: world.id }).then(function (id) {
+                    return runService.load(id);
+                }).then(function (run) {
+                    run.world = world;
+                    return run;
+                });
+            };
+
+            return worldApi.getCurrentWorldForUser(userId, groupName).then(loadRunFromWorld);
+        }
+    }]);
+
+    return MultiplayerStrategy;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (MultiplayerStrategy);
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__);
@@ -9285,7 +9436,7 @@ module.exports = Strategy;
  * 
  * This strategy can be useful for basic, single-page projects. This strategy is also useful for prototyping or project development: it creates a new run each time you refresh the page, and you can easily check the outputs of the model. However, typically you will use one of the other strategies for a production project.
  *
- * @name always-new
+ * @name reuse-never
  */
 
 
@@ -9309,14 +9460,19 @@ Strategy.allowRunIDCache = false;
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__);
+
+
+
+var __super = __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default.a.prototype;
+
 /**
  * The `reuse-per-session` strategy creates a new run when the current one is not in the browser cookie.
  * 
@@ -9330,19 +9486,7 @@ Strategy.allowRunIDCache = false;
  *     * This cookie is set by the [Run Manager](../run-manager/) and configurable through its options. 
  *     * If the cookie exists, use the run id stored there. 
  *     * If the cookie does not exist, create a new run for this end user.
- *
- * @name new-if-missing
  */
-
-
-
-
-var __super = __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default.a.prototype;
-
-/*
-*  create a new run only if nothing is stored in the cookie
-*  this is useful for baseRuns.
-*/
 var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default.a, {
     constructor: function (options) {
         __super.constructor.call(this, this.createIf, options);
@@ -9357,14 +9501,18 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_I
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_util_inherit__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__none_strategy__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__none_strategy__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
+
+
+
+
 /**
  * The `reuse-across-sessions` strategy returns the latest (most recent) run for this user, whether it is in memory or not. If there are no runs for this user, it creates a new one.
  *
@@ -9376,23 +9524,16 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_I
  *     * If there are no runs (either in memory or in the database), create a new one.
  *     * If there are runs, take the latest (most recent) one.
  *
- * @name persistent-single-player
  */
-
-
-
-
-
 var Strategy = __WEBPACK_IMPORTED_MODULE_0_util_inherit___default()(__WEBPACK_IMPORTED_MODULE_1__none_strategy__["default"], {
+    /**
+     * @param {object} [options] strategy options
+     * @param {object} [options.filter ] Additional filters to retreive a run (e.g { saved: true }) etc
+     */
     constructor: function Strategy(options) {
         var defaults = {
-            /**
-             * (Optional) Additional criteria to use while selecting the last run
-             * @type {Object}
-             */
             filter: {}
         };
-
         var strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
     },
@@ -9426,7 +9567,7 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0_util_inherit___default()(__WEBPACK_IM
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9435,13 +9576,13 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * Use this if you already have a runid you want to use with the Run Manager (Usually used for impersonating a run)
+ * Use this strategy you already have a runid you want to use with the Run Manager (Usually used for impersonating a run)
  * 
  */
 var UseSpecificRun = function () {
     /**
      * @param {object} [options] 
-     * @property {string} [runId] Id of Run to use
+     * @property {string} [options.runId] Id of Run to use
      */
     function UseSpecificRun(options) {
         _classCallCheck(this, UseSpecificRun);
@@ -9452,14 +9593,14 @@ var UseSpecificRun = function () {
         var strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
         if (!this.options.runId) {
-            throw new Error('Missing required parameter `runId`: Specifying an runId is required for "Specific Run" strategy');
+            throw new Error('Missing required parameter `runId`: Specifying an runId is required for "Use Run" strategy');
         }
     }
 
     _createClass(UseSpecificRun, [{
         key: 'reset',
         value: function reset(runService, userSession, options) {
-            throw new Error('"Specific Run" strategy does not support reset');
+            throw new Error('"Use Run" strategy does not support reset');
         }
     }, {
         key: 'getRun',
@@ -9474,7 +9615,7 @@ var UseSpecificRun = function () {
 /* harmony default export */ __webpack_exports__["a"] = (UseSpecificRun);
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9485,7 +9626,7 @@ function reset(params, options, manager) {
 }
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9541,7 +9682,7 @@ function bulkFetchRecords(fetchFn, options) {
 }
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9593,7 +9734,7 @@ function BaselineStrategy(options) {
 }
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9679,7 +9820,7 @@ ReuseLastUnsaved.requiresAuth = false;
 /* harmony default export */ __webpack_exports__["a"] = (ReuseLastUnsaved);
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9687,7 +9828,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["parseUsers"] = parseUsers;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils__ = __webpack_require__(1);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -9883,21 +10024,20 @@ UserManager.errors = ERROR_TYPES;
 /* harmony default export */ __webpack_exports__["default"] = (UserManager);
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_scenario_manager_saved_runs_manager__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_util_index__ = __webpack_require__(10);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 
 
 
@@ -10035,14 +10175,14 @@ SettingsManager.actions = actions;
 /* harmony default export */ __webpack_exports__["default"] = (SettingsManager);
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_scenario_manager_saved_runs_manager__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_scenario_manager_saved_runs_manager__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_object_util__ = __webpack_require__(2);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10053,13 +10193,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 function sanitize(obj) {
-    return Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["omit"])(obj, ['id', 'lastModified']);
+    return Object(__WEBPACK_IMPORTED_MODULE_3_util_object_util__["omit"])(obj, ['id', 'lastModified']);
 }
 
 var SettingsService = function () {
     /**
      * @param {object} opts 
-     * @property {AccountAPIServiceOptions} opts.run Parameters to pass on to run service (account / project / model / files etc.)
+     * @property {AccountAPIServiceOptions} opts.run Parameters passed on to run service 
      * @property {object} [opts.settings]
      * @property {string} [opts.settings.collection]
      * @property {object | function(): object | function(): Promise<object>} [opts.settings.collection]
@@ -10099,7 +10239,7 @@ var SettingsService = function () {
                 if (this.state.currentDraft) {
                     return $.Deferred().resolve(this.state.currentDraft).promise();
                 }
-                return this.list().then(function (settingsList) {
+                return this.getAll().then(function (settingsList) {
                     var lastSettings = settingsList[0] || {};
                     if (lastSettings.isDraft) {
                         return lastSettings;
@@ -10125,25 +10265,18 @@ var SettingsService = function () {
     }, {
         key: 'getDefaults',
         value: function getDefaults() {
-            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["b" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["d" /* result */])(this.options.settings.defaults));
+            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["b" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["d" /* result */])(this.options.settings.defaults));
             return defaultsProm;
         }
 
         /**
-         * Retreive all settings objects
-         * 
-         * @example
-         * settings.getRecent({ excludeDrafts: true }).then((list)=> {
-         *  console.log('Found', list.length, 'active settings');
-         * });
-         * 
-         * @param {{excludeDrafts: boolean}} [options] optionally retreive only the active settings. Defaults to false.
+         * @param {{excludeDrafts: boolean}} [options]
          * @returns {Promise<object[]>} 
          */
 
     }, {
-        key: 'list',
-        value: function list(options) {
+        key: 'getAll',
+        value: function getAll(options) {
             return this.ds.load('', { sort: 'key', direction: 'desc' }).then(function (settingHistory) {
                 var sorted = settingHistory.sort(function (a, b) {
                     return a.key > b.key ? -1 : 1;
@@ -10159,18 +10292,13 @@ var SettingsService = function () {
 
         /**
          * Returns currently active settings, or undefined if there are none.
-         * 
-         * @example
-         * settings.getCurrentActive().then((settings)=> {
-         *  console.log(settings ? 'Active settings found', 'No settings found');
-         * });
          * @returns {Promise<object[]>}
          */
 
     }, {
         key: 'getCurrentActive',
         value: function getCurrentActive() {
-            return this.list({ excludeDrafts: true }).then(function (activeSettings) {
+            return this.getAll({ excludeDrafts: true }).then(function (activeSettings) {
                 var lastActive = activeSettings[0];
                 return lastActive;
             });
@@ -10178,12 +10306,6 @@ var SettingsService = function () {
 
         /**
          * Returns most recent settings; creates a new draft if none exist. Use to show current state on settings screen.
-         * @example
-         * settings.getMostRecent().then((settings)=> { //Automatically creates a new draft if none exist
-                const allowCreateNew = !settings.isDraft;
-                $('#btn-create-new').attr('disabled', !allowCreateNew);
-                $('#btn-activate-settings', '#btn-reset').attr('disabled', allowCreateNew);
-            });
          * @returns {Promise<object>}
          */
 
@@ -10192,7 +10314,7 @@ var SettingsService = function () {
         value: function getMostRecent() {
             var _this3 = this;
 
-            return this.list().then(function (settingsList) {
+            return this.getAll().then(function (settingsList) {
                 var lastSettings = settingsList[0];
                 if (!lastSettings) {
                     return _this3.createDraft({ useDefaults: true });
@@ -10203,13 +10325,6 @@ var SettingsService = function () {
 
         /**
          * Creates new draft settings. Usually used when there's already 'active' settings, and you want to start with a new set without affecting existing runs.
-         * 
-         * @example
-         * $('#btn-create-new').on('click', ()=> {
-                settings.createDraft().then((settings)=> {
-                    alert('Draft created');
-                });
-            });
          * 
          * @param {{ useDefaults: boolean }} options If `useDefaults` is set, a draft is created with the default settings, else it clones the last available settings (either draft or active)
          * @returns {Promise<object>}
@@ -10226,7 +10341,7 @@ var SettingsService = function () {
                 if (options.useDefaults) {
                     return this.getDefaults();
                 }
-                return this.list().then(function (settingsList) {
+                return this.getAll().then(function (settingsList) {
                     return settingsList[0] || _this4.getDefaults();
                 });
             }
@@ -10242,13 +10357,7 @@ var SettingsService = function () {
         /**
          * Resets draft to defaults. If you need to reset to previous settings, use `createDraft` instead.
          * 
-         * @example
-         * $('#btn-reset').on('click', ()=> {
-                settings.resetDraft().then((settings)=> {
-                    updateUIWithSettings(settings);
-                });
-            });
-          * @returns {Promise<object>}
+         * @returns {Promise<object>}
          */
 
     }, {
@@ -10259,9 +10368,6 @@ var SettingsService = function () {
 
         /**
          * Updates current draft with provided settings. Creates draft if none exist.
-         * 
-         * @example
-         * settings.updateDraft({ someValue: true });
          * 
          * @param {Object} settings
          * @returns {Promise<object>}
@@ -10274,46 +10380,7 @@ var SettingsService = function () {
         }
 
         /**
-         * Deletes settings identified by key and (optionally) runs created with those settings.
-         * 
-         * @example
-         * 
-         * settings.list().then((list)=> {
-         *   settings.delete(list[0].id);
-         * });
-         * 
-         * @param {string} settingsId Id for settings object to delete
-         * @param {{trashAssociatedRuns: boolean}} options Marks the runs created with that settings as 'trashed'. Defaults to false
-         * @returns {Promise<object>}
-         */
-
-    }, {
-        key: 'delete',
-        value: function _delete(settingsId, options) {
-            var _this6 = this;
-
-            return this.ds.remove(settingsId).then(function (res) {
-                var shouldTrashDeleteRuns = options && options.trashAssociatedRuns;
-                if (shouldTrashDeleteRuns) return res;
-
-                var sm = new __WEBPACK_IMPORTED_MODULE_3_managers_scenario_manager_saved_runs_manager__["default"](_this6.options.run);
-                return sm.remove({ scope: {
-                        trackingKey: settingsId
-                    } }).then(function () {
-                    return res;
-                });
-            });
-        }
-
-        /**
          * Activates the current settings, and makes it so it can no longer be modified; this will be applied to new runs (if you use the settings strategy)
-         *  
-         * @example
-         * $('#btn-activate-settings').on('click', ()=> {
-                settings.saveAndActivate().then((settings)=> {
-                    updateUIWithSettings(settings);
-                });
-            });
          * 
          * @param {Object} settings
          * @returns {Promise<object>}
@@ -10324,6 +10391,15 @@ var SettingsService = function () {
         value: function saveAndActivate(settings) {
             return this._updateDraftOrCreate(settings, { isDraft: false, key: Date.now() });
         }
+    }, {
+        key: 'getRunsForSettings',
+        value: function getRunsForSettings(settingsId) {
+            var runOptions = $.extend(true, {}, this.options.run, { scope: {
+                    trackingKey: settingsId
+                } });
+            var sm = new __WEBPACK_IMPORTED_MODULE_1_managers_scenario_manager_saved_runs_manager__["default"](runOptions);
+            return sm;
+        }
     }]);
 
     return SettingsService;
@@ -10332,154 +10408,12 @@ var SettingsService = function () {
 /* harmony default export */ __webpack_exports__["a"] = (SettingsService);
 
 /***/ }),
-/* 79 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategy_utils__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-
-
-
-
-
-var errors = {
-    RUN_LIMIT_REACHED: 'RUN_LIMIT_REACHED',
-    NO_TRACKING_KEY: 'NO_TRACKING_KEY'
-};
-
-/**
- * @param {RunService} runService 
- * @param {string} trackingKey 
- * @param {object} userSession 
- * @returns {Promise<object[]>}
- */
-function getRunsForKey(runService, trackingKey, userSession) {
-    var filter = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["a" /* injectFiltersFromSession */])({
-        scope: {
-            trackingKey: trackingKey
-        }
-    }, userSession);
-
-    return runService.query(filter, {
-        startRecord: 0,
-        endRecord: 0,
-        sort: 'created',
-        direction: 'desc'
-    });
-}
-
-var ReuseWithTrackingKeyStrategy = function () {
-    /**
-     * @param {object} [options] 
-     * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
-     * @property {string} settings.trackingKey Key to track runs with
-     * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
-     * @property {function(RunService, object):any} onCreate Callback will be called each time a new run is created
-     */
-    function ReuseWithTrackingKeyStrategy(options) {
-        _classCallCheck(this, ReuseWithTrackingKeyStrategy);
-
-        var defaults = {
-            settings: {
-                trackingKey: null,
-                runLimit: Infinity
-            },
-            onCreate: function (runService, settings, run) {
-                return run;
-            }
-        };
-        var strategyOptions = options ? options.strategyOptions : {};
-        this.options = $.extend(true, {}, defaults, strategyOptions);
-    }
-
-    _createClass(ReuseWithTrackingKeyStrategy, [{
-        key: 'getSettings',
-        value: function getSettings() {
-            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* result */])(this.options.settings);
-            var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(settings).then(function (settings) {
-                var key = settings && settings.trackingKey;
-                if (!key) {
-                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.NO_TRACKING_KEY, 'No tracking key provided to reuse-by-tracking-key strategy');
-                }
-                return settings;
-            });
-            return prom;
-        }
-    }, {
-        key: 'forceCreateRun',
-        value: function forceCreateRun(runService, userSession, settings) {
-            var _this = this;
-
-            var runConfig = runService.getCurrentConfig();
-            // const dupeRunService = new RunService(runConfig);
-            var trackingKey = settings && settings.trackingKey;
-
-            var createOptions = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["b" /* injectScopeFromSession */])(runConfig, userSession);
-            var opt = $.extend(true, createOptions, {
-                scope: {
-                    trackingKey: trackingKey
-                }
-            });
-            return runService.create(opt).then(function (run) {
-                var applied = _this.options.onCreate(runService, settings, run);
-                return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(applied).then(function (res) {
-                    return res && res.id ? res : run;
-                });
-            });
-        }
-    }, {
-        key: 'reset',
-        value: function reset(runService, userSession, options) {
-            var _this2 = this;
-
-            return this.getSettings().then(function (settings) {
-                return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs, status, xhr) {
-                    var startedRuns = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
-                    var runLimitNotSet = settings.runLimit === Infinity || ('' + settings.runLimit).trim() === '';
-                    var runLimit = runLimitNotSet ? Infinity : +settings.runLimit;
-                    if (startedRuns && startedRuns.total >= runLimit) {
-                        return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
-                    }
-                    return _this2.forceCreateRun(runService, userSession, settings);
-                });
-            });
-        }
-    }, {
-        key: 'getRun',
-        value: function getRun(runService, userSession, runSession, options) {
-            var _this3 = this;
-
-            return this.getSettings().then(function (settings) {
-                return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs) {
-                    if (!runs.length) {
-                        return _this3.forceCreateRun(runService, userSession, settings);
-                    }
-                    return runs[0];
-                });
-            });
-        }
-    }]);
-
-    return ReuseWithTrackingKeyStrategy;
-}();
-
-ReuseWithTrackingKeyStrategy.errors = errors;
-/* harmony default export */ __webpack_exports__["a"] = (ReuseWithTrackingKeyStrategy);
-
-/***/ }),
 /* 80 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(81);
