@@ -69,7 +69,6 @@ class SettingsManager {
             run: serviceOptions,
         });
         var strategy = settingsManager.getUserRunStrategy({
-            allowRunsWithoutSettings: true,
             applySettings: (runService, settings, run)=> {
                 return run.variables().save(settings); // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
             }
@@ -79,7 +78,7 @@ class SettingsManager {
      */
     getUserRunStrategy(options) {
         const defaults = {
-            allowRunsWithoutSettings: true,
+            allowCreateRun: ()=> true,
             applySettings: ()=> {}
         };
         const opts = $.extend({}, defaults, options);
@@ -87,11 +86,8 @@ class SettingsManager {
             strategyOptions: {
                 settings: ()=> {
                     return this.settings.getCurrentActive().then((settings)=> {
-                        if (!settings) {
-                            if (opts.allowRunsWithoutSettings) {
-                                return this.settings.getDefaults();
-                            }
-                            return rejectPromise('NO_ACTIVE_SETTINGS', 'The facilitator has not opened the simulation for gameplay.');
+                        if (!opts.allowCreateRun(settings)) {
+                            return rejectPromise('RUN_CREATION_NOT_ALLOWED', 'allowCreateRun check failed');
                         }
                         return settings;
                     }).then((settings)=> {
@@ -104,7 +100,6 @@ class SettingsManager {
         });
         return strategy;
     }
-
 
     getSavedRunsManagerForSetting(settingsId) {
         const runOptions = $.extend(true, {}, this.options.run, { scope: { 

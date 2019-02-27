@@ -1,6 +1,7 @@
 function init() {
     var am = new F.manager.AuthManager();
     if (!am.isLoggedIn()) {
+        alert('Not logged in');
         return;
     }
 
