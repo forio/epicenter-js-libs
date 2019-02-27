@@ -27,7 +27,7 @@ export function injectScopeFromSession(currentParams, session) {
     const group = session && session.groupName;
     const params = $.extend(true, {}, currentParams);
     if (group) {
-        $.extend(params, {
+        $.extend(true, params, {
             scope: { group: group }
         });
     }

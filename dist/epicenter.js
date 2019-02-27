@@ -815,7 +815,7 @@ function injectScopeFromSession(currentParams, session) {
     var group = session && session.groupName;
     var params = $.extend(true, {}, currentParams);
     if (group) {
-        $.extend(params, {
+        $.extend(true, params, {
             scope: { group: group }
         });
     }
