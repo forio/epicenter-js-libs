@@ -10377,6 +10377,27 @@ var SettingsService = function () {
         }
 
         /**
+         * Updates current *active* settings.
+         * 
+         * @param {Object} newSettings
+         * @returns {Promise<object>}
+         */
+
+    }, {
+        key: 'updateActive',
+        value: function updateActive(newSettings) {
+            var _this6 = this;
+
+            return this.getCurrentActive().then(function (settings) {
+                if (!settings) {
+                    throw new Error('No active settings found');
+                }
+                var toSave = sanitize($.extend(true, {}, settings, newSettings));
+                return _this6.ds.saveAs(settings.id, toSave);
+            });
+        }
+
+        /**
          * Activates the current settings, and makes it so it can no longer be modified; this will be applied to new runs (if you use the settings strategy)
          * 
          * @param {Object} settings

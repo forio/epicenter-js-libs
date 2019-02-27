@@ -3,6 +3,7 @@ var serviceOptions = getServiceOptions();
 function init() {
     var am = new F.manager.AuthManager();
     if (!am.isLoggedIn()) {
+        alert('Not logged in');
         return;
     }
 
@@ -16,7 +17,9 @@ function init() {
     });
     
     var strategy = settingsManager.getUserRunStrategy({
-        allowRunsWithoutSettings: true,
+        allowCreateRun: (settings)=> {
+            return settings && +settings.isOpen === 1;
+        },
         applySettings: (runService, settings, run)=> {
             let prom = runService.save({ name: settings.name });
             if (settings.Price) {
