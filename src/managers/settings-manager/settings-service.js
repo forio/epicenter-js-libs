@@ -154,6 +154,22 @@ class SettingsService {
     }
 
     /**
+     * Updates current *active* settings.
+     * 
+     * @param {Object} newSettings
+     * @returns {Promise<object>}
+     */
+    updateActive(newSettings) {
+        return this.getCurrentActive().then((settings)=> {
+            if (!settings) {
+                throw new Error('No active settings found');
+            }
+            const toSave = sanitize($.extend(true, {}, settings, newSettings));
+            return this.ds.saveAs(settings.id, toSave);
+        });
+    }
+
+    /**
      * Activates the current settings, and makes it so it can no longer be modified; this will be applied to new runs (if you use the settings strategy)
      * 
      * @param {Object} settings

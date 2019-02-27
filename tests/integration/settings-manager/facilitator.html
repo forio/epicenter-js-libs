@@ -85,14 +85,20 @@
                             <input type="text" class="form-control" id="txt-run-name" name="name">
                         </div>
                         <div class="form-group">
-                                <label for="">Run Limit</label>
-                                <select name="runLimit" id="lst-run-limit">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="">Unlimited</option>
-                                </select>
-                            </div>
-                        <div class="decision-container"></div>
+                            <label for="">Run Limit</label>
+                            <select name="runLimit" id="lst-run-limit">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="">Unlimited</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Sim Status</label>
+                            <select name="isOpen" >
+                                <option value="0">Closed</option>
+                                <option value="1">Open</option>
+                            </select>
+                        </div>
                     </form>
                 </li>
                 <li>
@@ -103,6 +109,7 @@
                         <button id="btn-delete-all" class="btn btn-danger">Delete ALL</button>
                     </div>
                 </li>
+                
             </ol>
         </section>
     </div>

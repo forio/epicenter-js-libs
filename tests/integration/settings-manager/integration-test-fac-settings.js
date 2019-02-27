@@ -48,9 +48,11 @@ function init() {
     }
 
     $('#btn-new-run').on('click', ()=> {
-        settingsManager.settings.createDraft().then((settings)=> {
-            alert('Draft created');
-            updateUIWithSettings(settings);
+        settingsManager.settings.updateActive({ isOpen: 0 }).then(()=> {
+            settingsManager.settings.createDraft().then((settings)=> {
+                alert('Draft created');
+                updateUIWithSettings(settings);
+            });
         });
     });
     $('#btn-save-settings').on('click', ()=> {
