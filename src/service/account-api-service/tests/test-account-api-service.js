@@ -7,7 +7,7 @@ chai.use(require('sinon-chai'));
 
 const { expect } = chai;
 
-describe('Project API Service', function () {
+describe('Account API Service', function () {
     const account = 'myaccount';
     const urlService = new URLService({ accountPath: account });
     const baseURL = urlService.getAPIPath('account');

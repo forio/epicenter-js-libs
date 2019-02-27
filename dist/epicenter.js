@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.8.0
+ *         v2.9.0
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -4471,7 +4471,7 @@ var RunManager = function () {
      * @property {string[]} [run.files] If and only if you are using a Vensim model and you have additional data to pass in to your model, you can optionally pass a `files` object with the names of the files, for example: `"files": {"data": "myExtraData.xls"}`. (See more on [Using External Data in Vensim](../../../model_code/vensim/vensim_example_xls/).)
      * @property {string|function} [strategy] Run creation strategy for when to create a new run and when to reuse an end user's existing run. This is *optional*; by default, the Run Manager selects `reuse-per-session`, or `reuse-last-initialized` if you also pass in an initial operation. See [below](#using-the-run-manager-to-access-and-register-strategies) for more information on strategies.
      * @property {object} [strategyOptions] Additional options passed directly to the [run creation strategy](../strategies/).
-     * @property {string} [sessionKey] Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtithis.
+     * @property {string} [sessionKey] Name of browser cookie in which to store run information, including run id. Many conditional strategies, including the provided strategies, rely on this browser cookie to store the run id and help make the decision of whether to create a new run or use an existing one. The name of this cookie defaults to `epicenter-scenario` and can be set with the `sessionKey` parameter. This can also be a function which returns a string, if you'd like to control this at runtime.
      */
     function RunManager(options) {
         _classCallCheck(this, RunManager);
@@ -6892,7 +6892,6 @@ var ReuseWithTrackingKeyStrategy = function () {
             var _this = this;
 
             var runConfig = runService.getCurrentConfig();
-            // const dupeRunService = new RunService(runConfig);
             var trackingKey = settings && settings.trackingKey;
 
             var createOptions = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["b" /* injectScopeFromSession */])(runConfig, userSession);
@@ -7139,7 +7138,7 @@ F.service.Channel = __webpack_require__(33).default;
 
 F.manager.ConsensusManager = __webpack_require__(80).default;
 
-if (true) F.version = "2.8.0"; //eslint-disable-line no-undef
+if (true) F.version = "2.9.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(25);
 
 F.constants = __webpack_require__(17);
@@ -8939,12 +8938,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /**
  *
- * ## Project API Adapter
+ * ## Account API Adapter
  *
- * The Project API allows reading/writing project settings. An author/admin project token is required for most operations.
+ * The Account API allows reading/writing Account settings. An author/admin Account token is required for most operations.
  *
- *      var ps = new F.service.Project({  account: 'acme', project: 'sample', token: 'author-or-project-access-token' });
- *      ps.getProjectSettings();
+ *      var ps = new F.service.Account({  account: 'acme', Account: 'sample', token: 'author-or-account-access-token' });
+ *      ps.getAccountSettings();
  */
 
 
@@ -10116,7 +10115,6 @@ var SettingsManager = function () {
                 run: serviceOptions,
             });
             var strategy = settingsManager.getUserRunStrategy({
-                allowRunsWithoutSettings: true,
                 applySettings: (runService, settings, run)=> {
                     return run.variables().save(settings); // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
                 }
@@ -10131,7 +10129,9 @@ var SettingsManager = function () {
             var _this2 = this;
 
             var defaults = {
-                allowRunsWithoutSettings: true,
+                allowCreateRun: function () {
+                    return true;
+                },
                 applySettings: function () {}
             };
             var opts = $.extend({}, defaults, options);
@@ -10139,11 +10139,8 @@ var SettingsManager = function () {
                 strategyOptions: {
                     settings: function () {
                         return _this2.settings.getCurrentActive().then(function (settings) {
-                            if (!settings) {
-                                if (opts.allowRunsWithoutSettings) {
-                                    return _this2.settings.getDefaults();
-                                }
-                                return Object(__WEBPACK_IMPORTED_MODULE_5_util_index__["c" /* rejectPromise */])('NO_ACTIVE_SETTINGS', 'The facilitator has not opened the simulation for gameplay.');
+                            if (!opts.allowCreateRun(settings)) {
+                                return Object(__WEBPACK_IMPORTED_MODULE_5_util_index__["c" /* rejectPromise */])('RUN_CREATION_NOT_ALLOWED', 'allowCreateRun check failed');
                             }
                             return settings;
                         }).then(function (settings) {

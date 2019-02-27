@@ -1,11 +1,11 @@
 /**
  *
- * ## Project API Adapter
+ * ## Account API Adapter
  *
- * The Project API allows reading/writing project settings. An author/admin project token is required for most operations.
+ * The Account API allows reading/writing Account settings. An author/admin Account token is required for most operations.
  *
- *      var ps = new F.service.Project({  account: 'acme', project: 'sample', token: 'author-or-project-access-token' });
- *      ps.getProjectSettings();
+ *      var ps = new F.service.Account({  account: 'acme', Account: 'sample', token: 'author-or-account-access-token' });
+ *      ps.getAccountSettings();
  */
 
 import { getDefaultOptions } from 'service/service-utils';
