@@ -120,9 +120,7 @@ export default class SavedRunsManager {
      * @example
      * const sm = new F.manager.ScenarioManager();
      * sm.savedRuns.getRuns().then(function (runs) {
-     *     for (const i=0; i<runs.length; i++) {
-     *         console.log('run id of saved run: ', runs[i].id);
-     *     }
+     *  console.log('Found runs', runs.length);
      * });
      *
      * @param  {string[]} [variables] If provided, in the returned list of runs, each run will have a `.variables` property with these set.

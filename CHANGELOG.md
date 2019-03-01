@@ -1,7 +1,107 @@
 <a name="2.9.0"></a>
 
-Run Manager detects and synchronizes simultaneous calls to getRun
-added 'use specific run' strategy to help with impersonation
+### Features
+
+#### AssetService has a new `getTargetUploadURL` method
+
+The new method provides a URL to an Amazon S3 endpoint to which you can upload directly, thereby skipping the middleman (Epicenter). This also allows you to set a expiration data on the asset beyond which it can no longer be accessed.
+
+#### New 'use-specific-run' strategy
+
+This is useful if you already know the id of the run you want the run-manager to return. This is typically used for impersonation.
+
+Example:
+```js
+var runOptions = window.location.search.indexOf('impersonate') === -1 ? 'reuse-across-sessions': {
+    strategy: 'use-specific-run',
+    strategyOptions: {
+        runId: 'runidToImpersonate' //usually passed on in the url
+    }
+}
+var rs = new F.Manager.Run(runOptions);
+```
+
+#### `SavedRunsManager#getRuns` now follows pages and passes partial results to `onData`
+
+The Epicenter APIs typically limit to providing 100 records (runs) at a time. You can explicitly as for more but the longer the dataset the slower the performance, and sometimes you may just forget to account for more than 100 runs when you make the call.
+
+`getRuns` now follows pages and returns *all* the runs when it resolves. It fetches runs 100 at a time (controllable by a `recordsPerFetch` parameter), and provides progressive partial data if you pass in an `onData` parameter.
+
+Example
+```js
+var sm = new F.manager.SavedRunsManager({ run: ..});
+sm.getRuns(['Price', 'OtherVariable'], { saved: true }, { sort: 'desc' }, { 
+    recordsPerFetch: 50,
+    onData: (partialRuns)=> { //will be called with 50 runs at a time }
+}).then((allRuns)=> { //Will be resolved with *all* runs, regardless of however many there are. Pass in `endRecord` if you do want to limit it. })
+```
+
+#### New SettingsManager
+
+The Settings Manager is designed for controlling in-game settings - which can be model variables, or text descriptions, or any combination - within a group, for authenticated turn-by-turn projects.
+
+See (Documentation)[https://forio.com/epicenter/docs/public/api_adapters/generated/settings-manager/] for more.
+
+### Improvements
+
+#### RunManager now synchronizes (and warns about) parallel `getRun` calls.
+
+e.g
+```js
+var rm = new F.Manager.RunManager({
+   strategy: 'reuse-never' 
+});
+var prom1 = rm.getRun();
+var prom2 = rm.getRun();
+
+//prom1 === prom2, and only 1 run will be created.
+```
+To explicitly create 2 runs, use 2 different run manager instances, or chain your `getRun` calls.
+
+#### RunManager Strategies are now exposed as constants
+```js
+new RunManager({ strategy: 'reuse-never' });
+```
+can now be written as
+```js
+new RunManager({ strategy: RunManager.STRATEGY.REUSE_NEVER })
+```
+
+This helps prevent typos / provides better editor auto-complete.
+
+
+#### DataService allows passing in a custom user id for user scoped data
+This is useful if you need to read user-scoped data as a facilitator user.
+
+```js
+var ds = new F.service.Data({
+   root: 'scores',
+   scope: F.service.Data.SCOPES.USER
+});
+ds.load('firstScore', {}, { userId: 'customUserid' })
+```
+
+#### RunService#save allows passing in `scope` as an object
+In previous versions, to update, say the tracking for a run, you'd need to do
+
+```js
+rs.save({ 'scope.trackingKey': 'foo' });
+```
+This release allows you to express that more idiomatically as:
+```js
+rs.save({ scope: { trackingKey: 'foo' }});
+```
+
+#### Strategies can now specify if the run-manager should set a cookie, 
+
+Custom strategies can expose a static boolean `allowRunIDCache` property to control if the run manager should persist the result from `getRun` in a cookie. As a result, the 'reuse-never' strategy no longer sets a (redundant) cookie since it will always create a new run anyway.
+
+#### Assignment component (Used by the manager and Interface Builder) has been updated to work with Lodash 4
+
+### Bug-fixes
+- DataService#remove allows providing an array of document ids to remove them all with a single call.
+- WorldService#update alllows you to update the World name
+- The URL service (which is used by all other services) now has safer defaults when working with non-https urls.
 
 <a name="2.8.0"></a>
 

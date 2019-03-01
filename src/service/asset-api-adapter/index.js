@@ -271,7 +271,7 @@ export default function AssetAdapter(config) {
         },
         
         /**
-         * Get upload url to S3
+         * Get upload url to S3. Useful if you're uploading large assets and would like to skip the middle-man (Epicenter) and upload to S3 directly.
          * 
          * @param {string} filename  Name of the file to upload.
          * @param {object} [params] 

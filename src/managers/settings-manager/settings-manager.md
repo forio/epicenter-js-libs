@@ -4,12 +4,12 @@ The Settings Manager is designed for controlling in-game settings - which can be
 
 ### Facilitator workflow
 
+#### Class settings
 In a typical turn-by-turn game, a facilitator would login to a class and administer settings using a UI somewhat similar to the one below:
 
 ![Class Settings](../../assets/settings-manager-example.png)
 
-
-He would then go through the following steps:
+They would then go through the following steps:
 
 1. Create 'draft' settings
 Drafts settings are persisted, can be tested, but are not applied to any student runs yet.
@@ -58,6 +58,16 @@ settingsManager.settings.getMostRecent().then((settings)=> { //Automatically cre
 });
 
 ```
+
+#### Class Results
+
+The Settings Manager provides a helper function to get all runs with the most recent active settings, for displaying results.
+
+```js
+settingsManager.getRuns(['Price', 'OtherVariable']).then((runs)=> { .. });
+```
+
+Note that this defaults to filtering for saved runs, which is good practice for facilitator screens. To filter otherwise, just pass in `settingsManager.getRuns(['Price', 'OtherVariable'], { saved: false })`. See [SavedRunsManager options](../saved-runs-manager/#getruns-variables-filter-modifiers-) for a full list of parameters. 
 
 ### End-User workflow
 

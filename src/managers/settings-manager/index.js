@@ -130,12 +130,13 @@ class SettingsManager {
     }
 
     /**
-     * Helper method to get runs for most recent settings
+     * Helper method to get runs for most recent settings. Runs in the result, will have a `settings` property with the currently active settings set on it.
+     * 
      * @param {*} savedRunManagerParams See  [SavedRunsManager options](../saved-runs-manager/#getruns-variables-filter-modifiers-) for parameters
      * @return {Promise<object[]>}
      */
     getRuns(savedRunManagerParams) {
-        return this.settings.getMostRecent().then((settings)=> {
+        return this.settings.getCurrentActive().then((settings)=> {
             if (!settings) {
                 return [];
             }
