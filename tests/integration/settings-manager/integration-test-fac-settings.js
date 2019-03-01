@@ -46,6 +46,20 @@ function init() {
             console.error('Run errors', e);
         });
     }
+    function renderRunResults() {
+        settingsManager.getRuns([], { saved: false }, { endRecord: 3 }).then((runs)=> {
+            const markup = runs.map((run)=> {
+                return `
+                    <tr>
+                        <td>${run.user.userName}</td>
+                        <td>${run.id}</td>
+                        <td>${JSON.stringify(run.settings)}</td>
+                    </tr>
+                `;
+            });
+            $('#run-results tbody').html(markup.join(''));
+        });
+    }
 
     $('#btn-new-run').on('click', ()=> {
         settingsManager.settings.updateActive({ isOpen: 0 }).then(()=> {
@@ -58,6 +72,7 @@ function init() {
     $('#btn-save-settings').on('click', ()=> {
         settingsManager.settings.saveAndActivate().then((settings)=> {
             alert('Activated');
+            renderRunResults();
             updateUIWithSettings(settings);
         });
     });
@@ -71,6 +86,9 @@ function init() {
     $('#btn-delete-all').on('click', ()=> {
         settingsManager.settings.ds.remove().then(initializeUI);
     });
+    $('#btn-refresh-run-results').on('click', ()=> {
+        renderRunResults();
+    });
 
     $('input, select').on('change', (evt)=> {
         const $el = $(evt.target);
@@ -81,6 +99,7 @@ function init() {
     });
 
     initializeUI();
+    renderRunResults();
 }
 
 init();

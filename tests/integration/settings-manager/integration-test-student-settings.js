@@ -17,9 +17,9 @@ function init() {
     });
     
     var strategy = settingsManager.getUserRunStrategy({
-        allowCreateRun: (settings)=> {
-            return settings && +settings.isOpen === 1;
-        },
+        // allowCreateRun: (settings)=> {
+        //     return settings && +settings.isOpen === 1;
+        // },
         applySettings: (runService, settings, run)=> {
             let prom = runService.save({ name: settings.name });
             if (settings.Price) {

@@ -125,7 +125,7 @@ class SettingsManager {
         const runOptions = $.extend(true, {}, this.options.run, { scope: { 
             trackingKey: settingsId
         } });
-        const sm = new SavedRunsManager(runOptions);
+        const sm = new SavedRunsManager({ run: runOptions, scopeByUser: false });
         return sm;
     }
 
@@ -140,7 +140,11 @@ class SettingsManager {
                 return [];
             }
             const sm = this.getSavedRunsManagerForSetting(settings.id);
-            return sm.getRuns.apply(sm, arguments);
+            return sm.getRuns.apply(sm, arguments).then((runs)=> {
+                return (runs || []).map((run)=> {
+                    return $.extend(true, run, { settings: settings });
+                });
+            });
         }); 
     }
 }
