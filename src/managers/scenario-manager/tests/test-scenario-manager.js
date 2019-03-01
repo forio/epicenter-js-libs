@@ -1,7 +1,7 @@
 
 import ScenarioManager from '../index';
 import RunManager from 'managers/run-manager';
-import SavedRunsManager from '../saved-runs-manager';
+import SavedRunsManager from 'managers/saved-runs-manager';
 
 import RunService from 'service/run-api-service';
 

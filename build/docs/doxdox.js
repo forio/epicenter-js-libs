@@ -31,8 +31,8 @@ const files = [
         dest: 'settings-service/index.html.md',
     },
     {
-        src: 'managers/scenario-manager/saved-runs-manager/index.js',
-        dest: 'scenario-manager/saved/index.html.md',
+        src: 'managers/saved-runs-manager/index.js',
+        dest: 'saved-runs-manager/index.html.md',
     },
     {
         src: 'managers/scenario-manager/scenario-strategies/baseline-strategy.js',

@@ -1,9 +1,9 @@
-import SavedRunsManager from 'managers/scenario-manager/saved-runs-manager';
+import SavedRunsManager from 'managers/saved-runs-manager';
 import SettingsService from './settings-service';
 import ReuseWithTracking from 'managers/run-strategies/reuse-by-tracking-key';
 import PubSub from 'util/pubsub';
 import { omit } from 'util/object-util';
-import { rejectPromise } from 'util/index';
+import { rejectPromise, makePromise } from 'util/index';
 
 const actions = {
     SETTINGS_DELETED: 'SETTINGS_DELETED',
@@ -107,6 +107,21 @@ class SettingsManager {
         } });
         const sm = new SavedRunsManager(runOptions);
         return sm;
+    }
+
+    /**
+     * Helper method to get runs for most recent settings
+     * @param  {*} savedRunManagerParams See  [SavedRunManager options](../run-manager/#getruns-variables-filter-modifiers-) for parameters
+     * @return {Promise<object[]>}
+     */
+    getRuns(savedRunManagerParams) {
+        return this.settings.getMostRecent().then((settings)=> {
+            if (!settings) {
+                return [];
+            }
+            const sm = this.getSavedRunsManagerForSetting(settings.id);
+            return sm.getRuns.apply(sm, arguments);
+        }); 
     }
 }
 

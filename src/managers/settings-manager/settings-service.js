@@ -1,5 +1,4 @@
 import DataService from 'service/data-api-service';
-import SavedRunsManager from 'managers/scenario-manager/saved-runs-manager';
 import { makePromise, result } from 'util/index';
 import { omit } from 'util/object-util';
 
@@ -177,14 +176,6 @@ class SettingsService {
      */
     saveAndActivate(settings) {
         return this._updateDraftOrCreate(settings, { isDraft: false, key: Date.now() });
-    }
-
-    getRunsForSettings(settingsId) {
-        const runOptions = $.extend(true, {}, this.options.run, { scope: { 
-            trackingKey: settingsId
-        } });
-        const sm = new SavedRunsManager(runOptions);
-        return sm;
     }
 }
 
