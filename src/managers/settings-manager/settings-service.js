@@ -6,6 +6,9 @@ function sanitize(obj) {
     return omit(obj, ['id', 'lastModified']);
 }
 
+/**
+ * Thin wrapper around Data API for managing settings. Meant to be used in conjunction with the Settings Manager.
+ */
 class SettingsService {
     /**
      * @param {object} opts 

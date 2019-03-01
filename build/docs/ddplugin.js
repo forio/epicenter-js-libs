@@ -63,7 +63,10 @@ function paramsToTable(params) {
     const paramRows = params.map((param)=> {
         const isOptional = param.isOptional || param.name.indexOf('[') === 0;
         const name = param.name.replace('[', '').replace(']', '');
-        const type = param.types && param.types.length ? param.types.join(' / ') : 'any';
+        const type = param.types && param.types.length ? param.types.map((t)=> (typeof t === 'object' ? JSON.stringify(t) : t)).join(' / ') : 'any';
+        if (type === '[object Object]') {
+            console.error('Documentation error, unknown type', param.types);
+        }
         return toRow([
             isOptional ? '&nbsp;' : 'Yes',
             name,

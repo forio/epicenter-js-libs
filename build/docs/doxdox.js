@@ -23,7 +23,7 @@ const files = [
     'managers/scenario-manager',
 
     {
-        src: 'managers/settings-manager/index.js',
+        src: 'managers/settings-manager',
         dest: 'settings-manager/index.html.md',
     },
     {
@@ -31,7 +31,7 @@ const files = [
         dest: 'settings-service/index.html.md',
     },
     {
-        src: 'managers/saved-runs-manager/index.js',
+        src: 'managers/saved-runs-manager',
         dest: 'saved-runs-manager/index.html.md',
     },
     {

@@ -37,6 +37,19 @@ class SettingsManager {
         };
     }
 
+    /**
+     * Get a cometd channel to subscribe to settings changes. The list of available topics are:
+     * 
+     * | Topic | Description |
+     * | ------------- | ------------- |
+     * | ALL | All events |
+     * | SETTINGS_ACTIVATED | A new draft has been made active, or a currently active draft was edited |
+     * | SETTINGS_DELETED | A settings document (either current or historical)  was deleted |
+     * | DRAFT_CREATED | A new draft was created |
+     * | DRAFT_UPDATED | A draft document was updated  |
+     * 
+     * @returns {Channel} Channel instance
+     */
     getChannel() {
         if (this.state.subscription) {
             return this.channel;
@@ -74,6 +87,8 @@ class SettingsManager {
             }
         });
      * @param {object} options 
+     * @property {function(settings):boolean} [options.allowCreateRun] Use if you want to disallow creating new runs for some combination of settings, for e.g. if the settings are invalid or the simulation is 'closed' to gameplay. Defaults to always allowing.
+     * @property {function(RunService, settings, run):void} [options.applySettings] Function to apply settings to given run.
      * @returns {object} Run Strategy 
      */
     getUserRunStrategy(options) {
@@ -101,6 +116,11 @@ class SettingsManager {
         return strategy;
     }
 
+    /**
+     * Helper method to create a [SavedRunsManager](../saved-runs-manager) instance with a preset tracking key
+     * @param {string} settingsId
+     * @return {SavedRunsManager}
+     */
     getSavedRunsManagerForSetting(settingsId) {
         const runOptions = $.extend(true, {}, this.options.run, { scope: { 
             trackingKey: settingsId
@@ -111,7 +131,7 @@ class SettingsManager {
 
     /**
      * Helper method to get runs for most recent settings
-     * @param  {*} savedRunManagerParams See  [SavedRunManager options](../run-manager/#getruns-variables-filter-modifiers-) for parameters
+     * @param {*} savedRunManagerParams See  [SavedRunsManager options](../saved-runs-manager/#getruns-variables-filter-modifiers-) for parameters
      * @return {Promise<object[]>}
      */
     getRuns(savedRunManagerParams) {

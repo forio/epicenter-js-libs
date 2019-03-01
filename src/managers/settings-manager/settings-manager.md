@@ -1,29 +1,36 @@
 ## Settings Manager
 
-The Settings Manager is designed for authenticated turn-by-turn projects, using the following workflow:
+The Settings Manager is designed for controlling in-game settings - which can be model variables, or text descriptions, or any combination - within a group, for authenticated turn-by-turn projects.
 
-- A Facilitator creates 'draft' settings (model variables / text descriptions) -- drafts are settings which are persisted, can be tested, but are not applied to any student runs yet.
-- A draft can then be 'activated', at which point they then apply to any new runs created after that point. The manager provides hooks for handling existing runs in progress.
+### Facilitator workflow
+
+In a typical turn-by-turn game, a facilitator would login to a class and administer settings using a UI somewhat similar to the one below:
+
+![Class Settings](../../assets/settings-manager-example.png)
 
 
-### Using the Settings Manager for the facilitator
+He would then go through the following steps:
+
+1. Create 'draft' settings
+Drafts settings are persisted, can be tested, but are not applied to any student runs yet.
+
+2. (Optionally) Set a  Run Limit for the number of runs which can be created with this settings.
+If the settings includes a special key called a `runLimit` the settings strategy (See)
+
+3. 'Activate' the draft settings once done with changes
+These settings then apply to any new runs created after this point. The Settings Manager provides hooks for handling existing runs in progress, and also lets each project determine what "applying" settings means in it's context.
+
+**Example:**
 ```js
 var settingsManager = new F.manager.Settings({
     run: serviceOptions,
     settings: {
-        defaults: {
+        defaults: { //Default settings to initialize new drafts with (optional)
             name: 'myScenario',
             modelVariable: 22,
             runLimit: 3, //Optional, but if specificied then enforced by user-strategy
-            { ...otherSettings }
         }
     },
-});
-
-settingsManager.settings.getMostRecent().then((settings)=> { //Automatically creates a new draft if none exist
-    const allowCreateNew = !settings.isDraft;
-    $('#btn-create-new').attr('disabled', !allowCreateNew);
-    $('#btn-activate-settings', '#btn-reset').attr('disabled', allowCreateNew);
 });
 
 $('#btn-create-new').on('click', ()=> {
@@ -43,15 +50,24 @@ $('#btn-reset').on('click', ()=> {
         updateUIWithSettings(settings);
     });
 });
+
+settingsManager.settings.getMostRecent().then((settings)=> { //Automatically creates a new draft if none exist
+    const allowCreateNew = !settings.isDraft;
+    $('#btn-create-new').attr('disabled', !allowCreateNew);
+    $('#btn-activate-settings', '#btn-reset').attr('disabled', allowCreateNew);
+});
+
 ```
 
-## Using the Settings Manager for the user strategy
+### End-User workflow
+
+#### Run Strategy
+To properly apply and use the new settings, the 'end-user' needs to use a strategy provided by the SettingsManager
 
 ```js
 var settingsManager = new F.manager.Settings({
     run: serviceOptions,
 });
-
 var strategy = settingsManager.getUserRunStrategy({
     applySettings: (runService, settings, run)=> {
         // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
@@ -59,6 +75,16 @@ var strategy = settingsManager.getUserRunStrategy({
     }
 });
 
+var rm = new F.manager.RunManager({
+    strategy: strategy
+});
+rm.getRun(...);
+```
+
+#### Settings channel
+The settings manager provides a convenience wrapper around the cometd channel with more semantic actions.
+
+```js
 const channel = settingsManager.getChannel();
 channel.subscribe([actions.SETTINGS_ACTIVATED, actions.SETTINGS_DELETED], ()=> {
     getRunAndUpdateUI();
