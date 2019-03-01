@@ -1,3 +1,8 @@
+import classFrom from '../../util/inherit';
+import ConditionalStrategy from './conditional-creation-strategy';
+
+var __super = ConditionalStrategy.prototype;
+
 /**
  * The `reuse-per-session` strategy creates a new run when the current one is not in the browser cookie.
  * 
@@ -11,21 +16,7 @@
  *     * This cookie is set by the [Run Manager](../run-manager/) and configurable through its options. 
  *     * If the cookie exists, use the run id stored there. 
  *     * If the cookie does not exist, create a new run for this end user.
- *
- * @name new-if-missing
  */
-
-'use strict';
-
-var classFrom = require('../../util/inherit');
-var ConditionalStrategy = require('./conditional-creation-strategy');
-
-var __super = ConditionalStrategy.prototype;
-
-/*
-*  create a new run only if nothing is stored in the cookie
-*  this is useful for baseRuns.
-*/
 var Strategy = classFrom(ConditionalStrategy, {
     constructor: function (options) {
         __super.constructor.call(this, this.createIf, options);
@@ -37,4 +28,4 @@ var Strategy = classFrom(ConditionalStrategy, {
     }
 });
 
-module.exports = Strategy;
+export default Strategy;

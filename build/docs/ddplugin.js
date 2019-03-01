@@ -63,7 +63,10 @@ function paramsToTable(params) {
     const paramRows = params.map((param)=> {
         const isOptional = param.isOptional || param.name.indexOf('[') === 0;
         const name = param.name.replace('[', '').replace(']', '');
-        const type = param.types && param.types.length ? param.types.join(' / ') : 'any';
+        const type = param.types && param.types.length ? param.types.map((t)=> (typeof t === 'object' ? JSON.stringify(t) : t)).join(' / ') : 'any';
+        if (type === '[object Object]') {
+            console.error('Documentation error, unknown type', param.types);
+        }
         return toRow([
             isOptional ? '&nbsp;' : 'Yes',
             name,
@@ -84,9 +87,10 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
 
     const parsedFiles = data.files.map((file)=> {
         const pathParams = file.name.split('/');
-        const relevantModuleName = pathParams[pathParams.length - 2]; //last item is index.js
+        const moduleNameIndex = file.name.indexOf('index') === -1 ? 1 : 2;
+        const relevantModuleName = pathParams[pathParams.length - moduleNameIndex];
 
-        file.name = relevantModuleName;
+        file.name = relevantModuleName.split('.')[0];
         
         const splitMethodsAndConfig = file.methods.reduce((accum, m)=> {
             const typeKey = `type_${m.type}`;
@@ -109,7 +113,7 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
         const mainDescEl = splitMethodsAndConfig.type_class || splitMethodsAndConfig.type_function;
         file.description = mainDescEl && mainDescEl[0].description;
 
-        const constructorOptions = splitMethodsAndConfig.type_constructor || splitMethodsAndConfig.type_function;
+        const constructorOptions = splitMethodsAndConfig.type_constructor || splitMethodsAndConfig.type_function || splitMethodsAndConfig.type_method;
         file.constructorOptionsTable = '';
         if (constructorOptions) {
             const co = constructorOptions[0];
@@ -117,7 +121,7 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
             if (typedefs[type]) {
                 co.tags.property = [].concat(co.tags.property, typedefs[type]);
             }
-            file.constructorOptionsTable = paramsToTable(co.tags.property);
+            file.constructorOptionsTable = co.tags.property.length ? paramsToTable(co.tags.property) : co.parameterTable;
         }
 
         return Object.assign(file, splitMethodsAndConfig);

@@ -28,7 +28,6 @@ module.exports = function (grunt) {
         loader: 'babel-loader',
         options: {
             plugins: [
-                // 'transform-es2015-modules-commonjs',
                 'transform-es2015-destructuring',
                 'transform-es2015-block-scoping',
                 'transform-es2015-computed-properties',

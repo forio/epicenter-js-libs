@@ -5,17 +5,15 @@
  * 
  * This strategy can be useful for basic, single-page projects. This strategy is also useful for prototyping or project development: it creates a new run each time you refresh the page, and you can easily check the outputs of the model. However, typically you will use one of the other strategies for a production project.
  *
- * @name always-new
+ * @name reuse-never
  */
 
-'use strict';
+import classFrom from '../../util/inherit';
+import ConditionalStrategy from './conditional-creation-strategy';
 
-var classFrom = require('../../util/inherit');
-var ConditionalStrategy = require('./conditional-creation-strategy');
+const __super = ConditionalStrategy.prototype;
 
-var __super = ConditionalStrategy.prototype;
-
-var Strategy = classFrom(ConditionalStrategy, {
+const Strategy = classFrom(ConditionalStrategy, {
     constructor: function (options) {
         __super.constructor.call(this, this.createIf, options);
     },
@@ -26,4 +24,6 @@ var Strategy = classFrom(ConditionalStrategy, {
     }
 });
 
-module.exports = Strategy;
+Strategy.allowRunIDCache = false;
+
+export default Strategy;

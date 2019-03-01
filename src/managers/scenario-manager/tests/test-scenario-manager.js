@@ -1,7 +1,7 @@
 
 import ScenarioManager from '../index';
 import RunManager from 'managers/run-manager';
-import SavedRunsManager from '../saved-runs-manager';
+import SavedRunsManager from 'managers/saved-runs-manager';
 
 import RunService from 'service/run-api-service';
 
@@ -64,11 +64,13 @@ describe('Scenario Manager', function () {
         });
             
         server.respondWith('GET', /(.*)\/run\/([^/]*)\/([^/]*)\/(.*)/, function (xhr, base, account, project, id) {
-            xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify({ 
+            const run = { 
                 id: id.replace('/', ''),
                 account: account,
                 project: project,
-            }));
+            };
+            const resp = id.indexOf(';') === -1 ? run : [run];
+            xhr.respond(200, { 'Content-Type': 'application/json' }, JSON.stringify(resp));
             return true;
         });
         server.respondImmediately = true;

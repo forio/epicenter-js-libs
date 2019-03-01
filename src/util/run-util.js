@@ -13,6 +13,26 @@ export function extractValidRunParams(params) {
 }
 
 /**
+ * Parses content range header from ajax request
+ * @example
+ * parseContentRange(xhr.getResponseHeader('content-range'));
+ * 
+ * @param {string} range Of the form "records 0-99/3570"
+ * @return {{start: Number, end: Number, total: Number }}
+ */
+export function parseContentRange(range) {
+    if (!range) return null;
+
+    range = range.replace('records ', '');
+    const splitType = range.split('/');
+    const splitRange = splitType[0].split('-');
+    return {
+        start: parseInt(splitRange[0], 10),
+        end: parseInt(splitRange[1], 10),
+        total: parseInt(splitType[1], 10),
+    };
+}
+/**
  * normalizes different types of operation inputs
  * @param  {object|string[]|string} operations operations to perform
  * @param  {any[]} [args] arguments for operation

@@ -4,6 +4,7 @@ import { getDefaultOptions } from 'service/service-utils';
 import { SCOPES, getURL, getScopedName } from './data-service-scope-utils';
 
 import ChannelManager from 'managers/epicenter-channel-manager';
+import { rejectPromise } from 'util/index';
 
 const API_ENDPOINT = 'data';
 const getAPIURL = getURL.bind(null, API_ENDPOINT);
@@ -56,16 +57,20 @@ class DataService {
      * ds.query('', { 'question5': { '$regex': '.*day' } });
      *
      * 
-     * @param {String} key The name of the document to search. Pass the empty string ('') to search the entire collection.
+     * @param {String} documentID The id of the document to search. Pass the empty string ('') to search the entire collection.
      * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
-     * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+     * @param {Object} [outputModifier] Available fields include: `sort`, and `direction` (`asc` or `desc`).
      * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
      */
-    query(key, query, outputModifier, options) {
+    query(documentID, query, outputModifier, options) {
         var params = $.extend(true, { q: query }, outputModifier);
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, documentID, mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.get(params, mergedOptions);
     }
 
@@ -101,21 +106,29 @@ class DataService {
         }
 
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.post(attrs, mergedOptions);
     }
 
     /**
      * Append value to an array data structure within a document
      * 
-     * @param  {string} key     path to array item
+     * @param  {string} documentPath     path to array item
      * @param  {any} val     value to append to array
      * @param  {object} [options] Overrides for configuration options
      * @return {Promise}
      */
-    pushToArray(key, val, options) {
+    pushToArray(documentPath, val, options) {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.post(val, mergedOptions);
     }
 
@@ -153,16 +166,21 @@ class DataService {
      *     { scenarioYear: '2015' },
      *     { root: 'myclasses' });
      *
-     * @param {String} key Id of the document.
+     * @param {String} documentPath Can be the id of a document, or a path to data within that document.
      * @param {Object} [value] The data to save, in key:value pairs.
      * @param {Object} [options] Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
      * @return {Promise}
      */
-    saveAs(key, value, options) {
+    saveAs(documentPath, value, options) {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.put(value, mergedOptions);
     }
+
     /**
      * Get data for a specific document or field.
      *
@@ -170,14 +188,18 @@ class DataService {
      * ds.load('user1');
      * ds.load('user1/question3');
      * 
-     * @param  {String|Object} key The id of the data to return. Can be the id of a document, or a path to data within that document.
-     * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
+     * @param  {String|Object} [documentPath] The id of the data to return. Can be the id of a document, or a path to data within that document. If blank, returns whole collection
+     * @param {Object} [outputModifier] Available fields include: `sort`, and `direction` (`asc` or `desc`).
      * @param {Object} [options] Overrides for configuration options.
      * @return {Promise}
      */
-    load(key, outputModifier, options) {
+    load(documentPath, outputModifier, options) {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-        mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
+        try {
+            mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
+        }
         return this.http.get(outputModifier, mergedOptions);
     }
     /**
@@ -193,12 +215,16 @@ class DataService {
     remove(keys, options) {
         var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
         var params;
-        if (Array.isArray(keys)) {
-            params = 'id=' + keys.join('&id=');
-            mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
-        } else {
-            params = '';
-            mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
+        try {
+            if (Array.isArray(keys)) {
+                params = 'id=' + keys.join('&id=');
+                mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+            } else {
+                params = '';
+                mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
+            }
+        } catch (e) {
+            return rejectPromise(e.type, e.message);
         }
         return this.http.delete(params, mergedOptions);
     }

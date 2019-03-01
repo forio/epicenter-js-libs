@@ -24,6 +24,15 @@ module.exports = classFrom(Base, {
         }
     },
 
+    updateUser: function (user) {
+        if (!user) {
+            throw new Error('updateUser: No user passed to update');
+        }
+        const userObj = user.toJSON();
+        userObj.userId = userObj.id;
+        return this._worldApi.updateUser(userObj, { id: this.get('id') });
+    },
+
     addUser: function (user) {
         var users = this.get('users');
         users.push(user);

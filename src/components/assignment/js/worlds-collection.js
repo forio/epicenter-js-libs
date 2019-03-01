@@ -47,6 +47,10 @@ module.exports = classFrom(Base, {
             return dtd.resolve().promise();
         }
 
+        if (prevWorld && curWorld && prevWorld.get('id') === curWorld.get('id')) {
+            //worlds are the same, but role changed
+            return curWorld.updateUser(user);
+        }
         if (prevWorld) {
             prevWorld.removeUser(user)
                 .then(function () {

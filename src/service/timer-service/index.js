@@ -228,7 +228,6 @@ class TimerService {
         const dataChannel = ds.getChannel();
         const me = this;
 
-        
         function cancelTimer() {
             clearInterval(me.interval);
             me.interval = null;

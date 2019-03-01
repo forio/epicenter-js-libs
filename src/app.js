@@ -1,5 +1,4 @@
 var F = {
-    _private: {}, //need this hook now because tests expect everything to be global. Delete once tests are browserified
     util: {},
     factory: {},
     transport: {},
@@ -42,6 +41,8 @@ F.service.Time = require('./service/time-api-service').default;
 F.service.Timer = require('./service/timer-service').default;
 F.service.Password = require('./service/password-api-service').default;
 
+F.service.Account = require('./service/account-api-service').default;
+
 F.service.Consensus = require('./service/consensus-api-service/consensus-service').default;
 F.service.ConsensusGroup = require('./service/consensus-api-service/consensus-group-service').default;
 
@@ -55,10 +56,12 @@ F.manager.RunManager = require('./managers/run-manager').default;
 F.manager.User = require('./managers/user-manager').default;
 F.manager.AuthManager = require('./managers/auth-manager').default;
 F.manager.WorldManager = require('./managers/world-manager').default;
-F.manager.SavedRunsManager = require('./managers/scenario-manager/saved-runs-manager').default;
+F.manager.SavedRunsManager = require('./managers/saved-runs-manager').default;
 
-var strategies = require('./managers/run-strategies');
+var strategies = require('./managers/run-strategies').default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
+
+F.manager.Settings = require('./managers/settings-manager').default;
 
 F.manager.ChannelManager = require('./managers/epicenter-channel-manager').default;
 F.service.Channel = require('./service/channel-service').default;

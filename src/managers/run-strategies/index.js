@@ -10,26 +10,52 @@
  * * You can specify whether or not your strategy requires authorization (a valid user session) to work.
  */
 
+import conditionalCreation from './conditional-creation-strategy';
+import newIfInitialized from './deprecated/new-if-initialized-strategy';
+import newIfPersisted from './deprecated/new-if-persisted-strategy';
+
+import identity from './none-strategy';
+import multiplayer from './multiplayer-strategy';
+import reuseNever from './reuse-never';
+import reusePerSession from './reuse-per-session';
+import reuseAcrossSessions from './reuse-across-sessions';
+import reuseLastInitialized from './reuse-last-initialized';
+import reuseByTrackingKey from './reuse-by-tracking-key';
+ 
+import useSpecificRun from './use-specific-run-strategy';
+
+export const strategyKeys = {
+    REUSE_NEVER: 'reuse-never',
+    REUSE_PER_SESSION: 'reuse-per-session',
+    REUSE_ACROSS_SESSIONS: 'reuse-across-sessions',
+    REUSE_LAST_INITIALIZED: 'reuse-last-initialized',
+
+    REUSE_BY_TRACKINGKEY: 'reuse-by-tracking-key',
+    USE_SPECIFIC_RUN: 'use-specific-run',
+
+    MULTIPLAYER: 'multiplayer',
+    NONE: 'none'
+};
 
 var list = {
-    'conditional-creation': require('./conditional-creation-strategy'),
-    'new-if-initialized': require('./deprecated/new-if-initialized-strategy'), //deprecated
-    'new-if-persisted': require('./deprecated/new-if-persisted-strategy'), //deprecated
+    'conditional-creation': conditionalCreation,
+    'new-if-initialized': newIfInitialized,
+    'new-if-persisted': newIfPersisted,
 
-    none: require('./none-strategy'),
-
-    multiplayer: require('./multiplayer-strategy'),
-    'reuse-never': require('./reuse-never'),
-    'reuse-per-session': require('./reuse-per-session'),
-    'reuse-across-sessions': require('./reuse-across-sessions'),
-    'reuse-last-initialized': require('./reuse-last-initialized').default,
+    [strategyKeys.NONE]: identity,
+    [strategyKeys.MULTIPLAYER]: multiplayer,
+    [strategyKeys.USE_SPECIFIC_RUN]: useSpecificRun,
+    [strategyKeys.REUSE_NEVER]: reuseNever,
+    [strategyKeys.REUSE_PER_SESSION]: reusePerSession,
+    [strategyKeys.REUSE_ACROSS_SESSIONS]: reuseAcrossSessions,
+    [strategyKeys.REUSE_LAST_INITIALIZED]: reuseLastInitialized,
+    [strategyKeys.REUSE_BY_TRACKINGKEY]: reuseByTrackingKey,
 };
 
 //Add back older aliases
 list['always-new'] = list['reuse-never'];
 list['new-if-missing'] = list['reuse-per-session'];
 list['persistent-single-player'] = list['reuse-across-sessions'];
-
 
 const strategyManager = {
     /**
@@ -79,6 +105,7 @@ const strategyManager = {
             throw new Error('All strategies should implement a `getRun` and `reset` interface' + options.strategy);
         }
         strategyInstance.requiresAuth = StrategyCtor.requiresAuth;
+        strategyInstance.allowRunIDCache = StrategyCtor.allowRunIDCache;
 
         return strategyInstance;
     },
@@ -87,19 +114,14 @@ const strategyManager = {
      * Adds a new strategy.
      *
      * @example
-     *      // this "favorite run" strategy always returns the same run, no matter what
-     *      // (not a useful strategy, except as an example)
-     *      F.manager.RunManager.strategies.register(
-     *          'favRun', 
-     *          function() { 
-     *              return { getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
-     *                      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
-     *              } 
-     *          }, 
-     *          { requiresAuth: true }
-     *      );
-     *      
-     *      var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
+     * // this "favorite run" strategy always returns the same run, no matter what
+     * // (not a useful strategy, except as an example)
+     * F.manager.RunManager.strategies.register('favRun', function() { 
+     *  return { 
+     *      getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
+     *      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
+     *  }}, { requiresAuth: true });
+     * var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
      *
      * 
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.
@@ -113,4 +135,4 @@ const strategyManager = {
     }
 };
 
-module.exports = strategyManager;
+export default strategyManager;

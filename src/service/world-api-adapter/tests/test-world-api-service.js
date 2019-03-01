@@ -281,10 +281,16 @@ describe('World API Service', function () {
 
         it('should take the worldid from the service options or the override options', function () {
             createWorldAdapter().removeUser({ userId: '123' }, { filter: 'worldid1' });
-
             var req = server.requests.pop();
             req.method.toUpperCase().should.equal('DELETE');
             req.url.should.match(/\/world\/worldid1\/users/);
+        });
+        it('should pass delete flag if you opt in', ()=> {
+            createWorldAdapter().removeUser({ userId: '123' }, { filter: 'worldid1', deleteWorldIfEmpty: true });
+            var req = server.requests.pop();
+            req.method.toUpperCase().should.equal('DELETE');
+            req.url.should.match(/\/world\/worldid1\/users\/123\?deleteWorld=true/);
+            
         });
     });
 

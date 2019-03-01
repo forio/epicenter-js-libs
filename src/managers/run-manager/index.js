@@ -1,10 +1,10 @@
-import strategies, { getBestStrategy } from 'managers/run-strategies';
+import strategies, { strategyKeys } from 'managers/run-strategies';
 import * as specialOperations from './special-operations';
 
 import RunService from 'service/run-api-service';
 import SessionManager from 'store/session-manager';
 
-import { isEmpty } from 'util/object-util';
+import { isEmpty, omit } from 'util/object-util';
 import { STRATEGY_SESSION_KEY } from 'managers/key-names';
 
 function patchRunService(service, manager) {
@@ -73,7 +73,7 @@ class RunManager {
         }
         patchRunService(this.run, this);
     
-        this.strategy = getBestStrategy(this.options);
+        this.strategy = strategies.getBestStrategy(this.options);
         this.sessionManager = new SessionManager(this.options);
     }
 
@@ -125,14 +125,19 @@ class RunManager {
             console.warn('Two simultaneous calls to `getRun` detected on the same RunManager instance. Either create different instances, or eliminate duplicate call');
             return this.fetchProm;
         }
+
         this.fetchProm = this.strategy
             .getRun(this.run, authSession, runSession, options).then((run)=> {
                 if (!run || !run.id) {
                     return run;
                 }
+
                 this.run.updateConfig({ filter: run.id });
-                const sessionKey = sessionKeyFromOptions(this.options, this.run);
-                setRunInSession(sessionKey, run, this.sessionManager);
+                const canCache = this.strategy.allowRunIDCache !== false;
+                if (canCache) {
+                    const sessionKey = sessionKeyFromOptions(this.options, this.run);
+                    setRunInSession(sessionKey, run, this.sessionManager);
+                }
 
                 if (!variables || !variables.length) {
                     return run;
@@ -171,22 +176,35 @@ class RunManager {
      * @return {Promise}
      */
     reset(options) {
-        const me = this;
         const authSession = this.sessionManager.getSession();
         if (this.strategy.requiresAuth && isEmpty(authSession)) {
             console.error('No user-session available', this.options.strategy, 'requires authentication.');
             return $.Deferred().reject({ type: 'UNAUTHORIZED', message: 'No user-session available' }).promise();
         }
-        return this.strategy.reset(this.run, authSession, options).then(function (run) {
+
+        const optionsToPassOn = omit(options, ['success', 'error']); //strategy can just throw, so handle errors directly
+        return this.strategy.reset(this.run, authSession, optionsToPassOn).then((run)=> {
             if (run && run.id) {
-                me.run.updateConfig({ filter: run.id });
-                const sessionKey = sessionKeyFromOptions(me.options, me.run);
-                setRunInSession(sessionKey, run.id, me.sessionManager);
+                this.run.updateConfig({ filter: run.id });
+                const canCache = this.strategy.allowRunIDCache !== false;
+                if (canCache) {
+                    const sessionKey = sessionKeyFromOptions(this.options, this.run);
+                    setRunInSession(sessionKey, run.id, this.sessionManager);
+                }
+            }
+            if (options && options.success) {
+                options && options.success(run);
             }
             return run;
+        }).catch((e)=> {
+            if (options && options.error) {
+                options && options.error(e);
+            }
+            throw e;
         });
     }
 }
 
+RunManager.STRATEGY = strategyKeys;
 RunManager.strategies = strategies;
 export default RunManager;

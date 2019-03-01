@@ -148,14 +148,14 @@ export default function RunService(config) {
          * // where variables.price has been persisted (recorded)
          * // in the model.
          * rs.query({
-         *      'saved': 'true',
-         *      '.price': '>1'
+         *      saved: true,
+         *      include: ['Price', 'MyOtherVariable']
          * }, {
          *      startrecord: 2,
          *      endrecord: 5
          * });
          * 
-         * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
+         * @param {Object} qs Query object. Each key should be a property of the run (saved/trashed/custom metadata saved with `.save`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
          * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise.<object[]>}
@@ -448,9 +448,8 @@ export default function RunService(config) {
                 }
             } else if (serviceOptions.id) {
                 return introspection.byRunID(serviceOptions.id);
-            } else {
-                throw new Error('Please specify either the model or runid to introspect');
             }
+            throw new Error('Please specify either the model or runid to introspect');
         }
     };
 

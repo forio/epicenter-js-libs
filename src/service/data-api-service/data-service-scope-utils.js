@@ -1,6 +1,7 @@
 import AuthManager from 'managers/auth-manager';
 import { normalizeSlashes } from 'util/query-util';
 import { getURLConfig } from 'service/service-utils';
+import { CustomError } from 'util/index';
 
 export const SCOPES = {
     GROUP: 'GROUP',
@@ -9,6 +10,10 @@ export const SCOPES = {
     PROJECT: 'PROJECT',
     FACILITATOR: 'FACILITATOR',
     CUSTOM: 'CUSTOM',
+};
+
+export const errors = {
+    UNAUTHORIZED: 'UNAUTHORIZED'
 };
 
 /**
@@ -22,8 +27,9 @@ export const SCOPES = {
 export function addScopeToCollection(key, scope, session) {
     const publicAccessScopes = [SCOPES.CUSTOM];
     const allowPublicAccess = publicAccessScopes.indexOf(scope) !== -1;
-    if (!Object.keys(session || {}).length && !allowPublicAccess) {
-        throw new Error(`DataService Authorization error: ${scope} for ${key} requires an authenticated user`);
+    const isValidSession = session && session.groupId && session.userId;
+    if (!isValidSession && !allowPublicAccess) {
+        throw new CustomError(errors.UNAUTHORIZED, `DataService Authorization error: ${scope} for ${key} requires an authenticated user`);
     }
     scope = scope.toUpperCase();
     const delimiter = '_';
@@ -34,7 +40,7 @@ export function addScopeToCollection(key, scope, session) {
     } else if (scope === SCOPES.FACILITATOR) {
         const isFac = session.isTeamMember || session.isFac;
         if (!isFac) {
-            throw new Error(`DataService Authorization error: ${scope} for ${key} requires a Facilitator user`);
+            throw new CustomError(errors.UNAUTHORIZED, `DataService Authorization error: ${scope} for ${key} requires a Facilitator user`);
         }
         return [key, 'fac', 'group', session.groupId].join(delimiter);
     } else if (scope === SCOPES.PROJECT) {
@@ -50,14 +56,14 @@ export function addScopeToCollection(key, scope, session) {
  * 
  * @param {string} name 
  * @param {string} scope 
- * @param {object} [session] 
+ * @param {object} [sessionOverride] 
  * @returns {string}
  */
-export function getScopedName(name, scope, session) {
-    if (!session) {
-        const am = new AuthManager();
-        session = am.getCurrentUserSessionInfo();
-    }
+export function getScopedName(name, scope, sessionOverride) {
+    const am = new AuthManager();
+    const defaultSession = am.getCurrentUserSessionInfo();
+    const session = $.extend(true, {}, defaultSession, sessionOverride);
+
     const split = name.split('/');
     const collection = split[0];
    
@@ -68,7 +74,7 @@ export function getScopedName(name, scope, session) {
 }
 
 export function getURL(API_ENDPOINT, collection, doc, options) {
-    const scopedCollection = getScopedName(collection || options.root, options.scope);
+    const scopedCollection = getScopedName(collection || options.root, options.scope, options);
 
     const urlConfig = getURLConfig(options);
     const baseURL = urlConfig.getAPIPath(API_ENDPOINT);

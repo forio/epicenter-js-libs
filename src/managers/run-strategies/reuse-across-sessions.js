@@ -1,3 +1,7 @@
+import classFrom from 'util/inherit';
+import IdentityStrategy from './none-strategy';
+import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
+
 /**
  * The `reuse-across-sessions` strategy returns the latest (most recent) run for this user, whether it is in memory or not. If there are no runs for this user, it creates a new one.
  *
@@ -9,31 +13,22 @@
  *     * If there are no runs (either in memory or in the database), create a new one.
  *     * If there are runs, take the latest (most recent) one.
  *
- * @name persistent-single-player
  */
-
-'use strict';
-
-var classFrom = require('util/inherit');
-var IdentityStrategy = require('./none-strategy');
-var { injectFiltersFromSession, injectScopeFromSession } = require('managers/run-strategies/strategy-utils');
-
-var defaults = {
+const Strategy = classFrom(IdentityStrategy, {
     /**
-     * (Optional) Additional criteria to use while selecting the last run
-     * @type {Object}
+     * @param {object} [options] strategy options
+     * @param {object} [options.filter ] Additional filters to retreive a run (e.g { saved: true }) etc
      */
-    filter: {},
-};
-
-var Strategy = classFrom(IdentityStrategy, {
     constructor: function Strategy(options) {
-        var strategyOptions = options ? options.strategyOptions : {};
+        const defaults = {
+            filter: {},
+        };
+        const strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
     },
 
     reset: function (runService, userSession, options) {
-        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+        const opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
         return runService
             .create(opt, options)
             .then(function (run) {
@@ -43,20 +38,19 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     getRun: function (runService, userSession, runSession, options) {
-        var filter = injectFiltersFromSession(this.options.filter, userSession);
-        var me = this;
+        const filter = injectFiltersFromSession(this.options.filter, userSession);
         return runService.query(filter, { 
             startrecord: 0,
             endrecord: 0,
             sort: 'created', 
             direction: 'desc'
-        }).then(function (runs) {
+        }).then((runs)=> {
             if (!runs.length) {
-                return me.reset(runService, userSession, options);
+                return this.reset(runService, userSession, options);
             }
             return runs[0];
         });
     }
 });
 
-module.exports = Strategy;
+export default Strategy;

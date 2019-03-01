@@ -1,6 +1,6 @@
 // See integration-test-scenario-manager for usage examples
 import RunManager from 'managers/run-manager';
-import SavedRunsManager from './saved-runs-manager';
+import SavedRunsManager from 'managers/saved-runs-manager';
 
 import { mergeRunOptions } from 'managers/run-strategies/strategy-utils';
 import { normalizeOperations } from 'util/run-util';
