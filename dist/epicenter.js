@@ -68,7 +68,7 @@ var F =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 43);
+/******/ 	return __webpack_require__(__webpack_require__.s = 46);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,7 +77,7 @@ var F =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__);
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var transport = (isNode) ? require('./node-http-transport') : require('./ajax-http-transport');
@@ -93,10 +93,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getDefaultOptions;
 /* harmony export (immutable) */ __webpack_exports__["d"] = getURLConfig;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getHTTPTransport;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__configuration_service__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
 
@@ -160,14 +160,78 @@ function getHTTPTransport(transportOptions, overrides) {
 
 /***/ }),
 /* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
+/* harmony export (immutable) */ __webpack_exports__["omit"] = omit;
+/* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
+/* harmony export (immutable) */ __webpack_exports__["ensureKeysPresent"] = ensureKeysPresent;
+/**
+ * Return selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+function pick(obj, keys) {
+    var res = {};
+    for (var p in obj) {
+        if (keys.indexOf(p) !== -1) {
+            res[p] = obj[p];
+        }
+    }
+    return res;
+}
+
+/**
+ * Omits selected keys from obj
+ * 
+ * @param {object} obj
+ * @param {string[]} keys
+ * @return {object}
+ */
+function omit(obj, keys) {
+    var copy = $.extend(true, {}, obj);
+    keys.forEach(function (key) {
+        delete copy[key];
+    });
+    return copy;
+}
+
+function isEmpty(value) {
+    return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
+}
+
+/**
+ * Confirms presence of keys or throws error
+ * 
+ * @param {Object} obj
+ * @param {string[]} keysList
+ * @param {string} [context] Prefix to add to error message
+ * @throws {Error}
+ * @return {boolean}
+ */
+function ensureKeysPresent(obj, keysList, context) {
+    keysList.forEach(function (key) {
+        if (obj[key] === null || obj[key] === undefined) {
+            throw new Error((context || '') + ' Missing required parameter \'' + key + '\'\' in ' + JSON.stringify(obj) + ' ');
+        }
+    });
+    return true;
+}
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var keyNames = __webpack_require__(15);
-var StorageFactory = __webpack_require__(26);
-var optionUtils = __webpack_require__(45);
+var keyNames = __webpack_require__(16);
+var StorageFactory = __webpack_require__(29);
+var optionUtils = __webpack_require__(48);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var EPI_MANAGER_KEY = 'epicenter.token'; //can't be under key-names, or logout will clear this too
@@ -296,140 +360,12 @@ var SessionManager = function (managerOptions) {
 module.exports = SessionManager;
 
 /***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["pick"] = pick;
-/* harmony export (immutable) */ __webpack_exports__["omit"] = omit;
-/* harmony export (immutable) */ __webpack_exports__["isEmpty"] = isEmpty;
-/* harmony export (immutable) */ __webpack_exports__["ensureKeysPresent"] = ensureKeysPresent;
-/**
- * Return selected keys from obj
- * 
- * @param {object} obj
- * @param {string[]} keys
- * @return {object}
- */
-function pick(obj, keys) {
-    var res = {};
-    for (var p in obj) {
-        if (keys.indexOf(p) !== -1) {
-            res[p] = obj[p];
-        }
-    }
-    return res;
-}
-
-/**
- * Omits selected keys from obj
- * 
- * @param {object} obj
- * @param {string[]} keys
- * @return {object}
- */
-function omit(obj, keys) {
-    keys.forEach(function (key) {
-        delete obj[key];
-    });
-    return obj;
-}
-
-function isEmpty(value) {
-    return !value || $.isPlainObject(value) && Object.keys(value).length === 0;
-}
-
-/**
- * Confirms presence of keys or throws error
- * 
- * @param {Object} obj
- * @param {string[]} keysList
- * @param {string} [context] Prefix to add to error message
- * @throws {Error}
- * @return {boolean}
- */
-function ensureKeysPresent(obj, keysList, context) {
-    keysList.forEach(function (key) {
-        if (obj[key] === null || obj[key] === undefined) {
-            throw new Error((context || '') + ' Missing required parameter \'' + key + '\'\' in ' + JSON.stringify(obj) + ' ');
-        }
-    });
-    return true;
-}
-
-/***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
-/* Inherit from a class (using prototype borrowing)
-*/
-
-
-function inherit(C, P) {
-    var F = function () {};
-    F.prototype = P.prototype;
-    C.prototype = new F();
-    C.__super = P.prototype;
-    C.prototype.constructor = C;
-}
-
-/**
-* Shallow copy of an object
-* @param {Object} dest object to extend
-* @return {Object} extended object
-*/
-var extend = function (dest /*, var_args*/) {
-    var obj = Array.prototype.slice.call(arguments, 1);
-    var current;
-    for (var j = 0; j < obj.length; j++) {
-        if (!(current = obj[j])) {
-            //eslint-disable-line
-            continue;
-        }
-
-        // do not wrap inner in dest.hasOwnProperty or bad things will happen
-        for (var key in current) {
-            //eslint-disable-line
-            dest[key] = current[key];
-        }
-    }
-
-    return dest;
-};
-
-module.exports = function (base, props, staticProps) {
-    var parent = base;
-    var child;
-
-    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
-        return parent.apply(this, arguments);
-    };
-
-    // add static properties to the child constructor function
-    extend(child, parent, staticProps);
-
-    // associate prototype chain
-    inherit(child, parent);
-
-    // add instance properties
-    if (props) {
-        extend(child.prototype, props);
-    }
-
-    // done
-    return child;
-};
-
-/***/ }),
-/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_url_config_service___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_service_url_config_service__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -518,232 +454,82 @@ var ConfigService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ConfigService);
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+/* Inherit from a class (using prototype borrowing)
+*/
+
+
+function inherit(C, P) {
+    var F = function () {};
+    F.prototype = P.prototype;
+    C.prototype = new F();
+    C.__super = P.prototype;
+    C.prototype.constructor = C;
+}
+
+/**
+* Shallow copy of an object
+* @param {Object} dest object to extend
+* @return {Object} extended object
+*/
+var extend = function (dest /*, var_args*/) {
+    var obj = Array.prototype.slice.call(arguments, 1);
+    var current;
+    for (var j = 0; j < obj.length; j++) {
+        if (!(current = obj[j])) {
+            //eslint-disable-line
+            continue;
+        }
+
+        // do not wrap inner in dest.hasOwnProperty or bad things will happen
+        for (var key in current) {
+            //eslint-disable-line
+            dest[key] = current[key];
+        }
+    }
+
+    return dest;
+};
+
+module.exports = function (base, props, staticProps) {
+    var parent = base;
+    var child;
+
+    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
+        return parent.apply(this, arguments);
+    };
+
+    // add static properties to the child constructor function
+    extend(child, parent, staticProps);
+
+    // associate prototype chain
+    inherit(child, parent);
+
+    // add instance properties
+    if (props) {
+        extend(child.prototype, props);
+    }
+
+    // done
+    return child;
+};
+
+/***/ }),
 /* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["toMatrixFormat"] = toMatrixFormat;
-/* harmony export (immutable) */ __webpack_exports__["toQueryFormat"] = toQueryFormat;
-/* harmony export (immutable) */ __webpack_exports__["qsToObject"] = qsToObject;
-/* harmony export (immutable) */ __webpack_exports__["mergeQS"] = mergeQS;
-/* harmony export (immutable) */ __webpack_exports__["normalizeSlashes"] = normalizeSlashes;
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-/**
- * Utilities for working with query strings
-*/
-
-/**
- * Converts to matrix format
- * @param  {object} qs Object to convert to query string
- * @return {string}    Matrix-format query parameters
- */
-function toMatrixFormat(qs) {
-    if (qs === null || qs === undefined || qs === '') {
-        return ';';
-    }
-    if (typeof qs === 'string') {
-        return qs;
-    }
-    function translateParts(ip) {
-        function translateRawValue(val) {
-            var OPERATORS = ['<', '>', '!'];
-            var alreadyHasOperator = OPERATORS.some(function (o) {
-                return ('' + val).charAt(0) === o;
-            });
-            var withPrefix = alreadyHasOperator ? val : '=' + val;
-            return withPrefix;
-        }
-
-        var parts = Object.keys(ip).reduce(function (accum, key) {
-            var val = ip[key];
-            if (Array.isArray(val)) {
-                var mapped = val.map(function (v) {
-                    var translated = translateRawValue(v);
-                    return '' + key + translated;
-                });
-                accum = accum.concat(mapped);
-            } else if (val !== null && typeof val === 'object') {
-                var translated = translateParts(val);
-                var prefixed = translated.map(function (t) {
-                    return key + '.' + t;
-                });
-                accum = accum.concat(prefixed);
-            } else {
-                var _translated = translateRawValue(val);
-                accum.push('' + key + _translated);
-            }
-            return accum;
-        }, []);
-        return parts;
-    }
-
-    var parts = translateParts(qs);
-    return ';' + parts.join(';');
-}
-
-/**
- * Converts strings/arrays/objects to type 'a=b&b=c'
- * @param  { string|Array|Object} qs
- * @return { string}
- */
-function toQueryFormat(qs) {
-    if (qs === null || qs === undefined) {
-        return '';
-    }
-    if (typeof qs === 'string') {
-        return qs;
-    }
-
-    var returnArray = [];
-    $.each(qs, function (key, value) {
-        if (Array.isArray(value)) {
-            value = value.join(',');
-        }
-
-        if ($.isPlainObject(value)) {
-            //Mostly for data api
-            value = JSON.stringify(value);
-        }
-        returnArray.push(key + '=' + value);
-    });
-
-    var result = returnArray.join('&');
-    return result;
-}
-
-/**
- * Converts strings of type 'a=b&b=c' to { a:b, b:c}
- * @param  { string} qs
- * @return {object}
- */
-function qsToObject(qs) {
-    if (qs === null || qs === undefined || qs === '') {
-        return {};
-    }
-
-    var qsArray = qs.split('&');
-    var returnObj = {};
-    qsArray.forEach(function (value, index) {
-        var qKey = value.split('=')[0];
-        var qVal = value.split('=')[1];
-
-        if (qVal.indexOf(',') !== -1) {
-            qVal = qVal.split(',');
-        }
-
-        returnObj[qKey] = qVal;
-    });
-
-    return returnObj;
-}
-
-/**
- * Normalizes and merges strings of type 'a=b', { b:c} to { a:b, b:c}
- * @param  { string|Array|Object} qs1
- * @param  { string|Array|Object} qs2
- * @return {Object}
- */
-function mergeQS(qs1, qs2) {
-    var obj1 = qsToObject(toQueryFormat(qs1));
-    var obj2 = qsToObject(toQueryFormat(qs2));
-    return $.extend(true, {}, obj1, obj2);
-}
-
-/**
- *
- * @param {string} url url to sanitize
- * @param {object} [options] determines if leading/trailing slashes are expected
- * @param {boolean} [options.leading]
- * @param {boolean} [options.trailing]
- *
- * @returns {string}
- */
-function normalizeSlashes(url, options) {
-    if (!url) {
-        if (url === '') return '';
-        throw new Error('normalizeSlashes: Unknown url ' + url);
-    }
-    var opts = $.extend({}, {
-        leading: false,
-        trailing: false
-    }, options);
-
-    var protocolMatch = url.match(/^(https?:\/\/)(.*)/);
-
-    var _ref = protocolMatch ? [protocolMatch[1], protocolMatch[2]] : ['', url],
-        _ref2 = _slicedToArray(_ref, 2),
-        protocol = _ref2[0],
-        rest = _ref2[1];
-
-    var cleaned = rest.replace(/\/{2,}/g, '/');
-    if (opts.leading && cleaned.charAt(0) !== '/' && !protocol) {
-        cleaned = '/' + cleaned;
-    }
-    if (opts.trailing && cleaned.charAt(cleaned.length - 1) !== '/') {
-        cleaned = cleaned + '/';
-    }
-    return '' + protocol + cleaned;
-}
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["mergeRunOptions"] = mergeRunOptions;
-/* harmony export (immutable) */ __webpack_exports__["injectFiltersFromSession"] = injectFiltersFromSession;
-/* harmony export (immutable) */ __webpack_exports__["injectScopeFromSession"] = injectScopeFromSession;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
-
-
-function mergeRunOptions(run, options) {
-    if (run instanceof __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]) {
-        run.updateConfig(options);
-        return run;
-    }
-    return $.extend(true, {}, run, options);
-}
-function injectFiltersFromSession(currentFilter, session, options) {
-    var defaults = {
-        scopeByGroup: true,
-        scopeByUser: true
-    };
-    var opts = $.extend(true, {}, defaults, options);
-    var newFilter = {};
-    if (opts.scopeByGroup && session && session.groupName) {
-        newFilter.scope = { group: session.groupName };
-    }
-    if (opts.scopeByUser && session && session.userId) {
-        newFilter['user.id'] = session.userId;
-    }
-    var filter = $.extend(true, {}, currentFilter, newFilter);
-    return filter;
-}
-function injectScopeFromSession(currentParams, session) {
-    var group = session && session.groupName;
-    var params = $.extend(true, {}, currentParams);
-    if (group) {
-        $.extend(params, {
-            scope: { group: group }
-        });
-    }
-    return params;
-}
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["extractValidRunParams"] = extractValidRunParams;
+/* harmony export (immutable) */ __webpack_exports__["parseContentRange"] = parseContentRange;
 /* harmony export (immutable) */ __webpack_exports__["normalizeOperations"] = normalizeOperations;
 /* harmony export (immutable) */ __webpack_exports__["splitGetFactory"] = splitGetFactory;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__query_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__query_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(2);
 /**
  * Utilities for working with the run service
  */
@@ -758,6 +544,26 @@ function extractValidRunParams(params) {
     return Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(params, validParams);
 }
 
+/**
+ * Parses content range header from ajax request
+ * @example
+ * parseContentRange(xhr.getResponseHeader('content-range'));
+ * 
+ * @param {string} range Of the form "records 0-99/3570"
+ * @return {{start: Number, end: Number, total: Number }}
+ */
+function parseContentRange(range) {
+    if (!range) return null;
+
+    range = range.replace('records ', '');
+    var splitType = range.split('/');
+    var splitRange = splitType[0].split('-');
+    return {
+        start: parseInt(splitRange[0], 10),
+        end: parseInt(splitRange[1], 10),
+        total: parseInt(splitType[1], 10)
+    };
+}
 /**
  * normalizes different types of operation inputs
  * @param  {object|string[]|string} operations operations to perform
@@ -972,19 +778,234 @@ function splitGetFactory(httpOptions) {
 }
 
 /***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["c"] = mergeRunOptions;
+/* harmony export (immutable) */ __webpack_exports__["a"] = injectFiltersFromSession;
+/* harmony export (immutable) */ __webpack_exports__["b"] = injectScopeFromSession;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
+
+
+function mergeRunOptions(run, options) {
+    if (run instanceof __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]) {
+        run.updateConfig(options);
+        return run;
+    }
+    return $.extend(true, {}, run, options);
+}
+function injectFiltersFromSession(currentFilter, session, options) {
+    var defaults = {
+        scopeByGroup: true,
+        scopeByUser: true
+    };
+    var opts = $.extend(true, {}, defaults, options);
+    var newFilter = {};
+    if (opts.scopeByGroup && session && session.groupName) {
+        newFilter.scope = { group: session.groupName };
+    }
+    if (opts.scopeByUser && session && session.userId) {
+        newFilter['user.id'] = session.userId;
+    }
+    var filter = $.extend(true, {}, currentFilter, newFilter);
+    return filter;
+}
+function injectScopeFromSession(currentParams, session) {
+    var group = session && session.groupName;
+    var params = $.extend(true, {}, currentParams);
+    if (group) {
+        $.extend(true, params, {
+            scope: { group: group }
+        });
+    }
+    return params;
+}
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["toMatrixFormat"] = toMatrixFormat;
+/* harmony export (immutable) */ __webpack_exports__["toQueryFormat"] = toQueryFormat;
+/* harmony export (immutable) */ __webpack_exports__["qsToObject"] = qsToObject;
+/* harmony export (immutable) */ __webpack_exports__["mergeQS"] = mergeQS;
+/* harmony export (immutable) */ __webpack_exports__["normalizeSlashes"] = normalizeSlashes;
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+/**
+ * Utilities for working with query strings
+*/
+
+/**
+ * Converts to matrix format
+ * @param  {object} qs Object to convert to query string
+ * @return {string}    Matrix-format query parameters
+ */
+function toMatrixFormat(qs) {
+    if (qs === null || qs === undefined || qs === '') {
+        return ';';
+    }
+    if (typeof qs === 'string') {
+        return qs;
+    }
+    function translateParts(ip) {
+        function translateRawValue(val) {
+            var OPERATORS = ['<', '>', '!'];
+            var alreadyHasOperator = OPERATORS.some(function (o) {
+                return ('' + val).charAt(0) === o;
+            });
+            var withPrefix = alreadyHasOperator ? val : '=' + val;
+            return withPrefix;
+        }
+
+        var parts = Object.keys(ip).reduce(function (accum, key) {
+            var val = ip[key];
+            if (Array.isArray(val)) {
+                var mapped = val.map(function (v) {
+                    var translated = translateRawValue(v);
+                    return '' + key + translated;
+                });
+                accum = accum.concat(mapped);
+            } else if (val !== null && typeof val === 'object') {
+                var translated = translateParts(val);
+                var prefixed = translated.map(function (t) {
+                    return key + '.' + t;
+                });
+                accum = accum.concat(prefixed);
+            } else {
+                var _translated = translateRawValue(val);
+                accum.push('' + key + _translated);
+            }
+            return accum;
+        }, []);
+        return parts;
+    }
+
+    var parts = translateParts(qs);
+    return ';' + parts.join(';');
+}
+
+/**
+ * Converts strings/arrays/objects to type 'a=b&b=c'
+ * @param  { string|Array|Object} qs
+ * @return { string}
+ */
+function toQueryFormat(qs) {
+    if (qs === null || qs === undefined) {
+        return '';
+    }
+    if (typeof qs === 'string') {
+        return qs;
+    }
+
+    var returnArray = [];
+    $.each(qs, function (key, value) {
+        if (Array.isArray(value)) {
+            value = value.join(',');
+        }
+
+        if ($.isPlainObject(value)) {
+            //Mostly for data api
+            value = JSON.stringify(value);
+        }
+        returnArray.push(key + '=' + value);
+    });
+
+    var result = returnArray.join('&');
+    return result;
+}
+
+/**
+ * Converts strings of type 'a=b&b=c' to { a:b, b:c}
+ * @param  { string} qs
+ * @return {object}
+ */
+function qsToObject(qs) {
+    if (qs === null || qs === undefined || qs === '') {
+        return {};
+    }
+
+    var qsArray = qs.split('&');
+    var returnObj = {};
+    qsArray.forEach(function (value, index) {
+        var qKey = value.split('=')[0];
+        var qVal = value.split('=')[1];
+
+        if (qVal.indexOf(',') !== -1) {
+            qVal = qVal.split(',');
+        }
+
+        returnObj[qKey] = qVal;
+    });
+
+    return returnObj;
+}
+
+/**
+ * Normalizes and merges strings of type 'a=b', { b:c} to { a:b, b:c}
+ * @param  { string|Array|Object} qs1
+ * @param  { string|Array|Object} qs2
+ * @return {Object}
+ */
+function mergeQS(qs1, qs2) {
+    var obj1 = qsToObject(toQueryFormat(qs1));
+    var obj2 = qsToObject(toQueryFormat(qs2));
+    return $.extend(true, {}, obj1, obj2);
+}
+
+/**
+ *
+ * @param {string} url url to sanitize
+ * @param {object} [options] determines if leading/trailing slashes are expected
+ * @param {boolean} [options.leading]
+ * @param {boolean} [options.trailing]
+ *
+ * @returns {string}
+ */
+function normalizeSlashes(url, options) {
+    if (!url) {
+        if (url === '') return '';
+        throw new Error('normalizeSlashes: Unknown url ' + url);
+    }
+    var opts = $.extend({}, {
+        leading: false,
+        trailing: false
+    }, options);
+
+    var protocolMatch = url.match(/^(https?:\/\/)(.*)/);
+
+    var _ref = protocolMatch ? [protocolMatch[1], protocolMatch[2]] : ['', url],
+        _ref2 = _slicedToArray(_ref, 2),
+        protocol = _ref2[0],
+        rest = _ref2[1];
+
+    var cleaned = rest.replace(/\/{2,}/g, '/');
+    if (opts.leading && cleaned.charAt(0) !== '/' && !protocol) {
+        cleaned = '/' + cleaned;
+    }
+    if (opts.trailing && cleaned.charAt(cleaned.length - 1) !== '/') {
+        cleaned = cleaned + '/';
+    }
+    return '' + protocol + cleaned;
+}
+
+/***/ }),
 /* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = RunService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_store_session_manager__);
 
 
@@ -1135,14 +1156,14 @@ function RunService(config) {
          * // where variables.price has been persisted (recorded)
          * // in the model.
          * rs.query({
-         *      'saved': 'true',
-         *      '.price': '>1'
+         *      saved: true,
+         *      include: ['Price', 'MyOtherVariable']
          * }, {
          *      startrecord: 2,
          *      endrecord: 5
          * });
          * 
-         * @param {Object} qs Query object. Each key can be a property of the run or the name of variable that has been saved in the run (prefaced by `variables.`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
+         * @param {Object} qs Query object. Each key should be a property of the run (saved/trashed/custom metadata saved with `.save`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
          * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise.<object[]>}
@@ -1432,9 +1453,8 @@ function RunService(config) {
                 }
             } else if (serviceOptions.id) {
                 return introspection.byRunID(serviceOptions.id);
-            } else {
-                throw new Error('Please specify either the model or runid to introspect');
             }
+            throw new Error('Please specify either the model or runid to introspect');
         }
     };
 
@@ -1480,13 +1500,98 @@ function RunService(config) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["d"] = result;
+/* harmony export (immutable) */ __webpack_exports__["c"] = rejectPromise;
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomError; });
+/* harmony export (immutable) */ __webpack_exports__["b"] = makePromise;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function result(item) {
+    if (typeof item === 'function') {
+        return item();
+    }
+    return item;
+}
+
+/**
+ * @param {string} type 
+ * @param {string} message 
+ * @returns {Promise}
+ */
+function rejectPromise(type, message) {
+    return $.Deferred().reject({ type: type, message: message }).promise();
+}
+
+/**
+ * @param {string} type
+ * @param {string} message
+ */
+var CustomError = function (_Error) {
+    _inherits(CustomError, _Error);
+
+    function CustomError(type, message) {
+        _classCallCheck(this, CustomError);
+
+        var _this = _possibleConstructorReturn(this, (CustomError.__proto__ || Object.getPrototypeOf(CustomError)).call(this, message));
+
+        _this.message = message;
+        _this.type = type;
+        return _this;
+    }
+
+    return CustomError;
+}(Error);
+
+/**
+ * @param {any} val 
+ * @returns {Promise}
+ */
+function makePromise(val) {
+    //Can be replaced with Promise.resolve when we drop IE11;
+    // if (isFunction(val)) {
+    //     return Promise.resolve(val());
+    // }
+    // return Promise.resolve(val);
+    if (val.then) {
+        return val;
+    }
+    var $def = $.Deferred();
+    if (typeof val === 'function') {
+        try {
+            var toReturn = val();
+            if (toReturn && toReturn.then) {
+                return toReturn.then(function (r) {
+                    return $def.resolve(r);
+                }).catch(function (e) {
+                    return $def.reject(e);
+                });
+            }
+            $def.resolve(toReturn);
+        } catch (e) {
+            $def.reject(e);
+        }
+    } else {
+        $def.resolve(val);
+    }
+    return $def.promise();
+}
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldAPIAdapter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(1);
 
 
@@ -1556,10 +1661,10 @@ function WorldAPIAdapter(config) {
 
     var setIdFilterOrThrowError = function (options) {
         if (!options) options = {};
+
         if (options.id) {
             serviceOptions.filter = options.id;
-        }
-        if (options.filter) {
+        } else if (options.filter) {
             serviceOptions.filter = options.filter;
         }
         if (!serviceOptions.filter) {
@@ -1574,20 +1679,19 @@ function WorldAPIAdapter(config) {
     };
 
     var publicAPI = {
-
         /**
         * Creates a new World.
         *
         * Using this method is rare. It is more common to create worlds automatically while you `autoAssign()` end users to worlds. (In this case, configuration data for the world, such as the roles, are read from the project-level world configuration information, for example by `getProjectSettings()`.)
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create({
-        *           roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
-        *       });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create({
+        *      roles: ['VP Marketing', 'VP Sales', 'VP Engineering']
+        *  });
         *
         *  
         * @param {object} params Parameters to create the world.
@@ -1623,14 +1727,14 @@ function WorldAPIAdapter(config) {
         * Typically, you complete world configuration at the project level, rather than at the world level. For example, each world in your project probably has the same roles for end users. And your project is probably either configured so that all end users share the same world (and run), or smaller sets of end users share worlds — but not both. However, this method is available if you need to update the configuration of a particular world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.update({ roles: ['VP Marketing', 'VP Sales', 'VP Engineering'] });
+        *      });
         *
         *  
         * @param {object} params Parameters to update the world.
@@ -1659,14 +1763,14 @@ function WorldAPIAdapter(config) {
         * This function optionally takes one argument. If the argument is a string, it is the id of the world to delete. If the argument is an object, it is the override for global options.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.delete();
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.delete();
+        *      });
         *
         *  
         * @param {string|Object} [options] The id of the world to delete, or options object to override global options.
@@ -1700,18 +1804,18 @@ function WorldAPIAdapter(config) {
         * Lists all worlds for a given account, project, and group. All three are required, and if not specified as parameters, are read from the service.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               // lists all worlds in group "team1"
-        *               wa.list();
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          // lists all worlds in group "team1"
+        *          wa.list();
         *
-        *               // lists all worlds in group "other-group-name"
-        *               wa.list({ group: 'other-group-name' });
-        *           });
+        *          // lists all worlds in group "other-group-name"
+        *          wa.list({ group: 'other-group-name' });
+        *      });
         *
         *  
         * @param {object} [options] Options object to override global options.
@@ -1748,16 +1852,15 @@ function WorldAPIAdapter(config) {
         * Gets all worlds that an end user belongs to for a given account (team), project, and group.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.getWorldsForUser('b1c19dda-2d2e-4777-ad5d-3929f17e86d3')
+        *      });
         *
-        * ** Parameters **
         * @param {string} userId The `userId` of the user whose worlds are being retrieved.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -1774,31 +1877,30 @@ function WorldAPIAdapter(config) {
         * Adds an end user or list of end users to a given world. The end user must be a member of the `group` that is associated with this world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               // add one user
-        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
-        *               wa.addUsers(['b1c19dda-2d2e-4777-ad5d-3929f17e86d3']);
-        *               wa.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          // add one user
+        *          wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *          wa.addUsers(['b1c19dda-2d2e-4777-ad5d-3929f17e86d3']);
+        *          wa.addUsers({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'VP Sales' });
         *
-        *               // add several users
-        *               wa.addUsers([
-        *                   { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44',
-        *                     role: 'VP Marketing' },
-        *                   { userId: '8f2604cf-96cd-449f-82fa-e331530734ee',
-        *                     role: 'VP Engineering' }
-        *               ]);
+        *          // add several users
+        *          wa.addUsers([
+        *              { userId: 'a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44',
+        *                role: 'VP Marketing' },
+        *              { userId: '8f2604cf-96cd-449f-82fa-e331530734ee',
+        *                role: 'VP Engineering' }
+        *          ]);
         *
-        *               // add one user to a specific world
-        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', world.id);
-        *               wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', { filter: world.id });
-        *           });
+        *          // add one user to a specific world
+        *          wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', world.id);
+        *          wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3', { filter: world.id });
+        *      });
         *
-        * ** Parameters **
         * @param {string|object|array} users User id, array of user ids, object, or array of objects of the users to add to this world.
         * @param {string} users.role The `role` the user should have in the world. It is up to the caller to ensure, if needed, that the `role` passed in is one of the `roles` or `optionalRoles` of this world.
         * @param {string} worldId The world to which the users should be added. If not specified, the filter parameter of the `options` object is used.
@@ -1843,15 +1945,15 @@ function WorldAPIAdapter(config) {
         * Updates the role of an end user in a given world. (You can only update one end user at a time.)
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.create().then(function(world) {
-        *           wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
-        *           wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
-        *      });
+        * wa.create().then(function(world) {
+        *      wa.addUsers('b1c19dda-2d2e-4777-ad5d-3929f17e86d3');
+        *      wa.updateUser({ userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', role: 'leader' });
+        * });
         *
         * 
         * @param {{userId: string, role: string}} user User object with `userId` and the new `role`.
@@ -1874,20 +1976,20 @@ function WorldAPIAdapter(config) {
         * Removes an end user from a given world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.addUsers(['a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', '8f2604cf-96cd-449f-82fa-e331530734ee']);
-        *               wa.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
-        *               wa.removeUser({ userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.addUsers(['a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44', '8f2604cf-96cd-449f-82fa-e331530734ee']);
+        *          wa.removeUser('a6fe0c1e-f4b8-4f01-9f5f-01ccf4c2ed44');
+        *          wa.removeUser({ userId: '8f2604cf-96cd-449f-82fa-e331530734ee' });
+        *      });
         *
-        * ** Parameters **
         * @param {object|string} user The `userId` of the user to remove from the world, or an object containing the `userId` field.
         * @param {object} [options] Options object to override global options.
+        * @param {boolean} [options.deleteWorldIfEmpty] Delete the world if you removed the last user.
         * @return {Promise}
         */
         removeUser: function (user, options) {
@@ -1899,11 +2001,17 @@ function WorldAPIAdapter(config) {
                 throw new Error('You need to pass a userId to remove from the world');
             }
 
-            setIdFilterOrThrowError(options);
+            var mergedOptions = $.extend(true, {}, serviceOptions, options);
+            setIdFilterOrThrowError(mergedOptions);
 
-            var getOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId });
+            var autoDeleteWorld = options && options.deleteWorldIfEmpty === true;
+            var url = urlConfig.getAPIPath(apiEndpoint) + serviceOptions.filter + '/users/' + user.userId;
+            if (autoDeleteWorld) {
+                url += '?deleteWorld=true';
+            }
+            mergedOptions.url = url;
 
-            return http.delete(null, getOptions);
+            return http.delete(null, mergedOptions);
         },
 
         /**
@@ -1912,16 +2020,15 @@ function WorldAPIAdapter(config) {
         * Remember that a [run](../../glossary/#run) is a collection of interactions with a project and its model. In the case of multiplayer projects, the run is shared by all end users in the world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.create()
-        *           .then(function(world) {
-        *               wa.getCurrentRunId({ model: 'model.py' });
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.create()
+        *      .then(function(world) {
+        *          wa.getCurrentRunId({ model: 'model.py' });
+        *      });
         *
-        * ** Parameters **
         * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
         * @return {Promise}
@@ -1940,16 +2047,15 @@ function WorldAPIAdapter(config) {
         * Gets the current (most recent) world for the given end user in the given group. Brings this most recent world into memory if needed.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
-        *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
-        *           .then(function(world) {
-        *               // use data from world
-        *           });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
+        * wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
+        *      .then(function(world) {
+        *          // use data from world
+        *      });
         *
-        * ** Parameters **
         * @param {string} userId The `userId` of the user whose current (most recent) world is being retrieved.
         * @param {string} [groupName] The name of the group. If not provided, defaults to the group used to create the service.
         * @return {JQuery.Promise}
@@ -1980,14 +2086,13 @@ function WorldAPIAdapter(config) {
         * (Note that the world id remains part of the run record, indicating that the run was formerly an active run for the world.)
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.deleteRun('sample-world-id');
+        * wa.deleteRun('sample-world-id');
         *
-        *  
         * @param {string} worldId The `worldId` of the world from which the current run is being deleted.
         * @param {object} [options] Options object to override global options.
         * @return {Promise}
@@ -2009,17 +2114,16 @@ function WorldAPIAdapter(config) {
         * Creates a new run for the world.
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
-        *           .then(function (world) {
-        *                   wa.newRunForWorld(world.id);
-        *           });
+        * wa.getCurrentWorldForUser('8f2604cf-96cd-449f-82fa-e331530734ee')
+        *      .then(function (world) {
+        *              wa.newRunForWorld(world.id);
+        *      });
         *
-        *  
         * @param {string} worldId worldId in which we create the new run.
         * @param {object} [options] Options object to override global options.
         * @param {object} options.model The model file to use to create a run if needed.
@@ -2040,12 +2144,12 @@ function WorldAPIAdapter(config) {
         * Assigns end users to worlds, creating new worlds as appropriate, automatically. Assigns all end users in the group, and creates new worlds as needed based on the project-level world configuration (roles, optional roles, and minimum end users per world).
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.autoAssign();
+        * wa.autoAssign();
         *
         * 
         * @param {object} [options] Options object to override global options.
@@ -2081,16 +2185,16 @@ function WorldAPIAdapter(config) {
         * (The [Multiplayer Project REST API](../../../rest_apis/multiplayer/multiplayer_project/) allows you to set these project-level world configurations. The World Adapter simply retrieves them, for example so they can be used in auto-assignment of end users to worlds.)
         *
         * @example
-        *      var wa = new F.service.World({
-        *           account: 'acme-simulations',
-        *           project: 'supply-chain-game',
-        *           group: 'team1' });
+        * var wa = new F.service.World({
+        *      account: 'acme-simulations',
+        *      project: 'supply-chain-game',
+        *      group: 'team1' });
         *
-        *      wa.getProjectSettings()
-        *           .then(function(settings) {
-        *               console.log(settings.roles);
-        *               console.log(settings.optionalRoles);
-        *           });
+        * wa.getProjectSettings()
+        *      .then(function(settings) {
+        *          console.log(settings.roles);
+        *          console.log(settings.optionalRoles);
+        *      });
         *
         * 
         * @param {object} [options] Options object to override global options.
@@ -2163,19 +2267,18 @@ function WorldAPIAdapter(config) {
             });
         }
     };
-
     $.extend(this, publicAPI);
 }
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Base = __webpack_require__(12);
-var classFrom = __webpack_require__(4);
+var Base = __webpack_require__(14);
+var classFrom = __webpack_require__(5);
 
 /**
 * ## Conditional Creation Strategy
@@ -2253,49 +2356,18 @@ var Strategy = classFrom(Base, {
 module.exports = Strategy;
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../run-api-service/).
- * 
- * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
- */
-
-
-
-var classFrom = __webpack_require__(4);
-var Base = {};
-
-// Interface that all strategies need to implement
-module.exports = classFrom(Base, {
-    constructor: function (options) {},
-
-    reset: function () {
-        // return a newly created run
-        return $.Deferred().resolve().promise();
-    },
-
-    getRun: function (runService) {
-        // return a usable run
-        return $.Deferred().resolve(runService).promise();
-    }
-});
-
-/***/ }),
 /* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_object_assign__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_object_assign__);
 
 
@@ -2304,7 +2376,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var atob = window.atob || __webpack_require__(48).atob;
+var atob = window.atob || __webpack_require__(51).atob;
 
 var defaults = {
     requiresGroup: true
@@ -2668,16 +2740,61 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
 
 /***/ }),
 /* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * The `none` strategy never returns a run or tries to create a new run. It simply returns the contents of the current [Run Service instance](../run-api-service/).
+ * 
+ * This strategy is useful if you want to manually decide how to create your own runs and don't want any automatic assistance.
+ */
+var NoRunStrategy = function () {
+    function NoRunStrategy() {
+        _classCallCheck(this, NoRunStrategy);
+    }
+
+    _createClass(NoRunStrategy, [{
+        key: "reset",
+        value: function reset() {
+            // return a newly created run
+            return $.Deferred().resolve().promise();
+        }
+    }, {
+        key: "getRun",
+        value: function getRun(runService) {
+            // return a usable run
+            return $.Deferred().resolve(runService).promise();
+        }
+    }]);
+
+    return NoRunStrategy;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (NoRunStrategy);
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var epiVersion = __webpack_require__(22);
+var epiVersion = __webpack_require__(25);
+
+function isLocalHost(host) {
+    var isLocal = !host || //phantomjs
+    host === '127.0.0.1' || host.indexOf('local.') === 0 || host.indexOf('ngrok') !== -1 || host.indexOf('localhost') === 0;
+    return isLocal;
+}
 
 //TODO: urlutils to get host, since no window on node
 var defaults = {
-    protocol: window.location.protocol.replace(':', ''),
+    protocol: isLocalHost(window.location.host) ? 'https' : window.location.protocol.replace(':', ''),
     host: window.location.host,
     pathname: window.location.pathname
 };
@@ -2694,9 +2811,7 @@ function getLocalHost(existingFn, host) {
         }
     } else {
         localHostFn = function () {
-            var isLocal = !host || //phantomjs
-            host === '127.0.0.1' || host.indexOf('local.') === 0 || host.indexOf('ngrok') !== -1 || host.indexOf('localhost') === 0;
-            return isLocal;
+            return isLocalHost(host);
         };
     }
     return localHostFn;
@@ -2817,7 +2932,7 @@ UrlConfigService.defaults = {};
 module.exports = UrlConfigService;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2829,7 +2944,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2926,14 +3041,332 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_index__ = __webpack_require__(10);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
+
+
+
+var API_ENDPOINT = 'data';
+var getAPIURL = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["c" /* getURL */].bind(null, API_ENDPOINT);
+
+var DataService = function () {
+    /**
+     * @param {AccountAPIServiceOptions} config 
+     * @property {string} root The name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
+     * @property {string} [scope] Determines who has read-write access to this data collection. See above for available scopes.
+     */
+    function DataService(config) {
+        _classCallCheck(this, DataService);
+
+        var defaults = {
+            scope: __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a" /* SCOPES */].CUSTOM,
+            root: '/',
+
+            account: undefined,
+            project: undefined,
+            token: undefined,
+            transport: {}
+        };
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpont: API_ENDPOINT });
+
+        this.serviceOptions = serviceOptions;
+        this.http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
+    }
+
+    /**
+     * Search for data within a collection.
+     *
+     * Searching using comparison or logical operators (as opposed to exact matches) requires MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional details.
+     *
+     * @example
+     * // request all data associated with document 'user1'
+     * ds.query('user1');
+     *
+     * // exact matching:
+     * // request all documents in collection where 'question2' is 9
+     * ds.query('', { 'question2': 9});
+     *
+     * // comparison operators:
+     * // request all documents in collection where 'question2' is greater than 9
+     * ds.query('', { 'question2': { '$gt': 9} });
+     *
+     * // logical operators:
+     * // request all documents in collection where 'question2' is less than 10, and 'question3' is false
+     * ds.query('', { '$and': [ { 'question2': { '$lt':10} }, { 'question3': false }] });
+     *
+     * // regular expresssions: use any Perl-compatible regular expressions
+     * // request all documents in collection where 'question5' contains the string '.*day'
+     * ds.query('', { 'question5': { '$regex': '.*day' } });
+     *
+     * 
+     * @param {String} documentID The id of the document to search. Pass the empty string ('') to search the entire collection.
+     * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
+     * @param {Object} [outputModifier] Available fields include: `sort`, and `direction` (`asc` or `desc`).
+     * @param {Object} [options] Overrides for configuration options.
+     * @return {Promise}
+     */
+
+
+    _createClass(DataService, [{
+        key: 'query',
+        value: function query(documentID, _query, outputModifier, options) {
+            var params = $.extend(true, { q: _query }, outputModifier);
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, documentID, mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
+            return this.http.get(params, mergedOptions);
+        }
+
+        /**
+         * Save data in an anonymous document within the collection.
+         *
+         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options; you can also pass the `root` to the `save` call explicitly by overriding the options (third parameter).
+         *
+         * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `save` method is making a `POST` request.)
+         *
+         * @example
+         * // Create a new document, with one element, at the default root level
+         * ds.save('question1', 'yes');
+         *
+         * // Create a new document, with two elements, at the default root level
+         * ds.save({ question1:'yes', question2: 32 });
+         *
+         * // Create a new document, with two elements, at `/students/`
+         * ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
+         *
+         * @param {String|Object} key If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
+         * @param {Object} [value] The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
+         * @param {Object} [options] Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'save',
+        value: function save(key, value, options) {
+            var attrs;
+            if (typeof key === 'object') {
+                attrs = key;
+                options = value;
+            } else {
+                (attrs = {})[key] = value;
+            }
+
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
+            return this.http.post(attrs, mergedOptions);
+        }
+
+        /**
+         * Append value to an array data structure within a document
+         * 
+         * @param  {string} documentPath     path to array item
+         * @param  {any} val     value to append to array
+         * @param  {object} [options] Overrides for configuration options
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'pushToArray',
+        value: function pushToArray(documentPath, val, options) {
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
+            return this.http.post(val, mergedOptions);
+        }
+
+        /**
+         * Save (create or replace) data in a named document or element within the collection.
+         *
+         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options; you can also pass the `root` to the `saveAs` call explicitly by overriding the options (third parameter).
+         *
+         * Optionally, the named document or element can include path information, so that you are saving just part of the document.
+         *
+         * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `saveAs` method is making a `PUT` request.)
+         *
+         * @example
+         * // Create (or replace) the `user1` document at the default root level.
+         * // Note that this replaces any existing content in the `user1` document.
+         * ds.saveAs('user1',
+         *     { 'question1': 2, 'question2': 10,
+         *      'question3': false, 'question4': 'sometimes' } );
+         *
+         * // Create (or replace) the `student1` document at the `students` root,
+         * // that is, the data at `/students/student1/`.
+         * // Note that this replaces any existing content in the `/students/student1/` document.
+         * // However, this will keep existing content in other paths of this collection.
+         * // For example, the data at `/students/student2/` is unchanged by this call.
+         * ds.saveAs('student1',
+         *     { firstName: 'john', lastName: 'smith' },
+         *     { root: 'students' });
+         *
+         * // Create (or replace) the `mgmt100/groupB` document at the `myclasses` root,
+         * // that is, the data at `/myclasses/mgmt100/groupB/`.
+         * // Note that this replaces any existing content in the `/myclasses/mgmt100/groupB/` document.
+         * // However, this will keep existing content in other paths of this collection.
+         * // For example, the data at `/myclasses/mgmt100/groupA/` is unchanged by this call.
+         * ds.saveAs('mgmt100/groupB',
+         *     { scenarioYear: '2015' },
+         *     { root: 'myclasses' });
+         *
+         * @param {String} documentPath Can be the id of a document, or a path to data within that document.
+         * @param {Object} [value] The data to save, in key:value pairs.
+         * @param {Object} [options] Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'saveAs',
+        value: function saveAs(documentPath, value, options) {
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
+            return this.http.put(value, mergedOptions);
+        }
+
+        /**
+         * Get data for a specific document or field.
+         *
+         * @example
+         * ds.load('user1');
+         * ds.load('user1/question3');
+         * 
+         * @param  {String|Object} [documentPath] The id of the data to return. Can be the id of a document, or a path to data within that document. If blank, returns whole collection
+         * @param {Object} [outputModifier] Available fields include: `sort`, and `direction` (`asc` or `desc`).
+         * @param {Object} [options] Overrides for configuration options.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'load',
+        value: function load(documentPath, outputModifier, options) {
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            try {
+                mergedOptions.url = getAPIURL(mergedOptions.root, documentPath, mergedOptions);
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
+            return this.http.get(outputModifier, mergedOptions);
+        }
+        /**
+         * Removes data from collection. Only documents (top-level elements in each collection) can be deleted.
+         *
+         * @example
+         * ds.remove('user1');
+         *
+         * @param {String|Array} keys The id of the document to remove from this collection, or an array of such ids.
+         * @param {Object} [options] Overrides for configuration options.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(keys, options) {
+            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
+            var params;
+            try {
+                if (Array.isArray(keys)) {
+                    params = 'id=' + keys.join('&id=');
+                    mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
+                } else {
+                    params = '';
+                    mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
+                }
+            } catch (e) {
+                return Object(__WEBPACK_IMPORTED_MODULE_4_util_index__["c" /* rejectPromise */])(e.type, e.message);
+            }
+            return this.http.delete(params, mergedOptions);
+        }
+
+        /**
+         * Returns the internal collection name (with scope)
+         *
+         * @param {object} session Group/User info to add to scope. Gets it from current session otherwise
+         * @param {Object} [options] Overrides for configuration options.
+         * @param {string} options.scope Scope to set to.
+         * @return {string} Scoped collection name.
+         */
+
+    }, {
+        key: 'getScopedName',
+        value: function getScopedName(session, options) {
+            var opts = $.extend(true, {}, this.serviceOptions, options);
+            var collName = opts.root.split('/')[0];
+            var scopedCollName = Object(__WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["b" /* getScopedName */])(collName, opts.scope, session);
+            return scopedCollName;
+        }
+
+        /**
+         * Gets a channel to listen to notifications on for this collection
+         *
+         * @param {Object} [options] Overrides for configuration options.
+         * @return {Channnel} channel instance to subscribe with.
+         */
+
+    }, {
+        key: 'getChannel',
+        value: function getChannel(options) {
+            var opts = $.extend(true, {}, this.serviceOptions, options);
+            var scopedCollName = this.getScopedName(opts);
+            var cm = new __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__["default"](opts);
+            return cm.getDataChannel(scopedCollName);
+        }
+        // Epicenter doesn't allow nuking collections
+        //     /**
+        //      * Removes collection being referenced
+        //      * @return null
+        //      */
+        //     destroy(options) {
+        //         return this.remove('', options);
+        //     }
+
+    }]);
+
+    return DataService;
+}();
+
+DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a" /* SCOPES */];
+
+/* harmony default export */ __webpack_exports__["default"] = (DataService);
+
+/***/ }),
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = MemberAPIService;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__service_utils__ = __webpack_require__(1);
 
 
@@ -3136,18 +3569,18 @@ function MemberAPIService(config) {
 }
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(53);
 
 
 
@@ -3512,7 +3945,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
 /* harmony default export */ __webpack_exports__["default"] = (EpicenterChannelManager);
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3740,7 +4173,7 @@ function ConsensusService(config) {
 }
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3762,19 +4195,18 @@ var STRATEGY = {
 };
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(73);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_managers_key_names___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_managers_key_names__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -3857,7 +4289,7 @@ var RunManager = function () {
         }
         patchRunService(this.run, this);
 
-        this.strategy = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__["getBestStrategy"])(this.options);
+        this.strategy = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__["default"].getBestStrategy(this.options);
         this.sessionManager = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(this.options);
     }
 
@@ -3915,13 +4347,18 @@ var RunManager = function () {
                 console.warn('Two simultaneous calls to `getRun` detected on the same RunManager instance. Either create different instances, or eliminate duplicate call');
                 return this.fetchProm;
             }
+
             this.fetchProm = this.strategy.getRun(this.run, authSession, runSession, options).then(function (run) {
                 if (!run || !run.id) {
                     return run;
                 }
+
                 _this.run.updateConfig({ filter: run.id });
-                var sessionKey = sessionKeyFromOptions(_this.options, _this.run);
-                setRunInSession(sessionKey, run, _this.sessionManager);
+                var canCache = _this.strategy.allowRunIDCache !== false;
+                if (canCache) {
+                    var sessionKey = sessionKeyFromOptions(_this.options, _this.run);
+                    setRunInSession(sessionKey, run, _this.sessionManager);
+                }
 
                 if (!variables || !variables.length) {
                     return run;
@@ -3963,19 +4400,33 @@ var RunManager = function () {
     }, {
         key: 'reset',
         value: function reset(options) {
-            var me = this;
+            var _this2 = this;
+
             var authSession = this.sessionManager.getSession();
             if (this.strategy.requiresAuth && Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["isEmpty"])(authSession)) {
                 console.error('No user-session available', this.options.strategy, 'requires authentication.');
                 return $.Deferred().reject({ type: 'UNAUTHORIZED', message: 'No user-session available' }).promise();
             }
-            return this.strategy.reset(this.run, authSession, options).then(function (run) {
+
+            var optionsToPassOn = Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["omit"])(options, ['success', 'error']); //strategy can just throw, so handle errors directly
+            return this.strategy.reset(this.run, authSession, optionsToPassOn).then(function (run) {
                 if (run && run.id) {
-                    me.run.updateConfig({ filter: run.id });
-                    var sessionKey = sessionKeyFromOptions(me.options, me.run);
-                    setRunInSession(sessionKey, run.id, me.sessionManager);
+                    _this2.run.updateConfig({ filter: run.id });
+                    var canCache = _this2.strategy.allowRunIDCache !== false;
+                    if (canCache) {
+                        var sessionKey = sessionKeyFromOptions(_this2.options, _this2.run);
+                        setRunInSession(sessionKey, run.id, _this2.sessionManager);
+                    }
+                }
+                if (options && options.success) {
+                    options && options.success(run);
                 }
                 return run;
+            }).catch(function (e) {
+                if (options && options.error) {
+                    options && options.error(e);
+                }
+                throw e;
             });
         }
     }]);
@@ -3983,23 +4434,230 @@ var RunManager = function () {
     return RunManager;
 }();
 
-RunManager.strategies = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies___default.a;
+RunManager.STRATEGY = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__["strategyKeys"];
+RunManager.strategies = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__["default"];
 /* harmony default export */ __webpack_exports__["default"] = (RunManager);
 
 /***/ }),
-/* 22 */
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(74);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
+
+/**
+ * @description
+ * 
+ * ## Saved Runs Manager
+ *
+ * The Saved Runs Manager is a specific type of [Run Manager](../../run-manager/) which provides access to a list of runs (rather than just one run). It also provides utility functions for dealing with multiple runs (e.g. saving, deleting, listing).
+ *
+ * An instance of a Saved Runs Manager is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.savedRuns`. See [more information](../#properties) on using `.savedRuns` within the Scenario Manager.
+ */
+
+var SavedRunsManager = function () {
+
+    /**
+     * @param {object} config 
+     * @property {boolean} [scopeByGroup]  If set, will only pull runs from current group. Defaults to `true`.
+     * @property {boolean} [scopeByUser]  If set, will only pull runs from current user. Defaults to `true`. For multiplayer run comparison projects, set this to false so that all end users in a group can view the shared set of saved runs.
+     * @property {object} [run] Run Service options
+     */
+    function SavedRunsManager(config) {
+        _classCallCheck(this, SavedRunsManager);
+
+        var defaults = {
+            scopeByGroup: true,
+            scopeByUser: true,
+            run: null
+        };
+
+        this.sessionManager = new __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default.a();
+
+        var options = $.extend(true, {}, defaults, config);
+        if (options.run) {
+            if (options.run instanceof __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]) {
+                this.runService = options.run;
+            } else {
+                this.runService = new __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"](options.run);
+            }
+            this.options = options;
+        } else {
+            throw new Error('No run options passed to SavedRunsManager');
+        }
+    }
+
+    /**
+     * Marks a run as saved. 
+     *
+     * Note that while any run can be saved, only runs which also match the configuration options `scopeByGroup` and `scopeByUser` are returned by the `getRuns()` method.
+     *
+     * @example
+     * const sm = new F.manager.ScenarioManager();
+     * sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
+     *
+     * @param  {String|RunService} run Run to save. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+     * @param  {object} [otherFields] Any other meta-data to save with the run.
+     * @return {Promise}
+     */
+
+
+    _createClass(SavedRunsManager, [{
+        key: 'save',
+        value: function save(run, otherFields) {
+            var runConfig = this.runService.getCurrentConfig();
+            var defaultToSave = {};
+            if (runConfig.scope && runConfig.scope.trackingKey) {
+                defaultToSave.scope = { trackingKey: runConfig.scope.trackingKey };
+            }
+            var param = $.extend(true, defaultToSave, otherFields, { saved: true, trashed: false });
+            return this.mark(run, param);
+        }
+
+        /**
+         * Marks a run as removed; the inverse of marking as saved.
+         *
+         * @example
+         * const sm = new F.manager.ScenarioManager();
+         * sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
+         *
+         * @param  {String|RunService|object} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+         * @param  {object} [otherFields] any other meta-data to save with the run.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(run, otherFields) {
+            var param = $.extend(true, {}, otherFields, { saved: false, trashed: true });
+            return this.mark(run, param);
+        }
+
+        /**
+         * Sets additional fields on a run. This is a convenience method for [RunService#save](../../run-api-service/#save).
+         *
+         * @example
+         * const sm = new F.manager.ScenarioManager();
+         * sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
+         *     { 'myRunName': 'sample policy decisions' });
+         *
+         * @param  {String|string[]|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
+         * @param  {Object} toMark Fields to set, as name : value pairs.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'mark',
+        value: function mark(run, toMark) {
+            var rs = void 0;
+            var existingOptions = this.runService.getCurrentConfig();
+            if (run instanceof __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]) {
+                rs = run;
+            } else if (run && typeof run === 'string') {
+                rs = new __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]($.extend(true, {}, existingOptions, { id: run, autoRestore: false }));
+            } else if (Array.isArray(run)) {
+                var me = this;
+                var proms = run.map(function (r) {
+                    return me.mark(r, toMark);
+                });
+                return $.when.apply(null, proms);
+            } else {
+                throw new Error('Invalid run object provided');
+            }
+            return rs.save(toMark);
+        }
+
+        /**
+         * Returns a list of saved runs. Note: This recursively fetches **all** runs by default; if you need access to data as it's being fetched use `options.onData`, else the promise is resolved with the final list of runs.
+         *
+         * @example
+         * const sm = new F.manager.ScenarioManager();
+         * sm.savedRuns.getRuns().then(function (runs) {
+         *  console.log('Found runs', runs.length);
+         * });
+         *
+         * @param  {string[]} [variables] If provided, in the returned list of runs, each run will have a `.variables` property with these set.
+         * @param  {object} [filter]    Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
+         * @param  {object} [modifiers] Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
+         * @param  {object} [options]
+         * @param {function(object[]):void} [options.onData] Use to get progressive data notifications as they're being fetched. Called with <options.recordsPerFetch> runs until all runs are loaded.
+         * @param {Number} [options.recordsPerFetch] Control the number of runs loaded with each request. Defaults to 100, set to lower to get results faster.
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'getRuns',
+        value: function getRuns(variables, filter, modifiers, options) {
+            var _this = this;
+
+            var session = this.sessionManager.getSession(this.runService.getCurrentConfig());
+
+            var runopts = this.runService.getCurrentConfig();
+            var scopedFilter = Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["a" /* injectFiltersFromSession */])($.extend(true, {}, {
+                saved: true,
+                trashed: false,
+                model: runopts.model
+            }, filter), session, this.options);
+            Object.keys(filter || {}).forEach(function (key) {
+                if (filter[key] === undefined) {
+                    delete scopedFilter[key];
+                }
+            });
+
+            var opModifiers = $.extend(true, {}, {
+                sort: 'created',
+                direction: 'asc'
+            }, modifiers);
+            if (variables) {
+                opModifiers.include = [].concat(variables);
+            }
+
+            var ops = $.extend({}, {
+                recordsPerFetch: 100,
+                onData: function () {},
+                startRecord: opModifiers.startRecord,
+                endRecord: opModifiers.endRecord
+            }, options);
+            return Object(__WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__["a" /* default */])(function (startRecord, endRecord) {
+                var opModifiersWithPaging = $.extend({}, opModifiers, { startRecord: startRecord, endRecord: endRecord });
+                return _this.runService.query(scopedFilter, opModifiersWithPaging);
+            }, ops);
+        }
+    }]);
+
+    return SavedRunsManager;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (SavedRunsManager);
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = {"version":"v2"}
 
 /***/ }),
-/* 23 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _require = __webpack_require__(3),
+var _require = __webpack_require__(2),
     omit = _require.omit;
 
-var _require2 = __webpack_require__(6),
+var _require2 = __webpack_require__(8),
     toQueryFormat = _require2.toQueryFormat;
 
 module.exports = function (config) {
@@ -4111,14 +4769,14 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = VariablesService;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(6);
 
 
 
@@ -4276,7 +4934,7 @@ function VariablesService(config) {
 }
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4384,7 +5042,7 @@ var apiEndpoint = 'model/introspect';
 });
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4396,15 +5054,14 @@ var apiEndpoint = 'model/introspect';
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var store = (isNode) ? require('./session-store') : require('./cookie-store');
 
-var store = __webpack_require__(27);
+var store = __webpack_require__(30);
 
 module.exports = store;
 
 /***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 30 */
+/***/ (function(module, exports) {
 
-"use strict";
 /**
  * @class Cookie Storage Service
  *
@@ -4415,10 +5072,7 @@ module.exports = store;
 
  */
 
-
-
 // Thin document.cookie wrapper to allow unit testing
-
 var Cookie = function () {
     this.get = function () {
         return document.cookie;
@@ -4483,7 +5137,11 @@ module.exports = function (config) {
             var path = setOptions.root;
             var cookie = setOptions.cookie;
 
-            cookie.set(encodeURIComponent(key) + '=' + encodeURIComponent(value) + (domain ? '; domain=' + domain : '') + (path ? '; path=' + path : ''));
+            var contents = [encodeURIComponent(key) + '=' + encodeURIComponent(value)];
+            if (domain) contents.push('domain=' + domain);
+            if (path) contents.push('path=' + path);
+            if (setOptions.expires !== undefined) contents.push('expires=' + setOptions.expires);
+            cookie.set(contents.join('; '));
 
             return value;
         },
@@ -4543,304 +5201,13 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(18);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-
-
-
-
-
-
-
-var API_ENDPOINT = 'data';
-var getAPIURL = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["c" /* getURL */].bind(null, API_ENDPOINT);
-
-var DataService = function () {
-    /**
-     * @param {AccountAPIServiceOptions} config 
-     * @property {string} root The name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
-     * @property {string} [scope] Determines who has read-write access to this data collection. See above for available scopes.
-     */
-    function DataService(config) {
-        _classCallCheck(this, DataService);
-
-        var defaults = {
-            scope: __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a" /* SCOPES */].CUSTOM,
-            root: '/',
-
-            account: undefined,
-            project: undefined,
-            token: undefined,
-            transport: {}
-        };
-        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpont: API_ENDPOINT });
-
-        this.serviceOptions = serviceOptions;
-        this.http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
-    }
-
-    /**
-     * Search for data within a collection.
-     *
-     * Searching using comparison or logical operators (as opposed to exact matches) requires MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional details.
-     *
-     * @example
-     * // request all data associated with document 'user1'
-     * ds.query('user1');
-     *
-     * // exact matching:
-     * // request all documents in collection where 'question2' is 9
-     * ds.query('', { 'question2': 9});
-     *
-     * // comparison operators:
-     * // request all documents in collection where 'question2' is greater than 9
-     * ds.query('', { 'question2': { '$gt': 9} });
-     *
-     * // logical operators:
-     * // request all documents in collection where 'question2' is less than 10, and 'question3' is false
-     * ds.query('', { '$and': [ { 'question2': { '$lt':10} }, { 'question3': false }] });
-     *
-     * // regular expresssions: use any Perl-compatible regular expressions
-     * // request all documents in collection where 'question5' contains the string '.*day'
-     * ds.query('', { 'question5': { '$regex': '.*day' } });
-     *
-     * 
-     * @param {String} key The name of the document to search. Pass the empty string ('') to search the entire collection.
-     * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
-     * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-     * @param {Object} [options] Overrides for configuration options.
-     * @return {Promise}
-     */
-
-
-    _createClass(DataService, [{
-        key: 'query',
-        value: function query(key, _query, outputModifier, options) {
-            var params = $.extend(true, { q: _query }, outputModifier);
-            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
-            return this.http.get(params, mergedOptions);
-        }
-
-        /**
-         * Save data in an anonymous document within the collection.
-         *
-         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options; you can also pass the `root` to the `save` call explicitly by overriding the options (third parameter).
-         *
-         * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `save` method is making a `POST` request.)
-         *
-         * @example
-         * // Create a new document, with one element, at the default root level
-         * ds.save('question1', 'yes');
-         *
-         * // Create a new document, with two elements, at the default root level
-         * ds.save({ question1:'yes', question2: 32 });
-         *
-         * // Create a new document, with two elements, at `/students/`
-         * ds.save({ name:'John', className: 'CS101' }, { root: 'students' });
-         *
-         * @param {String|Object} key If `key` is a string, it is the id of the element to save (create) in this document. If `key` is an object, the object is the data to save (create) in this document. In both cases, the id for the document is generated automatically.
-         * @param {Object} [value] The data to save. If `key` is a string, this is the value to save. If `key` is an object, the value(s) to save are already part of `key` and this argument is not required.
-         * @param {Object} [options] Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
-         * @return {Promise}
-         */
-
-    }, {
-        key: 'save',
-        value: function save(key, value, options) {
-            var attrs;
-            if (typeof key === 'object') {
-                attrs = key;
-                options = value;
-            } else {
-                (attrs = {})[key] = value;
-            }
-
-            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
-            return this.http.post(attrs, mergedOptions);
-        }
-
-        /**
-         * Append value to an array data structure within a document
-         * 
-         * @param  {string} key     path to array item
-         * @param  {any} val     value to append to array
-         * @param  {object} [options] Overrides for configuration options
-         * @return {Promise}
-         */
-
-    }, {
-        key: 'pushToArray',
-        value: function pushToArray(key, val, options) {
-            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
-            return this.http.post(val, mergedOptions);
-        }
-
-        /**
-         * Save (create or replace) data in a named document or element within the collection.
-         *
-         * The `root` of the collection must be specified. By default the `root` is taken from the Data Service configuration options; you can also pass the `root` to the `saveAs` call explicitly by overriding the options (third parameter).
-         *
-         * Optionally, the named document or element can include path information, so that you are saving just part of the document.
-         *
-         * (Additional background: Documents are top-level elements within a collection. Collections must be unique within this account (team or personal account) and project and are set with the `root` field in the `option` parameter. See the underlying [Data API](../../../rest_apis/data_api/) for more information. The `saveAs` method is making a `PUT` request.)
-         *
-         * @example
-         * // Create (or replace) the `user1` document at the default root level.
-         * // Note that this replaces any existing content in the `user1` document.
-         * ds.saveAs('user1',
-         *     { 'question1': 2, 'question2': 10,
-         *      'question3': false, 'question4': 'sometimes' } );
-         *
-         * // Create (or replace) the `student1` document at the `students` root,
-         * // that is, the data at `/students/student1/`.
-         * // Note that this replaces any existing content in the `/students/student1/` document.
-         * // However, this will keep existing content in other paths of this collection.
-         * // For example, the data at `/students/student2/` is unchanged by this call.
-         * ds.saveAs('student1',
-         *     { firstName: 'john', lastName: 'smith' },
-         *     { root: 'students' });
-         *
-         * // Create (or replace) the `mgmt100/groupB` document at the `myclasses` root,
-         * // that is, the data at `/myclasses/mgmt100/groupB/`.
-         * // Note that this replaces any existing content in the `/myclasses/mgmt100/groupB/` document.
-         * // However, this will keep existing content in other paths of this collection.
-         * // For example, the data at `/myclasses/mgmt100/groupA/` is unchanged by this call.
-         * ds.saveAs('mgmt100/groupB',
-         *     { scenarioYear: '2015' },
-         *     { root: 'myclasses' });
-         *
-         * @param {String} key Id of the document.
-         * @param {Object} [value] The data to save, in key:value pairs.
-         * @param {Object} [options] Overrides for configuration options. If you want to override the default `root` of the collection, do so here.
-         * @return {Promise}
-         */
-
-    }, {
-        key: 'saveAs',
-        value: function saveAs(key, value, options) {
-            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
-            return this.http.put(value, mergedOptions);
-        }
-        /**
-         * Get data for a specific document or field.
-         *
-         * @example
-         * ds.load('user1');
-         * ds.load('user1/question3');
-         * 
-         * @param  {String|Object} key The id of the data to return. Can be the id of a document, or a path to data within that document.
-         * @param {Object} [outputModifier] Available fields include: `startrecord`, `endrecord`, `sort`, and `direction` (`asc` or `desc`).
-         * @param {Object} [options] Overrides for configuration options.
-         * @return {Promise}
-         */
-
-    }, {
-        key: 'load',
-        value: function load(key, outputModifier, options) {
-            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            mergedOptions.url = getAPIURL(mergedOptions.root, key, mergedOptions);
-            return this.http.get(outputModifier, mergedOptions);
-        }
-        /**
-         * Removes data from collection. Only documents (top-level elements in each collection) can be deleted.
-         *
-         * @example
-         * ds.remove('user1');
-         *
-         * @param {String|Array} keys The id of the document to remove from this collection, or an array of such ids.
-         * @param {Object} [options] Overrides for configuration options.
-         * @return {Promise}
-         */
-
-    }, {
-        key: 'remove',
-        value: function remove(keys, options) {
-            var mergedOptions = $.extend(true, {}, this.serviceOptions, options);
-            var params;
-            if (Array.isArray(keys)) {
-                params = 'id=' + keys.join('&id=');
-                mergedOptions.url = getAPIURL(mergedOptions.root, '', mergedOptions);
-            } else {
-                params = '';
-                mergedOptions.url = getAPIURL(mergedOptions.root, keys, mergedOptions);
-            }
-            return this.http.delete(params, mergedOptions);
-        }
-
-        /**
-         * Returns the internal collection name (with scope)
-         *
-         * @param {object} session Group/User info to add to scope. Gets it from current session otherwise
-         * @param {Object} [options] Overrides for configuration options.
-         * @param {string} options.scope Scope to set to.
-         * @return {string} Scoped collection name.
-         */
-
-    }, {
-        key: 'getScopedName',
-        value: function getScopedName(session, options) {
-            var opts = $.extend(true, {}, this.serviceOptions, options);
-            var collName = opts.root.split('/')[0];
-            var scopedCollName = Object(__WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["b" /* getScopedName */])(collName, opts.scope, session);
-            return scopedCollName;
-        }
-
-        /**
-         * Gets a channel to listen to notifications on for this collection
-         *
-         * @param {Object} [options] Overrides for configuration options.
-         * @return {Channnel} channel instance to subscribe with.
-         */
-
-    }, {
-        key: 'getChannel',
-        value: function getChannel(options) {
-            var opts = $.extend(true, {}, this.serviceOptions, options);
-            var scopedCollName = this.getScopedName(opts);
-            var cm = new __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__["default"](opts);
-            return cm.getDataChannel(scopedCollName);
-        }
-        // Epicenter doesn't allow nuking collections
-        //     /**
-        //      * Removes collection being referenced
-        //      * @return null
-        //      */
-        //     destroy(options) {
-        //         return this.remove('', options);
-        //     }
-
-    }]);
-
-    return DataService;
-}();
-
-DataService.SCOPES = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["a" /* SCOPES */];
-
-/* harmony default export */ __webpack_exports__["default"] = (DataService);
-
-/***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = AuthService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 
 
@@ -4942,14 +5309,14 @@ function AuthService(config) {
 }
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_object_assign__);
 /**
  *
@@ -5023,7 +5390,7 @@ var GroupService = function (config) {
 /* harmony default export */ __webpack_exports__["default"] = (GroupService);
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5220,7 +5587,7 @@ var ChannelService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ChannelService);
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5399,7 +5766,7 @@ var apiEndpoint = 'presence';
          * @return {Channel} Channel instance
          */
         getChannel: function (groupName, options) {
-            var ChannelManager = __webpack_require__(18).default;
+            var ChannelManager = __webpack_require__(20).default;
             options = options || {};
             var isString = typeof groupName === 'string';
             var objParams = getFinalParams(groupName);
@@ -5416,14 +5783,14 @@ var apiEndpoint = 'presence';
 });
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = StateService;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
 
 
@@ -5547,7 +5914,7 @@ function StateService(config) {
 }
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5555,7 +5922,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = UserAPIAdapter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(8);
 
 
 
@@ -5708,12 +6075,12 @@ function UserAPIAdapter(config) {
 }
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -5761,7 +6128,240 @@ var TimeAPIService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (TimeAPIService);
 
 /***/ }),
-/* 36 */
+/* 38 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export objectToPublishable */
+/* unused harmony export publishableToObject */
+/* unused harmony export normalizeParamOptions */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(39);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+/**
+ * @typedef Publishable
+ * @property {string} name
+ * @property {*} value
+ */
+
+/**
+  * @typedef Subscription
+  * @prop {string} id
+  * @prop {Function} callback
+  * @prop {string[]} topics
+  */
+
+/**
+ * @param {object} obj
+ * @return {Publishable[]}
+ */
+function objectToPublishable(obj) {
+    var mapped = Object.keys(obj || {}).map(function (t) {
+        return { name: t, value: obj[t] };
+    });
+    return mapped;
+}
+
+/**
+ * Converts arrays of the form [{ name: '', value: ''}] to {[name]: value}
+ * @param {Publishable[]} arr
+ * @param {object} [mergeWith]
+ * @returns {object}
+ */
+function publishableToObject(arr, mergeWith) {
+    var result = (arr || []).reduce(function (accum, topic) {
+        accum[topic.name] = topic.value;
+        return accum;
+    }, __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend(true, {}, mergeWith));
+    return result;
+}
+
+/**
+ * @typedef NormalizedParam
+ * @property {Publishable[]} params
+ * @property {Object} options
+ */
+
+/**
+ *
+ * @param {String|Object|array} topic 
+ * @param {*} publishValue 
+ * @param {Object} [options]
+ * @return {NormalizedParam}
+ */
+function normalizeParamOptions(topic, publishValue, options) {
+    if (!topic) {
+        return { params: [], options: {} };
+    }
+    if (__WEBPACK_IMPORTED_MODULE_0_jquery___default.a.isPlainObject(topic)) {
+        return { params: objectToPublishable(topic), options: publishValue };
+    }
+    if (Array.isArray(topic)) {
+        return { params: topic, options: publishValue };
+    }
+    return { params: [{ name: topic, value: publishValue }], options: options };
+}
+
+var i = 0;
+function uniqueId(prefix) {
+    i++;
+    return '' + (prefix || '') + i;
+}
+
+/**
+ * 
+ * @param {String[]|String} topics 
+ * @param {Function} callback 
+ * @param {Object} options
+ * @return {Subscription}
+ */
+function makeSubs(topics, callback, options) {
+    var id = uniqueId('subs-');
+    var defaults = {
+        batch: false
+    };
+    var opts = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend({}, defaults, options);
+    if (!callback) {
+        throw new Error('subscribe callback should be a function');
+    }
+    return __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend(true, {
+        id: id,
+        topics: [].concat(topics).map(function (t) {
+            return t.toLowerCase();
+        }),
+        callback: callback
+    }, opts);
+}
+
+/**
+* @param {Publishable[]} topics
+* @param {Subscription} subscription 
+*/
+function checkAndNotifyBatch(topics, subscription) {
+    var merged = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend(true, {}, publishableToObject(topics));
+    var keys = Object.keys(merged).map(function (k) {
+        return k.toLowerCase();
+    });
+    var matchingTopics = Object(__WEBPACK_IMPORTED_MODULE_1_util_array_utils__["a" /* intersection */])(keys, subscription.topics);
+    if (matchingTopics.length > 0) {
+        var toSend = subscription.topics.reduce(function (accum, topic) {
+            accum[topic] = merged[topic];
+            return accum;
+        }, {});
+
+        if (matchingTopics.length === subscription.topics.length) {
+            subscription.callback(toSend);
+        }
+    }
+}
+
+/**
+ * @param {Publishable[]} topics
+ * @param {Subscription} subscription 
+ */
+function checkAndNotify(topics, subscription) {
+    topics.forEach(function (topic) {
+        if (subscription.topics.indexOf(topic.name.toLowerCase()) !== -1 || subscription.topics.indexOf('*') !== -1) {
+            subscription.callback(topic.value);
+        }
+    });
+}
+
+var PubSub = function () {
+    /**
+     * @param {{validTopics: string[]}} [options] 
+     */
+    function PubSub(options) {
+        _classCallCheck(this, PubSub);
+
+        var defaults = {
+            validTopics: []
+        };
+        this.options = __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.extend({}, defaults, options);
+        this.subscriptions = [];
+    }
+
+    /**
+     * @param {String | Publishable } topic
+     * @param {any} [value] item to publish
+     * @param {Object} [options]
+     * @return {Promise}
+     */
+
+
+    _createClass(PubSub, [{
+        key: 'publish',
+        value: function publish(topic, value, options) {
+            var normalized = normalizeParamOptions(topic, value, options);
+            // console.log('notify', normalized.params);
+            return this.subscriptions.forEach(function (subs) {
+                var fn = subs.batch ? checkAndNotifyBatch : checkAndNotify;
+                fn(normalized.params, subs);
+            });
+        }
+
+        /**
+         * @param {String[] | String} topics
+         * @param {Function} cb
+         * @param {Object} [options]
+         * @return {String}
+         */
+
+    }, {
+        key: 'subscribe',
+        value: function subscribe(topics, cb, options) {
+            topics = [].concat(topics);
+            var knownTopics = this.options.validTopics;
+            var areAllValid = knownTopics.length === 0 || Object(__WEBPACK_IMPORTED_MODULE_1_util_array_utils__["a" /* intersection */])(topics, knownTopics).length === topics.length;
+            if (!areAllValid) {
+                console.error('Uknown topics - ', topics, '. Only known topics are', knownTopics);
+                throw new Error('INVALID_TOPICS');
+            }
+            var subs = makeSubs(topics, cb, options);
+            this.subscriptions = this.subscriptions.concat(subs);
+            return subs.id;
+        }
+
+        /**
+         * @param {String} token
+         */
+
+    }, {
+        key: 'unsubscribe',
+        value: function unsubscribe(token) {
+            var olderLength = this.subscriptions.length;
+            if (!olderLength) {
+                throw new Error('No subscriptions found to unsubscribe from');
+            }
+
+            var remaining = this.subscriptions.filter(function (subs) {
+                return subs.id !== token;
+            });
+            if (remaining.length === olderLength) {
+                throw new Error('No subscription found for token ' + token);
+            }
+            this.subscriptions = remaining;
+        }
+    }, {
+        key: 'unsubscribeAll',
+        value: function unsubscribeAll() {
+            this.subscriptions = [];
+        }
+    }]);
+
+    return PubSub;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (PubSub);
+
+/***/ }),
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5785,12 +6385,12 @@ function intersection(a, b) {
 }
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(22);
 
 
 function reduceActions(actions, options) {
@@ -5827,13 +6427,13 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = ConsensusGroupService;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__consensus_service_js__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils_js__ = __webpack_require__(1);
 
@@ -5928,8 +6528,29 @@ function ConsensusGroupService(config) {
 }
 
 /***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "strategyKeys", function() { return strategyKeys; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__none_strategy__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reuse_never__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__use_specific_run_strategy__ = __webpack_require__(72);
+var _list;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /**
  * ### Working with Run Strategies
@@ -5943,19 +6564,39 @@ function ConsensusGroupService(config) {
  * * You can specify whether or not your strategy requires authorization (a valid user session) to work.
  */
 
-var list = {
-    'conditional-creation': __webpack_require__(11),
-    'new-if-initialized': __webpack_require__(62), //deprecated
-    'new-if-persisted': __webpack_require__(63), //deprecated
 
-    none: __webpack_require__(12),
 
-    multiplayer: __webpack_require__(64),
-    'reuse-never': __webpack_require__(65),
-    'reuse-per-session': __webpack_require__(66),
-    'reuse-across-sessions': __webpack_require__(67),
-    'reuse-last-initialized': __webpack_require__(40).default
+
+
+
+
+
+
+
+
+
+
+
+
+var strategyKeys = {
+    REUSE_NEVER: 'reuse-never',
+    REUSE_PER_SESSION: 'reuse-per-session',
+    REUSE_ACROSS_SESSIONS: 'reuse-across-sessions',
+    REUSE_LAST_INITIALIZED: 'reuse-last-initialized',
+
+    REUSE_BY_TRACKINGKEY: 'reuse-by-tracking-key',
+    USE_SPECIFIC_RUN: 'use-specific-run',
+
+    MULTIPLAYER: 'multiplayer',
+    NONE: 'none'
 };
+
+var list = (_list = {
+    'conditional-creation': __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy___default.a,
+    'new-if-initialized': __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy___default.a,
+    'new-if-persisted': __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy___default.a
+
+}, _defineProperty(_list, strategyKeys.NONE, __WEBPACK_IMPORTED_MODULE_3__none_strategy__["default"]), _defineProperty(_list, strategyKeys.MULTIPLAYER, __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.USE_SPECIFIC_RUN, __WEBPACK_IMPORTED_MODULE_10__use_specific_run_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_NEVER, __WEBPACK_IMPORTED_MODULE_5__reuse_never__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_PER_SESSION, __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_ACROSS_SESSIONS, __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_LAST_INITIALIZED, __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_BY_TRACKINGKEY, __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__["a" /* default */]), _list);
 
 //Add back older aliases
 list['always-new'] = list['reuse-never'];
@@ -6010,6 +6651,7 @@ var strategyManager = {
             throw new Error('All strategies should implement a `getRun` and `reset` interface' + options.strategy);
         }
         strategyInstance.requiresAuth = StrategyCtor.requiresAuth;
+        strategyInstance.allowRunIDCache = StrategyCtor.allowRunIDCache;
 
         return strategyInstance;
     },
@@ -6018,19 +6660,14 @@ var strategyManager = {
      * Adds a new strategy.
      *
      * @example
-     *      // this "favorite run" strategy always returns the same run, no matter what
-     *      // (not a useful strategy, except as an example)
-     *      F.manager.RunManager.strategies.register(
-     *          'favRun', 
-     *          function() { 
-     *              return { getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
-     *                      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
-     *              } 
-     *          }, 
-     *          { requiresAuth: true }
-     *      );
-     *      
-     *      var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
+     * // this "favorite run" strategy always returns the same run, no matter what
+     * // (not a useful strategy, except as an example)
+     * F.manager.RunManager.strategies.register('favRun', function() { 
+     *  return { 
+     *      getRun: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; },
+     *      reset: function() { return '0000015a4cd1700209cd0a7d207f44bac289'; } 
+     *  }}, { requiresAuth: true });
+     * var rm = new F.manager.RunManager({strategy: 'favRun', run: { model: 'model.vmf'} });
      *
      * 
      * @param  {String} name Name for strategy. This string can then be passed to a Run Manager as `new F.manager.RunManager({ strategy: 'mynewname'})`.
@@ -6044,31 +6681,33 @@ var strategyManager = {
     }
 };
 
-module.exports = strategyManager;
+/* harmony default export */ __webpack_exports__["default"] = (strategyManager);
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
 
 /**
  * The `reuse-last-initialized` strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations. 
  *
  * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *
- *      const rm = new F.manager.RunManager({
- *          strategy: 'reuse-last-initialized',
- *          strategyOptions: {
- *              initOperation: [{ step: 10 }]
- *          }
- *      });
- * 
+ *  ```js
+ *  const rm = new F.manager.RunManager({
+ *      strategy: 'reuse-last-initialized',
+ *      strategyOptions: {
+ *          initOperation: [{ step: 10 }]
+ *      }
+ *  });
+ *  ```
  * This strategy is also useful if you have a custom initialization function in your model, and want to make sure it's always executed for new runs.
  *
  * Specifically, the strategy is:
@@ -6080,17 +6719,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  */
 
-
-
 var ReuseLastInitializedStrategy = function () {
     /**
      * 
      * @param {object} [options] 
-     * @property {object[]} [initOperation] Operations to execute in the model for initialization to be considered complete. Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
-     * @property {object} [flag] Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
-     * @property {object} scope 
-     * @property {boolean} scope.scopeByUser  If true, only returns the last run for the user in session. Defaults to true.
-     * @property {boolean} scope.scopeByGroup If true, only returns the last run for the group in session. Defaults to true.
+     * @property {object[]} [options.initOperation] Operations to execute in the model for initialization to be considered complete. Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
+     * @property {object} [options.flag] Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
+     * @property {object} [options.scope] 
+     * @property {boolean} [options.scope.scopeByUser]  If true, only returns the last run for the user in session. Defaults to true.
+     * @property {boolean} [options.scope.scopeByGroup] If true, only returns the last run for the group in session. Defaults to true.
      */
     function ReuseLastInitializedStrategy(options) {
         _classCallCheck(this, ReuseLastInitializedStrategy);
@@ -6120,7 +6757,7 @@ var ReuseLastInitializedStrategy = function () {
         value: function reset(runService, userSession, options) {
             var _this = this;
 
-            var opt = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["injectScopeFromSession"])(runService.getCurrentConfig(), userSession);
+            var opt = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["b" /* injectScopeFromSession */])(runService.getCurrentConfig(), userSession);
             return runService.create(opt, options).then(function (createResponse) {
                 return runService.serial([].concat(_this.options.initOperation)).then(function () {
                     return createResponse;
@@ -6136,7 +6773,7 @@ var ReuseLastInitializedStrategy = function () {
         value: function getRun(runService, userSession, runSession, options) {
             var _this2 = this;
 
-            var sessionFilter = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["injectFiltersFromSession"])(this.options.flag, userSession, this.options.scope);
+            var sessionFilter = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["a" /* injectFiltersFromSession */])(this.options.flag, userSession, this.options.scope);
             var runopts = runService.getCurrentConfig();
             var filter = $.extend(true, { trashed: false }, sessionFilter, { model: runopts.model });
             return runService.query(filter, {
@@ -6156,18 +6793,17 @@ var ReuseLastInitializedStrategy = function () {
     return ReuseLastInitializedStrategy;
 }();
 
-/* harmony default export */ __webpack_exports__["default"] = (ReuseLastInitializedStrategy);
+/* harmony default export */ __webpack_exports__["a"] = (ReuseLastInitializedStrategy);
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategy_utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6177,188 +6813,146 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
+var errors = {
+    RUN_LIMIT_REACHED: 'RUN_LIMIT_REACHED',
+    NO_TRACKING_KEY: 'NO_TRACKING_KEY'
+};
+
 /**
- * @description
- * 
- * ## Saved Runs Manager
+ * @param {RunService} runService 
+ * @param {string} trackingKey 
+ * @param {object} userSession 
+ * @returns {Promise<object[]>}
+ */
+function getRunsForKey(runService, trackingKey, userSession) {
+    var filter = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["a" /* injectFiltersFromSession */])({
+        scope: {
+            trackingKey: trackingKey
+        }
+    }, userSession);
+
+    return runService.query(filter, {
+        startRecord: 0,
+        endRecord: 0,
+        sort: 'created',
+        direction: 'desc'
+    });
+}
+
+/**
+ * The `reuse-by-tracking-key` strategy creates or returns the most recent run matching a given tracking key. You can optionally  also provide a "Run limit", and it'll prevent new runs from being created with this strategy once that limit has  been reached.
  *
- * The Saved Runs Manager is a specific type of [Run Manager](../../run-manager/) which provides access to a list of runs (rather than just one run). It also provides utility functions for dealing with multiple runs (e.g. saving, deleting, listing).
+ * This strategy is used by the Settings Manager to apply class settings for turn-by-turn simulations, but can also be used stand-alone.
  *
- * An instance of a Saved Runs Manager is included automatically in every instance of a [Scenario Manager](../), and is accessible from the Scenario Manager at `.savedRuns`. See [more information](../#properties) on using `.savedRuns` within the Scenario Manager.
+ * @name reuse-by-tracking-key
  */
 
-var SavedRunsManager = function () {
-
+var ReuseWithTrackingKeyStrategy = function () {
     /**
-     * @param {object} config 
-     * @property {boolean} scopeByGroup  If set, will only pull runs from current group. Defaults to `true`.
-     * @property {boolean} scopeByUser  If set, will only pull runs from current user. Defaults to `true`. For multiplayer run comparison projects, set this to false so that all end users in a group can view the shared set of saved runs.
-     * @property {object} run Run Service options
+     * @param {object} [options] 
+     * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
+     * @property {string} settings.trackingKey Key to track runs with
+     * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
+     * @property {function(RunService, object):any} onCreate Callback will be called each time a new run is created
      */
-    function SavedRunsManager(config) {
-        _classCallCheck(this, SavedRunsManager);
+    function ReuseWithTrackingKeyStrategy(options) {
+        _classCallCheck(this, ReuseWithTrackingKeyStrategy);
 
         var defaults = {
-            scopeByGroup: true,
-            scopeByUser: true,
-            run: null
-        };
-
-        this.sessionManager = new __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default.a();
-
-        var options = $.extend(true, {}, defaults, config);
-        if (options.run) {
-            if (options.run instanceof __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]) {
-                this.runService = options.run;
-            } else {
-                this.runService = new __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"](options.run);
+            settings: {
+                trackingKey: null,
+                runLimit: Infinity
+            },
+            onCreate: function (runService, settings, run) {
+                return run;
             }
-            this.options = options;
-        } else {
-            throw new Error('No run options passed to SavedRunsManager');
-        }
+        };
+        var strategyOptions = options ? options.strategyOptions : {};
+        this.options = $.extend(true, {}, defaults, strategyOptions);
     }
 
-    /**
-     * Marks a run as saved. 
-     *
-     * Note that while any run can be saved, only runs which also match the configuration options `scopeByGroup` and `scopeByUser` are returned by the `getRuns()` method.
-     *
-     * @example
-     * var sm = new F.manager.ScenarioManager();
-     * sm.savedRuns.save('0000015a4cd1700209cd0a7d207f44bac289');
-     *
-     * @param  {String|RunService} run Run to save. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-     * @param  {object} [otherFields] Any other meta-data to save with the run.
-     * @return {Promise}
-     */
-
-
-    _createClass(SavedRunsManager, [{
-        key: 'save',
-        value: function save(run, otherFields) {
-            var runConfig = this.runService.getCurrentConfig();
-            var defaultToSave = {};
-            if (runConfig.scope && runConfig.scope.trackingKey) {
-                defaultToSave.scope = { trackingKey: runConfig.scope.trackingKey };
-            }
-            var param = $.extend(true, defaultToSave, otherFields, { saved: true, trashed: false });
-            return this.mark(run, param);
+    _createClass(ReuseWithTrackingKeyStrategy, [{
+        key: 'getSettings',
+        value: function getSettings() {
+            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* result */])(this.options.settings);
+            var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(settings).then(function (settings) {
+                var key = settings && settings.trackingKey;
+                if (!key) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.NO_TRACKING_KEY, 'No tracking key provided to reuse-by-tracking-key strategy');
+                }
+                return settings;
+            });
+            return prom;
         }
-
-        /**
-         * Marks a run as removed; the inverse of marking as saved.
-         *
-         * @example
-         * var sm = new F.manager.ScenarioManager();
-         * sm.savedRuns.remove('0000015a4cd1700209cd0a7d207f44bac289');
-         *
-         * @param  {String|RunService} run Run to remove. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-         * @param  {object} [otherFields] any other meta-data to save with the run.
-         * @return {Promise}
-         */
-
     }, {
-        key: 'remove',
-        value: function remove(run, otherFields) {
-            var param = $.extend(true, {}, otherFields, { saved: false, trashed: true });
-            return this.mark(run, param);
-        }
+        key: 'forceCreateRun',
+        value: function forceCreateRun(runService, userSession, settings) {
+            var _this = this;
 
-        /**
-         * Sets additional fields on a run. This is a convenience method for [RunService#save](../../run-api-service/#save).
-         *
-         * @example
-         * var sm = new F.manager.ScenarioManager();
-         * sm.savedRuns.mark('0000015a4cd1700209cd0a7d207f44bac289', 
-         *     { 'myRunName': 'sample policy decisions' });
-         *
-         * @param  {String|string[]|RunService} run  Run to operate on. Pass in either the run id, as a string, or the [Run Service](../../run-api-service/).
-         * @param  {Object} toMark Fields to set, as name : value pairs.
-         * @return {Promise}
-         */
+            var runConfig = runService.getCurrentConfig();
+            var trackingKey = settings && settings.trackingKey;
 
-    }, {
-        key: 'mark',
-        value: function mark(run, toMark) {
-            var rs;
-            var existingOptions = this.runService.getCurrentConfig();
-            if (run instanceof __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]) {
-                rs = run;
-            } else if (run && typeof run === 'string') {
-                rs = new __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__["default"]($.extend(true, {}, existingOptions, { id: run, autoRestore: false }));
-            } else if (Array.isArray(run)) {
-                var me = this;
-                var proms = run.map(function (r) {
-                    return me.mark(r, toMark);
-                });
-                return $.when.apply(null, proms);
-            } else {
-                throw new Error('Invalid run object provided');
-            }
-            return rs.save(toMark);
-        }
-
-        /**
-         * Returns a list of saved runs.
-         *
-         * @example
-         * var sm = new F.manager.ScenarioManager();
-         * sm.savedRuns.getRuns().then(function (runs) {
-         *     for (var i=0; i<runs.length; i++) {
-         *         console.log('run id of saved run: ', runs[i].id);
-         *     }
-         * });
-         *
-         * @param  {string[]} [variables] If provided, in the returned list of runs, each run will have a `.variables` property with these set.
-         * @param  {object} [filter]    Any filters to apply while fetching the run. See [RunService#filter](../../run-api-service/#filter) for details.
-         * @param  {object} [modifiers] Use for paging/sorting etc. See [RunService#filter](../../run-api-service/#filter) for details.
-         * @return {Promise}
-         */
-
-    }, {
-        key: 'getRuns',
-        value: function getRuns(variables, filter, modifiers) {
-            var session = this.sessionManager.getSession(this.runService.getCurrentConfig());
-
-            var runopts = this.runService.getCurrentConfig();
-            var scopedFilter = Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["injectFiltersFromSession"])($.extend(true, {}, {
-                saved: true,
-                trashed: false,
-                model: runopts.model
-            }, filter), session, this.options);
-
-            Object.keys(filter || {}).forEach(function (key) {
-                if (filter[key] === undefined) {
-                    delete scopedFilter[key];
+            var createOptions = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["b" /* injectScopeFromSession */])(runConfig, userSession);
+            var opt = $.extend(true, createOptions, {
+                scope: {
+                    trackingKey: trackingKey
                 }
             });
-            var opModifiers = $.extend(true, {}, {
-                sort: 'created',
-                direction: 'asc'
-            }, modifiers);
+            return runService.create(opt).then(function (run) {
+                var applied = _this.options.onCreate(runService, settings, run);
+                return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(applied).then(function (res) {
+                    return res && res.id ? res : run;
+                });
+            });
+        }
+    }, {
+        key: 'reset',
+        value: function reset(runService, userSession, options) {
+            var _this2 = this;
 
-            if (variables) {
-                opModifiers.include = [].concat(variables);
-            }
-            return this.runService.query(scopedFilter, opModifiers);
+            return this.getSettings().then(function (settings) {
+                return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs, status, xhr) {
+                    var startedRuns = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
+                    var runLimitNotSet = settings.runLimit === Infinity || ('' + settings.runLimit).trim() === '';
+                    var runLimit = runLimitNotSet ? Infinity : +settings.runLimit;
+                    if (startedRuns && startedRuns.total >= runLimit) {
+                        return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
+                    }
+                    return _this2.forceCreateRun(runService, userSession, settings);
+                });
+            });
+        }
+    }, {
+        key: 'getRun',
+        value: function getRun(runService, userSession, runSession, options) {
+            var _this3 = this;
+
+            return this.getSettings().then(function (settings) {
+                return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs) {
+                    if (!runs.length) {
+                        return _this3.forceCreateRun(runService, userSession, settings);
+                    }
+                    return runs[0];
+                });
+            });
         }
     }]);
 
-    return SavedRunsManager;
+    return ReuseWithTrackingKeyStrategy;
 }();
 
-/* harmony default export */ __webpack_exports__["default"] = (SavedRunsManager);
+ReuseWithTrackingKeyStrategy.errors = errors;
+/* harmony default export */ __webpack_exports__["a"] = (ReuseWithTrackingKeyStrategy);
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldManager;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
 
 
@@ -6469,11 +7063,10 @@ function WorldManager(options) {
 }
 
 /***/ }),
-/* 43 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var F = {
-    _private: {}, //need this hook now because tests expect everything to be global. Delete once tests are browserified
     util: {},
     factory: {},
     transport: {},
@@ -6484,74 +7077,78 @@ var F = {
     }
 };
 
-F.load = __webpack_require__(44);
+F.load = __webpack_require__(47);
 
 if (!window.SKIP_ENV_LOAD) {
     F.load();
 }
 
-F.util.query = __webpack_require__(6);
-F.util.run = __webpack_require__(8);
-F.util.classFrom = __webpack_require__(4);
+F.util.query = __webpack_require__(8);
+F.util.run = __webpack_require__(6);
+F.util.classFrom = __webpack_require__(5);
 
 F.factory.Transport = __webpack_require__(0).default;
-F.transport.Ajax = __webpack_require__(23);
+F.transport.Ajax = __webpack_require__(26);
 
-F.service.URL = __webpack_require__(14);
-F.service.Config = __webpack_require__(5).default;
+F.service.URL = __webpack_require__(15);
+F.service.Config = __webpack_require__(4).default;
 F.service.Run = __webpack_require__(9).default;
-F.service.File = __webpack_require__(46);
-F.service.Variables = __webpack_require__(24).default;
-F.service.Data = __webpack_require__(28).default;
-F.service.Auth = __webpack_require__(29).default;
-F.service.World = __webpack_require__(10).default;
-F.service.State = __webpack_require__(33).default;
-F.service.User = __webpack_require__(34).default;
-F.service.Member = __webpack_require__(17).default;
-F.service.Asset = __webpack_require__(52).default;
-F.service.Group = __webpack_require__(30).default;
-F.service.Introspect = __webpack_require__(25).default;
-F.service.Presence = __webpack_require__(32).default;
-F.service.Time = __webpack_require__(35).default;
-F.service.Timer = __webpack_require__(53).default;
-F.service.Password = __webpack_require__(59).default;
+F.service.File = __webpack_require__(49);
+F.service.Variables = __webpack_require__(27).default;
+F.service.Data = __webpack_require__(18).default;
+F.service.Auth = __webpack_require__(31).default;
+F.service.World = __webpack_require__(11).default;
+F.service.State = __webpack_require__(35).default;
+F.service.User = __webpack_require__(36).default;
+F.service.Member = __webpack_require__(19).default;
+F.service.Asset = __webpack_require__(55).default;
+F.service.Group = __webpack_require__(32).default;
+F.service.Introspect = __webpack_require__(28).default;
+F.service.Presence = __webpack_require__(34).default;
+F.service.Time = __webpack_require__(37).default;
+F.service.Timer = __webpack_require__(56).default;
+F.service.Password = __webpack_require__(62).default;
 
-F.service.Consensus = __webpack_require__(19).default;
-F.service.ConsensusGroup = __webpack_require__(38).default;
+F.service.Account = __webpack_require__(63).default;
 
-F.service.Project = __webpack_require__(60).default;
+F.service.Consensus = __webpack_require__(21).default;
+F.service.ConsensusGroup = __webpack_require__(41).default;
 
-F.store.Cookie = __webpack_require__(27);
-F.factory.Store = __webpack_require__(26);
+F.service.Project = __webpack_require__(64).default;
 
-F.manager.ScenarioManager = __webpack_require__(61).default;
-F.manager.RunManager = __webpack_require__(21).default;
-F.manager.User = __webpack_require__(71).default;
+F.store.Cookie = __webpack_require__(30);
+F.factory.Store = __webpack_require__(29);
+
+F.manager.ScenarioManager = __webpack_require__(65).default;
+F.manager.RunManager = __webpack_require__(23).default;
+F.manager.User = __webpack_require__(77).default;
 F.manager.AuthManager = __webpack_require__(13).default;
-F.manager.WorldManager = __webpack_require__(42).default;
-F.manager.SavedRunsManager = __webpack_require__(41).default;
+F.manager.WorldManager = __webpack_require__(45).default;
+F.manager.SavedRunsManager = __webpack_require__(24).default;
 
-var strategies = __webpack_require__(39);
+var strategies = __webpack_require__(42).default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.ChannelManager = __webpack_require__(18).default;
-F.service.Channel = __webpack_require__(31).default;
+F.manager.Settings = __webpack_require__(78).default;
 
-F.manager.ConsensusManager = __webpack_require__(72).default;
+F.manager.ChannelManager = __webpack_require__(20).default;
+F.service.Channel = __webpack_require__(33).default;
+
+F.manager.ConsensusManager = __webpack_require__(80).default;
 
 if (true) F.version = "2.8.0"; //eslint-disable-line no-undef
-F.api = __webpack_require__(22);
+F.api = __webpack_require__(25);
 
-F.constants = __webpack_require__(15);
+F.constants = __webpack_require__(16);
 
 module.exports = F;
 
 /***/ }),
-/* 44 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var URLConfigService = __webpack_require__(14);
+var URLConfigService = __webpack_require__(15);
 
 var envLoad = function (callback) {
     var urlService = new URLConfigService();
@@ -6567,13 +7164,13 @@ var envLoad = function (callback) {
 module.exports = envLoad;
 
 /***/ }),
-/* 45 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfigService = __webpack_require__(5).default;
+var ConfigService = __webpack_require__(4).default;
 
 var urlConfig = new ConfigService().get('server');
 var customDefaults = {};
@@ -6614,7 +7211,7 @@ var optionUtils = {
 module.exports = optionUtils;
 
 /***/ }),
-/* 46 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -6639,9 +7236,9 @@ module.exports = optionUtils;
  *       });
  */
 
-var ConfigService = __webpack_require__(5).default;
+var ConfigService = __webpack_require__(4).default;
 var TransportFactory = __webpack_require__(0).default;
-var SessionManager = __webpack_require__(2);
+var SessionManager = __webpack_require__(3);
 
 module.exports = function (config) {
     var defaults = {
@@ -6817,17 +7414,20 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 47 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SCOPES; });
+/* unused harmony export errors */
 /* unused harmony export addScopeToCollection */
 /* harmony export (immutable) */ __webpack_exports__["b"] = getScopedName;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getURL;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
+
 
 
 
@@ -6841,6 +7441,10 @@ var SCOPES = {
     CUSTOM: 'CUSTOM'
 };
 
+var errors = {
+    UNAUTHORIZED: 'UNAUTHORIZED'
+};
+
 /**
  * 
  * @param {string} key to prefix
@@ -6852,8 +7456,9 @@ var SCOPES = {
 function addScopeToCollection(key, scope, session) {
     var publicAccessScopes = [SCOPES.CUSTOM];
     var allowPublicAccess = publicAccessScopes.indexOf(scope) !== -1;
-    if (!Object.keys(session || {}).length && !allowPublicAccess) {
-        throw new Error('DataService Authorization error: ' + scope + ' for ' + key + ' requires an authenticated user');
+    var isValidSession = session && session.groupId && session.userId;
+    if (!isValidSession && !allowPublicAccess) {
+        throw new __WEBPACK_IMPORTED_MODULE_3_util_index__["a" /* CustomError */](errors.UNAUTHORIZED, 'DataService Authorization error: ' + scope + ' for ' + key + ' requires an authenticated user');
     }
     scope = scope.toUpperCase();
     var delimiter = '_';
@@ -6864,7 +7469,7 @@ function addScopeToCollection(key, scope, session) {
     } else if (scope === SCOPES.FACILITATOR) {
         var isFac = session.isTeamMember || session.isFac;
         if (!isFac) {
-            throw new Error('DataService Authorization error: ' + scope + ' for ' + key + ' requires a Facilitator user');
+            throw new __WEBPACK_IMPORTED_MODULE_3_util_index__["a" /* CustomError */](errors.UNAUTHORIZED, 'DataService Authorization error: ' + scope + ' for ' + key + ' requires a Facilitator user');
         }
         return [key, 'fac', 'group', session.groupId].join(delimiter);
     } else if (scope === SCOPES.PROJECT) {
@@ -6880,14 +7485,14 @@ function addScopeToCollection(key, scope, session) {
  * 
  * @param {string} name 
  * @param {string} scope 
- * @param {object} [session] 
+ * @param {object} [sessionOverride] 
  * @returns {string}
  */
-function getScopedName(name, scope, session) {
-    if (!session) {
-        var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__["default"]();
-        session = am.getCurrentUserSessionInfo();
-    }
+function getScopedName(name, scope, sessionOverride) {
+    var am = new __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__["default"]();
+    var defaultSession = am.getCurrentUserSessionInfo();
+    var session = $.extend(true, {}, defaultSession, sessionOverride);
+
     var split = name.split('/');
     var collection = split[0];
 
@@ -6898,7 +7503,7 @@ function getScopedName(name, scope, session) {
 }
 
 function getURL(API_ENDPOINT, collection, doc, options) {
-    var scopedCollection = getScopedName(collection || options.root, options.scope);
+    var scopedCollection = getScopedName(collection || options.root, options.scope, options);
 
     var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["d" /* getURLConfig */])(options);
     var baseURL = urlConfig.getAPIPath(API_ENDPOINT);
@@ -6908,7 +7513,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 }
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -6979,12 +7584,12 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
 
 /***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_channel_service__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_channel_service__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
 
 
@@ -7169,14 +7774,14 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 /* harmony default export */ __webpack_exports__["a"] = (ChannelManager);
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 
@@ -7308,7 +7913,7 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
 }
 
 /***/ }),
-/* 51 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7348,16 +7953,16 @@ var TOPICS = {
 };
 
 /***/ }),
-/* 52 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = AssetAdapter;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 
 
@@ -7437,12 +8042,13 @@ function AssetAdapter(config) {
         });
     };
 
-    var buildUrl = function (filename, options) {
+    var buildUrl = function (filename, options, subEndPoint) {
         validateUrlParams(options);
         var partKeys = scopeConfig[options.scope];
-        var parts = $.map(partKeys, function (key) {
+        var parts = partKeys.map(function (key) {
             return options[key];
         });
+        if (subEndPoint) parts = [subEndPoint].concat(parts);
         if (filename) {
             // This prevents adding a trailing / in the URL as the Asset API
             // does not work correctly with it
@@ -7630,6 +8236,28 @@ function AssetAdapter(config) {
         },
 
         /**
+         * Get upload url to S3. Useful if you're uploading large assets and would like to skip the middle-man (Epicenter) and upload to S3 directly.
+         * 
+         * @param {string} filename  Name of the file to upload.
+         * @param {object} [params] 
+         * @param {number} params.ttlSeconds Number of seconds link is valid for
+         * @param {object} [options] Options object to override service options.
+         * @return {Promise}
+         */
+        getTargetUploadURL: function (filename, params, options) {
+            var getServiceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["pick"])(serviceOptions, ['scope', 'account', 'project', 'group', 'userId']);
+            var urlOptions = $.extend({}, getServiceOptions, options);
+            var url = buildUrl(filename, urlOptions, 'register');
+
+            var postOptions = Object.assign({}, {
+                ttlSeconds: 900
+            }, params);
+            var httpOptions = $.extend(true, {}, urlOptions, { url: url });
+
+            return http.post(postOptions, httpOptions);
+        },
+
+        /**
         * Deletes a file from the Asset API.
         *
         * @example
@@ -7653,19 +8281,19 @@ function AssetAdapter(config) {
 }
 
 /***/ }),
-/* 53 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(55);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(22);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8015,230 +8643,20 @@ TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a"
 /* harmony default export */ __webpack_exports__["default"] = (TimerService);
 
 /***/ }),
-/* 54 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 57 */
+/***/ (function(module, exports) {
 
-"use strict";
-/* unused harmony export objectToPublishable */
-/* unused harmony export publishableToObject */
-/* unused harmony export normalizeParamOptions */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_array_utils__ = __webpack_require__(36);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-
-/**
- * @typedef Publishable
- * @property {string} name
- * @property {*} value
- */
-
-/**
-  * @typedef Subscription
-  * @prop {string} id
-  * @prop {Function} callback
-  * @prop {string[]} topics
-  */
-
-/**
- * @param {object} obj
- * @return {Publishable[]}
- */
-function objectToPublishable(obj) {
-    var mapped = Object.keys(obj || {}).map(function (t) {
-        return { name: t, value: obj[t] };
-    });
-    return mapped;
-}
-
-/**
- * Converts arrays of the form [{ name: '', value: ''}] to {[name]: value}
- * @param {Publishable[]} arr
- * @param {object} [mergeWith]
- * @returns {object}
- */
-function publishableToObject(arr, mergeWith) {
-    var result = (arr || []).reduce(function (accum, topic) {
-        accum[topic.name] = topic.value;
-        return accum;
-    }, $.extend(true, {}, mergeWith));
-    return result;
-}
-
-/**
- * @typedef NormalizedParam
- * @property {Publishable[]} params
- * @property {Object} options
- */
-
-/**
- *
- * @param {String|Object|array} topic 
- * @param {*} publishValue 
- * @param {Object} [options]
- * @return {NormalizedParam}
- */
-function normalizeParamOptions(topic, publishValue, options) {
-    if (!topic) {
-        return { params: [], options: {} };
-    }
-    if ($.isPlainObject(topic)) {
-        return { params: objectToPublishable(topic), options: publishValue };
-    }
-    if (Array.isArray(topic)) {
-        return { params: topic, options: publishValue };
-    }
-    return { params: [{ name: topic, value: publishValue }], options: options };
-}
-
-var i = 0;
-function uniqueId(prefix) {
-    i++;
-    return '' + (prefix || '') + i;
-}
-
-/**
- * 
- * @param {String[]|String} topics 
- * @param {Function} callback 
- * @param {Object} options
- * @return {Subscription}
- */
-function makeSubs(topics, callback, options) {
-    var id = uniqueId('subs-');
-    var defaults = {
-        batch: false
-    };
-    var opts = $.extend({}, defaults, options);
-    if (!callback) {
-        throw new Error('subscribe callback should be a function');
-    }
-    return $.extend(true, {
-        id: id,
-        topics: [].concat(topics).map(function (t) {
-            return t.toLowerCase();
-        }),
-        callback: callback
-    }, opts);
-}
-
-/**
-* @param {Publishable[]} topics
-* @param {Subscription} subscription 
-*/
-function checkAndNotifyBatch(topics, subscription) {
-    var merged = $.extend(true, {}, publishableToObject(topics));
-    var keys = Object.keys(merged).map(function (k) {
-        return k.toLowerCase();
-    });
-    var matchingTopics = Object(__WEBPACK_IMPORTED_MODULE_0_util_array_utils__["a" /* intersection */])(keys, subscription.topics);
-    if (matchingTopics.length > 0) {
-        var toSend = subscription.topics.reduce(function (accum, topic) {
-            accum[topic] = merged[topic];
-            return accum;
-        }, {});
-
-        if (matchingTopics.length === subscription.topics.length) {
-            subscription.callback(toSend);
-        }
-    }
-}
-
-/**
- * @param {Publishable[]} topics
- * @param {Subscription} subscription 
- */
-function checkAndNotify(topics, subscription) {
-    topics.forEach(function (topic) {
-        if (subscription.topics.indexOf(topic.name.toLowerCase()) !== -1 || subscription.topics.indexOf('*') !== -1) {
-            subscription.callback(topic.value);
-        }
-    });
-}
-
-var PubSub = function () {
-    function PubSub(options) {
-        _classCallCheck(this, PubSub);
-
-        this.subscriptions = [];
-    }
-
-    /**
-     * @param {String | Publishable } topic
-     * @param {any} [value] item to publish
-     * @param {Object} [options]
-     * @return {Promise}
-     */
-
-
-    _createClass(PubSub, [{
-        key: 'publish',
-        value: function publish(topic, value, options) {
-            var normalized = normalizeParamOptions(topic, value, options);
-            // console.log('notify', normalized.params);
-            return this.subscriptions.forEach(function (subs) {
-                var fn = subs.batch ? checkAndNotifyBatch : checkAndNotify;
-                fn(normalized.params, subs);
-            });
-        }
-
-        /**
-         * @param {String[] | String} topics
-         * @param {Function} cb
-         * @param {Object} [options]
-         * @return {String}
-         */
-
-    }, {
-        key: 'subscribe',
-        value: function subscribe(topics, cb, options) {
-            var subs = makeSubs(topics, cb, options);
-            this.subscriptions = this.subscriptions.concat(subs);
-            return subs.id;
-        }
-
-        /**
-         * @param {String} token
-         */
-
-    }, {
-        key: 'unsubscribe',
-        value: function unsubscribe(token) {
-            var olderLength = this.subscriptions.length;
-            if (!olderLength) {
-                throw new Error('No subscriptions found to unsubscribe from');
-            }
-
-            var remaining = this.subscriptions.filter(function (subs) {
-                return subs.id !== token;
-            });
-            if (remaining.length === olderLength) {
-                throw new Error('No subscription found for token ' + token);
-            }
-            this.subscriptions = remaining;
-        }
-    }, {
-        key: 'unsubscribeAll',
-        value: function unsubscribeAll() {
-            this.subscriptions = [];
-        }
-    }]);
-
-    return PubSub;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (PubSub);
+module.exports = jQuery;
 
 /***/ }),
-/* 55 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return STRATEGIES; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(56);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(60);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -8263,12 +8681,12 @@ function getStrategy(strategy) {
 }
 
 /***/ }),
-/* 56 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(40);
 
 
 function reduceActions(actions) {
@@ -8280,13 +8698,13 @@ function reduceActions(actions) {
 }
 
 /***/ }),
-/* 57 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_when_user_condition__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(39);
 
 
 
@@ -8310,12 +8728,12 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 58 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(22);
 
 
 function toDetailedTime(ts) {
@@ -8393,14 +8811,14 @@ function reduceActions(actions, startTime, currentTime) {
 }
 
 /***/ }),
-/* 59 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -8508,7 +8926,63 @@ var PasswordService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (PasswordService);
 
 /***/ }),
-/* 60 */
+/* 63 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = AccountAPIService;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_service_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/**
+ *
+ * ## Account API Adapter
+ *
+ * The Account API allows reading/writing Account settings. An author/admin Account token is required for most operations.
+ *
+ *      var ps = new F.service.Account({  account: 'acme', Account: 'sample', token: 'author-or-account-access-token' });
+ *      ps.getAccountSettings();
+ */
+
+
+
+
+var API_ENDPOINT = 'account';
+
+function AccountAPIService(config) {
+    var defaults = {
+        account: undefined,
+        transport: {}
+    };
+
+    function getHTTP(overrides) {
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, {
+            apiEndpoint: API_ENDPOINT
+        }, overrides);
+        if (!serviceOptions.account) {
+            throw new Error('No account passed to getAccountSettings');
+        }
+        serviceOptions.transport.url += serviceOptions.account;
+        var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+        return http;
+    }
+
+    var publicAPI = {
+        /**
+         * Get current settings for account
+         * @param {object} [options] 
+         * @returns {Promise}
+         */
+        getAccountSettings: function (options) {
+            var http = getHTTP(options);
+            return http.get();
+        }
+    };
+    return publicAPI;
+}
+
+/***/ }),
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8534,22 +9008,8 @@ var MULTIPLAYER_ENDPOINT = 'multiplayer/project';
 
 function ProjectAPIService(config) {
     var defaults = {
-        /**
-         * Epicenter account name. Defaults to undefined.
-         * @type {string}
-         */
         account: undefined,
-
-        /**
-         * Epicenter project name. Defaults to undefined.
-         * @type {string}
-         */
         project: undefined,
-
-        /**
-         * Options to pass on to the underlying transport layer. All jquery.ajax options at http://api.jquery.com/jQuery.ajax/ are available. Defaults to empty object.
-         * @type {object}
-         */
         transport: {}
     };
 
@@ -8622,21 +9082,20 @@ function ProjectAPIService(config) {
 }
 
 /***/ }),
-/* 61 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__saved_runs_manager__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_saved_runs_manager__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(69);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(76);
 // See integration-test-scenario-manager for usage examples
 
 
@@ -8694,7 +9153,7 @@ function ScenarioManager(config) {
         opts.advanceOperation = config.advanceOperation; //jquery.extend does a poor job trying to merge arrays
     }
 
-    var BaselineStrategyToUse = opts.includeBaseLine ? __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__["a" /* default */] : __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy___default.a;
+    var BaselineStrategyToUse = opts.includeBaseLine ? __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__["a" /* default */] : __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__["default"];
     /**
      * A [Run Manager](../run-manager/) instance containing a 'baseline' run to compare against; this is defined as a run "advanced to the end" of your model using just the model defaults. By default the "advance" operation is assumed to be `stepTo: end`, which works for time-based models in [Vensim](../../../model_code/vensim/), [Powersim](../../../model_code/powersim/), and [SimLang](../../../model_code/forio_simlang). If you're using a different language, or need to change this, just pass in a different `advanceOperation` option while creating the Scenario Manager. The baseline run is typically displayed in the project's UI as part of a run comparison table or chart.
      * @return {RunManager}
@@ -8702,7 +9161,7 @@ function ScenarioManager(config) {
     this.baseline = new __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__["default"]({
         strategy: BaselineStrategyToUse,
         sessionKey: cookieNameFromOptions.bind(null, 'sm-baseline-run'),
-        run: Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["mergeRunOptions"])(opts.run, opts.baseline.run),
+        run: Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["c" /* mergeRunOptions */])(opts.run, opts.baseline.run),
         strategyOptions: {
             baselineName: opts.baseline.runName,
             initOperation: opts.advanceOperation,
@@ -8714,7 +9173,7 @@ function ScenarioManager(config) {
      * A [SavedRunsManager](../saved-runs-manager/) instance containing a list of saved runs, that is, all runs that you want to use for comparisons. The saved runs are typically displayed in the project's UI as part of a run comparison table or chart.
      * @return {SavedRunsManager}
      */
-    this.savedRuns = new __WEBPACK_IMPORTED_MODULE_1__saved_runs_manager__["default"]($.extend(true, {}, {
+    this.savedRuns = new __WEBPACK_IMPORTED_MODULE_1_managers_saved_runs_manager__["default"]($.extend(true, {}, {
         run: opts.run
     }, opts.savedRuns));
 
@@ -8731,7 +9190,7 @@ function ScenarioManager(config) {
         var currentTrackingKey = config.scope && config.scope.trackingKey ? config.scope.trackingKey + '-current' : 'current';
         return { scope: { trackingKey: currentTrackingKey } };
     }
-    var mergedCurrentRunOptions = Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["mergeRunOptions"])(opts.run, opts.current.run);
+    var mergedCurrentRunOptions = Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["c" /* mergeRunOptions */])(opts.run, opts.current.run);
     if (mergedCurrentRunOptions instanceof __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__["default"]) {
         var _config = mergedCurrentRunOptions.getCurrentConfig();
         mergedCurrentRunOptions.updateConfig(scopeFromConfig(_config));
@@ -8788,7 +9247,7 @@ function ScenarioManager(config) {
 /* harmony default export */ __webpack_exports__["default"] = (ScenarioManager);
 
 /***/ }),
-/* 62 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8812,8 +9271,8 @@ function ScenarioManager(config) {
 
 
 
-var classFrom = __webpack_require__(4);
-var ConditionalStrategy = __webpack_require__(11);
+var classFrom = __webpack_require__(5);
+var ConditionalStrategy = __webpack_require__(12);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8831,7 +9290,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8858,8 +9317,8 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(4);
-var ConditionalStrategy = __webpack_require__(11);
+var classFrom = __webpack_require__(5);
+var ConditionalStrategy = __webpack_require__(12);
 
 var __super = ConditionalStrategy.prototype;
 
@@ -8877,91 +9336,96 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 64 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 68 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(10);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
 /**
  * The `multiplayer` strategy is for use with [multiplayer worlds](../../../glossary/#world). It checks the current world for this end user, and always returns the current run for that world. This is equivalent to calling `getCurrentWorldForUser()` and then `getCurrentRunId()` from the [World API Adapater](../world-api-adapter/). If you use the [World Manager](../world-manager/), you are automatically using this strategy.
  * 
  * Using this strategy means that end users in projects with multiplayer worlds always see the most current world and run. This ensures that they are in sync with the other end users sharing their world and run. In turn, this allows for competitive or collaborative multiplayer projects.
  */
 
+var MultiplayerStrategy = function () {
+    function MultiplayerStrategy(options) {
+        _classCallCheck(this, MultiplayerStrategy);
 
-var classFrom = __webpack_require__(4);
-
-var IdentityStrategy = __webpack_require__(12);
-var WorldApiAdapter = __webpack_require__(10).default;
-
-var defaults = {};
-
-var Strategy = classFrom(IdentityStrategy, {
-    constructor: function (options) {
+        var defaults = {};
         this.options = $.extend(true, {}, defaults, options);
-        this.worldApi = new WorldApiAdapter(this.options.run);
-    },
-
-    reset: function (runService, session, options) {
-        var curUserId = session.userId;
-        var curGroupName = session.groupName;
-
-        var optionsToPassOn = $.extend(true, {}, options, {
-            success: $.noop
-        });
-        return this.worldApi.getCurrentWorldForUser(curUserId, curGroupName).then(function (world) {
-            return this.worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
-                var toReturn = {
-                    id: runid
-                };
-                if (options && options.success) options.success(toReturn);
-                return toReturn;
-            });
-        }.bind(this));
-    },
-
-    getRun: function (runService, session) {
-        var curUserId = session.userId;
-        var curGroupName = session.groupName;
-        var worldApi = this.worldApi;
-        var model = this.options.model;
-        var me = this;
-        var dtd = $.Deferred();
-
-        if (!curUserId) {
-            return dtd.reject({ statusCode: 401, type: 'UNAUTHORIZED', message: 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)' }, session).promise();
-        }
-
-        var loadRunFromWorld = function (world) {
-            if (!world) {
-                return dtd.reject({ statusCode: 404, type: 'NO_WORLD_FOR_USER', message: 'The user is not in any world.' }, { options: me.options, session: session });
-            }
-            return worldApi.getCurrentRunId({ model: model, filter: world.id }).then(function (id) {
-                return runService.load(id);
-            }).then(function (run) {
-                run.world = world;
-                return run;
-            }).then(dtd.resolve).catch(dtd.reject);
-        };
-
-        var serverError = function (error) {
-            // is this possible?
-            return dtd.reject(error, session, me.options);
-        };
-
-        this.worldApi.getCurrentWorldForUser(curUserId, curGroupName).then(loadRunFromWorld).fail(serverError);
-
-        return dtd.promise();
     }
 
-});
+    _createClass(MultiplayerStrategy, [{
+        key: 'reset',
+        value: function reset(runService, session, options) {
+            var userId = session.userId,
+                groupName = session.groupName;
 
-module.exports = Strategy;
+            var optionsToPassOn = $.extend(true, {}, options, {
+                success: $.noop
+            });
+            var worldApi = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](runService.getCurrentConfig());
+            return worldApi.getCurrentWorldForUser(userId, groupName).then(function (world) {
+                return worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
+                    var toReturn = {
+                        id: runid
+                    };
+                    if (options && options.success) options.success(toReturn);
+                    return toReturn;
+                });
+            });
+        }
+    }, {
+        key: 'getRun',
+        value: function getRun(runService, session) {
+            var userId = session.userId,
+                groupName = session.groupName;
+
+            var worldApi = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](runService.getCurrentConfig());
+            var model = this.options.model;
+
+            if (!userId) {
+                return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('UNAUTHORIZED', 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)');
+            }
+
+            var loadRunFromWorld = function (world) {
+                if (!world) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('NO_WORLD_FOR_USER', 'User ' + userId + ' not part of a world');
+                }
+                return worldApi.getCurrentRunId({ model: model, filter: world.id }).then(function (id) {
+                    return runService.load(id);
+                }).then(function (run) {
+                    run.world = world;
+                    return run;
+                });
+            };
+
+            return worldApi.getCurrentWorldForUser(userId, groupName).then(loadRunFromWorld);
+        }
+    }]);
+
+    return MultiplayerStrategy;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (MultiplayerStrategy);
 
 /***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 69 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__util_inherit__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__);
 /**
  * The `reuse-never` strategy always creates a new run for this end user irrespective of current state. This is equivalent to calling `F.service.Run.create()` from the [Run Service](../run-api-service/) every time. 
  * 
@@ -8969,17 +9433,15 @@ module.exports = Strategy;
  * 
  * This strategy can be useful for basic, single-page projects. This strategy is also useful for prototyping or project development: it creates a new run each time you refresh the page, and you can easily check the outputs of the model. However, typically you will use one of the other strategies for a production project.
  *
- * @name always-new
+ * @name reuse-never
  */
 
 
 
-var classFrom = __webpack_require__(4);
-var ConditionalStrategy = __webpack_require__(11);
 
-var __super = ConditionalStrategy.prototype;
+var __super = __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default.a.prototype;
 
-var Strategy = classFrom(ConditionalStrategy, {
+var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default.a, {
     constructor: function (options) {
         __super.constructor.call(this, this.createIf, options);
     },
@@ -8990,13 +9452,24 @@ var Strategy = classFrom(ConditionalStrategy, {
     }
 });
 
-module.exports = Strategy;
+Strategy.allowRunIDCache = false;
+
+/* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 70 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__util_inherit__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__);
+
+
+
+var __super = __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default.a.prototype;
+
 /**
  * The `reuse-per-session` strategy creates a new run when the current one is not in the browser cookie.
  * 
@@ -9010,22 +9483,8 @@ module.exports = Strategy;
  *     * This cookie is set by the [Run Manager](../run-manager/) and configurable through its options. 
  *     * If the cookie exists, use the run id stored there. 
  *     * If the cookie does not exist, create a new run for this end user.
- *
- * @name new-if-missing
  */
-
-
-
-var classFrom = __webpack_require__(4);
-var ConditionalStrategy = __webpack_require__(11);
-
-var __super = ConditionalStrategy.prototype;
-
-/*
-*  create a new run only if nothing is stored in the cookie
-*  this is useful for baseRuns.
-*/
-var Strategy = classFrom(ConditionalStrategy, {
+var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default.a, {
     constructor: function (options) {
         __super.constructor.call(this, this.createIf, options);
     },
@@ -9036,13 +9495,21 @@ var Strategy = classFrom(ConditionalStrategy, {
     }
 });
 
-module.exports = Strategy;
+/* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 71 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_util_inherit__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__none_strategy__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
+
+
+
+
 /**
  * The `reuse-across-sessions` strategy returns the latest (most recent) run for this user, whether it is in memory or not. If there are no runs for this user, it creates a new one.
  *
@@ -9054,34 +9521,22 @@ module.exports = Strategy;
  *     * If there are no runs (either in memory or in the database), create a new one.
  *     * If there are runs, take the latest (most recent) one.
  *
- * @name persistent-single-player
  */
-
-
-
-var classFrom = __webpack_require__(4);
-var IdentityStrategy = __webpack_require__(12);
-
-var _require = __webpack_require__(7),
-    injectFiltersFromSession = _require.injectFiltersFromSession,
-    injectScopeFromSession = _require.injectScopeFromSession;
-
-var defaults = {
+var Strategy = __WEBPACK_IMPORTED_MODULE_0_util_inherit___default()(__WEBPACK_IMPORTED_MODULE_1__none_strategy__["default"], {
     /**
-     * (Optional) Additional criteria to use while selecting the last run
-     * @type {Object}
+     * @param {object} [options] strategy options
+     * @param {object} [options.filter ] Additional filters to retreive a run (e.g { saved: true }) etc
      */
-    filter: {}
-};
-
-var Strategy = classFrom(IdentityStrategy, {
     constructor: function Strategy(options) {
+        var defaults = {
+            filter: {}
+        };
         var strategyOptions = options ? options.strategyOptions : {};
         this.options = $.extend(true, {}, defaults, strategyOptions);
     },
 
     reset: function (runService, userSession, options) {
-        var opt = injectScopeFromSession(runService.getCurrentConfig(), userSession);
+        var opt = Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["b" /* injectScopeFromSession */])(runService.getCurrentConfig(), userSession);
         return runService.create(opt, options).then(function (run) {
             run.freshlyCreated = true;
             return run;
@@ -9089,8 +9544,9 @@ var Strategy = classFrom(IdentityStrategy, {
     },
 
     getRun: function (runService, userSession, runSession, options) {
-        var filter = injectFiltersFromSession(this.options.filter, userSession);
-        var me = this;
+        var _this = this;
+
+        var filter = Object(__WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__["a" /* injectFiltersFromSession */])(this.options.filter, userSession);
         return runService.query(filter, {
             startrecord: 0,
             endrecord: 0,
@@ -9098,17 +9554,65 @@ var Strategy = classFrom(IdentityStrategy, {
             direction: 'desc'
         }).then(function (runs) {
             if (!runs.length) {
-                return me.reset(runService, userSession, options);
+                return _this.reset(runService, userSession, options);
             }
             return runs[0];
         });
     }
 });
 
-module.exports = Strategy;
+/* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 68 */
+/* 72 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Use this strategy you already have a runid you want to use with the Run Manager (Usually used for impersonating a run)
+ * 
+ */
+var UseSpecificRun = function () {
+    /**
+     * @param {object} [options] 
+     * @property {string} [options.runId] Id of Run to use
+     */
+    function UseSpecificRun(options) {
+        _classCallCheck(this, UseSpecificRun);
+
+        var defaults = {
+            runId: null
+        };
+        var strategyOptions = options ? options.strategyOptions : {};
+        this.options = $.extend(true, {}, defaults, strategyOptions);
+        if (!this.options.runId) {
+            throw new Error('Missing required parameter `runId`: Specifying an runId is required for "Use Run" strategy');
+        }
+    }
+
+    _createClass(UseSpecificRun, [{
+        key: 'reset',
+        value: function reset(runService, userSession, options) {
+            throw new Error('"Use Run" strategy does not support reset');
+        }
+    }, {
+        key: 'getRun',
+        value: function getRun(runService, userSession, runSession, options) {
+            return runService.load(this.options.runId);
+        }
+    }]);
+
+    return UseSpecificRun;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (UseSpecificRun);
+
+/***/ }),
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9119,12 +9623,68 @@ function reset(params, options, manager) {
 }
 
 /***/ }),
-/* 69 */
+/* 74 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = bulkFetchRecords;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_run_util__ = __webpack_require__(6);
+
+
+/**
+ * Recursively fetches from any API which supports content-range
+ * 
+ * @param {function(Number, Number):Promise<object[], string, XMLHttpRequest>} fetchFn Function which returns a promise (presumably an API call)
+ * @param {object} [options] 
+ * @param {Number} [options.startRecord]
+ * @param {Number} [options.endRecord]
+ * @param {Number} [options.recordsPerFetch]
+ * @param {function(Number, Number):Promise<object[]>} [options.recordsPerFetch]
+ * @param {Function} [options.contentRangeParser]
+ * @return {Promise.<object[]>}
+ */
+function bulkFetchRecords(fetchFn, options) {
+    var ops = $.extend({}, {
+        startRecord: 0,
+        endRecord: Infinity,
+
+        recordsPerFetch: 100,
+        contentRangeParser: function (currentRecords, xhr) {
+            return xhr && Object(__WEBPACK_IMPORTED_MODULE_0_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
+        },
+
+        onData: function () {}
+    }, options);
+
+    function getRecords(fetchFn, options, recordsFoundSoFar) {
+        var endRecord = Math.min(options.startRecord + options.recordsPerFetch, options.endRecord);
+        return fetchFn(options.startRecord, endRecord).then(function (currentRecords, status, xhr) {
+            var allFound = (recordsFoundSoFar || []).concat(currentRecords);
+            var recordsLeft = ops.contentRangeParser(allFound, xhr);
+            options.onData(currentRecords, recordsLeft);
+
+            var recordsNeeded = recordsLeft && Math.min(recordsLeft.total, ops.endRecord - ops.startRecord);
+            if (recordsLeft && recordsNeeded > recordsLeft.end + 1) {
+                var nextFetchOptions = $.extend({}, options, {
+                    startRecord: recordsLeft.end + 1
+                });
+                return getRecords(fetchFn, nextFetchOptions, allFound);
+            }
+            return $.Deferred().resolve(allFound, status, xhr).promise();
+        });
+    }
+
+    var prom = getRecords(fetchFn, ops);
+    return prom;
+}
+
+/***/ }),
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = BaselineStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized__ = __webpack_require__(43);
 
 
 /**
@@ -9165,13 +9725,13 @@ function BaselineStrategy(options) {
         scope: opts.scope
     };
 
-    return new __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized__["default"]({
+    return new __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized__["a" /* default */]({
         strategyOptions: reuseStrategyOptions
     });
 }
 
 /***/ }),
-/* 70 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9219,7 +9779,7 @@ var ReuseLastUnsaved = function () {
         value: function reset(runService, userSession, options) {
             var runConfig = runService.getCurrentConfig();
 
-            var scoped = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["injectScopeFromSession"])(runConfig, userSession);
+            var scoped = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["b" /* injectScopeFromSession */])(runConfig, userSession);
             var opt = $.extend(true, {}, scoped);
             return runService.create(opt, options).then(function (createResponse) {
                 return $.extend(true, {}, createResponse, { freshlyCreated: true });
@@ -9229,7 +9789,7 @@ var ReuseLastUnsaved = function () {
         key: 'getRun',
         value: function getRun(runService, userSession, opts) {
             var runConfig = runService.getCurrentConfig();
-            var filter = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["injectFiltersFromSession"])({
+            var filter = Object(__WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_strategy_utils__["a" /* injectFiltersFromSession */])({
                 trashed: false,
                 saved: false,
                 model: runConfig.model
@@ -9257,14 +9817,14 @@ ReuseLastUnsaved.requiresAuth = false;
 /* harmony default export */ __webpack_exports__["a"] = (ReuseLastUnsaved);
 
 /***/ }),
-/* 71 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["parseUsers"] = parseUsers;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils__ = __webpack_require__(1);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -9461,15 +10021,461 @@ UserManager.errors = ERROR_TYPES;
 /* harmony default export */ __webpack_exports__["default"] = (UserManager);
 
 /***/ }),
-/* 72 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_saved_runs_manager__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_util_index__ = __webpack_require__(10);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
+
+
+var actions = {
+    SETTINGS_DELETED: 'SETTINGS_DELETED',
+    SETTINGS_ACTIVATED: 'SETTINGS_ACTIVATED',
+    DRAFT_CREATED: 'DRAFT_CREATED',
+    DRAFT_UPDATED: 'DRAFT_UPDATED'
+};
+
+var SettingsManager = function () {
+    /**
+     * @param {object} options 
+     * @property {AccountAPIServiceOptions} options.run Parameters to pass on to run service (account / project / model / files etc.)
+     * @property {object} [options.settings]
+     * @property {string} [options.settings.collection]
+     * @property {object | function(): object | function(): Promise<object>} [options.settings.collection]
+     */
+    function SettingsManager(options) {
+        _classCallCheck(this, SettingsManager);
+
+        var defaultSettings = {
+            run: {},
+            settings: {
+                collection: 'settings',
+                defaults: {}
+            }
+        };
+
+        this.options = $.extend(true, {}, defaultSettings, options);
+        this.settings = new __WEBPACK_IMPORTED_MODULE_1__settings_service__["a" /* default */](this.options);
+        this.channel = new __WEBPACK_IMPORTED_MODULE_3_util_pubsub__["a" /* default */]();
+        this.state = {
+            subscription: null
+        };
+    }
+
+    /**
+     * Get a cometd channel to subscribe to settings changes. The list of available topics are:
+     * 
+     * | Topic | Description |
+     * | ------------- | ------------- |
+     * | ALL | All events |
+     * | SETTINGS_ACTIVATED | A new draft has been made active, or a currently active draft was edited |
+     * | SETTINGS_DELETED | A settings document (either current or historical)  was deleted |
+     * | DRAFT_CREATED | A new draft was created |
+     * | DRAFT_UPDATED | A draft document was updated  |
+     * 
+     * @returns {Channel} Channel instance
+     */
+
+
+    _createClass(SettingsManager, [{
+        key: 'getChannel',
+        value: function getChannel() {
+            var _this = this;
+
+            if (this.state.subscription) {
+                return this.channel;
+            }
+
+            var rawDataChannel = this.settings.ds.getChannel();
+            this.state.subscription = rawDataChannel.subscribe('', function (res, meta) {
+                if (meta.subType === 'delete') {
+                    _this.channel.publish(actions.SETTINGS_DELETED, meta);
+                } else if (meta.subType === 'new') {
+                    _this.channel.publish(actions.DRAFT_CREATED, res);
+                } else if (meta.subType === 'update') {
+                    if (res.isDraft) {
+                        _this.channel.publish(actions.DRAFT_UPDATED, res);
+                    } else {
+                        _this.channel.publish(actions.SETTINGS_ACTIVATED, res);
+                    }
+                } else {
+                    console.warn('getChannel: Unknown subtype', res, meta);
+                }
+            });
+            return this.channel;
+        }
+
+        /**
+         * Use to get a strategy to use for user-runs. 
+         * 
+         * @example
+         * var settingsManager = new F.manager.Settings({
+                run: serviceOptions,
+            });
+            var strategy = settingsManager.getUserRunStrategy({
+                applySettings: (runService, settings, run)=> {
+                    return run.variables().save(settings); // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
+                }
+            });
+         * @param {object} options 
+         * @property {function(settings):boolean} [options.allowCreateRun] Use if you want to disallow creating new runs for some combination of settings, for e.g. if the settings are invalid or the simulation is 'closed' to gameplay. Defaults to always allowing.
+         * @property {function(RunService, settings, run):void} [options.applySettings] Function to apply settings to given run.
+         * @returns {object} Run Strategy 
+         */
+
+    }, {
+        key: 'getUserRunStrategy',
+        value: function getUserRunStrategy(options) {
+            var _this2 = this;
+
+            var defaults = {
+                allowCreateRun: function () {
+                    return true;
+                },
+                applySettings: function () {}
+            };
+            var opts = $.extend({}, defaults, options);
+            var strategy = new __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__["a" /* default */]({
+                strategyOptions: {
+                    settings: function () {
+                        return _this2.settings.getCurrentActive().then(function (settings) {
+                            if (!opts.allowCreateRun(settings)) {
+                                return Object(__WEBPACK_IMPORTED_MODULE_5_util_index__["c" /* rejectPromise */])('RUN_CREATION_NOT_ALLOWED', 'allowCreateRun check failed');
+                            }
+                            return settings || _this2.settings.getDefaults();
+                        }).then(function (settings) {
+                            var cleanedSettings = Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["omit"])(settings, ['id', 'lastModified', 'isDraft', 'key']);
+                            return $.extend(true, {}, cleanedSettings, { trackingKey: settings.id || 'defaultSettings' });
+                        });
+                    },
+                    onCreate: opts.applySettings
+                }
+            });
+            return strategy;
+        }
+
+        /**
+         * Helper method to create a [SavedRunsManager](../saved-runs-manager) instance with a preset tracking key
+         * @param {string} settingsId
+         * @return {SavedRunsManager}
+         */
+
+    }, {
+        key: 'getSavedRunsManagerForSetting',
+        value: function getSavedRunsManagerForSetting(settingsId) {
+            var runOptions = $.extend(true, {}, this.options.run, { scope: {
+                    trackingKey: settingsId
+                } });
+            var sm = new __WEBPACK_IMPORTED_MODULE_0_managers_saved_runs_manager__["default"]({ run: runOptions, scopeByUser: false });
+            return sm;
+        }
+
+        /**
+         * Helper method to get runs for most recent settings. Runs in the result, will have a `settings` property with the currently active settings set on it.
+         * 
+         * @param {*} savedRunManagerParams See  [SavedRunsManager options](../saved-runs-manager/#getruns-variables-filter-modifiers-) for parameters
+         * @return {Promise<object[]>}
+         */
+
+    }, {
+        key: 'getRuns',
+        value: function getRuns(savedRunManagerParams) {
+            var _this3 = this,
+                _arguments = arguments;
+
+            return this.settings.getCurrentActive().then(function (settings) {
+                if (!settings) {
+                    return [];
+                }
+                var sm = _this3.getSavedRunsManagerForSetting(settings.id);
+                return sm.getRuns.apply(sm, _arguments).then(function (runs) {
+                    return (runs || []).map(function (run) {
+                        return $.extend(true, run, { settings: settings });
+                    });
+                });
+            });
+        }
+    }]);
+
+    return SettingsManager;
+}();
+
+SettingsManager.actions = actions;
+
+/* harmony default export */ __webpack_exports__["default"] = (SettingsManager);
+
+/***/ }),
+/* 79 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+function sanitize(obj) {
+    return Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["omit"])(obj, ['id', 'lastModified']);
+}
+
+/**
+ * Thin wrapper around Data API for managing settings. Meant to be used in conjunction with the Settings Manager.
+ */
+
+var SettingsService = function () {
+    /**
+     * @param {object} opts 
+     * @property {AccountAPIServiceOptions} opts.run Parameters passed on to run service 
+     * @property {object} [opts.settings]
+     * @property {string} [opts.settings.collection]
+     * @property {object | function(): object | function(): Promise<object>} [opts.settings.collection]
+     */
+    function SettingsService(opts) {
+        _classCallCheck(this, SettingsService);
+
+        var defaults = {
+            run: {},
+            settings: {
+                collection: 'settings',
+                defaults: {}
+            }
+        };
+
+        this.options = $.extend(true, {}, defaults, opts);
+
+        var serviceOptions = $.extend(true, {}, this.options.run, {
+            root: this.options.settings.collection,
+            scope: __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__["default"].SCOPES.GROUP
+        });
+        this.ds = new __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__["default"](serviceOptions);
+
+        this.state = {
+            currentDraft: null
+        };
+    }
+
+    _createClass(SettingsService, [{
+        key: '_updateDraftOrCreate',
+        value: function _updateDraftOrCreate(settings, meta) {
+            var _this2 = this;
+
+            function getLastDraft() {
+                var _this = this;
+
+                if (this.state.currentDraft) {
+                    return $.Deferred().resolve(this.state.currentDraft).promise();
+                }
+                return this.getAll().then(function (settingsList) {
+                    var lastSettings = settingsList[0] || {};
+                    if (lastSettings.isDraft) {
+                        return lastSettings;
+                    }
+                    return _this.ds.save({});
+                });
+            }
+
+            return getLastDraft.call(this).then(function (draft) {
+                var newSettings = $.extend(true, {}, draft, settings, meta);
+                return _this2.ds.saveAs(draft.id, sanitize(newSettings));
+            }).then(function (d) {
+                _this2.state.currentDraft = d.isDraft ? d : null;
+                return d;
+            });
+        }
+
+        /**
+         * Evaluates and returns default settings.
+         * @returns {Promise<object>}
+         */
+
+    }, {
+        key: 'getDefaults',
+        value: function getDefaults() {
+            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["b" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["d" /* result */])(this.options.settings.defaults));
+            return defaultsProm;
+        }
+
+        /**
+         * @param {{excludeDrafts: boolean}} [options]
+         * @returns {Promise<object[]>} 
+         */
+
+    }, {
+        key: 'getAll',
+        value: function getAll(options) {
+            return this.ds.load('', { sort: 'key', direction: 'desc' }).then(function (settingHistory) {
+                var sorted = settingHistory.sort(function (a, b) {
+                    return a.key > b.key ? -1 : 1;
+                });
+                if (options && options.excludeDrafts) {
+                    return sorted.filter(function (s) {
+                        return s.isDraft === false;
+                    });
+                }
+                return sorted;
+            });
+        }
+
+        /**
+         * Returns currently active settings, or undefined if there are none.
+         * @returns {Promise<object[]>}
+         */
+
+    }, {
+        key: 'getCurrentActive',
+        value: function getCurrentActive() {
+            return this.getAll({ excludeDrafts: true }).then(function (activeSettings) {
+                var lastActive = activeSettings[0];
+                return lastActive;
+            });
+        }
+
+        /**
+         * Returns most recent settings; creates a new draft if none exist. Use to show current state on settings screen.
+         * @returns {Promise<object>}
+         */
+
+    }, {
+        key: 'getMostRecent',
+        value: function getMostRecent() {
+            var _this3 = this;
+
+            return this.getAll().then(function (settingsList) {
+                var lastSettings = settingsList[0];
+                if (!lastSettings) {
+                    return _this3.createDraft({ useDefaults: true });
+                }
+                return lastSettings;
+            });
+        }
+
+        /**
+         * Creates new draft settings. Usually used when there's already 'active' settings, and you want to start with a new set without affecting existing runs.
+         * 
+         * @param {{ useDefaults: boolean }} options If `useDefaults` is set, a draft is created with the default settings, else it clones the last available settings (either draft or active)
+         * @returns {Promise<object>}
+         */
+
+    }, {
+        key: 'createDraft',
+        value: function createDraft(options) {
+            var _this5 = this;
+
+            function getSettings(options) {
+                var _this4 = this;
+
+                if (options.useDefaults) {
+                    return this.getDefaults();
+                }
+                return this.getAll().then(function (settingsList) {
+                    return settingsList[0] || _this4.getDefaults();
+                });
+            }
+            return getSettings.call(this, options || {}).then(function (defaults) {
+                var newSettings = $.extend(true, {}, defaults, { isDraft: true, key: Date.now() });
+                return _this5.ds.save(sanitize(newSettings));
+            }).then(function (d) {
+                _this5.state.currentDraft = d;
+                return d;
+            });
+        }
+
+        /**
+         * Resets draft to defaults. If you need to reset to previous settings, use `createDraft` instead.
+         * 
+         * @returns {Promise<object>}
+         */
+
+    }, {
+        key: 'resetDraft',
+        value: function resetDraft() {
+            return this.createDraft({ useDefaults: true });
+        }
+
+        /**
+         * Updates current draft with provided settings. Creates draft if none exist.
+         * 
+         * @param {Object} settings
+         * @returns {Promise<object>}
+         */
+
+    }, {
+        key: 'updateDraft',
+        value: function updateDraft(settings) {
+            return this._updateDraftOrCreate(settings);
+        }
+
+        /**
+         * Updates current *active* settings.
+         * 
+         * @param {Object} newSettings
+         * @returns {Promise<object>}
+         */
+
+    }, {
+        key: 'updateActive',
+        value: function updateActive(newSettings) {
+            var _this6 = this;
+
+            return this.getCurrentActive().then(function (settings) {
+                if (!settings) {
+                    throw new Error('No active settings found');
+                }
+                var toSave = sanitize($.extend(true, {}, settings, newSettings));
+                return _this6.ds.saveAs(settings.id, toSave);
+            });
+        }
+
+        /**
+         * Activates the current settings, and makes it so it can no longer be modified; this will be applied to new runs (if you use the settings strategy)
+         * 
+         * @param {Object} settings
+         * @returns {Promise<object>}
+         */
+
+    }, {
+        key: 'saveAndActivate',
+        value: function saveAndActivate(settings) {
+            return this._updateDraftOrCreate(settings, { isDraft: false, key: Date.now() });
+        }
+    }]);
+
+    return SettingsService;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (SettingsService);
+
+/***/ }),
+/* 80 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(81);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9504,7 +10510,6 @@ var ConsensusManager = function () {
             strategy: '',
             strategyOptions: {}
         };
-
         this.serviceOptions = $.extend(true, {}, opts, config);
     }
 
@@ -9530,7 +10535,7 @@ var ConsensusManager = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ConsensusManager);
 
 /***/ }),
-/* 73 */
+/* 81 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
