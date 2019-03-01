@@ -89,7 +89,7 @@ class SettingsManager {
                         if (!opts.allowCreateRun(settings)) {
                             return rejectPromise('RUN_CREATION_NOT_ALLOWED', 'allowCreateRun check failed');
                         }
-                        return settings;
+                        return settings || this.settings.getDefaults();
                     }).then((settings)=> {
                         const cleanedSettings = omit(settings, ['id', 'lastModified', 'isDraft', 'key']);
                         return $.extend(true, {}, cleanedSettings, { trackingKey: settings.id || 'defaultSettings' });
