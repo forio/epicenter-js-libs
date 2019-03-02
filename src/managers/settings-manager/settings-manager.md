@@ -66,7 +66,6 @@ The Settings Manager provides a helper function to get all runs with the most re
 ```js
 settingsManager.getRuns(['Price', 'OtherVariable']).then((runs)=> { .. });
 ```
-
 Note that this defaults to filtering for saved runs, which is good practice for facilitator screens. To filter otherwise, just pass in `settingsManager.getRuns(['Price', 'OtherVariable'], { saved: false })`. See [SavedRunsManager options](../saved-runs-manager/#getruns-variables-filter-modifiers-) for a full list of parameters. 
 
 ### End-User workflow

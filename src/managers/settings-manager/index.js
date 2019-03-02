@@ -79,13 +79,12 @@ class SettingsManager {
      * 
      * @example
      * var settingsManager = new F.manager.Settings({
-            run: serviceOptions,
-        });
-        var strategy = settingsManager.getUserRunStrategy({
-            applySettings: (runService, settings, run)=> {
-                return run.variables().save(settings); // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
-            }
-        });
+     *      run: serviceOptions,
+     * });
+     * var strategy = settingsManager.getUserRunStrategy({
+     *  applySettings: (runService, settings, run)=> {
+     *      return run.variables().save(settings); // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
+     *  }});
      * @param {object} options 
      * @property {function(settings):boolean} [options.allowCreateRun] Use if you want to disallow creating new runs for some combination of settings, for e.g. if the settings are invalid or the simulation is 'closed' to gameplay. Defaults to always allowing.
      * @property {function(RunService, settings, run):void} [options.applySettings] Function to apply settings to given run.

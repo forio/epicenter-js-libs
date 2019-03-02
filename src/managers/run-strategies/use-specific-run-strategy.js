@@ -1,6 +1,16 @@
 /**
  * Use this strategy you already have a runid you want to use with the Run Manager (Usually used for impersonating a run)
  * 
+ *  Example:
+ *  ```js
+        var runOptions = window.location.search.indexOf('impersonate') === -1 ? 'reuse-across-sessions': {
+            strategy: 'use-specific-run',
+            strategyOptions: {
+                runId: 'runidToImpersonate' //usually passed on in the url
+            }
+        }
+        var rs = new F.Manager.Run(runOptions);
+    ```
  */
 export default class UseSpecificRun {
     /**

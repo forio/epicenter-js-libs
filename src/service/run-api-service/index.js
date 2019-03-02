@@ -148,11 +148,12 @@ export default function RunService(config) {
          * // where variables.price has been persisted (recorded)
          * // in the model.
          * rs.query({
-         *      saved: true,
-         *      include: ['Price', 'MyOtherVariable']
+         *  saved: true,
          * }, {
-         *      startrecord: 2,
-         *      endrecord: 5
+         *  include: ['Price', 'MyOtherVariable']
+         * }, {
+         *  startrecord: 2,
+         *  endrecord: 5
          * });
          * 
          * @param {Object} qs Query object. Each key should be a property of the run (saved/trashed/custom metadata saved with `.save`). Each value can be a literal value, or a comparison operator and value. (See [more on filtering](../../../rest_apis/aggregate_run_api/#filters) allowed in the underlying Run API.) Querying for variables is available for runs [in memory](../../../run_persistence/#runs-in-memory) and for runs [in the database](../../../run_persistence/#runs-in-memory) if the variables are persisted (e.g. that have been `record`ed in your model or marked for saving in your [model context file](../../../model_code/context/)).
