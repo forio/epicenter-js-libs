@@ -26,9 +26,9 @@ The `scope` parameter determines who has read-write access to this data collecti
 
 | Scope | Readable By | Writable By
 | ------------- | ------------- | ------------- |
-| GROUP | Facilitators & Users in that group | Faciliators in that group|
+| GROUP | Facilitators & Users in that group | Facilitators in that group|
 | USER | Faciliator in that group. User who created the collection | Faciliator in that group. User who created the collection |
-| FACILITATOR | Faciliators in that group | Faciliators in that group |
+| FACILITATOR | Facilitators in that group | Facilitators in that group |
 | PROJECT (default, for legacy reasons) | Any user in the project | Any user in the project |
 | CUSTOM (to opt out of naming conventions) | customize with Epicenter-api-proxy | customize with Epicenter-api-proxy |
 
