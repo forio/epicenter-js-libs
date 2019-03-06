@@ -36,7 +36,7 @@ export function makePromise(val) {
     //     return Promise.resolve(val());
     // }
     // return Promise.resolve(val);
-    if (val.then) {
+    if (val && val.then) {
         return val;
     }
     const $def = $.Deferred();
