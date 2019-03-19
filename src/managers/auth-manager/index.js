@@ -3,7 +3,6 @@ import MemberAdapter from 'service/member-api-adapter';
 import GroupService from 'service/group-api-service';
 import SessionManager from 'store/session-manager';
 import { pick as _pick } from 'util/object-util';
-import objectAssign from 'object-assign';
 
 var atob = window.atob || require('Base64').atob;
 
@@ -146,7 +145,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                         groupName: group.name,
                         isFac: isFac
                     };
-                    var sessionInfoWithGroup = objectAssign({}, sessionInfo, groupData);
+                    var sessionInfoWithGroup = $.extend({}, sessionInfo, groupData);
                     sessionInfo.groups[project] = groupData;
                     me.sessionManager.saveSession(sessionInfoWithGroup, adapterOptions);
                     outSuccess.apply(this, [data]);
@@ -160,7 +159,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts)
                     .then(handleGroupList, $d.reject);
             } else {
-                var opts = objectAssign({}, userGroupOpts, { token: token });
+                var opts = $.extend({}, userGroupOpts, { token: token });
                 var groupService = new GroupService(opts);
                 groupService.getGroups({ account: adapterOptions.account, project: project })
                     .then(function (groups) {

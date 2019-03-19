@@ -12,7 +12,6 @@
 
 import { getDefaultOptions, getApiUrl } from 'service/service-utils';
 import TransportFactory from 'transport/http-transport-factory';
-import objectAssign from 'object-assign';
 
 var apiEndpoint = 'group/local';
 
@@ -54,7 +53,7 @@ var GroupService = function (config) {
         getGroups: function (params, options) {
             //groupID is part of the URL
             //q, account and project are part of the query string
-            var finalOpts = objectAssign({}, serviceOptions, options);
+            var finalOpts = $.extend(true, {}, serviceOptions, options);
             var finalParams;
             if (typeof params === 'string') {
                 finalOpts.url = getApiUrl(apiEndpoint + '/' + params, finalOpts);
@@ -64,7 +63,7 @@ var GroupService = function (config) {
             return http.get(finalParams, finalOpts);
         }
     };
-    objectAssign(this, publicAPI);
+    $.extend(this, publicAPI);
 };
 
 export default GroupService;

@@ -34,12 +34,6 @@ Use the `SessionManager` to automatically get the merged session and library-wid
 ### Services
 Use `serviceUtils` for misc service utilities. Like generating the `serviceOptions` using the `SessionManager` and setting the `Authorization` header. Eventually all boilerplate code in the services should be removed in favor of using the `serviceUtils`.
 
-### Tools
-New code should:
-- Use `require('object-assign')` "ponyfill" and avoid deep object merges as is very slow
-- When deep assign needed use: `deep-assign`
-- Avoid using jQuery utils methods
-
 ### Future
 Eventually (maybe v2) we should try to:
 - Add library-wide options that we plug into `SessionManager` (all services/managers are using it)

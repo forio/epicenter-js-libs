@@ -1,7 +1,5 @@
 import ConfigService from './configuration-service';
 import SessionManager from '../store/session-manager';
-import objectAssign from 'object-assign';
-
 import TransportFactory from 'transport/http-transport-factory';
 
 export function getApiUrl(apiEndpoint, serviceOptions) {
@@ -29,7 +27,7 @@ export function getDefaultOptions(defaults) {
     var sessionManager = new SessionManager();
     var serviceOptions = sessionManager.getMergedOptions.apply(sessionManager, [defaults].concat(rest));
 
-    serviceOptions.transport = objectAssign({}, serviceOptions.transport, {
+    serviceOptions.transport = $.extend(true, {}, serviceOptions.transport, {
         url: getApiUrl(serviceOptions.apiEndpoint, serviceOptions)
     });
 
