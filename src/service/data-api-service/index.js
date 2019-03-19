@@ -25,7 +25,7 @@ class DataService {
             token: undefined,
             transport: {}
         };
-        const serviceOptions = getDefaultOptions(defaults, config, { apiEndpont: API_ENDPOINT });
+        const serviceOptions = getDefaultOptions(defaults, config, { apiEndpoint: API_ENDPOINT });
 
         this.serviceOptions = serviceOptions;
         this.http = new TransportFactory(serviceOptions.transport);
