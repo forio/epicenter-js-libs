@@ -124,11 +124,8 @@ export function splitGetFactory(httpOptions) {
         var getFinalUrl = function (params) {
             var url = getValue('url', options);
             var data = params;
-            // There is easy (or known) way to get the final URL jquery is going to send so
-            // we're replicating it. The process might change at some point but it probably will not.
-            // 1. Remove hash
+            // There is easy (or known) way to get the final URL jquery is going to send so we're replicating it.
             url = url.replace(/#.*$/, '');
-            // 1. Append query string
             var queryParams = toQueryFormat(data);
             var questionIdx = url.indexOf('?');
             if (queryParams && questionIdx > -1) {
@@ -153,7 +150,7 @@ export function splitGetFactory(httpOptions) {
             options.success = $.noop;
             options.error = $.noop;
 
-            var include = params.include;
+            var include = [].concat(params.include);
             var currIncludes = [];
             var includeOpts = [currIncludes];
             var currLength = encodeURIComponent('?include=').length;

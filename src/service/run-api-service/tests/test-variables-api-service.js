@@ -143,6 +143,15 @@ describe('Variables Service', function () {
             });
             server.requests = [];
         });
+        it('should not mutate includes', function () {
+            server.requests = [];
+            var include = createLargeInclude();
+            var oldLength = include.length;
+
+            vs.query(include);
+            include.length.should.equal(oldLength);
+            server.requests = [];
+        });
         it('should aggregate the response from the multiple GETs from the variables API', function () {
             var success = sinon.spy();
             var fail = sinon.spy(function () {
