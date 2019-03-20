@@ -32,9 +32,11 @@ export function getDefaultOptions(defaults) {
     });
 
     if (serviceOptions.token) {
-        serviceOptions.transport.headers = {
-            Authorization: 'Bearer ' + serviceOptions.token
-        };
+        $.extend(true, serviceOptions.transport, {
+            headers: {
+                Authorization: 'Bearer ' + serviceOptions.token
+            }
+        });
     }
     return serviceOptions;
 }
