@@ -43,7 +43,7 @@ class ReuseWithTrackingKeyStrategy {
      * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
      * @property {string} settings.trackingKey Key to track runs with
      * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
-     * @property {function(RunService, object):any} onCreate Callback will be called each time a new run is created
+     * @property {function(RunService, object):any} [onCreate] Callback will be called each time a new run is created
      */
     constructor(options) {
         const defaults = {
