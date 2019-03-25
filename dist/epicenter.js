@@ -6746,7 +6746,7 @@ var ReuseWithTrackingKeyStrategy = function () {
      * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
      * @property {string} settings.trackingKey Key to track runs with
      * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
-     * @property {function(RunService, object):any} onCreate Callback will be called each time a new run is created
+     * @property {function(RunService, object):any} [onCreate] Callback will be called each time a new run is created
      */
     function ReuseWithTrackingKeyStrategy(options) {
         _classCallCheck(this, ReuseWithTrackingKeyStrategy);
@@ -9235,6 +9235,7 @@ module.exports = Strategy;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9242,6 +9243,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
+
+function worldFromRun(runService) {
+    var config = Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["omit"])(runService.getCurrentConfig(), ['filter', 'id']);
+    var worldService = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](config);
+    return worldService;
+}
 /**
  * The `multiplayer` strategy is for use with [multiplayer worlds](../../../glossary/#world). It checks the current world for this end user, and always returns the current run for that world. This is equivalent to calling `getCurrentWorldForUser()` and then `getCurrentRunId()` from the [World API Adapater](../world-api-adapter/). If you use the [World Manager](../world-manager/), you are automatically using this strategy.
  * 
@@ -9265,7 +9272,7 @@ var MultiplayerStrategy = function () {
             var optionsToPassOn = $.extend(true, {}, options, {
                 success: $.noop
             });
-            var worldApi = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](runService.getCurrentConfig());
+            var worldApi = worldFromRun(runService);
             return worldApi.getCurrentWorldForUser(userId, groupName).then(function (world) {
                 return worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
                     var toReturn = {
@@ -9282,7 +9289,7 @@ var MultiplayerStrategy = function () {
             var userId = session.userId,
                 groupName = session.groupName;
 
-            var worldApi = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](runService.getCurrentConfig());
+            var worldApi = worldFromRun(runService);
             var model = this.options.model;
 
             if (!userId) {

@@ -1,6 +1,12 @@
 import WorldApiAdapter from 'service/world-api-adapter';
 import { rejectPromise } from 'util/index';
+import { omit } from 'util/object-util';
 
+function worldFromRun(runService) {
+    const config = omit(runService.getCurrentConfig(), ['filter', 'id']);
+    const worldService = new WorldApiAdapter(config);
+    return worldService;
+}
 /**
  * The `multiplayer` strategy is for use with [multiplayer worlds](../../../glossary/#world). It checks the current world for this end user, and always returns the current run for that world. This is equivalent to calling `getCurrentWorldForUser()` and then `getCurrentRunId()` from the [World API Adapater](../world-api-adapter/). If you use the [World Manager](../world-manager/), you are automatically using this strategy.
  * 
@@ -17,7 +23,7 @@ export default class MultiplayerStrategy {
         const optionsToPassOn = $.extend(true, {}, options, {
             success: $.noop,
         });
-        const worldApi = new WorldApiAdapter(runService.getCurrentConfig());
+        const worldApi = worldFromRun(runService);
         return worldApi
             .getCurrentWorldForUser(userId, groupName)
             .then((world)=> {
@@ -33,7 +39,7 @@ export default class MultiplayerStrategy {
 
     getRun(runService, session) {
         const { userId, groupName } = session;
-        const worldApi = new WorldApiAdapter(runService.getCurrentConfig());
+        const worldApi = worldFromRun(runService);
         const model = this.options.model;
 
         if (!userId) {
