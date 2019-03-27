@@ -127,7 +127,7 @@ function createFile(dest, contents) {
         //folder alerady exists, and that's okay
     }
     fs.writeFileSync(dest, contents);
-    console.log(`Created ${dest}`);
+    // console.log(`Created ${dest}`);
 }
 
 function getHeaderText(headerFile, includeFiles) {
@@ -149,8 +149,8 @@ function getHeaderText(headerFile, includeFiles) {
     });
 }
 
-files.map(normalizeInputStructure).forEach((ip)=> {
-    dd.parseFiles([ip.src], {
+const promises = files.map(normalizeInputStructure).map((ip)=> {
+    return dd.parseFiles([ip.src], {
         ignore: '', 
         parser: 'dox', 
         layout: path.resolve(__dirname, 'ddplugin.js')
@@ -164,11 +164,15 @@ files.map(normalizeInputStructure).forEach((ip)=> {
             '---',
         ].join('\n');
         
-        getHeaderText(ip.headerFile, ip.includeFiles).then((headerData)=> {
+        return getHeaderText(ip.headerFile, ip.includeFiles).then((headerData)=> {
             createFile(ip.dest, [prologue, headerData, contents].join('\n'));
+            return ip.dest;
         }, (e)=> {
             console.error('Could not get header text', e);
         });
     });
+});
+Promise.all(promises).then((files)=> {
+    console.log('Documentation generated for', files.length, 'files.');
 });
 

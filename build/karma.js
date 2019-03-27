@@ -49,8 +49,7 @@ module.exports = function (grunt) {
                 output: 'minimal',
             },
             webpackMiddleware: {
-                noInfo: true,
-                stats: 'none'
+                logLevel: 'error',
             },
             webpack: {
                 module: {

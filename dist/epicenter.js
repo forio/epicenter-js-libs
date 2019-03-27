@@ -7716,10 +7716,9 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
         }
 
         var _fullTopic$split = fullTopic.split('/'),
-            _fullTopic$split2 = _slicedToArray(_fullTopic$split, 3),
+            _fullTopic$split2 = _slicedToArray(_fullTopic$split, 2),
             subscribedTopic = _fullTopic$split2[0],
-            subscribedSubTopic = _fullTopic$split2[1],
-            subTopicFilter = _fullTopic$split2[2];
+            subscribedSubTopic = _fullTopic$split2[1];
 
         var defaults = {
             includeMine: true

@@ -13,7 +13,7 @@ export default function subscribeToWorldChannel(worldid, channel, session, chann
             return oldsubs.call(channel, fullTopic, callback, context, subscribeOptions);
         }
 
-        const [subscribedTopic, subscribedSubTopic, subTopicFilter] = fullTopic.split('/');
+        const [subscribedTopic, subscribedSubTopic] = fullTopic.split('/');
         var defaults = {
             includeMine: true
         };

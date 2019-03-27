@@ -3,7 +3,7 @@ import SettingsService from './settings-service';
 import ReuseWithTracking from 'managers/run-strategies/reuse-by-tracking-key';
 import PubSub from 'util/pubsub';
 import { omit } from 'util/object-util';
-import { rejectPromise, makePromise } from 'util/index';
+import { rejectPromise } from 'util/index';
 
 const actions = {
     SETTINGS_DELETED: 'SETTINGS_DELETED',
