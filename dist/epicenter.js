@@ -5753,7 +5753,7 @@ function StateService(config) {
         * sa.replay({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore'});
         *
         *  
-        * @param {object} params Parameters object.
+        * @param {object} params
         * @param {string} params.runId The id of the run to bring back to memory.
         * @param {string} [params.stopBefore] The run is advanced only up to the first occurrence of this method.
         * @param {string[]} [params.exclude] Array of methods to exclude when advancing the run.
@@ -5773,13 +5773,13 @@ function StateService(config) {
         /**
         * 'Rewind' applies to time-based models; it replays the model and stops before the last instance of the rewind operation.
         * 
-        *  Note that for this action to work, you need define `"rewind":{"name": "step"}` in your model context file, where `step` is the name of the operation you typically rewind.
+        *  Note that for this action to work, you need to define `"rewind":{"name": "step"}` in your model context file, where `step` is the name of the operation you typically use to advance your simulation.
         *  
         * @example
         * var sa = new F.service.State();
         * sa.rewind({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f' });
         *
-        * @param {object} params Parameters object.
+        * @param {object} params
         * @param {string} params.runId The id of the run to rewind
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -5806,7 +5806,7 @@ function StateService(config) {
         * var sa = new F.service.State();
         * sa.clone({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f', stopBefore: 'calculateScore', exclude: ['interimCalculation'] });
         *  
-        * @param {object} params Parameters object.
+        * @param {object} params
         * @param {string} params.runId The id of the run to clone from memory.
         * @param {string} [params.stopBefore] The newly cloned run is advanced only up to the first occurrence of this method.
         * @param {string[]} [params.exclude] Array of methods to exclude when advancing the newly cloned run.
