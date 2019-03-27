@@ -5771,6 +5771,27 @@ function StateService(config) {
         },
 
         /**
+        * 'Rewind' applies to time-based models; it replays the model and stops before the last instance of the rewind operation.
+        * 
+        *  Note that for this action to work, you need define `"rewind":{"name": "step"}` in your model context file, where `step` is the name of the operation you typically rewind.
+        *  
+        * @example
+        * var sa = new F.service.State();
+        * sa.rewind({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f' });
+        *
+        * @param {object} params Parameters object.
+        * @param {string} params.runId The id of the run to rewind
+        * @param {object} [options] Overrides for configuration options.
+        * @return {Promise}
+        */
+        rewind: function (params, options) {
+            var runId = parseRunIdOrError(params);
+
+            var replayOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + 'rewind/' + runId });
+            return http.post({}, replayOptions);
+        },
+
+        /**
         * Clone a given run and return a new run in the same state as the given run.
         *
         * The new run id is now available [in memory](../../../run_persistence/#runs-in-memory). The new run includes a copy of all of the data from the original run, EXCEPT:
@@ -7742,7 +7763,10 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
             var notificationFrom = res.data.user || {};
             var payload = res.data.data;
             if (type === __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__["a" /* TOPICS */].RUN && subType === __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__["b" /* TOPIC_SUBTYPES */].RESET) {
-                notificationFrom = payload.run.user; //reset doesn't give back user info otherwise
+                if (payload.run.user) {
+                    //reset doesn't give back user info otherwise, and world api doesn't return anything regardless
+                    notificationFrom = payload.run.user;
+                }
             } else if (type === __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__["a" /* TOPICS */].ROLES && !notificationFrom.id) {
                 notificationFrom.id = session.userid; //unassign doesn't provide an user
             }

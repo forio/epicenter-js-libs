@@ -50,7 +50,10 @@ export default function subscribeToWorldChannel(worldid, channel, session, chann
             let notificationFrom = res.data.user || {};
             const payload = res.data.data;
             if (type === TOPICS.RUN && subType === TOPIC_SUBTYPES.RESET) {
-                notificationFrom = payload.run.user; //reset doesn't give back user info otherwise
+                if (payload.run.user) {
+                    //reset doesn't give back user info otherwise, and world api doesn't return anything regardless
+                    notificationFrom = payload.run.user;
+                }
             } else if (type === TOPICS.ROLES && !notificationFrom.id) {
                 notificationFrom.id = session.userid; //unassign doesn't provide an user
             }
