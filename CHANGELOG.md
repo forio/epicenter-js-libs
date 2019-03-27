@@ -1,3 +1,17 @@
+<a name="2.9.1"></a>
+### Bug-fixes
+- The multiplayer strategy reset function was sometimes using the wrong run id. This may have been a regression in `2.9.0`, and so **All multiplayer simulations should use 2.9.1 instead **.
+- Listening to `TOPICS.RUN_RESET` on the channel instance returned by `getWorldChannel` wasn't working, now does.
+- EPICENTER-3942 Variable service `query` mutated it's inputs for large GETs. Now properly clones.
+- The `onCreate` parameter to `settingsManager.getUserRunStrategy` should've been optional but was actually required. Now is optional for real.
+- Data service added a leading `/` if a custom `baseURL` was set while using an API proxy, now uses the correct path.
+
+### Improvements
+- Removed `objectAssign` polyfill, which was only used in the AuthManager. This is replaced with `$.extend` which is what the rest of the code uses anyway, and makes the file-size slightly smaller.
+
+### Features
+- Though technically a bug-fix release, this release also adds a `rewind` operation to the State service.
+
 <a name="2.9.0"></a>
 
 ### Features
