@@ -21,8 +21,8 @@ describe('State API Adapter', function () {
     });
 
     it('should pass through string tokens', function () {
-        var ds = new StateService({ token: 'abc' });
-        ds.replay({ runId: 'X' });
+        var ss = new StateService({ token: 'abc' });
+        ss.replay({ runId: 'X' });
 
         var req = server.requests.pop();
         req.requestHeaders.Authorization.should.equal('Bearer abc');
@@ -30,8 +30,8 @@ describe('State API Adapter', function () {
 
     it('should pass in transport options to the underlying ajax handler', function () {
         var callback = sinon.spy();
-        var ds = new StateService({ transport: { beforeSend: callback } });
-        ds.replay({ runId: 'X' });
+        var ss = new StateService({ transport: { beforeSend: callback } });
+        ss.replay({ runId: 'X' });
 
         server.respond();
         callback.should.have.been.called;
@@ -39,15 +39,15 @@ describe('State API Adapter', function () {
 
     describe('#load', function () {
         it('should do a GET', function () {
-            var ds = new StateService();
-            ds.load('X');
+            var ss = new StateService();
+            ss.load('X');
 
             var req = server.requests.pop();
             req.method.toUpperCase().should.equal('GET');
         });
         it('should hit the right url', function () {
-            var ds = new StateService();
-            ds.load('X');
+            var ss = new StateService();
+            ss.load('X');
 
             var req = server.requests.pop();
             req.url.should.equal(baseURL + 'X');
@@ -56,102 +56,125 @@ describe('State API Adapter', function () {
 
     describe('#replay', function () {
         it('Should do a POST', function () {
-            var ds = new StateService();
-            ds.replay({ runId: 'X' });
+            var ss = new StateService();
+            ss.replay({ runId: 'X' });
 
             var req = server.requests.pop();
             req.method.toUpperCase().should.equal('POST');
         });
 
         it('should hit the right url', function () {
-            var ds = new StateService();
-            ds.replay({ runId: 'X' });
+            var ss = new StateService();
+            ss.replay({ runId: 'X' });
 
             var req = server.requests.pop();
             req.url.should.equal(baseURL + 'X');
         });
         //Hold off till 2.0
-        it.skip('should allow string runids', function () {
-            var ds = new StateService();
-            ds.replay('X');
+        it.skip('should allow string runiss', function () {
+            var ss = new StateService();
+            ss.replay('X');
 
             var req = server.requests.pop();
             req.url.should.equal(baseURL + 'X');
         });
         it('should throw an error if runid is not provided', function () {
-            var ds = new StateService();
-            var ret = function () { ds.replay(); };
+            var ss = new StateService();
+            var ret = function () { ss.replay(); };
             ret.should.throw(Error);
         });
 
         it('should only allow white-listed parameters', function () {
-            var ds = new StateService();
-            ds.replay({ runId: 'X', stopBefore: 'Y' });
+            var ss = new StateService();
+            ss.replay({ runId: 'X', stopBefore: 'Y' });
 
             var req = server.requests.pop();
             req.requestBody.should.equal(JSON.stringify({ action: 'replay', stopBefore: 'Y' }));
 
-            ds.replay({ runId: 'X', stopBefore: 'Y', exclude: 'Z' });
+            ss.replay({ runId: 'X', stopBefore: 'Y', exclude: 'Z' });
 
             req = server.requests.pop();
             req.requestBody.should.equal(JSON.stringify({ action: 'replay', stopBefore: 'Y', exclude: 'Z' }));
         });
         it('should now allow non-white-listed parameters', function () {
-            var ds = new StateService();
-            ds.replay({ runId: 'X', stopBefore: 'Y' });
+            var ss = new StateService();
+            ss.replay({ runId: 'X', stopBefore: 'Y' });
 
-            ds.replay({ runId: 'X', stopBefore: 'Y', include: 'Z' });
+            ss.replay({ runId: 'X', stopBefore: 'Y', include: 'Z' });
             var req = server.requests.pop();
             req.requestBody.should.equal(JSON.stringify({ action: 'replay', stopBefore: 'Y' }));
         });
     });
-    describe('#clone', function () {
+
+    describe('#rewind', function () {
         it('Should do a POST', function () {
-            var ds = new StateService();
-            ds.clone({ runId: 'X' });
+            var ss = new StateService();
+            ss.rewind({ runId: 'X' });
 
             var req = server.requests.pop();
             req.method.toUpperCase().should.equal('POST');
         });
 
         it('should hit the right url', function () {
-            var ds = new StateService();
-            ds.clone({ runId: 'X' });
+            var ss = new StateService();
+            ss.rewind({ runId: 'X' });
 
             var req = server.requests.pop();
-            req.url.should.equal(baseURL + 'X');
+            req.url.should.equal(baseURL + 'rewind/X');
         });
-        //Hold off till 2.0
-        it.skip('should allow string runids', function () {
-            var ds = new StateService();
-            ds.clone('X');
+        it('should throw an error if runid is not provided', function () {
+            var ss = new StateService();
+            var ret = function () { ss.rewind(); };
+            ret.should.throw(Error);
+        });
+
+        it('should post with an empty body', function () {
+            var ss = new StateService();
+            ss.rewind({ runId: 'X' });
+
+            var req = server.requests.pop();
+            req.requestBody.should.equal(JSON.stringify({}));
+        });
+    });
+    describe('#clone', function () {
+        it('Should do a POST', function () {
+            var ss = new StateService();
+            ss.clone({ runId: 'X' });
+
+            var req = server.requests.pop();
+            req.method.toUpperCase().should.equal('POST');
+        });
+
+        it('should hit the right url', function () {
+            var ss = new StateService();
+            ss.clone({ runId: 'X' });
 
             var req = server.requests.pop();
             req.url.should.equal(baseURL + 'X');
         });
         it('should throw an error if runid is not provided', function () {
-            var ds = new StateService();
-            var ret = function () { ds.clone(); };
+            var ss = new StateService();
+            var ret = function () { ss.clone(); };
             ret.should.throw(Error);
         });
 
         it('should only allow white-listed parameters', function () {
-            var ds = new StateService();
-            ds.clone({ runId: 'X', stopBefore: 'Y' });
+            var ss = new StateService();
+            ss.clone({ runId: 'X', stopBefore: 'Y' });
 
             var req = server.requests.pop();
             req.requestBody.should.equal(JSON.stringify({ action: 'clone', stopBefore: 'Y' }));
 
-            ds.clone({ runId: 'X', stopBefore: 'Y', exclude: 'Z' });
+            ss.clone({ runId: 'X', stopBefore: 'Y', exclude: 'Z' });
 
             req = server.requests.pop();
             req.requestBody.should.equal(JSON.stringify({ action: 'clone', stopBefore: 'Y', exclude: 'Z' }));
         });
         it('should now allow non-white-listed parameters', function () {
-            var ds = new StateService();
-            ds.clone({ runId: 'X', stopBefore: 'Y' });
+            var ss = new StateService();
+            ss.clone({ runId: 'X', stopBefore: 'Y' });
 
-            ds.clone({ runId: 'X', stopBefore: 'Y', include: 'Z' });
+            ss.clone({ runId: 'X', stopBefore: 'Y', include: 'Z' });
             var req = server.requests.pop();
             req.requestBody.should.equal(JSON.stringify({ action: 'clone', stopBefore: 'Y' }));
         });

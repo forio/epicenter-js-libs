@@ -91,6 +91,32 @@ export default function StateService(config) {
             return http.post(params, replayOptions);
         },
 
+
+        /**
+        * 'Rewind' applies to time-based models; it replays the model and stops before the last instance of the rewind operation.
+        * 
+        *  Note that for this action to work, you need define `"rewind":{"name": "step"}` in your model context file, where `step` is the name of the operation you typically rewind.
+        *  
+        * @example
+        * var sa = new F.service.State();
+        * sa.rewind({runId: '1842bb5c-83ad-4ba8-a955-bd13cc2fdb4f' });
+        *
+        * @param {object} params Parameters object.
+        * @param {string} params.runId The id of the run to rewind
+        * @param {object} [options] Overrides for configuration options.
+        * @return {Promise}
+        */
+        rewind: function (params, options) {
+            var runId = parseRunIdOrError(params);
+
+            var replayOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + 'rewind/' + runId }
+            );
+            return http.post({}, replayOptions);
+        },
+
         /**
         * Clone a given run and return a new run in the same state as the given run.
         *
