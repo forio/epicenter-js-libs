@@ -1,6 +1,6 @@
-export function result(item) {
+export function result(item, ...rest) {
     if (typeof item === 'function') {
-        return item();
+        return item(...rest);
     }
     return item;
 }
