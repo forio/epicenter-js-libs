@@ -57,8 +57,8 @@ class ReuseWithTrackingKeyStrategy {
         this.options = $.extend(true, {}, defaults, strategyOptions);
     }
 
-    getSettings() {
-        const settings = result(this.options.settings);
+    getSettings(...params) {
+        const settings = result(this.options.settings, ...params);
         const prom = makePromise(settings).then((settings)=> {
             const key = settings && settings.trackingKey;
             if (!key) {
@@ -69,7 +69,7 @@ class ReuseWithTrackingKeyStrategy {
         return prom;
     }
 
-    forceCreateRun(runService, userSession, settings) {
+    forceCreateRun(runService, userSession, settings, runCreateOptions) {
         const runConfig = runService.getCurrentConfig();
         const trackingKey = settings && settings.trackingKey;
 
@@ -78,7 +78,7 @@ class ReuseWithTrackingKeyStrategy {
             scope: { 
                 trackingKey: trackingKey,
             }
-        });
+        }, runCreateOptions);
         return runService.create(opt).then((run)=> {
             const applied = this.options.onCreate(runService, settings, run);
             return makePromise(applied).then((res)=> {
@@ -86,8 +86,8 @@ class ReuseWithTrackingKeyStrategy {
             });
         });
     }
-    reset(runService, userSession, options) {
-        return this.getSettings().then((settings)=> {
+    reset(runService, userSession, runCreateOptions) {
+        return this.getSettings(runService, userSession, runCreateOptions).then((settings)=> {
             return getRunsForKey(runService, settings.trackingKey, userSession).then((runs, status, xhr)=> {
                 const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
                 const runLimitNotSet = settings.runLimit === Infinity || `${settings.runLimit}`.trim() === '';
@@ -95,16 +95,16 @@ class ReuseWithTrackingKeyStrategy {
                 if (startedRuns && startedRuns.total >= runLimit) {
                     return rejectPromise(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
                 }
-                return this.forceCreateRun(runService, userSession, settings);
+                return this.forceCreateRun(runService, userSession, settings, runCreateOptions);
             });
         });
     }
 
-    getRun(runService, userSession, runSession, options) {
-        return this.getSettings().then((settings)=> {
+    getRun(runService, userSession, runSession, runCreateOptions) {
+        return this.getSettings(runService, userSession, runCreateOptions).then((settings)=> {
             return getRunsForKey(runService, settings.trackingKey, userSession).then((runs)=> {
                 if (!runs.length) {
-                    return this.forceCreateRun(runService, userSession, settings);
+                    return this.forceCreateRun(runService, userSession, settings, runCreateOptions);
                 }
                 return runs[0];
             });
