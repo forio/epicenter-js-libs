@@ -83,8 +83,8 @@ class ReuseWithTrackingKeyStrategy {
         this.options = $.extend(true, {}, defaults, strategyOptions);
     }
 
-    getSettings(...params) {
-        const settings = result(this.options.settings, ...params);
+    getSettings(runService, userSession) {
+        const settings = result(this.options.settings, runService, userSession);
         const prom = makePromise(settings).then((settings)=> {
             const key = settings && settings.trackingKey;
             if (!key) {
@@ -115,7 +115,7 @@ class ReuseWithTrackingKeyStrategy {
         });
     }
     reset(runService, userSession, runCreateOptions) {
-        return this.getSettings(runService, userSession, runCreateOptions).then((settings)=> {
+        return this.getSettings(runService, userSession).then((settings)=> {
             const runFilter = makeFilter(settings.trackingKey, userSession, this.options.filter);
             return getRunsForFilter(runService, runFilter).then((runs, status, xhr)=> {
                 const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
@@ -130,7 +130,7 @@ class ReuseWithTrackingKeyStrategy {
     }
 
     getRun(runService, userSession, runSession, runCreateOptions) {
-        return this.getSettings(runService, userSession, runCreateOptions).then((settings)=> {
+        return this.getSettings(runService, userSession).then((settings)=> {
             const runFilter = makeFilter(settings.trackingKey, userSession, this.options.filter);
             return getRunsForFilter(runService, runFilter).then((runs)=> {
                 if (!runs.length) {

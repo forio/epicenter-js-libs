@@ -1,6 +1,7 @@
-export function result(item, ...rest) {
+export function result(item) {
     if (typeof item === 'function') {
-        return item(...rest);
+        const rest = Array.prototype.slice.call(arguments, 1);
+        return item.apply(item, rest);
     }
     return item;
 }

@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.9.0
+ *         v2.9.1
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -1147,9 +1147,7 @@ function RunService(config) {
          * The elements of the `qs` object are ANDed together within a single call to `.query()`.
          *
          * @example
-         * // returns runs with saved = true and variables.price > 1,
-         * // where variables.price has been persisted (recorded)
-         * // in the model.
+         * // returns runs with saved = true where variables.price has been persisted (recorded) in the model.
          * rs.query({
          *  saved: true,
          * }, {
@@ -1508,7 +1506,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function result(item) {
     if (typeof item === 'function') {
-        return item();
+        var rest = Array.prototype.slice.call(arguments, 1);
+        return item.apply(item, rest);
     }
     return item;
 }
@@ -6614,7 +6613,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *
- *  ```js
+ *  ```
  *  const rm = new F.manager.RunManager({
  *      strategy: 'reuse-last-initialized',
  *      strategyOptions: {
@@ -6733,18 +6732,27 @@ var errors = {
 };
 
 /**
- * @param {RunService} runService 
  * @param {string} trackingKey 
  * @param {object} userSession 
- * @returns {Promise<object[]>}
+ * @param {object} metaFilter Additional criteria to filter by 
+ * @returns {object}
  */
-function getRunsForKey(runService, trackingKey, userSession) {
-    var filter = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["a" /* injectFiltersFromSession */])({
+function makeFilter(trackingKey, userSession, metaFilter) {
+    var runFilter = $.extend(true, {
         scope: {
             trackingKey: trackingKey
         }
-    }, userSession);
+    }, metaFilter);
+    var filter = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["a" /* injectFiltersFromSession */])(runFilter, userSession);
+    return filter;
+}
 
+/**
+ * @param {RunService} runService 
+ * @param {object} filter 
+ * @returns {Promise<object[]>}
+ */
+function getRunsForFilter(runService, filter) {
     return runService.query(filter, {
         startRecord: 0,
         endRecord: 0,
@@ -6753,12 +6761,26 @@ function getRunsForKey(runService, trackingKey, userSession) {
     });
 }
 
+function addSettingsToRun(run, settings) {
+    return $.extend(true, {}, run, { settings: settings });
+}
 /**
  * The `reuse-by-tracking-key` strategy creates or returns the most recent run matching a given tracking key. You can optionally  also provide a "Run limit", and it'll prevent new runs from being created with this strategy once that limit has  been reached.
  *
+ * ```
+ *  const rm = new F.manager.RunManager({
+ *      strategy: 'reuse-by-tracking-key',
+ *      strategyOptions: {
+ *          settings: {
+ *              trackingKey: 'foobar'
+ *          }
+ *      }
+ *  });
+ *  ```
+ *  Any runs created with this strategy will have a 'settings' field which returns the current settings for that run (when retreived with `getRun` or `reset`)
+ * 
  * This strategy is used by the Settings Manager to apply class settings for turn-by-turn simulations, but can also be used stand-alone.
  *
- * @name reuse-by-tracking-key
  */
 
 var ReuseWithTrackingKeyStrategy = function () {
@@ -6767,6 +6789,7 @@ var ReuseWithTrackingKeyStrategy = function () {
      * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
      * @property {string} settings.trackingKey Key to track runs with
      * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
+     * @property {object} [settings.filter] Criteria to filter runs by, in addition to matching by tracking key (and user/group). Defaults to trashed: false
      * @property {function(RunService, object):any} [onCreate] Callback will be called each time a new run is created
      */
     function ReuseWithTrackingKeyStrategy(options) {
@@ -6776,6 +6799,9 @@ var ReuseWithTrackingKeyStrategy = function () {
             settings: {
                 trackingKey: null,
                 runLimit: Infinity
+            },
+            filter: {
+                trashed: false
             },
             onCreate: function (runService, settings, run) {
                 return run;
@@ -6787,8 +6813,8 @@ var ReuseWithTrackingKeyStrategy = function () {
 
     _createClass(ReuseWithTrackingKeyStrategy, [{
         key: 'getSettings',
-        value: function getSettings() {
-            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* result */])(this.options.settings);
+        value: function getSettings(runService, userSession) {
+            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* result */])(this.options.settings, runService, userSession);
             var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(settings).then(function (settings) {
                 var key = settings && settings.trackingKey;
                 if (!key) {
@@ -6800,7 +6826,7 @@ var ReuseWithTrackingKeyStrategy = function () {
         }
     }, {
         key: 'forceCreateRun',
-        value: function forceCreateRun(runService, userSession, settings) {
+        value: function forceCreateRun(runService, userSession, settings, runCreateOptions) {
             var _this = this;
 
             var runConfig = runService.getCurrentConfig();
@@ -6811,42 +6837,46 @@ var ReuseWithTrackingKeyStrategy = function () {
                 scope: {
                     trackingKey: trackingKey
                 }
-            });
+            }, runCreateOptions);
             return runService.create(opt).then(function (run) {
                 var applied = _this.options.onCreate(runService, settings, run);
                 return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(applied).then(function (res) {
                     return res && res.id ? res : run;
+                }).then(function (run) {
+                    return addSettingsToRun(run, settings);
                 });
             });
         }
     }, {
         key: 'reset',
-        value: function reset(runService, userSession, options) {
+        value: function reset(runService, userSession, runCreateOptions) {
             var _this2 = this;
 
-            return this.getSettings().then(function (settings) {
-                return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs, status, xhr) {
+            return this.getSettings(runService, userSession).then(function (settings) {
+                var runFilter = makeFilter(settings.trackingKey, userSession, _this2.options.filter);
+                return getRunsForFilter(runService, runFilter).then(function (runs, status, xhr) {
                     var startedRuns = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
                     var runLimitNotSet = settings.runLimit === Infinity || ('' + settings.runLimit).trim() === '';
                     var runLimit = runLimitNotSet ? Infinity : +settings.runLimit;
                     if (startedRuns && startedRuns.total >= runLimit) {
                         return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
                     }
-                    return _this2.forceCreateRun(runService, userSession, settings);
+                    return _this2.forceCreateRun(runService, userSession, settings, runCreateOptions);
                 });
             });
         }
     }, {
         key: 'getRun',
-        value: function getRun(runService, userSession, runSession, options) {
+        value: function getRun(runService, userSession, runSession, runCreateOptions) {
             var _this3 = this;
 
-            return this.getSettings().then(function (settings) {
-                return getRunsForKey(runService, settings.trackingKey, userSession).then(function (runs) {
+            return this.getSettings(runService, userSession).then(function (settings) {
+                var runFilter = makeFilter(settings.trackingKey, userSession, _this3.options.filter);
+                return getRunsForFilter(runService, runFilter).then(function (runs) {
                     if (!runs.length) {
-                        return _this3.forceCreateRun(runService, userSession, settings);
+                        return _this3.forceCreateRun(runService, userSession, settings, runCreateOptions);
                     }
-                    return runs[0];
+                    return addSettingsToRun(runs[0], settings);
                 });
             });
         }
@@ -7050,7 +7080,7 @@ F.service.Channel = __webpack_require__(32).default;
 
 F.manager.ConsensusManager = __webpack_require__(79).default;
 
-if (true) F.version = "2.9.0"; //eslint-disable-line no-undef
+if (true) F.version = "2.9.1"; //eslint-disable-line no-undef
 F.api = __webpack_require__(24);
 
 F.constants = __webpack_require__(16);
@@ -9356,7 +9386,6 @@ var MultiplayerStrategy = function () {
  * 
  * This strategy can be useful for basic, single-page projects. This strategy is also useful for prototyping or project development: it creates a new run each time you refresh the page, and you can easily check the outputs of the model. However, typically you will use one of the other strategies for a production project.
  *
- * @name reuse-never
  */
 
 
