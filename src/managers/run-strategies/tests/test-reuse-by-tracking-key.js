@@ -114,6 +114,36 @@ describe('Reuse by tracking key', function () {
                 });
             });
         });
+
+        it('should return the relevant settings as a property on the run, if no runs found', ()=> {
+            const rs = new RunService(runOptions);
+            const createSub = sinon.stub(rs, 'create').callsFake(()=> ($.Deferred().resolve({ id: 'newrunid' }).promise()));
+            const strategy = new Strategy({
+                strategyOptions: {
+                    settings: {
+                        trackingKey: 'noruns',
+                        foo: 'bar'
+                    }
+                }
+            });
+            return strategy.getRun(rs).then((run)=> {
+                expect(run.settings.foo).to.equal('bar');
+            });
+        });
+        it('should return the relevant settings as a property on the run, if existing runs', ()=> {
+            const rs = new RunService(runOptions);
+            const strategy = new Strategy({
+                strategyOptions: {
+                    settings: {
+                        trackingKey: 'existingruns',
+                        foo: 'bar'
+                    }
+                }
+            });
+            return strategy.getRun(rs).then((run)=> {
+                expect(run.settings.foo).to.equal('bar');
+            });
+        });
     });
     describe('#reset', function () {
         let rs, createStub;
@@ -206,6 +236,20 @@ describe('Reuse by tracking key', function () {
                             trackingKey: 'tracker'
                         }
                     });
+                });
+            });
+
+            it('should return the relevant settings as a property on the run', ()=> {
+                const settingsFetcher = sinon.spy(()=> {
+                    return $.Deferred().resolve({ trackingKey: 'tracker', foo: 'bar' }).promise();
+                });
+                const strategy = new Strategy({
+                    strategyOptions: {
+                        settings: settingsFetcher
+                    }
+                });
+                return strategy.reset(rs, auth).then((run)=> {
+                    expect(run.settings.foo).to.equal('bar');
                 });
             });
         });

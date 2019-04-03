@@ -5,7 +5,7 @@ import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-s
  *
  * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *
- *  ```js
+ *  ```
  *  const rm = new F.manager.RunManager({
  *      strategy: 'reuse-last-initialized',
  *      strategyOptions: {

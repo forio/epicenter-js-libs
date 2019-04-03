@@ -8,20 +8,27 @@ const errors = {
     NO_TRACKING_KEY: 'NO_TRACKING_KEY'
 };
 
-
 /**
- * @param {RunService} runService 
  * @param {string} trackingKey 
  * @param {object} userSession 
- * @returns {Promise<object[]>}
+ * @param {object} metaFilter Additional criteria to filter by 
+ * @returns {object}
  */
-function getRunsForKey(runService, trackingKey, userSession) {
+function makeFilter(trackingKey, userSession, metaFilter) {
     const filter = injectFiltersFromSession({
         scope: {
             trackingKey: trackingKey
         }
-    }, userSession);
+    }, metaFilter, userSession);
+    return filter;
+}
 
+/**
+ * @param {RunService} runService 
+ * @param {object} filter 
+ * @returns {Promise<object[]>}
+ */
+function getRunsForFilter(runService, filter) {
     return runService.query(filter, {
         startRecord: 0,
         endRecord: 0,
@@ -30,12 +37,26 @@ function getRunsForKey(runService, trackingKey, userSession) {
     });
 }
 
+function addSettingsToRun(run, settings) {
+    return $.extend(true, {}, run, { settings: settings });
+}
 /**
  * The `reuse-by-tracking-key` strategy creates or returns the most recent run matching a given tracking key. You can optionally  also provide a "Run limit", and it'll prevent new runs from being created with this strategy once that limit has  been reached.
  *
+ * ```
+ *  const rm = new F.manager.RunManager({
+ *      strategy: 'reuse-by-tracking-key',
+ *      strategyOptions: {
+ *          settings: {
+ *              trackingKey: 'foobar'
+ *          }
+ *      }
+ *  });
+ *  ```
+ *  Any runs created with this strategy will have a 'settings' field which returns the current settings for that run (when retreived with `getRun` or `reset`)
+ * 
  * This strategy is used by the Settings Manager to apply class settings for turn-by-turn simulations, but can also be used stand-alone.
  *
- * @name reuse-by-tracking-key
  */
 class ReuseWithTrackingKeyStrategy {
     /**
@@ -43,6 +64,7 @@ class ReuseWithTrackingKeyStrategy {
      * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
      * @property {string} settings.trackingKey Key to track runs with
      * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
+     * @property {object} [settings.filter] Criteria to filter runs by, in addition to matching by tracking key (and user/group). Defaults to trashed: false
      * @property {function(RunService, object):any} [onCreate] Callback will be called each time a new run is created
      */
     constructor(options) {
@@ -50,6 +72,9 @@ class ReuseWithTrackingKeyStrategy {
             settings: {
                 trackingKey: null,
                 runLimit: Infinity,
+            },
+            filter: {
+                trashed: false
             },
             onCreate: (runService, settings, run)=> run
         };
@@ -83,12 +108,15 @@ class ReuseWithTrackingKeyStrategy {
             const applied = this.options.onCreate(runService, settings, run);
             return makePromise(applied).then((res)=> {
                 return res && res.id ? res : run; 
+            }).then((run)=> {
+                return addSettingsToRun(run, settings);
             });
         });
     }
     reset(runService, userSession, runCreateOptions) {
         return this.getSettings(runService, userSession, runCreateOptions).then((settings)=> {
-            return getRunsForKey(runService, settings.trackingKey, userSession).then((runs, status, xhr)=> {
+            const runFilter = makeFilter(settings.trackingKey, userSession, this.options.filter);
+            return getRunsForFilter(runService, runFilter).then((runs, status, xhr)=> {
                 const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
                 const runLimitNotSet = settings.runLimit === Infinity || `${settings.runLimit}`.trim() === '';
                 const runLimit = runLimitNotSet ? Infinity : +settings.runLimit;
@@ -102,11 +130,12 @@ class ReuseWithTrackingKeyStrategy {
 
     getRun(runService, userSession, runSession, runCreateOptions) {
         return this.getSettings(runService, userSession, runCreateOptions).then((settings)=> {
-            return getRunsForKey(runService, settings.trackingKey, userSession).then((runs)=> {
+            const runFilter = makeFilter(settings.trackingKey, userSession, this.options.filter);
+            return getRunsForFilter(runService, runFilter).then((runs)=> {
                 if (!runs.length) {
                     return this.forceCreateRun(runService, userSession, settings, runCreateOptions);
                 }
-                return runs[0];
+                return addSettingsToRun(runs[0], settings);
             });
         });
     }
