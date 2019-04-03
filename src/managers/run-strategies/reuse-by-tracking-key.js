@@ -15,11 +15,12 @@ const errors = {
  * @returns {object}
  */
 function makeFilter(trackingKey, userSession, metaFilter) {
-    const filter = injectFiltersFromSession({
+    const runFilter = $.extend(true, {
         scope: {
             trackingKey: trackingKey
         }
-    }, metaFilter, userSession);
+    }, metaFilter);
+    const filter = injectFiltersFromSession(runFilter, userSession);
     return filter;
 }
 

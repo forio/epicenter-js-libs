@@ -144,9 +144,7 @@ export default function RunService(config) {
          * The elements of the `qs` object are ANDed together within a single call to `.query()`.
          *
          * @example
-         * // returns runs with saved = true and variables.price > 1,
-         * // where variables.price has been persisted (recorded)
-         * // in the model.
+         * // returns runs with saved = true where variables.price has been persisted (recorded) in the model.
          * rs.query({
          *  saved: true,
          * }, {

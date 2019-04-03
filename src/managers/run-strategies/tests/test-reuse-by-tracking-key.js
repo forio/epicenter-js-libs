@@ -28,7 +28,7 @@ describe('Reuse by tracking key', function () {
         });
         server.respondWith('GET', /.*\/run\/(.*)\/(.*)\/\?(.*)/, function (xhr, base, filter, qs) {
             const headers = { 'Content-Type': 'application/json' };
-            const runs = filter.indexOf('noruns') === -1 ? [{ id: 'existingRunI', url: xhr.url }] : [];
+            const runs = filter.indexOf('noruns') === -1 ? [{ id: 'existingRunI', url: xhr.url, filter: filter }] : [];
             if (filter.indexOf('tracker-with-run-limit') !== -1) {
                 headers['content-range'] = '0-0/100';
             }
@@ -41,6 +41,9 @@ describe('Reuse by tracking key', function () {
 
     after(function () {
         server.restore();
+    });
+    afterEach(function () {
+        server.requests = [];
     });
 
     describe('#getRun', ()=> {
@@ -142,6 +145,33 @@ describe('Reuse by tracking key', function () {
             });
             return strategy.getRun(rs).then((run)=> {
                 expect(run.settings.foo).to.equal('bar');
+            });
+        });
+        it('should pass any filters to query', ()=> {
+            const rs = new RunService(runOptions);
+            const queryStub = sinon.stub(rs, 'query').callsFake(()=> {
+                return $.Deferred().resolve([{ id: 'myrun1' }]).promise();
+            });
+            const strategy = new Strategy({
+                strategyOptions: {
+                    settings: {
+                        trackingKey: 'noruns',
+                    },
+                    filter: {
+                        saved: true
+                    }
+                }
+            });
+            return strategy.getRun(rs).then((run)=> {
+                expect(queryStub).to.have.been.calledOnce;
+                const filterArgs = queryStub.getCall(0).args[0];
+                expect(filterArgs).to.eql({ 
+                    scope: {
+                        trackingKey: 'noruns',
+                    },
+                    saved: true,
+                    trashed: false,
+                });
             });
         });
     });
@@ -280,6 +310,24 @@ describe('Reuse by tracking key', function () {
                 });
                 return strategy.reset(rs, auth).then((e)=> {
                     expect(createStub).to.have.been.calledOnce;
+                });
+            });
+            it('should pass any filters to query', ()=> {
+                const strategy = new Strategy({
+                    strategyOptions: {
+                        settings: {
+                            trackingKey: 'tracker-with-run-limit',
+                            runLimit: 1000
+                        },
+                        filter: {
+                            foo: 'bar'
+                        }
+                    }
+                });
+                return strategy.reset(rs, auth).then((run)=> {
+                    const req = server.requests[0];
+                    expect(req.url.indexOf(';foo=bar')).to.not.equal(-1);
+                    expect(req.url.indexOf(';trashed=false')).to.not.equal(-1);
                 });
             });
         });
