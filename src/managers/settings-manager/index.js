@@ -1,9 +1,13 @@
 import SavedRunsManager from 'managers/saved-runs-manager';
 import SettingsService from './settings-service';
+
 import ReuseWithTracking from 'managers/run-strategies/reuse-by-tracking-key';
+import ReuseWithTrackingMultiplayer from 'managers/run-strategies/multiplayer-with-tracking-key';
+
 import PubSub from 'util/pubsub';
 import { omit } from 'util/object-util';
 import { rejectPromise } from 'util/index';
+import WorldAPIAdapter from 'service/world-api-adapter';
 
 const actions = {
     SETTINGS_DELETED: 'SETTINGS_DELETED',
@@ -27,6 +31,9 @@ class SettingsManager {
                 collection: 'settings',
                 defaults: {},
             },
+
+            multiplayer: false,
+            interruptRunsInProgress: true,
         };
 
         this.options = $.extend(true, {}, defaultSettings, options);
@@ -35,6 +42,22 @@ class SettingsManager {
         this.state = {
             subscription: null
         };
+
+        if (this.options.interruptRunsInProgress && this.options.multiplayer) {
+            const defaultSaveAndActivate = this.settings.saveAndActivate;
+            this.settings.saveAndActivate = function () {
+                const originalArgs = Array.prototype.slice.call(arguments);
+                const ws = new WorldAPIAdapter(this.options.run);
+                return ws.list().then((worlds)=> {
+                    const deletionPromises = worlds.map((world)=> {
+                        return ws.deleteRun(world.id);
+                    });
+                    return $.when.apply(null, deletionPromises).then(()=> {
+                        return defaultSaveAndActivate.apply(this.settings, originalArgs);
+                    });
+                });
+            }.bind(this);
+        }
     }
 
     /**
@@ -93,10 +116,11 @@ class SettingsManager {
     getUserRunStrategy(options) {
         const defaults = {
             allowCreateRun: ()=> true,
-            applySettings: ()=> {}
+            applySettings: ()=> {},
         };
         const opts = $.extend({}, defaults, options);
-        const strategy = new ReuseWithTracking({
+        const Strategy = this.options.multiplayer ? ReuseWithTrackingMultiplayer : ReuseWithTracking;
+        const strategy = new Strategy({
             strategyOptions: {
                 settings: ()=> {
                     return this.settings.getCurrentActive().then((settings)=> {
