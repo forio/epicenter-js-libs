@@ -1,9 +1,10 @@
 import RunService from 'service/run-api-service';
 import { parseContentRange } from 'util/run-util';
 import { injectScopeFromSession, injectFiltersFromSession } from './strategy-utils';
-import { result, makePromise, rejectPromise } from 'util/index';
+import { result, makePromise, rejectPromise, resolvePromise } from 'util/index';
 
 import { reset, getRun, getCurrentWorld } from './multiplayer-strategy';
+import { omit } from 'util/object-util';
 
 const errors = {
     RUN_LIMIT_REACHED: 'RUN_LIMIT_REACHED',
@@ -97,15 +98,26 @@ class MultiplayerWithTrackingKeyStrategy {
     }
 
     _applySettingsToNewRun(runService, settings, run) {
-        const applied = this.options.onCreate(runService, settings, run);
-        return makePromise(applied).then((res)=> {
-            return res && res.id ? res : run; 
-        }).then((run)=> {
-            return $.extend(true, {}, run, { settings: settings });
+        let prom = resolvePromise(run);
+
+        if (!run.scope || run.scope.trackingKey !== settings.trackingKey) {
+            prom = runService.save({
+                scope: {
+                    trackingKey: settings.trackingKey
+                }
+            });
+        }
+        return prom.then(()=> {
+            const applied = this.options.onCreate(runService, settings, run);
+            return makePromise(applied).then((res)=> {
+                return res && res.id ? res : run; 
+            }).then((run)=> {
+                return $.extend(true, {}, run, { settings: settings });
+            });
         });
     }
     _forceCreateRun(runService, userSession, settings, runCreateOptions) {
-        const runConfig = runService.getCurrentConfig();
+        const runConfig = omit(runService.getCurrentConfig(), ['id', 'filter']);
         const trackingKey = settings && settings.trackingKey;
 
         const scopeConfig = injectScopeFromSession(runConfig, userSession);
@@ -154,7 +166,7 @@ class MultiplayerWithTrackingKeyStrategy {
                     trackingKey: trackingKey,
                 }
             });
-            return getRun(runService, runSession, opt).then((run)=> {
+            return getRun(runService, userSession, opt).then((run)=> {
                 if (run.freshlyCreated) {
                     return this._applySettingsToNewRun(runService, settings, run);
                 }

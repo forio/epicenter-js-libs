@@ -10,9 +10,9 @@ function worldFromRun(runService) {
 
 export function reset(runService, session, options) {
     const { userId, groupName } = session;
-    const optionsToPassOn = $.extend(true, {}, options, {
+    const optionsToPassOn = omit($.extend(true, {}, options, {
         success: $.noop,
-    });
+    }), ['filter', 'id']);
     const worldApi = worldFromRun(runService);
     return worldApi
         .getCurrentWorldForUser(userId, groupName)
@@ -51,7 +51,7 @@ export function getRun(runService, session, options) {
             .then(function (id, status, xhr) {
                 return runService.load(id).then((run)=> {
                     const RUN_CREATION_STATUS = 201;
-                    run.freslyCreated = xhr.status === RUN_CREATION_STATUS;
+                    run.freshlyCreated = xhr.status === RUN_CREATION_STATUS;
                     return run;
                 });
             })
