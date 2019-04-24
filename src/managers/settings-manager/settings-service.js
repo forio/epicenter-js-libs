@@ -89,7 +89,7 @@ class SettingsService {
 
     /**
      * Returns currently active settings, or undefined if there are none.
-     * @returns {Promise<object[]>}
+     * @returns {Promise<object>}
      */
     getCurrentActive() {
         return this.getAll({ excludeDrafts: true }).then((activeSettings)=> {
