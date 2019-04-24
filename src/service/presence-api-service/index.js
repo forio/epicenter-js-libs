@@ -43,6 +43,11 @@ export default function (config) {
         return serviceOptions;
     };
 
+    const userOnlineTimers = {};
+    function cancelKeepOnline(userid) {
+        clearInterval(userOnlineTimers[userid]);
+    }
+
     var publicAPI = {
         /**
          * Marks an end user as online.
@@ -58,6 +63,7 @@ export default function (config) {
          *
          * @param  {string} [userId] optional If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults.
+         * @param  {boolean} [options.keepOnline] Starts a timer registering the user as online every 5 minutes. Timer is canceled when you call `markOffline` or `cancelKeepOnline`
          * @return {Promise} Promise with presence information for user marked online.
          */
         markOnline: function (userId, options) {
@@ -72,7 +78,22 @@ export default function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options,
                 { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId }
             );
+            
+            if (options.keepOnline) {
+                const PRESENCE_TIMEOUT_INTERVAL = 5;
+                userOnlineTimers[userId] = setInterval(()=> {
+                    http.post({ message: 'online' }, httpOptions);
+                }, PRESENCE_TIMEOUT_INTERVAL * 60 * 1000);
+            }
             return http.post({ message: 'online' }, httpOptions);
+        },
+
+        /**
+         * If you set `keepOnline` to true while calling `markOnline`, use this to cancel the timer
+         * @param {string} userid
+         */
+        cancelKeepOnline: function (userid) {
+            cancelKeepOnline(userid);
         },
 
         /**
@@ -99,6 +120,7 @@ export default function (config) {
             var httpOptions = $.extend(true, {}, serviceOptions, options,
                 { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId }
             );
+            cancelKeepOnline(userId);
             return http.delete({}, httpOptions);
         },
 
