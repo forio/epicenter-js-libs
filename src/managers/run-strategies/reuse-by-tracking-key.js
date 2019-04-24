@@ -1,7 +1,7 @@
 import RunService from 'service/run-api-service';
 import { parseContentRange } from 'util/run-util';
 import { injectScopeFromSession, injectFiltersFromSession } from './strategy-utils';
-import { result, makePromise, rejectPromise } from 'util/index';
+import { result, makePromise, rejectPromise, resolvePromise } from 'util/index';
 
 const errors = {
     RUN_LIMIT_REACHED: 'RUN_LIMIT_REACHED',
@@ -114,18 +114,28 @@ class ReuseWithTrackingKeyStrategy {
             });
         });
     }
+
+    checkIfWithinRunLimit(runService, userSession, settings) {
+        const noRunLimit = settings.runLimit === Infinity || `${settings.runLimit}`.trim() === '';
+        if (noRunLimit) {
+            return resolvePromise(settings);
+        }
+        const runFilter = makeFilter(settings.trackingKey, userSession, this.options.filter);
+        return getRunsForFilter(runService, runFilter).then((runs, status, xhr)=> {
+            const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
+            const runLimit = noRunLimit ? Infinity : +settings.runLimit;
+            if (startedRuns && startedRuns.total >= runLimit) {
+                return rejectPromise(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
+            }
+            return settings;
+        });
+    }
+
     reset(runService, userSession, runCreateOptions) {
         return this.getSettings(runService, userSession).then((settings)=> {
-            const runFilter = makeFilter(settings.trackingKey, userSession, this.options.filter);
-            return getRunsForFilter(runService, runFilter).then((runs, status, xhr)=> {
-                const startedRuns = parseContentRange(xhr.getResponseHeader('content-range'));
-                const runLimitNotSet = settings.runLimit === Infinity || `${settings.runLimit}`.trim() === '';
-                const runLimit = runLimitNotSet ? Infinity : +settings.runLimit;
-                if (startedRuns && startedRuns.total >= runLimit) {
-                    return rejectPromise(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
-                }
-                return this.forceCreateRun(runService, userSession, settings, runCreateOptions);
-            });
+            return this.checkIfWithinRunLimit(runService, userSession, settings);
+        }).then((settings)=> {
+            return this.forceCreateRun(runService, userSession, settings, runCreateOptions);
         });
     }
 
