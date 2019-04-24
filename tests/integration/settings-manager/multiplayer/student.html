@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Student Settings test </title>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter-multiplayer-dependencies.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter.js"></script> -->
+
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/epicenter-multiplayer-dependencies.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        section {
+            padding: 30px 0;
+            border-top: 1px dotted silver;
+        }
+        .instructions {
+            color: blue;
+        }
+    </style>
+</head>
+<body class="container">
+    <section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
+
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="multiplayer-test" >
+                <br/>
+
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="n1" >
+                <br/>
+
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="password1" >
+                <br/>
+
+                <label for="">API Server (leave blank to use default)</label>
+                <input type="text" id="txtServer" value="" >
+                <br/>
+
+                <label for="">Model</label>
+                <input type="text" id="txtModel" value="gglasses.vmf" >
+                <br/>
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              Make sure you enter info for 
+              <ul>
+                  <li>A team account</li>
+                  <li>A student user</li>
+              </ul>
+          </div>
+      </div>
+    </section>
+
+    <h4> Decisions</h4>
+    <section class="row">
+        <h4>Current run id</h4>
+        <span id="curr-run-id"></span>
+
+        <h5>Default Price (controlled by fac settings)</h5>
+        <span id="price-val"></span>
+
+
+        <h5>Run name (controlled by fac settings)</h5>
+        <span id="run-name"></span>
+
+        <h5>Run Limit</h5>
+        <span id="run-limit"></span>
+
+    </section>
+    <button id="btn-reset" class="btn btn-danger">Reset</button>
+
+    <script src="../../common.js"></script>
+    <script src="integration-test-student-settings.js"></script>
+</body>
+</html>

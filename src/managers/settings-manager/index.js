@@ -22,6 +22,9 @@ class SettingsManager {
      * @property {AccountAPIServiceOptions} options.run Parameters to pass on to run service (account / project / model / files etc.)
      * @property {object} [options.settings]
      * @property {string} [options.settings.collection]
+     * @property {boolean} [options.multiplayer] Set to true for multiplayer games.
+     * @property {boolean} [options.interruptRunsInProgress] Once settings are activated, this determines if existing runs can continue or new runs are forced. If multiplayer=true, this deletes the existing run for each world.
+     * 
      * @property {object | function(): object | function(): Promise<object>} [options.settings.collection]
      */
     constructor(options) {

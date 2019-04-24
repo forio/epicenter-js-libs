@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> Fac Settings test </title>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter-multiplayer-dependencies.js"></script>
+    <script src="//forio.com/tools/js-libs/2.6.0/epicenter.js"></script> -->
+
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/epicenter-edge.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        section {
+            padding: 30px 0;
+            border-top: 1px dotted silver;
+        }
+        .instructions {
+            color: blue;
+        }
+    </style>
+</head>
+<body class="container">
+    <section class="jumbotron">
+      <div class="row">
+          <div class="col-xs-6">
+              <form action="">
+                <label for="">Account</label>
+                <input type="text" id="txtAccount"  value="team-naren">
+                <br/>
+
+                <label for="">Project</label>
+                <input type="text" id="txtProject" value="multiplayer-test" >
+                <br/>
+
+                <label for="">Username</label>
+                <input type="text" id="txtUsername" value="nrn_fac" >
+                <br/>
+
+                <label for="">Password</label>
+                <input type="text" id="txtPassword" value="password1" >
+                <br/>
+
+                <label for="">API Server (leave blank to use default)</label>
+                <input type="text" id="txtServer" value="" >
+                <br/>
+
+                <label for="">Model</label>
+                <input type="text" id="txtModel" value="gglasses.vmf" >
+                <br/>
+                <button id="btnLogin"> Login </button>
+                <a href="#" id='logout'> Logout</a>
+              </form>
+          </div>
+          <div class="col-xs-6">
+              Make sure you enter info for 
+              <ul>
+                  <li>A team account</li>
+                  <li>A facilitator user</li>
+              </ul>
+          </div>
+      </div>
+    </section>
+
+    <div class="row">
+        <section class="col-xs-12 col-md-8">
+            <h4> Please follow the steps below to set up and open the simulation for play.</h4>
+            <ol class="settings-steps">
+                <li>
+                    <h5>Set up a new run</h5>
+                    <button class="btn btn-primary" id="btn-new-run">Set up a new run</button>
+                </li>
+                <li>
+                    <h5>Customize Simulation</h5>
+                    <form>
+                        <div class="form-group">
+                            <label for="">Enter Price</label>
+                            <input type="text" class="form-control" id="txt-price" name="Price">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Run Name</label>
+                            <input type="text" class="form-control" id="txt-run-name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Run Limit</label>
+                            <select name="runLimit" id="lst-run-limit">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="">Unlimited</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Sim Status</label>
+                            <select name="isOpen" >
+                                <option value="0">Closed</option>
+                                <option value="1">Open</option>
+                            </select>
+                        </div>
+                    </form>
+                </li>
+                <li>
+                    <h5>Apply settings to all runs</h5>
+                    <div class="btn-container">
+                        <button id="btn-reset" class="btn btn-link f-action-button">Reset</button>
+                        <button id="btn-save-settings" class="btn btn-primary f-action-button">Save & Apply settings</button>
+                        <button id="btn-delete-all" class="btn btn-danger">Delete ALL</button>
+                    </div>
+                </li>
+                
+            </ol>
+        </section>
+    </div>
+
+    <button id="btn-refresh-run-results" class="btn btn-link f-action-button">Refresh Results</button>
+
+    <table class="table" id="run-results">
+        <thead>
+            <tr>
+                <thead>User</thead>
+                <thead>RunId</thead>
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+    
+    <script src="../../common.js"></script>
+    <script src="integration-test-fac-settings.js"></script>
+</body>
+</html>

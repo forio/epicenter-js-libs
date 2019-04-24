@@ -28,6 +28,9 @@ $('#btnLogin').click(function (evt) {
     };
     am.login(params).then(function () {
         window.alert('login successful');
+    }, (e)=> {
+        window.alert('login error');
+        console.error(e);
     });
 });
 
