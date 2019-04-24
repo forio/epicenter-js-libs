@@ -14,6 +14,14 @@ export function result(item) {
 export function rejectPromise(type, message) {
     return $.Deferred().reject({ type: type, message: message }).promise();
 }
+/**
+ * @param {string} val 
+ * @returns {Promise}
+ */
+export function resolvePromise(val) {
+    return $.Deferred().resolve(val).promise();
+}
+
 
 /**
  * @param {string} type
