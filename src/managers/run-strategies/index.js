@@ -21,7 +21,8 @@ import reusePerSession from './reuse-per-session';
 import reuseAcrossSessions from './reuse-across-sessions';
 import reuseLastInitialized from './reuse-last-initialized';
 import reuseByTrackingKey from './reuse-by-tracking-key';
- 
+import multiplayerWithTrackingKey from './multiplayer-with-tracking-key';
+
 import useSpecificRun from './use-specific-run-strategy';
 
 export const strategyKeys = {
@@ -31,6 +32,8 @@ export const strategyKeys = {
     REUSE_LAST_INITIALIZED: 'reuse-last-initialized',
 
     REUSE_BY_TRACKINGKEY: 'reuse-by-tracking-key',
+    REUSE_BY_TRACKINGKEY_MULTIPLAYER: 'reuse-by-tracking-key-multiplayer',
+
     USE_SPECIFIC_RUN: 'use-specific-run',
 
     MULTIPLAYER: 'multiplayer',
@@ -50,6 +53,7 @@ var list = {
     [strategyKeys.REUSE_ACROSS_SESSIONS]: reuseAcrossSessions,
     [strategyKeys.REUSE_LAST_INITIALIZED]: reuseLastInitialized,
     [strategyKeys.REUSE_BY_TRACKINGKEY]: reuseByTrackingKey,
+    [strategyKeys.REUSE_BY_TRACKINGKEY_MULTIPLAYER]: multiplayerWithTrackingKey,
 };
 
 //Add back older aliases
