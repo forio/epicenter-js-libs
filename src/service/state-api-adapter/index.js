@@ -151,6 +151,38 @@ export default function StateService(config) {
             params = $.extend(true, { action: 'clone' }, pick(params, ['stopBefore', 'exclude']));
 
             return http.post(params, replayOptions);
+        },
+
+        //Specific to Vensim, only used within the interface builder for now
+        cloneForSensitivity: function (runId, options) {
+            const params = {
+                modelContext: {
+                    restorations: {
+                        assembly: [{
+                            replay: {
+                                operations: [{
+                                    operationType: 'stop_before',
+                                    targetType: 'execute',
+                                    targetKey: 'stepTo'
+                                }]
+                            }
+                        }]
+                    }
+                },
+                executionContext: {
+                    tool: {
+                        vensim: {
+                            sensitivityMode: true
+                        }
+                    }
+                }
+            };
+            var httpoptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(apiEndpoint) + 'clone/' + runId }
+            );
+            return http.post(params, httpoptions);
         }
     };
 
