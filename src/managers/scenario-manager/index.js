@@ -123,7 +123,7 @@ function ScenarioManager(config) {
      */
     this.current.saveAndAdvance = function (metadata) {
         function clone(run) {
-            var sa = new StateService();
+            var sa = new StateService(mergedCurrentRunOptions);
             var advanceOpns = normalizeOperations(opts.advanceOperation); 
             //run i'm cloning shouldn't have the advance operations there by default, but just in case
             return sa.clone({ runId: run.id, exclude: advanceOpns.ops }).then(function (response) {
@@ -137,7 +137,7 @@ function ScenarioManager(config) {
             });
         }
         function advance(run) {
-            var rs = new RunService(run);
+            var rs = new RunService($.extend(true, {}, mergedCurrentRunOptions, run));
             return rs.serial(opts.advanceOperation).then(function () {
                 return run;
             });

@@ -68,7 +68,7 @@ var F =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 45);
+/******/ 	return __webpack_require__(__webpack_require__.s = 47);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -229,7 +229,7 @@ function ensureKeysPresent(obj, keysList, context) {
 
 var keyNames = __webpack_require__(16);
 var StorageFactory = __webpack_require__(28);
-var optionUtils = __webpack_require__(47);
+var optionUtils = __webpack_require__(49);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
 var EPI_MANAGER_KEY = 'epicenter.token'; //can't be under key-names, or logout will clear this too
@@ -453,71 +453,6 @@ var ConfigService = function () {
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
-/* Inherit from a class (using prototype borrowing)
-*/
-
-
-function inherit(C, P) {
-    var F = function () {};
-    F.prototype = P.prototype;
-    C.prototype = new F();
-    C.__super = P.prototype;
-    C.prototype.constructor = C;
-}
-
-/**
-* Shallow copy of an object
-* @param {Object} dest object to extend
-* @return {Object} extended object
-*/
-var extend = function (dest /*, var_args*/) {
-    var obj = Array.prototype.slice.call(arguments, 1);
-    var current;
-    for (var j = 0; j < obj.length; j++) {
-        if (!(current = obj[j])) {
-            //eslint-disable-line
-            continue;
-        }
-
-        // do not wrap inner in dest.hasOwnProperty or bad things will happen
-        for (var key in current) {
-            //eslint-disable-line
-            dest[key] = current[key];
-        }
-    }
-
-    return dest;
-};
-
-module.exports = function (base, props, staticProps) {
-    var parent = base;
-    var child;
-
-    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
-        return parent.apply(this, arguments);
-    };
-
-    // add static properties to the child constructor function
-    extend(child, parent, staticProps);
-
-    // associate prototype chain
-    inherit(child, parent);
-
-    // add instance properties
-    if (props) {
-        extend(child.prototype, props);
-    }
-
-    // done
-    return child;
-};
-
-/***/ }),
-/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -526,7 +461,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["parseContentRange"] = parseContentRange;
 /* harmony export (immutable) */ __webpack_exports__["normalizeOperations"] = normalizeOperations;
 /* harmony export (immutable) */ __webpack_exports__["splitGetFactory"] = splitGetFactory;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__query_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__query_util__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_object_util__ = __webpack_require__(2);
 /**
  * Utilities for working with the run service
@@ -773,6 +708,71 @@ function splitGetFactory(httpOptions) {
 }
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+/* Inherit from a class (using prototype borrowing)
+*/
+
+
+function inherit(C, P) {
+    var F = function () {};
+    F.prototype = P.prototype;
+    C.prototype = new F();
+    C.__super = P.prototype;
+    C.prototype.constructor = C;
+}
+
+/**
+* Shallow copy of an object
+* @param {Object} dest object to extend
+* @return {Object} extended object
+*/
+var extend = function (dest /*, var_args*/) {
+    var obj = Array.prototype.slice.call(arguments, 1);
+    var current;
+    for (var j = 0; j < obj.length; j++) {
+        if (!(current = obj[j])) {
+            //eslint-disable-line
+            continue;
+        }
+
+        // do not wrap inner in dest.hasOwnProperty or bad things will happen
+        for (var key in current) {
+            //eslint-disable-line
+            dest[key] = current[key];
+        }
+    }
+
+    return dest;
+};
+
+module.exports = function (base, props, staticProps) {
+    var parent = base;
+    var child;
+
+    child = props && props.hasOwnProperty('constructor') ? props.constructor : function () {
+        return parent.apply(this, arguments);
+    };
+
+    // add static properties to the child constructor function
+    extend(child, parent, staticProps);
+
+    // associate prototype chain
+    inherit(child, parent);
+
+    // add instance properties
+    if (props) {
+        extend(child.prototype, props);
+    }
+
+    // done
+    return child;
+};
+
+/***/ }),
 /* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -780,7 +780,7 @@ function splitGetFactory(httpOptions) {
 /* harmony export (immutable) */ __webpack_exports__["c"] = mergeRunOptions;
 /* harmony export (immutable) */ __webpack_exports__["a"] = injectFiltersFromSession;
 /* harmony export (immutable) */ __webpack_exports__["b"] = injectScopeFromSession;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(8);
 
 
 function mergeRunOptions(run, options) {
@@ -823,180 +823,10 @@ function injectScopeFromSession(currentParams, session) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["toMatrixFormat"] = toMatrixFormat;
-/* harmony export (immutable) */ __webpack_exports__["toQueryFormat"] = toQueryFormat;
-/* harmony export (immutable) */ __webpack_exports__["qsToObject"] = qsToObject;
-/* harmony export (immutable) */ __webpack_exports__["mergeQS"] = mergeQS;
-/* harmony export (immutable) */ __webpack_exports__["normalizeSlashes"] = normalizeSlashes;
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-/**
- * Utilities for working with query strings
-*/
-
-/**
- * Converts to matrix format
- * @param  {object} qs Object to convert to query string
- * @return {string}    Matrix-format query parameters
- */
-function toMatrixFormat(qs) {
-    if (qs === null || qs === undefined || qs === '') {
-        return ';';
-    }
-    if (typeof qs === 'string') {
-        return qs;
-    }
-    function translateParts(ip) {
-        function translateRawValue(val) {
-            var OPERATORS = ['<', '>', '!'];
-            var alreadyHasOperator = OPERATORS.some(function (o) {
-                return ('' + val).charAt(0) === o;
-            });
-            var withPrefix = alreadyHasOperator ? val : '=' + val;
-            return withPrefix;
-        }
-
-        var parts = Object.keys(ip).reduce(function (accum, key) {
-            var val = ip[key];
-            if (Array.isArray(val)) {
-                var mapped = val.map(function (v) {
-                    var translated = translateRawValue(v);
-                    return '' + key + translated;
-                });
-                accum = accum.concat(mapped);
-            } else if (val !== null && typeof val === 'object') {
-                var translated = translateParts(val);
-                var prefixed = translated.map(function (t) {
-                    return key + '.' + t;
-                });
-                accum = accum.concat(prefixed);
-            } else {
-                var _translated = translateRawValue(val);
-                accum.push('' + key + _translated);
-            }
-            return accum;
-        }, []);
-        return parts;
-    }
-
-    var parts = translateParts(qs);
-    return ';' + parts.join(';');
-}
-
-/**
- * Converts strings/arrays/objects to type 'a=b&b=c'
- * @param  { string|Array|Object} qs
- * @return { string}
- */
-function toQueryFormat(qs) {
-    if (qs === null || qs === undefined) {
-        return '';
-    }
-    if (typeof qs === 'string') {
-        return qs;
-    }
-
-    var returnArray = [];
-    $.each(qs, function (key, value) {
-        if (Array.isArray(value)) {
-            value = value.join(',');
-        }
-
-        if ($.isPlainObject(value)) {
-            //Mostly for data api
-            value = JSON.stringify(value);
-        }
-        returnArray.push(key + '=' + value);
-    });
-
-    var result = returnArray.join('&');
-    return result;
-}
-
-/**
- * Converts strings of type 'a=b&b=c' to { a:b, b:c}
- * @param  { string} qs
- * @return {object}
- */
-function qsToObject(qs) {
-    if (qs === null || qs === undefined || qs === '') {
-        return {};
-    }
-
-    var qsArray = qs.split('&');
-    var returnObj = {};
-    qsArray.forEach(function (value, index) {
-        var qKey = value.split('=')[0];
-        var qVal = value.split('=')[1];
-
-        if (qVal.indexOf(',') !== -1) {
-            qVal = qVal.split(',');
-        }
-
-        returnObj[qKey] = qVal;
-    });
-
-    return returnObj;
-}
-
-/**
- * Normalizes and merges strings of type 'a=b', { b:c} to { a:b, b:c}
- * @param  { string|Array|Object} qs1
- * @param  { string|Array|Object} qs2
- * @return {Object}
- */
-function mergeQS(qs1, qs2) {
-    var obj1 = qsToObject(toQueryFormat(qs1));
-    var obj2 = qsToObject(toQueryFormat(qs2));
-    return $.extend(true, {}, obj1, obj2);
-}
-
-/**
- *
- * @param {string} url url to sanitize
- * @param {object} [options] determines if leading/trailing slashes are expected
- * @param {boolean} [options.leading]
- * @param {boolean} [options.trailing]
- *
- * @returns {string}
- */
-function normalizeSlashes(url, options) {
-    if (!url) {
-        if (url === '') return '';
-        throw new Error('normalizeSlashes: Unknown url ' + url);
-    }
-    var opts = $.extend({}, {
-        leading: false,
-        trailing: false
-    }, options);
-
-    var protocolMatch = url.match(/^(https?:\/\/)(.*)/);
-
-    var _ref = protocolMatch ? [protocolMatch[1], protocolMatch[2]] : ['', url],
-        _ref2 = _slicedToArray(_ref, 2),
-        protocol = _ref2[0],
-        rest = _ref2[1];
-
-    var cleaned = rest.replace(/\/{2,}/g, '/');
-    if (opts.leading && cleaned.charAt(0) !== '/' && !protocol) {
-        cleaned = '/' + cleaned;
-    }
-    if (opts.trailing && cleaned.charAt(cleaned.length - 1) !== '/') {
-        cleaned = cleaned + '/';
-    }
-    return '' + protocol + cleaned;
-}
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = RunService;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(27);
@@ -1490,12 +1320,13 @@ function RunService(config) {
 }
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["d"] = result;
+/* harmony export (immutable) */ __webpack_exports__["e"] = result;
 /* harmony export (immutable) */ __webpack_exports__["c"] = rejectPromise;
+/* harmony export (immutable) */ __webpack_exports__["d"] = resolvePromise;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomError; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = makePromise;
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1519,6 +1350,13 @@ function result(item) {
  */
 function rejectPromise(type, message) {
     return $.Deferred().reject({ type: type, message: message }).promise();
+}
+/**
+ * @param {string} val 
+ * @returns {Promise}
+ */
+function resolvePromise(val) {
+    return $.Deferred().resolve(val).promise();
 }
 
 /**
@@ -1576,6 +1414,176 @@ function makePromise(val) {
 }
 
 /***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["toMatrixFormat"] = toMatrixFormat;
+/* harmony export (immutable) */ __webpack_exports__["toQueryFormat"] = toQueryFormat;
+/* harmony export (immutable) */ __webpack_exports__["qsToObject"] = qsToObject;
+/* harmony export (immutable) */ __webpack_exports__["mergeQS"] = mergeQS;
+/* harmony export (immutable) */ __webpack_exports__["normalizeSlashes"] = normalizeSlashes;
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+/**
+ * Utilities for working with query strings
+*/
+
+/**
+ * Converts to matrix format
+ * @param  {object} qs Object to convert to query string
+ * @return {string}    Matrix-format query parameters
+ */
+function toMatrixFormat(qs) {
+    if (qs === null || qs === undefined || qs === '') {
+        return ';';
+    }
+    if (typeof qs === 'string') {
+        return qs;
+    }
+    function translateParts(ip) {
+        function translateRawValue(val) {
+            var OPERATORS = ['<', '>', '!'];
+            var alreadyHasOperator = OPERATORS.some(function (o) {
+                return ('' + val).charAt(0) === o;
+            });
+            var withPrefix = alreadyHasOperator ? val : '=' + val;
+            return withPrefix;
+        }
+
+        var parts = Object.keys(ip).reduce(function (accum, key) {
+            var val = ip[key];
+            if (Array.isArray(val)) {
+                var mapped = val.map(function (v) {
+                    var translated = translateRawValue(v);
+                    return '' + key + translated;
+                });
+                accum = accum.concat(mapped);
+            } else if (val !== null && typeof val === 'object') {
+                var translated = translateParts(val);
+                var prefixed = translated.map(function (t) {
+                    return key + '.' + t;
+                });
+                accum = accum.concat(prefixed);
+            } else {
+                var _translated = translateRawValue(val);
+                accum.push('' + key + _translated);
+            }
+            return accum;
+        }, []);
+        return parts;
+    }
+
+    var parts = translateParts(qs);
+    return ';' + parts.join(';');
+}
+
+/**
+ * Converts strings/arrays/objects to type 'a=b&b=c'
+ * @param  { string|Array|Object} qs
+ * @return { string}
+ */
+function toQueryFormat(qs) {
+    if (qs === null || qs === undefined) {
+        return '';
+    }
+    if (typeof qs === 'string') {
+        return qs;
+    }
+
+    var returnArray = [];
+    $.each(qs, function (key, value) {
+        if (Array.isArray(value)) {
+            value = value.join(',');
+        }
+
+        if ($.isPlainObject(value)) {
+            //Mostly for data api
+            value = JSON.stringify(value);
+        }
+        returnArray.push(key + '=' + value);
+    });
+
+    var result = returnArray.join('&');
+    return result;
+}
+
+/**
+ * Converts strings of type 'a=b&b=c' to { a:b, b:c}
+ * @param  { string} qs
+ * @return {object}
+ */
+function qsToObject(qs) {
+    if (qs === null || qs === undefined || qs === '') {
+        return {};
+    }
+
+    var qsArray = qs.split('&');
+    var returnObj = {};
+    qsArray.forEach(function (value, index) {
+        var qKey = value.split('=')[0];
+        var qVal = value.split('=')[1];
+
+        if (qVal.indexOf(',') !== -1) {
+            qVal = qVal.split(',');
+        }
+
+        returnObj[qKey] = qVal;
+    });
+
+    return returnObj;
+}
+
+/**
+ * Normalizes and merges strings of type 'a=b', { b:c} to { a:b, b:c}
+ * @param  { string|Array|Object} qs1
+ * @param  { string|Array|Object} qs2
+ * @return {Object}
+ */
+function mergeQS(qs1, qs2) {
+    var obj1 = qsToObject(toQueryFormat(qs1));
+    var obj2 = qsToObject(toQueryFormat(qs2));
+    return $.extend(true, {}, obj1, obj2);
+}
+
+/**
+ *
+ * @param {string} url url to sanitize
+ * @param {object} [options] determines if leading/trailing slashes are expected
+ * @param {boolean} [options.leading]
+ * @param {boolean} [options.trailing]
+ *
+ * @returns {string}
+ */
+function normalizeSlashes(url, options) {
+    if (!url) {
+        if (url === '') return '';
+        throw new Error('normalizeSlashes: Unknown url ' + url);
+    }
+    var opts = $.extend({}, {
+        leading: false,
+        trailing: false
+    }, options);
+
+    var protocolMatch = url.match(/^(https?:\/\/)(.*)/);
+
+    var _ref = protocolMatch ? [protocolMatch[1], protocolMatch[2]] : ['', url],
+        _ref2 = _slicedToArray(_ref, 2),
+        protocol = _ref2[0],
+        rest = _ref2[1];
+
+    var cleaned = rest.replace(/\/{2,}/g, '/');
+    if (opts.leading && cleaned.charAt(0) !== '/' && !protocol) {
+        cleaned = '/' + cleaned;
+    }
+    if (opts.trailing && cleaned.charAt(cleaned.length - 1) !== '/') {
+        cleaned = cleaned + '/';
+    }
+    return '' + protocol + cleaned;
+}
+
+/***/ }),
 /* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1585,7 +1593,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(1);
 
@@ -2273,7 +2281,7 @@ function WorldAPIAdapter(config) {
 
 
 var Base = __webpack_require__(14);
-var classFrom = __webpack_require__(5);
+var classFrom = __webpack_require__(6);
 
 /**
 * ## Conditional Creation Strategy
@@ -2368,7 +2376,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var atob = window.atob || __webpack_require__(50).atob;
+var atob = window.atob || __webpack_require__(52).atob;
 
 var defaults = {
     requiresGroup: true
@@ -2943,9 +2951,9 @@ module.exports = {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_epicenter_channel_manager__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_index__ = __webpack_require__(9);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3469,13 +3477,13 @@ function MemberAPIService(config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(52);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(54);
 
 
 
@@ -4096,8 +4104,8 @@ var STRATEGY = {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(72);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
@@ -4339,11 +4347,11 @@ RunManager.strategies = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__["d
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(74);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4552,7 +4560,7 @@ module.exports = {"version":"v2"}
 var _require = __webpack_require__(2),
     omit = _require.omit;
 
-var _require2 = __webpack_require__(8),
+var _require2 = __webpack_require__(10),
     toQueryFormat = _require2.toQueryFormat;
 
 module.exports = function (config) {
@@ -4671,7 +4679,7 @@ module.exports = function (config) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = VariablesService;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(5);
 
 
 
@@ -5531,6 +5539,11 @@ var apiEndpoint = 'presence';
         return serviceOptions;
     };
 
+    var userOnlineTimers = {};
+    function cancelKeepOnline(userid) {
+        clearInterval(userOnlineTimers[userid]);
+    }
+
     var publicAPI = {
         /**
          * Marks an end user as online.
@@ -5546,6 +5559,7 @@ var apiEndpoint = 'presence';
          *
          * @param  {string} [userId] optional If not provided, taken from session cookie.
          * @param  {Object} [options] Additional options to change the presence service defaults.
+         * @param  {boolean} [options.keepOnline] Starts a timer registering the user as online every 5 minutes. Timer is canceled when you call `markOffline` or `cancelKeepOnline`
          * @return {Promise} Promise with presence information for user marked online.
          */
         markOnline: function (userId, options) {
@@ -5558,7 +5572,22 @@ var apiEndpoint = 'presence';
             userId = isString ? userId : objParams.userId;
             var groupName = options.groupName || objParams.groupName;
             var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId });
+
+            if (options.keepOnline) {
+                var PRESENCE_TIMEOUT_INTERVAL = 5;
+                userOnlineTimers[userId] = setInterval(function () {
+                    http.post({ message: 'online' }, httpOptions);
+                }, PRESENCE_TIMEOUT_INTERVAL * 60 * 1000);
+            }
             return http.post({ message: 'online' }, httpOptions);
+        },
+
+        /**
+         * If you set `keepOnline` to true while calling `markOnline`, use this to cancel the timer
+         * @param {string} userid
+         */
+        cancelKeepOnline: function (userid) {
+            cancelKeepOnline(userid);
         },
 
         /**
@@ -5583,6 +5612,7 @@ var apiEndpoint = 'presence';
             userId = isString ? userId : objParams.userId;
             var groupName = options.groupName || objParams.groupName;
             var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + groupName + '/' + userId });
+            cancelKeepOnline(userId);
             return http.delete({}, httpOptions);
         },
 
@@ -5820,6 +5850,34 @@ function StateService(config) {
             params = $.extend(true, { action: 'clone' }, Object(__WEBPACK_IMPORTED_MODULE_1_util_object_util__["pick"])(params, ['stopBefore', 'exclude']));
 
             return http.post(params, replayOptions);
+        },
+
+        //Specific to Vensim, only used within the interface builder for now
+        cloneForSensitivity: function (runId, options) {
+            var params = {
+                modelContext: {
+                    restorations: {
+                        assembly: [{
+                            replay: {
+                                operations: [{
+                                    operationType: 'stop_before',
+                                    targetType: 'execute',
+                                    targetKey: 'stepTo'
+                                }]
+                            }
+                        }]
+                    }
+                },
+                executionContext: {
+                    tool: {
+                        vensim: {
+                            sensitivityMode: true
+                        }
+                    }
+                }
+            };
+            var httpoptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + 'clone/' + runId });
+            return http.post(params, httpoptions);
         }
     };
 
@@ -5835,7 +5893,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = UserAPIAdapter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(10);
 
 
 
@@ -6048,7 +6106,7 @@ var TimeAPIService = function () {
 /* unused harmony export objectToPublishable */
 /* unused harmony export publishableToObject */
 /* unused harmony export normalizeParamOptions */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(56);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(38);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6449,18 +6507,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "strategyKeys", function() { return strategyKeys; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__ = __webpack_require__(67);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__ = __webpack_require__(66);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__none_strategy__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__ = __webpack_require__(67);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reuse_never__ = __webpack_require__(68);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__ = __webpack_require__(69);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__ = __webpack_require__(70);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__use_specific_run_strategy__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reuse_never__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__multiplayer_with_tracking_key__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__use_specific_run_strategy__ = __webpack_require__(72);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -6491,6 +6550,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
 var strategyKeys = {
     REUSE_NEVER: 'reuse-never',
     REUSE_PER_SESSION: 'reuse-per-session',
@@ -6498,6 +6558,8 @@ var strategyKeys = {
     REUSE_LAST_INITIALIZED: 'reuse-last-initialized',
 
     REUSE_BY_TRACKINGKEY: 'reuse-by-tracking-key',
+    REUSE_BY_TRACKINGKEY_MULTIPLAYER: 'reuse-by-tracking-key-multiplayer',
+
     USE_SPECIFIC_RUN: 'use-specific-run',
 
     MULTIPLAYER: 'multiplayer',
@@ -6509,7 +6571,7 @@ var list = (_list = {
     'new-if-initialized': __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy___default.a,
     'new-if-persisted': __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy___default.a
 
-}, _defineProperty(_list, strategyKeys.NONE, __WEBPACK_IMPORTED_MODULE_3__none_strategy__["default"]), _defineProperty(_list, strategyKeys.MULTIPLAYER, __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.USE_SPECIFIC_RUN, __WEBPACK_IMPORTED_MODULE_10__use_specific_run_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_NEVER, __WEBPACK_IMPORTED_MODULE_5__reuse_never__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_PER_SESSION, __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_ACROSS_SESSIONS, __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_LAST_INITIALIZED, __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_BY_TRACKINGKEY, __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__["a" /* default */]), _list);
+}, _defineProperty(_list, strategyKeys.NONE, __WEBPACK_IMPORTED_MODULE_3__none_strategy__["default"]), _defineProperty(_list, strategyKeys.MULTIPLAYER, __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.USE_SPECIFIC_RUN, __WEBPACK_IMPORTED_MODULE_11__use_specific_run_strategy__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_NEVER, __WEBPACK_IMPORTED_MODULE_5__reuse_never__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_PER_SESSION, __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_ACROSS_SESSIONS, __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_LAST_INITIALIZED, __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_BY_TRACKINGKEY, __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__["a" /* default */]), _defineProperty(_list, strategyKeys.REUSE_BY_TRACKINGKEY_MULTIPLAYER, __WEBPACK_IMPORTED_MODULE_10__multiplayer_with_tracking_key__["a" /* default */]), _list);
 
 //Add back older aliases
 list['always-new'] = list['reuse-never'];
@@ -6598,6 +6660,118 @@ var strategyManager = {
 
 /***/ }),
 /* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return _reset; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return _getRun; });
+/* harmony export (immutable) */ __webpack_exports__["b"] = getCurrentWorld;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
+
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+function worldFromRun(runService) {
+    var config = Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["omit"])(runService.getCurrentConfig(), ['filter', 'id']);
+    var worldService = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](config);
+    return worldService;
+}
+
+function _reset(runService, session, options) {
+    var userId = session.userId,
+        groupName = session.groupName;
+
+    var optionsToPassOn = Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["omit"])($.extend(true, {}, options, {
+        success: $.noop
+    }), ['filter', 'id']);
+    var worldApi = worldFromRun(runService);
+    return worldApi.getCurrentWorldForUser(userId, groupName).then(function (world) {
+        return worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
+            return runService.load(runid);
+        }).then(function (run) {
+            run.freshlyCreated = true;
+            run.world = world;
+            return run;
+        });
+    });
+}
+function getCurrentWorld(runService, session) {
+    var userId = session.userId,
+        groupName = session.groupName;
+
+    var worldApi = worldFromRun(runService);
+    return worldApi.getCurrentWorldForUser(userId, groupName);
+}
+
+function _getRun(runService, session, options) {
+    var userId = session.userId;
+
+    var worldApi = worldFromRun(runService);
+    var model = runService.getCurrentConfig().model;
+
+    if (!userId) {
+        return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('UNAUTHORIZED', 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)');
+    }
+
+    function loadRunFromWorld(world) {
+        if (!world) {
+            return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('NO_WORLD_FOR_USER', 'User ' + userId + ' is not part of a world');
+        }
+        var createOptions = $.extend(true, {}, options, { model: model, filter: world.id });
+        return worldApi.getCurrentRunId(createOptions).then(function (id, status, xhr) {
+            return runService.load(id).then(function (run) {
+                var RUN_CREATION_STATUS = 201;
+                var timeSinceCreation = Date.now() - new Date(run.created).valueOf();
+                run.freshlyCreated = timeSinceCreation < 500;
+                return run;
+            });
+        }).then(function (run) {
+            run.world = world;
+            return run;
+        });
+    }
+
+    return getCurrentWorld(runService, session).then(loadRunFromWorld);
+}
+/**
+ * The `multiplayer` strategy is for use with [multiplayer worlds](../../../glossary/#world). It checks the current world for this end user, and always returns the current run for that world. This is equivalent to calling `getCurrentWorldForUser()` and then `getCurrentRunId()` from the [World API Adapater](../world-api-adapter/). If you use the [World Manager](../world-manager/), you are automatically using this strategy.
+ * 
+ * Using this strategy means that end users in projects with multiplayer worlds always see the most current world and run. This ensures that they are in sync with the other end users sharing their world and run. In turn, this allows for competitive or collaborative multiplayer projects.
+ */
+
+var MultiplayerStrategy = function () {
+    function MultiplayerStrategy() {
+        _classCallCheck(this, MultiplayerStrategy);
+    }
+
+    _createClass(MultiplayerStrategy, [{
+        key: 'reset',
+        value: function reset(runService, session, options) {
+            return _reset(runService, session, options);
+        }
+    }, {
+        key: 'getRun',
+        value: function getRun(runService, session, options) {
+            return _getRun(runService, session, options);
+        }
+    }]);
+
+    return MultiplayerStrategy;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (MultiplayerStrategy);
+
+/***/ }),
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6709,14 +6883,14 @@ var ReuseLastInitializedStrategy = function () {
 /* harmony default export */ __webpack_exports__["a"] = (ReuseLastInitializedStrategy);
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategy_utils__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(9);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6814,7 +6988,7 @@ var ReuseWithTrackingKeyStrategy = function () {
     _createClass(ReuseWithTrackingKeyStrategy, [{
         key: 'getSettings',
         value: function getSettings(runService, userSession) {
-            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* result */])(this.options.settings, runService, userSession);
+            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["e" /* result */])(this.options.settings, runService, userSession);
             var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(settings).then(function (settings) {
                 var key = settings && settings.trackingKey;
                 if (!key) {
@@ -6848,21 +7022,31 @@ var ReuseWithTrackingKeyStrategy = function () {
             });
         }
     }, {
+        key: 'checkIfWithinRunLimit',
+        value: function checkIfWithinRunLimit(runService, userSession, settings) {
+            var noRunLimit = settings.runLimit === Infinity || ('' + settings.runLimit).trim() === '';
+            if (noRunLimit) {
+                return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* resolvePromise */])(settings);
+            }
+            var runFilter = makeFilter(settings.trackingKey, userSession, this.options.filter);
+            return getRunsForFilter(runService, runFilter).then(function (runs, status, xhr) {
+                var startedRuns = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
+                var runLimit = noRunLimit ? Infinity : +settings.runLimit;
+                if (startedRuns && startedRuns.total >= runLimit) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
+                }
+                return settings;
+            });
+        }
+    }, {
         key: 'reset',
         value: function reset(runService, userSession, runCreateOptions) {
             var _this2 = this;
 
             return this.getSettings(runService, userSession).then(function (settings) {
-                var runFilter = makeFilter(settings.trackingKey, userSession, _this2.options.filter);
-                return getRunsForFilter(runService, runFilter).then(function (runs, status, xhr) {
-                    var startedRuns = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
-                    var runLimitNotSet = settings.runLimit === Infinity || ('' + settings.runLimit).trim() === '';
-                    var runLimit = runLimitNotSet ? Infinity : +settings.runLimit;
-                    if (startedRuns && startedRuns.total >= runLimit) {
-                        return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
-                    }
-                    return _this2.forceCreateRun(runService, userSession, settings, runCreateOptions);
-                });
+                return _this2.checkIfWithinRunLimit(runService, userSession, settings);
+            }).then(function (settings) {
+                return _this2.forceCreateRun(runService, userSession, settings, runCreateOptions);
             });
         }
     }, {
@@ -6889,7 +7073,234 @@ ReuseWithTrackingKeyStrategy.errors = errors;
 /* harmony default export */ __webpack_exports__["a"] = (ReuseWithTrackingKeyStrategy);
 
 /***/ }),
-/* 44 */
+/* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_run_api_service__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_run_util__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__strategy_utils__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_util_object_util__ = __webpack_require__(2);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
+
+
+
+var errors = {
+    RUN_LIMIT_REACHED: 'RUN_LIMIT_REACHED',
+    NO_TRACKING_KEY: 'NO_TRACKING_KEY'
+};
+
+/**
+ * @param {string} trackingKey 
+ * @param {string} worldId 
+ * @param {object} userSession 
+ * @param {object} metaFilter Additional criteria to filter by 
+ * @returns {object}
+ */
+function makeFilter(trackingKey, worldId, userSession, metaFilter) {
+    var runFilter = $.extend(true, {
+        scope: {
+            trackingKey: trackingKey,
+            worldId: worldId
+        }
+    }, metaFilter);
+    var filter = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["a" /* injectFiltersFromSession */])(runFilter, userSession, { scopeByUser: false });
+    return filter;
+}
+
+/**
+ * @param {RunService} runService 
+ * @param {object} filter 
+ * @returns {Promise<object[]>}
+ */
+function getRunsForFilter(runService, filter) {
+    return runService.query(filter, {
+        startRecord: 0,
+        endRecord: 0,
+        sort: 'created',
+        direction: 'desc'
+    });
+}
+
+/**
+ * The `reuse-by-tracking-key-multiplayer` strategy creates or returns the most recent multiplayer run matching a given tracking key. You can optionally  also provide a "Run limit", and it'll prevent new runs from being created with this strategy once that limit has  been reached.
+ *
+ * ```
+ *  const rm = new F.manager.RunManager({
+ *      strategy: 'reuse-by-tracking-key-multiplayer',
+ *      strategyOptions: {
+ *          settings: {
+ *              trackingKey: 'foobar'
+ *          }
+ *      }
+ *  });
+ *  ```
+ *  Any runs created with this strategy will have a 'settings' field which returns the current settings for that run (when retreived with `getRun` or `reset`)
+ * 
+ * This strategy is used by the Settings Manager to apply class settings for turn-by-turn simulations, but can also be used stand-alone.
+ *
+ */
+
+var MultiplayerWithTrackingKeyStrategy = function () {
+    /**
+     * @param {object} [options] 
+     * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
+     * @property {string} settings.trackingKey Key to track runs with
+     * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
+     * @property {object} [settings.filter] Criteria to filter runs by, in addition to matching by tracking key (and user/group). Defaults to trashed: false
+     * @property {function(RunService, object):any} [onCreate] Callback will be called each time a new run is created
+     */
+    function MultiplayerWithTrackingKeyStrategy(options) {
+        _classCallCheck(this, MultiplayerWithTrackingKeyStrategy);
+
+        var defaults = {
+            settings: {
+                trackingKey: null,
+                runLimit: Infinity
+            },
+            filter: {
+                trashed: false
+            },
+            onCreate: function (runService, settings, run) {
+                return run;
+            }
+        };
+        var strategyOptions = options ? options.strategyOptions : {};
+        this.options = $.extend(true, {}, defaults, strategyOptions);
+    }
+
+    _createClass(MultiplayerWithTrackingKeyStrategy, [{
+        key: 'getSettings',
+        value: function getSettings(runService, userSession) {
+            var settings = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["e" /* result */])(this.options.settings, runService, userSession);
+            var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(settings).then(function (settings) {
+                var key = settings && settings.trackingKey;
+                if (!key) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.NO_TRACKING_KEY, 'No tracking key provided to reuse-by-tracking-key strategy');
+                }
+                return settings;
+            });
+            return prom;
+        }
+    }, {
+        key: '_applySettingsToNewRun',
+        value: function _applySettingsToNewRun(runService, settings, run) {
+            var _this = this;
+
+            var prom = Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["d" /* resolvePromise */])(run);
+
+            if (!run.scope || run.scope.trackingKey !== settings.trackingKey) {
+                prom = runService.save({
+                    scope: {
+                        trackingKey: settings.trackingKey
+                    }
+                });
+            }
+            return prom.then(function () {
+                var applied = _this.options.onCreate(runService, settings, run);
+                return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["b" /* makePromise */])(applied).then(function (res) {
+                    return res && res.id ? res : run;
+                }).then(function (run) {
+                    return $.extend(true, {}, run, { settings: settings });
+                });
+            });
+        }
+    }, {
+        key: '_forceCreateRun',
+        value: function _forceCreateRun(runService, userSession, settings, runCreateOptions) {
+            var _this2 = this;
+
+            var runConfig = Object(__WEBPACK_IMPORTED_MODULE_5_util_object_util__["omit"])(runService.getCurrentConfig(), ['id', 'filter']);
+            var trackingKey = settings && settings.trackingKey;
+
+            var scopeConfig = Object(__WEBPACK_IMPORTED_MODULE_2__strategy_utils__["b" /* injectScopeFromSession */])(runConfig, userSession);
+            var opt = $.extend(true, scopeConfig, {
+                scope: {
+                    trackingKey: trackingKey
+                }
+            }, runCreateOptions);
+
+            return Object(__WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__["d" /* reset */])(runService, userSession, opt).then(function (run) {
+                return _this2._applySettingsToNewRun(runService, settings, run);
+            });
+        }
+    }, {
+        key: 'checkIfWithinRunLimit',
+        value: function checkIfWithinRunLimit(runService, userSession, settings) {
+            var _this3 = this;
+
+            var noRunLimit = settings.runLimit === Infinity || ('' + settings.runLimit).trim() === '';
+            if (noRunLimit) {
+                return $.Deferred().resolve(settings).promise();
+            }
+            return Object(__WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__["b" /* getCurrentWorld */])(runService, userSession).then(function (world) {
+                var runFilter = makeFilter(settings.trackingKey, world.id, userSession, _this3.options.filter);
+                return getRunsForFilter(runService, runFilter).then(function (runs, status, xhr) {
+                    var startedRuns = Object(__WEBPACK_IMPORTED_MODULE_1_util_run_util__["parseContentRange"])(xhr.getResponseHeader('content-range'));
+                    var runLimit = noRunLimit ? Infinity : +settings.runLimit;
+                    if (startedRuns && startedRuns.total >= runLimit) {
+                        return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(errors.RUN_LIMIT_REACHED, 'You have reached your run limit and cannot create new runs.');
+                    }
+                    return settings;
+                });
+            });
+        }
+    }, {
+        key: 'reset',
+        value: function reset(runService, userSession, runCreateOptions) {
+            var _this4 = this;
+
+            return this.getSettings(runService, userSession).then(function (settings) {
+                return _this4.checkIfWithinRunLimit(runService, userSession, settings);
+            }).then(function (settings) {
+                return _this4._forceCreateRun(runService, userSession, settings, runCreateOptions);
+            });
+        }
+    }, {
+        key: 'getRun',
+        value: function getRun(runService, userSession, runSession, runCreateOptions) {
+            var _this5 = this;
+
+            return this.getSettings(runService, userSession).then(function (settings) {
+                var trackingKey = settings.trackingKey;
+
+                var opt = $.extend(true, runCreateOptions, {
+                    scope: {
+                        trackingKey: trackingKey
+                    }
+                });
+                return Object(__WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__["c" /* getRun */])(runService, userSession, opt).then(function (run) {
+                    if (run.freshlyCreated) {
+                        return _this5._applySettingsToNewRun(runService, settings, run);
+                    }
+
+                    if (!run.scope || run.scope.trackingKey !== trackingKey) {
+                        console.warn('Existing run has older settings. Reset to apply new settings');
+                    }
+                    return run;
+                });
+            });
+        }
+    }]);
+
+    return MultiplayerWithTrackingKeyStrategy;
+}();
+
+MultiplayerWithTrackingKeyStrategy.errors = errors;
+/* harmony default export */ __webpack_exports__["a"] = (MultiplayerWithTrackingKeyStrategy);
+
+/***/ }),
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7007,7 +7418,7 @@ function WorldManager(options) {
 }
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var F = {
@@ -7021,23 +7432,23 @@ var F = {
     }
 };
 
-F.load = __webpack_require__(46);
+F.load = __webpack_require__(48);
 
 if (!window.SKIP_ENV_LOAD) {
     F.load();
 }
 
-F.util.query = __webpack_require__(8);
-F.util.run = __webpack_require__(6);
-F.util.classFrom = __webpack_require__(5);
+F.util.query = __webpack_require__(10);
+F.util.run = __webpack_require__(5);
+F.util.classFrom = __webpack_require__(6);
 
 F.factory.Transport = __webpack_require__(0).default;
 F.transport.Ajax = __webpack_require__(25);
 
 F.service.URL = __webpack_require__(15);
 F.service.Config = __webpack_require__(4).default;
-F.service.Run = __webpack_require__(9).default;
-F.service.File = __webpack_require__(48);
+F.service.Run = __webpack_require__(8).default;
+F.service.File = __webpack_require__(50);
 F.service.Variables = __webpack_require__(26).default;
 F.service.Data = __webpack_require__(17).default;
 F.service.Auth = __webpack_require__(30).default;
@@ -7045,40 +7456,40 @@ F.service.World = __webpack_require__(11).default;
 F.service.State = __webpack_require__(34).default;
 F.service.User = __webpack_require__(35).default;
 F.service.Member = __webpack_require__(18).default;
-F.service.Asset = __webpack_require__(54).default;
+F.service.Asset = __webpack_require__(56).default;
 F.service.Group = __webpack_require__(31).default;
 F.service.Introspect = __webpack_require__(27).default;
 F.service.Presence = __webpack_require__(33).default;
 F.service.Time = __webpack_require__(36).default;
-F.service.Timer = __webpack_require__(55).default;
-F.service.Password = __webpack_require__(61).default;
+F.service.Timer = __webpack_require__(57).default;
+F.service.Password = __webpack_require__(63).default;
 
-F.service.Account = __webpack_require__(62).default;
+F.service.Account = __webpack_require__(64).default;
 
 F.service.Consensus = __webpack_require__(20).default;
 F.service.ConsensusGroup = __webpack_require__(40).default;
 
-F.service.Project = __webpack_require__(63).default;
+F.service.Project = __webpack_require__(65).default;
 
 F.store.Cookie = __webpack_require__(29);
 F.factory.Store = __webpack_require__(28);
 
-F.manager.ScenarioManager = __webpack_require__(64).default;
+F.manager.ScenarioManager = __webpack_require__(66).default;
 F.manager.RunManager = __webpack_require__(22).default;
-F.manager.User = __webpack_require__(76).default;
+F.manager.User = __webpack_require__(77).default;
 F.manager.AuthManager = __webpack_require__(13).default;
-F.manager.WorldManager = __webpack_require__(44).default;
+F.manager.WorldManager = __webpack_require__(46).default;
 F.manager.SavedRunsManager = __webpack_require__(23).default;
 
 var strategies = __webpack_require__(41).default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.Settings = __webpack_require__(77).default;
+F.manager.Settings = __webpack_require__(78).default;
 
 F.manager.ChannelManager = __webpack_require__(19).default;
 F.service.Channel = __webpack_require__(32).default;
 
-F.manager.ConsensusManager = __webpack_require__(79).default;
+F.manager.ConsensusManager = __webpack_require__(80).default;
 
 if (true) F.version = "2.9.1"; //eslint-disable-line no-undef
 F.api = __webpack_require__(24);
@@ -7088,7 +7499,7 @@ F.constants = __webpack_require__(16);
 module.exports = F;
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -7108,7 +7519,7 @@ var envLoad = function (callback) {
 module.exports = envLoad;
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7155,7 +7566,7 @@ var optionUtils = {
 module.exports = optionUtils;
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -7358,7 +7769,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7368,9 +7779,9 @@ module.exports = function (config) {
 /* harmony export (immutable) */ __webpack_exports__["b"] = getScopedName;
 /* harmony export (immutable) */ __webpack_exports__["c"] = getURL;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_auth_manager__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(9);
 
 
 
@@ -7457,7 +7868,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 }
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -7528,7 +7939,7 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7718,13 +8129,13 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 /* harmony default export */ __webpack_exports__["a"] = (ChannelManager);
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -7859,7 +8270,7 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
 }
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7899,7 +8310,7 @@ var TOPICS = {
 };
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8227,7 +8638,7 @@ function AssetAdapter(config) {
 }
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8237,8 +8648,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(60);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(62);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(21);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -8589,20 +9000,20 @@ TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a"
 /* harmony default export */ __webpack_exports__["default"] = (TimerService);
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports) {
 
 module.exports = jQuery;
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return STRATEGIES; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(60);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(61);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -8627,7 +9038,7 @@ function getStrategy(strategy) {
 }
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8644,7 +9055,7 @@ function reduceActions(actions) {
 }
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8674,7 +9085,7 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8757,7 +9168,7 @@ function reduceActions(actions, startTime, currentTime) {
 }
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8872,7 +9283,7 @@ var PasswordService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (PasswordService);
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8928,7 +9339,7 @@ function AccountAPIService(config) {
 }
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9028,7 +9439,7 @@ function ProjectAPIService(config) {
 }
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9036,12 +9447,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_saved_runs_manager__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(74);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(76);
 // See integration-test-scenario-manager for usage examples
 
 
@@ -9167,7 +9578,7 @@ function ScenarioManager(config) {
      */
     this.current.saveAndAdvance = function (metadata) {
         function clone(run) {
-            var sa = new __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__["default"]();
+            var sa = new __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__["default"](mergedCurrentRunOptions);
             var advanceOpns = Object(__WEBPACK_IMPORTED_MODULE_3_util_run_util__["normalizeOperations"])(opts.advanceOperation);
             //run i'm cloning shouldn't have the advance operations there by default, but just in case
             return sa.clone({ runId: run.id, exclude: advanceOpns.ops }).then(function (response) {
@@ -9181,7 +9592,7 @@ function ScenarioManager(config) {
             });
         }
         function advance(run) {
-            var rs = new __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__["default"](run);
+            var rs = new __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__["default"]($.extend(true, {}, mergedCurrentRunOptions, run));
             return rs.serial(opts.advanceOperation).then(function () {
                 return run;
             });
@@ -9193,7 +9604,7 @@ function ScenarioManager(config) {
 /* harmony default export */ __webpack_exports__["default"] = (ScenarioManager);
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9217,7 +9628,7 @@ function ScenarioManager(config) {
 
 
 
-var classFrom = __webpack_require__(5);
+var classFrom = __webpack_require__(6);
 var ConditionalStrategy = __webpack_require__(12);
 
 var __super = ConditionalStrategy.prototype;
@@ -9236,7 +9647,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9263,7 +9674,7 @@ module.exports = Strategy;
 
 
 
-var classFrom = __webpack_require__(5);
+var classFrom = __webpack_require__(6);
 var ConditionalStrategy = __webpack_require__(12);
 
 var __super = ConditionalStrategy.prototype;
@@ -9282,100 +9693,11 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-
-
-
-
-function worldFromRun(runService) {
-    var config = Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["omit"])(runService.getCurrentConfig(), ['filter', 'id']);
-    var worldService = new __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__["default"](config);
-    return worldService;
-}
-/**
- * The `multiplayer` strategy is for use with [multiplayer worlds](../../../glossary/#world). It checks the current world for this end user, and always returns the current run for that world. This is equivalent to calling `getCurrentWorldForUser()` and then `getCurrentRunId()` from the [World API Adapater](../world-api-adapter/). If you use the [World Manager](../world-manager/), you are automatically using this strategy.
- * 
- * Using this strategy means that end users in projects with multiplayer worlds always see the most current world and run. This ensures that they are in sync with the other end users sharing their world and run. In turn, this allows for competitive or collaborative multiplayer projects.
- */
-
-var MultiplayerStrategy = function () {
-    function MultiplayerStrategy(options) {
-        _classCallCheck(this, MultiplayerStrategy);
-
-        var defaults = {};
-        this.options = $.extend(true, {}, defaults, options);
-    }
-
-    _createClass(MultiplayerStrategy, [{
-        key: 'reset',
-        value: function reset(runService, session, options) {
-            var userId = session.userId,
-                groupName = session.groupName;
-
-            var optionsToPassOn = $.extend(true, {}, options, {
-                success: $.noop
-            });
-            var worldApi = worldFromRun(runService);
-            return worldApi.getCurrentWorldForUser(userId, groupName).then(function (world) {
-                return worldApi.newRunForWorld(world.id, optionsToPassOn).then(function (runid) {
-                    var toReturn = {
-                        id: runid
-                    };
-                    if (options && options.success) options.success(toReturn);
-                    return toReturn;
-                });
-            });
-        }
-    }, {
-        key: 'getRun',
-        value: function getRun(runService, session) {
-            var userId = session.userId,
-                groupName = session.groupName;
-
-            var worldApi = worldFromRun(runService);
-            var model = this.options.model;
-
-            if (!userId) {
-                return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('UNAUTHORIZED', 'We need an authenticated user to join a multiplayer world. (ERR: no userId in session)');
-            }
-
-            var loadRunFromWorld = function (world) {
-                if (!world) {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('NO_WORLD_FOR_USER', 'User ' + userId + ' not part of a world');
-                }
-                return worldApi.getCurrentRunId({ model: model, filter: world.id }).then(function (id) {
-                    return runService.load(id);
-                }).then(function (run) {
-                    run.world = world;
-                    return run;
-                });
-            };
-
-            return worldApi.getCurrentWorldForUser(userId, groupName).then(loadRunFromWorld);
-        }
-    }]);
-
-    return MultiplayerStrategy;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (MultiplayerStrategy);
-
-/***/ }),
-/* 68 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__);
@@ -9409,11 +9731,11 @@ Strategy.allowRunIDCache = false;
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy__);
@@ -9450,11 +9772,11 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_I
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__none_strategy__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(7);
@@ -9516,7 +9838,7 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0_util_inherit___default()(__WEBPACK_IM
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9574,7 +9896,7 @@ var UseSpecificRun = function () {
 /* harmony default export */ __webpack_exports__["a"] = (UseSpecificRun);
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9585,12 +9907,12 @@ function reset(params, options, manager) {
 }
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = bulkFetchRecords;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_run_util__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_util_run_util__ = __webpack_require__(5);
 
 
 /**
@@ -9641,12 +9963,12 @@ function bulkFetchRecords(fetchFn, options) {
 }
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = BaselineStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies_reuse_last_initialized__ = __webpack_require__(43);
 
 
 /**
@@ -9693,7 +10015,7 @@ function BaselineStrategy(options) {
 }
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9779,7 +10101,7 @@ ReuseLastUnsaved.requiresAuth = false;
 /* harmony default export */ __webpack_exports__["a"] = (ReuseLastUnsaved);
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9983,20 +10305,26 @@ UserManager.errors = ERROR_TYPES;
 /* harmony default export */ __webpack_exports__["default"] = (UserManager);
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_saved_runs_manager__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(78);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_util_index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_run_strategies_multiplayer_with_tracking_key__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_pubsub__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_util_object_util__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_util_index__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_service_world_api_adapter__ = __webpack_require__(11);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
 
 
 
@@ -10018,6 +10346,9 @@ var SettingsManager = function () {
      * @property {AccountAPIServiceOptions} options.run Parameters to pass on to run service (account / project / model / files etc.)
      * @property {object} [options.settings]
      * @property {string} [options.settings.collection]
+     * @property {boolean} [options.multiplayer] Set to true for multiplayer games.
+     * @property {boolean} [options.interruptRunsInProgress] Once settings are activated, this determines if existing runs can continue or new runs are forced. If multiplayer=true, this deletes the existing run for each world.
+     * 
      * @property {object | function(): object | function(): Promise<object>} [options.settings.collection]
      */
     function SettingsManager(options) {
@@ -10028,15 +10359,36 @@ var SettingsManager = function () {
             settings: {
                 collection: 'settings',
                 defaults: {}
-            }
+            },
+
+            multiplayer: false,
+            interruptRunsInProgress: true
         };
 
         this.options = $.extend(true, {}, defaultSettings, options);
         this.settings = new __WEBPACK_IMPORTED_MODULE_1__settings_service__["a" /* default */](this.options);
-        this.channel = new __WEBPACK_IMPORTED_MODULE_3_util_pubsub__["a" /* default */]();
+        this.channel = new __WEBPACK_IMPORTED_MODULE_4_util_pubsub__["a" /* default */]();
         this.state = {
             subscription: null
         };
+
+        if (this.options.interruptRunsInProgress && this.options.multiplayer) {
+            var defaultSaveAndActivate = this.settings.saveAndActivate;
+            this.settings.saveAndActivate = function () {
+                var _this = this;
+
+                var originalArgs = Array.prototype.slice.call(arguments);
+                var ws = new __WEBPACK_IMPORTED_MODULE_7_service_world_api_adapter__["default"](this.options.run);
+                return ws.list().then(function (worlds) {
+                    var deletionPromises = worlds.map(function (world) {
+                        return ws.deleteRun(world.id);
+                    });
+                    return $.when.apply(null, deletionPromises).then(function () {
+                        return defaultSaveAndActivate.apply(_this.settings, originalArgs);
+                    });
+                });
+            }.bind(this);
+        }
     }
 
     /**
@@ -10057,7 +10409,7 @@ var SettingsManager = function () {
     _createClass(SettingsManager, [{
         key: 'getChannel',
         value: function getChannel() {
-            var _this = this;
+            var _this2 = this;
 
             if (this.state.subscription) {
                 return this.channel;
@@ -10066,14 +10418,14 @@ var SettingsManager = function () {
             var rawDataChannel = this.settings.ds.getChannel();
             this.state.subscription = rawDataChannel.subscribe('', function (res, meta) {
                 if (meta.subType === 'delete') {
-                    _this.channel.publish(actions.SETTINGS_DELETED, meta);
+                    _this2.channel.publish(actions.SETTINGS_DELETED, meta);
                 } else if (meta.subType === 'new') {
-                    _this.channel.publish(actions.DRAFT_CREATED, res);
+                    _this2.channel.publish(actions.DRAFT_CREATED, res);
                 } else if (meta.subType === 'update') {
                     if (res.isDraft) {
-                        _this.channel.publish(actions.DRAFT_UPDATED, res);
+                        _this2.channel.publish(actions.DRAFT_UPDATED, res);
                     } else {
-                        _this.channel.publish(actions.SETTINGS_ACTIVATED, res);
+                        _this2.channel.publish(actions.SETTINGS_ACTIVATED, res);
                     }
                 } else {
                     console.warn('getChannel: Unknown subtype', res, meta);
@@ -10102,7 +10454,7 @@ var SettingsManager = function () {
     }, {
         key: 'getUserRunStrategy',
         value: function getUserRunStrategy(options) {
-            var _this2 = this;
+            var _this3 = this;
 
             var defaults = {
                 allowCreateRun: function () {
@@ -10111,16 +10463,17 @@ var SettingsManager = function () {
                 applySettings: function () {}
             };
             var opts = $.extend({}, defaults, options);
-            var strategy = new __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__["a" /* default */]({
+            var Strategy = this.options.multiplayer ? __WEBPACK_IMPORTED_MODULE_3_managers_run_strategies_multiplayer_with_tracking_key__["a" /* default */] : __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__["a" /* default */];
+            var strategy = new Strategy({
                 strategyOptions: {
                     settings: function () {
-                        return _this2.settings.getCurrentActive().then(function (settings) {
+                        return _this3.settings.getCurrentActive().then(function (settings) {
                             if (!opts.allowCreateRun(settings)) {
-                                return Object(__WEBPACK_IMPORTED_MODULE_5_util_index__["c" /* rejectPromise */])('RUN_CREATION_NOT_ALLOWED', 'allowCreateRun check failed');
+                                return Object(__WEBPACK_IMPORTED_MODULE_6_util_index__["c" /* rejectPromise */])('RUN_CREATION_NOT_ALLOWED', 'allowCreateRun check failed');
                             }
-                            return settings || _this2.settings.getDefaults();
+                            return settings || _this3.settings.getDefaults();
                         }).then(function (settings) {
-                            var cleanedSettings = Object(__WEBPACK_IMPORTED_MODULE_4_util_object_util__["omit"])(settings, ['id', 'lastModified', 'isDraft', 'key']);
+                            var cleanedSettings = Object(__WEBPACK_IMPORTED_MODULE_5_util_object_util__["omit"])(settings, ['id', 'lastModified', 'isDraft', 'key']);
                             return $.extend(true, {}, cleanedSettings, { trackingKey: settings.id || 'defaultSettings' });
                         });
                     },
@@ -10156,14 +10509,14 @@ var SettingsManager = function () {
     }, {
         key: 'getRuns',
         value: function getRuns(savedRunManagerParams) {
-            var _this3 = this,
+            var _this4 = this,
                 _arguments = arguments;
 
             return this.settings.getCurrentActive().then(function (settings) {
                 if (!settings) {
                     return [];
                 }
-                var sm = _this3.getSavedRunsManagerForSetting(settings.id);
+                var sm = _this4.getSavedRunsManagerForSetting(settings.id);
                 return sm.getRuns.apply(sm, _arguments).then(function (runs) {
                     return (runs || []).map(function (run) {
                         return $.extend(true, run, { settings: settings });
@@ -10181,12 +10534,12 @@ SettingsManager.actions = actions;
 /* harmony default export */ __webpack_exports__["default"] = (SettingsManager);
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -10273,7 +10626,7 @@ var SettingsService = function () {
     }, {
         key: 'getDefaults',
         value: function getDefaults() {
-            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["b" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["d" /* result */])(this.options.settings.defaults));
+            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["b" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["e" /* result */])(this.options.settings.defaults));
             return defaultsProm;
         }
 
@@ -10300,7 +10653,7 @@ var SettingsService = function () {
 
         /**
          * Returns currently active settings, or undefined if there are none.
-         * @returns {Promise<object[]>}
+         * @returns {Promise<object>}
          */
 
     }, {
@@ -10428,15 +10781,15 @@ var SettingsService = function () {
 /* harmony default export */ __webpack_exports__["a"] = (SettingsService);
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(81);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10496,7 +10849,7 @@ var ConsensusManager = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ConsensusManager);
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
