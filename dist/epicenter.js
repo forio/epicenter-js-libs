@@ -6730,8 +6730,7 @@ function _getRun(runService, session, options) {
         return worldApi.getCurrentRunId(createOptions).then(function (id, status, xhr) {
             return runService.load(id).then(function (run) {
                 var RUN_CREATION_STATUS = 201;
-                var timeSinceCreation = Date.now() - new Date(run.created).valueOf();
-                run.freshlyCreated = timeSinceCreation < 500;
+                run.freshlyCreated = xhr.status === RUN_CREATION_STATUS;
                 return run;
             });
         }).then(function (run) {

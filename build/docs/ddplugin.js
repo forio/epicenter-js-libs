@@ -117,7 +117,7 @@ const plugin = (data)=> new Promise((resolve, reject)=> {
         file.constructorOptionsTable = '';
         if (constructorOptions) {
             const co = constructorOptions[0];
-            const type = co.tags.param[0].types[0];
+            const type = co.tags.param[0] && co.tags.param[0].types[0];
             if (typedefs[type]) {
                 co.tags.property = [].concat(co.tags.property, typedefs[type]);
             }

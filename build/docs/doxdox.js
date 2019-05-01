@@ -4,6 +4,7 @@ const path = require('path');
 const _ = require('lodash');
 
 const files = [
+    'service/time-api-service',
     'service/timer-service',
     'service/run-api-service',
     'service/data-api-service',
