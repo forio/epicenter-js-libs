@@ -71,6 +71,9 @@ export default function AuthService(config) {
                 //pass in null for account under options if you don't want it to be sent
                 postParams.account = httpOptions.account;
             }
+            if (httpOptions.project) {
+                postParams.project = httpOptions.project;
+            }
 
             return http.post(postParams, httpOptions);
         },

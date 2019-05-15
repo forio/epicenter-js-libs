@@ -6057,14 +6057,13 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * ## Time API Adapter
- *
- */
-
 
 
 var apiEndpoint = 'time';
+
+/**
+ *  Service to get current server time, to avoid relying on unreliable client-reported times.
+ */
 
 var TimeAPIService = function () {
     function TimeAPIService(config) {
@@ -6079,6 +6078,12 @@ var TimeAPIService = function () {
         this.http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](transportOptions);
     }
 
+    /**
+     * Get current server time
+     *  @returns {Promise<Date>}
+     */
+
+
     _createClass(TimeAPIService, [{
         key: 'getTime',
         value: function getTime() {
@@ -6089,6 +6094,7 @@ var TimeAPIService = function () {
                 if (e.responseText) {
                     return new Date(e.responseText);
                 }
+                throw e;
             });
         }
     }]);
@@ -6726,7 +6732,7 @@ function _getRun(runService, session, options) {
         if (!world) {
             return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('NO_WORLD_FOR_USER', 'User ' + userId + ' is not part of a world');
         }
-        var createOptions = $.extend(true, {}, options, { model: model, filter: world.id });
+        var createOptions = $.extend(true, {}, options, { model: model, filter: world.id, id: world.id });
         return worldApi.getCurrentRunId(createOptions).then(function (id, status, xhr) {
             return runService.load(id).then(function (run) {
                 var RUN_CREATION_STATUS = 201;

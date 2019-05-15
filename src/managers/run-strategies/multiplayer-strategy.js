@@ -46,7 +46,7 @@ export function getRun(runService, session, options) {
         if (!world) {
             return rejectPromise('NO_WORLD_FOR_USER', `User ${userId} is not part of a world`);
         }
-        const createOptions = $.extend(true, {}, options, { model: model, filter: world.id });
+        const createOptions = $.extend(true, {}, options, { model: model, filter: world.id, id: world.id });
         return worldApi.getCurrentRunId(createOptions)
             .then(function (id, status, xhr) {
                 return runService.load(id).then((run)=> {
