@@ -1,3 +1,24 @@
+<a name="2.10.0"></a>
+
+### Features
+- Added a `keepOnline` flag to Presence Service. 
+```js
+var pr = new F.service.Presence();
+pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74', { keepOnline: true });
+```
+This will register your presence with the server every 5 minutes. Use `cancelKeepOnline` to stop doing so.
+- Added sensitivity helper method to State Service (only applicable to Vensim)
+- Added **Multiplayer** support to the Settings Manager. Pass in `multiplayer: true` to the constructor, and you'll now get a multiplayer settings strategy from `getUserRunStrategy`
+- `reuse-by-tracking-key` is now more efficient; only does network call to get run count if you explicitly have a run limit set in your settings.
+
+### Bug-fixes
+- Multiplayer strategy was still mixing up world-id and run-id in some cases.
+- Scenario/RunManager were not correctly passing through the `server` config option, so if you wanted to run the scenario manager against a different server it would not work. It now correctly passes through relevant options to intermediate services.
+
+### Improvements
+- Generated docs for Time Service
+- Each run from tracking-key strategy now returns the associated settings as an object on the run. i.e., you can access `run.settings` to access to the settings that run was created with.
+
 <a name="2.9.1"></a>
 ### Bug-fixes
 - The multiplayer strategy reset function was sometimes using the wrong run id. This may have been a regression in `2.9.0`, and so **All multiplayer simulations should use 2.9.1 instead **.
