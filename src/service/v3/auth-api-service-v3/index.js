@@ -1,7 +1,5 @@
-import ConfigService from 'service/configuration-service';
 import TransportFactory from 'transport/http-transport-factory';
 import { getDefaultOptions } from 'service/service-utils';
-
 
 export default class AuthServiceV3 {
     constructor(config) {

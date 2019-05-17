@@ -61,8 +61,13 @@ $(function () {
         var project = $('#project:not([data-local])').val() || fromUrl.project || $('#project').val();
         var groupId = ($('#groupId').length ? $('#groupId') : $('<input type="hidden" id="groupId">').appendTo(form)).val();
 
+        var mfaCode = $('#mfaCode').val();
+
         $('button', form).attr('disabled', 'disabled').addClass('disabled');
         $('#login-message').text('').hide();
+        $('.mfa input').on('change', function () {
+            $('.mfa').removeClass('has-error');
+        });
 
         if (!account) {
             console.log('No account was specified and it cannot be extracted from the URL. You may not be able to login.');
@@ -81,6 +86,7 @@ $(function () {
             password: password,
         };
         if (groupId) loginParams.groupKey = groupId;
+        if (mfaCode) loginParams.mfaCode = mfaCode;
         auth.login(loginParams).then(function () {
             var session = auth.getCurrentUserSessionInfo();
             if ($('#log-login').length) {
@@ -99,6 +105,14 @@ $(function () {
                 selectGroup(userName, password, account, project, error.context.possibleGroups, action);
             } else if (error.type === 'NO_GROUPS') {
                 showError('The user has no groups associated in this account');
+            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
+                if ($('.mfa').hasClass('hidden')) {
+                    $('.mfa').removeClass('hidden');
+                } else {
+                    $('.mfa').addClass('has-error');
+                }
+            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_INVALID') {
+                $('.mfa').addClass('has-error');
             } else {
                 showError('Unknown error occured. Please try again. (' + error.type + ')');
             }

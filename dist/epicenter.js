@@ -10373,13 +10373,15 @@ var AuthManagerV3 = function () {
             var as = this.getAuthService(overridenServiceOptions);
 
             var params = Object.assign({}, loginParams, { objectType: 'user' });
-            return as.login(params).catch(function (err, a, b) {
-                console.log(err, a, b);
+            return as.login(params).catch(function (err, a, b, c) {
+                if (err.responseJSON) err = err.responseJSON;
                 var code = err && err.information && err.information.code;
                 if (code === 'AUTHORIZATION_FAILURE') {
                     return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Could not login, please check username/ password and try again');
                 } else if (code === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Two Factor authentication has been enabled for this project.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Multi Factor authentication has been enabled for this project.');
+                } else if (code === 'MULTI_FACTOR_AUTHENTICATION_INVALID') {
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'The provided Authorization Code is invalid');
                 }
                 throw err;
 
@@ -10414,6 +10416,27 @@ var AuthManagerV3 = function () {
                 return sessionInfo;
             });
         }
+    }, {
+        key: 'logout',
+        value: function logout(options) {
+            var overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
+            var sm = new __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default.a(overridenServiceOptions);
+            sm.removeSession();
+            return Promise.resolve();
+        }
+    }, {
+        key: 'isLoggedIn',
+        value: function isLoggedIn() {
+            var session = this.getCurrentUserSessionInfo();
+            return !!(session && session.userId);
+        }
+    }, {
+        key: 'getCurrentUserSessionInfo',
+        value: function getCurrentUserSessionInfo(options) {
+            var overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
+            var sm = new __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default.a(overridenServiceOptions);
+            return sm.getSession();
+        }
     }]);
 
     return AuthManagerV3;
@@ -10426,13 +10449,11 @@ var AuthManagerV3 = function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_service_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 
 
 
@@ -10443,14 +10464,12 @@ var AuthServiceV3 = function () {
 
         var defaults = {
             server: {
-                protocol: 'http',
-                host: 'epimon4.foriodev.com',
                 versionPath: 'v3'
             }
         };
-        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_2_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: 'authentication' });
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: 'authentication' });
         delete serviceOptions.transport.headers.Authorization;
-        var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+        var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
         this.http = http;
     }
 

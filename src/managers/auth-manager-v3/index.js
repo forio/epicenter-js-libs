@@ -32,13 +32,15 @@ export default class AuthManagerV3 {
         const as = this.getAuthService(overridenServiceOptions);
 
         const params = Object.assign({}, loginParams, { objectType: 'user' });
-        return as.login(params).catch((err, a, b)=> {
-            console.log(err, a, b);
+        return as.login(params).catch((err, a, b, c)=> {
+            if (err.responseJSON) err = err.responseJSON;
             const code = err && err.information && err.information.code;
             if (code === 'AUTHORIZATION_FAILURE') {
                 return rejectPromise(code, 'Could not login, please check username/ password and try again');
             } else if (code === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
-                return rejectPromise(code, 'Two Factor authentication has been enabled for this project.');
+                return rejectPromise(code, 'Multi Factor authentication has been enabled for this project.');
+            } else if (code === 'MULTI_FACTOR_AUTHENTICATION_INVALID') {
+                return rejectPromise(code, 'The provided Authorization Code is invalid');
             } 
             throw err;
 
