@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.9.1
+ *         v2.10.0
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -5185,6 +5185,9 @@ function AuthService(config) {
                 //pass in null for account under options if you don't want it to be sent
                 postParams.account = httpOptions.account;
             }
+            if (httpOptions.project) {
+                postParams.project = httpOptions.project;
+            }
 
             return http.post(postParams, httpOptions);
         },
@@ -7496,7 +7499,7 @@ F.service.Channel = __webpack_require__(32).default;
 
 F.manager.ConsensusManager = __webpack_require__(80).default;
 
-if (true) F.version = "2.9.1"; //eslint-disable-line no-undef
+if (true) F.version = "2.10.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(24);
 
 F.constants = __webpack_require__(16);
