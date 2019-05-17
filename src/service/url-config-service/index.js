@@ -131,11 +131,16 @@ var UrlConfigService = function (config) {
                 return configProtocol + '://' + actingHost + '/epicenter/' + this.versionPath + 'config';
             }
             var baseURL = (typeof this.baseURL === 'function') ? this.baseURL() : this.baseURL;
-            var apiPath = baseURL + apiEndpoint + '/';
-
-            if (PROJECT_APIS.indexOf(apiEndpoint) !== -1) {
-                apiPath += this.accountPath + '/' + this.projectPath + '/';
+            var apiPath;
+            if (this.versionPath === 'v3') {
+                apiPath = baseURL + '/' + this.accountPath + '/' + this.projectPath + '/' + apiEndpoint + '/';
+            } else {
+                apiPath = baseURL + apiEndpoint + '/';
+                if (PROJECT_APIS.indexOf(apiEndpoint) !== -1) {
+                    apiPath += this.accountPath + '/' + this.projectPath + '/';
+                }
             }
+            
             return apiPath;
         }
     };

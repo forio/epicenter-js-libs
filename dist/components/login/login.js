@@ -23,7 +23,7 @@ $(function () {
         select.find('[value!=""]').remove();
         $.each(groups, function () {
             $('<option>')
-                .attr('value', this.groupId)
+                .attr('value', this.groupKey)
                 .text(this.name)
                 .appendTo(select);
         });
@@ -72,45 +72,39 @@ $(function () {
             console.log('No project was specified and it cannot be extracted from the URL.');
         }
 
-        var auth = new F.manager.AuthManager();
-        auth.login({
-            userName: userName,
-            password: password,
+        var auth = new F.v3.manager.AuthManager({
             account: account,
-            project: project,
-            groupId: groupId
-        })
-            .fail(function (error) {
-                if (error.status === 401) {
-                    showError('Invalid user name or password.');
-                } else if (error.status === 403) {
-                    if (error.type === 'MULTIPLE_GROUPS') {
-                        selectGroup(userName, password, account, project, error.userGroups, action);
-                    } else if (error.type === 'NO_GROUPS') {
-                        showError('The user has no groups associated in this account');
-                    } else {
-                        showError(error.statusText || error.message || ('Unknown Error' + error.status));
-                    }
-                } else {
-                    showError('Unknown error occured. Please try again. (' + error.status + ')');
-                }
+            project: project
+        });
+        const loginParams = {
+            handle: userName,
+            password: password,
+        };
+        if (groupId) loginParams.groupKey = groupId;
+        auth.login(loginParams).then(function () {
+            var session = auth.getCurrentUserSessionInfo();
+            if ($('#log-login').length) {
+                var url = $('#log-login').val();
+                $.get(url + '?userName=' + session.userName + '&groupName=' + session.groupName);
+            }
+            var newPage = action;
+            var facPage = $('#fac-redirect-page').val();
+            if ((session.isFac || session.isTeamMember) && facPage) {
+                newPage = facPage;
+            }
+            window.location = newPage;
+            $('.group-selection-dialog').hide();
+        }, function (error) {
+            if (error.type === 'MULTIPLE_GROUPS') {
+                selectGroup(userName, password, account, project, error.context.possibleGroups, action);
+            } else if (error.type === 'NO_GROUPS') {
+                showError('The user has no groups associated in this account');
+            } else {
+                showError('Unknown error occured. Please try again. (' + error.type + ')');
+            }
 
-                $('button', form).attr('disabled', null).removeClass('disabled');
-            })
-            .then(function () {
-                var session = auth.getCurrentUserSessionInfo();
-                if ($('#log-login').length) {
-                    var url = $('#log-login').val();
-                    $.get(url + '?userName=' + session.userName + '&groupName=' + session.groupName);
-                }
-                var newPage = action;
-                var facPage = $('#fac-redirect-page').val();
-                if ((session.isFac || session.isTeamMember) && facPage) {
-                    newPage = facPage;
-                }
-                window.location = newPage;
-                $('.group-selection-dialog').hide();
-            });
+            $('button', form).attr('disabled', null).removeClass('disabled');
+        });
     });
 
     groupSelectionTemplate = window.groupSelectionTemplate = '<form>\
