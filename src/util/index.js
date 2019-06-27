@@ -9,10 +9,12 @@ export function result(item) {
 /**
  * @param {string} type 
  * @param {string} message 
+ * @param {any} [context] 
  * @returns {Promise}
  */
-export function rejectPromise(type, message) {
-    return $.Deferred().reject({ type: type, message: message }).promise();
+export function rejectPromise(type, message, context) {
+    const payload = { type: type, message: message, context: context };
+    return $.Deferred().reject(payload).promise();
 }
 /**
  * @param {string} val 
