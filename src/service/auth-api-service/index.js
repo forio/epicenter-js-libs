@@ -3,7 +3,7 @@ import TransportFactory from 'transport/http-transport-factory';
 
 /**
  * @description
- * 
+ *
  * ## Authentication API Service
  *
  * The Authentication API Service provides a method for logging in, which creates and returns a user access token.
@@ -15,7 +15,7 @@ import TransportFactory from 'transport/http-transport-factory';
  *      var auth = new F.service.Auth();
  *      auth.login({ userName: 'jsmith@acmesimulations.com',
  *                  password: 'passw0rd' });
- *  @param {AccountAPIServiceOptions} config 
+ *  @param {AccountAPIServiceOptions} config
  *  @property {string} userName Email or username to use for logging in.
  */
 export default function AuthService(config) {
@@ -48,7 +48,7 @@ export default function AuthService(config) {
          *     console.log("user access token is: ", token.access_token);
          * });
          *
-         * 
+         *
          * @param {Object} [options] Overrides for configuration options.
          * @return {Promise}
          */
@@ -71,9 +71,11 @@ export default function AuthService(config) {
                 //pass in null for account under options if you don't want it to be sent
                 postParams.account = httpOptions.account;
             }
-            if (httpOptions.project) {
-                postParams.project = httpOptions.project;
-            }
+
+            // EPICENTER-3738: Add this back when we properly handle a list of groups as the response from the Auth API
+            // if (httpOptions.project) {
+            //     postParams.project = httpOptions.project;
+            // }
 
             return http.post(postParams, httpOptions);
         },
@@ -87,7 +89,7 @@ export default function AuthService(config) {
         // @example
         //      auth.logout();
         //
-        // 
+        //
         // @param {Object} [options] Overrides for configuration options.
         //
         logout: function (options) {
