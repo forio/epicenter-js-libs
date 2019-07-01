@@ -137,9 +137,10 @@ describe('Asset API Adapter', function () {
         });
 
         it('should pass a FormData object', function () {
+            var content = new Blob(['This is a test file.']);
             var aa = new AssetService(defaults);
             var formData = new FormData();
-            formData.append('file', 'This is a test file.', 'file.txt');
+            formData.append('file', content, 'file.txt');
             aa.create('ignored.txt', formData, { scope: 'user' });
 
             var req = server.requests.pop();
@@ -219,9 +220,10 @@ describe('Asset API Adapter', function () {
         });
 
         it('should pass a FormData object', function () {
+            var content = new Blob(['This is a test file.']);
             var aa = new AssetService(defaults);
             var formData = new FormData();
-            formData.append('file', 'This is a test file.', 'file.txt');
+            formData.append('file', content, 'file.txt');
             aa.replace('ignored.txt', formData, { scope: 'user' });
 
             var req = server.requests.pop();
