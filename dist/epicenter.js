@@ -5192,9 +5192,6 @@ function AuthService(config) {
                 //pass in null for account under options if you don't want it to be sent
                 postParams.account = httpOptions.account;
             }
-            if (httpOptions.project) {
-                postParams.project = httpOptions.project;
-            }
 
             // EPICENTER-3738: Add this back when we properly handle a list of groups as the response from the Auth API
             // if (httpOptions.project) {
