@@ -36,8 +36,8 @@ export default class AuthManagerV3 {
             if (err.responseJSON) err = err.responseJSON;
             const code = err && err.information && err.information.code;
             if (code === 'AUTHORIZATION_FAILURE') {
-                return rejectPromise(code, 'Could not login, please check username/ password and try again');
-            } else if (code === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
+                return rejectPromise(code, 'Could not login, please check username / password and try again.');
+            } else if (code === 'MULTI_FACTOR_AUTHENTICATION_MISSING') {
                 return rejectPromise(code, 'Multi Factor authentication has been enabled for this project.');
             } else if (code === 'MULTI_FACTOR_AUTHENTICATION_INVALID') {
                 return rejectPromise(code, 'The provided Authorization Code is invalid');
@@ -53,10 +53,13 @@ export default class AuthManagerV3 {
                     possibleGroups: res.possibleGroups
                 });
             }
+            else if (!res.groupKey) {
+                return rejectPromise('NO_GROUPS', 'User is not a member of a simulation group.');
+            }
             const groupInfo = {
                 groupId: res.groupKey,
                 groupName: res.groupName,
-                isFac: res.groupRole !== 'PARTICIPANT'
+                isFac: res.groupRole && res.groupRole !== 'PARTICIPANT'
             };
             const sessionInfo = Object.assign({}, groupInfo, {
                 auth_token: res.session,

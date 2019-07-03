@@ -10,7 +10,9 @@ export default class AuthServiceV3 {
             }
         };
         const serviceOptions = getDefaultOptions(defaults, config, { apiEndpoint: 'authentication' });
-        delete serviceOptions.transport.headers.Authorization;
+        if (serviceOptions.transport &&  serviceOptions.transport.headers) {
+           delete serviceOptions.transport.headers.Authorization;
+        }
         var http = new TransportFactory(serviceOptions.transport);
         this.http = http;
     }

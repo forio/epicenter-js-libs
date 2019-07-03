@@ -104,8 +104,10 @@ $(function () {
             if (error.type === 'MULTIPLE_GROUPS') {
                 selectGroup(userName, password, account, project, error.context.possibleGroups, action);
             } else if (error.type === 'NO_GROUPS') {
-                showError('The user has no groups associated in this account');
-            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
+                showError('User is not a member of a simulation group.');
+            } else if (error.type === 'AUTHORIZATION_FAILURE') {
+                showError('Could not login, please check username/ password and try again.');
+            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_MISSING') {
                 if ($('.mfa').hasClass('hidden')) {
                     $('.mfa').removeClass('hidden');
                 } else {
