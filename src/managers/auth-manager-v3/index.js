@@ -37,10 +37,14 @@ export default class AuthManagerV3 {
             const code = err && err.information && err.information.code;
             if (code === 'AUTHORIZATION_FAILURE') {
                 return rejectPromise(code, 'Could not login, please check username / password and try again.');
+            } else if (code === 'PASSWORD_EXPIRATION') {
+                return rejectPromise(code, 'Your password has expired.  Please contact your administrator and request a password reset.');
             } else if (code === 'MULTI_FACTOR_AUTHENTICATION_MISSING') {
-                return rejectPromise(code, 'Multi Factor authentication has been enabled for this project.');
-            } else if (code === 'MULTI_FACTOR_AUTHENTICATION_INVALID') {
-                return rejectPromise(code, 'The provided Authorization Code is invalid');
+                return rejectPromise(code, 'Multi factor authentication has been enabled for this project.');
+            } else if (code === 'MULTI_FACTOR_AUTHENTICATION_FAILURE') {
+                return rejectPromise(code, 'The provided Authorization Code is invalid.');
+            } else if (code === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
+                return rejectPromise(code, 'This project requires multi factor authentication.');
             } 
             throw err;
 
