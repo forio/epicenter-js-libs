@@ -3,15 +3,15 @@ import { getDefaultOptions } from 'service/service-utils';
 
 export default class AuthServiceV3 {
     constructor(config) {
-        
+
         const defaults = {
             server: {
                 versionPath: 'v3'
             }
         };
         const serviceOptions = getDefaultOptions(defaults, config, { apiEndpoint: 'authentication' });
-        if (serviceOptions.transport &&  serviceOptions.transport.headers) {
-           delete serviceOptions.transport.headers.Authorization;
+        if (serviceOptions.transport && serviceOptions.transport.headers) {
+            delete serviceOptions.transport.headers.Authorization;
         }
         var http = new TransportFactory(serviceOptions.transport);
         this.http = http;
@@ -31,7 +31,7 @@ export default class AuthServiceV3 {
         *     console.log("user access token is: ", token.access_token);
         * });
         *
-        * 
+        *
         * @param {{ handle: string, password?: string, groupKey?:string, mfaCode?:Number }} params
         * @param {Object} [options] Overrides for configuration options.
         * @returns {Promise}

@@ -56,8 +56,7 @@ export default class AuthManagerV3 {
                 return rejectPromise('MULTIPLE_GROUPS', 'User is part of multiple groups for this project. Please choose one', {
                     possibleGroups: res.possibleGroups
                 });
-            }
-            else if (!res.groupKey) {
+            } else if (!res.groupKey) {
                 return rejectPromise('NO_GROUPS', 'User is not a member of a simulation group.');
             }
             const groupInfo = {
