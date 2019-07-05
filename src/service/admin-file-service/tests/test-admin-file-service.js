@@ -3,6 +3,7 @@ import URLService from 'service/url-config-service';
 
 import sinon from 'sinon';
 import chai from 'chai';
+import { Z_BLOCK } from 'zlib';
 chai.use(require('sinon-chai'));
 
 const { expect } = chai;
@@ -110,7 +111,7 @@ describe('File API Adapter', function () {
             });
         });
         it('should accept formdata', function () {
-            var content = '<html></html>';
+            var content = new Blob(['<html></html>']);
             var formData = new FormData();
             formData.append('file', content, 'file.html');
             return fs.replace('test.html', formData).then(function () {
@@ -158,7 +159,7 @@ describe('File API Adapter', function () {
             });
         });
         it('should accept formdata', function () {
-            var content = '<html></html>';
+            var content = new Blob(['<html></html>']);
             var formData = new FormData();
             formData.append('file', content, 'file.html');
             return fs.create('test.html', formData).then(function () {

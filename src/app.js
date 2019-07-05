@@ -55,6 +55,10 @@ F.manager.ScenarioManager = require('./managers/scenario-manager').default;
 F.manager.RunManager = require('./managers/run-manager').default;
 F.manager.User = require('./managers/user-manager').default;
 F.manager.AuthManager = require('./managers/auth-manager').default;
+
+F.v3 = { manager: {}, service: {} };
+F.v3.manager.AuthManager = require('./managers/auth-manager-v3').default;
+
 F.manager.WorldManager = require('./managers/world-manager').default;
 F.manager.SavedRunsManager = require('./managers/saved-runs-manager').default;
 

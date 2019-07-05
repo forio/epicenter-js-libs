@@ -1,4 +1,11 @@
+<a name="2.11.0"></a>
+### 2.11.0
+
+### Features
+- login.js now supports multifactor authentication.  See ```src/components/login/index.html``` for the necessary HTML components that must be on the login page.
+
 <a name="2.10.0"></a>
+### 2.10.0
 
 ### Features
 - Added a `keepOnline` flag to Presence Service. 

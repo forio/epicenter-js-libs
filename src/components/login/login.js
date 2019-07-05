@@ -23,7 +23,7 @@ $(function () {
         select.find('[value!=""]').remove();
         $.each(groups, function () {
             $('<option>')
-                .attr('value', this.groupId)
+                .attr('value', this.groupKey)
                 .text(this.name)
                 .appendTo(select);
         });
@@ -61,8 +61,13 @@ $(function () {
         var project = $('#project:not([data-local])').val() || fromUrl.project || $('#project').val();
         var groupId = ($('#groupId').length ? $('#groupId') : $('<input type="hidden" id="groupId">').appendTo(form)).val();
 
+        var mfaCode = $('#mfaCode').val();
+
         $('button', form).attr('disabled', 'disabled').addClass('disabled');
         $('#login-message').text('').hide();
+        $('.mfa input').on('change', function () {
+            $('.mfa').removeClass('has-error');
+        });
 
         if (!account) {
             console.log('No account was specified and it cannot be extracted from the URL. You may not be able to login.');
@@ -72,45 +77,78 @@ $(function () {
             console.log('No project was specified and it cannot be extracted from the URL.');
         }
 
-        var auth = new F.manager.AuthManager();
-        auth.login({
-            userName: userName,
-            password: password,
+        var auth = new F.v3.manager.AuthManager({
             account: account,
-            project: project,
-            groupId: groupId
-        })
-            .fail(function (error) {
-                if (error.status === 401) {
-                    showError('Invalid user name or password.');
-                } else if (error.status === 403) {
-                    if (error.type === 'MULTIPLE_GROUPS') {
-                        selectGroup(userName, password, account, project, error.userGroups, action);
-                    } else if (error.type === 'NO_GROUPS') {
-                        showError('The user has no groups associated in this account');
-                    } else {
-                        showError(error.statusText || error.message || ('Unknown Error' + error.status));
-                    }
-                } else {
-                    showError('Unknown error occured. Please try again. (' + error.status + ')');
+            project: project
+        });
+        const loginParams = {
+            handle: userName,
+            password: password,
+        };
+        if (groupId) loginParams.groupKey = groupId;
+        if (mfaCode) loginParams.mfaCode = mfaCode;
+        auth.login(loginParams).then(function () {
+            var session = auth.getCurrentUserSessionInfo();
+            if ($('#log-login').length) {
+                var url = $('#log-login').val();
+                $.get(url + '?userName=' + session.userName + '&groupName=' + session.groupName);
+            }
+            var newPage = action;
+            var facPage = $('#fac-redirect-page').val();
+            if ((session.isFac || session.isTeamMember) && facPage) {
+                newPage = facPage;
+            }
+            window.location = newPage;
+            $('.group-selection-dialog').hide();
+        }, function (error) {
+            if (error.type === 'MULTIPLE_GROUPS') {
+                selectGroup(userName, password, account, project, error.context.possibleGroups, action);
+            } else if (error.type === 'NO_GROUPS') {
+                showError('User is not a member of a simulation group.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'AUTHORIZATION_FAILURE') {
+                showError('Could not login, please check username/ password and try again.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'PASSWORD_EXPIRATION') {
+                showError('Your password has expired.  Please contact your administrator and request a password reset.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_FAILURE') {
+                showError('Could not login, please check username, password and/or authentication code and try again.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
+                showError('Could not login, this project requires a user set up with multi factor authentication.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_MISSING') {
+                if ($('.mfa').hasClass('hidden')) {
+                    $('.mfa').removeClass('hidden');
                 }
+                $('#username').prop('disabled', true);
+                $('#password').prop('disabled', true);
+            } else {
+                showError('Unknown error occured. Please try again. (' + error.type + ')');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            }
 
-                $('button', form).attr('disabled', null).removeClass('disabled');
-            })
-            .then(function () {
-                var session = auth.getCurrentUserSessionInfo();
-                if ($('#log-login').length) {
-                    var url = $('#log-login').val();
-                    $.get(url + '?userName=' + session.userName + '&groupName=' + session.groupName);
-                }
-                var newPage = action;
-                var facPage = $('#fac-redirect-page').val();
-                if ((session.isFac || session.isTeamMember) && facPage) {
-                    newPage = facPage;
-                }
-                window.location = newPage;
-                $('.group-selection-dialog').hide();
-            });
+            $('button', form).attr('disabled', null).removeClass('disabled');
+        });
     });
 
     groupSelectionTemplate = window.groupSelectionTemplate = '<form>\

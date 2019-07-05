@@ -282,3 +282,10 @@ body {
     background-position: 50%;
 
 }
+
+.error-text {
+    display: none;
+}
+.has-error .error-text {
+    display: block;
+}
