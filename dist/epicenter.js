@@ -7890,14 +7890,21 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
 /***/ }),
 /* 52 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 ;(function () {
 
-  var object =
-     true ? exports :
-    typeof self != 'undefined' ? self : // #8: web workers
-    $.global; // #31: ExtendScript
+  var object = (
+    // #34: CommonJS
+    typeof exports === 'object' && exports !== null &&
+    typeof exports.nodeType !== 'number' ?
+      exports :
+    // #8: web workers
+    typeof self != 'undefined' ?
+      self :
+    // #31: ExtendScript
+      $.global
+  );
 
   var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
@@ -10379,11 +10386,15 @@ var AuthManagerV3 = function () {
                 if (err.responseJSON) err = err.responseJSON;
                 var code = err && err.information && err.information.code;
                 if (code === 'AUTHORIZATION_FAILURE') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Could not login, please check username/ password and try again');
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Could not login, please check username / password and try again.');
+                } else if (code === 'PASSWORD_EXPIRATION') {
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Your password has expired.  Please contact your administrator and request a password reset.');
+                } else if (code === 'MULTI_FACTOR_AUTHENTICATION_MISSING') {
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Multi factor authentication has been enabled for this project.');
+                } else if (code === 'MULTI_FACTOR_AUTHENTICATION_FAILURE') {
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'The provided Authorization Code is invalid.');
                 } else if (code === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Multi Factor authentication has been enabled for this project.');
-                } else if (code === 'MULTI_FACTOR_AUTHENTICATION_INVALID') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'The provided Authorization Code is invalid');
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'This project requires multi factor authentication.');
                 }
                 throw err;
 
@@ -10395,11 +10406,13 @@ var AuthManagerV3 = function () {
                     return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('MULTIPLE_GROUPS', 'User is part of multiple groups for this project. Please choose one', {
                         possibleGroups: res.possibleGroups
                     });
+                } else if (!res.groupKey) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('NO_GROUPS', 'User is not a member of a simulation group.');
                 }
                 var groupInfo = {
                     groupId: res.groupKey,
                     groupName: res.groupName,
-                    isFac: res.groupRole !== 'PARTICIPANT'
+                    isFac: res.groupRole && res.groupRole !== 'PARTICIPANT'
                 };
                 var sessionInfo = Object.assign({}, groupInfo, {
                     auth_token: res.session,
@@ -10470,7 +10483,9 @@ var AuthServiceV3 = function () {
             }
         };
         var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: 'authentication' });
-        delete serviceOptions.transport.headers.Authorization;
+        if (serviceOptions.transport && serviceOptions.transport.headers) {
+            delete serviceOptions.transport.headers.Authorization;
+        }
         var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
         this.http = http;
     }
@@ -10489,7 +10504,7 @@ var AuthServiceV3 = function () {
         *     console.log("user access token is: ", token.access_token);
         * });
         *
-        * 
+        *
         * @param {{ handle: string, password?: string, groupKey?:string, mfaCode?:Number }} params
         * @param {Object} [options] Overrides for configuration options.
         * @returns {Promise}

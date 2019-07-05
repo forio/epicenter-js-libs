@@ -104,17 +104,47 @@ $(function () {
             if (error.type === 'MULTIPLE_GROUPS') {
                 selectGroup(userName, password, account, project, error.context.possibleGroups, action);
             } else if (error.type === 'NO_GROUPS') {
-                showError('The user has no groups associated in this account');
+                showError('User is not a member of a simulation group.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'AUTHORIZATION_FAILURE') {
+                showError('Could not login, please check username/ password and try again.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'PASSWORD_EXPIRATION') {
+                showError('Your password has expired.  Please contact your administrator and request a password reset.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_FAILURE') {
+                showError('Could not login, please check username, password and/or authentication code and try again.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
             } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
+                showError('Could not login, this project requires a user set up with multi factor authentication.');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
+            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_MISSING') {
                 if ($('.mfa').hasClass('hidden')) {
                     $('.mfa').removeClass('hidden');
-                } else {
-                    $('.mfa').addClass('has-error');
                 }
-            } else if (error.type === 'MULTI_FACTOR_AUTHENTICATION_INVALID') {
-                $('.mfa').addClass('has-error');
+                $('#username').prop('disabled', true);
+                $('#password').prop('disabled', true);
             } else {
                 showError('Unknown error occured. Please try again. (' + error.type + ')');
+                $('.mfa').addClass('hidden');
+                $('#mfaCode').val('');
+                $('#username').prop('disabled', false);
+                $('#password').prop('disabled', false);
             }
 
             $('button', form).attr('disabled', null).removeClass('disabled');
