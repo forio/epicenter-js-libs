@@ -75,11 +75,12 @@ export default class ReuseLastInitializedStrategy {
             sort: 'created',
             direction: 'desc'
         }).then((runs)=> {
-            if (!runs.length || runs[0].trashed) {
+            const latestActiveRun = (runs || []).find((run)=> !run.trashed);
+            if (!runs.length || !latestActiveRun) {
                 // If no runs exist or the most recent run is trashed, create a new run
                 return this.reset(runService, userSession, options);
             }
-            return runs[0];
+            return latestActiveRun;
         });
     }
 }
