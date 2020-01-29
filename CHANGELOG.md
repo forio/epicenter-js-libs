@@ -1,3 +1,14 @@
+<a name="2.12.0"></a>
+### 2.12.0
+
+### Improvements
+- Run strategies now account for runs that are "deleted" ( `trashed: true` ) runs and return / create a new run based on their default behavior:
+	- Reuse across sessions: Creates new run if the latest run is trashed
+	- Reuse by tracking key: Creates new run if the latest run is trashed
+	- Reuse last initalized: Returns the latest non-trashed run or created a new run if there is no non-trashed run
+	- Reuse per session: Creates a new run if the run is trashed
+	
+
 <a name="2.11.0"></a>
 ### 2.11.0
 
