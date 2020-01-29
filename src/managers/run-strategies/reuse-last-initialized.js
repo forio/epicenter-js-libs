@@ -1,7 +1,7 @@
 import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-strategies/strategy-utils';
 
 /**
- * The `reuse-last-initialized` strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations. 
+ * The `reuse-last-initialized` strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations.
  *
  * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *
@@ -25,11 +25,11 @@ import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-s
  */
 export default class ReuseLastInitializedStrategy {
     /**
-     * 
-     * @param {object} [options] 
+     *
+     * @param {object} [options]
      * @property {object[]} [options.initOperation] Operations to execute in the model for initialization to be considered complete. Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
      * @property {object} [options.flag] Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
-     * @property {object} [options.scope] 
+     * @property {object} [options.scope]
      * @property {boolean} [options.scope.scopeByUser]  If true, only returns the last run for the user in session. Defaults to true.
      * @property {boolean} [options.scope.scopeByGroup] If true, only returns the last run for the group in session. Defaults to true.
      */
@@ -69,16 +69,18 @@ export default class ReuseLastInitializedStrategy {
         const sessionFilter = injectFiltersFromSession(this.options.flag, userSession, this.options.scope);
         const runopts = runService.getCurrentConfig();
         const filter = $.extend(true, { trashed: false }, sessionFilter, { model: runopts.model });
-        return runService.query(filter, { 
+        return runService.query(filter, {
             startrecord: 0,
             endrecord: 0,
-            sort: 'created', 
+            sort: 'created',
             direction: 'desc'
         }).then((runs)=> {
-            if (!runs.length) {
+            const latestActiveRun = (runs || []).find((run)=> !run.trashed);
+            if (!runs.length || !latestActiveRun) {
+                // If no runs exist or the most recent run is trashed, create a new run
                 return this.reset(runService, userSession, options);
             }
-            return runs[0];
+            return latestActiveRun;
         });
     }
 }

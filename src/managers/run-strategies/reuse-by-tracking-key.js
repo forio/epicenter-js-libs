@@ -9,9 +9,9 @@ const errors = {
 };
 
 /**
- * @param {string} trackingKey 
- * @param {object} userSession 
- * @param {object} metaFilter Additional criteria to filter by 
+ * @param {string} trackingKey
+ * @param {object} userSession
+ * @param {object} metaFilter Additional criteria to filter by
  * @returns {object}
  */
 function makeFilter(trackingKey, userSession, metaFilter) {
@@ -25,15 +25,15 @@ function makeFilter(trackingKey, userSession, metaFilter) {
 }
 
 /**
- * @param {RunService} runService 
- * @param {object} filter 
+ * @param {RunService} runService
+ * @param {object} filter
  * @returns {Promise<object[]>}
  */
 function getRunsForFilter(runService, filter) {
     return runService.query(filter, {
         startRecord: 0,
         endRecord: 0,
-        sort: 'created', 
+        sort: 'created',
         direction: 'desc'
     });
 }
@@ -55,13 +55,13 @@ function addSettingsToRun(run, settings) {
  *  });
  *  ```
  *  Any runs created with this strategy will have a 'settings' field which returns the current settings for that run (when retreived with `getRun` or `reset`)
- * 
+ *
  * This strategy is used by the Settings Manager to apply class settings for turn-by-turn simulations, but can also be used stand-alone.
  *
  */
 class ReuseWithTrackingKeyStrategy {
     /**
-     * @param {object} [options] 
+     * @param {object} [options]
      * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
      * @property {string} settings.trackingKey Key to track runs with
      * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
@@ -101,14 +101,14 @@ class ReuseWithTrackingKeyStrategy {
 
         const createOptions = injectScopeFromSession(runConfig, userSession);
         const opt = $.extend(true, createOptions, {
-            scope: { 
+            scope: {
                 trackingKey: trackingKey,
             }
         }, runCreateOptions);
         return runService.create(opt).then((run)=> {
             const applied = this.options.onCreate(runService, settings, run);
             return makePromise(applied).then((res)=> {
-                return res && res.id ? res : run; 
+                return res && res.id ? res : run;
             }).then((run)=> {
                 return addSettingsToRun(run, settings);
             });
@@ -143,7 +143,8 @@ class ReuseWithTrackingKeyStrategy {
         return this.getSettings(runService, userSession).then((settings)=> {
             const runFilter = makeFilter(settings.trackingKey, userSession, this.options.filter);
             return getRunsForFilter(runService, runFilter).then((runs)=> {
-                if (!runs.length) {
+                if (!runs.length || runs[0].trashed) {
+                    // If no runs exist or the most recent run is trashed, create a new run
                     return this.forceCreateRun(runService, userSession, settings, runCreateOptions);
                 }
                 return addSettingsToRun(runs[0], settings);

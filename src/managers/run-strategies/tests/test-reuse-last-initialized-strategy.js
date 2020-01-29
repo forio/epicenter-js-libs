@@ -20,7 +20,7 @@ describe('Reuse last initialized', function () {
             var c = function () { new Strategy(); };
             expect(c).to.throw(Error);
         });
-    }); 
+    });
 
     describe('#getRun', function () {
         var rs, strategy, resetStub, queryStub;
@@ -100,6 +100,13 @@ describe('Reuse last initialized', function () {
             });
         });
         it('should call reset if not found', function () {
+            return strategy.getRun(rs, { userId: 'userId' }).then(function () {
+                expect(resetStub).to.have.been.calledOnce;
+            });
+        });
+        it('should call reset if run is trashed', function () {
+            var rs = new RunService(runOptions);
+            sinon.stub(rs, 'query').returns($.Deferred().resolve([{ id: 'x', trashed: true }]).promise());
             return strategy.getRun(rs, { userId: 'userId' }).then(function () {
                 expect(resetStub).to.have.been.calledOnce;
             });

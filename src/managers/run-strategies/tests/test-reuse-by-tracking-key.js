@@ -32,7 +32,7 @@ describe('Reuse by tracking key', function () {
             if (filter.indexOf('tracker-with-run-limit') !== -1) {
                 headers['content-range'] = '0-0/100';
             }
-            
+
             xhr.respond(200, headers, JSON.stringify(runs));
             return true;
         });
@@ -85,6 +85,33 @@ describe('Reuse by tracking key', function () {
                     settings: {
                         trackingKey: 'noruns'
                     }
+                }
+            });
+            return strategy.getRun(rs).then((run)=> {
+                expect(createSub).to.have.been.calledOnce;
+                expect(run.id).to.equal('newrunid');
+            });
+        });
+        it('should create if latest run is trashed', ()=> {
+            const rs = new RunService(runOptions);
+            const createSub = sinon.stub(rs, 'create').callsFake(()=>
+                ($.Deferred().resolve({ id: 'newrunid' }).promise()));
+            const queryStub = sinon.stub(rs, 'query').callsFake(function () {
+                return $.Deferred().resolve([{
+                    id: 'run1',
+                    date: '2016-10-21T00:07:55.735Z',
+                    trashed: true,
+                    scope: {
+                        trackingKey: 'tracker',
+                    }
+                }]);
+            });
+            const settingsFetcher = sinon.spy(()=> {
+                return $.Deferred().resolve({ trackingKey: 'tracker' }).promise();
+            });
+            const strategy = new Strategy({
+                strategyOptions: {
+                    settings: settingsFetcher
                 }
             });
             return strategy.getRun(rs).then((run)=> {
@@ -165,7 +192,7 @@ describe('Reuse by tracking key', function () {
             return strategy.getRun(rs).then((run)=> {
                 expect(queryStub).to.have.been.calledOnce;
                 const filterArgs = queryStub.getCall(0).args[0];
-                expect(filterArgs).to.eql({ 
+                expect(filterArgs).to.eql({
                     scope: {
                         trackingKey: 'noruns',
                     },
@@ -283,7 +310,7 @@ describe('Reuse by tracking key', function () {
                 });
             });
         });
-        
+
         describe('Run limit', ()=> {
             it('should throw an error if runs exceed limit', ()=> {
                 const strategy = new Strategy({

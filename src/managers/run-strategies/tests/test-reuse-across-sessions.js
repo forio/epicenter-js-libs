@@ -60,7 +60,7 @@ describe('Reuse Across Sessions strategy', function () {
             return strategy.getRun(rs, auth).then(function () {
                 expect(queryStub).to.have.been.calledOnce;
                 var args = queryStub.getCall(0).args;
-                    
+
                 expect(args[0]).to.eql({
                     'user.id': auth.userId,
                     scope: {
@@ -73,6 +73,24 @@ describe('Reuse Across Sessions strategy', function () {
             var rs = new RunService(runOptions);
             sinon.stub(rs, 'query').callsFake(function () {
                 return $.Deferred().resolve([]);
+            });
+            var createStub = sinon.stub(rs, 'create').callsFake(function () {
+                return $.Deferred().resolve({
+                    id: 'def'
+                }).promise();
+            });
+            return strategy.getRun(rs, auth).then(function () {
+                expect(createStub).to.have.been.calledOnce;
+            });
+        });
+        it('should create new if latest run is trashed', function () {
+            var rs = new RunService(runOptions);
+            sinon.stub(rs, 'query').callsFake(function () {
+                return $.Deferred().resolve([{
+                    id: 'run1',
+                    date: '2016-10-21T00:07:55.735Z',
+                    trashed: true,
+                }]);
             });
             var createStub = sinon.stub(rs, 'create').callsFake(function () {
                 return $.Deferred().resolve({

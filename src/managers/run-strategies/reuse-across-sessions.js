@@ -8,7 +8,7 @@ import { injectFiltersFromSession, injectScopeFromSession } from 'managers/run-s
  * This strategy is useful if end users are using your project for an extended period of time, possibly over several sessions. This is most common in cases where a user of your project executes the model step by step (as opposed to a project where the model is executed completely, for example, a Vensim model that is immediately stepped to the end).
  *
  * Specifically, the strategy is:
- * 
+ *
  * * Check if there are any runs for this end user.
  *     * If there are no runs (either in memory or in the database), create a new one.
  *     * If there are runs, take the latest (most recent) one.
@@ -39,13 +39,14 @@ const Strategy = classFrom(IdentityStrategy, {
 
     getRun: function (runService, userSession, runSession, options) {
         const filter = injectFiltersFromSession(this.options.filter, userSession);
-        return runService.query(filter, { 
+        return runService.query(filter, {
             startrecord: 0,
             endrecord: 0,
-            sort: 'created', 
+            sort: 'created',
             direction: 'desc'
         }).then((runs)=> {
-            if (!runs.length) {
+            if (!runs.length || runs[0].trashed) {
+                // If no runs exist or the most recent run is trashed, create a new run
                 return this.reset(runService, userSession, options);
             }
             return runs[0];
