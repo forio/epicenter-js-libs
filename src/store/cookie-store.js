@@ -72,11 +72,11 @@ module.exports = function (config) {
         set: function (key, value, options) {
             var setOptions = $.extend(true, {}, this.serviceOptions, options);
 
-            const domain = setOptions.domain;
-            const samesite = setOptions.samesite;
-            const path = setOptions.root;
-            const cookie = setOptions.cookie;
-            const secureFlag = setOptions.secure;
+            var domain = setOptions.domain;
+            var samesite = setOptions.samesite;
+            var path = setOptions.root;
+            var cookie = setOptions.cookie;
+            var secureFlag = setOptions.secure;
 
             const contents = [`${encodeURIComponent(key)}=${encodeURIComponent(value)}`];
             if (domain) {
