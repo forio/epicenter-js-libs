@@ -1,3 +1,11 @@
+<a name="2.13.0"></a>
+### 2.13.0
+
+### Improvements
+- Cookie manager has been improved to be in accordance with modern browser expectations.
+    - Cookies are set with `Secure: true` setting if application loaded under https.
+    - Cookies now allow calling code to set SameSite property.
+
 <a name="2.12.0"></a>
 ### 2.12.0
 
@@ -7,7 +15,7 @@
 	- Reuse by tracking key: Creates new run if the latest run is trashed
 	- Reuse last initalized: Returns the latest non-trashed run or created a new run if there is no non-trashed run
 	- Reuse per session: Creates a new run if the run is trashed
-	
+
 
 <a name="2.11.0"></a>
 ### 2.11.0
@@ -19,7 +27,7 @@
 ### 2.10.0
 
 ### Features
-- Added a `keepOnline` flag to Presence Service. 
+- Added a `keepOnline` flag to Presence Service.
 ```js
 var pr = new F.service.Presence();
 pr.markOnline('0000015a68d806bc09cd0a7d207f44ba5f74', { keepOnline: true });
@@ -83,7 +91,7 @@ The Epicenter APIs typically limit to providing 100 records (runs) at a time. Yo
 Example
 ```js
 var sm = new F.manager.SavedRunsManager({ run: ..});
-sm.getRuns(['Price', 'OtherVariable'], { saved: true }, { sort: 'desc' }, { 
+sm.getRuns(['Price', 'OtherVariable'], { saved: true }, { sort: 'desc' }, {
     recordsPerFetch: 50,
     onData: (partialRuns)=> { //will be called with 50 runs at a time }
 }).then((allRuns)=> { //Will be resolved with *all* runs, regardless of however many there are. Pass in `endRecord` if you do want to limit it. })
@@ -102,7 +110,7 @@ See (Documentation)[https://forio.com/epicenter/docs/public/api_adapters/generat
 e.g
 ```js
 var rm = new F.Manager.RunManager({
-   strategy: 'reuse-never' 
+   strategy: 'reuse-never'
 });
 var prom1 = rm.getRun();
 var prom2 = rm.getRun();
@@ -145,7 +153,7 @@ This release allows you to express that more idiomatically as:
 rs.save({ scope: { trackingKey: 'foo' }});
 ```
 
-#### Strategies can now specify if the run-manager should set a cookie, 
+#### Strategies can now specify if the run-manager should set a cookie,
 
 Custom strategies can expose a static boolean `allowRunIDCache` property to control if the run manager should persist the result from `getRun` in a cookie. As a result, the 'reuse-never' strategy no longer sets a (redundant) cookie since it will always create a new run anyway.
 
@@ -207,7 +215,7 @@ var sm = new F.manager.SavedRunsManager({
 sm.getRuns(['Time'], {
     saved: undefined,
 });
-```   
+```
 #### User Management features:
 
 ##### New User Manager (F.manager.User)
@@ -296,16 +304,16 @@ cm.subscribe(worldChannel.TOPICS.PRESENCE, (data, meta)=> {
 
 #### Data API Scoping
 
-```js  
-const DataService = F.service.Data;    
-const groupScopeDataService = new DataService({    
-    name: 'some-name', 
-    scope: DataService.SCOPES.GROUP,   
-});    
-const userScopeDataService = new DataService({     
-    name: 'some-name', 
-    scope: DataService.SCOPES.USER,    
-});    
+```js
+const DataService = F.service.Data;
+const groupScopeDataService = new DataService({
+    name: 'some-name',
+    scope: DataService.SCOPES.GROUP,
+});
+const userScopeDataService = new DataService({
+    name: 'some-name',
+    scope: DataService.SCOPES.USER,
+});
 ```
 Available scopes are:
 
@@ -348,7 +356,7 @@ ps.resetPassword('myuserName@gmail.com', {
 <a name="2.6.0"></a>
 #### Bug Fixes:
 - World Service: `getCurrentRunId` and `newRunForWorld` calls were ignoring any `files` or `cinFiles` parameters passed in; they now correctly pass it through to the APIs, facilitating building multiplayer Vensim models relying on external files.
-- Fixed bug where the muliplayer strategy was prematurely returning a success before a run was actually created. 
+- Fixed bug where the muliplayer strategy was prematurely returning a success before a run was actually created.
 
 ### Improvements:
 - If you're using `ngrok` for testing your simulation locally, it is now identified as "local" (and defaults to using api.forio.com)
@@ -359,7 +367,7 @@ ps.resetPassword('myuserName@gmail.com', {
 - `pushToArray`: Adds items to an underlying array structure on a document. See [REST API docs](https://forio.com/epicenter/docs/public/rest_apis/data_api/#adding-data-to-an-existing-array-variable-within-a-collection) for details.
 
 ### New Consensus Services
-Two new (related) services have been added: `F.service.Consensus` and `F.service.ConsensusGroup`, as well as a helper `worldservice.consensus()` method. 
+Two new (related) services have been added: `F.service.Consensus` and `F.service.ConsensusGroup`, as well as a helper `worldservice.consensus()` method.
 
 The Consensus Service allows you to build common features in multiplayer games like:
    - Delaying execution of an operation until all users within a world have 'submitted'
@@ -402,19 +410,19 @@ See documentation for [Consensus Service](http://forio.com/epicenter/docs/public
 - `reuse-last-initialized` strategy, as well as all the `ScenarioManager` strategies now scope runs by model name.
 
 - `RunService` now includes a `removeFromMemory` method as a performance optimization.
-- 
+-
 <a name="2.3.1"></a>
 #### Bug fixes:
 * Fix inconsistent format for `getDataChannel`
 Due to a bad falsy check, boolean values used to be incorrectly returned under `data.data` if it was `false` and under `data` for anything else. It's consistently returned under `data` now. Note that this is a **breaking change** if you were relying on the older incorrect format.
 
-* Pass through `userIds` for the `autoAssign` method in the World API Adapter. It was being ignored before. 
+* Pass through `userIds` for the `autoAssign` method in the World API Adapter. It was being ignored before.
 
 <a name="2.3.0"></a>
 ### 2.3.0 (2017-08-18)
 
 #### Features:
-##### The `sessionKey` parameter of the RunManager can now optionally be provided a function instead of a string. 
+##### The `sessionKey` parameter of the RunManager can now optionally be provided a function instead of a string.
 
 This is useful if you want to optionally skip setting/over-writing a cookie based on an external flag. For instance, maybe you'd rather not save a cookie while impersonating another user:
 ```js
@@ -425,7 +433,7 @@ new F.manager.RunManager({
     }
 });
 ```
-  
+
 ##### Current session information now includes the `userName` of the currently logged in user.
 
 ```js
@@ -505,7 +513,7 @@ This strategy looks for the most recent run that matches particular criteria; if
 
 - You have a custom initialization function in your model, and want to make sure it's always executed for new runs.
 
-`strategyOptions` is a field you can generally use to pass options to different strategies; while `reuse-last-initialized` is currently the only strategy which uses it, you can also use this field when creating your own strategies. 
+`strategyOptions` is a field you can generally use to pass options to different strategies; while `reuse-last-initialized` is currently the only strategy which uses it, you can also use this field when creating your own strategies.
 
 #### Summary
 
@@ -519,11 +527,11 @@ The benefit of this consolidation is that deciding what strategy to use easier t
 
 ### Run Manager Changes
 
-New in this release, there are several changes to the Run Manager, primarily to support Run Strategy changes (described above) and the new Scenario Manager (described below). 
+New in this release, there are several changes to the Run Manager, primarily to support Run Strategy changes (described above) and the new Scenario Manager (described below).
 
 #### `getRun` Allows Populating Run with Variables
 
-The Run Manager's `getRun` function now takes in an array of `variables` as an argument; if provided, it populates the run it gets with the provided variables. 
+The Run Manager's `getRun` function now takes in an array of `variables` as an argument; if provided, it populates the run it gets with the provided variables.
 
 ```js
     rm.getRun(['Price', 'Sales'], function (run) {
@@ -548,7 +556,7 @@ The original purpose of the Run Manager was to just find the right strategy and 
  + @param  {RunService} runService A Run Service instance for the 'correct' run as determined by the Run Manager
  + @param  {Object} userSession Information about the current user session. See AuthManager#getCurrentUserSession for format
  + @param  {Object} runSession The Run Manager serializes the 'last accessed' run in a cookie and provides it each time `getRun()` is called
- + @return {Promise}             
+ + @return {Promise}
  */
 getRun: function (runService, userSession, runSession){}
 
@@ -557,7 +565,7 @@ getRun: function (runService, userSession, runSession){}
  + Resets current run
  + @param  {RunService} runService  A Run Service instance for the 'correct' run as determined by the Run Manager
  + @param  {Object} userSession Information about the current user session. See AuthManager#getCurrentUserSession for format
- + @return {Promise}             
+ + @return {Promise}
  */
 reset: function (runService, userSession){}
 ```
@@ -569,7 +577,7 @@ reset: function (runService, userSession){}
 
 #### F.manager.RunManager.strategies
 
-You can access a list of available strategies via `F.manager.RunManager.strategies.list`. 
+You can access a list of available strategies via `F.manager.RunManager.strategies.list`.
 
 This behavior mirrors getting the list through `F.manager.strategy`; however, `F.manager.strategy` is now considered **Deprecated** and may be removed in a future release.
 
@@ -579,11 +587,11 @@ See the [run strategies](http://forio.com/epicenter/docs/public/api_adapters/gen
 
 ### Scenario Manager
 
-This release introduces a new Scenario Manager, accessible as `F.manager.ScenarioManager`. 
+This release introduces a new Scenario Manager, accessible as `F.manager.ScenarioManager`.
 
 Each Scenario Manager allows you to compare the results of several runs. This is mostly useful for time-based models (Vensim, Powersim, SimLang, Stella), but can be adapted to working with other languages as well.
 
-The Scenario Manager can be thought of as a collection of Run Managers with pre-configured strategies. Just as the Run Manager provides use case -based abstractions and utilities for managing the Run Service, the Scenario Manager does the same for the Run Manager. 
+The Scenario Manager can be thought of as a collection of Run Managers with pre-configured strategies. Just as the Run Manager provides use case -based abstractions and utilities for managing the Run Service, the Scenario Manager does the same for the Run Manager.
 
 There are typically three components to building a run comparison:
 
@@ -668,7 +676,7 @@ All calls to the cometD channel now respect the versionPath of the rest of the E
 
 This release introduces the WebSocket protocol of the channel manager.
 
-* **Improvement**: Epicenter.js now supports the websockets protocol for the cometd library used in the Channel Manager. 
+* **Improvement**: Epicenter.js now supports the websockets protocol for the cometd library used in the Channel Manager.
 	* By default, websocket support is enabled. You can change this in the Channel Manager configuration options.
 	* When websocket support is enabled, the Channel Manager attempts to connect using websockets, and if it cannot, falls back to using the long poll transport.
 * **Bug fix**: Epicenter.js now consistently uses the access token available in `epicenter.token` as part of the Authorization header for calls to the underlying Epicenter RESTful APIs. This was not working for some cases starting in Epicenter.js 1.8.0 but is now resolved.
@@ -682,7 +690,7 @@ This release introduces the WebSocket protocol of the channel manager.
 This is a minor release, and includes two significant improvements:
 
 * The library file size has been significantly reduced. In particular, `epicenter.min.js` is now less than 90KB.
-* Development both in local environments and on custom domains has been streamlined. Previously, there were a few bugs in the checks for localhost and for local sessions/cookies; these have been resolved. 
+* Development both in local environments and on custom domains has been streamlined. Previously, there were a few bugs in the checks for localhost and for local sessions/cookies; these have been resolved.
 
 
 <a name="2.0"></a>
@@ -690,13 +698,13 @@ This is a minor release, and includes two significant improvements:
 
 This is a major release, including several major features and a few bug fixes.
 
-* **New Feature: Introspection**: You can now view a listing of all of the variables and operations (functions) exposed in your model. You can access this through the Introspection Service, or through `introspect` in the Run Service. 
+* **New Feature: Introspection**: You can now view a listing of all of the variables and operations (functions) exposed in your model. You can access this through the Introspection Service, or through `introspect` in the Run Service.
 
 * **New Feature: Epicenter APIs, v2**: New in this release, all calls are now routed to `v2` of the underlying Epicenter APIs. This is largely a transparent change -- probably the biggest difference you'll notice is that Run Ids have a slightly different format; they no longer contain hyphens. Under the hood, runs are now created on a new and improved distributed model service infrastructure, which provides increased stability and improved logging and error reporting.
 
 * **New Feature: jQuery 3.1**: New in this release, you can include jQuery 3.1.0. Changes are backwards compatible, so you can use either jQuery 2.1.4 (as for previous releases of Epicenter.js) or jQuery 3.1.0, but you already be using the newer version of jQuery in your project for other reasons. In particular, jQuery 3 is A+ promises compatible so will play well with ES6 code.
 
-* **Bug Fixes**: 
+* **Bug Fixes**:
 	* In some cases when multiple end users were logging into a project in the same browser (but not explicitly logging out), the `always-new` strategy was failing to create a new run. This has been corrected.
 	* The `AuthManager`'s `logout()` call now correctly removes all managed cookies.
 
@@ -710,7 +718,7 @@ This release includes improvements to the admin file service and is anticipated 
 <a name="1.8.1"></a>
 ### 1.8.1 (2016-07-07)
 
-This release fixes a bug introduced 1.8.0. In some cases, when an end user logged in (using the `AuthManager`), the end user's group was not being correctly passed down to the scope of the runs being created by that user. This has been resolved. 
+This release fixes a bug introduced 1.8.0. In some cases, when an end user logged in (using the `AuthManager`), the end user's group was not being correctly passed down to the scope of the runs being created by that user. This has been resolved.
 
 
 <a name="1.8.0"></a>
@@ -720,8 +728,8 @@ This release cleans up session handling significantly, including making cookies 
 
 Improvements:
 
- - All session information is now stored in a single cookie. The **epicenterjs.session** cookie now defaults to a path of `/app/{account id}/{project id}/`. 
- 	* Making it specific to the account and project allows end users to log in to several different projects from the same team without session information being overridden. 
+ - All session information is now stored in a single cookie. The **epicenterjs.session** cookie now defaults to a path of `/app/{account id}/{project id}/`.
+ 	* Making it specific to the account and project allows end users to log in to several different projects from the same team without session information being overridden.
  	* As a developer, if you need to set the cookie path to something else, you can change it explicitly by passing `{ store: { root: 'other/path' } }` to the Authorization Manager.
  - When a user logs in, the access token is now automatically passed to the User, Member, and State API adapters, and to the Channel and Epicenter Channel managers. As a developer, you no longer need to worry about passing tokens once the user is logged in.
  - The Epicenter Channel manager now automatically validates channel names. They must be in the form `/{type}/{account id}/{project id}/{...}`, where `type` is one of `run`, `data`, `user`, `world`, or `chat`. (See the [underlying Push Channel API](https://forio.com/epicenter/docs/public/rest_apis/multiplayer/channel/) for additional details.) You can disable this validation if needed.
@@ -729,7 +737,7 @@ Improvements:
 
 Bug Fixes:
 
- - When automatically splitting long queries into multiple pieces, the pieces were still a little too long for Microsoft Edge when all the URL-encoding was included. This was fixed by shortening the size of the pieces to account for any encoding. 
+ - When automatically splitting long queries into multiple pieces, the pieces were still a little too long for Microsoft Edge when all the URL-encoding was included. This was fixed by shortening the size of the pieces to account for any encoding.
  - In some situations, the login component generated extraneous errors in the console. This has been fixed.
 
 
@@ -743,7 +751,7 @@ Bug Fixes:
 ### 1.7.0 (2016-04-11)
 
  - The API configuration (that is, where the REST API calls should be sent) is now loaded from the server, rather than hard-coded in the library. This allows Epicenter.js to more easily be used on multiple Epicenter installations (not just forio.com).
- - In the Authorization Manager, improve how the path in the cookie is set to make local development easier. This is an extension of the improvement in v1.6.4. 
+ - In the Authorization Manager, improve how the path in the cookie is set to make local development easier. This is an extension of the improvement in v1.6.4.
 
 
 <a name="1.6.4"></a>
@@ -753,9 +761,9 @@ Bug Fixes:
 
 <a name="1.6.3"></a>
 ### 1.6.3 (2016-02-24)
- - Updates for the [run strategies](https://forio.com/epicenter/docs/public/api_adapters/strategy/) to use group name rather than group id to create runs with specific scope. 
+ - Updates for the [run strategies](https://forio.com/epicenter/docs/public/api_adapters/strategy/) to use group name rather than group id to create runs with specific scope.
  - Addition of the `Auto-Restore` header to the Variables API Service `query()` call; previously it had only been set for the `load()` call. This header means that runs are automatically pulled from the Epicenter backend database into memory (and replayed) when they are queried. A run must be in memory in order to update model variables or call model operations.
- - Clean up of the Authentication API Service `logout()` call; it no longer calls the (unsupported) Epicenter delete. 
+ - Clean up of the Authentication API Service `logout()` call; it no longer calls the (unsupported) Epicenter delete.
  - Documentation improvements, including more information on running Epicenter projects locally and additional examples when using Asset API Adapter.
 
 <a name="1.6.2"></a>

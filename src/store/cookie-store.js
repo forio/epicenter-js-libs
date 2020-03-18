@@ -21,6 +21,7 @@ var Cookie = function () {
 
 module.exports = function (config) {
     var host = window.location.hostname;
+    var secureFlag = location.protocol == "https";
     var validHost = host.split('.').length > 1;
     var domain = validHost ? '.' + host : null;
 
@@ -55,10 +56,11 @@ module.exports = function (config) {
         // },
 
         /**
-         * Save cookie value
+         * Save cookie value.  Note: root defaults to '/', domain defaults to current domain, samesite defaults to "none".
+         * Secure flag is added to pages served from https.
          * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
          * @param  {any} [value] value to store
-         * @param {object} [options] Overrides for service options
+         * @param {object} [options] Overrides for service options (domain, samesite, root)
          *
          * @return {*} The saved value
          *
@@ -70,12 +72,21 @@ module.exports = function (config) {
             var setOptions = $.extend(true, {}, this.serviceOptions, options);
 
             var domain = setOptions.domain;
+            var samesite = setOptions.samesite;
             var path = setOptions.root;
             var cookie = setOptions.cookie;
 
             const contents = [`${encodeURIComponent(key)}=${encodeURIComponent(value)}`];
             if (domain) contents.push(`domain=${domain}`);
             if (path) contents.push(`path=${path}`);
+            if (secureFlag) {
+                contents.push('secure');
+            }
+            if (samesite) {
+                contents.push(`samesite=${samesite}`);
+            } else {
+                contents.push('samesite=none');
+            }
             if (setOptions.expires !== undefined) contents.push(`expires=${setOptions.expires}`);
             cookie.set(contents.join('; '));
 
