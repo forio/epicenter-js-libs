@@ -5007,6 +5007,7 @@ module.exports = function (config) {
         root: '/',
 
         domain: domain,
+        secure: secureFlag,
         cookie: new Cookie()
     };
     this.serviceOptions = $.extend({}, defaults, config);
@@ -5049,10 +5050,15 @@ module.exports = function (config) {
             var samesite = setOptions.samesite;
             var path = setOptions.root;
             var cookie = setOptions.cookie;
+            var secureFlag = setOptions.secure;
 
             var contents = [encodeURIComponent(key) + '=' + encodeURIComponent(value)];
-            if (domain) contents.push('domain=' + domain);
-            if (path) contents.push('path=' + path);
+            if (domain) {
+                contents.push('domain=' + domain);
+            }
+            if (path) {
+                contents.push('path=' + path);
+            }
             if (secureFlag) {
                 contents.push('secure');
             }
@@ -5061,7 +5067,9 @@ module.exports = function (config) {
             } else {
                 contents.push('samesite=none');
             }
-            if (setOptions.expires !== undefined) contents.push('expires=' + setOptions.expires);
+            if (setOptions.expires !== undefined) {
+                contents.push('expires=' + setOptions.expires);
+            }
             cookie.set(contents.join('; '));
 
             return value;
