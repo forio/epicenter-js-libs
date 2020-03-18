@@ -33,6 +33,7 @@ module.exports = function (config) {
         root: '/',
 
         domain: domain,
+        secure: secureFlag,
         cookie: new Cookie()
     };
     this.serviceOptions = $.extend({}, defaults, config);
@@ -75,11 +76,16 @@ module.exports = function (config) {
             var samesite = setOptions.samesite;
             var path = setOptions.root;
             var cookie = setOptions.cookie;
+            var secureFlag = setOptions.secure;
 
             const contents = [`${encodeURIComponent(key)}=${encodeURIComponent(value)}`];
-            if (domain) contents.push(`domain=${domain}`);
-            if (path) contents.push(`path=${path}`);
-            if (secureFlag) {
+            if (domain) {
+                contents.push(`domain=${domain}`);
+            }
+            if (path) {
+                contents.push(`path=${path}`);
+            }
+            if (secure) {
                 contents.push('secure');
             }
             if (samesite) {
@@ -87,7 +93,9 @@ module.exports = function (config) {
             } else {
                 contents.push('samesite=none');
             }
-            if (setOptions.expires !== undefined) contents.push(`expires=${setOptions.expires}`);
+            if (setOptions.expires !== undefined) {
+                contents.push(`expires=${setOptions.expires}`);
+            }
             cookie.set(contents.join('; '));
 
             return value;
