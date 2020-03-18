@@ -85,7 +85,7 @@ module.exports = function (config) {
             if (path) {
                 contents.push(`path=${path}`);
             }
-            if (secure) {
+            if (secureFlag) {
                 contents.push('secure');
             }
             if (samesite) {
