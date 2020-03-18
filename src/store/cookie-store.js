@@ -21,7 +21,7 @@ var Cookie = function () {
 
 module.exports = function (config) {
     var host = window.location.hostname;
-    var secureFlag = location.protocol === 'https';
+    var secureFlag = location.protocol === 'https:';
     var validHost = host.split('.').length > 1;
     var domain = validHost ? '.' + host : null;
 
@@ -72,11 +72,11 @@ module.exports = function (config) {
         set: function (key, value, options) {
             var setOptions = $.extend(true, {}, this.serviceOptions, options);
 
-            var domain = setOptions.domain;
-            var samesite = setOptions.samesite;
-            var path = setOptions.root;
-            var cookie = setOptions.cookie;
-            var secureFlag = setOptions.secure;
+            const domain = setOptions.domain;
+            const samesite = setOptions.samesite;
+            const path = setOptions.root;
+            const cookie = setOptions.cookie;
+            const secureFlag = setOptions.secure;
 
             const contents = [`${encodeURIComponent(key)}=${encodeURIComponent(value)}`];
             if (domain) {

@@ -4995,7 +4995,7 @@ var Cookie = function () {
 
 module.exports = function (config) {
     var host = window.location.hostname;
-    var secureFlag = location.protocol === 'https';
+    var secureFlag = location.protocol === 'https:';
     var validHost = host.split('.').length > 1;
     var domain = validHost ? '.' + host : null;
 
