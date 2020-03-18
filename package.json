@@ -1,6 +1,6 @@
 {
     "name": "epicenter-js",
-    "version": "2.10.0",
+    "version": "2.13.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/forio/epicenter-js-libs"
@@ -55,13 +55,13 @@
         "webpack-dev-server": "^3.1.4"
     },
     "scripts": {
-        "document": "node ./build/docs/doxdox.js",
-        "debug": "./node_modules/grunt-cli/bin/grunt karma:debugMode",
-        "release": "npm run document && ./node_modules/grunt-cli/bin/grunt production",
-        "build": "./node_modules/grunt-cli/bin/grunt production && npm run document",
-        "build:components": "./node_modules/grunt-cli/bin/grunt components",
-        "start": "./node_modules/grunt-cli/bin/grunt",
-        "prepush": "./node_modules/grunt-cli/bin/grunt validate"
+        "document": "node build/docs/doxdox.js",
+        "debug": "node node_modules/grunt-cli/bin/grunt karma:debugMode",
+        "release": "npm run document && node node_modules/grunt-cli/bin/grunt production",
+        "build": "node node_modules/grunt-cli/bin/grunt production && npm run document",
+        "build:components": "node node_modules/grunt-cli/bin/grunt components",
+        "start": "node node_modules/grunt-cli/bin/grunt",
+        "prepush": "node node_modules/grunt-cli/bin/grunt validate"
     },
     "dependencies": {
         "Base64": "^1.0.1",

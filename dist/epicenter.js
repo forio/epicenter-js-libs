@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.10.0
+ *         v2.13.0
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -4995,6 +4995,7 @@ var Cookie = function () {
 
 module.exports = function (config) {
     var host = window.location.hostname;
+    var secureFlag = location.protocol === 'https';
     var validHost = host.split('.').length > 1;
     var domain = validHost ? '.' + host : null;
 
@@ -5029,10 +5030,11 @@ module.exports = function (config) {
         // },
 
         /**
-         * Save cookie value
+         * Save cookie value.  Note: root defaults to '/', domain defaults to current domain, samesite defaults to "none".
+         * Secure flag is added to pages served from https.
          * @param  { string|Object} key   If given a key save values under it, if given an object directly, save to top-level api
          * @param  {any} [value] value to store
-         * @param {object} [options] Overrides for service options
+         * @param {object} [options] Overrides for service options (domain, samesite, root)
          *
          * @return {*} The saved value
          *
@@ -5044,12 +5046,21 @@ module.exports = function (config) {
             var setOptions = $.extend(true, {}, this.serviceOptions, options);
 
             var domain = setOptions.domain;
+            var samesite = setOptions.samesite;
             var path = setOptions.root;
             var cookie = setOptions.cookie;
 
             var contents = [encodeURIComponent(key) + '=' + encodeURIComponent(value)];
             if (domain) contents.push('domain=' + domain);
             if (path) contents.push('path=' + path);
+            if (secureFlag) {
+                contents.push('secure');
+            }
+            if (samesite) {
+                contents.push('samesite=' + samesite);
+            } else {
+                contents.push('samesite=none');
+            }
             if (setOptions.expires !== undefined) contents.push('expires=' + setOptions.expires);
             cookie.set(contents.join('; '));
 
@@ -6800,7 +6811,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 /**
- * The `reuse-last-initialized` strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations. 
+ * The `reuse-last-initialized` strategy looks for the most recent run that matches particular criteria; if it cannot find one, it creates a new run and immediately executes a set of "initialization" operations.
  *
  * This strategy is useful if you have a time-based model and always want the run you're operating on to start at a particular step. For example:
  *
@@ -6825,11 +6836,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var ReuseLastInitializedStrategy = function () {
     /**
-     * 
-     * @param {object} [options] 
+     *
+     * @param {object} [options]
      * @property {object[]} [options.initOperation] Operations to execute in the model for initialization to be considered complete. Can be in any of the formats [Run Service's `serial()`](../run-api-service/#serial) supports.
      * @property {object} [options.flag] Flag to set in run after initialization operations are run. You typically would not override this unless you needed to set additional properties as well.
-     * @property {object} [options.scope] 
+     * @property {object} [options.scope]
      * @property {boolean} [options.scope.scopeByUser]  If true, only returns the last run for the user in session. Defaults to true.
      * @property {boolean} [options.scope.scopeByGroup] If true, only returns the last run for the group in session. Defaults to true.
      */
@@ -6886,10 +6897,14 @@ var ReuseLastInitializedStrategy = function () {
                 sort: 'created',
                 direction: 'desc'
             }).then(function (runs) {
-                if (!runs.length) {
+                var latestActiveRun = (runs || []).find(function (run) {
+                    return !run.trashed;
+                });
+                if (!runs.length || !latestActiveRun) {
+                    // If no runs exist or the most recent run is trashed, create a new run
                     return _this2.reset(runService, userSession, options);
                 }
-                return runs[0];
+                return latestActiveRun;
             });
         }
     }]);
@@ -6923,9 +6938,9 @@ var errors = {
 };
 
 /**
- * @param {string} trackingKey 
- * @param {object} userSession 
- * @param {object} metaFilter Additional criteria to filter by 
+ * @param {string} trackingKey
+ * @param {object} userSession
+ * @param {object} metaFilter Additional criteria to filter by
  * @returns {object}
  */
 function makeFilter(trackingKey, userSession, metaFilter) {
@@ -6939,8 +6954,8 @@ function makeFilter(trackingKey, userSession, metaFilter) {
 }
 
 /**
- * @param {RunService} runService 
- * @param {object} filter 
+ * @param {RunService} runService
+ * @param {object} filter
  * @returns {Promise<object[]>}
  */
 function getRunsForFilter(runService, filter) {
@@ -6969,14 +6984,14 @@ function addSettingsToRun(run, settings) {
  *  });
  *  ```
  *  Any runs created with this strategy will have a 'settings' field which returns the current settings for that run (when retreived with `getRun` or `reset`)
- * 
+ *
  * This strategy is used by the Settings Manager to apply class settings for turn-by-turn simulations, but can also be used stand-alone.
  *
  */
 
 var ReuseWithTrackingKeyStrategy = function () {
     /**
-     * @param {object} [options] 
+     * @param {object} [options]
      * @property {object|function():object|function():Promise<object>} settings An object with trackingKey, runlimit, and any other key values; will be passed to `onCreate` function if provided
      * @property {string} settings.trackingKey Key to track runs with
      * @property {string} [settings.runLimit] Attempts to create new runs once limit is reach will return a `RUN_LIMIT_REACHED` error
@@ -7074,7 +7089,8 @@ var ReuseWithTrackingKeyStrategy = function () {
             return this.getSettings(runService, userSession).then(function (settings) {
                 var runFilter = makeFilter(settings.trackingKey, userSession, _this3.options.filter);
                 return getRunsForFilter(runService, runFilter).then(function (runs) {
-                    if (!runs.length) {
+                    if (!runs.length || runs[0].trashed) {
+                        // If no runs exist or the most recent run is trashed, create a new run
                         return _this3.forceCreateRun(runService, userSession, settings, runCreateOptions);
                     }
                     return addSettingsToRun(runs[0], settings);
@@ -7512,7 +7528,7 @@ F.service.Channel = __webpack_require__(32).default;
 
 F.manager.ConsensusManager = __webpack_require__(82).default;
 
-if (true) F.version = "2.10.0"; //eslint-disable-line no-undef
+if (true) F.version = "2.13.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(24);
 
 F.constants = __webpack_require__(16);
@@ -7890,46 +7906,35 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
 /***/ }),
 /* 52 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
 
-  var object = (
-    // #34: CommonJS
-    typeof exports === 'object' && exports !== null &&
-    typeof exports.nodeType !== 'number' ?
-      exports :
-    // #8: web workers
-    typeof self != 'undefined' ?
-      self :
-    // #31: ExtendScript
-      $.global
-  );
+  var object =  true ? exports : typeof self != 'undefined' ? self : // #8: web workers
+  $.global; // #31: ExtendScript
 
   var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
   function InvalidCharacterError(message) {
     this.message = message;
   }
-  InvalidCharacterError.prototype = new Error;
+  InvalidCharacterError.prototype = new Error();
   InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
   // encoder
   // [https://gist.github.com/999166] by [https://github.com/nignag]
-  object.btoa || (
-  object.btoa = function (input) {
+  object.btoa || (object.btoa = function (input) {
     var str = String(input);
     for (
-      // initialize result and counter
-      var block, charCode, idx = 0, map = chars, output = '';
-      // if the next str index does not exist:
-      //   change the mapping table to "="
-      //   check if d has no fractional digits
-      str.charAt(idx | 0) || (map = '=', idx % 1);
-      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-      output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-    ) {
-      charCode = str.charCodeAt(idx += 3/4);
+    // initialize result and counter
+    var block, charCode, idx = 0, map = chars, output = '';
+    // if the next str index does not exist:
+    //   change the mapping table to "="
+    //   check if d has no fractional digits
+    str.charAt(idx | 0) || (map = '=', idx % 1);
+    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+    output += map.charAt(63 & block >> 8 - idx % 1 * 8)) {
+      charCode = str.charCodeAt(idx += 3 / 4);
       if (charCode > 0xFF) {
         throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
       }
@@ -7940,31 +7945,27 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 
   // decoder
   // [https://gist.github.com/1020396] by [https://github.com/atk]
-  object.atob || (
-  object.atob = function (input) {
+  object.atob || (object.atob = function (input) {
     var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
     if (str.length % 4 == 1) {
       throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
     }
     for (
-      // initialize result and counters
-      var bc = 0, bs, buffer, idx = 0, output = '';
-      // get next character
-      buffer = str.charAt(idx++);
-      // character found in table? initialize bit storage and add its ascii value;
-      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-        // and if not first of each 4 characters,
-        // convert the first 8 bits to one ascii character
-        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-    ) {
+    // initialize result and counters
+    var bc = 0, bs, buffer, idx = 0, output = '';
+    // get next character
+    buffer = str.charAt(idx++);
+    // character found in table? initialize bit storage and add its ascii value;
+    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+    // and if not first of each 4 characters,
+    // convert the first 8 bits to one ascii character
+    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0) {
       // try to find character in table (0-63, not found => -1)
       buffer = chars.indexOf(buffer);
     }
     return output;
   });
-
-}());
-
+})();
 
 /***/ }),
 /* 53 */
@@ -9250,7 +9251,7 @@ var PasswordService = function () {
                 subject: 'Please reset your password',
                 projectFullName: 'My Awesome Project'
             });
-      * This will send the following email
+       * This will send the following email
      * 
      * Subject: Please reset your password
      * To: myuserName@gmail.com
@@ -9261,7 +9262,7 @@ var PasswordService = function () {
      * If you did not initiate this request, please ignore this email.
      * 
      * To reset your password, please click the following link: https://forio.com/epicenter/recover/<password recovery token>
-      * @param {string} userName user to reset password for 
+       * @param {string} userName user to reset password for 
      * @param {object} [resetParams] 
      * @param {string} [resetParams.redirectUrl] URL to redirect to after password is reset. Defaults to project root. If relative, it's treated as being relative to project
      * @param {string} [resetParams.subject] Subject for reset password email
@@ -9774,16 +9775,16 @@ var __super = __WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___defau
 
 /**
  * The `reuse-per-session` strategy creates a new run when the current one is not in the browser cookie.
- * 
+ *
  * Using this strategy means that when end users navigate between pages in your project, or refresh their browsers, they will still be working with the same run. However, if end users log out and return to the project at a later date, a new run is created.
  *
  * This strategy is useful if your project is structured such that immediately after a run is created, the model is executed completely (for example, a Vensim model that is stepped to the end as soon as it is created). In contrast, if end users play with your project for an extended period of time, executing the model step by step, the `reuse-across-sessions` strategy is probably a better choice (it allows end users to pick up where they left off, rather than starting from scratch each browser session).
- * 
+ *
  * Specifically, the strategy is:
  *
  * * Check the `sessionKey` cookie.
- *     * This cookie is set by the [Run Manager](../run-manager/) and configurable through its options. 
- *     * If the cookie exists, use the run id stored there. 
+ *     * This cookie is set by the [Run Manager](../run-manager/) and configurable through its options.
+ *     * If the cookie exists, use the run id stored there.
  *     * If the cookie does not exist, create a new run for this end user.
  */
 var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_IMPORTED_MODULE_1__conditional_creation_strategy___default.a, {
@@ -9792,6 +9793,10 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_I
     },
 
     createIf: function (run, headers) {
+        // If user refreshed and the faciliator deleted the run, create a new run
+        if (run.trashed) {
+            return true;
+        }
         // if we are here, it means that the run exists... so we don't need a new one
         return false;
     }
@@ -9818,7 +9823,7 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_I
  * This strategy is useful if end users are using your project for an extended period of time, possibly over several sessions. This is most common in cases where a user of your project executes the model step by step (as opposed to a project where the model is executed completely, for example, a Vensim model that is immediately stepped to the end).
  *
  * Specifically, the strategy is:
- * 
+ *
  * * Check if there are any runs for this end user.
  *     * If there are no runs (either in memory or in the database), create a new one.
  *     * If there are runs, take the latest (most recent) one.
@@ -9855,7 +9860,8 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0_util_inherit___default()(__WEBPACK_IM
             sort: 'created',
             direction: 'desc'
         }).then(function (runs) {
-            if (!runs.length) {
+            if (!runs.length || runs[0].trashed) {
+                // If no runs exist or the most recent run is trashed, create a new run
                 return _this.reset(runService, userSession, options);
             }
             return runs[0];
