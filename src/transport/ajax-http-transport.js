@@ -26,7 +26,7 @@ module.exports = function (config) {
     };
 
     var transportOptions = $.extend({}, defaults, config);
-    
+
     var result = function (d) {
         return ($.isFunction(d)) ? d() : d;
     };
@@ -65,9 +65,9 @@ module.exports = function (config) {
 
         //These params mean affect jQuery behavior, and may be passed in inadvertently since all the different options are merged together
         //FIXME: Do not merge with service options and we won't have this problem
-        const paramsToIgnore = ['password', 'username', 'isLocal', 'type']; 
+        const paramsToIgnore = ['password', 'username', 'isLocal', 'type'];
         const cleaned = omit(options, paramsToIgnore);
-       
+
         //Legacy: jquery .then resolves with 3 different response values, which makes $.when return an array.  remove in 3.0
         return $.ajax(cleaned);
     };

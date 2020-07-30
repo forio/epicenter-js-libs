@@ -1,4 +1,5 @@
 import AuthService from 'service/v3/auth-api-service-v3';
+import MemberService from 'service/v3/member-api-adapter-v3';
 import { rejectPromise } from 'util/index';
 
 import SessionManager from 'store/session-manager';
@@ -27,6 +28,11 @@ export default class AuthManagerV3 {
         const as = new AuthService(opts);
         return as;
     }
+    getMemberService(config) {
+        const opts = $.extend({}, this.serviceOptions, config);
+        const ms = new MemberService(opts);
+        return ms;
+    }
     login(loginParams, options) {
         const overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
         const as = this.getAuthService(overridenServiceOptions);
@@ -45,20 +51,27 @@ export default class AuthManagerV3 {
                 return rejectPromise(code, 'The provided Authorization Code is invalid.');
             } else if (code === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
                 return rejectPromise(code, 'This project requires multi factor authentication.');
-            } 
+            }
             throw err;
 
             // if (err.sta)
             // handle multi group error
             // handle mfa error
         }).then((res)=> {
-            if (res.possibleGroups && res.possibleGroups.length) {
-                return rejectPromise('MULTIPLE_GROUPS', 'User is part of multiple groups for this project. Please choose one', {
-                    possibleGroups: res.possibleGroups
-                });
-            } else if (!res.groupKey) {
+            if (!res.groupKey && !res.multipleGroups) {
                 return rejectPromise('NO_GROUPS', 'User is not a member of a simulation group.');
             }
+            if (!res.groupKey && res.multipleGroups && res.token) {
+                const overridenServiceOptions = $.extend(true, { token: res.token }, this.serviceOptions, options);
+                const ms = this.getMemberService(overridenServiceOptions);
+                return ms.getGroupsForUser().then((groups)=> rejectPromise('MULTIPLE_GROUPS', 'User is part of multiple groups for this project. Please choose one.', {
+                    possibleGroups: groups.map((group)=> {
+                        group.id = group.groupKey;
+                        return group;
+                    }),
+                }));
+            }
+
             const groupInfo = {
                 groupId: res.groupKey,
                 groupName: res.groupName,
@@ -70,7 +83,7 @@ export default class AuthManagerV3 {
                 account: res.accountShortName,
                 project: res.projectShortName,
                 userId: res.userKey,
-                
+
                 groups: [groupInfo],
                 isTeamMember: false,
             });
@@ -88,7 +101,6 @@ export default class AuthManagerV3 {
         sm.removeSession();
         return Promise.resolve();
     }
-
     isLoggedIn() {
         var session = this.getCurrentUserSessionInfo();
         return !!(session && session.userId);
@@ -98,5 +110,4 @@ export default class AuthManagerV3 {
         const sm = new SessionManager(overridenServiceOptions);
         return sm.getSession();
     }
-
 }
