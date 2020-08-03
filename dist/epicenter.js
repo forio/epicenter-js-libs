@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.13.1
+ *         v2.13.2
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -5064,6 +5064,8 @@ module.exports = function (config) {
             }
             if (samesite) {
                 contents.push('samesite=' + samesite);
+            } else if (domain === '.local.forio.com') {
+                contents.push('samesite=lax');
             } else {
                 contents.push('samesite=none');
             }
@@ -7536,7 +7538,7 @@ F.service.Channel = __webpack_require__(32).default;
 
 F.manager.ConsensusManager = __webpack_require__(84).default;
 
-if (true) F.version = "2.13.1"; //eslint-disable-line no-undef
+if (true) F.version = "2.13.2"; //eslint-disable-line no-undef
 F.api = __webpack_require__(24);
 
 F.constants = __webpack_require__(16);
