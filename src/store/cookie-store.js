@@ -90,6 +90,8 @@ module.exports = function (config) {
             }
             if (samesite) {
                 contents.push(`samesite=${samesite}`);
+            } else if (domain === '.local.forio.com') {
+                contents.push('samesite=lax');
             } else {
                 contents.push('samesite=none');
             }
