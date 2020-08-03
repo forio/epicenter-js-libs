@@ -17,8 +17,8 @@ const API_ENDPOINT = 'member/local';
  * ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
  * ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
  * ```
- * 
- * @param {ServiceOptions} config 
+ *
+ * @param {ServiceOptions} config
  * @property {string} [userId] Epicenter user id.
  * @property {string} [groupId] Epicenter group id. Note that this is the group *id*, not the group *name*.
  */
@@ -26,7 +26,7 @@ export default function MemberAPIService(config) {
     const defaults = {
         userId: undefined,
         groupId: undefined,
-        
+
         transport: {}
     };
 
@@ -77,7 +77,7 @@ export default function MemberAPIService(config) {
         *
         * ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
         *
-        * 
+        *
         * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -120,7 +120,7 @@ export default function MemberAPIService(config) {
             httpOptions.url = `${urlConfig.getAPIPath(API_ENDPOINT)}${httpOptions.groupId}`;
             return http.post(params, httpOptions);
         },
-        
+
         /**
         * Retrieve details about one group, including an array of all its members.
         *
@@ -135,7 +135,7 @@ export default function MemberAPIService(config) {
         *
         * ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * 
+        *
         * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -165,7 +165,7 @@ export default function MemberAPIService(config) {
         * ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * 
+        *
         * @param {object} params The end user and group information.
         * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
@@ -184,7 +184,7 @@ export default function MemberAPIService(config) {
         * ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *   groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * 
+        *
         * @param {object} params The end user and group information.
         * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.

@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.13.0
+ *         v2.13.1
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -3297,8 +3297,8 @@ var API_ENDPOINT = 'member/local';
  * ma.getGroupsForUser({ userId: 'b6b313a3-ab84-479c-baea-206f6bff337' });
  * ma.getGroupDetails({ groupId: '00b53308-9833-47f2-b21e-1278c07d53b8' });
  * ```
- * 
- * @param {ServiceOptions} config 
+ *
+ * @param {ServiceOptions} config
  * @property {string} [userId] Epicenter user id.
  * @property {string} [groupId] Epicenter group id. Note that this is the group *id*, not the group *name*.
  */
@@ -3357,7 +3357,7 @@ function MemberAPIService(config) {
         *
         * ma.getGroupsForUser({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c' });
         *
-        * 
+        *
         * @param {string|object} params The user id for the end user. Alternatively, an object with field `userId` and value the user id.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -3417,7 +3417,7 @@ function MemberAPIService(config) {
         *
         * ma.getGroupDetails({ groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * 
+        *
         * @param {string|object} params The group id. Alternatively, an object with field `groupId` and value the group id.
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
@@ -3444,7 +3444,7 @@ function MemberAPIService(config) {
         * ma.makeUserActive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                           groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * 
+        *
         * @param {object} params The end user and group information.
         * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make active.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become active.
@@ -3463,7 +3463,7 @@ function MemberAPIService(config) {
         * ma.makeUserInactive({ userId: '42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *   groupId: '80257a25-aa10-4959-968b-fd053901f72f' });
         *
-        * 
+        *
         * @param {object} params The end user and group information.
         * @param {string|string[]} params.userId The id or list of ids of the end user(s) to make inactive.
         * @param {string} params.groupId The id of the group to which this end user belongs, and in which the end user should become inactive.
@@ -3484,13 +3484,13 @@ function MemberAPIService(config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(53);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__channel_manager__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_inherit___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_util_inherit__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__world_channel_subscribe_world_channel__ = __webpack_require__(55);
 
 
 
@@ -4111,7 +4111,7 @@ var STRATEGY = {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__special_operations__ = __webpack_require__(74);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_run_api_service__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
@@ -4358,7 +4358,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(74);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(75);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6143,7 +6143,7 @@ var TimeAPIService = function () {
 /* unused harmony export objectToPublishable */
 /* unused harmony export publishableToObject */
 /* unused harmony export normalizeParamOptions */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_array_utils__ = __webpack_require__(38);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -6544,19 +6544,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "strategyKeys", function() { return strategyKeys; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__conditional_creation_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__deprecated_new_if_initialized_strategy__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__ = __webpack_require__(69);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__deprecated_new_if_persisted_strategy__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__none_strategy__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__multiplayer_strategy__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reuse_never__ = __webpack_require__(69);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__ = __webpack_require__(70);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reuse_never__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__reuse_per_session__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__reuse_across_sessions__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__reuse_last_initialized__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__reuse_by_tracking_key__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__multiplayer_with_tracking_key__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__use_specific_run_strategy__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__use_specific_run_strategy__ = __webpack_require__(73);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -7497,31 +7497,31 @@ F.service.World = __webpack_require__(11).default;
 F.service.State = __webpack_require__(34).default;
 F.service.User = __webpack_require__(35).default;
 F.service.Member = __webpack_require__(18).default;
-F.service.Asset = __webpack_require__(56).default;
+F.service.Asset = __webpack_require__(57).default;
 F.service.Group = __webpack_require__(31).default;
 F.service.Introspect = __webpack_require__(27).default;
 F.service.Presence = __webpack_require__(33).default;
 F.service.Time = __webpack_require__(36).default;
-F.service.Timer = __webpack_require__(57).default;
-F.service.Password = __webpack_require__(63).default;
+F.service.Timer = __webpack_require__(58).default;
+F.service.Password = __webpack_require__(64).default;
 
-F.service.Account = __webpack_require__(64).default;
+F.service.Account = __webpack_require__(65).default;
 
 F.service.Consensus = __webpack_require__(20).default;
 F.service.ConsensusGroup = __webpack_require__(40).default;
 
-F.service.Project = __webpack_require__(65).default;
+F.service.Project = __webpack_require__(66).default;
 
 F.store.Cookie = __webpack_require__(29);
 F.factory.Store = __webpack_require__(28);
 
-F.manager.ScenarioManager = __webpack_require__(66).default;
+F.manager.ScenarioManager = __webpack_require__(67).default;
 F.manager.RunManager = __webpack_require__(22).default;
-F.manager.User = __webpack_require__(77).default;
+F.manager.User = __webpack_require__(78).default;
 F.manager.AuthManager = __webpack_require__(13).default;
 
 F.v3 = { manager: {}, service: {} };
-F.v3.manager.AuthManager = __webpack_require__(78).default;
+F.v3.manager.AuthManager = __webpack_require__(79).default;
 
 F.manager.WorldManager = __webpack_require__(46).default;
 F.manager.SavedRunsManager = __webpack_require__(23).default;
@@ -7529,14 +7529,14 @@ F.manager.SavedRunsManager = __webpack_require__(23).default;
 var strategies = __webpack_require__(41).default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
 
-F.manager.Settings = __webpack_require__(80).default;
+F.manager.Settings = __webpack_require__(82).default;
 
 F.manager.ChannelManager = __webpack_require__(19).default;
 F.service.Channel = __webpack_require__(32).default;
 
-F.manager.ConsensusManager = __webpack_require__(82).default;
+F.manager.ConsensusManager = __webpack_require__(84).default;
 
-if (true) F.version = "2.13.0"; //eslint-disable-line no-undef
+if (true) F.version = "2.13.1"; //eslint-disable-line no-undef
 F.api = __webpack_require__(24);
 
 F.constants = __webpack_require__(16);
@@ -7916,67 +7916,101 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 /* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-;(function () {
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f) {
 
-  var object =  true ? exports : typeof self != 'undefined' ? self : // #8: web workers
-  $.global; // #31: ExtendScript
+  'use strict';
+
+  /* istanbul ignore else */
+  if (typeof exports === 'object' && exports != null &&
+      typeof exports.nodeType !== 'number') {
+    module.exports = f ();
+  } else if ("function" === 'function' && __webpack_require__(53) != null) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (f),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else {
+    var base64 = f ();
+    var global = typeof self !== 'undefined' ? self : $.global;
+    if (typeof global.btoa !== 'function') global.btoa = base64.btoa;
+    if (typeof global.atob !== 'function') global.atob = base64.atob;
+  }
+
+} (function() {
+
+  'use strict';
 
   var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
   function InvalidCharacterError(message) {
     this.message = message;
   }
-  InvalidCharacterError.prototype = new Error();
+  InvalidCharacterError.prototype = new Error ();
   InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
   // encoder
   // [https://gist.github.com/999166] by [https://github.com/nignag]
-  object.btoa || (object.btoa = function (input) {
-    var str = String(input);
+  function btoa(input) {
+    var str = String (input);
     for (
-    // initialize result and counter
-    var block, charCode, idx = 0, map = chars, output = '';
-    // if the next str index does not exist:
-    //   change the mapping table to "="
-    //   check if d has no fractional digits
-    str.charAt(idx | 0) || (map = '=', idx % 1);
-    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-    output += map.charAt(63 & block >> 8 - idx % 1 * 8)) {
-      charCode = str.charCodeAt(idx += 3 / 4);
+      // initialize result and counter
+      var block, charCode, idx = 0, map = chars, output = '';
+      // if the next str index does not exist:
+      //   change the mapping table to "="
+      //   check if d has no fractional digits
+      str.charAt (idx | 0) || (map = '=', idx % 1);
+      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+      output += map.charAt (63 & block >> 8 - idx % 1 * 8)
+    ) {
+      charCode = str.charCodeAt (idx += 3 / 4);
       if (charCode > 0xFF) {
-        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+        throw new InvalidCharacterError ("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
       }
       block = block << 8 | charCode;
     }
     return output;
-  });
+  }
 
   // decoder
   // [https://gist.github.com/1020396] by [https://github.com/atk]
-  object.atob || (object.atob = function (input) {
-    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
-    if (str.length % 4 == 1) {
-      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+  function atob(input) {
+    var str = (String (input)).replace (/[=]+$/, ''); // #31: ExtendScript bad parse of /=
+    if (str.length % 4 === 1) {
+      throw new InvalidCharacterError ("'atob' failed: The string to be decoded is not correctly encoded.");
     }
     for (
-    // initialize result and counters
-    var bc = 0, bs, buffer, idx = 0, output = '';
-    // get next character
-    buffer = str.charAt(idx++);
-    // character found in table? initialize bit storage and add its ascii value;
-    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-    // and if not first of each 4 characters,
-    // convert the first 8 bits to one ascii character
-    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0) {
+      // initialize result and counters
+      var bc = 0, bs, buffer, idx = 0, output = '';
+      // get next character
+      buffer = str.charAt (idx++); // eslint-disable-line no-cond-assign
+      // character found in table? initialize bit storage and add its ascii value;
+      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+        // and if not first of each 4 characters,
+        // convert the first 8 bits to one ascii character
+        bc++ % 4) ? output += String.fromCharCode (255 & bs >> (-2 * bc & 6)) : 0
+    ) {
       // try to find character in table (0-63, not found => -1)
-      buffer = chars.indexOf(buffer);
+      buffer = chars.indexOf (buffer);
     }
     return output;
-  });
-})();
+  }
+
+  return {btoa: btoa, atob: atob};
+
+}));
+
 
 /***/ }),
 /* 53 */
+/***/ (function(module, exports) {
+
+/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
+module.exports = __webpack_amd_options__;
+
+/* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ }),
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8166,13 +8200,13 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 /* harmony default export */ __webpack_exports__["a"] = (ChannelManager);
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = subscribeToWorldChannel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(55);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__world_channel_constants__ = __webpack_require__(56);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -8307,7 +8341,7 @@ function subscribeToWorldChannel(worldid, channel, session, channelOptions) {
 }
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8347,7 +8381,7 @@ var TOPICS = {
 };
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8675,7 +8709,7 @@ function AssetAdapter(config) {
 }
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8685,8 +8719,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(62);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(60);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(63);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(21);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -9037,20 +9071,20 @@ TimerService.STRATEGY = __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__["a"
 /* harmony default export */ __webpack_exports__["default"] = (TimerService);
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports) {
 
 module.exports = jQuery;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return STRATEGIES; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = getStrategy;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__start_on_first_user__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__start_when_all_users__ = __webpack_require__(62);
 var _list;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -9075,7 +9109,7 @@ function getStrategy(strategy) {
 }
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9092,7 +9126,7 @@ function reduceActions(actions) {
 }
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9122,7 +9156,7 @@ function reduceActions(actions, options) {
 }
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9205,7 +9239,7 @@ function reduceActions(actions, startTime, currentTime) {
 }
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9259,7 +9293,7 @@ var PasswordService = function () {
                 subject: 'Please reset your password',
                 projectFullName: 'My Awesome Project'
             });
-       * This will send the following email
+      * This will send the following email
      * 
      * Subject: Please reset your password
      * To: myuserName@gmail.com
@@ -9270,7 +9304,7 @@ var PasswordService = function () {
      * If you did not initiate this request, please ignore this email.
      * 
      * To reset your password, please click the following link: https://forio.com/epicenter/recover/<password recovery token>
-       * @param {string} userName user to reset password for 
+      * @param {string} userName user to reset password for 
      * @param {object} [resetParams] 
      * @param {string} [resetParams.redirectUrl] URL to redirect to after password is reset. Defaults to project root. If relative, it's treated as being relative to project
      * @param {string} [resetParams.subject] Subject for reset password email
@@ -9320,7 +9354,7 @@ var PasswordService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (PasswordService);
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9376,7 +9410,7 @@ function AccountAPIService(config) {
 }
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9476,7 +9510,7 @@ function ProjectAPIService(config) {
 }
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9488,8 +9522,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(75);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(77);
 // See integration-test-scenario-manager for usage examples
 
 
@@ -9641,7 +9675,7 @@ function ScenarioManager(config) {
 /* harmony default export */ __webpack_exports__["default"] = (ScenarioManager);
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9684,7 +9718,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9730,7 +9764,7 @@ var Strategy = classFrom(ConditionalStrategy, {
 module.exports = Strategy;
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9768,7 +9802,7 @@ Strategy.allowRunIDCache = false;
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9813,7 +9847,7 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0__util_inherit___default()(__WEBPACK_I
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9880,7 +9914,7 @@ var Strategy = __WEBPACK_IMPORTED_MODULE_0_util_inherit___default()(__WEBPACK_IM
 /* harmony default export */ __webpack_exports__["a"] = (Strategy);
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9938,7 +9972,7 @@ var UseSpecificRun = function () {
 /* harmony default export */ __webpack_exports__["a"] = (UseSpecificRun);
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9949,7 +9983,7 @@ function reset(params, options, manager) {
 }
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10005,7 +10039,7 @@ function bulkFetchRecords(fetchFn, options) {
 }
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10057,7 +10091,7 @@ function BaselineStrategy(options) {
 }
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10143,7 +10177,7 @@ ReuseLastUnsaved.requiresAuth = false;
 /* harmony default export */ __webpack_exports__["a"] = (ReuseLastUnsaved);
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10347,18 +10381,20 @@ UserManager.errors = ERROR_TYPES;
 /* harmony default export */ __webpack_exports__["default"] = (UserManager);
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_v3_auth_api_service_v3__ = __webpack_require__(79);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_v3_auth_api_service_v3__ = __webpack_require__(80);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_v3_member_api_adapter_v3__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_index__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 
 
 
@@ -10390,8 +10426,17 @@ var AuthManagerV3 = function () {
             return as;
         }
     }, {
+        key: 'getMemberService',
+        value: function getMemberService(config) {
+            var opts = $.extend({}, this.serviceOptions, config);
+            var ms = new __WEBPACK_IMPORTED_MODULE_1_service_v3_member_api_adapter_v3__["a" /* default */](opts);
+            return ms;
+        }
+    }, {
         key: 'login',
         value: function login(loginParams, options) {
+            var _this = this;
+
             var overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
             var as = this.getAuthService(overridenServiceOptions);
 
@@ -10400,15 +10445,15 @@ var AuthManagerV3 = function () {
                 if (err.responseJSON) err = err.responseJSON;
                 var code = err && err.information && err.information.code;
                 if (code === 'AUTHORIZATION_FAILURE') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Could not login, please check username / password and try again.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'Could not login, please check username / password and try again.');
                 } else if (code === 'PASSWORD_EXPIRATION') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Your password has expired.  Please contact your administrator and request a password reset.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'Your password has expired.  Please contact your administrator and request a password reset.');
                 } else if (code === 'MULTI_FACTOR_AUTHENTICATION_MISSING') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'Multi factor authentication has been enabled for this project.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'Multi factor authentication has been enabled for this project.');
                 } else if (code === 'MULTI_FACTOR_AUTHENTICATION_FAILURE') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'The provided Authorization Code is invalid.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'The provided Authorization Code is invalid.');
                 } else if (code === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])(code, 'This project requires multi factor authentication.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'This project requires multi factor authentication.');
                 }
                 throw err;
 
@@ -10416,13 +10461,22 @@ var AuthManagerV3 = function () {
                 // handle multi group error
                 // handle mfa error
             }).then(function (res) {
-                if (res.possibleGroups && res.possibleGroups.length) {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('MULTIPLE_GROUPS', 'User is part of multiple groups for this project. Please choose one', {
-                        possibleGroups: res.possibleGroups
-                    });
-                } else if (!res.groupKey) {
-                    return Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["c" /* rejectPromise */])('NO_GROUPS', 'User is not a member of a simulation group.');
+                if (!res.groupKey && !res.multipleGroups) {
+                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])('NO_GROUPS', 'User is not a member of a simulation group.');
                 }
+                if (!res.groupKey && res.multipleGroups && res.token) {
+                    var _overridenServiceOptions = $.extend(true, { token: res.token }, _this.serviceOptions, options);
+                    var ms = _this.getMemberService(_overridenServiceOptions);
+                    return ms.getGroupsForUser().then(function (groups) {
+                        return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])('MULTIPLE_GROUPS', 'User is part of multiple groups for this project. Please choose one.', {
+                            possibleGroups: groups.map(function (group) {
+                                group.id = group.groupKey;
+                                return group;
+                            })
+                        });
+                    });
+                }
+
                 var groupInfo = {
                     groupId: res.groupKey,
                     groupName: res.groupName,
@@ -10439,7 +10493,7 @@ var AuthManagerV3 = function () {
                     isTeamMember: false
                 });
 
-                var sm = new __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default.a(overridenServiceOptions);
+                var sm = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(overridenServiceOptions);
                 sm.saveSession(sessionInfo);
 
                 return sessionInfo;
@@ -10449,7 +10503,7 @@ var AuthManagerV3 = function () {
         key: 'logout',
         value: function logout(options) {
             var overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
-            var sm = new __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default.a(overridenServiceOptions);
+            var sm = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(overridenServiceOptions);
             sm.removeSession();
             return Promise.resolve();
         }
@@ -10463,7 +10517,7 @@ var AuthManagerV3 = function () {
         key: 'getCurrentUserSessionInfo',
         value: function getCurrentUserSessionInfo(options) {
             var overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
-            var sm = new __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default.a(overridenServiceOptions);
+            var sm = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(overridenServiceOptions);
             return sm.getSession();
         }
     }]);
@@ -10474,7 +10528,7 @@ var AuthManagerV3 = function () {
 /* harmony default export */ __webpack_exports__["default"] = (AuthManagerV3);
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10511,18 +10565,18 @@ var AuthServiceV3 = function () {
      *
      * @example
      * auth.login({
-        *     userName: 'jsmith',
-        *     password: 'passw0rd',
-        *     account: 'acme-simulations' })
-        * .then(function (token) {
-        *     console.log("user access token is: ", token.access_token);
-        * });
-        *
-        *
-        * @param {{ handle: string, password?: string, groupKey?:string, mfaCode?:Number }} params
-        * @param {Object} [options] Overrides for configuration options.
-        * @returns {Promise}
-        */
+     *     userName: 'jsmith',
+     *     password: 'passw0rd',
+     *     account: 'acme-simulations' })
+     * .then(function (identification) {
+     *     console.log("user access token is: ", identification.token);
+     * });
+     *
+     *
+     * @param {{ handle: string, password?: string, groupKey?:string, mfaCode?:Number }} params
+     * @param {Object} [options] Overrides for configuration options.
+     * @returns {Promise}
+     */
 
 
     _createClass(AuthServiceV3, [{
@@ -10543,13 +10597,54 @@ var AuthServiceV3 = function () {
 /* harmony default export */ __webpack_exports__["a"] = (AuthServiceV3);
 
 /***/ }),
-/* 80 */
+/* 81 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_service_utils__ = __webpack_require__(1);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+var MemberAPIServiceV3 = function () {
+    function MemberAPIServiceV3(config) {
+        _classCallCheck(this, MemberAPIServiceV3);
+
+        var defaults = {
+            server: {
+                versionPath: 'v3'
+            }
+        };
+        var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_1_service_service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: 'group/member' });
+        var http = new __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__["default"](serviceOptions.transport);
+        this.http = http;
+    }
+
+    _createClass(MemberAPIServiceV3, [{
+        key: 'getGroupsForUser',
+        value: function getGroupsForUser(options) {
+            var httpOptions = $.extend(true, {}, this.serviceOptions, options);
+            return this.http.get('', httpOptions);
+        }
+    }]);
+
+    return MemberAPIServiceV3;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (MemberAPIServiceV3);
+
+/***/ }),
+/* 82 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_saved_runs_manager__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_run_strategies_multiplayer_with_tracking_key__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_pubsub__ = __webpack_require__(37);
@@ -10772,7 +10867,7 @@ SettingsManager.actions = actions;
 /* harmony default export */ __webpack_exports__["default"] = (SettingsManager);
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11019,7 +11114,7 @@ var SettingsService = function () {
 /* harmony default export */ __webpack_exports__["a"] = (SettingsService);
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11027,7 +11122,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_world_manager__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_world_api_adapter__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_consensus_api_service_consensus_group_service__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__strategies_mandatory_consensus_strategy__ = __webpack_require__(85);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11087,7 +11182,7 @@ var ConsensusManager = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ConsensusManager);
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

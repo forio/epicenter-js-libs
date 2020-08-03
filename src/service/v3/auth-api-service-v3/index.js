@@ -24,18 +24,18 @@ export default class AuthServiceV3 {
      *
      * @example
      * auth.login({
-        *     userName: 'jsmith',
-        *     password: 'passw0rd',
-        *     account: 'acme-simulations' })
-        * .then(function (token) {
-        *     console.log("user access token is: ", token.access_token);
-        * });
-        *
-        *
-        * @param {{ handle: string, password?: string, groupKey?:string, mfaCode?:Number }} params
-        * @param {Object} [options] Overrides for configuration options.
-        * @returns {Promise}
-        */
+     *     userName: 'jsmith',
+     *     password: 'passw0rd',
+     *     account: 'acme-simulations' })
+     * .then(function (identification) {
+     *     console.log("user access token is: ", identification.token);
+     * });
+     *
+     *
+     * @param {{ handle: string, password?: string, groupKey?:string, mfaCode?:Number }} params
+     * @param {Object} [options] Overrides for configuration options.
+     * @returns {Promise}
+     */
     login(params, options) {
         var httpOptions = $.extend(true, {}, this.serviceOptions, options);
         if (!params || !params.handle) {
