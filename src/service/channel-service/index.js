@@ -7,7 +7,7 @@ var makeName = function (channelName, topic) {
 
 export default class ChannelService {
     /**
-     * @param {object} options 
+     * @param {object} options
      * @property {string} [base] The base topic. This is added as a prefix to all further topics you publish or subscribe to while working with this Channel Service.
      * @property {function(topic): string} [topicResolver]  A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. By default, it just echoes the topic.
      * @property {object} [transport] The instance of `$.cometd` to hook onto. See http://docs.cometd.org/reference/javascript.html for additional background on cometd.
@@ -77,7 +77,7 @@ export default class ChannelService {
      *
      * // Send data to all subscribers of the 'run/variables' topic
      * cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
-     * 
+     *
      * @param  {String} topic Topic to publish to.
      * @param  {*} data  Data to publish to topic.
      * @return {Array | Object} Responses to published data
@@ -108,7 +108,7 @@ export default class ChannelService {
      * @example
      * cs.unsubscribe('sampleToken');
      *
-     * 
+     *
      * @param  {String} token The token for topic is returned when you initially subscribe. Pass it here to unsubscribe from that topic.
      * @return {Object} reference to current instance
      */

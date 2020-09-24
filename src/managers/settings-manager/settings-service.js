@@ -11,8 +11,8 @@ function sanitize(obj) {
  */
 class SettingsService {
     /**
-     * @param {object} opts 
-     * @property {AccountAPIServiceOptions} opts.run Parameters passed on to run service 
+     * @param {object} opts
+     * @property {AccountAPIServiceOptions} opts.run Parameters passed on to run service
      * @property {object} [opts.settings]
      * @property {string} [opts.settings.collection]
      * @property {object | function(): object | function(): Promise<object>} [opts.settings.collection]
@@ -48,7 +48,7 @@ class SettingsService {
                 const lastSettings = settingsList[0] || {};
                 if (lastSettings.isDraft) {
                     return lastSettings;
-                } 
+                }
                 return this.ds.save({});
             });
         }
@@ -73,7 +73,7 @@ class SettingsService {
 
     /**
      * @param {{excludeDrafts: boolean}} [options]
-     * @returns {Promise<object[]>} 
+     * @returns {Promise<object[]>}
      */
     getAll(options) {
         return this.ds.load('', { sort: 'key', direction: 'desc' }).then((settingHistory)=> {
@@ -114,7 +114,7 @@ class SettingsService {
 
     /**
      * Creates new draft settings. Usually used when there's already 'active' settings, and you want to start with a new set without affecting existing runs.
-     * 
+     *
      * @param {{ useDefaults: boolean }} options If `useDefaults` is set, a draft is created with the default settings, else it clones the last available settings (either draft or active)
      * @returns {Promise<object>}
      */
@@ -138,7 +138,7 @@ class SettingsService {
 
     /**
      * Resets draft to defaults. If you need to reset to previous settings, use `createDraft` instead.
-     * 
+     *
      * @returns {Promise<object>}
      */
     resetDraft() {
@@ -147,7 +147,7 @@ class SettingsService {
 
     /**
      * Updates current draft with provided settings. Creates draft if none exist.
-     * 
+     *
      * @param {Object} settings
      * @returns {Promise<object>}
      */
@@ -157,7 +157,7 @@ class SettingsService {
 
     /**
      * Updates current *active* settings.
-     * 
+     *
      * @param {Object} newSettings
      * @returns {Promise<object>}
      */
@@ -173,7 +173,7 @@ class SettingsService {
 
     /**
      * Activates the current settings, and makes it so it can no longer be modified; this will be applied to new runs (if you use the settings strategy)
-     * 
+     *
      * @param {Object} settings
      * @returns {Promise<object>}
      */

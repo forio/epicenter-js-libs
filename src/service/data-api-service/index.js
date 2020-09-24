@@ -11,7 +11,7 @@ const getAPIURL = getURL.bind(null, API_ENDPOINT);
 
 class DataService {
     /**
-     * @param {AccountAPIServiceOptions} config 
+     * @param {AccountAPIServiceOptions} config
      * @property {string} root The name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
      * @property {string} [scope] Determines who has read-write access to this data collection. See above for available scopes.
      */
@@ -56,7 +56,7 @@ class DataService {
      * // request all documents in collection where 'question5' contains the string '.*day'
      * ds.query('', { 'question5': { '$regex': '.*day' } });
      *
-     * 
+     *
      * @param {String} documentID The id of the document to search. Pass the empty string ('') to search the entire collection.
      * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
      * @param {Object} [outputModifier] Available fields include: `sort`, and `direction` (`asc` or `desc`).
@@ -116,7 +116,7 @@ class DataService {
 
     /**
      * Append value to an array data structure within a document
-     * 
+     *
      * @param  {string} documentPath     path to array item
      * @param  {any} val     value to append to array
      * @param  {object} [options] Overrides for configuration options
@@ -187,7 +187,7 @@ class DataService {
      * @example
      * ds.load('user1');
      * ds.load('user1/question3');
-     * 
+     *
      * @param  {String|Object} [documentPath] The id of the data to return. Can be the id of a document, or a path to data within that document. If blank, returns whole collection
      * @param {Object} [outputModifier] Available fields include: `sort`, and `direction` (`asc` or `desc`).
      * @param {Object} [options] Overrides for configuration options.

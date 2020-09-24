@@ -18,13 +18,13 @@ const actions = {
 
 class SettingsManager {
     /**
-     * @param {object} options 
+     * @param {object} options
      * @property {AccountAPIServiceOptions} options.run Parameters to pass on to run service (account / project / model / files etc.)
      * @property {object} [options.settings]
      * @property {string} [options.settings.collection]
      * @property {boolean} [options.multiplayer] Set to true for multiplayer games.
      * @property {boolean} [options.interruptRunsInProgress] Once settings are activated, this determines if existing runs can continue or new runs are forced. If multiplayer=true, this deletes the existing run for each world.
-     * 
+     *
      * @property {object | function(): object | function(): Promise<object>} [options.settings.collection]
      */
     constructor(options) {
@@ -65,7 +65,7 @@ class SettingsManager {
 
     /**
      * Get a cometd channel to subscribe to settings changes. The list of available topics are:
-     * 
+     *
      * | Topic | Description |
      * | ------------- | ------------- |
      * | ALL | All events |
@@ -73,7 +73,7 @@ class SettingsManager {
      * | SETTINGS_DELETED | A settings document (either current or historical)  was deleted |
      * | DRAFT_CREATED | A new draft was created |
      * | DRAFT_UPDATED | A draft document was updated  |
-     * 
+     *
      * @returns {Channel} Channel instance
      */
     getChannel() {
@@ -97,12 +97,13 @@ class SettingsManager {
                 console.warn('getChannel: Unknown subtype', res, meta);
             }
         });
+        this.channel.rawDataChannel = rawDataChannel;
         return this.channel;
     }
 
     /**
-     * Use to get a strategy to use for user-runs. 
-     * 
+     * Use to get a strategy to use for user-runs.
+     *
      * @example
      * var settingsManager = new F.manager.Settings({
      *      run: serviceOptions,
@@ -111,10 +112,10 @@ class SettingsManager {
      *  applySettings: (runService, settings, run)=> {
      *      return run.variables().save(settings); // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
      *  }});
-     * @param {object} options 
+     * @param {object} options
      * @property {function(settings):boolean} [options.allowCreateRun] Use if you want to disallow creating new runs for some combination of settings, for e.g. if the settings are invalid or the simulation is 'closed' to gameplay. Defaults to always allowing.
      * @property {function(RunService, settings, run):void} [options.applySettings] Function to apply settings to given run.
-     * @returns {object} Run Strategy 
+     * @returns {object} Run Strategy
      */
     getUserRunStrategy(options) {
         const defaults = {
@@ -148,7 +149,7 @@ class SettingsManager {
      * @return {SavedRunsManager}
      */
     getSavedRunsManagerForSetting(settingsId) {
-        const runOptions = $.extend(true, {}, this.options.run, { scope: { 
+        const runOptions = $.extend(true, {}, this.options.run, { scope: {
             trackingKey: settingsId
         } });
         const sm = new SavedRunsManager({ run: runOptions, scopeByUser: false });
@@ -157,7 +158,7 @@ class SettingsManager {
 
     /**
      * Helper method to get runs for most recent settings. Runs in the result, will have a `settings` property with the currently active settings set on it.
-     * 
+     *
      * @param {*} savedRunManagerParams See  [SavedRunsManager options](../saved-runs-manager/#getruns-variables-filter-modifiers-) for parameters
      * @return {Promise<object[]>}
      */
@@ -172,7 +173,7 @@ class SettingsManager {
                     return $.extend(true, run, { settings: settings });
                 });
             });
-        }); 
+        });
     }
 }
 

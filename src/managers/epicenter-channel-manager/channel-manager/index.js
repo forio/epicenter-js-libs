@@ -3,7 +3,7 @@ import SessionManager from 'store/session-manager';
 
 /**
  * @constructor
- * @param {object} options 
+ * @param {object} options
  * @property {string} url The Cometd endpoint URL.
  * @property {string} [logLevel] The log level for the channel (logs to console).
  * @property {boolean} [websocketEnabled] Whether websocket support is active. Defaults to `true`, uses long-polling if false
@@ -114,7 +114,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * 
+     *
      * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */

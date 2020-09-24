@@ -111,7 +111,7 @@ var SessionManager = function (managerOptions) {
                  */
                 group: session.groupName,
                 /**
-                 * Alias for group. 
+                 * Alias for group.
                  * @type {String}
                  */
                 groupName: session.groupName, //It's a little weird that it's called groupName in the cookie, but 'group' in all the service options, so normalize for both

@@ -26,7 +26,7 @@ export default function AuthService(config) {
     };
     var serviceOptions = $.extend({}, defaults, config);
     var urlConfig = new ConfigService(serviceOptions).get('server');
-    
+
     var transportOptions = $.extend(true, {}, serviceOptions.transport, {
         url: urlConfig.getAPIPath('authentication')
     });

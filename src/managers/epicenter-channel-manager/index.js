@@ -80,7 +80,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * 
+     *
      * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
@@ -150,7 +150,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * This is typically used together with the [World Manager](../world-manager).
      *
      * The list of available topics available to subscribe to are:
-     * 
+     *
      * | Topic | Description |
      * | ------------- | ------------- |
      * | ALL | All events |
@@ -165,7 +165,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * | ROLES_ASSIGN | Role assignments only |
      * | ROLES_UNASSIGN | Role unassignments |
      * | CONSENSUS | Consensus topics |
-     * 
+     *
      * @example
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
@@ -191,11 +191,11 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             throw new Error('Please specify a world id');
         }
         var session = this.sessionManager.getMergedOptions(this.options);
-    
+
         groupName = getFromSessionOrError(groupName, 'groupName', session);
         var account = getFromSessionOrError('', 'account', session);
         var project = getFromSessionOrError('', 'project', session);
-    
+
         var baseTopic = ['/world', account, project, groupName, worldid].join('/');
         var channel = __super.getChannel.call(this, { base: baseTopic });
 
@@ -205,7 +205,7 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
             project: project,
         });
     },
-    
+
     /**
      * Create and return a publish/subscribe channel (from the underlying [Channel Manager](../channel-manager/)) for the current [end user](../../../glossary/#users) in that user's current [world](../../../glossary/#world).
      *
