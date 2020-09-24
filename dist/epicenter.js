@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.13.2
+ *         v2.13.3
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -337,7 +337,7 @@ var SessionManager = function (managerOptions) {
                  */
                 group: session.groupName,
                 /**
-                 * Alias for group. 
+                 * Alias for group.
                  * @type {String}
                  */
                 groupName: session.groupName, //It's a little weird that it's called groupName in the cookie, but 'group' in all the service options, so normalize for both
@@ -2978,7 +2978,7 @@ var getAPIURL = __WEBPACK_IMPORTED_MODULE_2__data_service_scope_utils__["c" /* g
 
 var DataService = function () {
     /**
-     * @param {AccountAPIServiceOptions} config 
+     * @param {AccountAPIServiceOptions} config
      * @property {string} root The name of the collection. If you have multiple collections within each of your projects, you can also pass the collection name as an option for each call.
      * @property {string} [scope] Determines who has read-write access to this data collection. See above for available scopes.
      */
@@ -3025,7 +3025,7 @@ var DataService = function () {
      * // request all documents in collection where 'question5' contains the string '.*day'
      * ds.query('', { 'question5': { '$regex': '.*day' } });
      *
-     * 
+     *
      * @param {String} documentID The id of the document to search. Pass the empty string ('') to search the entire collection.
      * @param {Object} query The query object. For exact matching, this object contains the field name and field value to match. For matching based on comparison, this object contains the field name and the comparison expression. For matching based on logical operators, this object contains an expression using MongoDB syntax. See the underlying [Data API](../../../rest_apis/data_api/#searching) for additional examples.
      * @param {Object} [outputModifier] Available fields include: `sort`, and `direction` (`asc` or `desc`).
@@ -3092,7 +3092,7 @@ var DataService = function () {
 
         /**
          * Append value to an array data structure within a document
-         * 
+         *
          * @param  {string} documentPath     path to array item
          * @param  {any} val     value to append to array
          * @param  {object} [options] Overrides for configuration options
@@ -3169,7 +3169,7 @@ var DataService = function () {
          * @example
          * ds.load('user1');
          * ds.load('user1/question3');
-         * 
+         *
          * @param  {String|Object} [documentPath] The id of the data to return. Can be the id of a document, or a path to data within that document. If blank, returns whole collection
          * @param {Object} [outputModifier] Available fields include: `sort`, and `direction` (`asc` or `desc`).
          * @param {Object} [options] Overrides for configuration options.
@@ -3573,7 +3573,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * 
+     *
      * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
@@ -3644,7 +3644,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      * This is typically used together with the [World Manager](../world-manager).
      *
      * The list of available topics available to subscribe to are:
-     * 
+     *
      * | Topic | Description |
      * | ------------- | ------------- |
      * | ALL | All events |
@@ -3659,7 +3659,7 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      * | ROLES_ASSIGN | Role assignments only |
      * | ROLES_UNASSIGN | Role unassignments |
      * | CONSENSUS | Consensus topics |
-     * 
+     *
      * @example
      *     var cm = new F.manager.ChannelManager();
      *     var worldManager = new F.manager.WorldManager({
@@ -5340,7 +5340,7 @@ var makeName = function (channelName, topic) {
 
 var ChannelService = function () {
     /**
-     * @param {object} options 
+     * @param {object} options
      * @property {string} [base] The base topic. This is added as a prefix to all further topics you publish or subscribe to while working with this Channel Service.
      * @property {function(topic): string} [topicResolver]  A function that processes all 'topics' passed into the `publish` and `subscribe` methods. This is useful if you want to implement your own serialize functions for converting custom objects to topic names. By default, it just echoes the topic.
      * @property {object} [transport] The instance of `$.cometd` to hook onto. See http://docs.cometd.org/reference/javascript.html for additional background on cometd.
@@ -5416,7 +5416,7 @@ var ChannelService = function () {
          *
          * // Send data to all subscribers of the 'run/variables' topic
          * cs.publish('/acme-simulations/supply-chain-game/fall-seminar/run/variables', { price: 50 });
-         * 
+         *
          * @param  {String} topic Topic to publish to.
          * @param  {*} data  Data to publish to topic.
          * @return {Array | Object} Responses to published data
@@ -5449,7 +5449,7 @@ var ChannelService = function () {
          * @example
          * cs.unsubscribe('sampleToken');
          *
-         * 
+         *
          * @param  {String} token The token for topic is returned when you initially subscribe. Pass it here to unsubscribe from that topic.
          * @return {Object} reference to current instance
          */
@@ -7538,7 +7538,7 @@ F.service.Channel = __webpack_require__(32).default;
 
 F.manager.ConsensusManager = __webpack_require__(84).default;
 
-if (true) F.version = "2.13.2"; //eslint-disable-line no-undef
+if (true) F.version = "2.13.3"; //eslint-disable-line no-undef
 F.api = __webpack_require__(24);
 
 F.constants = __webpack_require__(16);
@@ -8024,7 +8024,7 @@ module.exports = __webpack_amd_options__;
 
 /**
  * @constructor
- * @param {object} options 
+ * @param {object} options
  * @property {string} url The Cometd endpoint URL.
  * @property {string} [logLevel] The log level for the channel (logs to console).
  * @property {boolean} [websocketEnabled] Whether websocket support is active. Defaults to `true`, uses long-polling if false
@@ -8134,7 +8134,7 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
      *      channel.subscribe('topic', callback);
      *      channel.publish('topic', { myData: 100 });
      *
-     * 
+     *
      * @param {Object|String} [options] If string, assumed to be the base channel url. If object, assumed to be configuration options for the constructor.
      * @return {Channel} Channel instance
      */
@@ -10677,13 +10677,13 @@ var actions = {
 
 var SettingsManager = function () {
     /**
-     * @param {object} options 
+     * @param {object} options
      * @property {AccountAPIServiceOptions} options.run Parameters to pass on to run service (account / project / model / files etc.)
      * @property {object} [options.settings]
      * @property {string} [options.settings.collection]
      * @property {boolean} [options.multiplayer] Set to true for multiplayer games.
      * @property {boolean} [options.interruptRunsInProgress] Once settings are activated, this determines if existing runs can continue or new runs are forced. If multiplayer=true, this deletes the existing run for each world.
-     * 
+     *
      * @property {object | function(): object | function(): Promise<object>} [options.settings.collection]
      */
     function SettingsManager(options) {
@@ -10728,7 +10728,7 @@ var SettingsManager = function () {
 
     /**
      * Get a cometd channel to subscribe to settings changes. The list of available topics are:
-     * 
+     *
      * | Topic | Description |
      * | ------------- | ------------- |
      * | ALL | All events |
@@ -10736,7 +10736,7 @@ var SettingsManager = function () {
      * | SETTINGS_DELETED | A settings document (either current or historical)  was deleted |
      * | DRAFT_CREATED | A new draft was created |
      * | DRAFT_UPDATED | A draft document was updated  |
-     * 
+     *
      * @returns {Channel} Channel instance
      */
 
@@ -10766,12 +10766,13 @@ var SettingsManager = function () {
                     console.warn('getChannel: Unknown subtype', res, meta);
                 }
             });
+            this.channel.rawDataChannel = rawDataChannel;
             return this.channel;
         }
 
         /**
-         * Use to get a strategy to use for user-runs. 
-         * 
+         * Use to get a strategy to use for user-runs.
+         *
          * @example
          * var settingsManager = new F.manager.Settings({
          *      run: serviceOptions,
@@ -10780,10 +10781,10 @@ var SettingsManager = function () {
          *  applySettings: (runService, settings, run)=> {
          *      return run.variables().save(settings); // This example assumes all the settings are model variables, while they're typically a combination of model variables and run metadata (name / description etc.) and may involve calls to rs.save() in addition.
          *  }});
-         * @param {object} options 
+         * @param {object} options
          * @property {function(settings):boolean} [options.allowCreateRun] Use if you want to disallow creating new runs for some combination of settings, for e.g. if the settings are invalid or the simulation is 'closed' to gameplay. Defaults to always allowing.
          * @property {function(RunService, settings, run):void} [options.applySettings] Function to apply settings to given run.
-         * @returns {object} Run Strategy 
+         * @returns {object} Run Strategy
          */
 
     }, {
@@ -10836,7 +10837,7 @@ var SettingsManager = function () {
 
         /**
          * Helper method to get runs for most recent settings. Runs in the result, will have a `settings` property with the currently active settings set on it.
-         * 
+         *
          * @param {*} savedRunManagerParams See  [SavedRunsManager options](../saved-runs-manager/#getruns-variables-filter-modifiers-) for parameters
          * @return {Promise<object[]>}
          */
@@ -10894,8 +10895,8 @@ function sanitize(obj) {
 
 var SettingsService = function () {
     /**
-     * @param {object} opts 
-     * @property {AccountAPIServiceOptions} opts.run Parameters passed on to run service 
+     * @param {object} opts
+     * @property {AccountAPIServiceOptions} opts.run Parameters passed on to run service
      * @property {object} [opts.settings]
      * @property {string} [opts.settings.collection]
      * @property {object | function(): object | function(): Promise<object>} [opts.settings.collection]
@@ -10967,7 +10968,7 @@ var SettingsService = function () {
 
         /**
          * @param {{excludeDrafts: boolean}} [options]
-         * @returns {Promise<object[]>} 
+         * @returns {Promise<object[]>}
          */
 
     }, {
@@ -11021,7 +11022,7 @@ var SettingsService = function () {
 
         /**
          * Creates new draft settings. Usually used when there's already 'active' settings, and you want to start with a new set without affecting existing runs.
-         * 
+         *
          * @param {{ useDefaults: boolean }} options If `useDefaults` is set, a draft is created with the default settings, else it clones the last available settings (either draft or active)
          * @returns {Promise<object>}
          */
@@ -11052,7 +11053,7 @@ var SettingsService = function () {
 
         /**
          * Resets draft to defaults. If you need to reset to previous settings, use `createDraft` instead.
-         * 
+         *
          * @returns {Promise<object>}
          */
 
@@ -11064,7 +11065,7 @@ var SettingsService = function () {
 
         /**
          * Updates current draft with provided settings. Creates draft if none exist.
-         * 
+         *
          * @param {Object} settings
          * @returns {Promise<object>}
          */
@@ -11077,7 +11078,7 @@ var SettingsService = function () {
 
         /**
          * Updates current *active* settings.
-         * 
+         *
          * @param {Object} newSettings
          * @returns {Promise<object>}
          */
@@ -11098,7 +11099,7 @@ var SettingsService = function () {
 
         /**
          * Activates the current settings, and makes it so it can no longer be modified; this will be applied to new runs (if you use the settings strategy)
-         * 
+         *
          * @param {Object} settings
          * @returns {Promise<object>}
          */
