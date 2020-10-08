@@ -65,7 +65,7 @@ describe('Auth Manager', function () {
                 active: true
             }
         ];
-            
+
         function getResponse() {
             var singleGroup = [
                 {
@@ -154,11 +154,11 @@ describe('Auth Manager', function () {
 
         it('should fail when the user has multiple groups', function () {
             multipleGroupsResponse = true;
-            var sucessSpy = sinon.spy(function (p) { 
-                return $.Deferred().resolve(p).promise(); 
+            var sucessSpy = sinon.spy(function (p) {
+                return $.Deferred().resolve(p).promise();
             });
-            var failSpy = sinon.spy(function (p) { 
-                return $.Deferred().resolve(p).promise(); 
+            var failSpy = sinon.spy(function (p) {
+                return $.Deferred().resolve(p).promise();
             });
             return am.login({ userName: 'test', password: 'test' }).then(sucessSpy, failSpy).then(function () {
                 sucessSpy.should.not.have.been.called;
@@ -172,11 +172,11 @@ describe('Auth Manager', function () {
         });
         it('should fail when the user belongs to no groups', function () {
             noGroupResponse = true;
-            var sucessSpy = sinon.spy(function (p) { 
-                return $.Deferred().resolve(p).promise(); 
+            var sucessSpy = sinon.spy(function (p) {
+                return $.Deferred().resolve(p).promise();
             });
-            var failSpy = sinon.spy(function (p) { 
-                return $.Deferred().resolve(p).promise(); 
+            var failSpy = sinon.spy(function (p) {
+                return $.Deferred().resolve(p).promise();
             });
             return am.login({ userName: 'test', password: 'test' }).then(sucessSpy, failSpy).then(function () {
                 sucessSpy.should.not.have.been.called;
@@ -202,11 +202,11 @@ describe('Auth Manager', function () {
 
         // it('should not work when a wrong group is used', function () {
         //     multipleGroupsResponse = true;
-        //     var sucessSpy = sinon.spy(function (p) { 
-        //         return $.Deferred().resolve(p).promise(); 
+        //     var sucessSpy = sinon.spy(function (p) {
+        //         return $.Deferred().resolve(p).promise();
         //     });
-        //     var failSpy = sinon.spy(function (p) { 
-        //         return $.Deferred().resolve(p).promise(); 
+        //     var failSpy = sinon.spy(function (p) {
+        //         return $.Deferred().resolve(p).promise();
         //     });
         //     return am.login({ userName: 'test', password: 'test', groupId: 'wrong-id' }).then(sucessSpy, failSpy).then(function (data) {
         //         sucessSpy.should.not.have.been.called;
@@ -227,24 +227,24 @@ describe('Auth Manager', function () {
                 var session = am.getCurrentUserSessionInfo();
                 session.groupName.should.equal('rv-test');
             });
-                
+
         });
 
         it('should fail with the list of groups on a team member login with no group', function () {
             multipleGroupsResponse = true;
             teamMemberResponse = true;
 
-            var sucessSpy = sinon.spy(function (p) { 
-                return $.Deferred().resolve(p).promise(); 
+            var sucessSpy = sinon.spy(function (p) {
+                return $.Deferred().resolve(p).promise();
             });
-            var failSpy = sinon.spy(function (p) { 
-                return $.Deferred().resolve(p).promise(); 
+            var failSpy = sinon.spy(function (p) {
+                return $.Deferred().resolve(p).promise();
             });
 
             return am.login({ userName: 'test', password: 'test' }).then(sucessSpy, failSpy).then(function (data) {
                 sucessSpy.should.not.have.been.called;
                 failSpy.should.have.been.calledOnce;
-                    
+
                 var req = server.requests.pop();
                 req.method.toUpperCase().should.equal('GET');
                 req.url.should.match(/https:\/\/(.*)\/(.*)\/group\/local\/?/);
@@ -265,7 +265,7 @@ describe('Auth Manager', function () {
                 am.isLoggedIn().should.equal(true);
             });
         });
-        it('should return true after logging out', function () {
+        it('should return false after logging out', function () {
             return am.logout().then(function () {
                 am.isLoggedIn().should.equal(false);
             });
@@ -290,7 +290,7 @@ describe('Auth Manager', function () {
                 spyCall = cookie.set.getCall(1);
                 spyCall.args[0].should.match(/epicenter-scenario=; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=\.forio\.com; path=\/app\/accountName\/projectName/);
                 done();
-            }).fail(function () {
+            }).fail(function (e) {
                 done(new Error('Login should not fail'));
             });
         });
@@ -372,7 +372,7 @@ describe('Auth Manager', function () {
                 session.groups['test-project'].groupName.should.equal('rv-test2');
                 session.groups['test-project'].groupId.should.equal('groupId');
                 session.groups['test-project'].isFac.should.be.false;
-                    
+
                 am.sessionManager.removeSession();
                 done();
             }).fail(function () {
@@ -400,7 +400,7 @@ describe('Auth Manager', function () {
                 session.groups['test-project2'].groupName.should.equal('rv-test2');
                 session.groups['test-project2'].groupId.should.equal('groupId');
                 session.groups['test-project2'].isFac.should.be.true;
-                    
+
                 am.sessionManager.removeSession();
                 done();
             }).fail(function () {
@@ -423,7 +423,7 @@ describe('Auth Manager', function () {
                 session.groups.projectName.groupName.should.equal('rv-test2');
                 session.groups.projectName.groupId.should.equal('groupId');
                 session.groups.projectName.isFac.should.be.false;
-                    
+
                 am.sessionManager.removeSession();
                 done();
             }).fail(function () {

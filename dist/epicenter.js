@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.13.3
+ *         v2.13.4
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -292,6 +292,13 @@ var SessionManager = function (managerOptions) {
             Object.keys(keyNames).forEach(function (cookieKey) {
                 var cookieName = keyNames[cookieKey];
                 store.remove(cookieName);
+                document.cookie.split('; ').map(function (c) {
+                    return c.split('=')[0] || '';
+                }).filter(function (c) {
+                    return c.indexOf(cookieName) === 0;
+                }).forEach(function (cookieName) {
+                    return store.remove(cookieName);
+                });
             });
             return true;
         },
@@ -7538,7 +7545,7 @@ F.service.Channel = __webpack_require__(32).default;
 
 F.manager.ConsensusManager = __webpack_require__(84).default;
 
-if (true) F.version = "2.13.3"; //eslint-disable-line no-undef
+if (true) F.version = "2.13.4"; //eslint-disable-line no-undef
 F.api = __webpack_require__(24);
 
 F.constants = __webpack_require__(16);
