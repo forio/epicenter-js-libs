@@ -67,7 +67,7 @@ var SessionManager = function (managerOptions) {
                 store.remove(cookieName);
                 document.cookie.split('; ')
                     .map((c)=> c.split('=')[0] || '')
-                    .filter((c)=> c.startsWith(cookieName))
+                    .filter((c)=> c.indexOf(cookieName) === 0)
                     .forEach((cookieName)=> store.remove(cookieName));
             });
             return true;
