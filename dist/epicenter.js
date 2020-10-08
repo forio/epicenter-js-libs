@@ -295,7 +295,7 @@ var SessionManager = function (managerOptions) {
                 document.cookie.split('; ').map(function (c) {
                     return c.split('=')[0] || '';
                 }).filter(function (c) {
-                    return c.startsWith(cookieName);
+                    return c.indexOf(cookieName) === 0;
                 }).forEach(function (cookieName) {
                     return store.remove(cookieName);
                 });

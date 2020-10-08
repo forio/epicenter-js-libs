@@ -284,7 +284,6 @@ describe('Auth Manager', function () {
                     domain: '.forio.com'
                 }
             });
-            console.log('LOGIGNGINGINGOUTUTTUTU');
             am.logout().then(function (response) {
                 var spyCall = cookie.set.getCall(0);
                 spyCall.args[0].should.match(/epicenterjs\.session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=\.forio\.com; path=\/app\/accountName\/projectName/);
