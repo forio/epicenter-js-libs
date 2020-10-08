@@ -65,6 +65,10 @@ var SessionManager = function (managerOptions) {
             Object.keys(keyNames).forEach(function (cookieKey) {
                 var cookieName = keyNames[cookieKey];
                 store.remove(cookieName);
+                document.cookie.split('; ')
+                    .map((c)=> c.split('=')[0] || '')
+                    .filter((c)=> c.startsWith(cookieName))
+                    .forEach((cookieName)=> store.remove(cookieName));
             });
             return true;
         },
