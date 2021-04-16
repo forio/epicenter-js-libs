@@ -1,3 +1,39 @@
+<a name="2.13.5"></a>
+### 2.13.5
+This is a bug fix release.
+
+### Bug Fixes
+- The v3 login component now correctly converts the v3 user keys to v2 user ids.  For early users
+  these are the same but for recently created users these may be different.
+
+<a name="2.13.4"></a>
+### 2.13.4
+This is a bug fix release.
+
+### Bug Fixes
+- Fully remove all session cookies when logging out.  Previously did not remove epicenter-scenario cookie.
+
+<a name="2.13.3"></a>
+### 2.13.3
+This is a minor release.
+
+### Improvements
+-- expose rawDataChannel for settingsManager APIs.
+
+<a name="2.13.2"></a>
+### 2.13.2
+This is a minor release.
+
+### Bug Fixes
+-- Fix the samesite cookie setting to work with local development.
+
+<a name="2.13.1"></a>
+### 2.13.1
+This is a minor release.
+
+### Bug Fixes
+-- Use the v3 member API with multiple groups.
+
 <a name="2.13.0"></a>
 ### 2.13.0
 
