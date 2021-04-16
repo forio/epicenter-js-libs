@@ -10524,15 +10524,16 @@ var AuthManagerV3 = function () {
                 if (!res.v3UserKey) {
                     return res;
                 } else {
-                    if (!Array.isArray(res.v3UserKey) || res.v3UserKey.length === 0) {
-                        var resp = { status: 401, statusMessage: 'No user id found.' };
-                        return Promise.reject(resp);
-                    }
-
                     // get v2 user id based on v3 user key
                     var _overridenServiceOptions2 = $.extend(true, { token: res.auth_token }, _this.serviceOptions, options);
                     var us = _this.getUserService(_overridenServiceOptions2);
-                    return us.translateV3UserKeys([!res.v3UserKey]).then(function (userIdList) {
+                    return us.translateV3UserKeys([res.v3UserKey]).then(function (userIdList) {
+
+                        if (!Array.isArray(userIdList) || userIdList.length === 0) {
+                            var resp = { status: 401, statusMessage: 'No user id found.' };
+                            return Promise.reject(resp);
+                        }
+
                         res.userId = userIdList[0];
                         var sm = new __WEBPACK_IMPORTED_MODULE_4_store_session_manager___default.a(_overridenServiceOptions2);
                         sm.saveSession(res);

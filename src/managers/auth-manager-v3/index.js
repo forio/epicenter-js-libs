@@ -101,15 +101,16 @@ export default class AuthManagerV3 {
                 return res;
 
             } else {
-                if (!Array.isArray(res.v3UserKey) || res.v3UserKey.length === 0) {
-                    var resp = { status: 401, statusMessage: 'No user id found.' };
-                    return Promise.reject(resp);
-                }
-
                 // get v2 user id based on v3 user key
                 const overridenServiceOptions = $.extend(true, { token: res.auth_token }, this.serviceOptions, options);
                 const us = this.getUserService(overridenServiceOptions);
-                return us.translateV3UserKeys([!res.v3UserKey]).then((userIdList)=> {
+                return us.translateV3UserKeys([res.v3UserKey]).then((userIdList)=> {
+
+                    if (!Array.isArray(userIdList) || userIdList.length === 0) {
+                        var resp = { status: 401, statusMessage: 'No user id found.' };
+                        return Promise.reject(resp);
+                    }
+
                     res.userId = userIdList[0];
                     const sm = new SessionManager(overridenServiceOptions);
                     sm.saveSession(res);
