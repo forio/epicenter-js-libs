@@ -146,7 +146,23 @@ export default function UserAPIAdapter(config) {
                 }).promise();
             }
             return http.post(sortedUsers.valid, httpOptions);
+        },
+
+        translateV3UserKeys: function (v3UserKeyList, options) {
+            if (!v3UserKeyList || !Array.isArray(v3UserKeyList) || v3UserKeyList.length === 0) {
+                var resp = { status: 401, statusMessage: 'No user keys specified.' };
+                return Promise.reject(resp);
+            }
+
+            var httpOptions = $.extend(true, {},
+                serviceOptions,
+                options,
+                { url: urlConfig.getAPIPath(API_ENDPOINT) + '/translate' }
+            );
+
+            return http.post(v3UserKeyList, httpOptions);
         }
+
     };
 
     $.extend(this, publicAPI);

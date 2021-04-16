@@ -1,5 +1,6 @@
 import AuthService from 'service/v3/auth-api-service-v3';
 import MemberService from 'service/v3/member-api-adapter-v3';
+import UserService from 'service/user-api-adapter';
 import { rejectPromise } from 'util/index';
 
 import SessionManager from 'store/session-manager';
@@ -32,6 +33,11 @@ export default class AuthManagerV3 {
         const opts = $.extend({}, this.serviceOptions, config);
         const ms = new MemberService(opts);
         return ms;
+    }
+    getUserService(config) {
+        const opts = $.extend({}, this.serviceOptions, config);
+        const us = new UserService(opts);
+        return us;
     }
     login(loginParams, options) {
         const overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
@@ -70,28 +76,47 @@ export default class AuthManagerV3 {
                         return group;
                     }),
                 }));
+            } else {
+                const groupInfo = {
+                    groupId: res.groupKey,
+                    groupName: res.groupName,
+                    isFac: res.groupRole && res.groupRole !== 'PARTICIPANT'
+                };
+                const sessionInfo = Object.assign({}, groupInfo, {
+                    auth_token: res.session,
+                    userName: res.userHandle,
+                    account: res.accountShortName,
+                    project: res.projectShortName,
+                    v3UserKey: res.userKey,
+
+                    groups: [groupInfo],
+                    isTeamMember: false,
+                });
+                return sessionInfo;
             }
+        }).then((res)=> {
 
-            const groupInfo = {
-                groupId: res.groupKey,
-                groupName: res.groupName,
-                isFac: res.groupRole && res.groupRole !== 'PARTICIPANT'
-            };
-            const sessionInfo = Object.assign({}, groupInfo, {
-                auth_token: res.session,
-                userName: res.userHandle,
-                account: res.accountShortName,
-                project: res.projectShortName,
-                userId: res.userKey,
+            // if res is group info, just return
+            if (!res.v3UserKey) {
+                return res;
 
-                groups: [groupInfo],
-                isTeamMember: false,
-            });
+            } else {
+                // get v2 user id based on v3 user key
+                const overridenServiceOptions = $.extend(true, { token: res.auth_token }, this.serviceOptions, options);
+                const us = this.getUserService(overridenServiceOptions);
+                return us.translateV3UserKeys([res.v3UserKey]).then((userIdList)=> {
 
-            const sm = new SessionManager(overridenServiceOptions);
-            sm.saveSession(sessionInfo);
+                    if (!Array.isArray(userIdList) || userIdList.length === 0) {
+                        var resp = { status: 401, statusMessage: 'No user id found.' };
+                        return Promise.reject(resp);
+                    }
 
-            return sessionInfo;
+                    res.userId = userIdList[0];
+                    const sm = new SessionManager(overridenServiceOptions);
+                    sm.saveSession(res);
+                    return res;
+                });
+            }
         });
     }
 
