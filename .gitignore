@@ -55,3 +55,4 @@ coverage/
 **/.DS_Store
 
 *.orig
+package.lock
