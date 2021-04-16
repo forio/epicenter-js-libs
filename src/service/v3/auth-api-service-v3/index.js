@@ -44,4 +44,19 @@ export default class AuthServiceV3 {
         }
         return this.http.post(params, httpOptions);
     }
+
+    /**
+     * Translate v3 user keys to v2 user ids.
+     *
+     * @param keys
+     * @param options
+     */
+    translateUserKeys(keys, options) {
+        var httpOptions = $.extend(true, {}, this.serviceOptions, options);
+        if (!keys || keys.length == 0) {
+            var resp = { status: 401, statusMessage: 'No user keys specified.' };
+            return Promise.reject(resp);
+        }
+        return
+    }
 }
