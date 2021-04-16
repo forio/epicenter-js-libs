@@ -77,7 +77,7 @@ var F =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__);
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var transport = (isNode) ? require('./node-http-transport') : require('./ajax-http-transport');
@@ -228,7 +228,7 @@ function ensureKeysPresent(obj, keysList, context) {
 
 
 var keyNames = __webpack_require__(16);
-var StorageFactory = __webpack_require__(28);
+var StorageFactory = __webpack_require__(29);
 var optionUtils = __webpack_require__(49);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
@@ -931,8 +931,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_store_session_manager__);
 
@@ -1601,7 +1601,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldAPIAdapter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(1);
@@ -2373,9 +2373,9 @@ module.exports = Strategy;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
@@ -2793,7 +2793,7 @@ var NoRunStrategy = function () {
 "use strict";
 
 
-var epiVersion = __webpack_require__(24);
+var epiVersion = __webpack_require__(25);
 
 function isLocalHost(host) {
     var isLocal = !host || //phantomjs
@@ -4094,6 +4094,179 @@ function ConsensusService(config) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = UserAPIAdapter;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(10);
+
+
+
+
+/**
+ * @description
+ * 
+ * ## User API Adapter
+ *
+ * The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
+ *
+ * Example:
+ *```js
+ * var ua = new F.service.User({
+ *     account: 'acme-simulations',
+ *     token: 'user-or-project-access-token'
+ * });
+ * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+ * ua.get({ userName: 'jsmith' });
+ * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+ *             '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+ * ```
+ * 
+ * @param {AccountAPIServiceOptions} config 
+ */
+function UserAPIAdapter(config) {
+    var API_ENDPOINT = 'user';
+
+    var defaults = {
+        account: undefined,
+        token: undefined,
+        transport: {}
+    };
+
+    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
+    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["d" /* getURLConfig */])(serviceOptions);
+    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
+    var publicAPI = {
+
+        /**
+        * Retrieve details about particular end users in your team, based on user name or user id.
+        *
+        * @example
+        * var ua = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * ua.get({ userName: 'jsmith' });
+        * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
+        *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
+        *
+        * 
+        * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
+        * @param {object} [options] Overrides for configuration options.
+        * @return {Promise}
+        */
+        get: function (filter, options) {
+            filter = filter || {};
+
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            function toIdFilters(id) {
+                if (!id) return '';
+
+                var qs = Array.isArray(id) ? id : [id];
+                return 'id=' + qs.join('&id=');
+            }
+
+            var query = filter.userName ? { q: filter.userName } : {}; // API only supports filtering by username
+            var params = ['account=' + httpOptions.account, toIdFilters(filter.id), Object(__WEBPACK_IMPORTED_MODULE_2_util_query_util__["toQueryFormat"])(query)].join('&');
+
+            // special case for queries with large number of ids
+            // make it as a post with GET semantics
+            var threshold = 30;
+            if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
+                httpOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
+                return http.post({ id: filter.id }, httpOptions);
+            } else {
+                return http.get(params, httpOptions);
+            }
+        },
+
+        /**
+        * Retrieve details about a single end user in your team, based on user id.
+        *
+        * @example
+        * var ua = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
+        *
+        * 
+        * @param {string} userId The user id for the end user in your team.
+        * @param {object} [options] Overrides for configuration options.
+        * @return {Promise}
+        */
+        getById: function (userId, options) {
+            return publicAPI.get({ id: userId }, options);
+        },
+
+        /**
+        * Upload list of users to current account
+        *
+        * @example
+        * var us = new F.service.User({
+        *     account: 'acme-simulations',
+        * });
+        * us.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
+        *       
+        * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
+        * @param {object} [options] Overrides for configuration options.
+        * @returns {JQuery.Promise}
+        */
+        createUsers: function (userList, options) {
+            if (!userList || !Array.isArray(userList)) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: userList
+                }).promise();
+            }
+
+            var httpOptions = $.extend(true, {}, serviceOptions, options);
+            var requiredFields = ['userName', 'password', 'firstName', 'lastName'];
+
+            var sortedUsers = userList.reduce(function (accum, user) {
+                var missingRequiredFields = requiredFields.filter(function (field) {
+                    return user[field] === undefined;
+                });
+                var account = user.account || httpOptions.account;
+                if (!account) missingRequiredFields.push(account);
+                if (missingRequiredFields.length) {
+                    accum.invalid.push({ user: user, missingFields: missingRequiredFields });
+                }
+                if (!user.account) {
+                    user.account = httpOptions.account;
+                }
+                accum.valid.push(user);
+                return accum;
+            }, { valid: [], invalid: [] });
+
+            if (sortedUsers.invalid.length) {
+                return $.Deferred().reject({
+                    type: 'INVALID_USERS',
+                    payload: sortedUsers.invalid
+                }).promise();
+            }
+            return http.post(sortedUsers.valid, httpOptions);
+        },
+
+        translateV3UserKeys: function (v3UserKeyList, options) {
+            if (!v3UserKeyList || !Array.isArray(v3UserKeyList) || v3UserKeyList.length === 0) {
+                var resp = { status: 401, statusMessage: 'No user keys specified.' };
+                return Promise.reject(resp);
+            }
+
+            var httpOptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(API_ENDPOINT) + '/translate' });
+
+            return http.post(v3UserKeyList, httpOptions);
+        }
+
+    };
+
+    $.extend(this, publicAPI);
+}
+
+/***/ }),
+/* 22 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ACTIONS; });
 /* unused harmony export STRATEGY */
 var ACTIONS = {
@@ -4112,7 +4285,7 @@ var STRATEGY = {
 };
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4356,7 +4529,7 @@ RunManager.strategies = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__["d
 /* harmony default export */ __webpack_exports__["default"] = (RunManager);
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4562,13 +4735,13 @@ var SavedRunsManager = function () {
 /* harmony default export */ __webpack_exports__["default"] = (SavedRunsManager);
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = {"version":"v2"}
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _require = __webpack_require__(2),
@@ -4686,7 +4859,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4851,7 +5024,7 @@ function VariablesService(config) {
 }
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4959,7 +5132,7 @@ var apiEndpoint = 'model/introspect';
 });
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4971,12 +5144,12 @@ var apiEndpoint = 'model/introspect';
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var store = (isNode) ? require('./session-store') : require('./cookie-store');
 
-var store = __webpack_require__(29);
+var store = __webpack_require__(30);
 
 module.exports = store;
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports) {
 
 /**
@@ -5139,7 +5312,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5252,7 +5425,7 @@ function AuthService(config) {
 }
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5330,7 +5503,7 @@ var GroupService = function (config) {
 /* harmony default export */ __webpack_exports__["default"] = (GroupService);
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5527,7 +5700,7 @@ var ChannelService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ChannelService);
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5745,7 +5918,7 @@ var apiEndpoint = 'presence';
 });
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5918,167 +6091,6 @@ function StateService(config) {
             };
             var httpoptions = $.extend(true, {}, serviceOptions, options, { url: urlConfig.getAPIPath(apiEndpoint) + 'clone/' + runId });
             return http.post(params, httpoptions);
-        }
-    };
-
-    $.extend(this, publicAPI);
-}
-
-/***/ }),
-/* 35 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["default"] = UserAPIAdapter;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(10);
-
-
-
-
-/**
- * @description
- * 
- * ## User API Adapter
- *
- * The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
- *
- * Example:
- *```js
- * var ua = new F.service.User({
- *     account: 'acme-simulations',
- *     token: 'user-or-project-access-token'
- * });
- * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
- * ua.get({ userName: 'jsmith' });
- * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
- *             '4ea75631-4c8d-4872-9d80-b4600146478e'] });
- * ```
- * 
- * @param {AccountAPIServiceOptions} config 
- */
-function UserAPIAdapter(config) {
-    var API_ENDPOINT = 'user';
-
-    var defaults = {
-        account: undefined,
-        token: undefined,
-        transport: {}
-    };
-
-    var serviceOptions = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["b" /* getDefaultOptions */])(defaults, config, { apiEndpoint: API_ENDPOINT });
-    var urlConfig = Object(__WEBPACK_IMPORTED_MODULE_0__service_utils__["d" /* getURLConfig */])(serviceOptions);
-    var http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](serviceOptions.transport);
-    var publicAPI = {
-
-        /**
-        * Retrieve details about particular end users in your team, based on user name or user id.
-        *
-        * @example
-        * var ua = new F.service.User({
-        *     account: 'acme-simulations',
-        * });
-        * ua.get({ userName: 'jsmith' });
-        * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
-        *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
-        *
-        * 
-        * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
-        * @param {object} [options] Overrides for configuration options.
-        * @return {Promise}
-        */
-        get: function (filter, options) {
-            filter = filter || {};
-
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-            function toIdFilters(id) {
-                if (!id) return '';
-
-                var qs = Array.isArray(id) ? id : [id];
-                return 'id=' + qs.join('&id=');
-            }
-
-            var query = filter.userName ? { q: filter.userName } : {}; // API only supports filtering by username
-            var params = ['account=' + httpOptions.account, toIdFilters(filter.id), Object(__WEBPACK_IMPORTED_MODULE_2_util_query_util__["toQueryFormat"])(query)].join('&');
-
-            // special case for queries with large number of ids
-            // make it as a post with GET semantics
-            var threshold = 30;
-            if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
-                httpOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
-                return http.post({ id: filter.id }, httpOptions);
-            } else {
-                return http.get(params, httpOptions);
-            }
-        },
-
-        /**
-        * Retrieve details about a single end user in your team, based on user id.
-        *
-        * @example
-        * var ua = new F.service.User({
-        *     account: 'acme-simulations',
-        * });
-        * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
-        *
-        * 
-        * @param {string} userId The user id for the end user in your team.
-        * @param {object} [options] Overrides for configuration options.
-        * @return {Promise}
-        */
-        getById: function (userId, options) {
-            return publicAPI.get({ id: userId }, options);
-        },
-
-        /**
-        * Upload list of users to current account
-        *
-        * @example
-        * var us = new F.service.User({
-        *     account: 'acme-simulations',
-        * });
-        * us.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
-        *       
-        * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
-        * @param {object} [options] Overrides for configuration options.
-        * @returns {JQuery.Promise}
-        */
-        createUsers: function (userList, options) {
-            if (!userList || !Array.isArray(userList)) {
-                return $.Deferred().reject({
-                    type: 'INVALID_USERS',
-                    payload: userList
-                }).promise();
-            }
-
-            var httpOptions = $.extend(true, {}, serviceOptions, options);
-            var requiredFields = ['userName', 'password', 'firstName', 'lastName'];
-
-            var sortedUsers = userList.reduce(function (accum, user) {
-                var missingRequiredFields = requiredFields.filter(function (field) {
-                    return user[field] === undefined;
-                });
-                var account = user.account || httpOptions.account;
-                if (!account) missingRequiredFields.push(account);
-                if (missingRequiredFields.length) {
-                    accum.invalid.push({ user: user, missingFields: missingRequiredFields });
-                }
-                if (!user.account) {
-                    user.account = httpOptions.account;
-                }
-                accum.valid.push(user);
-                return accum;
-            }, { valid: [], invalid: [] });
-
-            if (sortedUsers.invalid.length) {
-                return $.Deferred().reject({
-                    type: 'INVALID_USERS',
-                    payload: sortedUsers.invalid
-                }).promise();
-            }
-            return http.post(sortedUsers.valid, httpOptions);
         }
     };
 
@@ -6407,7 +6419,7 @@ function intersection(a, b) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(22);
 
 
 function reduceActions(actions, options) {
@@ -7357,7 +7369,7 @@ MultiplayerWithTrackingKeyStrategy.errors = errors;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldManager;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
 
 
@@ -7493,23 +7505,23 @@ F.util.run = __webpack_require__(5);
 F.util.classFrom = __webpack_require__(6);
 
 F.factory.Transport = __webpack_require__(0).default;
-F.transport.Ajax = __webpack_require__(25);
+F.transport.Ajax = __webpack_require__(26);
 
 F.service.URL = __webpack_require__(15);
 F.service.Config = __webpack_require__(4).default;
 F.service.Run = __webpack_require__(9).default;
 F.service.File = __webpack_require__(50);
-F.service.Variables = __webpack_require__(26).default;
+F.service.Variables = __webpack_require__(27).default;
 F.service.Data = __webpack_require__(17).default;
-F.service.Auth = __webpack_require__(30).default;
+F.service.Auth = __webpack_require__(31).default;
 F.service.World = __webpack_require__(11).default;
-F.service.State = __webpack_require__(34).default;
-F.service.User = __webpack_require__(35).default;
+F.service.State = __webpack_require__(35).default;
+F.service.User = __webpack_require__(21).default;
 F.service.Member = __webpack_require__(18).default;
 F.service.Asset = __webpack_require__(57).default;
-F.service.Group = __webpack_require__(31).default;
-F.service.Introspect = __webpack_require__(27).default;
-F.service.Presence = __webpack_require__(33).default;
+F.service.Group = __webpack_require__(32).default;
+F.service.Introspect = __webpack_require__(28).default;
+F.service.Presence = __webpack_require__(34).default;
 F.service.Time = __webpack_require__(36).default;
 F.service.Timer = __webpack_require__(58).default;
 F.service.Password = __webpack_require__(64).default;
@@ -7521,11 +7533,11 @@ F.service.ConsensusGroup = __webpack_require__(40).default;
 
 F.service.Project = __webpack_require__(66).default;
 
-F.store.Cookie = __webpack_require__(29);
-F.factory.Store = __webpack_require__(28);
+F.store.Cookie = __webpack_require__(30);
+F.factory.Store = __webpack_require__(29);
 
 F.manager.ScenarioManager = __webpack_require__(67).default;
-F.manager.RunManager = __webpack_require__(22).default;
+F.manager.RunManager = __webpack_require__(23).default;
 F.manager.User = __webpack_require__(78).default;
 F.manager.AuthManager = __webpack_require__(13).default;
 
@@ -7533,7 +7545,7 @@ F.v3 = { manager: {}, service: {} };
 F.v3.manager.AuthManager = __webpack_require__(79).default;
 
 F.manager.WorldManager = __webpack_require__(46).default;
-F.manager.SavedRunsManager = __webpack_require__(23).default;
+F.manager.SavedRunsManager = __webpack_require__(24).default;
 
 var strategies = __webpack_require__(41).default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
@@ -7541,12 +7553,12 @@ F.manager.strategy = strategies.list; //TODO: this is not really a manager so na
 F.manager.Settings = __webpack_require__(82).default;
 
 F.manager.ChannelManager = __webpack_require__(19).default;
-F.service.Channel = __webpack_require__(32).default;
+F.service.Channel = __webpack_require__(33).default;
 
 F.manager.ConsensusManager = __webpack_require__(84).default;
 
 if (true) F.version = "2.13.4"; //eslint-disable-line no-undef
-F.api = __webpack_require__(24);
+F.api = __webpack_require__(25);
 
 F.constants = __webpack_require__(16);
 
@@ -7925,27 +7937,26 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 /* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f) {
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (f) {
 
   'use strict';
 
   /* istanbul ignore else */
-  if (typeof exports === 'object' && exports != null &&
-      typeof exports.nodeType !== 'number') {
-    module.exports = f ();
+
+  if (typeof exports === 'object' && exports != null && typeof exports.nodeType !== 'number') {
+    module.exports = f();
   } else if ("function" === 'function' && __webpack_require__(53) != null) {
     !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (f),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else {
-    var base64 = f ();
+    var base64 = f();
     var global = typeof self !== 'undefined' ? self : $.global;
     if (typeof global.btoa !== 'function') global.btoa = base64.btoa;
     if (typeof global.atob !== 'function') global.atob = base64.atob;
   }
-
-} (function() {
+})(function () {
 
   'use strict';
 
@@ -7954,26 +7965,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   function InvalidCharacterError(message) {
     this.message = message;
   }
-  InvalidCharacterError.prototype = new Error ();
+  InvalidCharacterError.prototype = new Error();
   InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
   // encoder
   // [https://gist.github.com/999166] by [https://github.com/nignag]
   function btoa(input) {
-    var str = String (input);
+    var str = String(input);
     for (
-      // initialize result and counter
-      var block, charCode, idx = 0, map = chars, output = '';
-      // if the next str index does not exist:
-      //   change the mapping table to "="
-      //   check if d has no fractional digits
-      str.charAt (idx | 0) || (map = '=', idx % 1);
-      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-      output += map.charAt (63 & block >> 8 - idx % 1 * 8)
-    ) {
-      charCode = str.charCodeAt (idx += 3 / 4);
+    // initialize result and counter
+    var block, charCode, idx = 0, map = chars, output = '';
+    // if the next str index does not exist:
+    //   change the mapping table to "="
+    //   check if d has no fractional digits
+    str.charAt(idx | 0) || (map = '=', idx % 1);
+    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+    output += map.charAt(63 & block >> 8 - idx % 1 * 8)) {
+      charCode = str.charCodeAt(idx += 3 / 4);
       if (charCode > 0xFF) {
-        throw new InvalidCharacterError ("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
       }
       block = block << 8 | charCode;
     }
@@ -7983,31 +7993,28 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   // decoder
   // [https://gist.github.com/1020396] by [https://github.com/atk]
   function atob(input) {
-    var str = (String (input)).replace (/[=]+$/, ''); // #31: ExtendScript bad parse of /=
+    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
     if (str.length % 4 === 1) {
-      throw new InvalidCharacterError ("'atob' failed: The string to be decoded is not correctly encoded.");
+      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
     }
     for (
-      // initialize result and counters
-      var bc = 0, bs, buffer, idx = 0, output = '';
-      // get next character
-      buffer = str.charAt (idx++); // eslint-disable-line no-cond-assign
-      // character found in table? initialize bit storage and add its ascii value;
-      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-        // and if not first of each 4 characters,
-        // convert the first 8 bits to one ascii character
-        bc++ % 4) ? output += String.fromCharCode (255 & bs >> (-2 * bc & 6)) : 0
-    ) {
+    // initialize result and counters
+    var bc = 0, bs, buffer, idx = 0, output = '';
+    // get next character
+    buffer = str.charAt(idx++); // eslint-disable-line no-cond-assign
+    // character found in table? initialize bit storage and add its ascii value;
+    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+    // and if not first of each 4 characters,
+    // convert the first 8 bits to one ascii character
+    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0) {
       // try to find character in table (0-63, not found => -1)
-      buffer = chars.indexOf (buffer);
+      buffer = chars.indexOf(buffer);
     }
     return output;
   }
 
-  return {btoa: btoa, atob: atob};
-
-}));
-
+  return { btoa: btoa, atob: atob };
+});
 
 /***/ }),
 /* 53 */
@@ -8023,7 +8030,7 @@ module.exports = __webpack_amd_options__;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_channel_service__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_channel_service__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
 
@@ -8730,7 +8737,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(63);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(22);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9170,7 +9177,7 @@ function reduceActions(actions, options) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(22);
 
 
 function toDetailedTime(ts) {
@@ -9302,7 +9309,7 @@ var PasswordService = function () {
                 subject: 'Please reset your password',
                 projectFullName: 'My Awesome Project'
             });
-      * This will send the following email
+       * This will send the following email
      * 
      * Subject: Please reset your password
      * To: myuserName@gmail.com
@@ -9313,7 +9320,7 @@ var PasswordService = function () {
      * If you did not initiate this request, please ignore this email.
      * 
      * To reset your password, please click the following link: https://forio.com/epicenter/recover/<password recovery token>
-      * @param {string} userName user to reset password for 
+       * @param {string} userName user to reset password for 
      * @param {object} [resetParams] 
      * @param {string} [resetParams.redirectUrl] URL to redirect to after password is reset. Defaults to project root. If relative, it's treated as being relative to project
      * @param {string} [resetParams.subject] Subject for reset password email
@@ -9524,12 +9531,12 @@ function ProjectAPIService(config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_saved_runs_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_saved_runs_manager__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(76);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(77);
@@ -10192,7 +10199,7 @@ ReuseLastUnsaved.requiresAuth = false;
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["parseUsers"] = parseUsers;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_user_api_adapter__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_service_service_utils__ = __webpack_require__(1);
@@ -10397,12 +10404,14 @@ UserManager.errors = ERROR_TYPES;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_v3_auth_api_service_v3__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_v3_member_api_adapter_v3__ = __webpack_require__(81);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_index__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_user_api_adapter__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_index__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_store_session_manager__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_store_session_manager__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 
 
 
@@ -10442,6 +10451,13 @@ var AuthManagerV3 = function () {
             return ms;
         }
     }, {
+        key: 'getUserService',
+        value: function getUserService(config) {
+            var opts = $.extend({}, this.serviceOptions, config);
+            var us = new __WEBPACK_IMPORTED_MODULE_2_service_user_api_adapter__["default"](opts);
+            return us;
+        }
+    }, {
         key: 'login',
         value: function login(loginParams, options) {
             var _this = this;
@@ -10454,15 +10470,15 @@ var AuthManagerV3 = function () {
                 if (err.responseJSON) err = err.responseJSON;
                 var code = err && err.information && err.information.code;
                 if (code === 'AUTHORIZATION_FAILURE') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'Could not login, please check username / password and try again.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(code, 'Could not login, please check username / password and try again.');
                 } else if (code === 'PASSWORD_EXPIRATION') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'Your password has expired.  Please contact your administrator and request a password reset.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(code, 'Your password has expired.  Please contact your administrator and request a password reset.');
                 } else if (code === 'MULTI_FACTOR_AUTHENTICATION_MISSING') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'Multi factor authentication has been enabled for this project.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(code, 'Multi factor authentication has been enabled for this project.');
                 } else if (code === 'MULTI_FACTOR_AUTHENTICATION_FAILURE') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'The provided Authorization Code is invalid.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(code, 'The provided Authorization Code is invalid.');
                 } else if (code === 'MULTI_FACTOR_AUTHENTICATION_REQUIRED') {
-                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])(code, 'This project requires multi factor authentication.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(code, 'This project requires multi factor authentication.');
                 }
                 throw err;
 
@@ -10471,48 +10487,65 @@ var AuthManagerV3 = function () {
                 // handle mfa error
             }).then(function (res) {
                 if (!res.groupKey && !res.multipleGroups) {
-                    return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])('NO_GROUPS', 'User is not a member of a simulation group.');
+                    return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])('NO_GROUPS', 'User is not a member of a simulation group.');
                 }
                 if (!res.groupKey && res.multipleGroups && res.token) {
                     var _overridenServiceOptions = $.extend(true, { token: res.token }, _this.serviceOptions, options);
                     var ms = _this.getMemberService(_overridenServiceOptions);
                     return ms.getGroupsForUser().then(function (groups) {
-                        return Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["c" /* rejectPromise */])('MULTIPLE_GROUPS', 'User is part of multiple groups for this project. Please choose one.', {
+                        return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])('MULTIPLE_GROUPS', 'User is part of multiple groups for this project. Please choose one.', {
                             possibleGroups: groups.map(function (group) {
                                 group.id = group.groupKey;
                                 return group;
                             })
                         });
                     });
+                } else {
+                    var groupInfo = {
+                        groupId: res.groupKey,
+                        groupName: res.groupName,
+                        isFac: res.groupRole && res.groupRole !== 'PARTICIPANT'
+                    };
+                    var sessionInfo = Object.assign({}, groupInfo, {
+                        auth_token: res.session,
+                        userName: res.userHandle,
+                        account: res.accountShortName,
+                        project: res.projectShortName,
+                        v3UserKey: res.userKey,
+
+                        groups: [groupInfo],
+                        isTeamMember: false
+                    });
+                    return sessionInfo;
                 }
+            }).then(function (res) {
 
-                var groupInfo = {
-                    groupId: res.groupKey,
-                    groupName: res.groupName,
-                    isFac: res.groupRole && res.groupRole !== 'PARTICIPANT'
-                };
-                var sessionInfo = Object.assign({}, groupInfo, {
-                    auth_token: res.session,
-                    userName: res.userHandle,
-                    account: res.accountShortName,
-                    project: res.projectShortName,
-                    userId: res.userKey,
+                // if res is group info, just return
+                if (!res.v3UserKey) {
+                    return res;
+                } else {
+                    if (!Array.isArray(res.v3UserKey) || res.v3UserKey.length === 0) {
+                        var resp = { status: 401, statusMessage: 'No user id found.' };
+                        return Promise.reject(resp);
+                    }
 
-                    groups: [groupInfo],
-                    isTeamMember: false
-                });
-
-                var sm = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(overridenServiceOptions);
-                sm.saveSession(sessionInfo);
-
-                return sessionInfo;
+                    // get v2 user id based on v3 user key
+                    var _overridenServiceOptions2 = $.extend(true, { token: res.auth_token }, _this.serviceOptions, options);
+                    var us = _this.getUserService(_overridenServiceOptions2);
+                    return us.translateV3UserKeys([!res.v3UserKey]).then(function (userIdList) {
+                        res.userId = userIdList[0];
+                        var sm = new __WEBPACK_IMPORTED_MODULE_4_store_session_manager___default.a(_overridenServiceOptions2);
+                        sm.saveSession(res);
+                        return res;
+                    });
+                }
             });
         }
     }, {
         key: 'logout',
         value: function logout(options) {
             var overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
-            var sm = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(overridenServiceOptions);
+            var sm = new __WEBPACK_IMPORTED_MODULE_4_store_session_manager___default.a(overridenServiceOptions);
             sm.removeSession();
             return Promise.resolve();
         }
@@ -10526,7 +10559,7 @@ var AuthManagerV3 = function () {
         key: 'getCurrentUserSessionInfo',
         value: function getCurrentUserSessionInfo(options) {
             var overridenServiceOptions = $.extend(true, {}, this.serviceOptions, options);
-            var sm = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(overridenServiceOptions);
+            var sm = new __WEBPACK_IMPORTED_MODULE_4_store_session_manager___default.a(overridenServiceOptions);
             return sm.getSession();
         }
     }]);
@@ -10652,7 +10685,7 @@ var MemberAPIServiceV3 = function () {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_saved_runs_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_saved_runs_manager__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_run_strategies_multiplayer_with_tracking_key__ = __webpack_require__(45);
