@@ -2,7 +2,9 @@ export default function mandatoryConsensusStrategy(consensusGroup, strategyOptio
     const options = $.extend({}, {
         maxRounds: Infinity,
         name: (list)=> {
-            return `round-${list.length + 1}`;
+            const NUMBER_SIZE = 3;
+            const number = `${list.length + 1}`.padStart(NUMBER_SIZE, '0');
+            return `round-${number}`;
         }
     }, strategyOptions);
     return consensusGroup.list().then((consensusList)=> {
@@ -18,7 +20,7 @@ export default function mandatoryConsensusStrategy(consensusGroup, strategyOptio
         const newConsensusPromise = consensusGroup.consensus(name).create({
             roles: options.roles,
             executeActionsImmediately: false
-        }); 
+        });
         return newConsensusPromise;
     });
 }
