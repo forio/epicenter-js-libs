@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.13.4
+ *         v2.13.6
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -7624,7 +7624,7 @@ F.service.Channel = __webpack_require__(33).default;
 
 F.manager.ConsensusManager = __webpack_require__(84).default;
 
-if (true) F.version = "2.13.4"; //eslint-disable-line no-undef
+if (true) F.version = "2.13.6"; //eslint-disable-line no-undef
 F.api = __webpack_require__(25);
 
 F.constants = __webpack_require__(16);

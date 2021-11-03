@@ -8,7 +8,9 @@ export default function mandatoryTimerStrategy(consensusGroup, strategyOptions) 
         defaultActions: [],
         maxRounds: Infinity,
         name: (list)=> {
-            return `round-${list.length + 1}`;
+            const NUMBER_SIZE = 3;
+            const number = `${list.length + 1}`.padStart(NUMBER_SIZE, '0');
+            return `round-${number}`;
         }
     }, strategyOptions);
     return consensusGroup.list().then((consensusList)=> {
@@ -24,7 +26,7 @@ export default function mandatoryTimerStrategy(consensusGroup, strategyOptions) 
         const newConsensusPromise = consensusGroup.consensus(name).create({
             roles: options.roles,
             executeActionsImmediately: false
-        }); 
+        });
         return newConsensusPromise;
     });
 }
