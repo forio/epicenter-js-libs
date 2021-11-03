@@ -1,10 +1,11 @@
 import { getDefaultOptions, getURLConfig } from '../service-utils';
 import TransportFactory from 'transport/http-transport-factory';
 import { toQueryFormat } from 'util/query-util';
+import bulkFetchRecords from 'util/bulk-fetch-records';
 
 /**
  * @description
- * 
+ *
  * ## User API Adapter
  *
  * The User API Adapter allows you to retrieve details about end users in your team (account). It is based on the querying capabilities of the underlying RESTful [User API](../../../rest_apis/user_management/user/).
@@ -20,8 +21,8 @@ import { toQueryFormat } from 'util/query-util';
  * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
  *             '4ea75631-4c8d-4872-9d80-b4600146478e'] });
  * ```
- * 
- * @param {AccountAPIServiceOptions} config 
+ *
+ * @param {AccountAPIServiceOptions} config
  */
 export default function UserAPIAdapter(config) {
     const API_ENDPOINT = 'user';
@@ -48,7 +49,7 @@ export default function UserAPIAdapter(config) {
         * ua.get({ id: ['42836d4b-5b61-4fe4-80eb-3136e956ee5c',
         *                   '4ea75631-4c8d-4872-9d80-b4600146478e'] });
         *
-        * 
+        *
         * @param {object} filter Object with field `userName` and value of the username. Alternatively, object with field `id` and value of an array of user ids.
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -59,7 +60,7 @@ export default function UserAPIAdapter(config) {
             const httpOptions = $.extend(true, {}, serviceOptions, options);
             function toIdFilters(id) {
                 if (!id) return '';
-                
+
                 const qs = Array.isArray(id) ? id : [id];
                 return 'id=' + qs.join('&id=');
             }
@@ -76,7 +77,16 @@ export default function UserAPIAdapter(config) {
             var threshold = 30;
             if (filter.id && Array.isArray(filter.id) && filter.id.length >= threshold) {
                 httpOptions.url = urlConfig.getAPIPath('user') + '?_method=GET';
-                return http.post({ id: filter.id }, httpOptions);
+
+                const ops = $.extend({}, {
+                    recordsPerFetch: 100,
+                }, httpOptions);
+                return bulkFetchRecords((startRecord, endRecord)=> {
+                    const bulkOps = $.extend({}, {
+                        headers: { range: 'records ' + startRecord + '-' + endRecord },
+                    }, ops);
+                    return http.post({ id: filter.id }, bulkOps);
+                }, ops);
             } else {
                 return http.get(params, httpOptions);
             }
@@ -91,7 +101,7 @@ export default function UserAPIAdapter(config) {
         * });
         * ua.getById('42836d4b-5b61-4fe4-80eb-3136e956ee5c');
         *
-        * 
+        *
         * @param {string} userId The user id for the end user in your team.
         * @param {object} [options] Overrides for configuration options.
         * @return {Promise}
@@ -109,7 +119,7 @@ export default function UserAPIAdapter(config) {
         *     account: 'acme-simulations',
         * });
         * us.createUsers([{ userName: 'jsmith@forio.com', firstName: 'John', lastName: 'Smith', password: 'passw0rd' }]);
-        *       
+        *
         * @param {object[]} userList Array of {userName, password, firstName, lastName, ...} objects to upload
         * @param {object} [options] Overrides for configuration options.
         * @returns {JQuery.Promise}
