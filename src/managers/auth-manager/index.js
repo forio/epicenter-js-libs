@@ -11,7 +11,7 @@ var defaults = {
 };
 
 /**
- * @param {AccountAPIServiceOptions} options 
+ * @param {AccountAPIServiceOptions} options
  * @property {string} [groupId] Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
  * @property {string} [userName] Email or username to use for logging in.
  * @property {string} [password] Password for specified `userName`.
@@ -160,24 +160,32 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                     .then(handleGroupList, $d.reject);
             } else {
                 var opts = $.extend({}, userGroupOpts, { token: token });
-                var groupService = new GroupService(opts);
-                groupService.getGroups({ account: adapterOptions.account, project: project })
-                    .then(function (groups) {
-                        // Group API returns id instead of groupId
-                        groups.forEach(function (group) {
-                            group.groupId = group.id;
-                        });
+                if (adapterOptions.account) {
+                    var groupService = new GroupService(opts);
+                    groupService.getGroups({ account: adapterOptions.account, project: project })
+                        .then(function (groups) {
+                            // Group API returns id instead of groupId
+                            groups.forEach(function (group) {
+                                group.groupId = group.id;
+                            });
 
-                        if (groups.length) {
-                            handleGroupList(groups);
-                        } else {
-                            //either it's a private project or there are no groups
-                            sessionManager.saveSession(sessionInfo);
-                            outSuccess.apply(this, [data]);
-                            $d.resolve(data);
-                            return;
-                        }
-                    }, $d.reject);
+                            if (groups.length) {
+                                handleGroupList(groups);
+                            } else {
+                                //either it's a private project or there are no groups
+                                sessionManager.saveSession(sessionInfo);
+                                outSuccess.apply(this, [data]);
+                                $d.resolve(data);
+                                return;
+                            }
+                        }, $d.reject);
+                } else {
+                    // there is no account to call the group service with, meaning no groups to use
+                    me.sessionManager.saveSession(sessionInfo);
+                    outSuccess.apply(this, [data]);
+                    $d.resolve(data);
+                    return;
+                }
             }
         };
 
@@ -230,7 +238,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *     .then(function (token) {
      *         console.log('My token is ', token);
      *     });
-     * 
+     *
      * @param {Object} [options] Overrides for configuration options.
      * @return {JQuery.Promise}
      */
@@ -264,7 +272,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * // get groups for particular user
      * authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
      *
-     * 
+     *
      * @param {Object} params Object with a userId and token properties.
      * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
      * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
@@ -299,7 +307,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @example
      * var amILoggedIn = authMgr.isLoggedIn();
      *
-     * 
+     *
      * @param {none} none
      * @return {Boolean} true if you're logged in
      */
@@ -318,7 +326,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @example
      * var sessionObj = authMgr.getCurrentUserSessionInfo();
      *
-     * 
+     *
      * @param {Object} [options] Overrides for configuration options.
      * @return {Object} session information
      */
@@ -328,7 +336,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     },
 
     /*
-     * Adds one or more groups to the current session. 
+     * Adds one or more groups to the current session.
      *
      * This method assumes that the project and group exist and the user specified in the session is part of this project and group.
      *
@@ -338,7 +346,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
      * authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
      *
-     * 
+     *
      * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
      * @param {string} [group.isFac] Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
      * @param {string} [group.groupId] Defaults to undefined. Needed mostly for the Members API.
