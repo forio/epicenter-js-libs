@@ -2392,7 +2392,7 @@ var defaults = {
 };
 
 /**
- * @param {AccountAPIServiceOptions} options 
+ * @param {AccountAPIServiceOptions} options
  * @property {string} [groupId] Id of the group to which `userName` belongs. Required for end users if the `project` is specified.
  * @property {string} [userName] Email or username to use for logging in.
  * @property {string} [password] Password for specified `userName`.
@@ -2541,23 +2541,31 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
                 me.getUserGroups({ userId: userInfo.user_id, token: token }, userGroupOpts).then(handleGroupList, $d.reject);
             } else {
                 var opts = $.extend({}, userGroupOpts, { token: token });
-                var groupService = new __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__["default"](opts);
-                groupService.getGroups({ account: adapterOptions.account, project: project }).then(function (groups) {
-                    // Group API returns id instead of groupId
-                    groups.forEach(function (group) {
-                        group.groupId = group.id;
-                    });
+                if (adapterOptions.account) {
+                    var groupService = new __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__["default"](opts);
+                    groupService.getGroups({ account: adapterOptions.account, project: project }).then(function (groups) {
+                        // Group API returns id instead of groupId
+                        groups.forEach(function (group) {
+                            group.groupId = group.id;
+                        });
 
-                    if (groups.length) {
-                        handleGroupList(groups);
-                    } else {
-                        //either it's a private project or there are no groups
-                        sessionManager.saveSession(sessionInfo);
-                        outSuccess.apply(this, [data]);
-                        $d.resolve(data);
-                        return;
-                    }
-                }, $d.reject);
+                        if (groups.length) {
+                            handleGroupList(groups);
+                        } else {
+                            //either it's a private project or there are no groups
+                            sessionManager.saveSession(sessionInfo);
+                            outSuccess.apply(this, [data]);
+                            $d.resolve(data);
+                            return;
+                        }
+                    }, $d.reject);
+                } else {
+                    // there is no account to call the group service with, meaning no groups to use
+                    me.sessionManager.saveSession(sessionInfo);
+                    outSuccess.apply(this, [data]);
+                    $d.resolve(data);
+                    return;
+                }
             }
         };
 
@@ -2610,7 +2618,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      *     .then(function (token) {
      *         console.log('My token is ', token);
      *     });
-     * 
+     *
      * @param {Object} [options] Overrides for configuration options.
      * @return {JQuery.Promise}
      */
@@ -2644,7 +2652,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * // get groups for particular user
      * authMgr.getUserGroups({userId: 'b1c19dda-2d2e-4777-ad5d-3929f17e86d3', token: savedProjAccessToken });
      *
-     * 
+     *
      * @param {Object} params Object with a userId and token properties.
      * @param {String} params.userId The userId. If looking up groups for the currently logged in user, this is in the session information. Otherwise, pass a string.
      * @param {String} params.token The authorization credentials (access token) to use for checking the groups for this user. If looking up groups for the currently logged in user, this is in the session information. A team member's token or a project access token can access all the groups for all end users in the team or project.
@@ -2679,7 +2687,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @example
      * var amILoggedIn = authMgr.isLoggedIn();
      *
-     * 
+     *
      * @param {none} none
      * @return {Boolean} true if you're logged in
      */
@@ -2698,7 +2706,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * @example
      * var sessionObj = authMgr.getCurrentUserSessionInfo();
      *
-     * 
+     *
      * @param {Object} [options] Overrides for configuration options.
      * @return {Object} session information
      */
@@ -2708,7 +2716,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
     },
 
     /*
-     * Adds one or more groups to the current session. 
+     * Adds one or more groups to the current session.
      *
      * This method assumes that the project and group exist and the user specified in the session is part of this project and group.
      *
@@ -2718,7 +2726,7 @@ AuthManager.prototype = $.extend(AuthManager.prototype, {
      * authMgr.addGroups({ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' });
      * authMgr.addGroups([{ project: 'hello-world', groupName: 'groupName', groupId: 'groupId' }, { project: 'hello-world', groupName: '...' }]);
      *
-     * 
+     *
      * @param {object|array} groups (Required) The group object must contain the `project` (**Project ID**) and `groupName` properties. If passing an array of such objects, all of the objects must contain *different* `project` (**Project ID**) values: although end users may be logged in to multiple projects at once, they may only be logged in to one group per project at a time.
      * @param {string} [group.isFac] Defaults to `false`. Set to `true` if the user in the session should be a facilitator in this group.
      * @param {string} [group.groupId] Defaults to undefined. Needed mostly for the Members API.
@@ -8004,27 +8012,26 @@ function getURL(API_ENDPOINT, collection, doc, options) {
 /* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f) {
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (f) {
 
   'use strict';
 
   /* istanbul ignore else */
-  if (typeof exports === 'object' && exports != null &&
-      typeof exports.nodeType !== 'number') {
-    module.exports = f ();
+
+  if (typeof exports === 'object' && exports != null && typeof exports.nodeType !== 'number') {
+    module.exports = f();
   } else if ("function" === 'function' && __webpack_require__(54) != null) {
     !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (f),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else {
-    var base64 = f ();
+    var base64 = f();
     var global = typeof self !== 'undefined' ? self : $.global;
     if (typeof global.btoa !== 'function') global.btoa = base64.btoa;
     if (typeof global.atob !== 'function') global.atob = base64.atob;
   }
-
-} (function() {
+})(function () {
 
   'use strict';
 
@@ -8033,26 +8040,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   function InvalidCharacterError(message) {
     this.message = message;
   }
-  InvalidCharacterError.prototype = new Error ();
+  InvalidCharacterError.prototype = new Error();
   InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
   // encoder
   // [https://gist.github.com/999166] by [https://github.com/nignag]
   function btoa(input) {
-    var str = String (input);
+    var str = String(input);
     for (
-      // initialize result and counter
-      var block, charCode, idx = 0, map = chars, output = '';
-      // if the next str index does not exist:
-      //   change the mapping table to "="
-      //   check if d has no fractional digits
-      str.charAt (idx | 0) || (map = '=', idx % 1);
-      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-      output += map.charAt (63 & block >> 8 - idx % 1 * 8)
-    ) {
-      charCode = str.charCodeAt (idx += 3 / 4);
+    // initialize result and counter
+    var block, charCode, idx = 0, map = chars, output = '';
+    // if the next str index does not exist:
+    //   change the mapping table to "="
+    //   check if d has no fractional digits
+    str.charAt(idx | 0) || (map = '=', idx % 1);
+    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+    output += map.charAt(63 & block >> 8 - idx % 1 * 8)) {
+      charCode = str.charCodeAt(idx += 3 / 4);
       if (charCode > 0xFF) {
-        throw new InvalidCharacterError ("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
       }
       block = block << 8 | charCode;
     }
@@ -8062,31 +8068,28 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   // decoder
   // [https://gist.github.com/1020396] by [https://github.com/atk]
   function atob(input) {
-    var str = (String (input)).replace (/[=]+$/, ''); // #31: ExtendScript bad parse of /=
+    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
     if (str.length % 4 === 1) {
-      throw new InvalidCharacterError ("'atob' failed: The string to be decoded is not correctly encoded.");
+      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
     }
     for (
-      // initialize result and counters
-      var bc = 0, bs, buffer, idx = 0, output = '';
-      // get next character
-      buffer = str.charAt (idx++); // eslint-disable-line no-cond-assign
-      // character found in table? initialize bit storage and add its ascii value;
-      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-        // and if not first of each 4 characters,
-        // convert the first 8 bits to one ascii character
-        bc++ % 4) ? output += String.fromCharCode (255 & bs >> (-2 * bc & 6)) : 0
-    ) {
+    // initialize result and counters
+    var bc = 0, bs, buffer, idx = 0, output = '';
+    // get next character
+    buffer = str.charAt(idx++); // eslint-disable-line no-cond-assign
+    // character found in table? initialize bit storage and add its ascii value;
+    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+    // and if not first of each 4 characters,
+    // convert the first 8 bits to one ascii character
+    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0) {
       // try to find character in table (0-63, not found => -1)
-      buffer = chars.indexOf (buffer);
+      buffer = chars.indexOf(buffer);
     }
     return output;
   }
 
-  return {btoa: btoa, atob: atob};
-
-}));
-
+  return { btoa: btoa, atob: atob };
+});
 
 /***/ }),
 /* 54 */
@@ -9381,7 +9384,7 @@ var PasswordService = function () {
                 subject: 'Please reset your password',
                 projectFullName: 'My Awesome Project'
             });
-      * This will send the following email
+       * This will send the following email
      * 
      * Subject: Please reset your password
      * To: myuserName@gmail.com
@@ -9392,7 +9395,7 @@ var PasswordService = function () {
      * If you did not initiate this request, please ignore this email.
      * 
      * To reset your password, please click the following link: https://forio.com/epicenter/recover/<password recovery token>
-      * @param {string} userName user to reset password for 
+       * @param {string} userName user to reset password for 
      * @param {object} [resetParams] 
      * @param {string} [resetParams.redirectUrl] URL to redirect to after password is reset. Defaults to project root. If relative, it's treated as being relative to project
      * @param {string} [resetParams.subject] Subject for reset password email
