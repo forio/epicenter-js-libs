@@ -47,7 +47,7 @@ export default class AuthManagerV3 {
         return as.login(params).catch((err, a, b, c)=> {
             if (err.responseJSON) err = err.responseJSON;
             const code = err && err.information && err.information.code;
-            if (code === 'AUTHORIZATION_FAILURE') {
+            if (code === 'AUTHORIZATION_FAILURE' || code === 'INVALID_REQUEST') {
                 return rejectPromise(code, 'Could not login, please check username / password and try again.');
             } else if (code === 'PASSWORD_EXPIRATION') {
                 return rejectPromise(code, 'Your password has expired.  Please contact your administrator and request a password reset.');
