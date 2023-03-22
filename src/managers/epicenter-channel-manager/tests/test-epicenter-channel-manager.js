@@ -7,6 +7,7 @@ chai.use(require('sinon-chai'));
 
 describe('Epicenter ChannelManager', function () {
     var oldCometd;
+    var oldCometd2;
     var handshakeSpy = sinon.spy();
     var mockCometd = function () {
         return {
@@ -26,7 +27,7 @@ describe('Epicenter ChannelManager', function () {
     });
     after(function () {
         $.CometD = oldCometd;
-        $.cometd = oldCometd2
+        $.cometd = oldCometd2;
     });
     afterEach(function () {
         Manager.prototype._cometd = null;

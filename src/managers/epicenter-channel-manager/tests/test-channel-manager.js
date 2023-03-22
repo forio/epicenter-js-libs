@@ -7,6 +7,7 @@ chai.use(require('sinon-chai'));
 
 describe('ChannelManager', function () {
     var oldCometd;
+    var oldCometd2;
     var mockCometd = function () {
         var i = Math.random();
 
@@ -28,7 +29,7 @@ describe('ChannelManager', function () {
     });
     after(function () {
         $.CometD = oldCometd;
-        $.cometd = oldCometd2
+        $.cometd = oldCometd2;
     });
     afterEach(function () {
         Manager.prototype._cometd = null;
