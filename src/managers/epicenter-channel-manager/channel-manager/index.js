@@ -41,7 +41,8 @@ function ChannelManager(options) {
         this.cometd = ChannelManager.prototype._cometd;
         return this;
     }
-    var cometd = new $.CometD();
+	
+    var cometd = (defaultCometOptions.shareConnection && $.cometd) ? $.cometd : new $.CometD();
     ChannelManager.prototype._cometd = cometd;
 
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
@@ -63,7 +64,7 @@ function ChannelManager(options) {
         this.isConnected = (message.successful === true);
         if (!wasConnected && this.isConnected) { //Connecting for the first time
             connectionSucceeded.call(this, message);
-        } else if (wasConnected && !this.isConnected) { //Only throw disconnected message fro the first disconnect, not once per try
+        } else if (wasConnected && !this.isConnected) { //Only throw disconnected message from the first disconnect, not once per try
             connectionBroken.call(this, message);
         }
     }.bind(this));
