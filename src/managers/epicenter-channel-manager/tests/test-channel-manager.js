@@ -22,10 +22,13 @@ describe('ChannelManager', function () {
 
     before(function () {
         oldCometd = $.CometD;
+        oldCometd2 = $.cometd;
+        $.cometd = mockCometd();
         $.CometD = mockCometd;
     });
     after(function () {
         $.CometD = oldCometd;
+        $.cometd = oldCometd2
     });
     afterEach(function () {
         Manager.prototype._cometd = null;
