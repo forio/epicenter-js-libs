@@ -1,3 +1,19 @@
+<a name="2.13.9"></a>
+### 2.13.9
+- Fix cometd to use the AckRequest extension to ensure messages are delivered.
+
+<a name="2.13.8"></a>
+### 2.13.8
+- Skip the group service call when logging in as admin
+
+<a name="2.13.7"></a>
+### 2.13.7
+- Added paging for User Service .get requests
+
+<a name="2.13.6"></a>
+### 2.13.6
+- Round naming for consensus strategies is now unform
+
 <a name="2.13.5"></a>
 ### 2.13.5
 This is a bug fix release.
