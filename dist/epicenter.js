@@ -8044,25 +8044,38 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
   // encoder
-  // [https://gist.github.com/999166] by [https://github.com/nignag]
   function btoa(input) {
-    var str = String(input);
-    for (
-    // initialize result and counter
-    var block, charCode, idx = 0, map = chars, output = '';
-    // if the next str index does not exist:
-    //   change the mapping table to "="
-    //   check if d has no fractional digits
-    str.charAt(idx | 0) || (map = '=', idx % 1);
-    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-    output += map.charAt(63 & block >> 8 - idx % 1 * 8)) {
-      charCode = str.charCodeAt(idx += 3 / 4);
-      if (charCode > 0xFF) {
+    var data = String(input),
+        o1,
+        o2,
+        o3,
+        bits,
+        i = 0,
+        acc = '';
+
+    while (i < data.length) {
+      // pack three octets into four hextets
+      o1 = data.charCodeAt(i++);
+      o2 = data.charCodeAt(i++);
+      o3 = data.charCodeAt(i++);
+
+      if (o1 > 128 || o2 > 128 || o3 > 128) {
         throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
       }
-      block = block << 8 | charCode;
+
+      bits = o1 << 16 | o2 << 8 | o3;
+      // use hextets to index into b64, and append result to encoded string
+      acc += chars.charAt(bits >> 18 & 0x3F) + chars.charAt(bits >> 12 & 0x3F) + chars.charAt(bits >> 6 & 0x3F) + chars.charAt(bits & 0x3F);
     }
-    return output;
+
+    switch (data.length % 3) {
+      case 0:
+        return acc;
+      case 1:
+        return acc.slice(0, -2) + '==';
+      case 2:
+        return acc.slice(0, -1) + '=';
+    }
   }
 
   // decoder
@@ -8149,7 +8162,8 @@ function ChannelManager(options) {
         this.cometd = ChannelManager.prototype._cometd;
         return this;
     }
-    var cometd = new $.CometD();
+
+    var cometd = defaultCometOptions.shareConnection && $.cometd ? $.cometd : new $.CometD();
     ChannelManager.prototype._cometd = cometd;
 
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
@@ -8173,7 +8187,7 @@ function ChannelManager(options) {
             //Connecting for the first time
             connectionSucceeded.call(this, message);
         } else if (wasConnected && !this.isConnected) {
-            //Only throw disconnected message fro the first disconnect, not once per try
+            //Only throw disconnected message from the first disconnect, not once per try
             connectionBroken.call(this, message);
         }
     }.bind(this));
@@ -10488,7 +10502,7 @@ var AuthManagerV3 = function () {
             return as.login(params).catch(function (err, a, b, c) {
                 if (err.responseJSON) err = err.responseJSON;
                 var code = err && err.information && err.information.code;
-                if (code === 'AUTHORIZATION_FAILURE') {
+                if (code === 'AUTHORIZATION_FAILURE' || code === 'INVALID_REQUEST') {
                     return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(code, 'Could not login, please check username / password and try again.');
                 } else if (code === 'PASSWORD_EXPIRATION') {
                     return Object(__WEBPACK_IMPORTED_MODULE_3_util_index__["c" /* rejectPromise */])(code, 'Your password has expired.  Please contact your administrator and request a password reset.');
