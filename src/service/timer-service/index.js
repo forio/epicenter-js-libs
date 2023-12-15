@@ -51,6 +51,8 @@ class TimerService {
 
         this.interval = null;
         this.dataChannelSubid = null;
+
+        this.disposed = false;
     }
 
     /**
@@ -87,6 +89,10 @@ class TimerService {
             const state = getStateFromActions(actions, currentTime, this.options);
             return state;
         });
+    }
+
+    dispose() {
+        this.disposed = true;
     }
 
     /**
@@ -233,7 +239,7 @@ class TimerService {
             me.interval = null;
         }
         function createTimer(actions, currentTime) {
-            if (me.interval || !merged.tickInterval) {
+            if (me.interval || !merged.tickInterval || me.disposed) {
                 return;
             }
             me.interval = setInterval(function () {
