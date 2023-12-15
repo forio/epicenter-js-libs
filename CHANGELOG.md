@@ -1,6 +1,6 @@
 <a name="2.13.10"></a>
 ### 2.13.10
-- No `createTimer` if `TimerService` disposed
+- Add `TimerService.disposed` flag. No `createTimer` if `TimerService` instance already disposed. [PR](https://github.com/forio/epicenter-js-libs/pull/241)
 
 <a name="2.13.9"></a>
 ### 2.13.9
