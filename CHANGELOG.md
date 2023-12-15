@@ -1,3 +1,7 @@
+<a name="2.13.10"></a>
+### 2.13.10
+- No `createTimer` if `TimerService` disposed
+
 <a name="2.13.9"></a>
 ### 2.13.9
 - Fix cometd to use the AckRequest extension to ensure messages are delivered.
