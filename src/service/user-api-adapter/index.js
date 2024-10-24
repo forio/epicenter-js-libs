@@ -65,12 +65,24 @@ export default function UserAPIAdapter(config) {
                 return 'id=' + qs.join('&id=');
             }
 
-            const query = filter.userName ? { q: filter.userName } : {}; // API only supports filtering by username
+            // API supports filtering by userName, firstName, lastName.
+            // userName is converted to "q" for legacy reasons (broader search but unindexed and slower)
+            // to filter by userName directly, filter by exactUserName
+            const query = filter.userName ? { q: filter.userName } : {};
+            if (filter.exactUserName) {
+                query.userName = filter.exactUserName;
+            }
+            if (filter.firstName) {
+                query.firstName = filter.firstName;
+            }
+            if (filter.lastName) {
+                query.lastName = filter.lastName;
+            }
             const params = [
                 'account=' + httpOptions.account,
                 toIdFilters(filter.id),
                 toQueryFormat(query)
-            ].join('&');
+            ].join('&').replaceAll('&&', '&');
 
             // special case for queries with large number of ids
             // make it as a post with GET semantics
