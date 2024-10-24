@@ -1,4 +1,7 @@
-<a name="2.13.10"></a>
+<a name="2.13.11"></a>
+### 2.13.11
+- Allow userApiAdapter `get` method to filter by `firstName`, `lastName`, and `exactUserName`.
+
 ### 2.13.10
 - Add `TimerService.disposed` flag. No `createTimer` if `TimerService` instance already disposed. [PR](https://github.com/forio/epicenter-js-libs/pull/241)
 
