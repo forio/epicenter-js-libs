@@ -82,7 +82,7 @@ export default function UserAPIAdapter(config) {
                 'account=' + httpOptions.account,
                 toIdFilters(filter.id),
                 toQueryFormat(query)
-            ].filter((p) => p).join('&');
+            ].filter((p)=> p).join('&');
 
             // special case for queries with large number of ids
             // make it as a post with GET semantics
