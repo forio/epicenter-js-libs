@@ -24,7 +24,9 @@ module.exports = function (config) {
     var secureFlag = location.protocol === 'https:';
     var validHost = host.split('.').length > 1;
     var domain = validHost ? '.' + host : null;
-
+    if (host === 'localhost') {
+        domain = 'localhost';
+    }
     var defaults = {
         /**
          * Name of collection
@@ -77,7 +79,6 @@ module.exports = function (config) {
             var path = setOptions.root;
             var cookie = setOptions.cookie;
             var secureFlag = setOptions.secure;
-
             const contents = [`${encodeURIComponent(key)}=${encodeURIComponent(value)}`];
             if (domain) {
                 contents.push(`domain=${domain}`);
@@ -90,7 +91,7 @@ module.exports = function (config) {
             }
             if (samesite) {
                 contents.push(`samesite=${samesite}`);
-            } else if (domain === '.local.forio.com') {
+            } else if (domain === '.local.forio.com' || domain === 'localhost') {
                 contents.push('samesite=lax');
             } else {
                 contents.push('samesite=none');
