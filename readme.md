@@ -1,12 +1,17 @@
 # Epicenter JS Libraries
 
-The Epicenter JS Libraries comprise a set of services (adapters) and managers to help streamline your work with the underlying Epicenter APIs.
+The Epicenter JS Libraries comprise a set of services (adapters) and managers to help streamline your work with the underlying Epicenter v2 APIs.
 
 If you are comfortable with JavaScript, the epicenter.js library is an easy way to connect your project's model, data, and user interface.
 
 See the full [documentation](https://forio.com/epicenter/docs/public/api_adapters/) for more details.
 
 Questions?  Contact us at support@forio.com.
+
+## Deprecation Notice
+
+If you are reading this, please note that the v2 Epicenter libraries are officially deprecated.  Please contact us at support@forio.com for more information
+on the v3 Epicenter libraries.
 
 ## Getting started with development
 
