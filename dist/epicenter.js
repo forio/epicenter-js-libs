@@ -77,7 +77,7 @@ var F =
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ajax_http_transport___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ajax_http_transport__);
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var transport = (isNode) ? require('./node-http-transport') : require('./ajax-http-transport');
@@ -228,7 +228,7 @@ function ensureKeysPresent(obj, keysList, context) {
 
 
 var keyNames = __webpack_require__(16);
-var StorageFactory = __webpack_require__(29);
+var StorageFactory = __webpack_require__(30);
 var optionUtils = __webpack_require__(50);
 
 var EPI_SESSION_KEY = keyNames.EPI_SESSION_KEY;
@@ -931,8 +931,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_query_util__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_transport_http_transport_factory__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__variables_api_service__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_introspection_api_service__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_store_session_manager__);
 
@@ -1601,7 +1601,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldAPIAdapter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_consensus_api_service_consensus_service__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_presence_api_service__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_service_utils__ = __webpack_require__(1);
@@ -2373,9 +2373,9 @@ module.exports = Strategy;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_auth_api_service__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_member_api_adapter__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_service_group_api_service__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_util_object_util__ = __webpack_require__(2);
@@ -2801,7 +2801,7 @@ var NoRunStrategy = function () {
 "use strict";
 
 
-var epiVersion = __webpack_require__(25);
+var epiVersion = __webpack_require__(26);
 
 function isLocalHost(host) {
     var isLocal = !host || //phantomjs
@@ -4107,7 +4107,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__service_utils__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_query_util__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(37);
 
 
 
@@ -4300,6 +4300,65 @@ function UserAPIAdapter(config) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+var apiEndpoint = 'time';
+
+/**
+ *  Service to get current server time, to avoid relying on unreliable client-reported times.
+ */
+
+var TimeAPIService = function () {
+    function TimeAPIService(config) {
+        _classCallCheck(this, TimeAPIService);
+
+        this.serviceOptions = $.extend(true, {}, config);
+
+        var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](this.serviceOptions).get('server');
+        var transportOptions = $.extend(true, {}, this.serviceOptions.transport, {
+            url: urlConfig.getAPIPath(apiEndpoint)
+        });
+        this.http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](transportOptions);
+    }
+
+    /**
+     * Get current server time
+     *  @returns {Promise<Date>}
+     */
+
+
+    _createClass(TimeAPIService, [{
+        key: 'getTime',
+        value: function getTime() {
+            return this.http.get().then(function (t) {
+                return new Date(t);
+            }).catch(function (e) {
+                //EPICENTER-3516 wrong response-type
+                if (e.responseText) {
+                    return new Date(e.responseText);
+                }
+                throw e;
+            });
+        }
+    }]);
+
+    return TimeAPIService;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (TimeAPIService);
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ACTIONS; });
 /* unused harmony export STRATEGY */
 var ACTIONS = {
@@ -4318,7 +4377,7 @@ var STRATEGY = {
 };
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4562,7 +4621,7 @@ RunManager.strategies = __WEBPACK_IMPORTED_MODULE_0_managers_run_strategies__["d
 /* harmony default export */ __webpack_exports__["default"] = (RunManager);
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4571,7 +4630,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_bulk_fetch_records__ = __webpack_require__(37);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4768,13 +4827,13 @@ var SavedRunsManager = function () {
 /* harmony default export */ __webpack_exports__["default"] = (SavedRunsManager);
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 module.exports = {"version":"v2"}
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _require = __webpack_require__(2),
@@ -4892,7 +4951,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5057,7 +5116,7 @@ function VariablesService(config) {
 }
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5165,7 +5224,7 @@ var apiEndpoint = 'model/introspect';
 });
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5177,12 +5236,12 @@ var apiEndpoint = 'model/introspect';
 // var isNode = false; FIXME: Browserify/minifyify has issues with the next link
 // var store = (isNode) ? require('./session-store') : require('./cookie-store');
 
-var store = __webpack_require__(30);
+var store = __webpack_require__(31);
 
 module.exports = store;
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
 /**
@@ -5346,7 +5405,7 @@ module.exports = function (config) {
 };
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5459,7 +5518,7 @@ function AuthService(config) {
 }
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5537,7 +5596,7 @@ var GroupService = function (config) {
 /* harmony default export */ __webpack_exports__["default"] = (GroupService);
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5734,7 +5793,7 @@ var ChannelService = function () {
 /* harmony default export */ __webpack_exports__["default"] = (ChannelService);
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5952,7 +6011,7 @@ var apiEndpoint = 'presence';
 });
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6132,7 +6191,7 @@ function StateService(config) {
 }
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6186,65 +6245,6 @@ function bulkFetchRecords(fetchFn, options) {
     var prom = getRecords(fetchFn, ops);
     return prom;
 }
-
-/***/ }),
-/* 37 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__ = __webpack_require__(0);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-
-
-var apiEndpoint = 'time';
-
-/**
- *  Service to get current server time, to avoid relying on unreliable client-reported times.
- */
-
-var TimeAPIService = function () {
-    function TimeAPIService(config) {
-        _classCallCheck(this, TimeAPIService);
-
-        this.serviceOptions = $.extend(true, {}, config);
-
-        var urlConfig = new __WEBPACK_IMPORTED_MODULE_0_service_configuration_service__["default"](this.serviceOptions).get('server');
-        var transportOptions = $.extend(true, {}, this.serviceOptions.transport, {
-            url: urlConfig.getAPIPath(apiEndpoint)
-        });
-        this.http = new __WEBPACK_IMPORTED_MODULE_1_transport_http_transport_factory__["default"](transportOptions);
-    }
-
-    /**
-     * Get current server time
-     *  @returns {Promise<Date>}
-     */
-
-
-    _createClass(TimeAPIService, [{
-        key: 'getTime',
-        value: function getTime() {
-            return this.http.get().then(function (t) {
-                return new Date(t);
-            }).catch(function (e) {
-                //EPICENTER-3516 wrong response-type
-                if (e.responseText) {
-                    return new Date(e.responseText);
-                }
-                throw e;
-            });
-        }
-    }]);
-
-    return TimeAPIService;
-}();
-
-/* harmony default export */ __webpack_exports__["default"] = (TimeAPIService);
 
 /***/ }),
 /* 38 */
@@ -6509,7 +6509,7 @@ function intersection(a, b) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(23);
 
 
 function reduceActions(actions, options) {
@@ -7459,7 +7459,7 @@ MultiplayerWithTrackingKeyStrategy.errors = errors;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = WorldManager;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_world_api_adapter__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_run_manager__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_auth_manager__ = __webpack_require__(13);
 
 
@@ -7595,24 +7595,24 @@ F.util.run = __webpack_require__(5);
 F.util.classFrom = __webpack_require__(6);
 
 F.factory.Transport = __webpack_require__(0).default;
-F.transport.Ajax = __webpack_require__(26);
+F.transport.Ajax = __webpack_require__(27);
 
 F.service.URL = __webpack_require__(15);
 F.service.Config = __webpack_require__(4).default;
 F.service.Run = __webpack_require__(9).default;
 F.service.File = __webpack_require__(51);
-F.service.Variables = __webpack_require__(27).default;
+F.service.Variables = __webpack_require__(28).default;
 F.service.Data = __webpack_require__(17).default;
-F.service.Auth = __webpack_require__(31).default;
+F.service.Auth = __webpack_require__(32).default;
 F.service.World = __webpack_require__(11).default;
-F.service.State = __webpack_require__(35).default;
+F.service.State = __webpack_require__(36).default;
 F.service.User = __webpack_require__(21).default;
 F.service.Member = __webpack_require__(18).default;
 F.service.Asset = __webpack_require__(58).default;
-F.service.Group = __webpack_require__(32).default;
-F.service.Introspect = __webpack_require__(28).default;
-F.service.Presence = __webpack_require__(34).default;
-F.service.Time = __webpack_require__(37).default;
+F.service.Group = __webpack_require__(33).default;
+F.service.Introspect = __webpack_require__(29).default;
+F.service.Presence = __webpack_require__(35).default;
+F.service.Time = __webpack_require__(22).default;
 F.service.Timer = __webpack_require__(59).default;
 F.service.Password = __webpack_require__(65).default;
 
@@ -7623,11 +7623,11 @@ F.service.ConsensusGroup = __webpack_require__(41).default;
 
 F.service.Project = __webpack_require__(67).default;
 
-F.store.Cookie = __webpack_require__(30);
-F.factory.Store = __webpack_require__(29);
+F.store.Cookie = __webpack_require__(31);
+F.factory.Store = __webpack_require__(30);
 
 F.manager.ScenarioManager = __webpack_require__(68).default;
-F.manager.RunManager = __webpack_require__(23).default;
+F.manager.RunManager = __webpack_require__(24).default;
 F.manager.User = __webpack_require__(78).default;
 F.manager.AuthManager = __webpack_require__(13).default;
 
@@ -7635,7 +7635,7 @@ F.v3 = { manager: {}, service: {} };
 F.v3.manager.AuthManager = __webpack_require__(79).default;
 
 F.manager.WorldManager = __webpack_require__(47).default;
-F.manager.SavedRunsManager = __webpack_require__(24).default;
+F.manager.SavedRunsManager = __webpack_require__(25).default;
 
 var strategies = __webpack_require__(42).default;
 F.manager.strategy = strategies.list; //TODO: this is not really a manager so namespace this better
@@ -7643,12 +7643,12 @@ F.manager.strategy = strategies.list; //TODO: this is not really a manager so na
 F.manager.Settings = __webpack_require__(82).default;
 
 F.manager.ChannelManager = __webpack_require__(19).default;
-F.service.Channel = __webpack_require__(33).default;
+F.service.Channel = __webpack_require__(34).default;
 
 F.manager.ConsensusManager = __webpack_require__(84).default;
 
 if (true) F.version = "2.13.11"; //eslint-disable-line no-undef
-F.api = __webpack_require__(25);
+F.api = __webpack_require__(26);
 
 F.constants = __webpack_require__(16);
 
@@ -8131,7 +8131,7 @@ module.exports = __webpack_amd_options__;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_channel_service__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_channel_service__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_store_session_manager__);
 
@@ -8833,13 +8833,13 @@ function AssetAdapter(config) {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_store_session_manager___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_store_session_manager__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_pubsub__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__start_time_strategies__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__timer_actions_reducer__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__timer_constants__ = __webpack_require__(23);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9286,7 +9286,7 @@ function reduceActions(actions, options) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = reduceActions;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__timer_constants__ = __webpack_require__(23);
 
 
 function toDetailedTime(ts) {
@@ -9640,12 +9640,12 @@ function ProjectAPIService(config) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_saved_runs_manager__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_run_manager__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_managers_saved_runs_manager__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_strategy_utils__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_run_util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_managers_run_strategies_none_strategy__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_service_state_api_adapter__ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_service_run_api_service__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__scenario_strategies_baseline_strategy__ = __webpack_require__(76);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__scenario_strategies_reuse_last_unsaved__ = __webpack_require__(77);
@@ -10739,7 +10739,7 @@ var MemberAPIServiceV3 = function () {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_saved_runs_manager__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_managers_saved_runs_manager__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__settings_service__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_managers_run_strategies_reuse_by_tracking_key__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_managers_run_strategies_multiplayer_with_tracking_key__ = __webpack_require__(46);
@@ -10969,8 +10969,9 @@ SettingsManager.actions = actions;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util_index__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_object_util__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_util_index__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util_object_util__ = __webpack_require__(2);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10979,8 +10980,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
+
 function sanitize(obj) {
-    return Object(__WEBPACK_IMPORTED_MODULE_2_util_object_util__["omit"])(obj, ['id', 'lastModified']);
+    return Object(__WEBPACK_IMPORTED_MODULE_3_util_object_util__["omit"])(obj, ['id', 'lastModified']);
 }
 
 /**
@@ -11013,6 +11015,7 @@ var SettingsService = function () {
             scope: __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__["default"].SCOPES.GROUP
         });
         this.ds = new __WEBPACK_IMPORTED_MODULE_0_service_data_api_service__["default"](serviceOptions);
+        this.ts = new __WEBPACK_IMPORTED_MODULE_1_service_time_api_service__["default"]();
 
         this.state = {
             currentDraft: null
@@ -11056,7 +11059,7 @@ var SettingsService = function () {
     }, {
         key: 'getDefaults',
         value: function getDefaults() {
-            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["b" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_1_util_index__["e" /* result */])(this.options.settings.defaults));
+            var defaultsProm = Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["b" /* makePromise */])(Object(__WEBPACK_IMPORTED_MODULE_2_util_index__["e" /* result */])(this.options.settings.defaults));
             return defaultsProm;
         }
 
@@ -11137,8 +11140,10 @@ var SettingsService = function () {
                 });
             }
             return getSettings.call(this, options || {}).then(function (defaults) {
-                var newSettings = $.extend(true, {}, defaults, { isDraft: true, key: Date.now() });
-                return _this5.ds.save(sanitize(newSettings));
+                return _this5.ts.getTime().then(function (date) {
+                    var newSettings = $.extend(true, {}, defaults, { isDraft: true, key: date.getTime() });
+                    return _this5.ds.save(sanitize(newSettings));
+                });
             }).then(function (d) {
                 _this5.state.currentDraft = d;
                 return d;
@@ -11201,7 +11206,11 @@ var SettingsService = function () {
     }, {
         key: 'saveAndActivate',
         value: function saveAndActivate(settings) {
-            return this._updateDraftOrCreate(settings, { isDraft: false, key: Date.now() });
+            var _this7 = this;
+
+            return this.ts.getTime().then(function (date) {
+                return _this7._updateDraftOrCreate(settings, { isDraft: false, key: date.getTime() });
+            });
         }
     }]);
 

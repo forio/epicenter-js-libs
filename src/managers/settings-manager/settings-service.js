@@ -1,4 +1,5 @@
 import DataService from 'service/data-api-service';
+import TimeService from 'service/time-api-service';
 import { makePromise, result } from 'util/index';
 import { omit } from 'util/object-util';
 
@@ -33,6 +34,7 @@ class SettingsService {
             scope: DataService.SCOPES.GROUP
         });
         this.ds = new DataService(serviceOptions);
+        this.ts = new TimeService();
 
         this.state = {
             currentDraft: null
@@ -128,8 +130,10 @@ class SettingsService {
             });
         }
         return getSettings.call(this, options || {}).then((defaults)=> {
-            const newSettings = $.extend(true, {}, defaults, { isDraft: true, key: Date.now() });
-            return this.ds.save(sanitize(newSettings));
+            return this.ts.getTime().then((date)=> {
+                const newSettings = $.extend(true, {}, defaults, { isDraft: true, key: date.getTime() });
+                return this.ds.save(sanitize(newSettings));
+            });
         }).then((d)=> {
             this.state.currentDraft = d;
             return d;
@@ -178,7 +182,9 @@ class SettingsService {
      * @returns {Promise<object>}
      */
     saveAndActivate(settings) {
-        return this._updateDraftOrCreate(settings, { isDraft: false, key: Date.now() });
+        return this.ts.getTime().then((date)=> {
+            return this._updateDraftOrCreate(settings, { isDraft: false, key: date.getTime() });
+        });
     }
 }
 
