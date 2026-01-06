@@ -1,3 +1,7 @@
+<a name="2.13.12"></a>
+### 2.13.12
+- Create settings keys based on time service
+
 <a name="2.13.11"></a>
 ### 2.13.11
 - Allow userApiAdapter `get` method to filter by `firstName`, `lastName`, and `exactUserName`.
