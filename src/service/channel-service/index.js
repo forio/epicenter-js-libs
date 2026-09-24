@@ -4,6 +4,19 @@ var makeName = function (channelName, topic) {
     return newName;
 };
 
+var LEGACY_MESSAGE_TYPE = 'legacy';
+
+// Over the oumuamua protocol the server wraps every v2 channel message in a push envelope
+// ({ type: 'legacy', content: <v2 message>, address, sender }); over cometd it delivers the
+// v2 message bare. Subscribers always receive the bare message so sim code is transport-agnostic.
+var unwrapLegacyEnvelope = function (message) {
+    var data = message && message.data;
+    if (data && data.type === LEGACY_MESSAGE_TYPE && Object.prototype.hasOwnProperty.call(data, 'content')) {
+        return $.extend({}, message, { data: data.content });
+    }
+    return message;
+};
+
 
 export default class ChannelService {
     /**
@@ -59,10 +72,16 @@ export default class ChannelService {
         var subscriptionIds = [];
         var opts = me.channelOptions;
 
+        var listener = function (message) {
+            var args = Array.prototype.slice.call(arguments);
+            args[0] = unwrapLegacyEnvelope(message);
+            return callback.apply(this, args);
+        };
+
         opts.transport.batch(function () {
             $.each(topics, function (index, topic) {
                 topic = makeName(opts.base, opts.topicResolver(topic));
-                subscriptionIds.push(opts.transport.subscribe(topic, callback));
+                subscriptionIds.push(opts.transport.subscribe(topic, listener));
             });
         });
         return (subscriptionIds[1] ? subscriptionIds : subscriptionIds[0]);
