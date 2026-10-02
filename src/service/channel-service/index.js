@@ -6,9 +6,7 @@ var makeName = function (channelName, topic) {
 
 var LEGACY_MESSAGE_TYPE = 'legacy';
 
-// Over the oumuamua protocol the server wraps every v2 channel message in a push envelope
-// ({ type: 'legacy', content: <v2 message>, address, sender }); over cometd it delivers the
-// v2 message bare. Subscribers always receive the bare message so sim code is transport-agnostic.
+// The oumuamua endpoint delivers v2 messages wrapped as { type: 'legacy', content: <message> }; cometd delivers them bare.
 var unwrapLegacyEnvelope = function (message) {
     var data = message && message.data;
     if (data && data.type === LEGACY_MESSAGE_TYPE && Object.prototype.hasOwnProperty.call(data, 'content')) {

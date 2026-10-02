@@ -37,12 +37,15 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @property {string} userName Epicenter userName used for authentication.
      * @property {string} [userId] Epicenter user id used for authentication. Optional; `options.userName` is preferred.
      * @property {boolean} [allowAllChannels] If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
+     * @property {string} [channelProtocol] Push protocol configured for the project: `cometd` (default) or `oumuamua`. Selects the subscribe endpoint the manager connects to; it must match the project's channel protocol setting. Can also be set globally through `F.service.URL.defaults.channelProtocol`.
      */
     constructor: function (options) {
         this.sessionManager = new SessionManager(options);
         var defaultCometOptions = this.sessionManager.getMergedOptions(options);
 
-        var urlConfig = new ConfigService(defaultCometOptions).get('server');
+        var urlConfig = new ConfigService($.extend(true, {}, defaultCometOptions, {
+            server: { channelProtocol: defaultCometOptions.channelProtocol }
+        })).get('server');
         if (!defaultCometOptions.url) {
             defaultCometOptions.url = urlConfig.getAPIPath('channel');
         }

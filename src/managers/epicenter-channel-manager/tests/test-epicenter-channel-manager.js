@@ -1,5 +1,6 @@
 
 import Manager from '../index';
+import URLService from 'service/url-config-service';
 
 import sinon from 'sinon';
 import chai from 'chai';
@@ -43,6 +44,37 @@ describe('Epicenter ChannelManager', function () {
                     authorization: 'Bearer token'
                 }
             });
+        });
+    });
+
+    describe('#channelProtocol', function () {
+        var oldDefaults;
+        beforeEach(function () {
+            oldDefaults = $.extend({}, URLService.defaults);
+        });
+        afterEach(function () {
+            URLService.defaults = oldDefaults;
+        });
+        it('should connect to the cometd endpoint by default', function () {
+            var manager = new Manager({ userId: 'userId', token: 'token' });
+            manager.options.url.should.match(/\/channel\/subscribe\/$/);
+        });
+        it('should connect to the oumuamua endpoint when channelProtocol is oumuamua', function () {
+            var manager = new Manager({ userId: 'userId', token: 'token', channelProtocol: 'oumuamua' });
+            manager.options.url.should.match(/\/oumuamua\/subscribe\/$/);
+        });
+        it('should honor channelProtocol passed through the server options', function () {
+            var manager = new Manager({ userId: 'userId', token: 'token', server: { channelProtocol: 'oumuamua' } });
+            manager.options.url.should.match(/\/oumuamua\/subscribe\/$/);
+        });
+        it('should honor a globally configured channelProtocol', function () {
+            URLService.defaults = $.extend({}, oldDefaults, { channelProtocol: 'oumuamua' });
+            var manager = new Manager({ userId: 'userId', token: 'token' });
+            manager.options.url.should.match(/\/oumuamua\/subscribe\/$/);
+        });
+        it('should leave an explicit url untouched', function () {
+            var manager = new Manager({ userId: 'userId', token: 'token', url: 'wss://custom/push', channelProtocol: 'oumuamua' });
+            manager.options.url.should.equal('wss://custom/push');
         });
     });
 

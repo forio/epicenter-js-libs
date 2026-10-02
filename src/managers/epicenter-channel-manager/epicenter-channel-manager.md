@@ -47,6 +47,19 @@
 
  For details on what data is published automatically to which channels, see [Automatic Publishing of Events](../../../rest_apis/multiplayer/channel/#publish-message-auto).
 
+ #### Choosing the Push Protocol
+
+ Epicenter projects can be configured to deliver push messages over `cometd` (the default) or `oumuamua`. The Epicenter Channel Manager connects to the `cometd` endpoint unless told otherwise, so a project configured for `oumuamua` must tell the manager which protocol to use, either per instance or once for the whole page:
+
+```js
+ // per instance
+ var cm = new F.manager.ChannelManager({ channelProtocol: 'oumuamua' });
+
+ // or globally, before any channel manager is created
+ F.service.URL.defaults.channelProtocol = 'oumuamua';
+```
+ The value must match the project's channel protocol setting; messages published by the server are only delivered on the configured protocol's endpoint.
+
  #### Creating an Epicenter Channel Manager
 
  The Epicenter Channel Manager is a wrapper around the (more generic) [Channel Manager](../channel-manager/), to instantiate it with Epicenter-specific defaults. If you are interested in including a notification or chat feature in your project, using an Epicenter Channel Manager is the easiest way to get started.

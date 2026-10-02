@@ -2816,6 +2816,20 @@ var defaults = {
     pathname: window.location.pathname
 };
 
+var CHANNEL_SUBSCRIBE_PATHS = {
+    cometd: 'channel/subscribe',
+    oumuamua: 'oumuamua/subscribe'
+};
+var DEFAULT_CHANNEL_PROTOCOL = 'cometd';
+
+function normalizeChannelProtocol(channelProtocol) {
+    var protocol = channelProtocol === undefined || channelProtocol === null || channelProtocol === '' ? DEFAULT_CHANNEL_PROTOCOL : String(channelProtocol).toLowerCase();
+    if (!CHANNEL_SUBSCRIBE_PATHS[protocol]) {
+        throw new Error('Unknown channelProtocol "' + channelProtocol + '"; expected "cometd" or "oumuamua"');
+    }
+    return protocol;
+}
+
 function getLocalHost(existingFn, host) {
     var localHostFn;
     if (existingFn !== undefined) {
@@ -2867,6 +2881,8 @@ var UrlConfigService = function (config) {
 
     var publicExports = {
         protocol: actingProtocol,
+
+        channelProtocol: normalizeChannelProtocol(options.channelProtocol),
 
         api: '',
 
@@ -2921,7 +2937,7 @@ var UrlConfigService = function (config) {
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file', 'presence', 'project', 'multiplayer/project'];
             var apiMapping = {
-                channel: 'oumuamua/subscribe'
+                channel: CHANNEL_SUBSCRIBE_PATHS[normalizeChannelProtocol(this.channelProtocol)]
             };
             var apiEndpoint = apiMapping[api] || api;
 
@@ -3545,12 +3561,15 @@ var EpicenterChannelManager = __WEBPACK_IMPORTED_MODULE_2_util_inherit___default
      * @property {string} userName Epicenter userName used for authentication.
      * @property {string} [userId] Epicenter user id used for authentication. Optional; `options.userName` is preferred.
      * @property {boolean} [allowAllChannels] If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
+     * @property {string} [channelProtocol] Push protocol configured for the project: `cometd` (default) or `oumuamua`. Selects the subscribe endpoint the manager connects to; it must match the project's channel protocol setting. Can also be set globally through `F.service.URL.defaults.channelProtocol`.
      */
     constructor: function (options) {
         this.sessionManager = new __WEBPACK_IMPORTED_MODULE_3_store_session_manager___default.a(options);
         var defaultCometOptions = this.sessionManager.getMergedOptions(options);
 
-        var urlConfig = new __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__["default"](defaultCometOptions).get('server');
+        var urlConfig = new __WEBPACK_IMPORTED_MODULE_1_service_configuration_service__["default"]($.extend(true, {}, defaultCometOptions, {
+            server: { channelProtocol: defaultCometOptions.channelProtocol }
+        })).get('server');
         if (!defaultCometOptions.url) {
             defaultCometOptions.url = urlConfig.getAPIPath('channel');
         }
@@ -5613,9 +5632,7 @@ var makeName = function (channelName, topic) {
 
 var LEGACY_MESSAGE_TYPE = 'legacy';
 
-// Over the oumuamua protocol the server wraps every v2 channel message in a push envelope
-// ({ type: 'legacy', content: <v2 message>, address, sender }); over cometd it delivers the
-// v2 message bare. Subscribers always receive the bare message so sim code is transport-agnostic.
+// The oumuamua endpoint delivers v2 messages wrapped as { type: 'legacy', content: <message> }; cometd delivers them bare.
 var unwrapLegacyEnvelope = function (message) {
     var data = message && message.data;
     if (data && data.type === LEGACY_MESSAGE_TYPE && Object.prototype.hasOwnProperty.call(data, 'content')) {
