@@ -49,7 +49,11 @@
 
  #### Choosing the Push Protocol
 
- Epicenter projects can be configured to deliver push messages over `cometd` (the default) or `oumuamua`. The Epicenter Channel Manager connects to the `cometd` endpoint unless told otherwise, so a project configured for `oumuamua` must tell the manager which protocol to use, either per instance or once for the whole page:
+ Epicenter projects can be configured to deliver push messages over `cometd` (the default) or `oumuamua`. When the end user is logged in, the Epicenter Channel Manager asks Epicenter which protocol the project uses and connects to the matching endpoint automatically, so no configuration is needed. Channels you create and subscribe to in the meantime are held until the endpoint is known, then connected as usual.
+
+ If the lookup fails (an older Epicenter server without the lookup, a user without access to the project, or a network error), the manager connects over `cometd`.
+
+ To skip the lookup or override its result, set the protocol explicitly, either per instance or once for the whole page:
 
 ```js
  // per instance
@@ -58,7 +62,7 @@
  // or globally, before any channel manager is created
  F.service.URL.defaults.channelProtocol = 'oumuamua';
 ```
- The value must match the project's channel protocol setting; messages published by the server are only delivered on the configured protocol's endpoint.
+ An explicit `channelProtocol` (per instance, through `server.channelProtocol`, or through `F.service.URL.defaults.channelProtocol`) or an explicit `url` always wins and makes no lookup. The value must match the project's channel protocol setting; messages published by the server are only delivered on the configured protocol's endpoint.
 
  #### Creating an Epicenter Channel Manager
 

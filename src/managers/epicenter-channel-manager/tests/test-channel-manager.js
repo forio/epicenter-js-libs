@@ -49,6 +49,46 @@ describe('ChannelManager', function () {
             (manager1.cometd.i).should.not.equal(manager2.cometd.i);
         });
     });
+    describe('#resolveUrl', function () {
+        it('should handshake immediately when no resolveUrl is given', function () {
+            var manager = new Manager({ shareConnection: false, url: 'foobar' });
+
+            manager.cometd.handshake.should.have.been.calledOnce;
+            manager._connectionReady.state().should.equal('resolved');
+        });
+        it('should wait for resolveUrl and connect to the resolved url', function () {
+            var resolution = $.Deferred();
+            var manager = new Manager({ shareConnection: false, url: 'foobar', resolveUrl: function () { return resolution.promise(); } });
+
+            manager.cometd.handshake.should.not.have.been.called;
+            manager._connectionReady.state().should.equal('pending');
+            resolution.resolve('resolved-url');
+            return manager._connectionReady.then(function () {
+                manager.cometd.configure.should.have.been.calledWith({ url: 'resolved-url' });
+                manager.cometd.handshake.should.have.been.calledOnce;
+                manager.options.url.should.equal('resolved-url');
+            });
+        });
+        it('should connect to the original url when resolveUrl fails', function () {
+            var resolution = $.Deferred();
+            var manager = new Manager({ shareConnection: false, url: 'foobar', resolveUrl: function () { return resolution.promise(); } });
+
+            resolution.reject();
+            return manager._connectionReady.then(function () {
+                manager.cometd.handshake.should.have.been.calledOnce;
+                manager.options.url.should.equal('foobar');
+            });
+        });
+        it('should share the pending connection with later managers', function () {
+            var resolution = $.Deferred();
+            var handshakesBefore = $.cometd.handshake.callCount;
+            var manager1 = new Manager({ shareConnection: true, url: 'foobar', resolveUrl: function () { return resolution.promise(); } });
+            var manager2 = new Manager({ shareConnection: true, url: 'foobar' });
+
+            manager2._connectionReady.should.equal(manager1._connectionReady);
+            manager1.cometd.handshake.callCount.should.equal(handshakesBefore);
+        });
+    });
     describe('#getChannel', function () {
         it('should take in a string channel', function () {
             //TODO: Find a better mocking solution so I don't have to recreate Channel
