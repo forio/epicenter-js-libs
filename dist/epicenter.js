@@ -1,7 +1,7 @@
 /*!
  * 
  *         Epicenter Javascript libraries
- *         v2.13.11
+ *         v2.14.0
  *         https://github.com/forio/epicenter-js-libs
  *     
  */
@@ -7711,7 +7711,7 @@ F.service.Channel = __webpack_require__(34).default;
 
 F.manager.ConsensusManager = __webpack_require__(85).default;
 
-if (true) F.version = "2.13.11"; //eslint-disable-line no-undef
+if (true) F.version = "2.14.0"; //eslint-disable-line no-undef
 F.api = __webpack_require__(26);
 
 F.constants = __webpack_require__(16);
@@ -9577,7 +9577,7 @@ var PasswordService = function () {
                 subject: 'Please reset your password',
                 projectFullName: 'My Awesome Project'
             });
-      * This will send the following email
+       * This will send the following email
      * 
      * Subject: Please reset your password
      * To: myuserName@gmail.com
@@ -9588,7 +9588,7 @@ var PasswordService = function () {
      * If you did not initiate this request, please ignore this email.
      * 
      * To reset your password, please click the following link: https://forio.com/epicenter/recover/<password recovery token>
-      * @param {string} userName user to reset password for 
+       * @param {string} userName user to reset password for 
      * @param {object} [resetParams] 
      * @param {string} [resetParams.redirectUrl] URL to redirect to after password is reset. Defaults to project root. If relative, it's treated as being relative to project
      * @param {string} [resetParams.subject] Subject for reset password email
