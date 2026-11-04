@@ -1,6 +1,6 @@
 <a name="2.14.0"></a>
 ### 2.14.0
-- Add support for the `oumuamua` push channel protocol alongside `cometd`. The Epicenter Channel Manager now looks up the project's configured protocol and connects to the matching subscribe endpoint automatically, falling back to `cometd` if the lookup fails. Set `channelProtocol` on the channel manager options or on `F.service.URL.defaults` to skip the lookup. [PR](https://github.com/forio/epicenter-js-libs/pull/246)
+- Add support for the `oumuamua` push channel protocol alongside `cometd`. The Epicenter Channel Manager now looks up the project's configured protocol and connects to the matching subscribe endpoint automatically, falling back to `cometd` if the lookup fails. Set `channelProtocol` on the channel manager options or on `F.service.URL.defaults` to skip the lookup.
 
 <a name="2.13.12"></a>
 ### 2.13.12
