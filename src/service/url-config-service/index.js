@@ -18,6 +18,20 @@ var defaults = {
     pathname: window.location.pathname
 };
 
+var CHANNEL_SUBSCRIBE_PATHS = {
+    cometd: 'channel/subscribe',
+    oumuamua: 'oumuamua/subscribe'
+};
+var DEFAULT_CHANNEL_PROTOCOL = 'cometd';
+
+function normalizeChannelProtocol(channelProtocol) {
+    var protocol = (channelProtocol === undefined || channelProtocol === null || channelProtocol === '') ? DEFAULT_CHANNEL_PROTOCOL : String(channelProtocol).toLowerCase();
+    if (!CHANNEL_SUBSCRIBE_PATHS[protocol]) {
+        throw new Error('Unknown channelProtocol "' + channelProtocol + '"; expected "cometd" or "oumuamua"');
+    }
+    return protocol;
+}
+
 function getLocalHost(existingFn, host) {
     var localHostFn;
     if (existingFn !== undefined) {
@@ -67,6 +81,8 @@ var UrlConfigService = function (config) {
 
     var publicExports = {
         protocol: actingProtocol,
+
+        channelProtocol: normalizeChannelProtocol(options.channelProtocol),
 
         api: '',
 
@@ -121,7 +137,7 @@ var UrlConfigService = function (config) {
         getAPIPath: function (api) {
             var PROJECT_APIS = ['run', 'data', 'file', 'presence', 'project', 'multiplayer/project'];
             var apiMapping = {
-                channel: 'channel/subscribe'
+                channel: CHANNEL_SUBSCRIBE_PATHS[normalizeChannelProtocol(this.channelProtocol)]
             };
             var apiEndpoint = apiMapping[api] || api;
 

@@ -1,6 +1,39 @@
 import Channel from 'service/channel-service';
 import SessionManager from 'store/session-manager';
 
+var deferUntilReady = function (cometd, ready) {
+    var isReady = function () {
+        return ready.state() === 'resolved';
+    };
+    var replay = function (method, args) {
+        ready.done(function () {
+            cometd[method].apply(cometd, args);
+        });
+    };
+    return {
+        batch: function (fn) {
+            return isReady() ? cometd.batch(fn) : fn();
+        },
+        subscribe: function () {
+            if (isReady()) {
+                return cometd.subscribe.apply(cometd, arguments);
+            }
+            var subscription = {};
+            var args = arguments;
+            ready.done(function () {
+                $.extend(subscription, cometd.subscribe.apply(cometd, args));
+            });
+            return subscription;
+        },
+        publish: function () {
+            return isReady() ? cometd.publish.apply(cometd, arguments) : replay('publish', arguments);
+        },
+        unsubscribe: function () {
+            return isReady() ? cometd.unsubscribe.apply(cometd, arguments) : replay('unsubscribe', arguments);
+        }
+    };
+};
+
 /**
  * @constructor
  * @param {object} options
@@ -11,6 +44,7 @@ import SessionManager from 'store/session-manager';
  * @property {boolean} [shareConnection] If false each instance of Channel will have a separate cometd connection to server, which could be noisy. Set to true (default) to re-use the same connection across instances.
  * @property {object} [channel] Other defaults to pass on to instances of the underlying [Channel Service](../channel-service/), which are created through `getChannel()`.
  * @property {object} [handshake] Options to pass to the channel handshake. For example, the [Epicenter Channel Manager](../epicenter-channel-manager/) passes `ext` and authorization information. More information on possible options is in the details of the underlying [Push Channel API](../../../rest_apis/multiplayer/channel/).
+ * @property {function(): Promise} [resolveUrl] Returns a promise for the Cometd endpoint URL to connect to. When provided the handshake waits for it; `url` is used if it fails. Channels created in the meantime hold their subscriptions until the connection opens.
  */
 function ChannelManager(options) {
     if (!$.cometd) {
@@ -39,11 +73,15 @@ function ChannelManager(options) {
 
     if (defaultCometOptions.shareConnection && ChannelManager.prototype._cometd) {
         this.cometd = ChannelManager.prototype._cometd;
+        this._connectionReady = ChannelManager.prototype._connectionReady;
         return this;
     }
-	
+
     var cometd = (defaultCometOptions.shareConnection && $.cometd) ? $.cometd : new $.CometD();
     ChannelManager.prototype._cometd = cometd;
+    var connectionReady = $.Deferred();
+    ChannelManager.prototype._connectionReady = connectionReady.promise();
+    this._connectionReady = ChannelManager.prototype._connectionReady;
 
     cometd.websocketEnabled = defaultCometOptions.websocketEnabled;
     cometd.ackEnabled = defaultCometOptions.ackEnabled;
@@ -97,7 +135,21 @@ function ChannelManager(options) {
         $(me).trigger('error', message);
     });
 
-    cometd.handshake(defaultCometOptions.handshake);
+    var connect = function (url) {
+        if (url) {
+            cometd.configure({ url: url });
+            me.options.url = url;
+        }
+        cometd.handshake(defaultCometOptions.handshake);
+        connectionReady.resolve();
+    };
+    if ($.isFunction(defaultCometOptions.resolveUrl)) {
+        $.when(defaultCometOptions.resolveUrl()).then(connect, function () {
+            connect();
+        });
+    } else {
+        connect();
+    }
 
     this.cometd = cometd;
 }
@@ -126,8 +178,9 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
                 base: options
             };
         }
+        var isPending = this._connectionReady && this._connectionReady.state() === 'pending';
         var defaults = {
-            transport: this.cometd
+            transport: isPending ? deferUntilReady(this.cometd, this._connectionReady) : this.cometd
         };
         var channel = new Channel($.extend(true, {}, this.options.channel, defaults, options));
 
@@ -142,10 +195,11 @@ ChannelManager.prototype = $.extend(ChannelManager.prototype, {
 
 
         var unsubs = channel.unsubscribe;
-        channel.unsubscribe = function () {
+        channel.unsubscribe = function (subscription) {
             var removed = unsubs.apply(channel, arguments);
-            for (var i = 0; i < this.currentSubscriptions.length; i++) {
-                if (this.currentSubscriptions[i].id === removed.id) {
+            for (var i = this.currentSubscriptions.length - 1; i >= 0; i--) {
+                var current = this.currentSubscriptions[i];
+                if (current === subscription || (removed.id !== undefined && current.id === removed.id)) {
                     this.currentSubscriptions.splice(i, 1);
                 }
             }

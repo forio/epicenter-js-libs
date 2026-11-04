@@ -84,6 +84,36 @@ describe('URL Service', function () {
             url.getAPIPath('data').should.equal('https://' + url.host + '/' + version + 'data/forioAccount/forioProj/');
         });
 
+        describe('channel', function () {
+            it('should default to the cometd subscribe endpoint', function () {
+                var url = new URLService({ host: 'myapi.forio.com', protocol: 'https' });
+                url.channelProtocol.should.equal('cometd');
+                url.getAPIPath('channel').should.equal('https://myapi.forio.com/' + version + 'channel/subscribe/');
+            });
+            it('should use the oumuamua subscribe endpoint when channelProtocol is oumuamua', function () {
+                var url = new URLService({ host: 'myapi.forio.com', protocol: 'https', channelProtocol: 'oumuamua' });
+                url.channelProtocol.should.equal('oumuamua');
+                url.getAPIPath('channel').should.equal('https://myapi.forio.com/' + version + 'oumuamua/subscribe/');
+            });
+            it('should accept channelProtocol regardless of case', function () {
+                var url = new URLService({ host: 'myapi.forio.com', protocol: 'https', channelProtocol: 'OUMUAMUA' });
+                url.getAPIPath('channel').should.equal('https://myapi.forio.com/' + version + 'oumuamua/subscribe/');
+            });
+            it('should allow setting channelProtocol globally through the defaults', function () {
+                URLService.defaults = { protocol: 'https', host: 'funky.forio.com', channelProtocol: 'oumuamua' };
+                var url = new URLService();
+                url.getAPIPath('channel').should.equal('https://funky.forio.com/' + version + 'oumuamua/subscribe/');
+            });
+            it('should let instance options override the global channelProtocol', function () {
+                URLService.defaults = { protocol: 'https', host: 'funky.forio.com', channelProtocol: 'oumuamua' };
+                var url = new URLService({ channelProtocol: 'cometd' });
+                url.getAPIPath('channel').should.equal('https://funky.forio.com/' + version + 'channel/subscribe/');
+            });
+            it('should reject unknown channel protocols', function () {
+                (function () { new URLService({ channelProtocol: 'carrier-pigeon' }); }).should.throw(/channelProtocol/);
+            });
+        });
+
         it('should allow over-riding the version', function () {
             var url = new URLService({ accountPath: 'forioAccount', projectPath: 'forioProj', versionPath: '' });
             url.getAPIPath('data').should.equal('https://' + url.host + '/data/forioAccount/forioProj/');

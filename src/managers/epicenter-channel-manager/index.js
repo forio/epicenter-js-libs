@@ -1,9 +1,11 @@
 import ChannelManager from './channel-manager';
 import ConfigService from 'service/configuration-service';
+import URLService from 'service/url-config-service';
 import classFrom from 'util/inherit';
 import SessionManager from 'store/session-manager';
 
 import subscribeToWorldChannel from './world-channel/subscribe-world-channel';
+import resolveChannelProtocol from './resolve-channel-protocol';
 
 var validTypes = {
     project: true,
@@ -29,6 +31,16 @@ var isPresenceData = function (payload) {
     return payload.data && payload.data.type === 'user' && payload.data.user;
 };
 
+var hasExplicitChannelProtocol = function (options) {
+    return !!(options.channelProtocol ||
+        (options.server && options.server.channelProtocol) ||
+        URLService.defaults.channelProtocol);
+};
+
+var canLookupChannelProtocol = function (options) {
+    return !!(options.account && options.project && options.token);
+};
+
 var __super = ChannelManager.prototype;
 var EpicenterChannelManager = classFrom(ChannelManager, {
     /**
@@ -37,14 +49,32 @@ var EpicenterChannelManager = classFrom(ChannelManager, {
      * @property {string} userName Epicenter userName used for authentication.
      * @property {string} [userId] Epicenter user id used for authentication. Optional; `options.userName` is preferred.
      * @property {boolean} [allowAllChannels] If not included or if set to `false`, all channel paths are validated; if your project requires [Push Channel Authorization](../../../updating_your_settings/), you should use this option. If you want to allow other channel paths, set to `true`; this is not common.
+     * @property {string} [channelProtocol] Push protocol configured for the project: `cometd` or `oumuamua`. Selects the subscribe endpoint the manager connects to; it must match the project's channel protocol setting. When omitted, the manager looks the protocol up from the project (falling back to `cometd` if the lookup fails). Can also be set globally through `F.service.URL.defaults.channelProtocol`.
      */
     constructor: function (options) {
         this.sessionManager = new SessionManager(options);
         var defaultCometOptions = this.sessionManager.getMergedOptions(options);
 
-        var urlConfig = new ConfigService(defaultCometOptions).get('server');
-        if (!defaultCometOptions.url) {
+        var urlConfig = new ConfigService($.extend(true, {}, defaultCometOptions, {
+            server: { channelProtocol: defaultCometOptions.channelProtocol }
+        })).get('server');
+        var explicitUrl = defaultCometOptions.url;
+        if (!explicitUrl) {
             defaultCometOptions.url = urlConfig.getAPIPath('channel');
+        }
+
+        if (!explicitUrl && !hasExplicitChannelProtocol(defaultCometOptions) && canLookupChannelProtocol(defaultCometOptions)) {
+            defaultCometOptions.resolveUrl = function () {
+                return resolveChannelProtocol({
+                    account: defaultCometOptions.account,
+                    project: defaultCometOptions.project,
+                    token: defaultCometOptions.token,
+                    server: defaultCometOptions.server
+                }).then(function (protocol) {
+                    urlConfig.channelProtocol = protocol;
+                    return urlConfig.getAPIPath('channel');
+                });
+            };
         }
 
         if (defaultCometOptions.handshake === undefined) {
